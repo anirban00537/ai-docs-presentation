@@ -1,64 +1,21 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import type {
+  SlideElement,
+  SlideElementUpdate,
+  TextElement,
+  RectangleElement,
+  CircleElement,
+  ArrowElement,
+  ResizeHandle,
+} from "@/components/editor/slide/types";
+import { TextElementNode } from "@/components/editor/slide/text-element-node";
+import { ShapeElementNode } from "@/components/editor/slide/shape-element-node";
 
-type ElementCommon = {
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  rotation?: number;
-};
-
-export type TextElement = ElementCommon & {
-  type: "text";
-  text: string;
-  fontSize: number;
-  fontWeight: number;
-  color: string;
-  align: "left" | "center" | "right";
-  lineHeight: number;
-};
-
-export type RectangleElement = ElementCommon & {
-  type: "rectangle";
-  fill: string;
-  borderRadius: number;
-};
-
-export type CircleElement = ElementCommon & {
-  type: "circle";
-  fill: string;
-};
-
-export type ArrowElement = ElementCommon & {
-  type: "arrow";
-  stroke: string;
-  strokeWidth: number;
-};
-
-export type SlideElement =
-  | TextElement
-  | RectangleElement
-  | CircleElement
-  | ArrowElement;
-
-export type SlideElementUpdate = Partial<
-  Omit<ElementCommon, "id"> & {
-    text: string;
-    fontSize: number;
-    fontWeight: number;
-    color: string;
-    align: "left" | "center" | "right";
-    fill: string;
-    borderRadius: number;
-    stroke: string;
-    strokeWidth: number;
-    lineHeight: number;
-  }
->;
+const SLIDE_WIDTH = 1280;
+const SLIDE_HEIGHT = 720;
+const MIN_ELEMENT_SIZE = 32;
 
 type SlideProps = {
   elements: SlideElement[];
@@ -68,31 +25,6 @@ type SlideProps = {
   onUpdateElement: (id: string, updates: SlideElementUpdate) => void;
   onStartEditing: (id: string) => void;
   onStopEditing: () => void;
-};
-
-const SLIDE_WIDTH = 1280;
-const SLIDE_HEIGHT = 720;
-const MIN_ELEMENT_SIZE = 32;
-
-type ResizeHandle =
-  | "top-left"
-  | "top"
-  | "top-right"
-  | "right"
-  | "bottom-right"
-  | "bottom"
-  | "bottom-left"
-  | "left";
-
-const cursorByHandle: Record<ResizeHandle, string> = {
-  "top-left": "cursor-nwse-resize",
-  top: "cursor-ns-resize",
-  "top-right": "cursor-nesw-resize",
-  right: "cursor-ew-resize",
-  "bottom-right": "cursor-nwse-resize",
-  bottom: "cursor-ns-resize",
-  "bottom-left": "cursor-nesw-resize",
-  left: "cursor-ew-resize",
 };
 
 const Slide: React.FC<SlideProps> = ({
@@ -475,104 +407,32 @@ const Slide: React.FC<SlideProps> = ({
     [logInteraction]
   );
 
-  const renderElementContent = useCallback(
-    (element: SlideElement) => {
-      switch (element.type) {
-        case "text":
-          if (editingId === element.id) {
-            return (
-              <textarea
-                ref={editingTextareaRef}
-                className="h-full w-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
-                style={{
-                  fontSize: element.fontSize,
-                  fontWeight: element.fontWeight,
-                  color: element.color,
-                  textAlign: element.align,
-                  lineHeight: element.lineHeight ?? 1.3,
-                }}
-                value={element.text}
-                onChange={(event) =>
-                  onUpdateElement(element.id, { text: event.target.value })
-                }
-                onBlur={() => onStopEditing()}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape") {
-                    event.preventDefault();
-                    onStopEditing();
-                  }
-                }}
-              />
-            );
-          }
+  const createDragPointerDown = useCallback(
+    (
+        element: SlideElement,
+        effective: SlideElement,
+        isSelected: boolean,
+        isEditing: boolean
+      ) =>
+      (event: React.PointerEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        if (!isSelected) {
+          onSelect(element.id);
+        }
+        if (isEditing) {
+          return;
+        }
+        beginDrag(element, effective, event);
+      },
+    [beginDrag, onSelect]
+  );
 
-          return (
-            <div
-              className="h-full w-full cursor-text whitespace-pre-wrap wrap-break-word"
-              style={{
-                fontSize: element.fontSize,
-                fontWeight: element.fontWeight,
-                color: element.color,
-                textAlign: element.align,
-                lineHeight: element.lineHeight ?? 1.3,
-              }}
-              onDoubleClick={(event) => {
-                event.stopPropagation();
-                onStartEditing(element.id);
-              }}
-            >
-              {element.text || "Start typing…"}
-            </div>
-          );
-
-        case "rectangle":
-          return (
-            <div
-              className="h-full w-full"
-              style={{
-                backgroundColor: element.fill,
-                borderRadius: element.borderRadius,
-              }}
-            />
-          );
-
-        case "circle":
-          return (
-            <div
-              className="h-full w-full"
-              style={{
-                backgroundColor: element.fill,
-                borderRadius: "9999px",
-              }}
-            />
-          );
-
-        case "arrow":
-          return (
-            <svg
-              width="100%"
-              height="100%"
-              viewBox="0 0 200 80"
-              preserveAspectRatio="none"
-            >
-              <line
-                x1="10"
-                y1="40"
-                x2="160"
-                y2="40"
-                stroke={element.stroke}
-                strokeWidth={element.strokeWidth}
-                strokeLinecap="round"
-              />
-              <polygon points="160,15 190,40 160,65" fill={element.stroke} />
-            </svg>
-          );
-
-        default:
-          return null;
-      }
-    },
-    [editingId, onStartEditing, onStopEditing, onUpdateElement]
+  const createResizePointerDown = useCallback(
+    (element: SlideElement, effective: SlideElement, handle: ResizeHandle) =>
+      (event: React.PointerEvent<HTMLDivElement>) => {
+        beginResize(element, effective, handle, event);
+      },
+    [beginResize]
   );
 
   return (
@@ -599,49 +459,48 @@ const Slide: React.FC<SlideProps> = ({
             ? ({ ...element, ...override } as SlideElement)
             : element;
 
-          return (
-            <div
-              key={element.id}
-              className={cn(
-                "canvas-element group absolute flex select-none border border-transparent shadow-sm transition",
-                isSelected && !isEditing
-                  ? "border-blue-500/70 shadow-[0_0_0_1px_rgba(37,99,235,0.6)]"
-                  : "border-transparent",
-                isEditing ? "cursor-text" : "cursor-move"
-              )}
-              style={{
-                left: effective.x,
-                top: effective.y,
-                width: effective.width,
-                height: effective.height,
-                zIndex: isSelected ? 20 : 10,
-                borderRadius:
-                  effective.type === "circle"
-                    ? "9999px"
-                    : effective.type === "rectangle"
-                    ? (effective as RectangleElement).borderRadius
-                    : undefined,
-              }}
-              onPointerDown={(event) => {
-                event.stopPropagation();
-                if (!isSelected) {
-                  onSelect(element.id);
-                }
-                if (isEditing) return;
-                beginDrag(element, effective, event);
-              }}
-            >
-              <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
-                {renderElementContent(effective)}
-                {isSelected && !isEditing && (
-                  <ResizeHandles
-                    onPointerDown={(handle, handleEvent) =>
-                      beginResize(element, effective, handle, handleEvent)
-                    }
-                  />
+          if (effective.type === "text") {
+            return (
+              <TextElementNode
+                key={element.id}
+                element={effective as TextElement}
+                isSelected={isSelected}
+                isEditing={isEditing}
+                onPointerDown={createDragPointerDown(
+                  element,
+                  effective,
+                  isSelected,
+                  isEditing
                 )}
-              </div>
-            </div>
+                getResizePointerDown={(handle) =>
+                  createResizePointerDown(element, effective, handle)
+                }
+                editingTextareaRef={editingTextareaRef}
+                onUpdateElement={(id, updates) => onUpdateElement(id, updates)}
+                onStartEditing={onStartEditing}
+                onStopEditing={onStopEditing}
+              />
+            );
+          }
+
+          return (
+            <ShapeElementNode
+              key={element.id}
+              element={
+                effective as RectangleElement | CircleElement | ArrowElement
+              }
+              isSelected={isSelected}
+              isEditing={isEditing}
+              onPointerDown={createDragPointerDown(
+                element,
+                effective,
+                isSelected,
+                isEditing
+              )}
+              getResizePointerDown={(handle) =>
+                createResizePointerDown(element, effective, handle)
+              }
+            />
           );
         })}
       </div>
@@ -650,39 +509,3 @@ const Slide: React.FC<SlideProps> = ({
 };
 
 export default Slide;
-
-type ResizeHandlesProps = {
-  onPointerDown: (
-    handle: ResizeHandle,
-    event: React.PointerEvent<HTMLDivElement>
-  ) => void;
-};
-
-const handleDefinitions: Array<{ handle: ResizeHandle; className: string }> = [
-  { handle: "top-left", className: "-left-1.5 -top-1.5" },
-  { handle: "top", className: "left-1/2 -top-1.5 -translate-x-1/2" },
-  { handle: "top-right", className: "-right-1.5 -top-1.5" },
-  { handle: "right", className: "-right-1.5 top-1/2 -translate-y-1/2" },
-  { handle: "bottom-right", className: "-bottom-1.5 -right-1.5" },
-  { handle: "bottom", className: "left-1/2 -bottom-1.5 -translate-x-1/2" },
-  { handle: "bottom-left", className: "-bottom-1.5 -left-1.5" },
-  { handle: "left", className: "-left-1.5 top-1/2 -translate-y-1/2" },
-];
-
-const ResizeHandles: React.FC<ResizeHandlesProps> = ({ onPointerDown }) => {
-  return (
-    <>
-      {handleDefinitions.map(({ handle, className }) => (
-        <div
-          key={handle}
-          className={cn(
-            "absolute h-3 w-3 rounded-sm border border-white bg-blue-500 shadow-sm",
-            cursorByHandle[handle],
-            className
-          )}
-          onPointerDown={(event) => onPointerDown(handle, event)}
-        />
-      ))}
-    </>
-  );
-};

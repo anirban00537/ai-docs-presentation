@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import Slide, {
+import Slide from "@/components/editor/slide";
+import {
   SlideElement,
   SlideElementUpdate,
-} from "@/components/editor/slide";
+} from "@/components/editor/slide/types";
 import {
   EditorHeader,
   TextPreset,
