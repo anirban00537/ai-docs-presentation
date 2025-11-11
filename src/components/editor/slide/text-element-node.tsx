@@ -33,6 +33,18 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
   onStartEditing,
   onStopEditing,
 }) => {
+  const handlePointerDown = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (event.detail >= 2 && !isEditing) {
+        event.stopPropagation();
+        onStartEditing(element.id);
+        return;
+      }
+      onPointerDown(event);
+    },
+    [element.id, isEditing, onPointerDown, onStartEditing]
+  );
+
   return (
     <div
       className={cn(
@@ -47,7 +59,11 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
         height: element.height,
         zIndex: isSelected ? 20 : 10,
       }}
-      onPointerDown={onPointerDown}
+      onPointerDown={handlePointerDown}
+      onDoubleClick={(event) => {
+        event.stopPropagation();
+        onStartEditing(element.id);
+      }}
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
         {isEditing ? (

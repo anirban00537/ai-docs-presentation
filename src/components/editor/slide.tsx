@@ -319,8 +319,6 @@ const Slide: React.FC<SlideProps> = ({
       const container = containerRef.current;
       if (!container || event.button !== 0) return;
 
-      event.preventDefault();
-
       const rect = container.getBoundingClientRect();
       const pointer = {
         x: event.clientX - rect.left,
@@ -416,6 +414,9 @@ const Slide: React.FC<SlideProps> = ({
       ) =>
       (event: React.PointerEvent<HTMLDivElement>) => {
         event.stopPropagation();
+        if (event.detail > 1) {
+          return;
+        }
         if (!isSelected) {
           onSelect(element.id);
         }
