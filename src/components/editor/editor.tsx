@@ -223,7 +223,7 @@ const Editor = () => {
   return (
     <div className="flex h-full flex-1 flex-col">
       <EditorHeader onAddText={handleAddText} onAddShape={handleAddShape} />
-      <div className="flex flex-1 flex-col gap-4 p-6">
+      <div className="flex flex-1 flex-col gap-4 ">
         <Slide
           elements={elements}
           selectedId={selectedElementId}

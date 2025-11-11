@@ -309,7 +309,7 @@ const Slide: React.FC<SlideProps> = ({
   };
 
   return (
-    <div className="flex flex-1 items-center justify-center overflow-auto  py-6">
+    <div className="flex flex-1 items-center justify-center overflow-auto bg-slate-100/60 py-6">
       <div
         ref={containerRef}
         className="relative  bg-white"
