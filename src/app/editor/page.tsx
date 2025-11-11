@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import Editor from "@/components/editor/editor";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,7 +27,7 @@ export default function Page() {
             className="mr-2 data-[orientation=vertical]:h-4"
           />
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4"></div>
+        <Editor />
       </SidebarInset>
     </SidebarProvider>
   );
