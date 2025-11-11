@@ -14,19 +14,46 @@ import {
 type TextPresetId = TextPreset["id"];
 type ShapePresetId = ShapePreset["id"];
 
-const DEFAULT_POSITIONS: Record<TextPresetId, { x: number; y: number }> = {
-  heading: { x: 120, y: 100 },
-  subheading: { x: 120, y: 180 },
-  body: { x: 120, y: 260 },
+const SLIDE_DIMENSIONS = {
+  width: 1280,
+  height: 720,
 };
 
 const TEXT_PRESET_CONFIG: Record<
   TextPresetId,
-  { width: number; height: number; fontSize: number; fontWeight: number }
+  {
+    width: number;
+    height: number;
+    fontSize: number;
+    fontWeight: number;
+    align: "left" | "center" | "right";
+    lineHeight: number;
+  }
 > = {
-  heading: { width: 420, height: 96, fontSize: 48, fontWeight: 600 },
-  subheading: { width: 380, height: 72, fontSize: 28, fontWeight: 500 },
-  body: { width: 420, height: 120, fontSize: 18, fontWeight: 400 },
+  heading: {
+    width: 960,
+    height: 184,
+    fontSize: 96,
+    fontWeight: 600,
+    align: "center",
+    lineHeight: 1,
+  },
+  subheading: {
+    width: 820,
+    height: 140,
+    fontSize: 48,
+    fontWeight: 500,
+    align: "center",
+    lineHeight: 1.05,
+  },
+  body: {
+    width: 720,
+    height: 240,
+    fontSize: 24,
+    fontWeight: 400,
+    align: "left",
+    lineHeight: 1.4,
+  },
 };
 
 const SHAPE_PRESET_CONFIG: Record<
@@ -84,21 +111,27 @@ const Editor = () => {
 
   const handleAddText = (preset: TextPreset) => {
     const config = TEXT_PRESET_CONFIG[preset.id] ?? TEXT_PRESET_CONFIG.body;
-    const coordinates = DEFAULT_POSITIONS[preset.id] ?? DEFAULT_POSITIONS.body;
+    const originX = Math.max(
+      40,
+      Math.round((SLIDE_DIMENSIONS.width - config.width) / 2)
+    );
+    const originY =
+      preset.id === "heading" ? 140 : preset.id === "subheading" ? 240 : 340;
     const id = createElementId("text");
 
     const newElement: SlideElement = {
       id,
       type: "text",
       text: preset.title,
-      x: coordinates.x,
-      y: coordinates.y,
+      x: originX,
+      y: originY,
       width: config.width,
       height: config.height,
       fontSize: config.fontSize,
       fontWeight: config.fontWeight,
       color: "#0f172a",
-      align: "left",
+      align: config.align,
+      lineHeight: config.lineHeight,
     };
 
     setElements((prev) => [...prev, newElement]);
@@ -112,14 +145,16 @@ const Editor = () => {
 
     const id = createElementId(config.type);
     let newElement: SlideElement;
+    const centerX = Math.round((SLIDE_DIMENSIONS.width - config.width) / 2);
+    const centerY = Math.round((SLIDE_DIMENSIONS.height - config.height) / 2);
 
     switch (config.type) {
       case "rectangle":
         newElement = {
           id,
           type: "rectangle",
-          x: 160,
-          y: 220,
+          x: centerX,
+          y: centerY,
           width: config.width,
           height: config.height,
           fill: config.fill,
@@ -130,8 +165,8 @@ const Editor = () => {
         newElement = {
           id,
           type: "circle",
-          x: 200,
-          y: 220,
+          x: centerX,
+          y: centerY,
           width: config.width,
           height: config.height,
           fill: config.fill,
@@ -141,8 +176,8 @@ const Editor = () => {
         newElement = {
           id,
           type: "arrow",
-          x: 180,
-          y: 240,
+          x: centerX,
+          y: centerY,
           width: config.width,
           height: config.height,
           stroke: config.stroke,

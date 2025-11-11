@@ -1,7 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { Rnd } from "react-rnd";
+import React, { useCallback, useEffect, useRef } from "react";
+import {
+  Rnd,
+  type RndDragCallback,
+  type RndResizeCallback,
+  type RndResizeStartCallback,
+} from "react-rnd";
 import { cn } from "@/lib/utils";
 
 type ElementCommon = {
@@ -20,6 +25,7 @@ export type TextElement = ElementCommon & {
   fontWeight: number;
   color: string;
   align: "left" | "center" | "right";
+  lineHeight: number;
 };
 
 export type RectangleElement = ElementCommon & {
@@ -56,6 +62,7 @@ export type SlideElementUpdate = Partial<
     borderRadius: number;
     stroke: string;
     strokeWidth: number;
+    lineHeight: number;
   }
 >;
 
@@ -68,6 +75,9 @@ type SlideProps = {
   onStartEditing: (id: string) => void;
   onStopEditing: () => void;
 };
+
+const SLIDE_WIDTH = 1280;
+const SLIDE_HEIGHT = 720;
 
 function handleStyle() {
   return {
@@ -101,6 +111,89 @@ const Slide: React.FC<SlideProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const editingTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const logInteraction = useCallback(
+    (
+      action:
+        | "drag:start"
+        | "drag:move"
+        | "drag:stop"
+        | "resize:start"
+        | "resize:move"
+        | "resize:stop",
+      detail: {
+        id: string;
+        x: number;
+        y: number;
+        width?: number;
+        height?: number;
+      }
+    ) => {
+      console.log(`[Slide] ${action}`, detail);
+    },
+    []
+  );
+
+  const createDragHandler =
+    (
+      action: "drag:start" | "drag:move" | "drag:stop",
+      element: SlideElement,
+      callback?: (coords: { x: number; y: number }) => void
+    ): RndDragCallback =>
+    (_event, data) => {
+      const payload = {
+        id: element.id,
+        x: data.x,
+        y: data.y,
+        width: element.width,
+        height: element.height,
+      };
+      logInteraction(action, payload);
+      callback?.({ x: data.x, y: data.y });
+    };
+
+  const createResizeStartHandler =
+    (element: SlideElement): RndResizeStartCallback =>
+    () => {
+      logInteraction("resize:start", {
+        id: element.id,
+        x: element.x,
+        y: element.y,
+        width: element.width,
+        height: element.height,
+      });
+    };
+
+  const createResizeHandler =
+    (
+      action: "resize:move" | "resize:stop",
+      element: SlideElement,
+      callback?: (detail: {
+        width: number;
+        height: number;
+        x: number;
+        y: number;
+      }) => void
+    ): RndResizeCallback =>
+    (...args: Parameters<RndResizeCallback>) => {
+      const [, , ref, , position] = args;
+      const width = parseFloat(ref.style.width);
+      const height = parseFloat(ref.style.height);
+
+      logInteraction(action, {
+        id: element.id,
+        x: position.x,
+        y: position.y,
+        width,
+        height,
+      });
+
+      callback?.({
+        width,
+        height,
+        x: position.x,
+        y: position.y,
+      });
+    };
 
   useEffect(() => {
     if (editingId && editingTextareaRef.current) {
@@ -131,7 +224,7 @@ const Slide: React.FC<SlideProps> = ({
                 fontWeight: element.fontWeight,
                 color: element.color,
                 textAlign: element.align,
-                lineHeight: 1.3,
+                lineHeight: element.lineHeight ?? 1.3,
               }}
               value={element.text}
               onChange={(event) =>
@@ -156,7 +249,7 @@ const Slide: React.FC<SlideProps> = ({
               fontWeight: element.fontWeight,
               color: element.color,
               textAlign: element.align,
-              lineHeight: 1.3,
+              lineHeight: element.lineHeight ?? 1.3,
             }}
             onDoubleClick={(event) => {
               event.stopPropagation();
@@ -216,76 +309,94 @@ const Slide: React.FC<SlideProps> = ({
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="relative flex h-full min-h-[520px] w-full items-center justify-center rounded-xl border border-border/60 bg-white shadow-inner"
-      onPointerDown={handleCanvasPointerDown}
-    >
-      {elements.length === 0 && (
-        <span className="pointer-events-none text-sm text-muted-foreground">
-          Use the toolbar to add content to this slide.
-        </span>
-      )}
+    <div className="flex flex-1 items-center justify-center overflow-auto  py-6">
+      <div
+        ref={containerRef}
+        className="relative  bg-white"
+        style={{
+          width: SLIDE_WIDTH,
+          height: SLIDE_HEIGHT,
+        }}
+        onPointerDown={handleCanvasPointerDown}
+      >
+        {elements.length === 0 && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="rounded-full bg-white/80 px-4 py-2 text-sm text-muted-foreground shadow-sm">
+              Use the toolbar to add content to this slide.
+            </span>
+          </div>
+        )}
 
-      {elements.map((element) => {
-        const isSelected = selectedId === element.id;
-        const isEditing = editingId === element.id;
+        {elements.map((element) => {
+          const isSelected = selectedId === element.id;
+          const isEditing = editingId === element.id;
 
-        return (
-          <Rnd
-            key={element.id}
-            bounds="parent"
-            size={{ width: element.width, height: element.height }}
-            position={{ x: element.x, y: element.y }}
-            onDragStop={(_, data) => {
-              onUpdateElement(element.id, { x: data.x, y: data.y });
-            }}
-            onResizeStop={(_, __, ref, ___, position) => {
-              onUpdateElement(element.id, {
-                width: parseFloat(ref.style.width),
-                height: parseFloat(ref.style.height),
-                ...position,
-              });
-            }}
-            enableResizing={isSelected && !isEditing}
-            disableDragging={isEditing}
-            dragHandleClassName="canvas-element__content"
-            className={cn(
-              "canvas-element group absolute flex select-none border border-transparent shadow-sm transition",
-              isSelected && !isEditing
-                ? "border-blue-500/70 shadow-[0_0_0_1px_rgba(37,99,235,0.6)]"
-                : "border-transparent"
-            )}
-            style={{
-              zIndex: isSelected ? 20 : 10,
-              borderRadius:
-                element.type === "circle"
-                  ? "9999px"
-                  : element.type === "rectangle"
-                  ? (element as RectangleElement).borderRadius
-                  : undefined,
-            }}
-            resizeHandleStyles={
-              isSelected && !isEditing ? resizeHandleStyles : undefined
-            }
-            onPointerDown={(event: React.PointerEvent<HTMLDivElement>) => {
-              event.stopPropagation();
-              if (!isSelected) {
-                onSelect(element.id);
-              }
-            }}
-          >
-            <div
-              className={cn(
-                "canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded",
-                isEditing ? "cursor-text" : "cursor-move"
+          return (
+            <Rnd
+              key={element.id}
+              bounds="parent"
+              size={{ width: element.width, height: element.height }}
+              position={{ x: element.x, y: element.y }}
+              enableUserSelectHack={false}
+              data-element-type={element.type}
+              onDragStart={createDragHandler("drag:start", element)}
+              onDrag={createDragHandler("drag:move", element)}
+              onDragStop={createDragHandler("drag:stop", element, ({ x, y }) =>
+                onUpdateElement(element.id, { x, y })
               )}
+              onResizeStart={createResizeStartHandler(element)}
+              onResize={createResizeHandler("resize:move", element)}
+              onResizeStop={createResizeHandler(
+                "resize:stop",
+                element,
+                (detail) =>
+                  onUpdateElement(element.id, {
+                    width: detail.width,
+                    height: detail.height,
+                    x: detail.x,
+                    y: detail.y,
+                  })
+              )}
+              enableResizing={isSelected && !isEditing}
+              disableDragging={isEditing}
+              dragHandleClassName="canvas-element__content"
+              className={cn(
+                "canvas-element group absolute flex select-none border border-transparent shadow-sm",
+                isSelected && !isEditing
+                  ? "border-blue-500/70 shadow-[0_0_0_1px_rgba(37,99,235,0.6)]"
+                  : "border-transparent"
+              )}
+              style={{
+                zIndex: isSelected ? 20 : 10,
+                borderRadius:
+                  element.type === "circle"
+                    ? "9999px"
+                    : element.type === "rectangle"
+                    ? (element as RectangleElement).borderRadius
+                    : undefined,
+              }}
+              resizeHandleStyles={
+                isSelected && !isEditing ? resizeHandleStyles : undefined
+              }
+              onPointerDown={(event: React.PointerEvent<HTMLDivElement>) => {
+                event.stopPropagation();
+                if (!isSelected) {
+                  onSelect(element.id);
+                }
+              }}
             >
-              {renderElementContent(element)}
-            </div>
-          </Rnd>
-        );
-      })}
+              <div
+                className={cn(
+                  "canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded",
+                  isEditing ? "cursor-text" : "cursor-move"
+                )}
+              >
+                {renderElementContent(element)}
+              </div>
+            </Rnd>
+          );
+        })}
+      </div>
     </div>
   );
 };
