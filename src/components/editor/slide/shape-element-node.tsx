@@ -23,6 +23,7 @@ type ShapeElementNodeProps = {
   element: RectangleElement | CircleElement | ArrowElement | PolygonElement;
   isSelected: boolean;
   isEditing: boolean;
+  baseZIndex: number;
   onPointerDown: (event: React.PointerEvent<HTMLDivElement>) => void;
   getResizePointerDown: (
     handle: ResizeHandle
@@ -33,6 +34,7 @@ export const ShapeElementNode: React.FC<ShapeElementNodeProps> = ({
   element,
   isSelected,
   isEditing,
+  baseZIndex,
   onPointerDown,
   getResizePointerDown,
 }) => {
@@ -170,7 +172,7 @@ export const ShapeElementNode: React.FC<ShapeElementNodeProps> = ({
         top: element.y,
         width: element.width,
         height: element.height,
-        zIndex: isSelected ? 20 : 10,
+        zIndex: baseZIndex + (isSelected ? 1 : 0),
         borderRadius:
           element.type === "circle"
             ? "9999px"

@@ -448,7 +448,8 @@ const Slide: React.FC = () => {
           </div>
         )}
 
-        {elements.map((element) => {
+        {elements.map((element, index) => {
+          const baseZIndex = 100 + index;
           const isSelected = selectedId === element.id;
           const isEditing = editingId === element.id;
           const override = liveOverrides[element.id];
@@ -463,6 +464,7 @@ const Slide: React.FC = () => {
                 element={effective as TextElement}
                 isSelected={isSelected}
                 isEditing={isEditing}
+                baseZIndex={baseZIndex}
                 onPointerDown={createDragPointerDown(
                   element,
                   effective,
@@ -489,6 +491,7 @@ const Slide: React.FC = () => {
               }
               isSelected={isSelected}
               isEditing={isEditing}
+              baseZIndex={baseZIndex}
               onPointerDown={createDragPointerDown(
                 element,
                 effective,

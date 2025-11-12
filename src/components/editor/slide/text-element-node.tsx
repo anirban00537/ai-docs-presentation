@@ -70,6 +70,7 @@ type TextElementNodeProps = {
   element: TextElement;
   isSelected: boolean;
   isEditing: boolean;
+  baseZIndex: number;
   onPointerDown: (event: React.PointerEvent<HTMLDivElement>) => void;
   getResizePointerDown: (
     handle: ResizeHandle
@@ -81,6 +82,7 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
   element,
   isSelected,
   isEditing,
+  baseZIndex,
   onPointerDown,
   getResizePointerDown,
   editingTextareaRef,
@@ -186,7 +188,7 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
         top: element.y,
         width: element.width,
         height: element.height,
-        zIndex: isSelected ? 20 : 10,
+        zIndex: baseZIndex + (isSelected ? 1 : 0),
       }}
       onPointerDown={handlePointerDown}
       onDoubleClick={(event) => {
