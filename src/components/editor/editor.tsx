@@ -1,17 +1,29 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useCallback } from "react";
+import { nanoid } from "@reduxjs/toolkit";
 import Slide from "@/components/editor/slide";
 import {
-  SlideElement,
-  SlideElementUpdate,
+  ArrowElement,
+  CircleElement,
+  PolygonElement,
   PolygonShape,
+  RectangleElement,
+  SlideElement,
+  TextElement,
 } from "@/components/editor/slide/types";
 import {
   EditorHeader,
-  TextPreset,
   ShapePreset,
+  TextPreset,
 } from "@/components/editor/editor-header";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addElement, selectActiveSlideId } from "@/store/slices/slidesSlice";
+import {
+  selectElement as selectElementAction,
+  startEditing as startEditingAction,
+  stopEditing as stopEditingAction,
+} from "@/store/slices/editorUiSlice";
 
 type TextPresetId = TextPreset["id"];
 type ShapePresetId = ShapePreset["id"];
@@ -202,163 +214,137 @@ const SHAPE_PRESET_CONFIG: Record<
 };
 
 const Editor = () => {
-  const [elements, setElements] = useState<SlideElement[]>([]);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>(
-    null
+  const dispatch = useAppDispatch();
+  const activeSlideId = useAppSelector(selectActiveSlideId);
+
+  const ensureSlideId = useCallback(() => {
+    if (!activeSlideId) {
+      throw new Error("No active slide available");
+    }
+    return activeSlideId;
+  }, [activeSlideId]);
+
+  const handleAddText = useCallback(
+    (preset: TextPreset) => {
+      const slideId = ensureSlideId();
+      const config = TEXT_PRESET_CONFIG[preset.id] ?? TEXT_PRESET_CONFIG.body;
+      const originX = Math.max(
+        40,
+        Math.round((SLIDE_DIMENSIONS.width - config.width) / 2)
+      );
+      const originY =
+        preset.id === "heading" ? 140 : preset.id === "subheading" ? 240 : 340;
+      const id = `text-${nanoid(8)}`;
+
+      const newElement: TextElement = {
+        id,
+        type: "text",
+        text: preset.title,
+        x: originX,
+        y: originY,
+        width: config.width,
+        height: config.height,
+        fontSize: config.fontSize,
+        fontWeight: config.fontWeight,
+        color: "#0f172a",
+        align: config.align,
+        lineHeight: config.lineHeight,
+      };
+
+      dispatch(addElement({ element: newElement, slideId }));
+      dispatch(selectElementAction(newElement.id));
+      dispatch(startEditingAction(newElement.id));
+    },
+    [dispatch, ensureSlideId]
   );
-  const [editingElementId, setEditingElementId] = useState<string | null>(null);
-  const idCounterRef = useRef(0);
 
-  const createElementId = (prefix: string) => {
-    idCounterRef.current += 1;
-    return `${prefix}-${idCounterRef.current}`;
-  };
+  const handleAddShape = useCallback(
+    (preset: ShapePreset) => {
+      const slideId = ensureSlideId();
+      const config = SHAPE_PRESET_CONFIG[preset.id];
+      if (!config) return;
 
-  const handleAddText = (preset: TextPreset) => {
-    const config = TEXT_PRESET_CONFIG[preset.id] ?? TEXT_PRESET_CONFIG.body;
-    const originX = Math.max(
-      40,
-      Math.round((SLIDE_DIMENSIONS.width - config.width) / 2)
-    );
-    const originY =
-      preset.id === "heading" ? 140 : preset.id === "subheading" ? 240 : 340;
-    const id = createElementId("text");
+      const baseId = `${config.type}-${nanoid(8)}`;
+      const centerX = Math.round((SLIDE_DIMENSIONS.width - config.width) / 2);
+      const centerY = Math.round((SLIDE_DIMENSIONS.height - config.height) / 2);
 
-    const newElement: SlideElement = {
-      id,
-      type: "text",
-      text: preset.title,
-      x: originX,
-      y: originY,
-      width: config.width,
-      height: config.height,
-      fontSize: config.fontSize,
-      fontWeight: config.fontWeight,
-      color: "#0f172a",
-      align: config.align,
-      lineHeight: config.lineHeight,
-    };
+      let newElement: SlideElement | null = null;
 
-    setElements((prev) => [...prev, newElement]);
-    setSelectedElementId(id);
-    setEditingElementId(id);
-  };
+      switch (config.type) {
+        case "rectangle":
+          newElement = {
+            id: baseId,
+            type: "rectangle",
+            x: centerX,
+            y: centerY,
+            width: config.width,
+            height: config.height,
+            fill: config.fill,
+            borderRadius: config.borderRadius,
+            ...(config.stroke
+              ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
+              : {}),
+          } satisfies RectangleElement;
+          break;
+        case "circle":
+          newElement = {
+            id: baseId,
+            type: "circle",
+            x: centerX,
+            y: centerY,
+            width: config.width,
+            height: config.height,
+            fill: config.fill,
+            ...(config.stroke
+              ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
+              : {}),
+          } satisfies CircleElement;
+          break;
+        case "polygon":
+          newElement = {
+            id: baseId,
+            type: "polygon",
+            x: centerX,
+            y: centerY,
+            width: config.width,
+            height: config.height,
+            shape: config.shape,
+            fill: config.fill,
+            ...(config.stroke
+              ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
+              : {}),
+          } satisfies PolygonElement;
+          break;
+        case "arrow":
+          newElement = {
+            id: baseId,
+            type: "arrow",
+            x: centerX,
+            y: centerY,
+            width: config.width,
+            height: config.height,
+            stroke: config.stroke,
+            strokeWidth: config.strokeWidth,
+          } satisfies ArrowElement;
+          break;
+      }
 
-  const handleAddShape = (preset: ShapePreset) => {
-    const config = SHAPE_PRESET_CONFIG[preset.id];
-    if (!config) return;
+      if (!newElement) {
+        return;
+      }
 
-    const id = createElementId(config.type);
-    let newElement: SlideElement;
-    const centerX = Math.round((SLIDE_DIMENSIONS.width - config.width) / 2);
-    const centerY = Math.round((SLIDE_DIMENSIONS.height - config.height) / 2);
-
-    switch (config.type) {
-      case "rectangle":
-        newElement = {
-          id,
-          type: "rectangle",
-          x: centerX,
-          y: centerY,
-          width: config.width,
-          height: config.height,
-          fill: config.fill,
-          borderRadius: config.borderRadius,
-          ...(config.stroke
-            ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
-            : {}),
-        };
-        break;
-      case "circle":
-        newElement = {
-          id,
-          type: "circle",
-          x: centerX,
-          y: centerY,
-          width: config.width,
-          height: config.height,
-          fill: config.fill,
-          ...(config.stroke
-            ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
-            : {}),
-        };
-        break;
-      case "polygon":
-        newElement = {
-          id,
-          type: "polygon",
-          x: centerX,
-          y: centerY,
-          width: config.width,
-          height: config.height,
-          shape: config.shape,
-          fill: config.fill,
-          ...(config.stroke
-            ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
-            : {}),
-        };
-        break;
-      case "arrow":
-        newElement = {
-          id,
-          type: "arrow",
-          x: centerX,
-          y: centerY,
-          width: config.width,
-          height: config.height,
-          stroke: config.stroke,
-          strokeWidth: config.strokeWidth,
-        };
-        break;
-    }
-
-    setElements((prev) => [...prev, newElement]);
-    setSelectedElementId(id);
-    setEditingElementId(null);
-  };
-
-  const handleUpdateElement = (id: string, updates: SlideElementUpdate) => {
-    setElements((prev) =>
-      prev.map((element) =>
-        element.id === id
-          ? ({
-              ...element,
-              ...updates,
-            } as SlideElement)
-          : element
-      )
-    );
-  };
-
-  const handleSelectElement = (id: string | null) => {
-    setSelectedElementId(id);
-    if (id !== editingElementId) {
-      setEditingElementId(null);
-    }
-  };
-
-  const handleStartEditing = (id: string) => {
-    setSelectedElementId(id);
-    setEditingElementId(id);
-  };
-
-  const handleStopEditing = () => {
-    setEditingElementId(null);
-  };
+      dispatch(addElement({ element: newElement, slideId }));
+      dispatch(selectElementAction(newElement.id));
+      dispatch(stopEditingAction());
+    },
+    [dispatch, ensureSlideId]
+  );
 
   return (
     <div className="flex h-full flex-1 flex-col">
       <EditorHeader onAddText={handleAddText} onAddShape={handleAddShape} />
       <div className="flex flex-1 flex-col gap-4 ">
-        <Slide
-          elements={elements}
-          selectedId={selectedElementId}
-          editingId={editingElementId}
-          onSelect={handleSelectElement}
-          onUpdateElement={handleUpdateElement}
-          onStartEditing={handleStartEditing}
-          onStopEditing={handleStopEditing}
-        />
+        <Slide />
       </div>
     </div>
   );

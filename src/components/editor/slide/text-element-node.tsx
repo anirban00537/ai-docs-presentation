@@ -5,6 +5,15 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlignCenter, AlignLeft, AlignRight, Minus, Plus } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  updateElement as updateElementAction,
+  selectActiveSlideId,
+} from "@/store/slices/slidesSlice";
+import {
+  startEditing as startEditingAction,
+  stopEditing as stopEditingAction,
+} from "@/store/slices/editorUiSlice";
 import type {
   TextElement,
   ResizeHandle,
@@ -66,9 +75,6 @@ type TextElementNodeProps = {
     handle: ResizeHandle
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   editingTextareaRef: React.RefObject<HTMLTextAreaElement | null>;
-  onUpdateElement: (id: string, updates: Partial<TextElement>) => void;
-  onStartEditing: (id: string) => void;
-  onStopEditing: () => void;
 };
 
 export const TextElementNode: React.FC<TextElementNodeProps> = ({
@@ -78,10 +84,10 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
   onPointerDown,
   getResizePointerDown,
   editingTextareaRef,
-  onUpdateElement,
-  onStartEditing,
-  onStopEditing,
 }) => {
+  const dispatch = useAppDispatch();
+  const activeSlideId = useAppSelector(selectActiveSlideId);
+
   const contentRef = React.useRef<HTMLDivElement | HTMLTextAreaElement | null>(
     null
   );
@@ -128,10 +134,18 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
         Math.abs(nextHeight - lastAppliedHeightRef.current) > 0.5
       ) {
         lastAppliedHeightRef.current = nextHeight;
-        onUpdateElement(element.id, { height: nextHeight });
+        dispatch(
+          updateElementAction({
+            slideId: activeSlideId,
+            elementId: element.id,
+            updates: { height: nextHeight },
+          })
+        );
       }
     }
   }, [
+    activeSlideId,
+    dispatch,
     element.align,
     element.fontSize,
     element.fontWeight,
@@ -141,7 +155,6 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
     element.text,
     element.width,
     isEditing,
-    onUpdateElement,
   ]);
 
   const handlePointerDown = React.useCallback(
@@ -153,12 +166,12 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
       }
       if (event.detail >= 2 && !isEditing) {
         event.stopPropagation();
-        onStartEditing(element.id);
+        dispatch(startEditingAction(element.id));
         return;
       }
       onPointerDown(event);
     },
-    [element.id, isEditing, onPointerDown, onStartEditing]
+    [dispatch, element.id, isEditing, onPointerDown]
   );
 
   return (
@@ -183,16 +196,12 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
           return;
         }
         event.stopPropagation();
-        onStartEditing(element.id);
+        dispatch(startEditingAction(element.id));
       }}
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
         {isSelected && (
-          <TextEditingToolbar
-            element={element}
-            isEditing={isEditing}
-            onUpdateElement={onUpdateElement}
-          />
+          <TextEditingToolbar element={element} isEditing={isEditing} />
         )}
         {isEditing ? (
           <textarea
@@ -207,13 +216,19 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
             }}
             value={element.text}
             onChange={(event) =>
-              onUpdateElement(element.id, { text: event.target.value })
+              dispatch(
+                updateElementAction({
+                  slideId: activeSlideId,
+                  elementId: element.id,
+                  updates: { text: event.target.value },
+                })
+              )
             }
-            onBlur={() => onStopEditing()}
+            onBlur={() => dispatch(stopEditingAction())}
             onKeyDown={(event) => {
               if (event.key === "Escape") {
                 event.preventDefault();
-                onStopEditing();
+                dispatch(stopEditingAction());
               }
             }}
           />
@@ -236,7 +251,7 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
                   return;
                 }
                 event.stopPropagation();
-                onStartEditing(element.id);
+                dispatch(startEditingAction(element.id));
               }}
             >
               {element.text || "Start typing…"}
@@ -266,16 +281,16 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
 type TextEditingToolbarProps = {
   element: TextElement;
   isEditing: boolean;
-  onUpdateElement: (id: string, updates: Partial<TextElement>) => void;
 };
 
 const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   element,
   isEditing,
-  onUpdateElement,
 }) => {
   const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement | null>(null);
+  const dispatch = useAppDispatch();
+  const activeSlideId = useAppSelector(selectActiveSlideId);
 
   React.useEffect(() => {
     if (!presetMenuOpen) {
@@ -302,14 +317,20 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
     (presetId: string) => {
       const preset = TEXT_STYLE_PRESETS.find((item) => item.id === presetId);
       if (!preset) return;
-      onUpdateElement(element.id, {
-        fontSize: preset.fontSize,
-        fontWeight: preset.fontWeight,
-        lineHeight: preset.lineHeight,
-        align: preset.align,
-      });
+      dispatch(
+        updateElementAction({
+          slideId: activeSlideId,
+          elementId: element.id,
+          updates: {
+            fontSize: preset.fontSize,
+            fontWeight: preset.fontWeight,
+            lineHeight: preset.lineHeight,
+            align: preset.align,
+          },
+        })
+      );
     },
-    [element.id, onUpdateElement]
+    [activeSlideId, dispatch, element.id]
   );
 
   const adjustFontSize = React.useCallback(
@@ -319,10 +340,16 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
         Math.max(8, Math.round(element.fontSize + delta))
       );
       if (next !== element.fontSize) {
-        onUpdateElement(element.id, { fontSize: next });
+        dispatch(
+          updateElementAction({
+            slideId: activeSlideId,
+            elementId: element.id,
+            updates: { fontSize: next },
+          })
+        );
       }
     },
-    [element.fontSize, element.id, onUpdateElement]
+    [activeSlideId, dispatch, element.fontSize, element.id]
   );
 
   const handleFontSizeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,18 +363,36 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
     }
     const next = Math.min(300, Math.max(8, Math.round(value)));
     if (next !== element.fontSize) {
-      onUpdateElement(element.id, { fontSize: next });
+      dispatch(
+        updateElementAction({
+          slideId: activeSlideId,
+          elementId: element.id,
+          updates: { fontSize: next },
+        })
+      );
     }
   };
 
   const toggleBold = () => {
     const nextWeight = isBold ? 400 : 700;
-    onUpdateElement(element.id, { fontWeight: nextWeight });
+    dispatch(
+      updateElementAction({
+        slideId: activeSlideId,
+        elementId: element.id,
+        updates: { fontWeight: nextWeight },
+      })
+    );
   };
 
   const handleAlign = (align: TextElement["align"]) => {
     if (align !== element.align) {
-      onUpdateElement(element.id, { align });
+      dispatch(
+        updateElementAction({
+          slideId: activeSlideId,
+          elementId: element.id,
+          updates: { align },
+        })
+      );
     }
   };
 

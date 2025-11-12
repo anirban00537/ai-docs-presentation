@@ -7,13 +7,17 @@ import type {
   CircleElement,
   ArrowElement,
   PolygonElement,
-  SlideElementUpdate,
   ResizeHandle,
 } from "@/components/editor/slide/types";
 import { ResizeHandles } from "@/components/editor/slide/resize-handles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, Minus, Plus } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  selectActiveSlideId,
+  updateElement as updateElementAction,
+} from "@/store/slices/slidesSlice";
 
 type ShapeElementNodeProps = {
   element: RectangleElement | CircleElement | ArrowElement | PolygonElement;
@@ -23,7 +27,6 @@ type ShapeElementNodeProps = {
   getResizePointerDown: (
     handle: ResizeHandle
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
-  onUpdateElement: (id: string, updates: SlideElementUpdate) => void;
 };
 
 export const ShapeElementNode: React.FC<ShapeElementNodeProps> = ({
@@ -32,7 +35,6 @@ export const ShapeElementNode: React.FC<ShapeElementNodeProps> = ({
   isEditing,
   onPointerDown,
   getResizePointerDown,
-  onUpdateElement,
 }) => {
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
@@ -179,12 +181,7 @@ export const ShapeElementNode: React.FC<ShapeElementNodeProps> = ({
       onPointerDown={handlePointerDown}
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
-        {isSelected && !isEditing && (
-          <ShapeStyleToolbar
-            element={element}
-            onUpdateElement={onUpdateElement}
-          />
-        )}
+        {isSelected && !isEditing && <ShapeStyleToolbar element={element} />}
         {renderContent()}
         {isSelected && !isEditing && (
           <ResizeHandles getResizePointerDown={getResizePointerDown} />
@@ -224,13 +221,11 @@ const SHAPE_STROKE_COLORS = [
 
 type ShapeStyleToolbarProps = {
   element: RectangleElement | CircleElement | ArrowElement | PolygonElement;
-  onUpdateElement: (id: string, updates: SlideElementUpdate) => void;
 };
 
-const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({
-  element,
-  onUpdateElement,
-}) => {
+const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ element }) => {
+  const dispatch = useAppDispatch();
+  const activeSlideId = useAppSelector(selectActiveSlideId);
   const toolbarRef = React.useRef<HTMLDivElement | null>(null);
   const [activePalette, setActivePalette] = React.useState<
     "fill" | "stroke" | null
@@ -249,30 +244,60 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({
 
   const handleSetFill = (color: string | "transparent") => {
     if (!supportsFill) return;
-    onUpdateElement(element.id, { fill: color });
+    dispatch(
+      updateElementAction({
+        slideId: activeSlideId,
+        elementId: element.id,
+        updates: { fill: color },
+      })
+    );
   };
 
   const handleSetStroke = (color: string | "transparent") => {
     if (color === "transparent") {
-      onUpdateElement(element.id, { stroke: undefined, strokeWidth: 0 });
+      dispatch(
+        updateElementAction({
+          slideId: activeSlideId,
+          elementId: element.id,
+          updates: { stroke: undefined, strokeWidth: 0 },
+        })
+      );
       return;
     }
-    onUpdateElement(element.id, {
-      stroke: color,
-      strokeWidth: strokeWidth || 4,
-    });
+    dispatch(
+      updateElementAction({
+        slideId: activeSlideId,
+        elementId: element.id,
+        updates: {
+          stroke: color,
+          strokeWidth: strokeWidth || 4,
+        },
+      })
+    );
   };
 
   const handleSetStrokeWidth = (width: number) => {
     const normalized = Math.round(width);
     if (normalized <= 0) {
-      onUpdateElement(element.id, { strokeWidth: 0, stroke: undefined });
+      dispatch(
+        updateElementAction({
+          slideId: activeSlideId,
+          elementId: element.id,
+          updates: { strokeWidth: 0, stroke: undefined },
+        })
+      );
       return;
     }
-    onUpdateElement(element.id, {
-      strokeWidth: Math.min(48, normalized),
-      stroke: currentStroke ?? DEFAULT_STROKE_COLOR,
-    });
+    dispatch(
+      updateElementAction({
+        slideId: activeSlideId,
+        elementId: element.id,
+        updates: {
+          strokeWidth: Math.min(48, normalized),
+          stroke: currentStroke ?? DEFAULT_STROKE_COLOR,
+        },
+      })
+    );
   };
 
   const adjustStrokeWidth = (delta: number) => {
