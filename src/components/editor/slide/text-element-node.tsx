@@ -6,7 +6,14 @@ import type {
   TextElement,
   ResizeHandle,
 } from "@/components/editor/slide/types";
-import { ResizeHandles } from "@/components/editor/slide/resize-handles";
+
+const textResizeHandles: Array<{
+  handle: Extract<ResizeHandle, "left" | "right">;
+  className: string;
+}> = [
+  { handle: "left", className: "-left-1.5 top-1/2 -translate-y-1/2" },
+  { handle: "right", className: "-right-1.5 top-1/2 -translate-y-1/2" },
+];
 
 type TextElementNodeProps = {
   element: TextElement;
@@ -33,6 +40,68 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
   onStartEditing,
   onStopEditing,
 }) => {
+  const contentRef = React.useRef<HTMLDivElement | HTMLTextAreaElement | null>(
+    null
+  );
+  const lastAppliedHeightRef = React.useRef<number>(element.height);
+
+  const setTextareaRef = React.useCallback(
+    (node: HTMLTextAreaElement | null) => {
+      if (editingTextareaRef) {
+        editingTextareaRef.current = node;
+      }
+      contentRef.current = node;
+    },
+    [editingTextareaRef]
+  );
+
+  const setDisplayRef = React.useCallback((node: HTMLDivElement | null) => {
+    contentRef.current = node;
+  }, []);
+
+  React.useEffect(() => {
+    lastAppliedHeightRef.current = element.height;
+  }, [element.height]);
+
+  React.useLayoutEffect(() => {
+    const node = contentRef.current;
+    if (!node) {
+      return;
+    }
+
+    if (node instanceof HTMLTextAreaElement) {
+      node.style.height = "auto";
+      node.style.height = `${node.scrollHeight}px`;
+    }
+
+    const measuredHeight =
+      node instanceof HTMLTextAreaElement
+        ? node.scrollHeight
+        : node.offsetHeight;
+
+    if (Number.isFinite(measuredHeight)) {
+      const nextHeight = Math.max(1, measuredHeight);
+      if (
+        Math.abs(nextHeight - element.height) > 0.5 &&
+        Math.abs(nextHeight - lastAppliedHeightRef.current) > 0.5
+      ) {
+        lastAppliedHeightRef.current = nextHeight;
+        onUpdateElement(element.id, { height: nextHeight });
+      }
+    }
+  }, [
+    element.align,
+    element.fontSize,
+    element.fontWeight,
+    element.height,
+    element.id,
+    element.lineHeight,
+    element.text,
+    element.width,
+    isEditing,
+    onUpdateElement,
+  ]);
+
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       if (event.detail >= 2 && !isEditing) {
@@ -68,8 +137,8 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
         {isEditing ? (
           <textarea
-            ref={editingTextareaRef}
-            className="h-full w-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
+            ref={setTextareaRef}
+            className="w-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
             style={{
               fontSize: element.fontSize,
               fontWeight: element.fontWeight,
@@ -90,26 +159,40 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
             }}
           />
         ) : (
-          <div
-            className="h-full w-full cursor-text whitespace-pre-wrap wrap-break-word"
-            style={{
-              fontSize: element.fontSize,
-              fontWeight: element.fontWeight,
-              color: element.color,
-              textAlign: element.align,
-              lineHeight: element.lineHeight ?? 1.3,
-            }}
-            onDoubleClick={(event) => {
-              event.stopPropagation();
-              onStartEditing(element.id);
-            }}
-          >
-            {element.text || "Start typing…"}
+          <div className="flex h-full w-full items-center">
+            <div
+              ref={setDisplayRef}
+              className="w-full cursor-text whitespace-pre-wrap wrap-break-word"
+              style={{
+                fontSize: element.fontSize,
+                fontWeight: element.fontWeight,
+                color: element.color,
+                textAlign: element.align,
+                lineHeight: element.lineHeight ?? 1.3,
+              }}
+              onDoubleClick={(event) => {
+                event.stopPropagation();
+                onStartEditing(element.id);
+              }}
+            >
+              {element.text || "Start typing…"}
+            </div>
           </div>
         )}
 
         {isSelected && !isEditing && (
-          <ResizeHandles getResizePointerDown={getResizePointerDown} />
+          <>
+            {textResizeHandles.map(({ handle, className }) => (
+              <div
+                key={handle}
+                className={cn(
+                  "absolute h-3 w-3 rounded-sm border border-white bg-blue-500 shadow-sm cursor-ew-resize",
+                  className
+                )}
+                onPointerDown={getResizePointerDown(handle)}
+              />
+            ))}
+          </>
         )}
       </div>
     </div>
