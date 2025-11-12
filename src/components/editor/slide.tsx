@@ -8,6 +8,7 @@ import type {
   RectangleElement,
   CircleElement,
   ArrowElement,
+  PolygonElement,
   ResizeHandle,
 } from "@/components/editor/slide/types";
 import { TextElementNode } from "@/components/editor/slide/text-element-node";
@@ -488,7 +489,11 @@ const Slide: React.FC<SlideProps> = ({
             <ShapeElementNode
               key={element.id}
               element={
-                effective as RectangleElement | CircleElement | ArrowElement
+                effective as
+                  | RectangleElement
+                  | CircleElement
+                  | ArrowElement
+                  | PolygonElement
               }
               isSelected={isSelected}
               isEditing={isEditing}
@@ -501,6 +506,7 @@ const Slide: React.FC<SlideProps> = ({
               getResizePointerDown={(handle) =>
                 createResizePointerDown(element, effective, handle)
               }
+              onUpdateElement={(id, updates) => onUpdateElement(id, updates)}
             />
           );
         })}

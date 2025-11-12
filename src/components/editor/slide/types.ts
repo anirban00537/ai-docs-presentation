@@ -21,11 +21,15 @@ export type RectangleElement = ElementCommon & {
   type: "rectangle";
   fill: string;
   borderRadius: number;
+  stroke?: string;
+  strokeWidth?: number;
 };
 
 export type CircleElement = ElementCommon & {
   type: "circle";
   fill: string;
+  stroke?: string;
+  strokeWidth?: number;
 };
 
 export type ArrowElement = ElementCommon & {
@@ -34,11 +38,22 @@ export type ArrowElement = ElementCommon & {
   strokeWidth: number;
 };
 
+export type PolygonShape = "triangle" | "diamond" | "star";
+
+export type PolygonElement = ElementCommon & {
+  type: "polygon";
+  shape: PolygonShape;
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+};
+
 export type SlideElement =
   | TextElement
   | RectangleElement
   | CircleElement
-  | ArrowElement;
+  | ArrowElement
+  | PolygonElement;
 
 export type SlideElementUpdate = Partial<
   Omit<ElementCommon, "id"> & {
@@ -52,6 +67,7 @@ export type SlideElementUpdate = Partial<
     stroke: string;
     strokeWidth: number;
     lineHeight: number;
+    shape: PolygonShape;
   }
 >;
 

@@ -5,6 +5,7 @@ import Slide from "@/components/editor/slide";
 import {
   SlideElement,
   SlideElementUpdate,
+  PolygonShape,
 } from "@/components/editor/slide/types";
 import {
   EditorHeader,
@@ -57,6 +58,10 @@ const TEXT_PRESET_CONFIG: Record<
   },
 };
 
+const DEFAULT_SHAPE_FILL = "#1f2937";
+const DEFAULT_OUTLINE_STROKE = "#1f2937";
+const DEFAULT_OUTLINE_STROKE_WIDTH = 8;
+
 const SHAPE_PRESET_CONFIG: Record<
   ShapePresetId,
   | {
@@ -65,8 +70,26 @@ const SHAPE_PRESET_CONFIG: Record<
       height: number;
       fill: string;
       borderRadius: number;
+      stroke?: string;
+      strokeWidth?: number;
     }
-  | { type: "circle"; width: number; height: number; fill: string }
+  | {
+      type: "circle";
+      width: number;
+      height: number;
+      fill: string;
+      stroke?: string;
+      strokeWidth?: number;
+    }
+  | {
+      type: "polygon";
+      width: number;
+      height: number;
+      shape: PolygonShape;
+      fill: string;
+      stroke?: string;
+      strokeWidth?: number;
+    }
   | {
       type: "arrow";
       width: number;
@@ -75,18 +98,99 @@ const SHAPE_PRESET_CONFIG: Record<
       strokeWidth: number;
     }
 > = {
-  rectangle: {
+  "square-solid": {
     type: "rectangle",
-    width: 320,
-    height: 180,
-    fill: "#2563EB",
-    borderRadius: 16,
+    width: 220,
+    height: 220,
+    fill: DEFAULT_SHAPE_FILL,
+    borderRadius: 4,
   },
-  circle: {
+  "rounded-square-solid": {
+    type: "rectangle",
+    width: 220,
+    height: 220,
+    fill: DEFAULT_SHAPE_FILL,
+    borderRadius: 36,
+  },
+  "circle-solid": {
     type: "circle",
-    width: 200,
-    height: 200,
-    fill: "#F97316",
+    width: 220,
+    height: 220,
+    fill: DEFAULT_SHAPE_FILL,
+  },
+  "triangle-solid": {
+    type: "polygon",
+    width: 240,
+    height: 230,
+    shape: "triangle",
+    fill: DEFAULT_SHAPE_FILL,
+  },
+  "diamond-solid": {
+    type: "polygon",
+    width: 240,
+    height: 240,
+    shape: "diamond",
+    fill: DEFAULT_SHAPE_FILL,
+  },
+  "star-solid": {
+    type: "polygon",
+    width: 260,
+    height: 240,
+    shape: "star",
+    fill: DEFAULT_SHAPE_FILL,
+  },
+  "square-outline": {
+    type: "rectangle",
+    width: 220,
+    height: 220,
+    fill: "transparent",
+    borderRadius: 4,
+    stroke: DEFAULT_OUTLINE_STROKE,
+    strokeWidth: DEFAULT_OUTLINE_STROKE_WIDTH,
+  },
+  "rounded-square-outline": {
+    type: "rectangle",
+    width: 220,
+    height: 220,
+    fill: "transparent",
+    borderRadius: 36,
+    stroke: DEFAULT_OUTLINE_STROKE,
+    strokeWidth: DEFAULT_OUTLINE_STROKE_WIDTH,
+  },
+  "circle-outline": {
+    type: "circle",
+    width: 220,
+    height: 220,
+    fill: "transparent",
+    stroke: DEFAULT_OUTLINE_STROKE,
+    strokeWidth: DEFAULT_OUTLINE_STROKE_WIDTH,
+  },
+  "triangle-outline": {
+    type: "polygon",
+    width: 240,
+    height: 230,
+    shape: "triangle",
+    fill: "transparent",
+    stroke: DEFAULT_OUTLINE_STROKE,
+    strokeWidth: DEFAULT_OUTLINE_STROKE_WIDTH,
+  },
+  "diamond-outline": {
+    type: "polygon",
+    width: 240,
+    height: 240,
+    shape: "diamond",
+    fill: "transparent",
+    stroke: DEFAULT_OUTLINE_STROKE,
+    strokeWidth: DEFAULT_OUTLINE_STROKE_WIDTH,
+  },
+  "star-outline": {
+    type: "polygon",
+    width: 260,
+    height: 240,
+    shape: "star",
+    fill: "transparent",
+    stroke: DEFAULT_OUTLINE_STROKE,
+    strokeWidth: DEFAULT_OUTLINE_STROKE_WIDTH,
   },
   arrow: {
     type: "arrow",
@@ -160,6 +264,9 @@ const Editor = () => {
           height: config.height,
           fill: config.fill,
           borderRadius: config.borderRadius,
+          ...(config.stroke
+            ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
+            : {}),
         };
         break;
       case "circle":
@@ -171,6 +278,24 @@ const Editor = () => {
           width: config.width,
           height: config.height,
           fill: config.fill,
+          ...(config.stroke
+            ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
+            : {}),
+        };
+        break;
+      case "polygon":
+        newElement = {
+          id,
+          type: "polygon",
+          x: centerX,
+          y: centerY,
+          width: config.width,
+          height: config.height,
+          shape: config.shape,
+          fill: config.fill,
+          ...(config.stroke
+            ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
+            : {}),
         };
         break;
       case "arrow":
