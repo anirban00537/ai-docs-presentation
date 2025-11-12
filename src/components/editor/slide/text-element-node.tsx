@@ -2,6 +2,9 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { AlignCenter, AlignLeft, AlignRight, Minus, Plus } from "lucide-react";
 import type {
   TextElement,
   ResizeHandle,
@@ -13,6 +16,43 @@ const textResizeHandles: Array<{
 }> = [
   { handle: "left", className: "-left-1.5 top-1/2 -translate-y-1/2" },
   { handle: "right", className: "-right-1.5 top-1/2 -translate-y-1/2" },
+];
+
+const TEXT_STYLE_PRESETS = [
+  {
+    id: "title",
+    label: "Title",
+    fontSize: 96,
+    fontWeight: 600,
+    lineHeight: 1,
+    align: "center" as const,
+  },
+  {
+    id: "subtitle",
+    label: "Subtitle",
+    fontSize: 48,
+    fontWeight: 500,
+    lineHeight: 1.05,
+    align: "center" as const,
+  },
+  {
+    id: "body",
+    label: "Body",
+    fontSize: 24,
+    fontWeight: 400,
+    lineHeight: 1.4,
+    align: "left" as const,
+  },
+];
+
+const ALIGN_OPTIONS: Array<{
+  value: TextElement["align"];
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  label: string;
+}> = [
+  { value: "left", icon: AlignLeft, label: "Align left" },
+  { value: "center", icon: AlignCenter, label: "Align center" },
+  { value: "right", icon: AlignRight, label: "Align right" },
 ];
 
 type TextElementNodeProps = {
@@ -135,6 +175,13 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
       }}
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
+        {isSelected && (
+          <TextEditingToolbar
+            element={element}
+            isEditing={isEditing}
+            onUpdateElement={onUpdateElement}
+          />
+        )}
         {isEditing ? (
           <textarea
             ref={setTextareaRef}
@@ -194,6 +241,223 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
             ))}
           </>
         )}
+      </div>
+    </div>
+  );
+};
+
+type TextEditingToolbarProps = {
+  element: TextElement;
+  isEditing: boolean;
+  onUpdateElement: (id: string, updates: Partial<TextElement>) => void;
+};
+
+const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
+  element,
+  isEditing,
+  onUpdateElement,
+}) => {
+  const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
+  const menuRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    if (!presetMenuOpen) {
+      return;
+    }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        event.target instanceof Node &&
+        !menuRef.current.contains(event.target)
+      ) {
+        setPresetMenuOpen(false);
+      }
+    };
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [presetMenuOpen]);
+
+  const isBold = element.fontWeight >= 600;
+
+  const applyPreset = React.useCallback(
+    (presetId: string) => {
+      const preset = TEXT_STYLE_PRESETS.find((item) => item.id === presetId);
+      if (!preset) return;
+      onUpdateElement(element.id, {
+        fontSize: preset.fontSize,
+        fontWeight: preset.fontWeight,
+        lineHeight: preset.lineHeight,
+        align: preset.align,
+      });
+    },
+    [element.id, onUpdateElement]
+  );
+
+  const adjustFontSize = React.useCallback(
+    (delta: number) => {
+      const next = Math.min(
+        300,
+        Math.max(8, Math.round(element.fontSize + delta))
+      );
+      if (next !== element.fontSize) {
+        onUpdateElement(element.id, { fontSize: next });
+      }
+    },
+    [element.fontSize, element.id, onUpdateElement]
+  );
+
+  const handleFontSizeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = event.target.value;
+    if (rawValue.trim() === "") {
+      return;
+    }
+    const value = Number(rawValue);
+    if (!Number.isFinite(value)) {
+      return;
+    }
+    const next = Math.min(300, Math.max(8, Math.round(value)));
+    if (next !== element.fontSize) {
+      onUpdateElement(element.id, { fontSize: next });
+    }
+  };
+
+  const toggleBold = () => {
+    const nextWeight = isBold ? 400 : 700;
+    onUpdateElement(element.id, { fontWeight: nextWeight });
+  };
+
+  const handleAlign = (align: TextElement["align"]) => {
+    if (align !== element.align) {
+      onUpdateElement(element.id, { align });
+    }
+  };
+
+  const currentPresetLabel =
+    TEXT_STYLE_PRESETS.find(
+      (preset) =>
+        preset.fontSize === element.fontSize &&
+        preset.fontWeight === element.fontWeight &&
+        Math.abs(
+          preset.lineHeight - (element.lineHeight ?? preset.lineHeight)
+        ) < 0.01
+    )?.label ?? "Custom";
+
+  return (
+    <div
+      className={cn(
+        "pointer-events-auto absolute left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur",
+        isEditing ? "top-full mt-2" : "-top-16"
+      )}
+      onPointerDown={(event) => {
+        event.stopPropagation();
+      }}
+    >
+      <div className="relative flex items-center gap-1" ref={menuRef}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="min-w-[90px] justify-between px-3 py-1 text-xs font-medium"
+          onClick={() => setPresetMenuOpen((prev) => !prev)}
+        >
+          {currentPresetLabel}
+          <svg
+            className={cn(
+              "h-3 w-3 transition-transform",
+              presetMenuOpen ? "rotate-180" : "rotate-0"
+            )}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </Button>
+        {presetMenuOpen && (
+          <div className="absolute left-0 top-full z-40 mt-1 w-40 overflow-hidden rounded-md border border-border bg-white shadow-lg">
+            {TEXT_STYLE_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                className="block w-full px-3 py-2 text-left text-xs hover:bg-accent"
+                onClick={() => {
+                  applyPreset(preset.id);
+                  setPresetMenuOpen(false);
+                }}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="rounded-md"
+          onClick={() => adjustFontSize(-4)}
+          aria-label="Decrease font size"
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+        <Input
+          type="number"
+          className="h-8 w-16 rounded-md text-center text-xs"
+          value={Number.isFinite(element.fontSize) ? element.fontSize : 0}
+          onChange={handleFontSizeInput}
+          min={8}
+          max={300}
+        />
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="rounded-md"
+          onClick={() => adjustFontSize(4)}
+          aria-label="Increase font size"
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className="flex items-center gap-1">
+        <Button
+          variant={isBold ? "default" : "ghost"}
+          size="sm"
+          className="rounded-md px-2 py-1 text-xs font-semibold"
+          onClick={toggleBold}
+          aria-pressed={isBold}
+          aria-label="Toggle bold"
+        >
+          B
+        </Button>
+      </div>
+
+      <div className="flex items-center gap-1">
+        {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
+          <Button
+            key={value}
+            variant="ghost"
+            size="icon-sm"
+            className={cn(
+              "rounded-md",
+              element.align === value
+                ? "bg-primary/10 text-primary hover:bg-primary/10"
+                : undefined
+            )}
+            onClick={() => handleAlign(value)}
+            aria-pressed={element.align === value}
+            title={label}
+          >
+            <Icon className="h-4 w-4" />
+          </Button>
+        ))}
       </div>
     </div>
   );
