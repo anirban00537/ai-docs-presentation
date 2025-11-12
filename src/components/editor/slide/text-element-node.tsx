@@ -18,6 +18,8 @@ const textResizeHandles: Array<{
   { handle: "right", className: "-right-1.5 top-1/2 -translate-y-1/2" },
 ];
 
+const TOOLBAR_SELECTOR = '[data-text-toolbar="true"]';
+
 const TEXT_STYLE_PRESETS = [
   {
     id: "title",
@@ -144,6 +146,11 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
 
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest(TOOLBAR_SELECTOR)) {
+        event.stopPropagation();
+        return;
+      }
       if (event.detail >= 2 && !isEditing) {
         event.stopPropagation();
         onStartEditing(element.id);
@@ -170,6 +177,11 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
       }}
       onPointerDown={handlePointerDown}
       onDoubleClick={(event) => {
+        const target = event.target as HTMLElement | null;
+        if (target?.closest(TOOLBAR_SELECTOR)) {
+          event.stopPropagation();
+          return;
+        }
         event.stopPropagation();
         onStartEditing(element.id);
       }}
@@ -218,6 +230,11 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
                 lineHeight: element.lineHeight ?? 1.3,
               }}
               onDoubleClick={(event) => {
+                const target = event.target as HTMLElement | null;
+                if (target?.closest(TOOLBAR_SELECTOR)) {
+                  event.stopPropagation();
+                  return;
+                }
                 event.stopPropagation();
                 onStartEditing(element.id);
               }}
@@ -346,6 +363,7 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
 
   return (
     <div
+      data-text-toolbar="true"
       className={cn(
         "pointer-events-auto absolute left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur",
         isEditing ? "top-full mt-2" : "-top-16"
