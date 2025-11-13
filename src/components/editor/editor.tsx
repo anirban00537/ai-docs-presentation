@@ -42,13 +42,14 @@ import {
   endPointerSession as endPointerSessionAction,
 } from "@/store/slices/editorUiSlice";
 import type { PointerSession } from "@/store/slices/editorUiSlice";
+import { SLIDE_WIDTH, SLIDE_HEIGHT } from "@/hooks/use-canvas-viewport";
 
 type TextPresetId = TextPreset["id"];
 type ShapePresetId = ShapePreset["id"];
 
 const SLIDE_DIMENSIONS = {
-  width: 1280,
-  height: 720,
+  width: SLIDE_WIDTH,
+  height: SLIDE_HEIGHT,
 };
 
 const TEXT_PRESET_CONFIG: Record<

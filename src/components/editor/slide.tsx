@@ -15,6 +15,11 @@ import type {
 } from "@/components/editor/slide/types";
 import type { PointerSession } from "@/store/slices/editorUiSlice";
 import { cn } from "@/lib/utils";
+import {
+  useCanvasViewport,
+  SLIDE_WIDTH,
+  SLIDE_HEIGHT,
+} from "@/hooks/use-canvas-viewport";
 
 type ActiveSlideMetadata = {
   backgroundColor?: string;
@@ -44,8 +49,6 @@ type SlideProps = {
   }) => void;
 };
 
-const SLIDE_WIDTH = 1280;
-const SLIDE_HEIGHT = 720;
 const MIN_ELEMENT_SIZE = 32;
 
 const Slide: React.FC<SlideProps> = ({
@@ -66,9 +69,16 @@ const Slide: React.FC<SlideProps> = ({
   onEndPointerSession,
   onUpdateElement,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const dragLayerRef = useRef<HTMLDivElement>(null);
+  const readLayerRef = useRef<HTMLDivElement>(null);
   const editingTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const pointerSessionRef = useRef<PointerSession | null>(null);
+
+  // Use the canvas viewport hook for viewport calculation and coordinate transformation
+  const { viewport, screenToSlide, invScale } =
+    useCanvasViewport(canvasContainerRef);
 
   useEffect(() => {
     pointerSessionRef.current = pointerSession;
@@ -125,7 +135,17 @@ const Slide: React.FC<SlideProps> = ({
 
   const handleCanvasPointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
-      if (event.target === containerRef.current) {
+      // Check if clicking on the canvas background (not on an element)
+      const target = event.target as HTMLElement;
+      const slideElement = target.closest('[data-slide-container="true"]');
+
+      // If clicking directly on the slide background or empty area
+      if (
+        target.classList.contains("slide") ||
+        target === readLayerRef.current ||
+        (slideElement === readLayerRef.current &&
+          target.closest(".canvas-element") === null)
+      ) {
         onSelectElement(null);
         onStopEditing();
       }
@@ -136,8 +156,14 @@ const Slide: React.FC<SlideProps> = ({
   const computeDrag = useCallback(
     (session: PointerSession, clientX: number, clientY: number) => {
       const { startPointer, startRect, elementId } = session;
-      const dx = clientX - startPointer.x;
-      const dy = clientY - startPointer.y;
+
+      // Convert screen coordinates to slide coordinates
+      const currentSlidePos = screenToSlide(clientX, clientY);
+      const startSlidePos = screenToSlide(startPointer.x, startPointer.y);
+
+      const dx = currentSlidePos.x - startSlidePos.x;
+      const dy = currentSlidePos.y - startSlidePos.y;
+
       const x = clamp(startRect.x + dx, 0, SLIDE_WIDTH - startRect.width);
       const y = clamp(startRect.y + dy, 0, SLIDE_HEIGHT - startRect.height);
 
@@ -159,7 +185,13 @@ const Slide: React.FC<SlideProps> = ({
       onUpdatePointerSession({ lastRect: override });
       pointerSessionRef.current = { ...session, lastRect: override };
     },
-    [clamp, logInteraction, onUpdatePointerSession, scheduleLiveOverride]
+    [
+      clamp,
+      logInteraction,
+      onUpdatePointerSession,
+      scheduleLiveOverride,
+      screenToSlide,
+    ]
   );
 
   const computeResize = useCallback(
@@ -167,8 +199,12 @@ const Slide: React.FC<SlideProps> = ({
       const { startPointer, startRect, elementId, handle } = session;
       if (!handle) return;
 
-      const dx = clientX - startPointer.x;
-      const dy = clientY - startPointer.y;
+      // Convert screen coordinates to slide coordinates
+      const currentSlidePos = screenToSlide(clientX, clientY);
+      const startSlidePos = screenToSlide(startPointer.x, startPointer.y);
+
+      const dx = currentSlidePos.x - startSlidePos.x;
+      const dy = currentSlidePos.y - startSlidePos.y;
 
       let { x, y, width, height } = startRect;
 
@@ -235,7 +271,13 @@ const Slide: React.FC<SlideProps> = ({
       onUpdatePointerSession({ lastRect: override });
       pointerSessionRef.current = { ...session, lastRect: override };
     },
-    [clamp, logInteraction, onUpdatePointerSession, scheduleLiveOverride]
+    [
+      clamp,
+      logInteraction,
+      onUpdatePointerSession,
+      scheduleLiveOverride,
+      screenToSlide,
+    ]
   );
 
   const finishPointerSession = useCallback(
@@ -276,19 +318,15 @@ const Slide: React.FC<SlideProps> = ({
 
     const handleMove = (event: PointerEvent) => {
       const session = pointerSessionRef.current;
-      const container = containerRef.current;
-      if (!session || !container || event.pointerId !== activePointerId) {
+      if (!session || event.pointerId !== activePointerId) {
         return;
       }
       event.preventDefault();
-      const rect = container.getBoundingClientRect();
-      const clientX = event.clientX - rect.left;
-      const clientY = event.clientY - rect.top;
 
       if (session.type === "drag") {
-        computeDrag(session, clientX, clientY);
+        computeDrag(session, event.clientX, event.clientY);
       } else {
-        computeResize(session, clientX, clientY);
+        computeResize(session, event.clientX, event.clientY);
       }
     };
 
@@ -329,13 +367,12 @@ const Slide: React.FC<SlideProps> = ({
       effective: SlideElement,
       event: React.PointerEvent<HTMLDivElement>
     ) => {
-      const container = containerRef.current;
-      if (!container || event.button !== 0) return;
+      if (event.button !== 0) return;
 
-      const rect = container.getBoundingClientRect();
+      // Store screen coordinates for the start pointer
       const pointer = {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
+        x: event.clientX,
+        y: event.clientY,
       };
 
       const startRect = {
@@ -377,16 +414,15 @@ const Slide: React.FC<SlideProps> = ({
       handle: ResizeHandle,
       event: React.PointerEvent<HTMLDivElement>
     ) => {
-      const container = containerRef.current;
-      if (!container || event.button !== 0) return;
+      if (event.button !== 0) return;
 
       event.stopPropagation();
       event.preventDefault();
 
-      const rect = container.getBoundingClientRect();
+      // Store screen coordinates for the start pointer
       const pointer = {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
+        x: event.clientX,
+        y: event.clientY,
       };
 
       const startRect = {
@@ -454,90 +490,167 @@ const Slide: React.FC<SlideProps> = ({
   );
 
   return (
-    <div className="flex flex-1 items-center justify-center overflow-auto py-6">
+    <div
+      ref={canvasContainerRef}
+      className="flex flex-1 overflow-hidden"
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+      }}
+    >
       <div
-        ref={containerRef}
-        className={cn(
-          "relative overflow-hidden bg-white transition-[box-shadow,border] duration-300 ease-out border border-slate-200/70",
-          "shadow-[0_20px_60px_-40px_rgba(15,23,42,0.35)]"
-        )}
+        ref={canvasRef}
+        className="canvas"
+        id="canvas"
         style={{
-          width: SLIDE_WIDTH,
-          height: SLIDE_HEIGHT,
-          backgroundColor: activeSlide?.backgroundColor || "#ffffff",
-          backgroundImage: activeSlide?.backgroundImage
-            ? `url(${activeSlide.backgroundImage})`
-            : undefined,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
         }}
-        onPointerDown={handleCanvasPointerDown}
       >
-        {elements.length === 0 && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span className="rounded-full bg-white/80 px-4 py-2 text-sm text-muted-foreground shadow-sm">
-              Use the toolbar to add content to this slide.
-            </span>
-          </div>
-        )}
-
-        {elements.map((element, index) => {
-          const baseZIndex = 100 + index;
-          const isSelected = selectedId === element.id;
-          const isEditing = editingId === element.id;
-          const override = liveOverrides[element.id];
-          const effective = override
-            ? ({ ...element, ...override } as SlideElement)
-            : element;
-
-          if (effective.type === "text") {
-            return (
-              <TextElementNode
-                key={element.id}
-                element={effective as TextElement}
-                isSelected={isSelected}
-                isEditing={isEditing}
-                baseZIndex={baseZIndex}
-                onPointerDown={createDragPointerDown(
-                  element,
-                  effective,
-                  isSelected,
-                  isEditing
+        <div className="selection-helper"></div>
+        <div
+          ref={dragLayerRef}
+          className="canvas-drag-layer"
+          style={{
+            position: "absolute",
+            left: `${viewport.translateX}px`,
+            top: `${viewport.translateY}px`,
+            width: `${SLIDE_WIDTH * viewport.scale}px`,
+            height: `${SLIDE_HEIGHT * viewport.scale}px`,
+          }}
+        >
+          <div
+            className="area-selection-wrapper slide-picker-enabled"
+            data-test-id="droppable-canvas"
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <div
+              ref={readLayerRef}
+              data-test-id="slide-interaction-layer"
+              data-slide-container="true"
+              style={{
+                width: `${SLIDE_WIDTH}px`,
+                height: `${SLIDE_HEIGHT}px`,
+                position: "relative",
+                transform: `scale(${viewport.scale})`,
+                transformOrigin: "0 0",
+                // @ts-expect-error - CSS custom property
+                "--inv-scale": invScale,
+              }}
+            >
+              <div
+                className={cn(
+                  "slide editable theme-background",
+                  "relative overflow-hidden bg-white transition-[box-shadow,border] duration-300 ease-out border border-slate-200/70",
+                  "shadow-[0_20px_60px_-40px_rgba(15,23,42,0.35)]"
                 )}
-                getResizePointerDown={(handle) =>
-                  createResizePointerDown(element, effective, handle)
-                }
-                editingTextareaRef={editingTextareaRef}
-              />
-            );
-          }
+                data-slide-index="0"
+                style={{
+                  width: `${SLIDE_WIDTH}px`,
+                  height: `${SLIDE_HEIGHT}px`,
+                  position: "relative",
+                  backgroundColor: activeSlide?.backgroundColor || "#ffffff",
+                  backgroundImage: activeSlide?.backgroundImage
+                    ? `url(${activeSlide.backgroundImage})`
+                    : undefined,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+                onPointerDown={handleCanvasPointerDown}
+              >
+                <div className="selection-helper slide-selection-helper"></div>
 
-          return (
-            <ShapeElementNode
-              key={element.id}
-              element={
-                effective as
-                  | RectangleElement
-                  | CircleElement
-                  | ArrowElement
-                  | PolygonElement
-              }
-              isSelected={isSelected}
-              isEditing={isEditing}
-              baseZIndex={baseZIndex}
-              onPointerDown={createDragPointerDown(
-                element,
-                effective,
-                isSelected,
-                isEditing
-              )}
-              getResizePointerDown={(handle) =>
-                createResizePointerDown(element, effective, handle)
-              }
-            />
-          );
-        })}
+                {elements.length === 0 && (
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                    <span className="rounded-full bg-white/80 px-4 py-2 text-sm text-muted-foreground shadow-sm">
+                      Use the toolbar to add content to this slide.
+                    </span>
+                  </div>
+                )}
+
+                {elements.map((element, index) => {
+                  const baseZIndex = 100 + index;
+                  const isSelected = selectedId === element.id;
+                  const isEditing = editingId === element.id;
+                  const override = liveOverrides[element.id];
+                  const effective = override
+                    ? ({ ...element, ...override } as SlideElement)
+                    : element;
+
+                  if (effective.type === "text") {
+                    return (
+                      <TextElementNode
+                        key={element.id}
+                        element={effective as TextElement}
+                        isSelected={isSelected}
+                        isEditing={isEditing}
+                        baseZIndex={baseZIndex}
+                        onPointerDown={createDragPointerDown(
+                          element,
+                          effective,
+                          isSelected,
+                          isEditing
+                        )}
+                        getResizePointerDown={(handle) =>
+                          createResizePointerDown(element, effective, handle)
+                        }
+                        editingTextareaRef={editingTextareaRef}
+                      />
+                    );
+                  }
+
+                  return (
+                    <ShapeElementNode
+                      key={element.id}
+                      element={
+                        effective as
+                          | RectangleElement
+                          | CircleElement
+                          | ArrowElement
+                          | PolygonElement
+                      }
+                      isSelected={isSelected}
+                      isEditing={isEditing}
+                      baseZIndex={baseZIndex}
+                      onPointerDown={createDragPointerDown(
+                        element,
+                        effective,
+                        isSelected,
+                        isEditing
+                      )}
+                      getResizePointerDown={(handle) =>
+                        createResizePointerDown(element, effective, handle)
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </div>
+            <div id="edit-layer"></div>
+            <div id="live-collab-layer">
+              <div
+                className="live-cursors"
+                style={{
+                  height: `${SLIDE_HEIGHT}px`,
+                  width: `${SLIDE_WIDTH}px`,
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  pointerEvents: "none",
+                }}
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div className="upload-indicators"></div>
       </div>
     </div>
   );
