@@ -24,6 +24,7 @@ import {
   startEditing as startEditingAction,
   stopEditing as stopEditingAction,
 } from "@/store/slices/editorUiSlice";
+import { EditorSidebar } from "./editor-sidebar";
 
 type TextPresetId = TextPreset["id"];
 type ShapePresetId = ShapePreset["id"];
@@ -343,7 +344,7 @@ const Editor = () => {
   return (
     <div className="flex h-full flex-1 flex-col">
       <EditorHeader onAddText={handleAddText} onAddShape={handleAddShape} />
-      <div className="flex flex-1 flex-col gap-4 ">
+      <div className="flex flex-1 flex-col gap-4 overflow-hidden">
         <Slide />
       </div>
     </div>

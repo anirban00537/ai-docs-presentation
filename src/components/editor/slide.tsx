@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideElements,
   selectActiveSlideId,
+  selectActiveSlide,
   updateElement as updateElementAction,
 } from "@/store/slices/slidesSlice";
 import {
@@ -47,6 +48,7 @@ const Slide: React.FC = () => {
 
   const elements = useAppSelector(selectActiveSlideElements);
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const activeSlide = useAppSelector(selectActiveSlide);
   const selectedId = useAppSelector(selectSelectedElementId);
   const editingId = useAppSelector(selectEditingElementId);
   const liveOverrides = useAppSelector(selectLiveOverrides);
@@ -436,8 +438,18 @@ const Slide: React.FC = () => {
     <div className="flex flex-1 items-center justify-center overflow-auto bg-slate-100/60 py-6">
       <div
         ref={containerRef}
-        className="relative bg-white"
-        style={{ width: SLIDE_WIDTH, height: SLIDE_HEIGHT }}
+        className="relative"
+        style={{
+          width: SLIDE_WIDTH,
+          height: SLIDE_HEIGHT,
+          backgroundColor: activeSlide?.backgroundColor || "#ffffff",
+          backgroundImage: activeSlide?.backgroundImage
+            ? `url(${activeSlide.backgroundImage})`
+            : undefined,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
         onPointerDown={handleCanvasPointerDown}
       >
         {elements.length === 0 && (

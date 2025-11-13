@@ -9,6 +9,10 @@ export type SlideModel = {
   id: string;
   title: string;
   elements: SlideElement[];
+  backgroundColor?: string;
+  backgroundImage?: string;
+  showSlideNumber?: boolean;
+  slideStyle?: string;
 };
 
 type SlidesState = {
@@ -20,6 +24,10 @@ const createEmptySlide = (title: string): SlideModel => ({
   id: nanoid(),
   title,
   elements: [],
+  backgroundColor: "#ffffff",
+  backgroundImage: undefined,
+  showSlideNumber: false,
+  slideStyle: "Engineering Team Meeting",
 });
 
 const initialSlide = createEmptySlide("Slide 1");
@@ -64,9 +72,7 @@ const slidesSlice = createSlice({
       },
     },
     setActiveSlide(state, action: PayloadAction<string>) {
-      const exists = state.slides.some(
-        (slide) => slide.id === action.payload
-      );
+      const exists = state.slides.some((slide) => slide.id === action.payload);
       if (exists) {
         state.activeSlideId = action.payload;
       }
@@ -136,6 +142,17 @@ const slidesSlice = createSlice({
       if (!slide) return;
       slide.elements = action.payload.elements;
     },
+    updateSlide(
+      state,
+      action: PayloadAction<{
+        slideId?: string;
+        updates: Partial<Omit<SlideModel, "id" | "elements">>;
+      }>
+    ) {
+      const slide = resolveSlide(state, action.payload.slideId);
+      if (!slide) return;
+      Object.assign(slide, action.payload.updates);
+    },
     resetSlidesState() {
       return initialState;
     },
@@ -150,6 +167,7 @@ export const {
   updateElement,
   removeElement,
   replaceElements,
+  updateSlide,
   resetSlidesState,
 } = slidesSlice.actions;
 
@@ -158,10 +176,10 @@ export const selectSlides = (state: RootState) => state.slides.slides;
 export const selectActiveSlideId = (state: RootState) =>
   state.slides.activeSlideId;
 export const selectActiveSlide = (state: RootState) =>
-  state.slides.slides.find((slide) => slide.id === state.slides.activeSlideId) ??
-  null;
+  state.slides.slides.find(
+    (slide) => slide.id === state.slides.activeSlideId
+  ) ?? null;
 export const selectActiveSlideElements = (state: RootState) =>
   selectActiveSlide(state)?.elements ?? [];
 
 export default slidesSlice.reducer;
-
