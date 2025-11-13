@@ -25,7 +25,10 @@ export function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar {...props} className={cn("border-none shadow-none", className)}>
+    <Sidebar
+      {...props}
+      className={cn("border-none shadow-none bg-white", className)}
+    >
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Slides</SidebarGroupLabel>

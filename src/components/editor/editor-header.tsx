@@ -262,7 +262,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
       ?.label ?? "Shapes";
 
   return (
-    <header className="flex h-16 shrink-0 items-center border-b px-4">
+    <header className="flex h-16 shrink-0 items-center px-4">
       <SidebarTrigger className="-ml-1" />
       <Separator
         orientation="vertical"
@@ -312,11 +312,11 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[460px] rounded-lg border border-border p-0"
+            className="w-[460px] rounded-lg p-0"
             align="center"
           >
             <div className="flex">
-              <div className="flex w-40 flex-col border-r border-border/60 bg-muted/40 p-2">
+              <div className="flex w-40 flex-col bg-muted/40 p-2">
                 {shapeCategories.map((category) => (
                   <button
                     key={category.id}
