@@ -7,9 +7,6 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -21,6 +18,7 @@ import {
   selectSlides,
   setActiveSlide,
 } from "@/store/slices/slidesSlice";
+import Slide from "@/components/editor/slide";
 
 export function AppSidebar({
   className,
@@ -52,24 +50,57 @@ export function AppSidebar({
         <SidebarGroup>
           <SidebarGroupLabel>Slides</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <div className="space-y-2 px-2">
               {slides.map((slide, index) => (
-                <SidebarMenuItem key={slide.id}>
-                  <SidebarMenuButton
-                    isActive={slide.id === activeSlideId}
-                    onClick={() => handleSelectSlide(slide.id)}
-                    className="flex items-center justify-between gap-2"
-                  >
-                    <span className="font-medium">{`Slide ${index + 1}`}</span>
-                    {slide.title ? (
-                      <span className="text-xs text-muted-foreground">
-                        {slide.title}
-                      </span>
-                    ) : null}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <div
+                  key={slide.id}
+                  className={cn(
+                    "relative cursor-pointer rounded-lg border-2 transition-all",
+                    slide.id === activeSlideId
+                      ? "border-primary shadow-md"
+                      : "border-transparent hover:border-border hover:shadow-sm"
+                  )}
+                  onClick={() => handleSelectSlide(slide.id)}
+                >
+                  <div className="relative aspect-video w-full overflow-hidden rounded-md bg-white pointer-events-none">
+                    <Slide
+                      elements={slide.elements}
+                      activeSlideId={slide.id}
+                      activeSlide={{
+                        backgroundColor: slide.backgroundColor,
+                        backgroundImage: slide.backgroundImage,
+                      }}
+                      selectedId={null}
+                      editingId={null}
+                      liveOverrides={{}}
+                      pointerSession={null}
+                      activePointerId={null}
+                      onSelectElement={() => {}}
+                      onStopEditing={() => {}}
+                      onSetLiveOverride={() => {}}
+                      onClearLiveOverride={() => {}}
+                      onStartPointerSession={() => {}}
+                      onUpdatePointerSession={() => {}}
+                      onEndPointerSession={() => {}}
+                      onUpdateElement={() => {}}
+                      scale={0.15}
+                    />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-2 py-1.5 rounded-b-md">
+                    <div className="flex items-center justify-between text-white">
+                      <span className="text-xs font-medium">{`Slide ${
+                        index + 1
+                      }`}</span>
+                      {slide.title && (
+                        <span className="text-xs opacity-90 truncate ml-2">
+                          {slide.title}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
               ))}
-            </SidebarMenu>
+            </div>
           </SidebarGroupContent>
           <div className="px-2">
             <Button

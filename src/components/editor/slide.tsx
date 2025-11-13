@@ -47,6 +47,7 @@ type SlideProps = {
     elementId: string;
     updates: SlideElementUpdate;
   }) => void;
+  scale?: number; // Optional fixed scale for thumbnails/previews
 };
 
 const MIN_ELEMENT_SIZE = 32;
@@ -68,6 +69,7 @@ const Slide: React.FC<SlideProps> = ({
   onUpdatePointerSession,
   onEndPointerSession,
   onUpdateElement,
+  scale: fixedScale,
 }) => {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -77,8 +79,10 @@ const Slide: React.FC<SlideProps> = ({
   const pointerSessionRef = useRef<PointerSession | null>(null);
 
   // Use the canvas viewport hook for viewport calculation and coordinate transformation
-  const { viewport, screenToSlide, invScale } =
-    useCanvasViewport(canvasContainerRef);
+  const { viewport, screenToSlide, invScale } = useCanvasViewport(
+    canvasContainerRef,
+    fixedScale
+  );
 
   useEffect(() => {
     pointerSessionRef.current = pointerSession;

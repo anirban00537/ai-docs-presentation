@@ -18,7 +18,8 @@ export type ScreenToSlideTransform = (screenX: number, screenY: number) => {
 };
 
 export function useCanvasViewport(
-  containerRef: RefObject<HTMLDivElement | null>
+  containerRef: RefObject<HTMLDivElement | null>,
+  fixedScale?: number
 ): {
   viewport: Viewport;
   screenToSlide: ScreenToSlideTransform;
@@ -27,13 +28,53 @@ export function useCanvasViewport(
   const [viewport, setViewport] = useState<Viewport>({
     width: 1280,
     height: 720,
-    scale: 1,
+    scale: fixedScale ?? 1,
     translateX: 0,
     translateY: 0,
   });
 
   // Calculate viewport and scale
   useEffect(() => {
+    // If fixed scale is provided, use it and skip responsive calculation
+    if (fixedScale !== undefined) {
+      const updateFixedScale = () => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const containerRect = container.getBoundingClientRect();
+        const containerWidth = containerRect.width;
+        const containerHeight = containerRect.height;
+
+        // Calculate scaled dimensions
+        const scaledWidth = SLIDE_WIDTH * fixedScale;
+        const scaledHeight = SLIDE_HEIGHT * fixedScale;
+
+        // Center the slide within the container
+        const translateX = (containerWidth - scaledWidth) / 2;
+        const translateY = (containerHeight - scaledHeight) / 2;
+
+        setViewport({
+          width: containerWidth,
+          height: containerHeight,
+          scale: fixedScale,
+          translateX,
+          translateY,
+        });
+      };
+
+      updateFixedScale();
+
+      const resizeObserver = new ResizeObserver(updateFixedScale);
+      if (containerRef.current) {
+        resizeObserver.observe(containerRef.current);
+      }
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+
+    // Responsive calculation for normal editor view
     const updateViewport = () => {
       const container = containerRef.current;
       if (!container) return;
@@ -85,7 +126,7 @@ export function useCanvasViewport(
       resizeObserver.disconnect();
       window.removeEventListener("resize", updateViewport);
     };
-  }, [containerRef]);
+  }, [containerRef, fixedScale]);
 
   // Transform screen coordinates to slide coordinates
   const screenToSlide = useCallback(
