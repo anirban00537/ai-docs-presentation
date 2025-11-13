@@ -20,7 +20,7 @@ export function CustomSidebar({
   return (
     <div
       className={cn(
-        "flex h-full bg-background border-l shadow-lg transition-all duration-200 ease-linear shrink-0",
+        "flex h-full bg-background transition-all duration-200 ease-linear shrink-0",
         className
       )}
       style={{

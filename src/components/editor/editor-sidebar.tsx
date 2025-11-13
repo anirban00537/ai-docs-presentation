@@ -123,7 +123,7 @@ export function EditorSidebar() {
   return (
     <CustomSidebar isOpen={isOpen && !!activeTab}>
       {/* Tab Icons - Always visible */}
-      <div className="flex flex-col items-center border-r w-12 bg-background">
+      <div className="flex flex-col items-center justify-center w-12 bg-background">
         {tabs.map((tab) => (
           <CustomSidebarMenuButton
             key={tab.id}
