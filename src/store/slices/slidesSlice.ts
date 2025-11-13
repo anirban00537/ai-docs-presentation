@@ -56,20 +56,25 @@ const slidesSlice = createSlice({
   name: "slides",
   initialState,
   reducers: {
-    addSlide: {
-      reducer(state, action: PayloadAction<SlideModel>) {
-        state.slides.push(action.payload);
-        state.activeSlideId = action.payload.id;
-      },
-      prepare(title?: string, elements?: SlideElement[]) {
-        return {
-          payload: {
-            id: nanoid(),
-            title: title ?? "Untitled slide",
-            elements: elements ?? [],
-          } satisfies SlideModel,
-        };
-      },
+    addSlide(
+      state,
+      action: PayloadAction<
+        { title?: string; elements?: SlideElement[] } | undefined
+      >
+    ) {
+      const insertIndex = state.slides.findIndex(
+        (slide) => slide.id === state.activeSlideId
+      );
+      const defaultTitle = `Slide ${state.slides.length + 1}`;
+      const { title, elements } = action.payload ?? {};
+      const newSlide = createEmptySlide(title ?? defaultTitle);
+      if (elements) {
+        newSlide.elements = elements;
+      }
+      const targetIndex =
+        insertIndex >= 0 ? insertIndex + 1 : state.slides.length;
+      state.slides.splice(targetIndex, 0, newSlide);
+      state.activeSlideId = newSlide.id;
     },
     setActiveSlide(state, action: PayloadAction<string>) {
       const exists = state.slides.some((slide) => slide.id === action.payload);

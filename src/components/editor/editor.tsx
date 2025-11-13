@@ -24,7 +24,6 @@ import {
   startEditing as startEditingAction,
   stopEditing as stopEditingAction,
 } from "@/store/slices/editorUiSlice";
-import { EditorSidebar } from "./editor-sidebar";
 
 type TextPresetId = TextPreset["id"];
 type ShapePresetId = ShapePreset["id"];
