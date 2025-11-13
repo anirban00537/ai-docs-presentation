@@ -35,6 +35,7 @@ import {
   stopEditing as stopEditingAction,
 } from "@/store/slices/editorUiSlice";
 import type { PointerSession } from "@/store/slices/editorUiSlice";
+import { cn } from "@/lib/utils";
 
 const SLIDE_WIDTH = 1280;
 const SLIDE_HEIGHT = 720;
@@ -438,7 +439,10 @@ const Slide: React.FC = () => {
     <div className="flex flex-1 items-center justify-center overflow-auto py-6">
       <div
         ref={containerRef}
-        className="relative"
+        className={cn(
+          "relative overflow-hidden bg-white transition-[box-shadow,border] duration-300 ease-out border border-slate-200/70",
+          "shadow-[0_20px_60px_-40px_rgba(15,23,42,0.35)]"
+        )}
         style={{
           width: SLIDE_WIDTH,
           height: SLIDE_HEIGHT,
