@@ -13,48 +13,62 @@ import type {
   PolygonElement,
   ResizeHandle,
 } from "@/components/editor/slide/types";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  selectActiveSlideElements,
-  selectActiveSlideId,
-  selectActiveSlide,
-  updateElement as updateElementAction,
-} from "@/store/slices/slidesSlice";
-import {
-  selectElement as selectElementAction,
-  selectSelectedElementId,
-  selectEditingElementId,
-  selectLiveOverrides,
-  selectPointerSession,
-  selectActivePointerId,
-  setLiveOverride,
-  clearLiveOverride,
-  startPointerSession as startPointerSessionAction,
-  updatePointerSession as updatePointerSessionAction,
-  endPointerSession as endPointerSessionAction,
-  stopEditing as stopEditingAction,
-} from "@/store/slices/editorUiSlice";
 import type { PointerSession } from "@/store/slices/editorUiSlice";
 import { cn } from "@/lib/utils";
+
+type ActiveSlideMetadata = {
+  backgroundColor?: string;
+  backgroundImage?: string;
+};
+
+type SlideProps = {
+  elements: SlideElement[];
+  activeSlideId: string | null;
+  activeSlide: ActiveSlideMetadata | null;
+  selectedId: string | null;
+  editingId: string | null;
+  liveOverrides: Record<string, SlideElementUpdate>;
+  pointerSession: PointerSession | null;
+  activePointerId: number | null;
+  onSelectElement: (elementId: string | null) => void;
+  onStopEditing: () => void;
+  onSetLiveOverride: (elementId: string, updates: SlideElementUpdate) => void;
+  onClearLiveOverride: (elementId: string) => void;
+  onStartPointerSession: (session: PointerSession) => void;
+  onUpdatePointerSession: (updates: Partial<PointerSession>) => void;
+  onEndPointerSession: () => void;
+  onUpdateElement: (payload: {
+    slideId?: string;
+    elementId: string;
+    updates: SlideElementUpdate;
+  }) => void;
+};
 
 const SLIDE_WIDTH = 1280;
 const SLIDE_HEIGHT = 720;
 const MIN_ELEMENT_SIZE = 32;
 
-const Slide: React.FC = () => {
-  const dispatch = useAppDispatch();
+const Slide: React.FC<SlideProps> = ({
+  elements,
+  activeSlideId,
+  activeSlide,
+  selectedId,
+  editingId,
+  liveOverrides,
+  pointerSession,
+  activePointerId,
+  onSelectElement,
+  onStopEditing,
+  onSetLiveOverride,
+  onClearLiveOverride,
+  onStartPointerSession,
+  onUpdatePointerSession,
+  onEndPointerSession,
+  onUpdateElement,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const editingTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const pointerSessionRef = useRef<PointerSession | null>(null);
-
-  const elements = useAppSelector(selectActiveSlideElements);
-  const activeSlideId = useAppSelector(selectActiveSlideId);
-  const activeSlide = useAppSelector(selectActiveSlide);
-  const selectedId = useAppSelector(selectSelectedElementId);
-  const editingId = useAppSelector(selectEditingElementId);
-  const liveOverrides = useAppSelector(selectLiveOverrides);
-  const pointerSession = useAppSelector(selectPointerSession);
-  const activePointerId = useAppSelector(selectActivePointerId);
 
   useEffect(() => {
     pointerSessionRef.current = pointerSession;
@@ -91,16 +105,16 @@ const Slide: React.FC = () => {
 
   const scheduleLiveOverride = useCallback(
     (elementId: string, updates: SlideElementUpdate) => {
-      dispatch(setLiveOverride({ elementId, updates }));
+      onSetLiveOverride(elementId, updates);
     },
-    [dispatch]
+    [onSetLiveOverride]
   );
 
   const clearOverride = useCallback(
     (elementId: string) => {
-      dispatch(clearLiveOverride(elementId));
+      onClearLiveOverride(elementId);
     },
-    [dispatch]
+    [onClearLiveOverride]
   );
 
   const clamp = useCallback(
@@ -112,11 +126,11 @@ const Slide: React.FC = () => {
   const handleCanvasPointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       if (event.target === containerRef.current) {
-        dispatch(selectElementAction(null));
-        dispatch(stopEditingAction());
+        onSelectElement(null);
+        onStopEditing();
       }
     },
-    [dispatch]
+    [onSelectElement, onStopEditing]
   );
 
   const computeDrag = useCallback(
@@ -142,10 +156,10 @@ const Slide: React.FC = () => {
         height: startRect.height,
       } satisfies SlideElementUpdate;
       scheduleLiveOverride(elementId, override);
-      dispatch(updatePointerSessionAction({ lastRect: override }));
+      onUpdatePointerSession({ lastRect: override });
       pointerSessionRef.current = { ...session, lastRect: override };
     },
-    [clamp, dispatch, logInteraction, scheduleLiveOverride]
+    [clamp, logInteraction, onUpdatePointerSession, scheduleLiveOverride]
   );
 
   const computeResize = useCallback(
@@ -218,10 +232,10 @@ const Slide: React.FC = () => {
       logInteraction("resize:move", { id: elementId, ...override });
 
       scheduleLiveOverride(elementId, override);
-      dispatch(updatePointerSessionAction({ lastRect: override }));
+      onUpdatePointerSession({ lastRect: override });
       pointerSessionRef.current = { ...session, lastRect: override };
     },
-    [clamp, dispatch, logInteraction, scheduleLiveOverride]
+    [clamp, logInteraction, onUpdatePointerSession, scheduleLiveOverride]
   );
 
   const finishPointerSession = useCallback(
@@ -235,20 +249,24 @@ const Slide: React.FC = () => {
       logInteraction(`${type}:stop`, { id: elementId, ...finalRect });
 
       if (!cancelled && activeSlideId) {
-        dispatch(
-          updateElementAction({
-            slideId: activeSlideId,
-            elementId,
-            updates: finalRect,
-          })
-        );
+        onUpdateElement({
+          slideId: activeSlideId ?? undefined,
+          elementId,
+          updates: finalRect,
+        });
       }
 
       clearOverride(elementId);
       pointerSessionRef.current = null;
-      dispatch(endPointerSessionAction());
+      onEndPointerSession();
     },
-    [activeSlideId, clearOverride, dispatch, logInteraction]
+    [
+      activeSlideId,
+      clearOverride,
+      logInteraction,
+      onEndPointerSession,
+      onUpdateElement,
+    ]
   );
 
   useEffect(() => {
@@ -337,7 +355,7 @@ const Slide: React.FC = () => {
       };
 
       pointerSessionRef.current = session;
-      dispatch(startPointerSessionAction(session));
+      onStartPointerSession(session);
 
       logInteraction("drag:start", {
         id: element.id,
@@ -349,7 +367,7 @@ const Slide: React.FC = () => {
 
       event.currentTarget.setPointerCapture(event.pointerId);
     },
-    [dispatch, logInteraction]
+    [logInteraction, onStartPointerSession]
   );
 
   const beginResize = useCallback(
@@ -389,7 +407,7 @@ const Slide: React.FC = () => {
       };
 
       pointerSessionRef.current = session;
-      dispatch(startPointerSessionAction(session));
+      onStartPointerSession(session);
 
       logInteraction("resize:start", {
         id: element.id,
@@ -401,7 +419,7 @@ const Slide: React.FC = () => {
 
       event.currentTarget.setPointerCapture(event.pointerId);
     },
-    [dispatch, logInteraction]
+    [logInteraction, onStartPointerSession]
   );
 
   const createDragPointerDown = useCallback(
@@ -417,14 +435,14 @@ const Slide: React.FC = () => {
           return;
         }
         if (!isSelected) {
-          dispatch(selectElementAction(element.id));
+          onSelectElement(element.id);
         }
         if (isEditing) {
           return;
         }
         beginDrag(element, effective, event);
       },
-    [beginDrag, dispatch]
+    [beginDrag, onSelectElement]
   );
 
   const createResizePointerDown = useCallback(

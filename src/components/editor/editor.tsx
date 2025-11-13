@@ -10,6 +10,7 @@ import {
   PolygonShape,
   RectangleElement,
   SlideElement,
+  SlideElementUpdate,
   TextElement,
 } from "@/components/editor/slide/types";
 import {
@@ -18,12 +19,29 @@ import {
   TextPreset,
 } from "@/components/editor/editor-header";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { addElement, selectActiveSlideId } from "@/store/slices/slidesSlice";
+import {
+  addElement,
+  selectActiveSlide,
+  selectActiveSlideElements,
+  selectActiveSlideId,
+  updateElement as updateElementAction,
+} from "@/store/slices/slidesSlice";
 import {
   selectElement as selectElementAction,
+  selectSelectedElementId,
+  selectEditingElementId,
+  selectLiveOverrides,
+  selectPointerSession,
+  selectActivePointerId,
   startEditing as startEditingAction,
   stopEditing as stopEditingAction,
+  setLiveOverride,
+  clearLiveOverride,
+  startPointerSession as startPointerSessionAction,
+  updatePointerSession as updatePointerSessionAction,
+  endPointerSession as endPointerSessionAction,
 } from "@/store/slices/editorUiSlice";
+import type { PointerSession } from "@/store/slices/editorUiSlice";
 
 type TextPresetId = TextPreset["id"];
 type ShapePresetId = ShapePreset["id"];
@@ -216,6 +234,13 @@ const SHAPE_PRESET_CONFIG: Record<
 const Editor = () => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const activeSlide = useAppSelector(selectActiveSlide);
+  const elements = useAppSelector(selectActiveSlideElements);
+  const selectedId = useAppSelector(selectSelectedElementId);
+  const editingId = useAppSelector(selectEditingElementId);
+  const liveOverrides = useAppSelector(selectLiveOverrides);
+  const pointerSession = useAppSelector(selectPointerSession);
+  const activePointerId = useAppSelector(selectActivePointerId);
 
   const ensureSlideId = useCallback(() => {
     if (!activeSlideId) {
@@ -256,6 +281,60 @@ const Editor = () => {
       dispatch(startEditingAction(newElement.id));
     },
     [dispatch, ensureSlideId]
+  );
+
+  const handleSelectElement = useCallback(
+    (elementId: string | null) => {
+      dispatch(selectElementAction(elementId));
+    },
+    [dispatch]
+  );
+
+  const handleStopEditing = useCallback(() => {
+    dispatch(stopEditingAction());
+  }, [dispatch]);
+
+  const handleSetLiveOverride = useCallback(
+    (elementId: string, updates: SlideElementUpdate) => {
+      dispatch(setLiveOverride({ elementId, updates }));
+    },
+    [dispatch]
+  );
+
+  const handleClearLiveOverride = useCallback(
+    (elementId: string) => {
+      dispatch(clearLiveOverride(elementId));
+    },
+    [dispatch]
+  );
+
+  const handleStartPointerSession = useCallback(
+    (session: PointerSession) => {
+      dispatch(startPointerSessionAction(session));
+    },
+    [dispatch]
+  );
+
+  const handleUpdatePointerSession = useCallback(
+    (updates: Partial<PointerSession>) => {
+      dispatch(updatePointerSessionAction(updates));
+    },
+    [dispatch]
+  );
+
+  const handleEndPointerSession = useCallback(() => {
+    dispatch(endPointerSessionAction());
+  }, [dispatch]);
+
+  const handleUpdateElement = useCallback(
+    (payload: {
+      slideId?: string;
+      elementId: string;
+      updates: SlideElementUpdate;
+    }) => {
+      dispatch(updateElementAction(payload));
+    },
+    [dispatch]
   );
 
   const handleAddShape = useCallback(
@@ -344,7 +423,24 @@ const Editor = () => {
     <div className="flex h-full flex-1 flex-col">
       <EditorHeader onAddText={handleAddText} onAddShape={handleAddShape} />
       <div className="flex flex-1 flex-col gap-4 overflow-hidden">
-        <Slide />
+        <Slide
+          elements={elements}
+          activeSlideId={activeSlideId ?? null}
+          activeSlide={activeSlide}
+          selectedId={selectedId}
+          editingId={editingId}
+          liveOverrides={liveOverrides}
+          pointerSession={pointerSession}
+          activePointerId={activePointerId}
+          onSelectElement={handleSelectElement}
+          onStopEditing={handleStopEditing}
+          onSetLiveOverride={handleSetLiveOverride}
+          onClearLiveOverride={handleClearLiveOverride}
+          onStartPointerSession={handleStartPointerSession}
+          onUpdatePointerSession={handleUpdatePointerSession}
+          onEndPointerSession={handleEndPointerSession}
+          onUpdateElement={handleUpdateElement}
+        />
       </div>
     </div>
   );
