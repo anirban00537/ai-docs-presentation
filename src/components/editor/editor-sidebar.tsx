@@ -2,12 +2,6 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import {
   CustomSidebar,
@@ -16,31 +10,6 @@ import {
 import { SidebarTabs, TabId, tabs } from "@/components/editor/sidebar-tabs";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectActiveSlide, updateSlide } from "@/store/slices/slidesSlice";
-
-const slideStyles = [
-  {
-    id: "engineering-team-meeting",
-    label: "Engineering Team Meeting",
-    icon: (
-      <div className="flex items-center gap-2">
-        <div className="h-4 w-4 rounded bg-black flex items-center justify-center">
-          <span className="text-[8px] text-white font-bold">E</span>
-        </div>
-        <div className="h-2 w-2 rounded-full bg-primary"></div>
-      </div>
-    ),
-  },
-  {
-    id: "presentation-default",
-    label: "Presentation Default",
-    icon: null,
-  },
-  {
-    id: "minimal",
-    label: "Minimal",
-    icon: null,
-  },
-];
 
 export function EditorSidebar() {
   const [activeTab, setActiveTab] = useState<TabId | null>(null);
@@ -78,91 +47,14 @@ export function EditorSidebar() {
     );
   };
 
-  const handleSlideStyleChange = (styleId: string) => {
-    const style = slideStyles.find((s) => s.id === styleId);
-    if (style) {
-      dispatch(
-        updateSlide({
-          slideId: activeSlide.id,
-          updates: { slideStyle: style.label },
-        })
-      );
-    }
-  };
-
   return (
     <CustomSidebar isOpen={isOpen && !!activeTab}>
       {/* Content Panel - Only visible when open */}
       {isOpen && activeTab && (
         <CustomSidebarContent className="flex-1">
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden">
             {activeTab === "design" && (
-              <div className="p-6 space-y-8">
-                {/* Slide style */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-primary"></div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Template
-                    </label>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-between h-12 text-sm font-medium border-2 border-border/60 hover:border-primary/50 hover:bg-accent/30 transition-all rounded-xl bg-background/50"
-                      >
-                        <div className="flex items-center gap-3">
-                          {slideStyles.find(
-                            (s) => s.label === activeSlide.slideStyle
-                          )?.icon || (
-                            <div className="flex items-center gap-2">
-                              <div className="h-5 w-5 rounded bg-black flex items-center justify-center">
-                                <span className="text-[9px] text-white font-bold">
-                                  E
-                                </span>
-                              </div>
-                              <div className="h-2.5 w-2.5 rounded-full bg-primary"></div>
-                            </div>
-                          )}
-                          <span className="truncate font-semibold">
-                            {activeSlide.slideStyle ||
-                              "Engineering Team Meeting"}
-                          </span>
-                        </div>
-                        <svg
-                          className="h-4 w-4 opacity-60"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-80 rounded-xl">
-                      {slideStyles.map((style) => (
-                        <DropdownMenuItem
-                          key={style.id}
-                          onClick={() => handleSlideStyleChange(style.id)}
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg"
-                        >
-                          {style.icon}
-                          <span className="font-medium">{style.label}</span>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-
-                {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent"></div>
-
+              <div className="p-4 space-y-6 max-w-full">
                 {/* Background color */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
@@ -171,16 +63,16 @@ export function EditorSidebar() {
                       Background
                     </label>
                   </div>
-                  <div className="p-4 rounded-xl border-2 border-border/60 bg-gradient-to-br from-background to-muted/20">
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
+                  <div className="p-3 rounded-xl border-2 border-border/60 bg-gradient-to-br from-background to-muted/20">
+                    <div className="flex items-center gap-3">
+                      <div className="relative shrink-0">
                         <input
                           type="color"
                           value={activeSlide.backgroundColor || "#ffffff"}
                           onChange={(e) =>
                             handleBackgroundColorChange(e.target.value)
                           }
-                          className="h-14 w-14 rounded-xl border-2 border-border/60 cursor-pointer hover:border-primary/50 hover:scale-105 transition-all appearance-none"
+                          className="h-12 w-12 rounded-xl border-2 border-border/60 cursor-pointer hover:border-primary/50 hover:scale-105 transition-all appearance-none"
                           style={{
                             backgroundColor:
                               activeSlide.backgroundColor || "#ffffff",
@@ -192,7 +84,7 @@ export function EditorSidebar() {
                         <div className="text-xs font-medium text-muted-foreground mb-1.5">
                           Color Code
                         </div>
-                        <div className="px-3 py-2 rounded-lg bg-background/80 border border-border/50 font-mono text-sm font-semibold text-foreground">
+                        <div className="px-2.5 py-1.5 rounded-lg bg-background/80 border border-border/50 font-mono text-xs font-semibold text-foreground truncate">
                           {activeSlide.backgroundColor || "#ffffff"}
                         </div>
                       </div>
@@ -210,7 +102,7 @@ export function EditorSidebar() {
                   </div>
                   {activeSlide.backgroundImage ? (
                     <div className="space-y-3">
-                      <div className="relative w-full h-40 rounded-xl overflow-hidden border-2 border-border/60 group bg-muted/20">
+                      <div className="relative w-full h-36 rounded-xl overflow-hidden border-2 border-border/60 group bg-muted/20">
                         <img
                           src={activeSlide.backgroundImage}
                           alt="Background"
@@ -279,8 +171,8 @@ export function EditorSidebar() {
                       Options
                     </label>
                   </div>
-                  <div className="flex items-center justify-between p-4 rounded-xl border-2 border-border/60 bg-gradient-to-br from-background to-muted/20">
-                    <div>
+                  <div className="flex items-center justify-between p-3 rounded-xl border-2 border-border/60 bg-gradient-to-br from-background to-muted/20">
+                    <div className="min-w-0 flex-1 pr-3">
                       <div className="text-sm font-semibold text-foreground mb-0.5">
                         Slide Number
                       </div>
@@ -291,6 +183,7 @@ export function EditorSidebar() {
                     <Switch
                       checked={activeSlide.showSlideNumber || false}
                       onCheckedChange={handleSlideNumberToggle}
+                      className="shrink-0"
                     />
                   </div>
                 </div>

@@ -44,7 +44,7 @@ export function CustomSidebarContent({
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-1 flex-col overflow-auto bg-background/50 backdrop-blur-sm",
+        "flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden bg-background/50 backdrop-blur-sm",
         className
       )}
     >
