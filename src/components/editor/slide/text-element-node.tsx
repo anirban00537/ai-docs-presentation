@@ -188,7 +188,7 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
         top: element.y,
         width: element.width,
         height: element.height,
-        zIndex: baseZIndex + (isSelected ? 1 : 0),
+        zIndex: baseZIndex,
       }}
       onPointerDown={handlePointerDown}
       onDoubleClick={(event) => {

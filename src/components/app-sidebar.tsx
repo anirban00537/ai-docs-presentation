@@ -68,16 +68,9 @@ export function AppSidebar({
                       selectedId={null}
                       editingId={null}
                       liveOverrides={{}}
-                      pointerSession={null}
-                      activePointerId={null}
                       onSelectElement={() => {}}
-                      onStopEditing={() => {}}
                       onSetLiveOverride={() => {}}
                       onClearLiveOverride={() => {}}
-                      onStartPointerSession={() => {}}
-                      onUpdatePointerSession={() => {}}
-                      onEndPointerSession={() => {}}
-                      onUpdateElement={() => {}}
                       scale={0.15}
                     />
                   </div>

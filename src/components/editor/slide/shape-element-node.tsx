@@ -172,7 +172,7 @@ export const ShapeElementNode: React.FC<ShapeElementNodeProps> = ({
         top: element.y,
         width: element.width,
         height: element.height,
-        zIndex: baseZIndex + (isSelected ? 1 : 0),
+        zIndex: baseZIndex,
         borderRadius:
           element.type === "circle"
             ? "9999px"
