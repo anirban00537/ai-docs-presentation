@@ -64,12 +64,7 @@ export function AppSidebar({
                 >
                   <div className="relative aspect-video w-full overflow-hidden rounded-md bg-white pointer-events-none">
                     <Slide
-                      elements={slide.elements}
-                      activeSlideId={slide.id}
-                      activeSlide={{
-                        backgroundColor: slide.backgroundColor,
-                        backgroundImage: slide.backgroundImage,
-                      }}
+                      slide={slide}
                       selectedId={null}
                       editingId={null}
                       liveOverrides={{}}

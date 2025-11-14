@@ -236,7 +236,6 @@ const Editor = () => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const activeSlide = useAppSelector(selectActiveSlide);
-  const elements = useAppSelector(selectActiveSlideElements);
   const selectedId = useAppSelector(selectSelectedElementId);
   const editingId = useAppSelector(selectEditingElementId);
   const liveOverrides = useAppSelector(selectLiveOverrides);
@@ -420,14 +419,20 @@ const Editor = () => {
     [dispatch, ensureSlideId]
   );
 
+  if (!activeSlide) {
+    return (
+      <div className="flex h-full flex-1 flex-col items-center justify-center">
+        <p className="text-muted-foreground">No slide selected</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full flex-1 flex-col">
       <EditorHeader onAddText={handleAddText} onAddShape={handleAddShape} />
       <div className="flex flex-1 flex-col gap-4 overflow-hidden">
         <Slide
-          elements={elements}
-          activeSlideId={activeSlideId ?? null}
-          activeSlide={activeSlide}
+          slide={activeSlide}
           selectedId={selectedId}
           editingId={editingId}
           liveOverrides={liveOverrides}

@@ -14,6 +14,7 @@ import type {
   ResizeHandle,
 } from "@/components/editor/slide/types";
 import type { PointerSession } from "@/store/slices/editorUiSlice";
+import type { SlideModel } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import {
   useCanvasViewport,
@@ -21,15 +22,8 @@ import {
   SLIDE_HEIGHT,
 } from "@/hooks/use-canvas-viewport";
 
-type ActiveSlideMetadata = {
-  backgroundColor?: string;
-  backgroundImage?: string;
-};
-
 type SlideProps = {
-  elements: SlideElement[];
-  activeSlideId: string | null;
-  activeSlide: ActiveSlideMetadata | null;
+  slide: SlideModel;
   selectedId: string | null;
   editingId: string | null;
   liveOverrides: Record<string, SlideElementUpdate>;
@@ -53,9 +47,7 @@ type SlideProps = {
 const MIN_ELEMENT_SIZE = 32;
 
 const Slide: React.FC<SlideProps> = ({
-  elements,
-  activeSlideId,
-  activeSlide,
+  slide,
   selectedId,
   editingId,
   liveOverrides,
@@ -71,6 +63,8 @@ const Slide: React.FC<SlideProps> = ({
   onUpdateElement,
   scale: fixedScale,
 }) => {
+  // Extract properties from slide object
+  const activeSlideId = slide.id;
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragLayerRef = useRef<HTMLDivElement>(null);
@@ -560,9 +554,9 @@ const Slide: React.FC<SlideProps> = ({
                   width: `${SLIDE_WIDTH}px`,
                   height: `${SLIDE_HEIGHT}px`,
                   position: "relative",
-                  backgroundColor: activeSlide?.backgroundColor || "#ffffff",
-                  backgroundImage: activeSlide?.backgroundImage
-                    ? `url(${activeSlide.backgroundImage})`
+                  backgroundColor: slide.backgroundColor || "#ffffff",
+                  backgroundImage: slide.backgroundImage
+                    ? `url(${slide.backgroundImage})`
                     : undefined,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
@@ -572,7 +566,7 @@ const Slide: React.FC<SlideProps> = ({
               >
                 <div className="selection-helper slide-selection-helper"></div>
 
-                {elements.length === 0 && (
+                {slide.elements.length === 0 && (
                   <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                     <span className="rounded-full bg-white/80 px-4 py-2 text-sm text-muted-foreground shadow-sm">
                       Use the toolbar to add content to this slide.
@@ -580,7 +574,7 @@ const Slide: React.FC<SlideProps> = ({
                   </div>
                 )}
 
-                {elements.map((element, index) => {
+                {slide.elements.map((element, index) => {
                   const baseZIndex = 100 + index;
                   const isSelected = selectedId === element.id;
                   const isEditing = editingId === element.id;
