@@ -20,7 +20,7 @@ export function CustomSidebar({
   return (
     <div
       className={cn(
-        "flex h-full bg-gradient-to-b from-background to-muted/10 border-l border-border/50 transition-all duration-300 ease-out shrink-0",
+        "flex h-full bg-gradient-to-b from-background to-muted/10 border-r border-border/50 transition-all duration-300 ease-out shrink-0",
         className
       )}
       style={{
@@ -140,7 +140,7 @@ export function CustomSidebarMenuButton({
     >
       <div
         className={cn(
-          "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-200",
+          "absolute right-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-l-full transition-all duration-200",
           isActive
             ? "bg-primary"
             : "bg-transparent group-hover:bg-primary/30"

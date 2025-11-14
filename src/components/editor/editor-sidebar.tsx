@@ -99,12 +99,6 @@ export function EditorSidebar() {
 
   return (
     <CustomSidebar isOpen={isOpen && !!activeTab}>
-      {/* Tab Icons - Always visible */}
-      <SidebarTabs
-        activeTab={activeTab && isOpen ? activeTab : null}
-        onTabClick={handleTabClick}
-      />
-
       {/* Content Panel - Only visible when open */}
       {isOpen && activeTab && (
         <CustomSidebarContent className="flex-1">
@@ -342,6 +336,12 @@ export function EditorSidebar() {
           </div>
         </CustomSidebarContent>
       )}
+
+      {/* Tab Icons - Always visible on the right */}
+      <SidebarTabs
+        activeTab={activeTab && isOpen ? activeTab : null}
+        onTabClick={handleTabClick}
+      />
     </CustomSidebar>
   );
 }

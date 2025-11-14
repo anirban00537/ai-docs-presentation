@@ -34,7 +34,7 @@ interface SidebarTabsProps {
 
 export function SidebarTabs({ activeTab, onTabClick }: SidebarTabsProps) {
   return (
-    <div className="flex flex-col items-center justify-center bg-gradient-to-b from-background via-background to-muted/20 border-r border-border/30">
+    <div className="flex flex-col items-center justify-center bg-gradient-to-b from-background via-background to-muted/20 border-l border-border/30 shrink-0">
       {tabs.map((tab) => (
         <CustomSidebarMenuButton
           key={tab.id}
