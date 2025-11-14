@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   Plus,
   X,
@@ -16,7 +16,6 @@ import {
   ArrowUpLeft,
 } from "lucide-react";
 import { HexColorPicker } from "react-colorful";
-import { motion, AnimatePresence } from "framer-motion";
 import { Popover, Transition } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -41,8 +40,6 @@ export function EditorSidebar() {
     "solid"
   );
   const [isBackgroundOpen, setIsBackgroundOpen] = useState(true);
-  const [colorPickerOpen, setColorPickerOpen] = useState<string | null>(null);
-  const colorPickerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const activeSlide = useAppSelector(selectActiveSlide);
 
@@ -264,35 +261,42 @@ export function EditorSidebar() {
                               "#f9fafb",
                             ].map((color) => (
                               <div key={color} className="relative">
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setColorPickerOpen(
-                                      colorPickerOpen === color ? null : color
-                                    )
-                                  }
-                                  className={cn(
-                                    "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
-                                    activeSlide.backgroundColor === color
-                                      ? "border-primary ring-2 ring-primary/20"
-                                      : "border-border/60 hover:border-primary/50"
-                                  )}
-                                  style={{ backgroundColor: color }}
-                                />
-                                {colorPickerOpen === color && (
-                                  <Popover>
-                                    <Popover.Button className="sr-only" />
-                                    <Popover.Panel className="absolute top-10 left-0 z-50">
-                                      <HexColorPicker
-                                        color={color}
-                                        onChange={(newColor) => {
-                                          handleBackgroundColorChange(newColor);
-                                          setColorPickerOpen(null);
-                                        }}
+                                <Popover>
+                                  {() => (
+                                    <>
+                                      <Popover.Button
+                                        type="button"
+                                        className={cn(
+                                          "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
+                                          activeSlide.backgroundColor === color
+                                            ? "border-primary ring-2 ring-primary/20"
+                                            : "border-border/60 hover:border-primary/50"
+                                        )}
+                                        style={{ backgroundColor: color }}
                                       />
-                                    </Popover.Panel>
-                                  </Popover>
-                                )}
+                                      <Transition
+                                        as={React.Fragment}
+                                        enter="transition ease-out duration-200"
+                                        enterFrom="opacity-0 translate-y-1"
+                                        enterTo="opacity-100 translate-y-0"
+                                        leave="transition ease-in duration-150"
+                                        leaveFrom="opacity-100 translate-y-0"
+                                        leaveTo="opacity-0 translate-y-1"
+                                      >
+                                        <Popover.Panel className="absolute top-10 left-0 z-50">
+                                          <HexColorPicker
+                                            color={color}
+                                            onChange={(newColor) => {
+                                              handleBackgroundColorChange(
+                                                newColor
+                                              );
+                                            }}
+                                          />
+                                        </Popover.Panel>
+                                      </Transition>
+                                    </>
+                                  )}
+                                </Popover>
                               </div>
                             ))}
                           </div>
@@ -301,72 +305,84 @@ export function EditorSidebar() {
                           <label className="text-xs font-medium text-muted-foreground mb-3 block">
                             All colors
                           </label>
-                          <div className="flex items-center gap-2 flex-wrap relative">
-                            <div className="relative" ref={colorPickerRef}>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setColorPickerOpen(
-                                    colorPickerOpen === "custom"
-                                      ? null
-                                      : "custom"
-                                  )
-                                }
-                                className="h-8 w-8 rounded-full border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
-                              >
-                                <Plus className="h-4 w-4 text-muted-foreground" />
-                              </button>
-                              {colorPickerOpen === "custom" && (
-                                <Popover>
-                                  <Popover.Button className="sr-only" />
-                                  <Popover.Panel className="absolute top-10 left-0 z-50">
-                                    <HexColorPicker
-                                      color={
-                                        activeSlide.backgroundColor || "#ffffff"
-                                      }
-                                      onChange={(color) => {
-                                        handleBackgroundColorChange(color);
-                                        setColorPickerOpen(null);
-                                      }}
-                                    />
-                                  </Popover.Panel>
-                                </Popover>
-                              )}
-                            </div>
-                            {["#9ca3af", "#ffffff", "#3b82f6", "#ec4899"].map(
-                              (color) => (
-                                <div key={color} className="relative">
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setColorPickerOpen(
-                                        colorPickerOpen === color ? null : color
-                                      )
-                                    }
-                                    className={cn(
-                                      "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
-                                      activeSlide.backgroundColor === color
-                                        ? "border-primary ring-2 ring-primary/20"
-                                        : "border-border/60 hover:border-primary/50"
-                                    )}
-                                    style={{ backgroundColor: color }}
-                                  />
-                                  {colorPickerOpen === color && (
-                                    <Popover>
-                                      <Popover.Button className="sr-only" />
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <div className="relative">
+                              <Popover>
+                                {() => (
+                                  <>
+                                    <Popover.Button
+                                      type="button"
+                                      className="h-8 w-8 rounded-full border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
+                                    >
+                                      <Plus className="h-4 w-4 text-muted-foreground" />
+                                    </Popover.Button>
+                                    <Transition
+                                      as={React.Fragment}
+                                      enter="transition ease-out duration-200"
+                                      enterFrom="opacity-0 translate-y-1"
+                                      enterTo="opacity-100 translate-y-0"
+                                      leave="transition ease-in duration-150"
+                                      leaveFrom="opacity-100 translate-y-0"
+                                      leaveTo="opacity-0 translate-y-1"
+                                    >
                                       <Popover.Panel className="absolute top-10 left-0 z-50">
                                         <HexColorPicker
-                                          color={color}
+                                          color={
+                                            activeSlide.backgroundColor ||
+                                            "#ffffff"
+                                          }
                                           onChange={(newColor) => {
                                             handleBackgroundColorChange(
                                               newColor
                                             );
-                                            setColorPickerOpen(null);
                                           }}
                                         />
                                       </Popover.Panel>
-                                    </Popover>
-                                  )}
+                                    </Transition>
+                                  </>
+                                )}
+                              </Popover>
+                            </div>
+                            {["#9ca3af", "#ffffff", "#3b82f6", "#ec4899"].map(
+                              (color) => (
+                                <div key={color} className="relative">
+                                  <Popover>
+                                    {() => (
+                                      <>
+                                        <Popover.Button
+                                          type="button"
+                                          className={cn(
+                                            "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
+                                            activeSlide.backgroundColor ===
+                                              color
+                                              ? "border-primary ring-2 ring-primary/20"
+                                              : "border-border/60 hover:border-primary/50"
+                                          )}
+                                          style={{ backgroundColor: color }}
+                                        />
+                                        <Transition
+                                          as={React.Fragment}
+                                          enter="transition ease-out duration-200"
+                                          enterFrom="opacity-0 translate-y-1"
+                                          enterTo="opacity-100 translate-y-0"
+                                          leave="transition ease-in duration-150"
+                                          leaveFrom="opacity-100 translate-y-0"
+                                          leaveTo="opacity-0 translate-y-1"
+                                        >
+                                          <Popover.Panel className="absolute top-10 left-0 z-50">
+                                            <HexColorPicker
+                                              color={color}
+                                              onChange={(newColor) => {
+                                                handleBackgroundColorChange(
+                                                  newColor
+                                                );
+                                              }}
+                                            />
+                                          </Popover.Panel>
+                                        </Transition>
+                                      </>
+                                    )}
+                                  </Popover>
                                 </div>
                               )
                             )}
@@ -377,157 +393,121 @@ export function EditorSidebar() {
 
                     {/* Gradient Color Tab */}
                     {backgroundType === "gradient" && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="space-y-5"
-                      >
-                        <AnimatePresence>
-                          <>
-                            <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 20 }}
+                      <div className="space-y-5">
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-3 block">
+                            Gradient Colors
+                          </label>
+                          <div className="grid grid-cols-6 gap-2">
+                            <button
+                              className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
+                              onClick={handleAddGradientColor}
                             >
-                              <label className="text-xs font-medium text-muted-foreground mb-3 block">
-                                Gradient Colors
-                              </label>
-                              <div className="grid grid-cols-6 gap-2">
-                                <motion.button
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.9 }}
-                                  className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
-                                  onClick={handleAddGradientColor}
-                                >
-                                  <Plus
-                                    size={18}
-                                    className="text-muted-foreground"
-                                  />
-                                </motion.button>
-                                {(
-                                  activeSlide.backgroundGradient || [
-                                    "#ffffff",
-                                    "#f0f0f0",
-                                  ]
-                                ).map((color, index) => (
-                                  <motion.div
-                                    key={index}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 20 }}
-                                    className="relative"
-                                  >
-                                    <Popover>
-                                      {() => (
-                                        <>
-                                          <Popover.Button className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110">
-                                            <div
-                                              className="w-full h-full rounded-full"
-                                              style={{ backgroundColor: color }}
-                                            />
-                                            {(
-                                              activeSlide.backgroundGradient ||
-                                              []
-                                            ).length > 2 && (
-                                              <span
-                                                className="absolute -top-1 -right-1 bg-destructive rounded-full p-0.5 cursor-pointer hover:bg-destructive/80 transition-colors"
-                                                onClick={(e) => {
-                                                  e.stopPropagation();
-                                                  handleRemoveGradientColor(
-                                                    index
-                                                  );
-                                                }}
-                                              >
-                                                <X
-                                                  className="text-white"
-                                                  size={12}
-                                                />
-                                              </span>
-                                            )}
-                                          </Popover.Button>
-                                          <Transition
-                                            as={React.Fragment}
-                                            enter="transition ease-out duration-200"
-                                            enterFrom="opacity-0 translate-y-1"
-                                            enterTo="opacity-100 translate-y-0"
-                                            leave="transition ease-in duration-150"
-                                            leaveFrom="opacity-100 translate-y-0"
-                                            leaveTo="opacity-0 translate-y-1"
+                              <Plus
+                                size={18}
+                                className="text-muted-foreground"
+                              />
+                            </button>
+                            {(
+                              activeSlide.backgroundGradient || [
+                                "#ffffff",
+                                "#f0f0f0",
+                              ]
+                            ).map((color, index) => (
+                              <div key={index} className="relative">
+                                <Popover>
+                                  {() => (
+                                    <>
+                                      <Popover.Button className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110">
+                                        <div
+                                          className="w-full h-full rounded-full"
+                                          style={{ backgroundColor: color }}
+                                        />
+                                        {(activeSlide.backgroundGradient || [])
+                                          .length > 2 && (
+                                          <span
+                                            className="absolute -top-1 -right-1 bg-destructive rounded-full p-0.5 cursor-pointer hover:bg-destructive/80 transition-colors"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleRemoveGradientColor(index);
+                                            }}
                                           >
-                                            <Popover.Panel className="absolute top-12 left-0 z-50">
-                                              <HexColorPicker
-                                                color={color}
-                                                onChange={(newColor) => {
-                                                  handleGradientColorChange(
-                                                    index,
-                                                    newColor
-                                                  );
-                                                }}
-                                              />
-                                            </Popover.Panel>
-                                          </Transition>
-                                        </>
-                                      )}
-                                    </Popover>
-                                  </motion.div>
-                                ))}
+                                            <X
+                                              className="text-white"
+                                              size={12}
+                                            />
+                                          </span>
+                                        )}
+                                      </Popover.Button>
+                                      <Transition
+                                        as={React.Fragment}
+                                        enter="transition ease-out duration-200"
+                                        enterFrom="opacity-0 translate-y-1"
+                                        enterTo="opacity-100 translate-y-0"
+                                        leave="transition ease-in duration-150"
+                                        leaveFrom="opacity-100 translate-y-0"
+                                        leaveTo="opacity-0 translate-y-1"
+                                      >
+                                        <Popover.Panel className="absolute top-12 left-0 z-50">
+                                          <HexColorPicker
+                                            color={color}
+                                            onChange={(newColor) => {
+                                              handleGradientColorChange(
+                                                index,
+                                                newColor
+                                              );
+                                            }}
+                                          />
+                                        </Popover.Panel>
+                                      </Transition>
+                                    </>
+                                  )}
+                                </Popover>
                               </div>
-                            </motion.div>
+                            ))}
+                          </div>
+                        </div>
 
-                            <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 20 }}
-                            >
-                              <motion.h2
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 20 }}
-                                className="text-xs font-medium text-muted-foreground mb-2"
-                              >
-                                Gradient Direction
-                              </motion.h2>
-                              <div className="flex flex-wrap gap-2">
-                                {gradientDirections.map((direction, index) => {
-                                  const gradientColors =
-                                    activeSlide.backgroundGradient || [
-                                      "#ffffff",
-                                      "#f0f0f0",
-                                    ];
-                                  const isActive =
-                                    activeSlide.backgroundGradientDirection ===
-                                    direction.name;
-                                  return (
-                                    <motion.button
-                                      key={index}
-                                      onClick={() =>
-                                        handleGradientDirectionChange(
-                                          direction.name
-                                        )
-                                      }
-                                      whileHover={{ scale: 1.1 }}
-                                      whileTap={{ scale: 0.9 }}
-                                      className={cn(
-                                        "rounded-md overflow-hidden p-2 cursor-pointer flex items-center justify-center w-10 h-10 transition-all",
-                                        isActive &&
-                                          "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                                      )}
-                                      style={{
-                                        background: `linear-gradient(${
-                                          direction.name
-                                        }, ${gradientColors.join(", ")})`,
-                                      }}
-                                    >
-                                      {direction.icon}
-                                    </motion.button>
-                                  );
-                                })}
-                              </div>
-                            </motion.div>
-                          </>
-                        </AnimatePresence>
-                      </motion.div>
+                        <div>
+                          <h2 className="text-xs font-medium text-muted-foreground mb-2">
+                            Gradient Direction
+                          </h2>
+                          <div className="flex flex-wrap gap-2">
+                            {gradientDirections.map((direction, index) => {
+                              const gradientColors =
+                                activeSlide.backgroundGradient || [
+                                  "#ffffff",
+                                  "#f0f0f0",
+                                ];
+                              const isActive =
+                                activeSlide.backgroundGradientDirection ===
+                                direction.name;
+                              return (
+                                <button
+                                  key={index}
+                                  onClick={() =>
+                                    handleGradientDirectionChange(
+                                      direction.name
+                                    )
+                                  }
+                                  className={cn(
+                                    "rounded-md overflow-hidden p-2 cursor-pointer flex items-center justify-center w-10 h-10 transition-all",
+                                    isActive &&
+                                      "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                                  )}
+                                  style={{
+                                    background: `linear-gradient(${
+                                      direction.name
+                                    }, ${gradientColors.join(", ")})`,
+                                  }}
+                                >
+                                  {direction.icon}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </CollapsibleContent>
                 </Collapsible>
