@@ -10,6 +10,9 @@ export type SlideModel = {
   title: string;
   elements: SlideElement[];
   backgroundColor?: string;
+  backgroundGradient?: string[]; // Array of color stops for gradient
+  backgroundGradientDirection?: string; // Gradient direction (e.g., "to top", "to bottom right")
+  backgroundType?: "solid" | "gradient"; // Type of background
   backgroundImage?: string;
   showSlideNumber?: boolean;
   slideStyle?: string;
@@ -25,6 +28,9 @@ const createEmptySlide = (title: string): SlideModel => ({
   title,
   elements: [],
   backgroundColor: "#ffffff",
+  backgroundGradient: ["#ffffff", "#f0f0f0"],
+  backgroundGradientDirection: "to bottom",
+  backgroundType: "solid",
   backgroundImage: undefined,
   showSlideNumber: false,
   slideStyle: "Engineering Team Meeting",

@@ -201,13 +201,24 @@ const Slide: React.FC<SlideProps> = ({
                   width: `${SLIDE_WIDTH}px`,
                   height: `${SLIDE_HEIGHT}px`,
                   position: "relative",
-                  backgroundColor: slide.backgroundColor || "#ffffff",
-                  backgroundImage: slide.backgroundImage
-                    ? `url(${slide.backgroundImage})`
-                    : undefined,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
+                  ...(slide.backgroundImage
+                    ? {
+                        backgroundImage: `url(${slide.backgroundImage})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                      }
+                    : slide.backgroundType === "gradient" &&
+                      slide.backgroundGradient &&
+                      slide.backgroundGradient.length > 0
+                    ? {
+                        background: `linear-gradient(${
+                          slide.backgroundGradientDirection || "to bottom"
+                        }, ${slide.backgroundGradient.join(", ")})`,
+                      }
+                    : {
+                        backgroundColor: slide.backgroundColor || "#ffffff",
+                      }),
                 }}
                 onPointerDown={(e) => {
                   const target = e.target as HTMLElement;

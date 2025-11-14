@@ -1,8 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import {
+  Plus,
+  X,
+  ChevronDown,
+  ChevronUp,
+  ArrowUp,
+  ArrowUpRight,
+  ArrowRight,
+  ArrowDownRight,
+  ArrowDown,
+  ArrowDownLeft,
+  ArrowLeft,
+  ArrowUpLeft,
+} from "lucide-react";
+import { HexColorPicker } from "react-colorful";
+import { motion, AnimatePresence } from "framer-motion";
+import { Popover, Transition } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   CustomSidebar,
   CustomSidebarContent,
@@ -10,12 +32,26 @@ import {
 import { SidebarTabs, TabId, tabs } from "@/components/editor/sidebar-tabs";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectActiveSlide, updateSlide } from "@/store/slices/slidesSlice";
+import { cn } from "@/lib/utils";
 
 export function EditorSidebar() {
   const [activeTab, setActiveTab] = useState<TabId | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [backgroundType, setBackgroundType] = useState<"solid" | "gradient">(
+    "solid"
+  );
+  const [isBackgroundOpen, setIsBackgroundOpen] = useState(true);
+  const [colorPickerOpen, setColorPickerOpen] = useState<string | null>(null);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const activeSlide = useAppSelector(selectActiveSlide);
+
+  // Initialize background type from slide
+  React.useEffect(() => {
+    if (activeSlide?.backgroundType) {
+      setBackgroundType(activeSlide.backgroundType);
+    }
+  }, [activeSlide?.backgroundType]);
 
   if (!activeSlide) return null;
 
@@ -33,10 +69,111 @@ export function EditorSidebar() {
     dispatch(
       updateSlide({
         slideId: activeSlide.id,
-        updates: { backgroundColor: color },
+        updates: {
+          backgroundColor: color,
+          backgroundType: "solid",
+        },
       })
     );
   };
+
+  const handleBackgroundTypeChange = (type: "solid" | "gradient") => {
+    setBackgroundType(type);
+    dispatch(
+      updateSlide({
+        slideId: activeSlide.id,
+        updates: { backgroundType: type },
+      })
+    );
+  };
+
+  const handleGradientColorChange = (index: number, color: string) => {
+    const currentGradient = activeSlide.backgroundGradient || [
+      "#ffffff",
+      "#f0f0f0",
+    ];
+    const newGradient = [...currentGradient];
+    newGradient[index] = color;
+    dispatch(
+      updateSlide({
+        slideId: activeSlide.id,
+        updates: {
+          backgroundGradient: newGradient,
+          backgroundType: "gradient",
+        },
+      })
+    );
+  };
+
+  const handleAddGradientColor = () => {
+    const currentGradient = activeSlide.backgroundGradient || [
+      "#ffffff",
+      "#f0f0f0",
+    ];
+    const newGradient = [...currentGradient, "#ffffff"];
+    dispatch(
+      updateSlide({
+        slideId: activeSlide.id,
+        updates: {
+          backgroundGradient: newGradient,
+          backgroundType: "gradient",
+        },
+      })
+    );
+  };
+
+  const handleRemoveGradientColor = (index: number) => {
+    const currentGradient = activeSlide.backgroundGradient || [
+      "#ffffff",
+      "#f0f0f0",
+    ];
+    if (currentGradient.length <= 2) return; // Keep at least 2 colors
+    const newGradient = currentGradient.filter((_, i) => i !== index);
+    dispatch(
+      updateSlide({
+        slideId: activeSlide.id,
+        updates: {
+          backgroundGradient: newGradient,
+          backgroundType: "gradient",
+        },
+      })
+    );
+  };
+
+  const handleGradientDirectionChange = (direction: string) => {
+    dispatch(
+      updateSlide({
+        slideId: activeSlide.id,
+        updates: {
+          backgroundGradientDirection: direction,
+          backgroundType: "gradient",
+        },
+      })
+    );
+  };
+
+  const gradientDirections = [
+    { name: "to top", icon: <ArrowUp size={18} className="text-white" /> },
+    {
+      name: "to top right",
+      icon: <ArrowUpRight size={18} className="text-white" />,
+    },
+    { name: "to right", icon: <ArrowRight size={18} className="text-white" /> },
+    {
+      name: "to bottom right",
+      icon: <ArrowDownRight size={18} className="text-white" />,
+    },
+    { name: "to bottom", icon: <ArrowDown size={18} className="text-white" /> },
+    {
+      name: "to bottom left",
+      icon: <ArrowDownLeft size={18} className="text-white" />,
+    },
+    { name: "to left", icon: <ArrowLeft size={18} className="text-white" /> },
+    {
+      name: "to top left",
+      icon: <ArrowUpLeft size={18} className="text-white" />,
+    },
+  ];
 
   const handleSlideNumberToggle = (checked: boolean) => {
     dispatch(
@@ -55,42 +192,345 @@ export function EditorSidebar() {
           <div className="flex-1 overflow-y-auto overflow-x-hidden">
             {activeTab === "design" && (
               <div className="p-4 space-y-6 max-w-full">
-                {/* Background color */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-primary"></div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Background
-                    </label>
-                  </div>
-                  <div className="p-3 rounded-xl border-2 border-border/60 bg-gradient-to-br from-background to-muted/20">
-                    <div className="flex items-center gap-3">
-                      <div className="relative shrink-0">
-                        <input
-                          type="color"
-                          value={activeSlide.backgroundColor || "#ffffff"}
-                          onChange={(e) =>
-                            handleBackgroundColorChange(e.target.value)
-                          }
-                          className="h-12 w-12 rounded-xl border-2 border-border/60 cursor-pointer hover:border-primary/50 hover:scale-105 transition-all appearance-none"
-                          style={{
-                            backgroundColor:
-                              activeSlide.backgroundColor || "#ffffff",
-                          }}
-                        />
-                        <div className="absolute inset-0 rounded-xl border-2 border-background pointer-events-none"></div>
+                {/* Background - Collapsible */}
+                <Collapsible
+                  open={isBackgroundOpen}
+                  onOpenChange={setIsBackgroundOpen}
+                >
+                  <CollapsibleTrigger className="w-full">
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <div className="h-1 w-1 rounded-full bg-primary"></div>
+                        <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          Background
+                        </label>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-muted-foreground mb-1.5">
-                          Color Code
-                        </div>
-                        <div className="px-2.5 py-1.5 rounded-lg bg-background/80 border border-border/50 font-mono text-xs font-semibold text-foreground truncate">
-                          {activeSlide.backgroundColor || "#ffffff"}
-                        </div>
-                      </div>
+                      {isBackgroundOpen ? (
+                        <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      )}
                     </div>
-                  </div>
-                </div>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-4 space-y-5">
+                    {/* Tabs for Solid/Gradient */}
+                    <div className="flex gap-6 border-b border-border/50">
+                      <button
+                        type="button"
+                        onClick={() => handleBackgroundTypeChange("solid")}
+                        className={cn(
+                          "relative pb-2 px-1 text-sm font-medium transition-colors",
+                          backgroundType === "solid"
+                            ? "text-primary"
+                            : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        Solid
+                        {backgroundType === "solid" && (
+                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleBackgroundTypeChange("gradient")}
+                        className={cn(
+                          "relative pb-2 px-1 text-sm font-medium transition-colors",
+                          backgroundType === "gradient"
+                            ? "text-primary"
+                            : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        Gradient
+                        {backgroundType === "gradient" && (
+                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Solid Color Tab */}
+                    {backgroundType === "solid" && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-3 block">
+                            Style colors
+                          </label>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {[
+                              "#ffffff",
+                              "#9ca3af",
+                              "#1f2937",
+                              "#4b5563",
+                              "#000000",
+                              "#f9fafb",
+                            ].map((color) => (
+                              <div key={color} className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setColorPickerOpen(
+                                      colorPickerOpen === color ? null : color
+                                    )
+                                  }
+                                  className={cn(
+                                    "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
+                                    activeSlide.backgroundColor === color
+                                      ? "border-primary ring-2 ring-primary/20"
+                                      : "border-border/60 hover:border-primary/50"
+                                  )}
+                                  style={{ backgroundColor: color }}
+                                />
+                                {colorPickerOpen === color && (
+                                  <Popover>
+                                    <Popover.Button className="sr-only" />
+                                    <Popover.Panel className="absolute top-10 left-0 z-50">
+                                      <HexColorPicker
+                                        color={color}
+                                        onChange={(newColor) => {
+                                          handleBackgroundColorChange(newColor);
+                                          setColorPickerOpen(null);
+                                        }}
+                                      />
+                                    </Popover.Panel>
+                                  </Popover>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-3 block">
+                            All colors
+                          </label>
+                          <div className="flex items-center gap-2 flex-wrap relative">
+                            <div className="relative" ref={colorPickerRef}>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setColorPickerOpen(
+                                    colorPickerOpen === "custom"
+                                      ? null
+                                      : "custom"
+                                  )
+                                }
+                                className="h-8 w-8 rounded-full border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
+                              >
+                                <Plus className="h-4 w-4 text-muted-foreground" />
+                              </button>
+                              {colorPickerOpen === "custom" && (
+                                <Popover>
+                                  <Popover.Button className="sr-only" />
+                                  <Popover.Panel className="absolute top-10 left-0 z-50">
+                                    <HexColorPicker
+                                      color={
+                                        activeSlide.backgroundColor || "#ffffff"
+                                      }
+                                      onChange={(color) => {
+                                        handleBackgroundColorChange(color);
+                                        setColorPickerOpen(null);
+                                      }}
+                                    />
+                                  </Popover.Panel>
+                                </Popover>
+                              )}
+                            </div>
+                            {["#9ca3af", "#ffffff", "#3b82f6", "#ec4899"].map(
+                              (color) => (
+                                <div key={color} className="relative">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setColorPickerOpen(
+                                        colorPickerOpen === color ? null : color
+                                      )
+                                    }
+                                    className={cn(
+                                      "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
+                                      activeSlide.backgroundColor === color
+                                        ? "border-primary ring-2 ring-primary/20"
+                                        : "border-border/60 hover:border-primary/50"
+                                    )}
+                                    style={{ backgroundColor: color }}
+                                  />
+                                  {colorPickerOpen === color && (
+                                    <Popover>
+                                      <Popover.Button className="sr-only" />
+                                      <Popover.Panel className="absolute top-10 left-0 z-50">
+                                        <HexColorPicker
+                                          color={color}
+                                          onChange={(newColor) => {
+                                            handleBackgroundColorChange(
+                                              newColor
+                                            );
+                                            setColorPickerOpen(null);
+                                          }}
+                                        />
+                                      </Popover.Panel>
+                                    </Popover>
+                                  )}
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Gradient Color Tab */}
+                    {backgroundType === "gradient" && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="space-y-5"
+                      >
+                        <AnimatePresence>
+                          <>
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 20 }}
+                            >
+                              <label className="text-xs font-medium text-muted-foreground mb-3 block">
+                                Gradient Colors
+                              </label>
+                              <div className="grid grid-cols-6 gap-2">
+                                <motion.button
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
+                                  onClick={handleAddGradientColor}
+                                >
+                                  <Plus
+                                    size={18}
+                                    className="text-muted-foreground"
+                                  />
+                                </motion.button>
+                                {(
+                                  activeSlide.backgroundGradient || [
+                                    "#ffffff",
+                                    "#f0f0f0",
+                                  ]
+                                ).map((color, index) => (
+                                  <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 20 }}
+                                    className="relative"
+                                  >
+                                    <Popover>
+                                      {() => (
+                                        <>
+                                          <Popover.Button className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110">
+                                            <div
+                                              className="w-full h-full rounded-full"
+                                              style={{ backgroundColor: color }}
+                                            />
+                                            {(
+                                              activeSlide.backgroundGradient ||
+                                              []
+                                            ).length > 2 && (
+                                              <span
+                                                className="absolute -top-1 -right-1 bg-destructive rounded-full p-0.5 cursor-pointer hover:bg-destructive/80 transition-colors"
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  handleRemoveGradientColor(
+                                                    index
+                                                  );
+                                                }}
+                                              >
+                                                <X
+                                                  className="text-white"
+                                                  size={12}
+                                                />
+                                              </span>
+                                            )}
+                                          </Popover.Button>
+                                          <Transition
+                                            as={React.Fragment}
+                                            enter="transition ease-out duration-200"
+                                            enterFrom="opacity-0 translate-y-1"
+                                            enterTo="opacity-100 translate-y-0"
+                                            leave="transition ease-in duration-150"
+                                            leaveFrom="opacity-100 translate-y-0"
+                                            leaveTo="opacity-0 translate-y-1"
+                                          >
+                                            <Popover.Panel className="absolute top-12 left-0 z-50">
+                                              <HexColorPicker
+                                                color={color}
+                                                onChange={(newColor) => {
+                                                  handleGradientColorChange(
+                                                    index,
+                                                    newColor
+                                                  );
+                                                }}
+                                              />
+                                            </Popover.Panel>
+                                          </Transition>
+                                        </>
+                                      )}
+                                    </Popover>
+                                  </motion.div>
+                                ))}
+                              </div>
+                            </motion.div>
+
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 20 }}
+                            >
+                              <motion.h2
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 20 }}
+                                className="text-xs font-medium text-muted-foreground mb-2"
+                              >
+                                Gradient Direction
+                              </motion.h2>
+                              <div className="flex flex-wrap gap-2">
+                                {gradientDirections.map((direction, index) => {
+                                  const gradientColors =
+                                    activeSlide.backgroundGradient || [
+                                      "#ffffff",
+                                      "#f0f0f0",
+                                    ];
+                                  const isActive =
+                                    activeSlide.backgroundGradientDirection ===
+                                    direction.name;
+                                  return (
+                                    <motion.button
+                                      key={index}
+                                      onClick={() =>
+                                        handleGradientDirectionChange(
+                                          direction.name
+                                        )
+                                      }
+                                      whileHover={{ scale: 1.1 }}
+                                      whileTap={{ scale: 0.9 }}
+                                      className={cn(
+                                        "rounded-md overflow-hidden p-2 cursor-pointer flex items-center justify-center w-10 h-10 transition-all",
+                                        isActive &&
+                                          "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                                      )}
+                                      style={{
+                                        background: `linear-gradient(${
+                                          direction.name
+                                        }, ${gradientColors.join(", ")})`,
+                                      }}
+                                    >
+                                      {direction.icon}
+                                    </motion.button>
+                                  );
+                                })}
+                              </div>
+                            </motion.div>
+                          </>
+                        </AnimatePresence>
+                      </motion.div>
+                    )}
+                  </CollapsibleContent>
+                </Collapsible>
 
                 {/* Background image */}
                 <div className="space-y-4">
