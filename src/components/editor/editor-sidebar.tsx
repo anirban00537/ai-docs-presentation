@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +12,6 @@ import { Switch } from "@/components/ui/switch";
 import {
   CustomSidebar,
   CustomSidebarContent,
-  CustomSidebarHeader,
 } from "@/components/editor/custom-sidebar";
 import { SidebarTabs, TabId, tabs } from "@/components/editor/sidebar-tabs";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -62,11 +60,6 @@ export function EditorSidebar() {
     }
   };
 
-  const handleClose = () => {
-    setActiveTab(null);
-    setIsOpen(false);
-  };
-
   const handleBackgroundColorChange = (color: string) => {
     dispatch(
       updateSlide({
@@ -102,20 +95,6 @@ export function EditorSidebar() {
       {/* Content Panel - Only visible when open */}
       {isOpen && activeTab && (
         <CustomSidebarContent className="flex-1">
-          <CustomSidebarHeader className="justify-between">
-            <h2 className="font-semibold text-base tracking-tight">
-              Slide Settings
-            </h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 rounded-md hover:bg-accent/60"
-              onClick={handleClose}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </CustomSidebarHeader>
-
           <div className="flex-1 overflow-y-auto">
             {activeTab === "design" && (
               <div className="p-6 space-y-8">
