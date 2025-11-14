@@ -34,17 +34,23 @@ interface SidebarTabsProps {
 
 export function SidebarTabs({ activeTab, onTabClick }: SidebarTabsProps) {
   return (
-    <div className="flex flex-col items-center justify-center bg-gradient-to-b from-background via-background to-muted/20 border-l border-border/30 shrink-0">
-      {tabs.map((tab) => (
-        <CustomSidebarMenuButton
-          key={tab.id}
-          onClick={() => onTabClick(tab.id)}
-          isActive={activeTab === tab.id}
-          tooltip={tab.label}
-        >
-          {tab.icon}
-        </CustomSidebarMenuButton>
-      ))}
+    <div className="flex flex-col items-center justify-center shrink-0 p-2">
+      <div className="flex flex-col items-center rounded-2xl border-2 border-border/60 bg-background p-1.5 gap-0.5">
+        {tabs.map((tab, index) => (
+          <React.Fragment key={tab.id}>
+            <CustomSidebarMenuButton
+              onClick={() => onTabClick(tab.id)}
+              isActive={activeTab === tab.id}
+              tooltip={tab.label}
+            >
+              {tab.icon}
+            </CustomSidebarMenuButton>
+            {index < tabs.length - 1 && (
+              <div className="w-8 h-px bg-border/30" />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   );
 }

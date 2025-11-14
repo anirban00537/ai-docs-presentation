@@ -14,7 +14,7 @@ export function CustomSidebar({
   children,
   className,
 }: CustomSidebarProps) {
-  const iconWidth = "3.5rem"; // 56px
+  const iconWidth = "4.5rem"; // 72px (to accommodate rounded border tabs)
   const expandedWidth = "20rem"; // 320px
 
   return (
@@ -127,11 +127,10 @@ export function CustomSidebarMenuButton({
   return (
     <button
       className={cn(
-        "relative w-full p-4 flex items-center justify-center transition-all duration-200",
-        "border-b border-border/30 last:border-b-0",
+        "relative w-10 h-10 flex items-center justify-center transition-all duration-200 rounded-lg",
         "group",
         isActive
-          ? "bg-primary/10 text-primary ring-2 ring-primary/10"
+          ? "bg-primary/10 text-primary"
           : "text-muted-foreground hover:text-foreground hover:bg-accent/40",
         className
       )}
@@ -140,7 +139,7 @@ export function CustomSidebarMenuButton({
     >
       <div
         className={cn(
-          "absolute right-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-l-full transition-all duration-200",
+          "absolute right-0 top-1/2 -translate-y-1/2 h-6 w-0.5 rounded-l-full transition-all duration-200",
           isActive
             ? "bg-primary"
             : "bg-transparent group-hover:bg-primary/30"
