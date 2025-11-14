@@ -28,7 +28,7 @@ const slideStyles = [
         <div className="h-4 w-4 rounded bg-black flex items-center justify-center">
           <span className="text-[8px] text-white font-bold">E</span>
         </div>
-        <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+        <div className="h-2 w-2 rounded-full bg-primary"></div>
       </div>
     ),
   },
@@ -122,40 +122,43 @@ export function EditorSidebar() {
             </Button>
           </CustomSidebarHeader>
 
-          <div className="flex-1 overflow-y-auto p-5 space-y-6">
+          <div className="flex-1 overflow-y-auto">
             {activeTab === "design" && (
-              <>
+              <div className="p-6 space-y-8">
                 {/* Slide style */}
-                <div className="space-y-3">
-                  <label className="text-sm font-semibold text-foreground">
-                    Slide style
-                  </label>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Template
+                    </label>
+                  </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="outline"
-                        className="w-full justify-between h-10 text-sm font-medium border-border/60 hover:border-primary/50 hover:bg-accent/50 transition-all"
+                        className="w-full justify-between h-12 text-sm font-medium border-2 border-border/60 hover:border-primary/50 hover:bg-accent/30 transition-all rounded-xl bg-background/50"
                       >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                           {slideStyles.find(
                             (s) => s.label === activeSlide.slideStyle
                           )?.icon || (
                             <div className="flex items-center gap-2">
-                              <div className="h-4 w-4 rounded bg-black flex items-center justify-center">
-                                <span className="text-[8px] text-white font-bold">
+                              <div className="h-5 w-5 rounded bg-black flex items-center justify-center">
+                                <span className="text-[9px] text-white font-bold">
                                   E
                                 </span>
                               </div>
-                              <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+                              <div className="h-2.5 w-2.5 rounded-full bg-primary"></div>
                             </div>
                           )}
-                          <span className="truncate">
+                          <span className="truncate font-semibold">
                             {activeSlide.slideStyle ||
                               "Engineering Team Meeting"}
                           </span>
                         </div>
                         <svg
-                          className="h-4 w-4 opacity-50"
+                          className="h-4 w-4 opacity-60"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -169,63 +172,82 @@ export function EditorSidebar() {
                         </svg>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-80">
+                    <DropdownMenuContent className="w-80 rounded-xl">
                       {slideStyles.map((style) => (
                         <DropdownMenuItem
                           key={style.id}
                           onClick={() => handleSlideStyleChange(style.id)}
-                          className="flex items-center gap-2"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg"
                         >
                           {style.icon}
-                          <span>{style.label}</span>
+                          <span className="font-medium">{style.label}</span>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
 
+                {/* Divider */}
+                <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent"></div>
+
                 {/* Background color */}
-                <div className="space-y-3">
-                  <label className="text-sm font-semibold text-foreground">
-                    Background color
-                  </label>
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="color"
-                      value={activeSlide.backgroundColor || "#ffffff"}
-                      onChange={(e) =>
-                        handleBackgroundColorChange(e.target.value)
-                      }
-                      className="h-10 w-10 rounded-lg border-2 border-border/60 cursor-pointer hover:border-primary/50 hover:scale-105 transition-all"
-                      style={{
-                        backgroundColor:
-                          activeSlide.backgroundColor || "#ffffff",
-                      }}
-                    />
-                    <span className="text-xs text-muted-foreground font-mono">
-                      {activeSlide.backgroundColor || "#ffffff"}
-                    </span>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Background
+                    </label>
+                  </div>
+                  <div className="p-4 rounded-xl border-2 border-border/60 bg-gradient-to-br from-background to-muted/20">
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        <input
+                          type="color"
+                          value={activeSlide.backgroundColor || "#ffffff"}
+                          onChange={(e) =>
+                            handleBackgroundColorChange(e.target.value)
+                          }
+                          className="h-14 w-14 rounded-xl border-2 border-border/60 cursor-pointer hover:border-primary/50 hover:scale-105 transition-all appearance-none"
+                          style={{
+                            backgroundColor:
+                              activeSlide.backgroundColor || "#ffffff",
+                          }}
+                        />
+                        <div className="absolute inset-0 rounded-xl border-2 border-background pointer-events-none"></div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-medium text-muted-foreground mb-1.5">
+                          Color Code
+                        </div>
+                        <div className="px-3 py-2 rounded-lg bg-background/80 border border-border/50 font-mono text-sm font-semibold text-foreground">
+                          {activeSlide.backgroundColor || "#ffffff"}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Background image */}
-                <div className="space-y-3">
-                  <label className="text-sm font-semibold text-foreground">
-                    Background image
-                  </label>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Image
+                    </label>
+                  </div>
                   {activeSlide.backgroundImage ? (
                     <div className="space-y-3">
-                      <div className="relative w-full h-32 rounded-lg overflow-hidden border border-border/60 group">
+                      <div className="relative w-full h-40 rounded-xl overflow-hidden border-2 border-border/60 group bg-muted/20">
                         <img
                           src={activeSlide.backgroundImage}
                           alt="Background"
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                       </div>
                       <Button
                         variant="outline"
-                        className="w-full h-10 border-destructive/50 text-destructive hover:bg-destructive/10 hover:border-destructive transition-all"
+                        className="w-full h-11 border-2 border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive transition-all rounded-xl font-semibold"
                         onClick={() => {
                           dispatch(
                             updateSlide({
@@ -235,13 +257,13 @@ export function EditorSidebar() {
                           );
                         }}
                       >
-                        Remove background image
+                        Remove Image
                       </Button>
                     </div>
                   ) : (
                     <Button
                       variant="outline"
-                      className="w-full h-10 border-dashed hover:border-primary/50 hover:bg-primary/5 hover:text-primary transition-all"
+                      className="w-full h-12 border-2 border-dashed border-primary/30 hover:border-primary/50 hover:bg-primary/10 hover:text-primary transition-all rounded-xl font-semibold bg-gradient-to-br from-primary/5 to-transparent"
                       onClick={() => {
                         // TODO: Implement image upload
                         const input = document.createElement("input");
@@ -267,24 +289,39 @@ export function EditorSidebar() {
                         input.click();
                       }}
                     >
-                      Edit background image
+                      <span className="text-base">+</span>
+                      <span>Upload Background Image</span>
                     </Button>
                   )}
                 </div>
 
+                {/* Divider */}
+                <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent"></div>
+
                 {/* Slide number */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
-                    <label className="text-sm font-semibold text-foreground">
-                      Slide number
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Options
                     </label>
+                  </div>
+                  <div className="flex items-center justify-between p-4 rounded-xl border-2 border-border/60 bg-gradient-to-br from-background to-muted/20">
+                    <div>
+                      <div className="text-sm font-semibold text-foreground mb-0.5">
+                        Slide Number
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Show slide number on slide
+                      </div>
+                    </div>
                     <Switch
                       checked={activeSlide.showSlideNumber || false}
                       onCheckedChange={handleSlideNumberToggle}
                     />
                   </div>
                 </div>
-              </>
+              </div>
             )}
 
             {activeTab !== "design" && (

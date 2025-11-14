@@ -180,7 +180,7 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
     <div
       className={cn(
         "canvas-element group absolute flex select-none border border-transparent transition",
-        isSelected && !isEditing ? "border-blue-500/70" : "border-transparent",
+        isSelected && !isEditing ? "border-primary/70" : "border-transparent",
         isEditing ? "cursor-text" : "cursor-move"
       )}
       style={{
@@ -267,7 +267,7 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
               <div
                 key={handle}
                 className={cn(
-                  "absolute h-3 w-3 rounded-sm border border-white bg-blue-500 shadow-sm cursor-ew-resize",
+                  "absolute h-3 w-3 rounded-sm border border-white bg-primary cursor-ew-resize",
                   className
                 )}
                 onPointerDown={getResizePointerDown(handle)}

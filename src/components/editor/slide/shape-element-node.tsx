@@ -163,7 +163,7 @@ export const ShapeElementNode: React.FC<ShapeElementNodeProps> = ({
       className={cn(
         "canvas-element group absolute flex select-none border border-transparent shadow-sm transition",
         isSelected && !isEditing
-          ? "border-blue-500/70 shadow-[0_0_0_1px_rgba(37,99,235,0.6)]"
+          ? "border-primary/70 ring-1 ring-primary/60"
           : "border-transparent",
         isEditing ? "cursor-text" : "cursor-move"
       )}

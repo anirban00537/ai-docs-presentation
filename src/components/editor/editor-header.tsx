@@ -135,7 +135,7 @@ const ArrowPreview: React.FC = () => (
   <ShapePreviewFrame>
     <svg
       viewBox="0 0 200 80"
-      className="h-8 w-10"
+      className="h-8 w-10 text-primary"
       preserveAspectRatio="xMidYMid meet"
     >
       <line
@@ -143,11 +143,11 @@ const ArrowPreview: React.FC = () => (
         y1="40"
         x2="150"
         y2="40"
-        stroke="#14B8A6"
+        stroke="currentColor"
         strokeWidth={8}
         strokeLinecap="round"
       />
-      <polygon points="150,22 190,40 150,58" fill="#14B8A6" />
+      <polygon points="150,22 190,40 150,58" fill="currentColor" />
     </svg>
   </ShapePreviewFrame>
 );

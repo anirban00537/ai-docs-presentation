@@ -40,7 +40,7 @@ export const ResizeHandles: React.FC<ResizeHandlesProps> = ({
       <div
         key={handle}
         className={cn(
-          "absolute h-3 w-3 rounded-sm border border-white bg-blue-500 shadow-sm",
+          "absolute h-3 w-3 rounded-sm border border-white bg-primary",
           cursorByHandle[handle],
           className
         )}
