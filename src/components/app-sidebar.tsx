@@ -45,30 +45,49 @@ export function AppSidebar({
     <Sidebar
       {...props}
       className={cn(
-        "border-r border-border/50 bg-gradient-to-b from-background to-muted/20",
+        "border-r border-border/50 bg-gradient-to-b from-background via-background to-muted/30",
         className
       )}
     >
-      <SidebarContent className="p-3">
+      <SidebarContent className="p-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Slides
-          </SidebarGroupLabel>
+          <div className="flex items-center justify-between mb-4 px-1">
+            <SidebarGroupLabel className="text-xs font-bold uppercase tracking-widest text-foreground/80 px-0">
+              Slides
+            </SidebarGroupLabel>
+            <span className="text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
+              {slides.length}
+            </span>
+          </div>
+          
+          {/* Add slide button at the top */}
+          <div className="px-1 mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddSlide}
+              className="w-full justify-center gap-2 h-11 font-semibold border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/10 hover:text-primary transition-all duration-200 rounded-xl bg-gradient-to-br from-primary/5 to-primary/0"
+            >
+              <Plus className="h-4 w-4" />
+              Add slide
+            </Button>
+          </div>
+
           <SidebarGroupContent>
-            <div className="space-y-3 px-2">
+            <div className="space-y-3 px-1">
               {slides.map((slide, index) => (
                 <div
                   key={slide.id}
                   className={cn(
-                    "group relative cursor-pointer rounded-xl border-2 transition-all duration-200 ease-out",
-                    "hover:scale-[1.02]",
+                    "group relative cursor-pointer rounded-2xl border-2 transition-all duration-300 ease-out overflow-hidden",
+                    "hover:scale-[1.02] hover:-translate-y-0.5",
                     slide.id === activeSlideId
-                      ? "border-primary ring-2 ring-primary/10"
-                      : "border-border/50 hover:border-primary/50"
+                      ? "border-primary/60 ring-2 ring-primary/20 bg-primary/5"
+                      : "border-border/60 hover:border-primary/40 hover:bg-accent/30"
                   )}
                   onClick={() => handleSelectSlide(slide.id)}
                 >
-                  <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-gradient-to-br from-muted/50 to-muted/30 pointer-events-none">
+                  <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-gradient-to-br from-muted/60 via-muted/40 to-muted/30 pointer-events-none">
                     <Slide
                       slide={slide}
                       selectedId={null}
@@ -80,39 +99,49 @@ export function AppSidebar({
                       scale={0.15}
                     />
                     {slide.id === activeSlideId && (
-                      <div className="absolute inset-0 bg-primary/5 ring-2 ring-primary/20 rounded-lg" />
+                      <div className="absolute inset-0 bg-primary/10 ring-1 ring-primary/30 rounded-xl" />
                     )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent px-3 py-2 rounded-b-lg">
-                    <div className="flex items-center justify-between text-white">
-                      <span className="text-xs font-semibold drop-shadow-sm">
-                        {`Slide ${index + 1}`}
+                  
+                  {/* Slide number badge */}
+                  <div className={cn(
+                    "absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold transition-all duration-200",
+                    slide.id === activeSlideId
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background/90 text-foreground/80 group-hover:bg-primary group-hover:text-primary-foreground"
+                  )}>
+                    {index + 1}
+                  </div>
+
+                  {/* Bottom info overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 rounded-b-2xl">
+                    <div className="flex items-center justify-between">
+                      <span className={cn(
+                        "text-xs font-bold",
+                        slide.id === activeSlideId
+                          ? "text-primary"
+                          : "text-foreground/70"
+                      )}>
+                        {slide.title || `Slide ${index + 1}`}
                       </span>
-                      {slide.title && (
-                        <span className="text-xs opacity-90 truncate ml-2 font-medium">
-                          {slide.title}
-                        </span>
+                      {slide.id === activeSlideId && (
+                        <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                       )}
                     </div>
                   </div>
+
+                  {/* Active indicator */}
                   {slide.id === activeSlideId && (
-                    <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary ring-2 ring-background" />
+                    <>
+                      <div className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-primary ring-2 ring-background" />
+                      <div className="absolute top-0 right-0 h-2 w-2 rounded-full bg-primary/50 animate-ping" />
+                    </>
                   )}
                 </div>
               ))}
             </div>
           </SidebarGroupContent>
-          <div className="px-2 pt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleAddSlide}
-              className="w-full justify-center gap-2 h-10 font-medium border-dashed hover:border-primary hover:bg-primary/5 hover:text-primary transition-all duration-200"
-            >
-              <Plus className="h-4 w-4" />
-              Add slide
-            </Button>
-          </div>
         </SidebarGroup>
       </SidebarContent>
       <SidebarRail />
