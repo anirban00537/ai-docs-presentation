@@ -14,13 +14,13 @@ export function CustomSidebar({
   children,
   className,
 }: CustomSidebarProps) {
-  const iconWidth = "3rem"; // 48px
+  const iconWidth = "3.5rem"; // 56px
   const expandedWidth = "20rem"; // 320px
 
   return (
     <div
       className={cn(
-        "flex h-full bg-background transition-all duration-200 ease-linear shrink-0",
+        "flex h-full bg-gradient-to-b from-background to-muted/10 border-l border-border/50 transition-all duration-300 ease-out shrink-0",
         className
       )}
       style={{
@@ -43,7 +43,10 @@ export function CustomSidebarContent({
 }: CustomSidebarContentProps) {
   return (
     <div
-      className={cn("flex min-h-0 flex-1 flex-col overflow-auto", className)}
+      className={cn(
+        "flex min-h-0 flex-1 flex-col overflow-auto bg-background/50 backdrop-blur-sm",
+        className
+      )}
     >
       {children}
     </div>
@@ -60,7 +63,12 @@ export function CustomSidebarHeader({
   className,
 }: CustomSidebarHeaderProps) {
   return (
-    <div className={cn("flex items-center border-b px-4 py-3", className)}>
+    <div
+      className={cn(
+        "flex items-center border-b border-border/50 bg-background/80 backdrop-blur-sm px-5 py-4",
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -119,16 +127,33 @@ export function CustomSidebarMenuButton({
   return (
     <button
       className={cn(
-        "w-full p-3 flex items-center justify-center transition-colors border-b border-border/50 last:border-b-0",
+        "relative w-full p-4 flex items-center justify-center transition-all duration-200",
+        "border-b border-border/30 last:border-b-0",
+        "group",
         isActive
-          ? "bg-primary/10 text-primary"
-          : "text-muted-foreground hover:text-foreground hover:bg-accent/50",
+          ? "bg-primary/10 text-primary ring-2 ring-primary/10"
+          : "text-muted-foreground hover:text-foreground hover:bg-accent/40",
         className
       )}
       title={tooltip}
       {...props}
     >
-      {children}
+      <div
+        className={cn(
+          "absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-200",
+          isActive
+            ? "bg-primary"
+            : "bg-transparent group-hover:bg-primary/30"
+        )}
+      />
+      <div
+        className={cn(
+          "transition-transform duration-200",
+          isActive ? "scale-110" : "group-hover:scale-105"
+        )}
+      >
+        {children}
+      </div>
     </button>
   );
 }

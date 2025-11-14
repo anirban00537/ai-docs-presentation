@@ -44,25 +44,31 @@ export function AppSidebar({
   return (
     <Sidebar
       {...props}
-      className={cn("border-none shadow-none bg-white", className)}
+      className={cn(
+        "border-r border-border/50 bg-gradient-to-b from-background to-muted/20",
+        className
+      )}
     >
-      <SidebarContent>
+      <SidebarContent className="p-3">
         <SidebarGroup>
-          <SidebarGroupLabel>Slides</SidebarGroupLabel>
+          <SidebarGroupLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Slides
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <div className="space-y-2 px-2">
+            <div className="space-y-3 px-2">
               {slides.map((slide, index) => (
                 <div
                   key={slide.id}
                   className={cn(
-                    "relative cursor-pointer rounded-lg border-2 transition-all",
+                    "group relative cursor-pointer rounded-xl border-2 transition-all duration-200 ease-out",
+                    "hover:scale-[1.02]",
                     slide.id === activeSlideId
-                      ? "border-primary shadow-md"
-                      : "border-transparent hover:border-border hover:shadow-sm"
+                      ? "border-primary ring-2 ring-primary/10"
+                      : "border-border/50 hover:border-primary/50"
                   )}
                   onClick={() => handleSelectSlide(slide.id)}
                 >
-                  <div className="relative aspect-video w-full overflow-hidden rounded-md bg-white pointer-events-none">
+                  <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-gradient-to-br from-muted/50 to-muted/30 pointer-events-none">
                     <Slide
                       slide={slide}
                       selectedId={null}
@@ -73,29 +79,35 @@ export function AppSidebar({
                       onClearLiveOverride={() => {}}
                       scale={0.15}
                     />
+                    {slide.id === activeSlideId && (
+                      <div className="absolute inset-0 bg-primary/5 ring-2 ring-primary/20 rounded-lg" />
+                    )}
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-2 py-1.5 rounded-b-md">
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent px-3 py-2 rounded-b-lg">
                     <div className="flex items-center justify-between text-white">
-                      <span className="text-xs font-medium">{`Slide ${
-                        index + 1
-                      }`}</span>
+                      <span className="text-xs font-semibold drop-shadow-sm">
+                        {`Slide ${index + 1}`}
+                      </span>
                       {slide.title && (
-                        <span className="text-xs opacity-90 truncate ml-2">
+                        <span className="text-xs opacity-90 truncate ml-2 font-medium">
                           {slide.title}
                         </span>
                       )}
                     </div>
                   </div>
+                  {slide.id === activeSlideId && (
+                    <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary ring-2 ring-background" />
+                  )}
                 </div>
               ))}
             </div>
           </SidebarGroupContent>
-          <div className="px-2">
+          <div className="px-2 pt-2">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleAddSlide}
-              className="mt-2 w-full justify-start gap-2"
+              className="w-full justify-center gap-2 h-10 font-medium border-dashed hover:border-primary hover:bg-primary/5 hover:text-primary transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
               Add slide

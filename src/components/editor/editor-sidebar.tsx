@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, MessageSquare, FileText, Clock, User, PenTool } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,33 +14,10 @@ import {
   CustomSidebar,
   CustomSidebarContent,
   CustomSidebarHeader,
-  CustomSidebarMenuButton,
 } from "@/components/editor/custom-sidebar";
+import { SidebarTabs, TabId, tabs } from "@/components/editor/sidebar-tabs";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectActiveSlide, updateSlide } from "@/store/slices/slidesSlice";
-
-type TabId = "design" | "comment" | "content" | "history" | "people";
-
-const tabs: Array<{ id: TabId; icon: React.ReactNode; label: string }> = [
-  {
-    id: "design",
-    icon: (
-      <div className="relative">
-        <PenTool className="h-5 w-5" />
-        <X className="h-3 w-3 absolute -top-0.5 -right-0.5" strokeWidth={3} />
-      </div>
-    ),
-    label: "Design",
-  },
-  {
-    id: "comment",
-    icon: <MessageSquare className="h-5 w-5" />,
-    label: "Comment",
-  },
-  { id: "content", icon: <FileText className="h-5 w-5" />, label: "Content" },
-  { id: "history", icon: <Clock className="h-5 w-5" />, label: "History" },
-  { id: "people", icon: <User className="h-5 w-5" />, label: "People" },
-];
 
 const slideStyles = [
   {
@@ -123,47 +100,41 @@ export function EditorSidebar() {
   return (
     <CustomSidebar isOpen={isOpen && !!activeTab}>
       {/* Tab Icons - Always visible */}
-      <div className="flex flex-col items-center justify-center w-12 bg-background">
-        {tabs.map((tab) => (
-          <CustomSidebarMenuButton
-            key={tab.id}
-            onClick={() => handleTabClick(tab.id)}
-            isActive={activeTab === tab.id && isOpen}
-            tooltip={tab.label}
-          >
-            {tab.icon}
-          </CustomSidebarMenuButton>
-        ))}
-      </div>
+      <SidebarTabs
+        activeTab={activeTab && isOpen ? activeTab : null}
+        onTabClick={handleTabClick}
+      />
 
       {/* Content Panel - Only visible when open */}
       {isOpen && activeTab && (
         <CustomSidebarContent className="flex-1">
           <CustomSidebarHeader className="justify-between">
-            <h2 className="font-semibold text-sm">Slide</h2>
+            <h2 className="font-semibold text-base tracking-tight">
+              Slide Settings
+            </h2>
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6"
+              className="h-7 w-7 rounded-md hover:bg-accent/60"
               onClick={handleClose}
             >
               <X className="h-4 w-4" />
             </Button>
           </CustomSidebarHeader>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          <div className="flex-1 overflow-y-auto p-5 space-y-6">
             {activeTab === "design" && (
               <>
                 {/* Slide style */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
+                <div className="space-y-3">
+                  <label className="text-sm font-semibold text-foreground">
                     Slide style
                   </label>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="outline"
-                        className="w-full justify-between h-9 text-sm font-normal"
+                        className="w-full justify-between h-10 text-sm font-medium border-border/60 hover:border-primary/50 hover:bg-accent/50 transition-all"
                       >
                         <div className="flex items-center gap-2">
                           {slideStyles.find(
@@ -214,8 +185,8 @@ export function EditorSidebar() {
                 </div>
 
                 {/* Background color */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
+                <div className="space-y-3">
+                  <label className="text-sm font-semibold text-foreground">
                     Background color
                   </label>
                   <div className="flex items-center gap-3">
@@ -225,32 +196,36 @@ export function EditorSidebar() {
                       onChange={(e) =>
                         handleBackgroundColorChange(e.target.value)
                       }
-                      className="h-8 w-8 rounded-full border-2 border-border cursor-pointer"
+                      className="h-10 w-10 rounded-lg border-2 border-border/60 cursor-pointer hover:border-primary/50 hover:scale-105 transition-all"
                       style={{
                         backgroundColor:
                           activeSlide.backgroundColor || "#ffffff",
                       }}
                     />
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {activeSlide.backgroundColor || "#ffffff"}
+                    </span>
                   </div>
                 </div>
 
                 {/* Background image */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
+                <div className="space-y-3">
+                  <label className="text-sm font-semibold text-foreground">
                     Background image
                   </label>
                   {activeSlide.backgroundImage ? (
-                    <div className="space-y-2">
-                      <div className="relative w-full h-32 rounded-md overflow-hidden border border-border">
+                    <div className="space-y-3">
+                      <div className="relative w-full h-32 rounded-lg overflow-hidden border border-border/60 group">
                         <img
                           src={activeSlide.backgroundImage}
                           alt="Background"
                           className="w-full h-full object-cover"
                         />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                       </div>
                       <Button
                         variant="outline"
-                        className="w-full"
+                        className="w-full h-10 border-destructive/50 text-destructive hover:bg-destructive/10 hover:border-destructive transition-all"
                         onClick={() => {
                           dispatch(
                             updateSlide({
@@ -266,7 +241,7 @@ export function EditorSidebar() {
                   ) : (
                     <Button
                       variant="outline"
-                      className="w-full"
+                      className="w-full h-10 border-dashed hover:border-primary/50 hover:bg-primary/5 hover:text-primary transition-all"
                       onClick={() => {
                         // TODO: Implement image upload
                         const input = document.createElement("input");
@@ -298,9 +273,9 @@ export function EditorSidebar() {
                 </div>
 
                 {/* Slide number */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-foreground">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
+                    <label className="text-sm font-semibold text-foreground">
                       Slide number
                     </label>
                     <Switch
@@ -313,8 +288,18 @@ export function EditorSidebar() {
             )}
 
             {activeTab !== "design" && (
-              <div className="flex items-center justify-center h-64 text-muted-foreground text-sm">
-                {tabs.find((t) => t.id === activeTab)?.label} tab coming soon
+              <div className="flex flex-col items-center justify-center h-64 text-center p-6">
+                <div className="rounded-full bg-muted/50 p-4 mb-4">
+                  {tabs.find((t) => t.id === activeTab)?.icon && (
+                    <div className="text-muted-foreground">
+                      {tabs.find((t) => t.id === activeTab)?.icon}
+                    </div>
+                  )}
+                </div>
+                <p className="text-sm font-medium text-foreground mb-1">
+                  {tabs.find((t) => t.id === activeTab)?.label}
+                </p>
+                <p className="text-xs text-muted-foreground">Coming soon</p>
               </div>
             )}
           </div>

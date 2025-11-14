@@ -262,35 +262,41 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
       ?.label ?? "Shapes";
 
   return (
-    <header className="flex h-16 shrink-0 items-center px-4">
-      <SidebarTrigger className="-ml-1" />
+    <header className="flex h-14 shrink-0 items-center px-4 border-b border-border/50 bg-background/95 backdrop-blur-sm">
+      <SidebarTrigger className="-ml-1 h-8 w-8 hover:bg-accent/60 transition-colors" />
       <Separator
         orientation="vertical"
-        className="mr-2 data-[orientation=vertical]:h-4"
+        className="mr-3 data-[orientation=vertical]:h-5"
       />
       <div className="flex flex-1 items-center justify-center gap-2">
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-2 h-9 px-3 font-medium hover:bg-accent/60 transition-all"
+            >
               <Type className="h-4 w-4" />
               Text
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-64" align="center">
-            <DropdownMenuLabel>Text presets</DropdownMenuLabel>
+          <DropdownMenuContent className="w-64 rounded-lg border-border/50" align="center">
+            <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Text presets
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {textItems.map((item) => (
               <DropdownMenuItem
                 key={item.title}
-                className="flex flex-col items-start gap-1 px-3 py-2"
+                className="flex flex-col items-start gap-1 px-3 py-2.5 hover:bg-accent/60 cursor-pointer transition-colors"
                 onSelect={() => {
                   onAddText(item);
                 }}
               >
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-sm font-semibold text-foreground">
                   {item.title}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground leading-relaxed">
                   {item.description}
                 </span>
               </DropdownMenuItem>
@@ -306,26 +312,30 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           }}
         >
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-2 h-9 px-3 font-medium hover:bg-accent/60 transition-all"
+            >
               <Shapes className="h-4 w-4" />
               Shapes
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[460px] rounded-lg p-0"
+            className="w-[460px] rounded-lg p-0 border-border/50"
             align="center"
           >
             <div className="flex">
-              <div className="flex w-40 flex-col bg-muted/40 p-2">
+              <div className="flex w-40 flex-col bg-gradient-to-b from-muted/50 to-muted/30 p-2 border-r border-border/50">
                 {shapeCategories.map((category) => (
                   <button
                     key={category.id}
                     type="button"
                     className={cn(
-                      "rounded-md px-3 py-2 text-left text-sm font-medium transition",
+                      "rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all duration-200",
                       activeShapeCategory === category.id
-                        ? "bg-white text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-background text-foreground border border-border/50"
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/50"
                     )}
                     onClick={() => setActiveShapeCategory(category.id)}
                   >
@@ -333,7 +343,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                   </button>
                 ))}
               </div>
-              <div className="flex flex-1 flex-col gap-3 p-4">
+              <div className="flex flex-1 flex-col gap-4 p-4 bg-background">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {activeCategoryLabel}
@@ -347,13 +357,13 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     <DropdownMenuItem asChild key={item.id}>
                       <button
                         type="button"
-                        className="flex flex-col items-center gap-2 rounded-md border border-transparent bg-white p-2 text-center transition hover:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                        className="flex flex-col items-center gap-2 rounded-lg border border-border/50 bg-background p-3 text-center transition-all duration-200 hover:border-primary/50 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
                         onClick={() => {
                           onAddShape?.(item);
                         }}
                       >
                         {item.preview}
-                        <span className="text-xs font-medium text-foreground">
+                        <span className="text-xs font-semibold text-foreground">
                           {item.title}
                         </span>
                       </button>
