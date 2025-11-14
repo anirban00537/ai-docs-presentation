@@ -2,16 +2,13 @@
 
 import React from "react";
 import Slide from "@/components/editor/slide";
-import { EditorHeader } from "@/components/editor/editor-header";
 import { useAppSelector } from "@/store/hooks";
 import { selectActiveSlide } from "@/store/slices/slidesSlice";
-import { useElementCreation } from "@/hooks/use-element-creation";
 import { useElementInteractions } from "@/hooks/use-element-interactions";
 
 const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
 
-  const { handleAddText, handleAddShape } = useElementCreation();
   const {
     selectedId,
     editingId,
@@ -31,7 +28,6 @@ const Editor = () => {
 
   return (
     <div className="flex h-full flex-1 flex-col">
-      <EditorHeader onAddText={handleAddText} onAddShape={handleAddShape} />
       <div className="flex flex-1 flex-col gap-4 overflow-hidden">
         <Slide
           slide={activeSlide}
