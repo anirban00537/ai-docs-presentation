@@ -44,7 +44,7 @@ export function CustomSidebarContent({
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden bg-background/50 backdrop-blur-sm",
+        "flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden bg-background/50 backdrop-blur-sm border-l border-border/40",
         className
       )}
     >
@@ -127,11 +127,11 @@ export function CustomSidebarMenuButton({
   return (
     <button
       className={cn(
-        "relative w-10 h-10 flex items-center justify-center transition-all duration-200 rounded-lg",
+        "relative w-9 h-9 flex items-center justify-center transition-all duration-200 rounded-lg",
         "group",
         isActive
-          ? "bg-primary/10 text-primary"
-          : "text-muted-foreground hover:text-foreground hover:bg-accent/40",
+          ? "bg-primary/10 text-primary shadow-sm"
+          : "text-muted-foreground hover:text-foreground hover:bg-accent/30",
         className
       )}
       title={tooltip}
@@ -139,16 +139,8 @@ export function CustomSidebarMenuButton({
     >
       <div
         className={cn(
-          "absolute right-0 top-1/2 -translate-y-1/2 h-6 w-0.5 rounded-l-full transition-all duration-200",
-          isActive
-            ? "bg-primary"
-            : "bg-transparent group-hover:bg-primary/30"
-        )}
-      />
-      <div
-        className={cn(
           "transition-transform duration-200",
-          isActive ? "scale-110" : "group-hover:scale-105"
+          isActive ? "scale-105" : "group-hover:scale-105"
         )}
       >
         {children}

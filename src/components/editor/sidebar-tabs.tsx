@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { MessageSquare, FileText, Clock, User, PenTool, X } from "lucide-react";
+import { MessageSquare, FileText, Clock, User, PenTool } from "lucide-react";
 import { CustomSidebarMenuButton } from "@/components/editor/custom-sidebar";
 
 export type TabId = "design" | "comment" | "content" | "history" | "people";
@@ -9,12 +9,7 @@ export type TabId = "design" | "comment" | "content" | "history" | "people";
 export const tabs: Array<{ id: TabId; icon: React.ReactNode; label: string }> = [
   {
     id: "design",
-    icon: (
-      <div className="relative">
-        <PenTool className="h-5 w-5" />
-        <X className="h-3 w-3 absolute -top-0.5 -right-0.5" strokeWidth={3} />
-      </div>
-    ),
+    icon: <PenTool className="h-5 w-5" />,
     label: "Design",
   },
   {
@@ -34,8 +29,8 @@ interface SidebarTabsProps {
 
 export function SidebarTabs({ activeTab, onTabClick }: SidebarTabsProps) {
   return (
-    <div className="flex flex-col items-center justify-center shrink-0 p-2">
-      <div className="flex flex-col items-center rounded-2xl border-2 border-border/60 bg-background p-1.5 gap-0.5">
+    <div className="flex flex-col items-center justify-center shrink-0 p-3">
+      <div className="flex flex-col items-center rounded-xl border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm p-1 gap-0.5">
         {tabs.map((tab, index) => (
           <React.Fragment key={tab.id}>
             <CustomSidebarMenuButton
@@ -46,7 +41,7 @@ export function SidebarTabs({ activeTab, onTabClick }: SidebarTabsProps) {
               {tab.icon}
             </CustomSidebarMenuButton>
             {index < tabs.length - 1 && (
-              <div className="w-8 h-px bg-border/30" />
+              <div className="w-7 h-px bg-border/20" />
             )}
           </React.Fragment>
         ))}
