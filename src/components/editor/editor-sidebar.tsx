@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   Plus,
   X,
@@ -16,7 +17,6 @@ import {
   ArrowUpLeft,
 } from "lucide-react";
 import { HexColorPicker } from "react-colorful";
-import { Popover, Transition } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -33,6 +33,55 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectActiveSlide, updateSlide } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 
+// Portal-based Color Picker Component
+function ColorPickerPortal({
+  isOpen,
+  color,
+  onChange,
+  pickerId,
+  refsMap,
+}: {
+  isOpen: boolean;
+  color: string;
+  onChange: (color: string) => void;
+  pickerId: string;
+  refsMap: React.MutableRefObject<Map<string, HTMLButtonElement>>;
+}) {
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  useLayoutEffect(() => {
+    if (isOpen) {
+      const buttonElement = refsMap.current.get(pickerId);
+      if (buttonElement) {
+        const rect = buttonElement.getBoundingClientRect();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setPosition({
+          top: rect.bottom + window.scrollY + 8,
+          left: rect.left + window.scrollX,
+        });
+      }
+    }
+    // Position calculation is intentional synchronous update for portal rendering
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, pickerId]);
+
+  if (!isOpen || typeof window === "undefined") return null;
+
+  return createPortal(
+    <div
+      data-color-picker
+      className="fixed z-[9999]"
+      style={{
+        top: `${position.top}px`,
+        left: `${position.left}px`,
+      }}
+    >
+      <HexColorPicker color={color} onChange={onChange} />
+    </div>,
+    document.body
+  );
+}
+
 export function EditorSidebar() {
   const [activeTab, setActiveTab] = useState<TabId | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -40,6 +89,10 @@ export function EditorSidebar() {
     "solid"
   );
   const [isBackgroundOpen, setIsBackgroundOpen] = useState(true);
+  const [openColorPicker, setOpenColorPicker] = useState<string | null>(null);
+  const colorPickerRefs = React.useRef<Map<string, HTMLButtonElement>>(
+    new Map()
+  );
   const dispatch = useAppDispatch();
   const activeSlide = useAppSelector(selectActiveSlide);
 
@@ -49,6 +102,25 @@ export function EditorSidebar() {
       setBackgroundType(activeSlide.backgroundType);
     }
   }, [activeSlide?.backgroundType]);
+
+  // Close color picker when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Element;
+      if (
+        openColorPicker &&
+        !target.closest("[data-color-picker]") &&
+        !target.closest("[data-color-picker-button]")
+      ) {
+        setOpenColorPicker(null);
+      }
+    };
+    if (openColorPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [openColorPicker]);
 
   if (!activeSlide) return null;
 
@@ -186,9 +258,9 @@ export function EditorSidebar() {
       {/* Content Panel - Only visible when open */}
       {isOpen && activeTab && (
         <CustomSidebarContent className="flex-1">
-          <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="flex-1 overflow-y-auto">
             {activeTab === "design" && (
-              <div className="p-4 space-y-6 max-w-full">
+              <div className="p-4 space-y-6 max-w-full overflow-visible">
                 {/* Background - Collapsible */}
                 <Collapsible
                   open={isBackgroundOpen}
@@ -251,7 +323,7 @@ export function EditorSidebar() {
                           <label className="text-xs font-medium text-muted-foreground mb-3 block">
                             Style colors
                           </label>
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap overflow-visible">
                             {[
                               "#ffffff",
                               "#9ca3af",
@@ -259,132 +331,161 @@ export function EditorSidebar() {
                               "#4b5563",
                               "#000000",
                               "#f9fafb",
-                            ].map((color) => (
-                              <div key={color} className="relative">
-                                <Popover>
-                                  {() => (
-                                    <>
-                                      <Popover.Button
-                                        type="button"
-                                        className={cn(
-                                          "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
-                                          activeSlide.backgroundColor === color
-                                            ? "border-primary ring-2 ring-primary/20"
-                                            : "border-border/60 hover:border-primary/50"
-                                        )}
-                                        style={{ backgroundColor: color }}
-                                      />
-                                      <Transition
-                                        as={React.Fragment}
-                                        enter="transition ease-out duration-200"
-                                        enterFrom="opacity-0 translate-y-1"
-                                        enterTo="opacity-100 translate-y-0"
-                                        leave="transition ease-in duration-150"
-                                        leaveFrom="opacity-100 translate-y-0"
-                                        leaveTo="opacity-0 translate-y-1"
-                                      >
-                                        <Popover.Panel className="absolute top-10 left-0 z-50">
-                                          <HexColorPicker
-                                            color={color}
-                                            onChange={(newColor) => {
-                                              handleBackgroundColorChange(
-                                                newColor
-                                              );
-                                            }}
-                                          />
-                                        </Popover.Panel>
-                                      </Transition>
-                                    </>
-                                  )}
-                                </Popover>
-                              </div>
-                            ))}
+                            ].map((color) => {
+                              const pickerId = `style-color-${color}`;
+                              return (
+                                <div
+                                  key={color}
+                                  className="relative overflow-visible"
+                                >
+                                  <button
+                                    ref={(el) => {
+                                      if (el) {
+                                        colorPickerRefs.current.set(
+                                          pickerId,
+                                          el
+                                        );
+                                      } else {
+                                        colorPickerRefs.current.delete(
+                                          pickerId
+                                        );
+                                      }
+                                    }}
+                                    type="button"
+                                    className={cn(
+                                      "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
+                                      activeSlide.backgroundColor === color
+                                        ? "border-primary ring-2 ring-primary/20"
+                                        : "border-border/60 hover:border-primary/50"
+                                    )}
+                                    style={{ backgroundColor: color }}
+                                    onClick={() =>
+                                      setOpenColorPicker(
+                                        openColorPicker === pickerId
+                                          ? null
+                                          : pickerId
+                                      )
+                                    }
+                                    data-color-picker-button
+                                  />
+                                  <ColorPickerPortal
+                                    isOpen={openColorPicker === pickerId}
+                                    color={color}
+                                    onChange={(newColor) => {
+                                      handleBackgroundColorChange(newColor);
+                                      setOpenColorPicker(null);
+                                    }}
+                                    pickerId={pickerId}
+                                    refsMap={colorPickerRefs}
+                                  />
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                         <div>
                           <label className="text-xs font-medium text-muted-foreground mb-3 block">
                             All colors
                           </label>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <div className="relative">
-                              <Popover>
-                                {() => (
+                          <div className="flex items-center gap-2 flex-wrap overflow-visible">
+                            <div className="relative overflow-visible">
+                              {(() => {
+                                const pickerId = "all-colors-plus";
+                                return (
                                   <>
-                                    <Popover.Button
+                                    <button
+                                      ref={(el) => {
+                                        if (el) {
+                                          colorPickerRefs.current.set(
+                                            pickerId,
+                                            el
+                                          );
+                                        } else {
+                                          colorPickerRefs.current.delete(
+                                            pickerId
+                                          );
+                                        }
+                                      }}
                                       type="button"
                                       className="h-8 w-8 rounded-full border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
+                                      onClick={() =>
+                                        setOpenColorPicker(
+                                          openColorPicker === pickerId
+                                            ? null
+                                            : pickerId
+                                        )
+                                      }
+                                      data-color-picker-button
                                     >
                                       <Plus className="h-4 w-4 text-muted-foreground" />
-                                    </Popover.Button>
-                                    <Transition
-                                      as={React.Fragment}
-                                      enter="transition ease-out duration-200"
-                                      enterFrom="opacity-0 translate-y-1"
-                                      enterTo="opacity-100 translate-y-0"
-                                      leave="transition ease-in duration-150"
-                                      leaveFrom="opacity-100 translate-y-0"
-                                      leaveTo="opacity-0 translate-y-1"
-                                    >
-                                      <Popover.Panel className="absolute top-10 left-0 z-50">
-                                        <HexColorPicker
-                                          color={
-                                            activeSlide.backgroundColor ||
-                                            "#ffffff"
-                                          }
-                                          onChange={(newColor) => {
-                                            handleBackgroundColorChange(
-                                              newColor
-                                            );
-                                          }}
-                                        />
-                                      </Popover.Panel>
-                                    </Transition>
+                                    </button>
+                                    <ColorPickerPortal
+                                      isOpen={openColorPicker === pickerId}
+                                      color={
+                                        activeSlide.backgroundColor || "#ffffff"
+                                      }
+                                      onChange={(newColor) => {
+                                        handleBackgroundColorChange(newColor);
+                                        setOpenColorPicker(null);
+                                      }}
+                                      pickerId={pickerId}
+                                      refsMap={colorPickerRefs}
+                                    />
                                   </>
-                                )}
-                              </Popover>
+                                );
+                              })()}
                             </div>
                             {["#9ca3af", "#ffffff", "#3b82f6", "#ec4899"].map(
-                              (color) => (
-                                <div key={color} className="relative">
-                                  <Popover>
-                                    {() => (
-                                      <>
-                                        <Popover.Button
-                                          type="button"
-                                          className={cn(
-                                            "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
-                                            activeSlide.backgroundColor ===
-                                              color
-                                              ? "border-primary ring-2 ring-primary/20"
-                                              : "border-border/60 hover:border-primary/50"
-                                          )}
-                                          style={{ backgroundColor: color }}
-                                        />
-                                        <Transition
-                                          as={React.Fragment}
-                                          enter="transition ease-out duration-200"
-                                          enterFrom="opacity-0 translate-y-1"
-                                          enterTo="opacity-100 translate-y-0"
-                                          leave="transition ease-in duration-150"
-                                          leaveFrom="opacity-100 translate-y-0"
-                                          leaveTo="opacity-0 translate-y-1"
-                                        >
-                                          <Popover.Panel className="absolute top-10 left-0 z-50">
-                                            <HexColorPicker
-                                              color={color}
-                                              onChange={(newColor) => {
-                                                handleBackgroundColorChange(
-                                                  newColor
-                                                );
-                                              }}
-                                            />
-                                          </Popover.Panel>
-                                        </Transition>
-                                      </>
-                                    )}
-                                  </Popover>
-                                </div>
-                              )
+                              (color) => {
+                                const pickerId = `all-color-${color}`;
+                                return (
+                                  <div
+                                    key={color}
+                                    className="relative overflow-visible"
+                                  >
+                                    <button
+                                      ref={(el) => {
+                                        if (el) {
+                                          colorPickerRefs.current.set(
+                                            pickerId,
+                                            el
+                                          );
+                                        } else {
+                                          colorPickerRefs.current.delete(
+                                            pickerId
+                                          );
+                                        }
+                                      }}
+                                      type="button"
+                                      className={cn(
+                                        "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
+                                        activeSlide.backgroundColor === color
+                                          ? "border-primary ring-2 ring-primary/20"
+                                          : "border-border/60 hover:border-primary/50"
+                                      )}
+                                      style={{ backgroundColor: color }}
+                                      onClick={() =>
+                                        setOpenColorPicker(
+                                          openColorPicker === pickerId
+                                            ? null
+                                            : pickerId
+                                        )
+                                      }
+                                      data-color-picker-button
+                                    />
+                                    <ColorPickerPortal
+                                      isOpen={openColorPicker === pickerId}
+                                      color={color}
+                                      onChange={(newColor) => {
+                                        handleBackgroundColorChange(newColor);
+                                        setOpenColorPicker(null);
+                                      }}
+                                      pickerId={pickerId}
+                                      refsMap={colorPickerRefs}
+                                    />
+                                  </div>
+                                );
+                              }
                             )}
                           </div>
                         </div>
@@ -398,7 +499,7 @@ export function EditorSidebar() {
                           <label className="text-xs font-medium text-muted-foreground mb-3 block">
                             Gradient Colors
                           </label>
-                          <div className="grid grid-cols-6 gap-2">
+                          <div className="grid grid-cols-6 gap-2 overflow-visible">
                             <button
                               className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
                               onClick={handleAddGradientColor}
@@ -413,58 +514,69 @@ export function EditorSidebar() {
                                 "#ffffff",
                                 "#f0f0f0",
                               ]
-                            ).map((color, index) => (
-                              <div key={index} className="relative">
-                                <Popover>
-                                  {() => (
-                                    <>
-                                      <Popover.Button className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110">
-                                        <div
-                                          className="w-full h-full rounded-full"
-                                          style={{ backgroundColor: color }}
-                                        />
-                                        {(activeSlide.backgroundGradient || [])
-                                          .length > 2 && (
-                                          <span
-                                            className="absolute -top-1 -right-1 bg-destructive rounded-full p-0.5 cursor-pointer hover:bg-destructive/80 transition-colors"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              handleRemoveGradientColor(index);
-                                            }}
-                                          >
-                                            <X
-                                              className="text-white"
-                                              size={12}
-                                            />
-                                          </span>
-                                        )}
-                                      </Popover.Button>
-                                      <Transition
-                                        as={React.Fragment}
-                                        enter="transition ease-out duration-200"
-                                        enterFrom="opacity-0 translate-y-1"
-                                        enterTo="opacity-100 translate-y-0"
-                                        leave="transition ease-in duration-150"
-                                        leaveFrom="opacity-100 translate-y-0"
-                                        leaveTo="opacity-0 translate-y-1"
+                            ).map((color, index) => {
+                              const pickerId = `gradient-color-${index}`;
+                              return (
+                                <div
+                                  key={index}
+                                  className="relative overflow-visible"
+                                >
+                                  <button
+                                    ref={(el) => {
+                                      if (el) {
+                                        colorPickerRefs.current.set(
+                                          pickerId,
+                                          el
+                                        );
+                                      } else {
+                                        colorPickerRefs.current.delete(
+                                          pickerId
+                                        );
+                                      }
+                                    }}
+                                    className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110"
+                                    onClick={() =>
+                                      setOpenColorPicker(
+                                        openColorPicker === pickerId
+                                          ? null
+                                          : pickerId
+                                      )
+                                    }
+                                    data-color-picker-button
+                                  >
+                                    <div
+                                      className="w-full h-full rounded-full"
+                                      style={{ backgroundColor: color }}
+                                    />
+                                    {(activeSlide.backgroundGradient || [])
+                                      .length > 2 && (
+                                      <span
+                                        className="absolute -top-1 -right-1 bg-destructive rounded-full p-0.5 cursor-pointer hover:bg-destructive/80 transition-colors z-10"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleRemoveGradientColor(index);
+                                        }}
                                       >
-                                        <Popover.Panel className="absolute top-12 left-0 z-50">
-                                          <HexColorPicker
-                                            color={color}
-                                            onChange={(newColor) => {
-                                              handleGradientColorChange(
-                                                index,
-                                                newColor
-                                              );
-                                            }}
-                                          />
-                                        </Popover.Panel>
-                                      </Transition>
-                                    </>
-                                  )}
-                                </Popover>
-                              </div>
-                            ))}
+                                        <X className="text-white" size={12} />
+                                      </span>
+                                    )}
+                                  </button>
+                                  <ColorPickerPortal
+                                    isOpen={openColorPicker === pickerId}
+                                    color={color}
+                                    onChange={(newColor) => {
+                                      handleGradientColorChange(
+                                        index,
+                                        newColor
+                                      );
+                                      setOpenColorPicker(null);
+                                    }}
+                                    pickerId={pickerId}
+                                    refsMap={colorPickerRefs}
+                                  />
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
 

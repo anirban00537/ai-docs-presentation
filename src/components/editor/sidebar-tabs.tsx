@@ -29,7 +29,7 @@ interface SidebarTabsProps {
 
 export function SidebarTabs({ activeTab, onTabClick }: SidebarTabsProps) {
   return (
-    <div className="flex flex-col items-center justify-center shrink-0 p-3">
+    <div className="flex flex-col items-center justify-center shrink-0 p-3 relative z-0">
       <div className="flex flex-col items-center rounded-xl border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm p-1 gap-0.5">
         {tabs.map((tab, index) => (
           <React.Fragment key={tab.id}>
