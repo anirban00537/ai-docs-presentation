@@ -1,6 +1,6 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/editor-left-sidebar";
 import Editor from "@/components/editor/editor";
 import { EditorSidebar } from "@/components/editor/editor-sidebar";
 import { EditorHeader } from "@/components/editor/editor-header";
