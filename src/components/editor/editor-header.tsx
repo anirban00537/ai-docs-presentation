@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Shapes, Type } from "lucide-react";
+import { Shapes, Type, Share2, Presentation } from "lucide-react";
 
 export type TextPreset = {
   id: string;
@@ -271,16 +271,19 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
       <div className="flex flex-1 items-center justify-center gap-2">
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="gap-2 h-9 px-3 font-medium hover:bg-accent/60 transition-all"
             >
               <Type className="h-4 w-4" />
               Text
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-64 rounded-lg border-border/50" align="center">
+          <DropdownMenuContent
+            className="w-64 rounded-lg border-border/50"
+            align="center"
+          >
             <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Text presets
             </DropdownMenuLabel>
@@ -312,9 +315,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           }}
         >
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="gap-2 h-9 px-3 font-medium hover:bg-accent/60 transition-all"
             >
               <Shapes className="h-4 w-4" />
@@ -375,7 +378,24 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="w-4" />
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 h-9 px-3 font-medium hover:bg-accent/60 transition-all"
+        >
+          <Share2 className="h-4 w-4" />
+          Share
+        </Button>
+        <Button
+          variant="default"
+          size="sm"
+          className="gap-2 h-9 px-3 font-medium hover:bg-primary/90 rounded-full transition-all"
+        >
+          <Presentation className="h-4 w-4" />
+          Present
+        </Button>
+      </div>
     </header>
   );
 };

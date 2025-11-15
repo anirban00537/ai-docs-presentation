@@ -74,70 +74,58 @@ export function AppSidebar({
           </div>
 
           <SidebarGroupContent>
-            <div className="space-y-3 px-1">
+            <div className="space-y-2">
               {slides.map((slide, index) => (
-                <div
-                  key={slide.id}
-                  className={cn(
-                    "group relative cursor-pointer rounded-2xl border-2 transition-all duration-300 ease-out overflow-hidden",
-                    "hover:scale-[1.02] hover:-translate-y-0.5",
-                    slide.id === activeSlideId
-                      ? "border-primary/60 ring-2 ring-primary/20 bg-primary/5"
-                      : "border-border/60 hover:border-primary/40 hover:bg-accent/30"
-                  )}
-                  onClick={() => handleSelectSlide(slide.id)}
-                >
-                  <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-gradient-to-br from-muted/60 via-muted/40 to-muted/30 pointer-events-none">
-                    <Slide
-                      slide={slide}
-                      selectedId={null}
-                      editingId={null}
-                      liveOverrides={{}}
-                      onSelectElement={() => {}}
-                      onSetLiveOverride={() => {}}
-                      onClearLiveOverride={() => {}}
-                      scale={0.15}
-                    />
-                    {slide.id === activeSlideId && (
-                      <div className="absolute inset-0 bg-primary/10 ring-1 ring-primary/30 rounded-xl" />
+                <div key={slide.id} className="space-y-1">
+                  <div
+                    className={cn(
+                      "group relative cursor-pointer rounded-lg border-2 transition-all duration-200 ease-out overflow-hidden",
+                      "hover:scale-[1.01] hover:shadow-md",
+                      slide.id === activeSlideId
+                        ? "border-primary/60 ring-2 ring-primary/20 bg-primary/5 shadow-sm"
+                        : "border-border/40 hover:border-primary/30 hover:bg-accent/20"
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                  </div>
-                  
-                  {/* Slide number badge */}
-                  <div className={cn(
-                    "absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold transition-all duration-200",
-                    slide.id === activeSlideId
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-background/90 text-foreground/80 group-hover:bg-primary group-hover:text-primary-foreground"
-                  )}>
-                    {index + 1}
-                  </div>
-
-                  {/* Bottom info overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 rounded-b-2xl">
-                    <div className="flex items-center justify-between">
-                      <span className={cn(
-                        "text-xs font-bold",
-                        slide.id === activeSlideId
-                          ? "text-primary"
-                          : "text-foreground/70"
-                      )}>
-                        {slide.title || `Slide ${index + 1}`}
-                      </span>
+                    onClick={() => handleSelectSlide(slide.id)}
+                  >
+                    <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-gradient-to-br from-muted/60 via-muted/40 to-muted/30 pointer-events-none">
+                      <Slide
+                        slide={slide}
+                        selectedId={null}
+                        editingId={null}
+                        liveOverrides={{}}
+                        onSelectElement={() => {}}
+                        onSetLiveOverride={() => {}}
+                        onClearLiveOverride={() => {}}
+                        scale={0.15}
+                      />
                       {slide.id === activeSlideId && (
-                        <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                        <div className="absolute inset-0 bg-primary/10 ring-1 ring-primary/30 rounded-lg" />
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg" />
+                    </div>
+                    
+                    {/* Slide number badge */}
+                    <div className={cn(
+                      "absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold transition-all duration-200",
+                      slide.id === activeSlideId
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-background/90 text-foreground/80 group-hover:bg-primary group-hover:text-primary-foreground"
+                    )}>
+                      {index + 1}
                     </div>
                   </div>
 
-                  {/* Active indicator */}
-                  {slide.id === activeSlideId && (
-                    <>
-                      <div className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-primary ring-2 ring-background" />
-                      <div className="absolute top-0 right-0 h-2 w-2 rounded-full bg-primary/50 animate-ping" />
-                    </>
-                  )}
+                  {/* Slide name below the box */}
+                  <div className="ml-1">
+                    <span className={cn(
+                      "text-[10px] font-medium block text-left",
+                      slide.id === activeSlideId
+                        ? "text-primary"
+                        : "text-foreground/70"
+                    )}>
+                      {slide.title || `Slide ${index + 1}`}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
