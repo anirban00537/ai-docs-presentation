@@ -1,189 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
-import {
-  Plus,
-  X,
-  ChevronDown,
-  ChevronUp,
-  ArrowUp,
-  ArrowUpRight,
-  ArrowRight,
-  ArrowDownRight,
-  ArrowDown,
-  ArrowDownLeft,
-  ArrowLeft,
-  ArrowUpLeft,
-} from "lucide-react";
-import { HexColorPicker } from "react-colorful";
-import { Popover } from "@headlessui/react";
-import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   CustomSidebar,
   CustomSidebarContent,
 } from "@/components/editor/custom-sidebar";
 import { SidebarTabs, TabId, tabs } from "@/components/editor/sidebar-tabs";
+import { BackgroundSection } from "@/components/editor/background/background-section";
+import { BackgroundImageSection } from "@/components/editor/background/background-image-section";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectActiveSlide, updateSlide } from "@/store/slices/slidesSlice";
-import { cn } from "@/lib/utils";
-
-// Portal wrapper for Popover Panel
-function PopoverPanelPortal({
-  children,
-  buttonRef,
-}: {
-  children: React.ReactNode;
-  buttonRef: React.RefObject<HTMLButtonElement | null>;
-}) {
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-
-  useEffect(() => {
-    const updatePosition = () => {
-      if (buttonRef.current) {
-        const rect = buttonRef.current.getBoundingClientRect();
-        setPosition({
-          top: rect.bottom + window.scrollY + 8,
-          left: rect.left + window.scrollX,
-        });
-      }
-    };
-
-    updatePosition();
-    window.addEventListener("scroll", updatePosition, true);
-    window.addEventListener("resize", updatePosition);
-
-    return () => {
-      window.removeEventListener("scroll", updatePosition, true);
-      window.removeEventListener("resize", updatePosition);
-    };
-  }, [buttonRef]);
-
-  if (typeof window === "undefined") return null;
-
-  return createPortal(
-    <div
-      className="fixed z-[9999]"
-      style={{
-        top: `${position.top}px`,
-        left: `${position.left}px`,
-      }}
-    >
-      {children}
-    </div>,
-    document.body
-  );
-}
-
-// Solid Color Picker Component
-function SolidColorPicker({
-  color,
-  onChange,
-}: {
-  color: string;
-  onChange: (color: string) => void;
-}) {
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
-  return (
-    <div className="relative overflow-visible">
-      <Popover>
-        {({ open }) => (
-          <>
-            <Popover.Button
-              ref={buttonRef}
-              className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110"
-              style={{ backgroundColor: color }}
-            >
-              <div
-                className="w-full h-full rounded-full"
-                style={{ backgroundColor: color }}
-              />
-            </Popover.Button>
-            {open && (
-              <PopoverPanelPortal buttonRef={buttonRef}>
-                <HexColorPicker color={color} onChange={onChange} />
-              </PopoverPanelPortal>
-            )}
-          </>
-        )}
-      </Popover>
-    </div>
-  );
-}
-
-// Gradient Color Picker Component
-function GradientColorPicker({
-  color,
-  onChange,
-  onRemove,
-  showRemove,
-}: {
-  color: string;
-  onChange: (color: string) => void;
-  onRemove: () => void;
-  showRemove: boolean;
-}) {
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
-  return (
-    <div className="relative overflow-visible">
-      <Popover>
-        {({ open }) => (
-          <>
-            <Popover.Button
-              ref={buttonRef}
-              className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110"
-              style={{ backgroundColor: color }}
-            >
-              <div
-                className="w-full h-full rounded-full"
-                style={{ backgroundColor: color }}
-              />
-              {showRemove && (
-                <span
-                  className="absolute -top-1 -right-1 bg-destructive rounded-full p-0.5 cursor-pointer hover:bg-destructive/80 transition-colors z-10"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemove();
-                  }}
-                >
-                  <X className="text-white" size={12} />
-                </span>
-              )}
-            </Popover.Button>
-            {open && (
-              <PopoverPanelPortal buttonRef={buttonRef}>
-                <HexColorPicker color={color} onChange={onChange} />
-              </PopoverPanelPortal>
-            )}
-          </>
-        )}
-      </Popover>
-    </div>
-  );
-}
 
 export function EditorSidebar() {
   const [activeTab, setActiveTab] = useState<TabId | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [backgroundType, setBackgroundType] = useState<"solid" | "gradient">(
-    "solid"
-  );
-  const [isBackgroundOpen, setIsBackgroundOpen] = useState(true);
   const dispatch = useAppDispatch();
   const activeSlide = useAppSelector(selectActiveSlide);
-
-  // Initialize background type from slide
-  React.useEffect(() => {
-    if (activeSlide?.backgroundType) {
-      setBackgroundType(activeSlide.backgroundType);
-    }
-  }, [activeSlide?.backgroundType]);
 
   if (!activeSlide) return null;
 
@@ -210,7 +43,6 @@ export function EditorSidebar() {
   };
 
   const handleBackgroundTypeChange = (type: "solid" | "gradient") => {
-    setBackgroundType(type);
     dispatch(
       updateSlide({
         slideId: activeSlide.id,
@@ -284,28 +116,23 @@ export function EditorSidebar() {
     );
   };
 
-  const gradientDirections = [
-    { name: "to top", icon: <ArrowUp size={18} className="text-white" /> },
-    {
-      name: "to top right",
-      icon: <ArrowUpRight size={18} className="text-white" />,
-    },
-    { name: "to right", icon: <ArrowRight size={18} className="text-white" /> },
-    {
-      name: "to bottom right",
-      icon: <ArrowDownRight size={18} className="text-white" />,
-    },
-    { name: "to bottom", icon: <ArrowDown size={18} className="text-white" /> },
-    {
-      name: "to bottom left",
-      icon: <ArrowDownLeft size={18} className="text-white" />,
-    },
-    { name: "to left", icon: <ArrowLeft size={18} className="text-white" /> },
-    {
-      name: "to top left",
-      icon: <ArrowUpLeft size={18} className="text-white" />,
-    },
-  ];
+  const handleBackgroundImageUpload = (imageData: string) => {
+    dispatch(
+      updateSlide({
+        slideId: activeSlide.id,
+        updates: { backgroundImage: imageData },
+      })
+    );
+  };
+
+  const handleBackgroundImageRemove = () => {
+    dispatch(
+      updateSlide({
+        slideId: activeSlide.id,
+        updates: { backgroundImage: undefined },
+      })
+    );
+  };
 
   const handleSlideNumberToggle = (checked: boolean) => {
     dispatch(
@@ -324,233 +151,26 @@ export function EditorSidebar() {
           <div className="flex-1 overflow-y-auto">
             {activeTab === "design" && (
               <div className="p-4 space-y-6 max-w-full overflow-visible">
-                {/* Background - Collapsible */}
-                <Collapsible
-                  open={isBackgroundOpen}
-                  onOpenChange={setIsBackgroundOpen}
-                >
-                  <CollapsibleTrigger className="w-full">
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <div className="h-1 w-1 rounded-full bg-primary"></div>
-                        <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          Background
-                        </label>
-                      </div>
-                      {isBackgroundOpen ? (
-                        <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </div>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-4 space-y-5">
-                    {/* Tabs for Solid/Gradient */}
-                    <div className="flex gap-6 border-b border-border/50">
-                      <button
-                        type="button"
-                        onClick={() => handleBackgroundTypeChange("solid")}
-                        className={cn(
-                          "relative pb-2 px-1 text-sm font-medium transition-colors",
-                          backgroundType === "solid"
-                            ? "text-primary"
-                            : "text-muted-foreground hover:text-foreground"
-                        )}
-                      >
-                        Solid
-                        {backgroundType === "solid" && (
-                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                        )}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleBackgroundTypeChange("gradient")}
-                        className={cn(
-                          "relative pb-2 px-1 text-sm font-medium transition-colors",
-                          backgroundType === "gradient"
-                            ? "text-primary"
-                            : "text-muted-foreground hover:text-foreground"
-                        )}
-                      >
-                        Gradient
-                        {backgroundType === "gradient" && (
-                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                        )}
-                      </button>
-                    </div>
+                <BackgroundSection
+                  backgroundColor={activeSlide.backgroundColor}
+                  backgroundType={activeSlide.backgroundType}
+                  backgroundGradient={activeSlide.backgroundGradient}
+                  backgroundGradientDirection={
+                    activeSlide.backgroundGradientDirection
+                  }
+                  onBackgroundColorChange={handleBackgroundColorChange}
+                  onBackgroundTypeChange={handleBackgroundTypeChange}
+                  onGradientColorChange={handleGradientColorChange}
+                  onAddGradientColor={handleAddGradientColor}
+                  onRemoveGradientColor={handleRemoveGradientColor}
+                  onGradientDirectionChange={handleGradientDirectionChange}
+                />
 
-                    {/* Solid Color Tab */}
-                    {backgroundType === "solid" && (
-                      <div className="space-y-5">
-                        <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-3 block">
-                            Color
-                          </label>
-                          <div className="grid grid-cols-6 gap-2 overflow-visible">
-                            <SolidColorPicker
-                              color={activeSlide.backgroundColor || "#ffffff"}
-                              onChange={handleBackgroundColorChange}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Gradient Color Tab */}
-                    {backgroundType === "gradient" && (
-                      <div className="space-y-5">
-                        <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-3 block">
-                            Gradient Colors
-                          </label>
-                          <div className="grid grid-cols-6 gap-2 overflow-visible">
-                            <button
-                              className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
-                              onClick={handleAddGradientColor}
-                            >
-                              <Plus
-                                size={18}
-                                className="text-muted-foreground"
-                              />
-                            </button>
-                            {(
-                              activeSlide.backgroundGradient || [
-                                "#ffffff",
-                                "#f0f0f0",
-                              ]
-                            ).map((color, index) => (
-                              <GradientColorPicker
-                                key={index}
-                                color={color}
-                                onChange={(newColor) => {
-                                  handleGradientColorChange(index, newColor);
-                                }}
-                                onRemove={() =>
-                                  handleRemoveGradientColor(index)
-                                }
-                                showRemove={
-                                  (activeSlide.backgroundGradient || [])
-                                    .length > 2
-                                }
-                              />
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <label className="text-xs font-medium text-muted-foreground block">
-                            Gradient Direction
-                          </label>
-                          <div className="flex gap-1.5">
-                            {gradientDirections.map((direction, index) => {
-                              const gradientColors =
-                                activeSlide.backgroundGradient || [
-                                  "#ffffff",
-                                  "#f0f0f0",
-                                ];
-                              const isActive =
-                                activeSlide.backgroundGradientDirection ===
-                                direction.name;
-                              return (
-                                <button
-                                  key={index}
-                                  onClick={() =>
-                                    handleGradientDirectionChange(
-                                      direction.name
-                                    )
-                                  }
-                                  className={cn(
-                                    "rounded-lg overflow-hidden p-1.5 cursor-pointer flex items-center justify-center w-8 h-8 transition-all hover:scale-110",
-                                    isActive &&
-                                      "ring-2 ring-primary ring-offset-1 ring-offset-background shadow-sm"
-                                  )}
-                                  style={{
-                                    background: `linear-gradient(${
-                                      direction.name
-                                    }, ${gradientColors.join(", ")})`,
-                                  }}
-                                  title={direction.name}
-                                >
-                                  <div className="scale-75">
-                                    {direction.icon}
-                                  </div>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Background image */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-primary"></div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Image
-                    </label>
-                  </div>
-                  {activeSlide.backgroundImage ? (
-                    <div className="space-y-3">
-                      <div className="relative w-full h-36 rounded-xl overflow-hidden border-2 border-border/60 group bg-muted/20">
-                        <img
-                          src={activeSlide.backgroundImage}
-                          alt="Background"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        className="w-full h-11 border-2 border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive transition-all rounded-xl font-semibold"
-                        onClick={() => {
-                          dispatch(
-                            updateSlide({
-                              slideId: activeSlide.id,
-                              updates: { backgroundImage: undefined },
-                            })
-                          );
-                        }}
-                      >
-                        Remove Image
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      className="w-full h-12 border-2 border-dashed border-primary/30 hover:border-primary/50 hover:bg-primary/10 hover:text-primary transition-all rounded-xl font-semibold bg-gradient-to-br from-primary/5 to-transparent"
-                      onClick={() => {
-                        // TODO: Implement image upload
-                        const input = document.createElement("input");
-                        input.type = "file";
-                        input.accept = "image/*";
-                        input.onchange = (e) => {
-                          const file = (e.target as HTMLInputElement)
-                            .files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (event) => {
-                              const result = event.target?.result as string;
-                              dispatch(
-                                updateSlide({
-                                  slideId: activeSlide.id,
-                                  updates: { backgroundImage: result },
-                                })
-                              );
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        };
-                        input.click();
-                      }}
-                    >
-                      <span className="text-base">+</span>
-                      <span>Upload Background Image</span>
-                    </Button>
-                  )}
-                </div>
+                <BackgroundImageSection
+                  backgroundImage={activeSlide.backgroundImage}
+                  onImageUpload={handleBackgroundImageUpload}
+                  onImageRemove={handleBackgroundImageRemove}
+                />
 
                 {/* Divider */}
                 <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent"></div>
