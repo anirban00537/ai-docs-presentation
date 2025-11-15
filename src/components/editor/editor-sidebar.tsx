@@ -318,79 +318,15 @@ export function EditorSidebar() {
 
                     {/* Solid Color Tab */}
                     {backgroundType === "solid" && (
-                      <div className="space-y-4">
+                      <div className="space-y-5">
                         <div>
                           <label className="text-xs font-medium text-muted-foreground mb-3 block">
-                            Style colors
+                            Color
                           </label>
-                          <div className="flex items-center gap-2 flex-wrap overflow-visible">
-                            {[
-                              "#ffffff",
-                              "#9ca3af",
-                              "#1f2937",
-                              "#4b5563",
-                              "#000000",
-                              "#f9fafb",
-                            ].map((color) => {
-                              const pickerId = `style-color-${color}`;
-                              return (
-                                <div
-                                  key={color}
-                                  className="relative overflow-visible"
-                                >
-                                  <button
-                                    ref={(el) => {
-                                      if (el) {
-                                        colorPickerRefs.current.set(
-                                          pickerId,
-                                          el
-                                        );
-                                      } else {
-                                        colorPickerRefs.current.delete(
-                                          pickerId
-                                        );
-                                      }
-                                    }}
-                                    type="button"
-                                    className={cn(
-                                      "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
-                                      activeSlide.backgroundColor === color
-                                        ? "border-primary ring-2 ring-primary/20"
-                                        : "border-border/60 hover:border-primary/50"
-                                    )}
-                                    style={{ backgroundColor: color }}
-                                    onClick={() =>
-                                      setOpenColorPicker(
-                                        openColorPicker === pickerId
-                                          ? null
-                                          : pickerId
-                                      )
-                                    }
-                                    data-color-picker-button
-                                  />
-                                  <ColorPickerPortal
-                                    isOpen={openColorPicker === pickerId}
-                                    color={color}
-                                    onChange={(newColor) => {
-                                      handleBackgroundColorChange(newColor);
-                                      setOpenColorPicker(null);
-                                    }}
-                                    pickerId={pickerId}
-                                    refsMap={colorPickerRefs}
-                                  />
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                        <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-3 block">
-                            All colors
-                          </label>
-                          <div className="flex items-center gap-2 flex-wrap overflow-visible">
+                          <div className="grid grid-cols-6 gap-2 overflow-visible">
                             <div className="relative overflow-visible">
                               {(() => {
-                                const pickerId = "all-colors-plus";
+                                const pickerId = "color-picker";
                                 return (
                                   <>
                                     <button
@@ -406,8 +342,7 @@ export function EditorSidebar() {
                                           );
                                         }
                                       }}
-                                      type="button"
-                                      className="h-8 w-8 rounded-full border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
+                                      className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110"
                                       onClick={() =>
                                         setOpenColorPicker(
                                           openColorPicker === pickerId
@@ -417,7 +352,14 @@ export function EditorSidebar() {
                                       }
                                       data-color-picker-button
                                     >
-                                      <Plus className="h-4 w-4 text-muted-foreground" />
+                                      <div
+                                        className="w-full h-full rounded-full"
+                                        style={{
+                                          backgroundColor:
+                                            activeSlide.backgroundColor ||
+                                            "#ffffff",
+                                        }}
+                                      />
                                     </button>
                                     <ColorPickerPortal
                                       isOpen={openColorPicker === pickerId}
@@ -435,58 +377,6 @@ export function EditorSidebar() {
                                 );
                               })()}
                             </div>
-                            {["#9ca3af", "#ffffff", "#3b82f6", "#ec4899"].map(
-                              (color) => {
-                                const pickerId = `all-color-${color}`;
-                                return (
-                                  <div
-                                    key={color}
-                                    className="relative overflow-visible"
-                                  >
-                                    <button
-                                      ref={(el) => {
-                                        if (el) {
-                                          colorPickerRefs.current.set(
-                                            pickerId,
-                                            el
-                                          );
-                                        } else {
-                                          colorPickerRefs.current.delete(
-                                            pickerId
-                                          );
-                                        }
-                                      }}
-                                      type="button"
-                                      className={cn(
-                                        "h-8 w-8 rounded-full border-2 transition-all hover:scale-110",
-                                        activeSlide.backgroundColor === color
-                                          ? "border-primary ring-2 ring-primary/20"
-                                          : "border-border/60 hover:border-primary/50"
-                                      )}
-                                      style={{ backgroundColor: color }}
-                                      onClick={() =>
-                                        setOpenColorPicker(
-                                          openColorPicker === pickerId
-                                            ? null
-                                            : pickerId
-                                        )
-                                      }
-                                      data-color-picker-button
-                                    />
-                                    <ColorPickerPortal
-                                      isOpen={openColorPicker === pickerId}
-                                      color={color}
-                                      onChange={(newColor) => {
-                                        handleBackgroundColorChange(newColor);
-                                        setOpenColorPicker(null);
-                                      }}
-                                      pickerId={pickerId}
-                                      refsMap={colorPickerRefs}
-                                    />
-                                  </div>
-                                );
-                              }
-                            )}
                           </div>
                         </div>
                       </div>
