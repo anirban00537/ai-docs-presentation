@@ -580,11 +580,11 @@ export function EditorSidebar() {
                           </div>
                         </div>
 
-                        <div>
-                          <h2 className="text-xs font-medium text-muted-foreground mb-2">
+                        <div className="space-y-2">
+                          <label className="text-xs font-medium text-muted-foreground block">
                             Gradient Direction
-                          </h2>
-                          <div className="flex flex-wrap gap-2">
+                          </label>
+                          <div className="flex gap-1.5">
                             {gradientDirections.map((direction, index) => {
                               const gradientColors =
                                 activeSlide.backgroundGradient || [
@@ -603,17 +603,20 @@ export function EditorSidebar() {
                                     )
                                   }
                                   className={cn(
-                                    "rounded-md overflow-hidden p-2 cursor-pointer flex items-center justify-center w-10 h-10 transition-all",
+                                    "rounded-lg overflow-hidden p-1.5 cursor-pointer flex items-center justify-center w-8 h-8 transition-all hover:scale-110",
                                     isActive &&
-                                      "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                                      "ring-2 ring-primary ring-offset-1 ring-offset-background shadow-sm"
                                   )}
                                   style={{
                                     background: `linear-gradient(${
                                       direction.name
                                     }, ${gradientColors.join(", ")})`,
                                   }}
+                                  title={direction.name}
                                 >
-                                  {direction.icon}
+                                  <div className="scale-75">
+                                    {direction.icon}
+                                  </div>
                                 </button>
                               );
                             })}
