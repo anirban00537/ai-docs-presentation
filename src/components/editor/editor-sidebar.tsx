@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import {
   Plus,
@@ -17,6 +17,7 @@ import {
   ArrowUpLeft,
 } from "lucide-react";
 import { HexColorPicker } from "react-colorful";
+import { Popover } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -33,52 +34,137 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectActiveSlide, updateSlide } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 
-// Portal-based Color Picker Component
-function ColorPickerPortal({
-  isOpen,
-  color,
-  onChange,
-  pickerId,
-  refsMap,
+// Portal wrapper for Popover Panel
+function PopoverPanelPortal({
+  children,
+  buttonRef,
 }: {
-  isOpen: boolean;
-  color: string;
-  onChange: (color: string) => void;
-  pickerId: string;
-  refsMap: React.MutableRefObject<Map<string, HTMLButtonElement>>;
+  children: React.ReactNode;
+  buttonRef: React.RefObject<HTMLButtonElement | null>;
 }) {
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
-  useLayoutEffect(() => {
-    if (isOpen) {
-      const buttonElement = refsMap.current.get(pickerId);
-      if (buttonElement) {
-        const rect = buttonElement.getBoundingClientRect();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const updatePosition = () => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
         setPosition({
           top: rect.bottom + window.scrollY + 8,
           left: rect.left + window.scrollX,
         });
       }
-    }
-    // Position calculation is intentional synchronous update for portal rendering
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, pickerId]);
+    };
 
-  if (!isOpen || typeof window === "undefined") return null;
+    updatePosition();
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [buttonRef]);
+
+  if (typeof window === "undefined") return null;
 
   return createPortal(
     <div
-      data-color-picker
       className="fixed z-[9999]"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
       }}
     >
-      <HexColorPicker color={color} onChange={onChange} />
+      {children}
     </div>,
     document.body
+  );
+}
+
+// Solid Color Picker Component
+function SolidColorPicker({
+  color,
+  onChange,
+}: {
+  color: string;
+  onChange: (color: string) => void;
+}) {
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  return (
+    <div className="relative overflow-visible">
+      <Popover>
+        {({ open }) => (
+          <>
+            <Popover.Button
+              ref={buttonRef}
+              className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110"
+              style={{ backgroundColor: color }}
+            >
+              <div
+                className="w-full h-full rounded-full"
+                style={{ backgroundColor: color }}
+              />
+            </Popover.Button>
+            {open && (
+              <PopoverPanelPortal buttonRef={buttonRef}>
+                <HexColorPicker color={color} onChange={onChange} />
+              </PopoverPanelPortal>
+            )}
+          </>
+        )}
+      </Popover>
+    </div>
+  );
+}
+
+// Gradient Color Picker Component
+function GradientColorPicker({
+  color,
+  onChange,
+  onRemove,
+  showRemove,
+}: {
+  color: string;
+  onChange: (color: string) => void;
+  onRemove: () => void;
+  showRemove: boolean;
+}) {
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  return (
+    <div className="relative overflow-visible">
+      <Popover>
+        {({ open }) => (
+          <>
+            <Popover.Button
+              ref={buttonRef}
+              className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110"
+              style={{ backgroundColor: color }}
+            >
+              <div
+                className="w-full h-full rounded-full"
+                style={{ backgroundColor: color }}
+              />
+              {showRemove && (
+                <span
+                  className="absolute -top-1 -right-1 bg-destructive rounded-full p-0.5 cursor-pointer hover:bg-destructive/80 transition-colors z-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove();
+                  }}
+                >
+                  <X className="text-white" size={12} />
+                </span>
+              )}
+            </Popover.Button>
+            {open && (
+              <PopoverPanelPortal buttonRef={buttonRef}>
+                <HexColorPicker color={color} onChange={onChange} />
+              </PopoverPanelPortal>
+            )}
+          </>
+        )}
+      </Popover>
+    </div>
   );
 }
 
@@ -89,10 +175,6 @@ export function EditorSidebar() {
     "solid"
   );
   const [isBackgroundOpen, setIsBackgroundOpen] = useState(true);
-  const [openColorPicker, setOpenColorPicker] = useState<string | null>(null);
-  const colorPickerRefs = React.useRef<Map<string, HTMLButtonElement>>(
-    new Map()
-  );
   const dispatch = useAppDispatch();
   const activeSlide = useAppSelector(selectActiveSlide);
 
@@ -102,25 +184,6 @@ export function EditorSidebar() {
       setBackgroundType(activeSlide.backgroundType);
     }
   }, [activeSlide?.backgroundType]);
-
-  // Close color picker when clicking outside
-  React.useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Element;
-      if (
-        openColorPicker &&
-        !target.closest("[data-color-picker]") &&
-        !target.closest("[data-color-picker-button]")
-      ) {
-        setOpenColorPicker(null);
-      }
-    };
-    if (openColorPicker) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [openColorPicker]);
 
   if (!activeSlide) return null;
 
@@ -324,59 +387,10 @@ export function EditorSidebar() {
                             Color
                           </label>
                           <div className="grid grid-cols-6 gap-2 overflow-visible">
-                            <div className="relative overflow-visible">
-                              {(() => {
-                                const pickerId = "color-picker";
-                                return (
-                                  <>
-                                    <button
-                                      ref={(el) => {
-                                        if (el) {
-                                          colorPickerRefs.current.set(
-                                            pickerId,
-                                            el
-                                          );
-                                        } else {
-                                          colorPickerRefs.current.delete(
-                                            pickerId
-                                          );
-                                        }
-                                      }}
-                                      className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110"
-                                      onClick={() =>
-                                        setOpenColorPicker(
-                                          openColorPicker === pickerId
-                                            ? null
-                                            : pickerId
-                                        )
-                                      }
-                                      data-color-picker-button
-                                    >
-                                      <div
-                                        className="w-full h-full rounded-full"
-                                        style={{
-                                          backgroundColor:
-                                            activeSlide.backgroundColor ||
-                                            "#ffffff",
-                                        }}
-                                      />
-                                    </button>
-                                    <ColorPickerPortal
-                                      isOpen={openColorPicker === pickerId}
-                                      color={
-                                        activeSlide.backgroundColor || "#ffffff"
-                                      }
-                                      onChange={(newColor) => {
-                                        handleBackgroundColorChange(newColor);
-                                        setOpenColorPicker(null);
-                                      }}
-                                      pickerId={pickerId}
-                                      refsMap={colorPickerRefs}
-                                    />
-                                  </>
-                                );
-                              })()}
-                            </div>
+                            <SolidColorPicker
+                              color={activeSlide.backgroundColor || "#ffffff"}
+                              onChange={handleBackgroundColorChange}
+                            />
                           </div>
                         </div>
                       </div>
@@ -404,69 +418,22 @@ export function EditorSidebar() {
                                 "#ffffff",
                                 "#f0f0f0",
                               ]
-                            ).map((color, index) => {
-                              const pickerId = `gradient-color-${index}`;
-                              return (
-                                <div
-                                  key={index}
-                                  className="relative overflow-visible"
-                                >
-                                  <button
-                                    ref={(el) => {
-                                      if (el) {
-                                        colorPickerRefs.current.set(
-                                          pickerId,
-                                          el
-                                        );
-                                      } else {
-                                        colorPickerRefs.current.delete(
-                                          pickerId
-                                        );
-                                      }
-                                    }}
-                                    className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 hover:border-primary/50 transition-all hover:scale-110"
-                                    onClick={() =>
-                                      setOpenColorPicker(
-                                        openColorPicker === pickerId
-                                          ? null
-                                          : pickerId
-                                      )
-                                    }
-                                    data-color-picker-button
-                                  >
-                                    <div
-                                      className="w-full h-full rounded-full"
-                                      style={{ backgroundColor: color }}
-                                    />
-                                    {(activeSlide.backgroundGradient || [])
-                                      .length > 2 && (
-                                      <span
-                                        className="absolute -top-1 -right-1 bg-destructive rounded-full p-0.5 cursor-pointer hover:bg-destructive/80 transition-colors z-10"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleRemoveGradientColor(index);
-                                        }}
-                                      >
-                                        <X className="text-white" size={12} />
-                                      </span>
-                                    )}
-                                  </button>
-                                  <ColorPickerPortal
-                                    isOpen={openColorPicker === pickerId}
-                                    color={color}
-                                    onChange={(newColor) => {
-                                      handleGradientColorChange(
-                                        index,
-                                        newColor
-                                      );
-                                      setOpenColorPicker(null);
-                                    }}
-                                    pickerId={pickerId}
-                                    refsMap={colorPickerRefs}
-                                  />
-                                </div>
-                              );
-                            })}
+                            ).map((color, index) => (
+                              <GradientColorPicker
+                                key={index}
+                                color={color}
+                                onChange={(newColor) => {
+                                  handleGradientColorChange(index, newColor);
+                                }}
+                                onRemove={() =>
+                                  handleRemoveGradientColor(index)
+                                }
+                                showRemove={
+                                  (activeSlide.backgroundGradient || [])
+                                    .length > 2
+                                }
+                              />
+                            ))}
                           </div>
                         </div>
 
