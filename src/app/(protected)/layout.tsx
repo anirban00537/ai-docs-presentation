@@ -7,9 +7,16 @@ export default async function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  let session;
+  try {
+    session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch (error) {
+    // If there's an error getting the session, redirect to login
+    console.error("Error getting session:", error);
+    redirect("/login");
+  }
 
   if (!session) {
     redirect("/login");
@@ -17,4 +24,3 @@ export default async function ProtectedLayout({
 
   return <>{children}</>;
 }
-
