@@ -113,6 +113,16 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
     lastAppliedHeightRef.current = element.height;
   }, [element.height]);
 
+  // Auto-focus textarea when entering edit mode
+  React.useEffect(() => {
+    if (isEditing && contentRef.current instanceof HTMLTextAreaElement) {
+      contentRef.current.focus();
+      // Move cursor to end of text
+      const length = contentRef.current.value.length;
+      contentRef.current.setSelectionRange(length, length);
+    }
+  }, [isEditing]);
+
   React.useLayoutEffect(() => {
     const node = contentRef.current;
     if (!node) {
@@ -207,34 +217,38 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
           <TextEditingToolbar element={element} isEditing={isEditing} />
         )}
         {isEditing ? (
-          <textarea
-            ref={setTextareaRef}
-            className="w-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
-            style={{
-              fontSize: element.fontSize,
-              fontWeight: element.fontWeight,
-              color: element.color,
-              textAlign: element.align,
-              lineHeight: element.lineHeight ?? 1.3,
-            }}
-            value={element.text}
-            onChange={(event) =>
-              dispatch(
-                updateElementAction({
-                  slideId: activeSlideId,
-                  elementId: element.id,
-                  updates: { text: event.target.value },
-                })
-              )
-            }
-            onBlur={() => dispatch(stopEditingAction())}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") {
-                event.preventDefault();
-                dispatch(stopEditingAction());
+          <div className="flex h-full w-full items-center">
+            <textarea
+              ref={setTextareaRef}
+              className="w-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
+              style={{
+                fontSize: element.fontSize,
+                fontWeight: element.fontWeight,
+                color: element.color,
+                textAlign: element.align,
+                lineHeight: element.lineHeight ?? 1.3,
+                wordWrap: "break-word",
+                overflowWrap: "break-word",
+              }}
+              value={element.text}
+              onChange={(event) =>
+                dispatch(
+                  updateElementAction({
+                    slideId: activeSlideId,
+                    elementId: element.id,
+                    updates: { text: event.target.value },
+                  })
+                )
               }
-            }}
-          />
+              onBlur={() => dispatch(stopEditingAction())}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  event.preventDefault();
+                  dispatch(stopEditingAction());
+                }
+              }}
+            />
+          </div>
         ) : (
           <div className="flex h-full w-full items-center">
             <div
