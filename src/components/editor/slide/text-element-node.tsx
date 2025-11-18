@@ -217,64 +217,60 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
           <TextEditingToolbar element={element} isEditing={isEditing} />
         )}
         {isEditing ? (
-          <div className="flex h-full w-full items-center">
-            <textarea
-              ref={setTextareaRef}
-              className="w-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
-              style={{
-                fontSize: element.fontSize,
-                fontWeight: element.fontWeight,
-                color: element.color,
-                textAlign: element.align,
-                lineHeight: element.lineHeight ?? 1.3,
-                wordWrap: "break-word",
-                overflowWrap: "break-word",
-              }}
-              value={element.text}
-              onChange={(event) =>
-                dispatch(
-                  updateElementAction({
-                    slideId: activeSlideId,
-                    elementId: element.id,
-                    updates: { text: event.target.value },
-                  })
-                )
+          <textarea
+            ref={setTextareaRef}
+            className="w-full h-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
+            style={{
+              fontSize: element.fontSize,
+              fontWeight: element.fontWeight,
+              color: element.color,
+              textAlign: element.align,
+              lineHeight: element.lineHeight ?? 1.3,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+            }}
+            value={element.text}
+            onChange={(event) =>
+              dispatch(
+                updateElementAction({
+                  slideId: activeSlideId,
+                  elementId: element.id,
+                  updates: { text: event.target.value },
+                })
+              )
+            }
+            onBlur={() => dispatch(stopEditingAction())}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.preventDefault();
+                dispatch(stopEditingAction());
               }
-              onBlur={() => dispatch(stopEditingAction())}
-              onKeyDown={(event) => {
-                if (event.key === "Escape") {
-                  event.preventDefault();
-                  dispatch(stopEditingAction());
-                }
-              }}
-            />
-          </div>
+            }}
+          />
         ) : (
-          <div className="flex h-full w-full items-center">
-            <div
-              ref={setDisplayRef}
-              className="w-full cursor-text whitespace-pre-wrap break-words"
-              style={{
-                fontSize: element.fontSize,
-                fontWeight: element.fontWeight,
-                color: element.color,
-                textAlign: element.align,
-                lineHeight: element.lineHeight ?? 1.3,
-                wordWrap: "break-word",
-                overflowWrap: "break-word",
-              }}
-              onDoubleClick={(event) => {
-                const target = event.target as HTMLElement | null;
-                if (target?.closest(TOOLBAR_SELECTOR)) {
-                  event.stopPropagation();
-                  return;
-                }
+          <div
+            ref={setDisplayRef}
+            className="w-full h-full cursor-text whitespace-pre-wrap break-words"
+            style={{
+              fontSize: element.fontSize,
+              fontWeight: element.fontWeight,
+              color: element.color,
+              textAlign: element.align,
+              lineHeight: element.lineHeight ?? 1.3,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+            }}
+            onDoubleClick={(event) => {
+              const target = event.target as HTMLElement | null;
+              if (target?.closest(TOOLBAR_SELECTOR)) {
                 event.stopPropagation();
-                dispatch(startEditingAction(element.id));
-              }}
-            >
-              {element.text || "Start typing…"}
-            </div>
+                return;
+              }
+              event.stopPropagation();
+              dispatch(startEditingAction(element.id));
+            }}
+          >
+            {element.text || "Start typing…"}
           </div>
         )}
 
