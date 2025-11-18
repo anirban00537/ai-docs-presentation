@@ -23,9 +23,9 @@ const textResizeHandles: Array<{
   handle: Extract<ResizeHandle, "left" | "right">;
   className: string;
 }> = [
-  { handle: "left", className: "-left-1.5 top-1/2 -translate-y-1/2" },
-  { handle: "right", className: "-right-1.5 top-1/2 -translate-y-1/2" },
-];
+    { handle: "left", className: "-left-1.5 top-1/2 -translate-y-1/2" },
+    { handle: "right", className: "-right-1.5 top-1/2 -translate-y-1/2" },
+  ];
 
 const TOOLBAR_SELECTOR = '[data-text-toolbar="true"]';
 
@@ -61,10 +61,10 @@ const ALIGN_OPTIONS: Array<{
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
 }> = [
-  { value: "left", icon: AlignLeft, label: "Align left" },
-  { value: "center", icon: AlignCenter, label: "Align center" },
-  { value: "right", icon: AlignRight, label: "Align right" },
-];
+    { value: "left", icon: AlignLeft, label: "Align left" },
+    { value: "center", icon: AlignCenter, label: "Align center" },
+    { value: "right", icon: AlignRight, label: "Align right" },
+  ];
 
 type TextElementNodeProps = {
   element: TextElement;
@@ -124,17 +124,18 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
       node.style.height = `${node.scrollHeight}px`;
     }
 
+    // For display divs, we need to measure the actual content height
+    // which includes wrapped text when width is constrained
     const measuredHeight =
       node instanceof HTMLTextAreaElement
         ? node.scrollHeight
-        : node.offsetHeight;
+        : node.scrollHeight || node.offsetHeight;
 
-    if (Number.isFinite(measuredHeight)) {
+    if (Number.isFinite(measuredHeight) && measuredHeight > 0) {
       const nextHeight = Math.max(1, measuredHeight);
-      if (
-        Math.abs(nextHeight - element.height) > 0.5 &&
-        Math.abs(nextHeight - lastAppliedHeightRef.current) > 0.5
-      ) {
+      // Allow height to grow when width changes cause text to wrap
+      // Remove the check against lastAppliedHeightRef to allow updates on resize
+      if (Math.abs(nextHeight - element.height) > 0.5) {
         lastAppliedHeightRef.current = nextHeight;
         dispatch(
           updateElementAction({
@@ -238,13 +239,15 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
           <div className="flex h-full w-full items-center">
             <div
               ref={setDisplayRef}
-              className="w-full cursor-text whitespace-pre-wrap wrap-break-word"
+              className="w-full cursor-text whitespace-pre-wrap break-words"
               style={{
                 fontSize: element.fontSize,
                 fontWeight: element.fontWeight,
                 color: element.color,
                 textAlign: element.align,
                 lineHeight: element.lineHeight ?? 1.3,
+                wordWrap: "break-word",
+                overflowWrap: "break-word",
               }}
               onDoubleClick={(event) => {
                 const target = event.target as HTMLElement | null;
