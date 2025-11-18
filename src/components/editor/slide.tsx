@@ -73,43 +73,13 @@ const Slide: React.FC<SlideProps> = ({
     }
   }, [editingId]);
 
-  // Sort elements so selected element appears on top (highest z-index)
-  // This ensures any selected element (text, shape, circle, etc.) always comes to front
-  const sortedElements = useMemo(() => {
-    if (!selectedId) return slide.elements;
-
-    const selectedIndex = slide.elements.findIndex(
-      (el) => el.id === selectedId
-    );
-    if (selectedIndex === -1) return slide.elements;
-
-    // Move selected element to the end of the array to get highest z-index
-    const elements = [...slide.elements];
-    const [selectedElement] = elements.splice(selectedIndex, 1);
-    elements.push(selectedElement);
-
-    return elements;
-  }, [slide.elements, selectedId]);
-
-  // Centralized z-index calculation - ensures selected elements always on top
-  // This works for all element types (text, rectangle, circle, arrow, polygon, etc.)
-  const getElementZIndex = useCallback(
-    (index: number, elementId: string) => {
-      const baseZIndex = 100 + index;
-      // Selected element gets large boost to ensure it's always on top
-      const isSelected = selectedId === elementId;
-      return isSelected ? baseZIndex + 1000 : baseZIndex;
-    },
-    [selectedId]
-  );
-
   const createDragPointerDown = useCallback(
     (
-        element: SlideElement,
-        effective: SlideElement,
-        isSelected: boolean,
-        isEditing: boolean
-      ) =>
+      element: SlideElement,
+      effective: SlideElement,
+      isSelected: boolean,
+      isEditing: boolean
+    ) =>
       (event: React.PointerEvent<HTMLDivElement>) => {
         event.stopPropagation();
         if (event.detail > 1) {
@@ -203,20 +173,19 @@ const Slide: React.FC<SlideProps> = ({
                   position: "relative",
                   ...(slide.backgroundImage
                     ? {
-                        backgroundImage: `url(${slide.backgroundImage})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        backgroundRepeat: "no-repeat",
-                      }
+                      backgroundImage: `url(${slide.backgroundImage})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }
                     : slide.backgroundType === "gradient" &&
                       slide.backgroundGradient &&
                       slide.backgroundGradient.length > 0
-                    ? {
-                        background: `linear-gradient(${
-                          slide.backgroundGradientDirection || "to bottom"
-                        }, ${slide.backgroundGradient.join(", ")})`,
+                      ? {
+                        background: `linear-gradient(${slide.backgroundGradientDirection || "to bottom"
+                          }, ${slide.backgroundGradient.join(", ")})`,
                       }
-                    : {
+                      : {
                         backgroundColor: slide.backgroundColor || "#ffffff",
                       }),
                 }}
@@ -243,7 +212,7 @@ const Slide: React.FC<SlideProps> = ({
                   </div>
                 )}
 
-                {sortedElements.map((element, index) => {
+                {slide.elements.map((element, index) => {
                   const isSelected = selectedId === element.id;
                   const isEditing = editingId === element.id;
                   const override = liveOverrides[element.id];
@@ -251,8 +220,9 @@ const Slide: React.FC<SlideProps> = ({
                     ? ({ ...element, ...override } as SlideElement)
                     : element;
 
-                  // Use centralized z-index calculation
-                  const baseZIndex = getElementZIndex(index, element.id);
+                  // Use simple z-index based on array order
+                  // This ensures strict layer stacking (last in array = top)
+                  const baseZIndex = 100 + index;
 
                   if (effective.type === "text") {
                     return (
@@ -281,10 +251,10 @@ const Slide: React.FC<SlideProps> = ({
                       key={element.id}
                       element={
                         effective as
-                          | RectangleElement
-                          | CircleElement
-                          | ArrowElement
-                          | PolygonElement
+                        | RectangleElement
+                        | CircleElement
+                        | ArrowElement
+                        | PolygonElement
                       }
                       isSelected={isSelected}
                       isEditing={isEditing}
