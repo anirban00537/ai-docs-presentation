@@ -198,7 +198,10 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
         left: element.x,
         top: element.y,
         width: element.width,
-        height: element.height,
+        // Use minHeight + height: auto to allow text to grow naturally
+        // while respecting manual vertical resizing (if larger than content)
+        minHeight: element.height,
+        height: "auto",
         zIndex: baseZIndex,
       }}
       onPointerDown={handlePointerDown}
@@ -217,60 +220,67 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
           <TextEditingToolbar element={element} isEditing={isEditing} />
         )}
         {isEditing ? (
-          <textarea
-            ref={setTextareaRef}
-            className="w-full h-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
-            style={{
-              fontSize: element.fontSize,
-              fontWeight: element.fontWeight,
-              color: element.color,
-              textAlign: element.align,
-              lineHeight: element.lineHeight ?? 1.3,
-              wordWrap: "break-word",
-              overflowWrap: "break-word",
-            }}
-            value={element.text}
-            onChange={(event) =>
-              dispatch(
-                updateElementAction({
-                  slideId: activeSlideId,
-                  elementId: element.id,
-                  updates: { text: event.target.value },
-                })
-              )
-            }
-            onBlur={() => dispatch(stopEditingAction())}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") {
-                event.preventDefault();
-                dispatch(stopEditingAction());
+          <div className="flex h-full w-full items-start pt-1 px-1">
+            <textarea
+              ref={setTextareaRef}
+              className="w-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
+              style={{
+                fontSize: element.fontSize,
+                fontWeight: element.fontWeight,
+                color: element.color,
+                textAlign: element.align,
+                lineHeight: element.lineHeight ?? 1.3,
+                wordWrap: "break-word",
+                overflowWrap: "break-word",
+                // Ensure textarea grows with content
+                height: "100%",
+                overflow: "hidden",
+              }}
+              value={element.text}
+              onChange={(event) =>
+                dispatch(
+                  updateElementAction({
+                    slideId: activeSlideId,
+                    elementId: element.id,
+                    updates: { text: event.target.value },
+                  })
+                )
               }
-            }}
-          />
+              onBlur={() => dispatch(stopEditingAction())}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  event.preventDefault();
+                  dispatch(stopEditingAction());
+                }
+              }}
+            />
+          </div>
         ) : (
-          <div
-            ref={setDisplayRef}
-            className="w-full h-full cursor-text whitespace-pre-wrap break-words"
-            style={{
-              fontSize: element.fontSize,
-              fontWeight: element.fontWeight,
-              color: element.color,
-              textAlign: element.align,
-              lineHeight: element.lineHeight ?? 1.3,
-              wordWrap: "break-word",
-              overflowWrap: "break-word",
-            }}
-            onDoubleClick={(event) => {
-              const target = event.target as HTMLElement | null;
-              if (target?.closest(TOOLBAR_SELECTOR)) {
+          <div className="flex h-full w-full items-start pt-1 px-1">
+            <div
+              ref={setDisplayRef}
+              className="w-full cursor-text whitespace-pre-wrap break-words"
+              style={{
+                fontSize: element.fontSize,
+                fontWeight: element.fontWeight,
+                color: element.color,
+                textAlign: element.align,
+                lineHeight: element.lineHeight ?? 1.3,
+                wordWrap: "break-word",
+                overflowWrap: "break-word",
+              }}
+              onDoubleClick={(event) => {
+                const target = event.target as HTMLElement | null;
+                if (target?.closest(TOOLBAR_SELECTOR)) {
+                  event.stopPropagation();
+                  return;
+                }
                 event.stopPropagation();
-                return;
-              }
-              event.stopPropagation();
-              dispatch(startEditingAction(element.id));
-            }}
-          >
-            {element.text || "Start typing…"}
+                dispatch(startEditingAction(element.id));
+              }}
+            >
+              {element.text || "Start typing…"}
+            </div>
           </div>
         )}
 
