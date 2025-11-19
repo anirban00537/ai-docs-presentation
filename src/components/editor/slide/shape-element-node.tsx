@@ -30,7 +30,7 @@ type ShapeElementNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
 };
 
-export const ShapeElementNode: React.FC<ShapeElementNodeProps> = ({
+const ShapeElementNodeBase: React.FC<ShapeElementNodeProps> = ({
   element,
   isSelected,
   isEditing,
@@ -192,6 +192,8 @@ export const ShapeElementNode: React.FC<ShapeElementNodeProps> = ({
     </div>
   );
 };
+
+export const ShapeElementNode = React.memo(ShapeElementNodeBase);
 
 const SHAPE_TOOLBAR_SELECTOR = '[data-shape-toolbar="true"]';
 const DEFAULT_STROKE_COLOR = "#1f2937";

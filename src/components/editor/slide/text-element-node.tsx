@@ -78,7 +78,7 @@ type TextElementNodeProps = {
   editingTextareaRef: React.RefObject<HTMLTextAreaElement | null>;
 };
 
-export const TextElementNode: React.FC<TextElementNodeProps> = ({
+const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
   element,
   isSelected,
   isEditing,
@@ -302,6 +302,8 @@ export const TextElementNode: React.FC<TextElementNodeProps> = ({
     </div>
   );
 };
+
+export const TextElementNode = React.memo(TextElementNodeBase);
 
 type TextEditingToolbarProps = {
   element: TextElement;

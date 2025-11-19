@@ -73,34 +73,38 @@ const Slide: React.FC<SlideProps> = ({
     }
   }, [editingId]);
 
-  const createDragPointerDown = useCallback(
+  const handleDragStart = useCallback(
     (
       element: SlideElement,
       effective: SlideElement,
       isSelected: boolean,
-      isEditing: boolean
-    ) =>
-      (event: React.PointerEvent<HTMLDivElement>) => {
-        event.stopPropagation();
-        if (event.detail > 1) {
-          return;
-        }
-        if (!isSelected) {
-          onSelectElement(element.id);
-        }
-        if (isEditing) {
-          return;
-        }
-        beginDrag(element, effective, event);
-      },
+      isEditing: boolean,
+      event: React.PointerEvent<HTMLDivElement>
+    ) => {
+      event.stopPropagation();
+      if (event.detail > 1) {
+        return;
+      }
+      if (!isSelected) {
+        onSelectElement(element.id);
+      }
+      if (isEditing) {
+        return;
+      }
+      beginDrag(element, effective, event);
+    },
     [beginDrag, onSelectElement]
   );
 
-  const createResizePointerDown = useCallback(
-    (element: SlideElement, effective: SlideElement, handle: ResizeHandle) =>
-      (event: React.PointerEvent<HTMLDivElement>) => {
-        beginResize(element, effective, handle, event);
-      },
+  const handleResizeStart = useCallback(
+    (
+      element: SlideElement,
+      effective: SlideElement,
+      handle: ResizeHandle,
+      event: React.PointerEvent<HTMLDivElement>
+    ) => {
+      beginResize(element, effective, handle, event);
+    },
     [beginResize]
   );
 
@@ -150,15 +154,16 @@ const Slide: React.FC<SlideProps> = ({
               ref={readLayerRef}
               data-test-id="slide-interaction-layer"
               data-slide-container="true"
-              style={{
-                width: `${SLIDE_WIDTH}px`,
-                height: `${SLIDE_HEIGHT}px`,
-                position: "relative",
-                transform: `scale(${viewport.scale})`,
-                transformOrigin: "0 0",
-                // @ts-expect-error - CSS custom property
-                "--inv-scale": invScale,
-              }}
+              style={
+                {
+                  width: `${SLIDE_WIDTH}px`,
+                  height: `${SLIDE_HEIGHT}px`,
+                  position: "relative",
+                  transform: `scale(${viewport.scale})`,
+                  transformOrigin: "0 0",
+                  "--inv-scale": invScale,
+                } as React.CSSProperties
+              }
             >
               <div
                 className={cn(
@@ -167,25 +172,28 @@ const Slide: React.FC<SlideProps> = ({
                   "shadow-[0_20px_60px_-40px_rgba(15,23,42,0.35)]"
                 )}
                 data-slide-index="0"
+                role="region"
+                aria-label="Slide Canvas"
                 style={{
                   width: `${SLIDE_WIDTH}px`,
                   height: `${SLIDE_HEIGHT}px`,
                   position: "relative",
                   ...(slide.backgroundImage
                     ? {
-                      backgroundImage: `url(${slide.backgroundImage})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }
+                        backgroundImage: `url(${slide.backgroundImage})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                      }
                     : slide.backgroundType === "gradient" &&
                       slide.backgroundGradient &&
                       slide.backgroundGradient.length > 0
-                      ? {
-                        background: `linear-gradient(${slide.backgroundGradientDirection || "to bottom"
-                          }, ${slide.backgroundGradient.join(", ")})`,
+                    ? {
+                        background: `linear-gradient(${
+                          slide.backgroundGradientDirection || "to bottom"
+                        }, ${slide.backgroundGradient.join(", ")})`,
                       }
-                      : {
+                    : {
                         backgroundColor: slide.backgroundColor || "#ffffff",
                       }),
                 }}
@@ -232,14 +240,17 @@ const Slide: React.FC<SlideProps> = ({
                         isSelected={isSelected}
                         isEditing={isEditing}
                         baseZIndex={baseZIndex}
-                        onPointerDown={createDragPointerDown(
-                          element,
-                          effective,
-                          isSelected,
-                          isEditing
-                        )}
-                        getResizePointerDown={(handle) =>
-                          createResizePointerDown(element, effective, handle)
+                        onPointerDown={(e) =>
+                          handleDragStart(
+                            element,
+                            effective,
+                            isSelected,
+                            isEditing,
+                            e
+                          )
+                        }
+                        getResizePointerDown={(handle) => (e) =>
+                          handleResizeStart(element, effective, handle, e)
                         }
                         editingTextareaRef={editingTextareaRef}
                       />
@@ -251,22 +262,25 @@ const Slide: React.FC<SlideProps> = ({
                       key={element.id}
                       element={
                         effective as
-                        | RectangleElement
-                        | CircleElement
-                        | ArrowElement
-                        | PolygonElement
+                          | RectangleElement
+                          | CircleElement
+                          | ArrowElement
+                          | PolygonElement
                       }
                       isSelected={isSelected}
                       isEditing={isEditing}
                       baseZIndex={baseZIndex}
-                      onPointerDown={createDragPointerDown(
-                        element,
-                        effective,
-                        isSelected,
-                        isEditing
-                      )}
-                      getResizePointerDown={(handle) =>
-                        createResizePointerDown(element, effective, handle)
+                      onPointerDown={(e) =>
+                        handleDragStart(
+                          element,
+                          effective,
+                          isSelected,
+                          isEditing,
+                          e
+                        )
+                      }
+                      getResizePointerDown={(handle) => (e) =>
+                        handleResizeStart(element, effective, handle, e)
                       }
                     />
                   );
