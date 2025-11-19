@@ -45,92 +45,96 @@ export function AppSidebar({
     <Sidebar
       {...props}
       className={cn(
-        "border-r border-border/50 bg-gradient-to-b from-background via-background to-muted/30",
+        "border-r border-border/50 bg-gradient-to-b from-background via-background to-muted/10",
         className
       )}
     >
-      <SidebarContent className="p-4">
-        <SidebarGroup>
-          <div className="flex items-center justify-between mb-4 px-1">
-            <SidebarGroupLabel className="text-xs font-bold uppercase tracking-widest text-foreground/80 px-0">
-              Slides
-            </SidebarGroupLabel>
-            <span className="text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
+      <SidebarContent className="p-0">
+        <div className="p-4 border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 z-10">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-1 rounded-full bg-primary/80" />
+              <h2 className="text-sm font-bold tracking-tight text-foreground">
+                Slides
+              </h2>
+            </div>
+            <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-1 rounded-md border border-border/50">
               {slides.length}
             </span>
           </div>
           
-          {/* Add slide button at the top */}
-          <div className="px-1 mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleAddSlide}
-              className="w-full justify-center gap-2 h-11 font-semibold border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/10 hover:text-primary transition-all duration-200 rounded-xl bg-gradient-to-br from-primary/5 to-primary/0"
-            >
-              <Plus className="h-4 w-4" />
-              Add slide
-            </Button>
-          </div>
-
-          <SidebarGroupContent>
-            <div className="space-y-2">
-              {slides.map((slide, index) => (
-                <div key={slide.id} className="space-y-1">
-                  <div
-                    className={cn(
-                      "group relative cursor-pointer rounded-lg border-2 transition-all duration-200 ease-out overflow-hidden",
-                      "hover:scale-[1.01] hover:shadow-md",
-                      slide.id === activeSlideId
-                        ? "border-primary/60 ring-2 ring-primary/20 bg-primary/5 shadow-sm"
-                        : "border-border/40 hover:border-primary/30 hover:bg-accent/20"
-                    )}
-                    onClick={() => handleSelectSlide(slide.id)}
-                  >
-                    <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-gradient-to-br from-muted/60 via-muted/40 to-muted/30 pointer-events-none">
-                      <Slide
-                        slide={slide}
-                        selectedId={null}
-                        editingId={null}
-                        liveOverrides={{}}
-                        onSelectElement={() => {}}
-                        onSetLiveOverride={() => {}}
-                        onClearLiveOverride={() => {}}
-                        scale={0.15}
-                      />
-                      {slide.id === activeSlideId && (
-                        <div className="absolute inset-0 bg-primary/10 ring-1 ring-primary/30 rounded-lg" />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg" />
-                    </div>
-                    
-                    {/* Slide number badge */}
-                    <div className={cn(
-                      "absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold transition-all duration-200",
-                      slide.id === activeSlideId
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-background/90 text-foreground/80 group-hover:bg-primary group-hover:text-primary-foreground"
-                    )}>
-                      {index + 1}
-                    </div>
-                  </div>
-
-                  {/* Slide name below the box */}
-                  <div className="ml-1">
-                    <span className={cn(
-                      "text-[10px] font-medium block text-left",
-                      slide.id === activeSlideId
-                        ? "text-primary"
-                        : "text-foreground/70"
-                    )}>
-                      {slide.title || `Slide ${index + 1}`}
-                    </span>
-                  </div>
-                </div>
-              ))}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAddSlide}
+            className="w-full justify-center gap-2 h-10 font-medium border-dashed border-border hover:border-primary/50 hover:bg-primary/5 hover:text-primary transition-all duration-300 rounded-lg group"
+          >
+            <div className="w-5 h-5 rounded-md bg-muted group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+              <Plus className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
             </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
+            <span className="text-xs">New Slide</span>
+          </Button>
+        </div>
+
+        <div className="p-3 space-y-3">
+          {slides.map((slide, index) => (
+            <div key={slide.id} className="group/slide relative">
+              <div
+                className={cn(
+                  "relative cursor-pointer rounded-xl border transition-all duration-300 ease-out overflow-hidden",
+                  slide.id === activeSlideId
+                    ? "border-primary ring-1 ring-primary/20 shadow-md shadow-primary/10 scale-[1.02]"
+                    : "border-border/40 hover:border-primary/30 hover:shadow-sm hover:scale-[1.01] bg-card/50"
+                )}
+                onClick={() => handleSelectSlide(slide.id)}
+              >
+                <div className="relative aspect-video w-full bg-muted/30 pointer-events-none">
+                  <div className="absolute inset-0 flex items-center justify-center opacity-50">
+                     {/* Placeholder for slide preview if needed, or keep the actual slide component */}
+                  </div>
+                  <Slide
+                    slide={slide}
+                    selectedId={null}
+                    editingId={null}
+                    liveOverrides={{}}
+                    onSelectElement={() => {}}
+                    onSetLiveOverride={() => {}}
+                    onClearLiveOverride={() => {}}
+                    scale={0.15}
+                  />
+                  
+                  {/* Active overlay */}
+                  {slide.id === activeSlideId && (
+                    <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
+                  )}
+                  
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/0 group-hover/slide:bg-black/5 transition-colors duration-300 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Slide Info */}
+              <div className="flex items-center justify-between mt-1.5 px-1">
+                <span className={cn(
+                  "text-[11px] font-medium truncate max-w-[120px] transition-colors",
+                  slide.id === activeSlideId
+                    ? "text-primary"
+                    : "text-muted-foreground group-hover/slide:text-foreground"
+                )}>
+                  {slide.title || `Slide ${index + 1}`}
+                </span>
+                <span className={cn(
+                  "text-[9px] font-bold px-1.5 py-0.5 rounded-md transition-colors",
+                  slide.id === activeSlideId
+                    ? "bg-primary/10 text-primary"
+                    : "bg-muted text-muted-foreground group-hover/slide:bg-muted/80"
+                )}>
+                  {index + 1}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
