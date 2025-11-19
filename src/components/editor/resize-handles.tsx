@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import type { ResizeHandle } from "@/components/editor/slide/types";
+import type { ResizeHandle } from "@/components/editor/widgets/types";
 
 export type ResizeHandlesProps = {
   getResizePointerDown: (

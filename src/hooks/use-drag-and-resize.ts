@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { SlideElementUpdate } from "@/components/editor/slide/types";
+import type { SlideElementUpdate } from "@/components/editor/widgets/types";
 import type { PointerSession } from "@/store/slices/editorUiSlice";
 import { SLIDE_WIDTH, SLIDE_HEIGHT } from "@/hooks/use-canvas-viewport";
 import type { ScreenToSlideTransform } from "@/hooks/use-canvas-viewport";

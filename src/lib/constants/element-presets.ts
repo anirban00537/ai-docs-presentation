@@ -1,5 +1,5 @@
 import type { TextPreset, ShapePreset } from "@/components/editor/editor-header";
-import type { PolygonShape } from "@/components/editor/slide/types";
+import type { PolygonShape } from "@/components/editor/widgets/types";
 
 type TextPresetId = TextPreset["id"];
 type ShapePresetId = ShapePreset["id"];

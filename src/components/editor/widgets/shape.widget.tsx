@@ -8,8 +8,8 @@ import type {
   ArrowElement,
   PolygonElement,
   ResizeHandle,
-} from "@/components/editor/slide/types";
-import { ResizeHandles } from "@/components/editor/slide/resize-handles";
+} from "@/components/editor/widgets/types";
+import { ResizeHandles } from "@/components/editor/resize-handles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, Minus, Plus } from "lucide-react";

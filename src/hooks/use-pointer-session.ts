@@ -3,7 +3,7 @@ import type {
   SlideElement,
   ResizeHandle,
   SlideElementUpdate,
-} from "@/components/editor/slide/types";
+} from "@/components/editor/widgets/types";
 import type { PointerSession } from "@/store/slices/editorUiSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {

@@ -51,18 +51,6 @@ export function AppSidebar({
     >
       <SidebarContent className="p-0">
         <div className="p-4 border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 z-10">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="h-4 w-1 rounded-full bg-primary/80" />
-              <h2 className="text-sm font-bold tracking-tight text-foreground">
-                Slides
-              </h2>
-            </div>
-            <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-1 rounded-md border border-border/50">
-              {slides.length}
-            </span>
-          </div>
-          
           <Button
             variant="outline"
             size="sm"

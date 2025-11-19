@@ -8,7 +8,7 @@ import type {
   PolygonElement,
   ArrowElement,
   SlideElement,
-} from "@/components/editor/slide/types";
+} from "@/components/editor/widgets/types";
 import {
   TEXT_PRESET_CONFIG,
   SHAPE_PRESET_CONFIG,

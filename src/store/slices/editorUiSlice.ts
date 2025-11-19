@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { SlideElementUpdate, ResizeHandle } from "@/components/editor/slide/types";
+import type { SlideElementUpdate, ResizeHandle } from "@/components/editor/widgets/types";
 import type { RootState } from "@/store";
 
 export type PointerSession = {

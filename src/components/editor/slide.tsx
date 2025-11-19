@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { TextElementNode } from "@/components/editor/slide/text-element-node";
-import { ShapeElementNode } from "@/components/editor/slide/shape-element-node";
+import { TextElementNode } from "@/components/editor/widgets/text.widget";
+import { ShapeElementNode } from "@/components/editor/widgets/shape.widget";
 import type {
   SlideElement,
   SlideElementUpdate,
@@ -12,7 +12,7 @@ import type {
   ArrowElement,
   PolygonElement,
   ResizeHandle,
-} from "@/components/editor/slide/types";
+} from "@/components/editor/widgets/types";
 import type { SlideModel } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import {

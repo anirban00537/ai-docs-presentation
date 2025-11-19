@@ -24,7 +24,7 @@ import {
 import type {
   TextElement,
   ResizeHandle,
-} from "@/components/editor/slide/types";
+} from "@/components/editor/widgets/types";
 import { useDebouncedCallback } from "use-debounce";
 
 const textResizeHandles: Array<{

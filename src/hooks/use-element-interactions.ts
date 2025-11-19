@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { SlideElementUpdate } from "@/components/editor/slide/types";
+import type { SlideElementUpdate } from "@/components/editor/widgets/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectElement as selectElementAction,

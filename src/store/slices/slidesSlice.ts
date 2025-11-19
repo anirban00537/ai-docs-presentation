@@ -2,7 +2,7 @@ import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 import type {
   SlideElement,
   SlideElementUpdate,
-} from "@/components/editor/slide/types";
+} from "@/components/editor/widgets/types";
 import type { RootState } from "@/store";
 
 export type SlideModel = {
