@@ -25,6 +25,7 @@ import type {
   TextElement,
   ResizeHandle,
 } from "@/components/editor/slide/types";
+import { useDebouncedCallback } from "use-debounce";
 
 const textResizeHandles: Array<{
   handle: Extract<ResizeHandle, "left" | "right">;
@@ -122,6 +123,33 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
     null
   );
   const lastAppliedHeightRef = React.useRef<number>(element.height);
+  const [localText, setLocalText] = React.useState(element.text);
+
+  const debouncedUpdateText = useDebouncedCallback((nextText: string) => {
+    dispatch(
+      updateElementAction({
+        slideId: activeSlideId,
+        elementId: element.id,
+        updates: { text: nextText },
+      })
+    );
+  }, 250);
+
+  React.useEffect(() => {
+    setLocalText((prev) => (prev === element.text ? prev : element.text));
+  }, [element.id, element.text]);
+
+  React.useEffect(() => {
+    if (!isEditing) {
+      debouncedUpdateText.flush();
+    }
+  }, [debouncedUpdateText, isEditing]);
+
+  React.useEffect(() => {
+    return () => {
+      debouncedUpdateText.flush();
+    };
+  }, [debouncedUpdateText]);
 
   const setTextareaRef = React.useCallback(
     (node: HTMLTextAreaElement | null) => {
@@ -171,9 +199,7 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
 
     if (Number.isFinite(measuredHeight) && measuredHeight > 0) {
       const nextHeight = Math.max(1, measuredHeight);
-      // Allow height to grow when width changes cause text to wrap
-      // Remove the check against lastAppliedHeightRef to allow updates on resize
-      if (Math.abs(nextHeight - element.height) > 0.5) {
+      if (!isEditing && Math.abs(nextHeight - element.height) > 0.5) {
         lastAppliedHeightRef.current = nextHeight;
         dispatch(
           updateElementAction({
@@ -264,20 +290,20 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
                 height: "100%",
                 overflow: "hidden",
               }}
-              value={element.text}
-              onChange={(event) =>
-                dispatch(
-                  updateElementAction({
-                    slideId: activeSlideId,
-                    elementId: element.id,
-                    updates: { text: event.target.value },
-                  })
-                )
-              }
-              onBlur={() => dispatch(stopEditingAction())}
+              value={localText}
+              onChange={(event) => {
+                const { value } = event.target;
+                setLocalText(value);
+                debouncedUpdateText(value);
+              }}
+              onBlur={() => {
+                debouncedUpdateText.flush();
+                dispatch(stopEditingAction());
+              }}
               onKeyDown={(event) => {
                 if (event.key === "Escape") {
                   event.preventDefault();
+                  debouncedUpdateText.flush();
                   dispatch(stopEditingAction());
                 }
               }}
@@ -287,7 +313,7 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
           <div className="flex h-full w-full items-start pt-1 px-1">
             <div
               ref={setDisplayRef}
-              className="w-full cursor-text whitespace-pre-wrap break-words"
+              className="w-full cursor-text whitespace-pre-wrap wrap-break-word"
               style={{
                 fontSize: element.fontSize,
                 fontWeight: element.fontWeight,
