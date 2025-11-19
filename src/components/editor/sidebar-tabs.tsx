@@ -3,6 +3,7 @@
 import React from "react";
 import { MessageSquare, FileText, Clock, User, PenTool } from "lucide-react";
 import { CustomSidebarMenuButton } from "@/components/editor/custom-sidebar";
+import { cn } from "@/lib/utils";
 
 export type TabId = "design" | "comment" | "content" | "history" | "people";
 
@@ -29,23 +30,23 @@ interface SidebarTabsProps {
 
 export function SidebarTabs({ activeTab, onTabClick }: SidebarTabsProps) {
   return (
-    <div className="flex flex-col items-center justify-center shrink-0 p-3 relative z-0">
-      <div className="flex flex-col items-center rounded-xl border border-border/40 bg-background/80 backdrop-blur-sm shadow-sm p-1 gap-0.5">
-        {tabs.map((tab, index) => (
-          <React.Fragment key={tab.id}>
-            <CustomSidebarMenuButton
-              onClick={() => onTabClick(tab.id)}
-              isActive={activeTab === tab.id}
-              tooltip={tab.label}
-            >
-              {tab.icon}
-            </CustomSidebarMenuButton>
-            {index < tabs.length - 1 && (
-              <div className="w-7 h-px bg-border/20" />
-            )}
-          </React.Fragment>
-        ))}
-      </div>
+    <div className="flex flex-col items-center shrink-0 py-4 px-2 gap-4 border-l border-border/40 bg-background/40 backdrop-blur-sm">
+      {tabs.map((tab) => (
+        <CustomSidebarMenuButton
+          key={tab.id}
+          onClick={() => onTabClick(tab.id)}
+          isActive={activeTab === tab.id}
+          tooltip={tab.label}
+          className={cn(
+            "w-10 h-10 rounded-xl transition-all duration-300",
+            activeTab === tab.id
+              ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-105"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+          )}
+        >
+          {tab.icon}
+        </CustomSidebarMenuButton>
+      ))}
     </div>
   );
 }

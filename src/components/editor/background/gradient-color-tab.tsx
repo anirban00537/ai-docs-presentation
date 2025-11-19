@@ -24,27 +24,23 @@ export function GradientColorTab({
 }: GradientColorTabProps) {
   return (
     <div className="space-y-5">
-      <div>
-        <label className="text-xs font-medium text-muted-foreground mb-3 block">
-          Gradient Colors
-        </label>
-        <div className="grid grid-cols-6 gap-2 overflow-visible">
-          <button
-            className="relative w-10 h-10 rounded-full cursor-pointer border-2 border-border/60 bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-muted/50 transition-all"
-            onClick={onAddColor}
-          >
-            <Plus size={18} className="text-muted-foreground" />
-          </button>
-          {gradientColors.map((color, index) => (
-            <GradientColorPicker
-              key={index}
-              color={color}
-              onChange={(newColor) => onColorChange(index, newColor)}
-              onRemove={() => onRemoveColor(index)}
-              showRemove={gradientColors.length > 2}
-            />
-          ))}
-        </div>
+      <div className="grid grid-cols-6 gap-3 overflow-visible">
+        <button
+          className="relative w-10 h-10 rounded-full cursor-pointer border border-dashed border-border bg-muted/30 flex items-center justify-center hover:border-primary/50 hover:bg-primary/5 transition-all group"
+          onClick={onAddColor}
+          title="Add color stop"
+        >
+          <Plus size={16} className="text-muted-foreground group-hover:text-primary transition-colors" />
+        </button>
+        {gradientColors.map((color, index) => (
+          <GradientColorPicker
+            key={index}
+            color={color}
+            onChange={(newColor) => onColorChange(index, newColor)}
+            onRemove={() => onRemoveColor(index)}
+            showRemove={gradientColors.length > 2}
+          />
+        ))}
       </div>
 
       <GradientDirectionPicker

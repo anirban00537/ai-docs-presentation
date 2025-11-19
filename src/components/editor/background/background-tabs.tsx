@@ -13,36 +13,30 @@ export function BackgroundTabs({
   onTypeChange,
 }: BackgroundTabsProps) {
   return (
-    <div className="flex gap-6 border-b border-border/50">
+    <div className="flex p-1 bg-muted/40 rounded-xl border border-border/40">
       <button
         type="button"
         onClick={() => onTypeChange("solid")}
         className={cn(
-          "relative pb-2 px-1 text-sm font-medium transition-colors",
+          "flex-1 py-1.5 text-xs font-medium rounded-lg transition-all duration-200",
           backgroundType === "solid"
-            ? "text-primary"
-            : "text-muted-foreground hover:text-foreground"
+            ? "bg-background text-foreground shadow-sm ring-1 ring-border/50"
+            : "text-muted-foreground hover:text-foreground hover:bg-background/50"
         )}
       >
-        Solid
-        {backgroundType === "solid" && (
-          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-        )}
+        Solid Color
       </button>
       <button
         type="button"
         onClick={() => onTypeChange("gradient")}
         className={cn(
-          "relative pb-2 px-1 text-sm font-medium transition-colors",
+          "flex-1 py-1.5 text-xs font-medium rounded-lg transition-all duration-200",
           backgroundType === "gradient"
-            ? "text-primary"
-            : "text-muted-foreground hover:text-foreground"
+            ? "bg-background text-foreground shadow-sm ring-1 ring-border/50"
+            : "text-muted-foreground hover:text-foreground hover:bg-background/50"
         )}
       >
         Gradient
-        {backgroundType === "gradient" && (
-          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-        )}
       </button>
     </div>
   );

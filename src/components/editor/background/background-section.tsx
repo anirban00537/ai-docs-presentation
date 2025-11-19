@@ -56,28 +56,19 @@ export function BackgroundSection({
   const gradientColors = backgroundGradient || defaultGradient;
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger className="w-full">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-2">
-            <div className="h-1 w-1 rounded-full bg-primary"></div>
-            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Background
-            </label>
-          </div>
-          {isOpen ? (
-            <ChevronUp className="h-4 w-4 text-muted-foreground" />
-          ) : (
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-          )}
-        </div>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="mt-4 space-y-5">
-        <BackgroundTabs
-          backgroundType={localBackgroundType}
-          onTypeChange={handleTypeChange}
-        />
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+          Background
+        </label>
+      </div>
+      
+      <BackgroundTabs
+        backgroundType={localBackgroundType}
+        onTypeChange={handleTypeChange}
+      />
 
+      <div className="pt-2">
         {localBackgroundType === "solid" && (
           <SolidColorTab
             color={backgroundColor || "#ffffff"}
@@ -95,8 +86,8 @@ export function BackgroundSection({
             onDirectionChange={onGradientDirectionChange}
           />
         )}
-      </CollapsibleContent>
-    </Collapsible>
+      </div>
+    </div>
   );
 }
 

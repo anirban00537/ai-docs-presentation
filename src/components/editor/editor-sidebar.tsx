@@ -5,12 +5,15 @@ import { Switch } from "@/components/ui/switch";
 import {
   CustomSidebar,
   CustomSidebarContent,
+  CustomSidebarHeader,
 } from "@/components/editor/custom-sidebar";
 import { SidebarTabs, TabId, tabs } from "@/components/editor/sidebar-tabs";
 import { BackgroundSection } from "@/components/editor/background/background-section";
 import { BackgroundImageSection } from "@/components/editor/background/background-image-section";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectActiveSlide, updateSlide } from "@/store/slices/slidesSlice";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function EditorSidebar() {
   const [activeTab, setActiveTab] = useState<TabId | null>(null);
@@ -28,6 +31,11 @@ export function EditorSidebar() {
       setActiveTab(tabId);
       setIsOpen(true);
     }
+  };
+
+  const handleClose = () => {
+    setActiveTab(null);
+    setIsOpen(false);
   };
 
   const handleBackgroundColorChange = (color: string) => {
@@ -148,54 +156,61 @@ export function EditorSidebar() {
       {/* Content Panel - Only visible when open */}
       {isOpen && activeTab && (
         <CustomSidebarContent className="flex-1">
-          <div className="flex-1 overflow-y-auto">
+          <CustomSidebarHeader className="justify-between border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 z-10">
+            <div className="flex items-center gap-2">
+              <span className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/10 text-primary">
+                {tabs.find((t) => t.id === activeTab)?.icon}
+              </span>
+              <h2 className="text-sm font-semibold text-foreground tracking-tight">
+                {tabs.find((t) => t.id === activeTab)?.label}
+              </h2>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="h-6 w-6 rounded-full hover:bg-muted text-muted-foreground"
+              onClick={handleClose}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </CustomSidebarHeader>
+          
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
             {activeTab === "design" && (
-              <div className="p-4 space-y-6 max-w-full overflow-visible">
-                <BackgroundSection
-                  backgroundColor={activeSlide.backgroundColor}
-                  backgroundType={activeSlide.backgroundType}
-                  backgroundGradient={activeSlide.backgroundGradient}
-                  backgroundGradientDirection={
-                    activeSlide.backgroundGradientDirection
-                  }
-                  onBackgroundColorChange={handleBackgroundColorChange}
-                  onBackgroundTypeChange={handleBackgroundTypeChange}
-                  onGradientColorChange={handleGradientColorChange}
-                  onAddGradientColor={handleAddGradientColor}
-                  onRemoveGradientColor={handleRemoveGradientColor}
-                  onGradientDirectionChange={handleGradientDirectionChange}
-                />
-
-                <BackgroundImageSection
-                  backgroundImage={activeSlide.backgroundImage}
-                  onImageUpload={handleBackgroundImageUpload}
-                  onImageRemove={handleBackgroundImageRemove}
-                />
-
-                {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent"></div>
-
-                {/* Slide number */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-primary"></div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Options
-                    </label>
+              <div className="p-5 space-y-8 max-w-full overflow-visible pb-20">
+                <div className="space-y-1">
+                  <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-1">
+                    Canvas
+                  </h3>
+                  <div className="p-1">
+                    <BackgroundSection
+                      backgroundColor={activeSlide.backgroundColor}
+                      backgroundType={activeSlide.backgroundType}
+                      backgroundGradient={activeSlide.backgroundGradient}
+                      backgroundGradientDirection={
+                        activeSlide.backgroundGradientDirection
+                      }
+                      onBackgroundColorChange={handleBackgroundColorChange}
+                      onBackgroundTypeChange={handleBackgroundTypeChange}
+                      onGradientColorChange={handleGradientColorChange}
+                      onAddGradientColor={handleAddGradientColor}
+                      onRemoveGradientColor={handleRemoveGradientColor}
+                      onGradientDirectionChange={handleGradientDirectionChange}
+                    />
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl border-2 border-border/60 bg-gradient-to-br from-background to-muted/20">
-                    <div className="min-w-0 flex-1 pr-3">
-                      <div className="text-sm font-semibold text-foreground mb-0.5">
-                        Slide Number
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        Show slide number on slide
-                      </div>
-                    </div>
-                    <Switch
-                      checked={activeSlide.showSlideNumber || false}
-                      onCheckedChange={handleSlideNumberToggle}
-                      className="shrink-0"
+                </div>
+
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+
+                <div className="space-y-1">
+                  <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-1">
+                    Assets
+                  </h3>
+                  <div className="p-1">
+                    <BackgroundImageSection
+                      backgroundImage={activeSlide.backgroundImage}
+                      onImageUpload={handleBackgroundImageUpload}
+                      onImageRemove={handleBackgroundImageRemove}
                     />
                   </div>
                 </div>
@@ -203,18 +218,20 @@ export function EditorSidebar() {
             )}
 
             {activeTab !== "design" && (
-              <div className="flex flex-col items-center justify-center h-64 text-center p-6">
-                <div className="rounded-full bg-muted/50 p-4 mb-4">
+              <div className="flex flex-col items-center justify-center h-[60vh] text-center p-6 animate-in fade-in zoom-in-95 duration-300">
+                <div className="rounded-2xl bg-gradient-to-br from-muted to-muted/30 p-6 mb-4 shadow-inner">
                   {tabs.find((t) => t.id === activeTab)?.icon && (
-                    <div className="text-muted-foreground">
+                    <div className="text-muted-foreground/50 [&>svg]:w-8 [&>svg]:h-8">
                       {tabs.find((t) => t.id === activeTab)?.icon}
                     </div>
                   )}
                 </div>
-                <p className="text-sm font-medium text-foreground mb-1">
+                <p className="text-base font-medium text-foreground mb-1.5">
                   {tabs.find((t) => t.id === activeTab)?.label}
                 </p>
-                <p className="text-xs text-muted-foreground">Coming soon</p>
+                <p className="text-xs text-muted-foreground max-w-[180px] leading-relaxed">
+                  This feature is currently under development. Stay tuned!
+                </p>
               </div>
             )}
           </div>
