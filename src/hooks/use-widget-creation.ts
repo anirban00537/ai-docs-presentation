@@ -2,12 +2,12 @@ import { useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import type { TextPreset, ShapePreset } from "@/components/editor/editor-header";
 import type {
-  TextElement,
-  RectangleElement,
-  CircleElement,
-  PolygonElement,
-  ArrowElement,
-  SlideElement,
+  TextWidget,
+  RectangleWidget,
+  CircleWidget,
+  PolygonWidget,
+  ArrowWidget,
+  SlideWidget,
 } from "@/components/editor/widgets/types";
 import {
   TEXT_PRESET_CONFIG,
@@ -15,17 +15,14 @@ import {
   SLIDE_DIMENSIONS,
 } from "@/lib/constants/element-presets";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addWidget, selectActiveSlideId } from "@/store/slices/slidesSlice";
 import {
-  addElement,
-  selectActiveSlideId,
-} from "@/store/slices/slidesSlice";
-import {
-  selectElement as selectElementAction,
-  startEditing as startEditingAction,
-  stopEditing as stopEditingAction,
+  selectWidget as selectWidgetAction,
+  startWidgetEditing as startWidgetEditingAction,
+  stopWidgetEditing as stopWidgetEditingAction,
 } from "@/store/slices/editorUiSlice";
 
-export const useElementCreation = () => {
+export const useWidgetCreation = () => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
 
@@ -48,7 +45,7 @@ export const useElementCreation = () => {
         preset.id === "heading" ? 140 : preset.id === "subheading" ? 240 : 340;
       const id = `text-${nanoid(8)}`;
 
-      const newElement: TextElement = {
+      const newWidget: TextWidget = {
         id,
         type: "text",
         text: preset.title,
@@ -63,9 +60,9 @@ export const useElementCreation = () => {
         lineHeight: config.lineHeight,
       };
 
-      dispatch(addElement({ element: newElement, slideId }));
-      dispatch(selectElementAction(newElement.id));
-      dispatch(startEditingAction(newElement.id));
+      dispatch(addWidget({ widget: newWidget, slideId }));
+      dispatch(selectWidgetAction(newWidget.id));
+      dispatch(startWidgetEditingAction(newWidget.id));
     },
     [dispatch, ensureSlideId]
   );
@@ -80,11 +77,11 @@ export const useElementCreation = () => {
       const centerX = Math.round((SLIDE_DIMENSIONS.width - config.width) / 2);
       const centerY = Math.round((SLIDE_DIMENSIONS.height - config.height) / 2);
 
-      let newElement: SlideElement | null = null;
+      let newWidget: SlideWidget | null = null;
 
       switch (config.type) {
         case "rectangle":
-          newElement = {
+          newWidget = {
             id: baseId,
             type: "rectangle",
             x: centerX,
@@ -96,10 +93,10 @@ export const useElementCreation = () => {
             ...(config.stroke
               ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
               : {}),
-          } satisfies RectangleElement;
+          } satisfies RectangleWidget;
           break;
         case "circle":
-          newElement = {
+          newWidget = {
             id: baseId,
             type: "circle",
             x: centerX,
@@ -110,10 +107,10 @@ export const useElementCreation = () => {
             ...(config.stroke
               ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
               : {}),
-          } satisfies CircleElement;
+          } satisfies CircleWidget;
           break;
         case "polygon":
-          newElement = {
+          newWidget = {
             id: baseId,
             type: "polygon",
             x: centerX,
@@ -125,10 +122,10 @@ export const useElementCreation = () => {
             ...(config.stroke
               ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
               : {}),
-          } satisfies PolygonElement;
+          } satisfies PolygonWidget;
           break;
         case "arrow":
-          newElement = {
+          newWidget = {
             id: baseId,
             type: "arrow",
             x: centerX,
@@ -137,17 +134,17 @@ export const useElementCreation = () => {
             height: config.height,
             stroke: config.stroke,
             strokeWidth: config.strokeWidth,
-          } satisfies ArrowElement;
+          } satisfies ArrowWidget;
           break;
       }
 
-      if (!newElement) {
+      if (!newWidget) {
         return;
       }
 
-      dispatch(addElement({ element: newElement, slideId }));
-      dispatch(selectElementAction(newElement.id));
-      dispatch(stopEditingAction());
+      dispatch(addWidget({ widget: newWidget, slideId }));
+      dispatch(selectWidgetAction(newWidget.id));
+      dispatch(stopWidgetEditingAction());
     },
     [dispatch, ensureSlideId]
   );

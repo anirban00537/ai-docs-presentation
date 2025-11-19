@@ -1,10 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { SlideElementUpdate, ResizeHandle } from "@/components/editor/widgets/types";
+import type { SlideWidgetUpdate, ResizeHandle } from "@/components/editor/widgets/types";
 import type { RootState } from "@/store";
 
 export type PointerSession = {
   type: "drag" | "resize";
-  elementId: string;
+  widgetId: string;
   pointerId: number;
   handle?: ResizeHandle;
   startPointer: { x: number; y: number };
@@ -13,16 +13,16 @@ export type PointerSession = {
 };
 
 type EditorUiState = {
-  selectedElementId: string | null;
-  editingElementId: string | null;
-  liveOverrides: Record<string, SlideElementUpdate>;
+  selectedWidgetId: string | null;
+  editingWidgetId: string | null;
+  liveOverrides: Record<string, SlideWidgetUpdate>;
   pointerSession: PointerSession | null;
   activePointerId: number | null;
 };
 
 const initialState: EditorUiState = {
-  selectedElementId: null,
-  editingElementId: null,
+  selectedWidgetId: null,
+  editingWidgetId: null,
   liveOverrides: {},
   pointerSession: null,
   activePointerId: null,
@@ -32,25 +32,25 @@ const editorUiSlice = createSlice({
   name: "editorUi",
   initialState,
   reducers: {
-    selectElement(state, action: PayloadAction<string | null>) {
-      state.selectedElementId = action.payload;
-      if (action.payload !== state.editingElementId) {
-        state.editingElementId = null;
+    selectWidget(state, action: PayloadAction<string | null>) {
+      state.selectedWidgetId = action.payload;
+      if (action.payload !== state.editingWidgetId) {
+        state.editingWidgetId = null;
       }
     },
-    startEditing(state, action: PayloadAction<string>) {
-      state.selectedElementId = action.payload;
-      state.editingElementId = action.payload;
+    startWidgetEditing(state, action: PayloadAction<string>) {
+      state.selectedWidgetId = action.payload;
+      state.editingWidgetId = action.payload;
     },
-    stopEditing(state) {
-      state.editingElementId = null;
+    stopWidgetEditing(state) {
+      state.editingWidgetId = null;
     },
     setLiveOverride(
       state,
-      action: PayloadAction<{ elementId: string; updates: SlideElementUpdate }>
+      action: PayloadAction<{ widgetId: string; updates: SlideWidgetUpdate }>
     ) {
-      state.liveOverrides[action.payload.elementId] = {
-        ...(state.liveOverrides[action.payload.elementId] ?? {}),
+      state.liveOverrides[action.payload.widgetId] = {
+        ...(state.liveOverrides[action.payload.widgetId] ?? {}),
         ...action.payload.updates,
       };
     },
@@ -91,9 +91,9 @@ const editorUiSlice = createSlice({
 });
 
 export const {
-  selectElement,
-  startEditing,
-  stopEditing,
+  selectWidget,
+  startWidgetEditing,
+  stopWidgetEditing,
   setLiveOverride,
   clearLiveOverride,
   clearAllLiveOverrides,
@@ -105,10 +105,10 @@ export const {
 } = editorUiSlice.actions;
 
 export const selectEditorUiState = (state: RootState) => state.editorUi;
-export const selectSelectedElementId = (state: RootState) =>
-  state.editorUi.selectedElementId;
-export const selectEditingElementId = (state: RootState) =>
-  state.editorUi.editingElementId;
+export const selectSelectedWidgetId = (state: RootState) =>
+  state.editorUi.selectedWidgetId;
+export const selectEditingWidgetId = (state: RootState) =>
+  state.editorUi.editingWidgetId;
 export const selectLiveOverrides = (state: RootState) =>
   state.editorUi.liveOverrides;
 export const selectPointerSession = (state: RootState) =>

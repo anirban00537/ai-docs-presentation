@@ -85,7 +85,7 @@ export function AppSidebar({
                     selectedId={null}
                     editingId={null}
                     liveOverrides={{}}
-                    onSelectElement={() => {}}
+                    onSelectWidget={() => {}}
                     onSetLiveOverride={() => {}}
                     onClearLiveOverride={() => {}}
                     scale={0.15}

@@ -3,10 +3,10 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import type {
-  RectangleElement,
-  CircleElement,
-  ArrowElement,
-  PolygonElement,
+  RectangleWidget,
+  CircleWidget,
+  ArrowWidget,
+  PolygonWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
 import { ResizeHandles } from "@/components/editor/resize-handles";
@@ -16,11 +16,11 @@ import { ChevronDown, Minus, Plus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  updateElement as updateElementAction,
+  updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 
-type ShapeElementNodeProps = {
-  element: RectangleElement | CircleElement | ArrowElement | PolygonElement;
+type ShapeWNodeProps = {
+  widget: RectangleWidget | CircleWidget | ArrowWidget | PolygonWidget;
   isSelected: boolean;
   isEditing: boolean;
   baseZIndex: number;
@@ -30,8 +30,8 @@ type ShapeElementNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
 };
 
-const ShapeElementNodeBase: React.FC<ShapeElementNodeProps> = ({
-  element,
+const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
+  widget,
   isSelected,
   isEditing,
   baseZIndex,
@@ -51,21 +51,21 @@ const ShapeElementNodeBase: React.FC<ShapeElementNodeProps> = ({
   );
 
   const renderContent = () => {
-    switch (element.type) {
+    switch (widget.type) {
       case "rectangle":
         return (
           <div
             className="h-full w-full"
             style={{
               backgroundColor:
-                element.fill === "transparent" || element.fill === "none"
+                widget.fill === "transparent" || widget.fill === "none"
                   ? "transparent"
-                  : element.fill,
+                  : widget.fill,
               border:
-                element.stroke && element.strokeWidth
-                  ? `${element.strokeWidth}px solid ${element.stroke}`
+                widget.stroke && widget.strokeWidth
+                  ? `${widget.strokeWidth}px solid ${widget.stroke}`
                   : undefined,
-              borderRadius: element.borderRadius,
+              borderRadius: widget.borderRadius,
             }}
           />
         );
@@ -75,12 +75,12 @@ const ShapeElementNodeBase: React.FC<ShapeElementNodeProps> = ({
             className="h-full w-full"
             style={{
               backgroundColor:
-                element.fill === "transparent" || element.fill === "none"
+                widget.fill === "transparent" || widget.fill === "none"
                   ? "transparent"
-                  : element.fill,
+                  : widget.fill,
               border:
-                element.stroke && element.strokeWidth
-                  ? `${element.strokeWidth}px solid ${element.stroke}`
+                widget.stroke && widget.strokeWidth
+                  ? `${widget.strokeWidth}px solid ${widget.stroke}`
                   : undefined,
               borderRadius: "9999px",
             }}
@@ -99,20 +99,20 @@ const ShapeElementNodeBase: React.FC<ShapeElementNodeProps> = ({
               y1="40"
               x2="160"
               y2="40"
-              stroke={element.stroke}
-              strokeWidth={element.strokeWidth}
+              stroke={widget.stroke}
+              strokeWidth={widget.strokeWidth}
               strokeLinecap="round"
             />
-            <polygon points="160,15 190,40 160,65" fill={element.stroke} />
+            <polygon points="160,15 190,40 160,65" fill={widget.stroke} />
           </svg>
         );
       case "polygon": {
         const strokeColor =
-          element.stroke ??
-          (element.fill === "transparent" ? "#1f2937" : "none");
-        const strokeWidth = element.strokeWidth ?? 0;
+          widget.stroke ??
+          (widget.fill === "transparent" ? "#1f2937" : "none");
+        const strokeWidth = widget.strokeWidth ?? 0;
         const fillColor =
-          element.fill === "none" ? "transparent" : element.fill ?? "#1f2937";
+          widget.fill === "none" ? "transparent" : widget.fill ?? "#1f2937";
         const commonProps = {
           width: "100%",
           height: "100%",
@@ -127,7 +127,7 @@ const ShapeElementNodeBase: React.FC<ShapeElementNodeProps> = ({
           strokeLinecap: "round" as const,
         };
 
-        switch (element.shape) {
+        switch (widget.shape) {
           case "triangle":
             return (
               <svg {...commonProps}>
@@ -168,22 +168,22 @@ const ShapeElementNodeBase: React.FC<ShapeElementNodeProps> = ({
         isEditing ? "cursor-text" : "cursor-move"
       )}
       style={{
-        left: element.x,
-        top: element.y,
-        width: element.width,
-        height: element.height,
+        left: widget.x,
+        top: widget.y,
+        width: widget.width,
+        height: widget.height,
         zIndex: baseZIndex,
         borderRadius:
-          element.type === "circle"
+          widget.type === "circle"
             ? "9999px"
-            : element.type === "rectangle"
-            ? element.borderRadius
+            : widget.type === "rectangle"
+            ? widget.borderRadius
             : undefined,
       }}
       onPointerDown={handlePointerDown}
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
-        {isSelected && !isEditing && <ShapeStyleToolbar element={element} />}
+        {isSelected && !isEditing && <ShapeStyleToolbar widget={widget} />}
         {renderContent()}
         {isSelected && !isEditing && (
           <ResizeHandles getResizePointerDown={getResizePointerDown} />
@@ -193,7 +193,7 @@ const ShapeElementNodeBase: React.FC<ShapeElementNodeProps> = ({
   );
 };
 
-export const ShapeElementNode = React.memo(ShapeElementNodeBase);
+export const ShapeWidgetNode = React.memo(ShapeWidgetNodeBase);
 
 const SHAPE_TOOLBAR_SELECTOR = '[data-shape-toolbar="true"]';
 const DEFAULT_STROKE_COLOR = "#1f2937";
@@ -224,10 +224,10 @@ const SHAPE_STROKE_COLORS = [
 ];
 
 type ShapeStyleToolbarProps = {
-  element: RectangleElement | CircleElement | ArrowElement | PolygonElement;
+  widget: RectangleWidget | CircleWidget | ArrowWidget | PolygonWidget;
 };
 
-const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ element }) => {
+const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ widget }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const toolbarRef = React.useRef<HTMLDivElement | null>(null);
@@ -235,23 +235,23 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ element }) => {
     "fill" | "stroke" | null
   >(null);
 
-  const supportsFill = element.type !== "arrow";
+  const supportsFill = widget.type !== "arrow";
   const currentFill =
-    element.type === "arrow" ? undefined : element.fill ?? "transparent";
-  const currentStroke = element.stroke ?? undefined;
+    widget.type === "arrow" ? undefined : widget.fill ?? "transparent";
+  const currentStroke = widget.stroke ?? undefined;
   const strokeWidth =
-    typeof element.strokeWidth === "number"
-      ? element.strokeWidth
-      : element.type === "arrow"
+    typeof widget.strokeWidth === "number"
+      ? widget.strokeWidth
+      : widget.type === "arrow"
       ? 8
       : 0;
 
   const handleSetFill = (color: string | "transparent") => {
     if (!supportsFill) return;
     dispatch(
-      updateElementAction({
+      updateWidgetAction({
         slideId: activeSlideId,
-        elementId: element.id,
+            widgetId: widget.id,
         updates: { fill: color },
       })
     );
@@ -260,18 +260,18 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ element }) => {
   const handleSetStroke = (color: string | "transparent") => {
     if (color === "transparent") {
       dispatch(
-        updateElementAction({
+        updateWidgetAction({
           slideId: activeSlideId,
-          elementId: element.id,
+          widgetId: widget.id,
           updates: { stroke: undefined, strokeWidth: 0 },
         })
       );
       return;
     }
     dispatch(
-      updateElementAction({
+      updateWidgetAction({
         slideId: activeSlideId,
-        elementId: element.id,
+        widgetId: widget.id,
         updates: {
           stroke: color,
           strokeWidth: strokeWidth || 4,
@@ -284,18 +284,18 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ element }) => {
     const normalized = Math.round(width);
     if (normalized <= 0) {
       dispatch(
-        updateElementAction({
+        updateWidgetAction({
           slideId: activeSlideId,
-          elementId: element.id,
+          widgetId: widget.id,
           updates: { strokeWidth: 0, stroke: undefined },
         })
       );
       return;
     }
     dispatch(
-      updateElementAction({
+      updateWidgetAction({
         slideId: activeSlideId,
-        elementId: element.id,
+        widgetId: widget.id,
         updates: {
           strokeWidth: Math.min(48, normalized),
           stroke: currentStroke ?? DEFAULT_STROKE_COLOR,

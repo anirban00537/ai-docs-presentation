@@ -5,10 +5,10 @@ import Editor from "@/components/editor/editor";
 import { EditorSidebar } from "@/components/editor/editor-sidebar";
 import { EditorHeader } from "@/components/editor/editor-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { useElementCreation } from "@/hooks/use-element-creation";
+import { useWidgetCreation } from "@/hooks/use-widget-creation";
 
 export default function Page() {
-  const { handleAddText, handleAddShape } = useElementCreation();
+  const { handleAddText, handleAddShape } = useWidgetCreation();
 
   return (
     <SidebarProvider>

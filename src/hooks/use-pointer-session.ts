@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useRef } from "react";
 import type {
-  SlideElement,
+  SlideWidget,
   ResizeHandle,
-  SlideElementUpdate,
+  SlideWidgetUpdate,
 } from "@/components/editor/widgets/types";
 import type { PointerSession } from "@/store/slices/editorUiSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  updateElement as updateElementAction,
+  updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import {
   selectActivePointerId,
@@ -22,8 +22,8 @@ import type { ScreenToSlideTransform } from "./use-canvas-viewport";
 
 type UsePointerSessionOptions = {
   screenToSlide: ScreenToSlideTransform;
-  onSetLiveOverride: (elementId: string, updates: SlideElementUpdate) => void;
-  onClearLiveOverride: (elementId: string) => void;
+  onSetLiveOverride: (widgetId: string, updates: SlideWidgetUpdate) => void;
+  onClearLiveOverride: (widgetId: string) => void;
 };
 
 export const usePointerSession = ({
@@ -70,22 +70,22 @@ export const usePointerSession = ({
       const session = pointerSessionRef.current;
       if (!session) return;
 
-      const { elementId, type, lastRect, startRect } = session;
+      const { widgetId, type, lastRect, startRect } = session;
       const finalRect = lastRect ?? startRect;
 
-      logInteraction(`${type}:stop`, { id: elementId, ...finalRect });
+      logInteraction(`${type}:stop`, { id: widgetId, ...finalRect });
 
       if (!cancelled && activeSlideId) {
         dispatch(
-          updateElementAction({
+          updateWidgetAction({
             slideId: activeSlideId ?? undefined,
-            elementId,
+            widgetId,
             updates: finalRect,
           })
         );
       }
 
-      onClearLiveOverride(elementId);
+      onClearLiveOverride(widgetId);
       pointerSessionRef.current = null;
       dispatch(endPointerSessionAction());
     },
@@ -105,7 +105,7 @@ export const usePointerSession = ({
       }
       event.preventDefault();
 
-      let override: SlideElementUpdate;
+      let override: SlideWidgetUpdate;
       if (session.type === "drag") {
         override = computeDrag(session, event.clientX, event.clientY);
       } else {
@@ -121,11 +121,11 @@ export const usePointerSession = ({
       };
 
       logInteraction(action, {
-        id: session.elementId,
+        id: session.widgetId,
         ...lastRect,
       });
 
-      onSetLiveOverride(session.elementId, override);
+      onSetLiveOverride(session.widgetId, override);
       dispatch(updatePointerSessionAction({ lastRect }));
       pointerSessionRef.current = { ...session, lastRect };
     };
@@ -171,8 +171,8 @@ export const usePointerSession = ({
 
   const beginDrag = useCallback(
     (
-      element: SlideElement,
-      effective: SlideElement,
+      widget: SlideWidget,
+      effectiveWidget: SlideWidget,
       event: React.PointerEvent<HTMLDivElement>
     ) => {
       if (event.button !== 0) return;
@@ -183,15 +183,15 @@ export const usePointerSession = ({
       };
 
       const startRect = {
-        x: effective.x,
-        y: effective.y,
-        width: effective.width,
-        height: effective.height,
+        x: effectiveWidget.x,
+        y: effectiveWidget.y,
+        width: effectiveWidget.width,
+        height: effectiveWidget.height,
       };
 
       const session: PointerSession = {
         type: "drag",
-        elementId: element.id,
+        widgetId: widget.id,
         pointerId: event.pointerId,
         startPointer: pointer,
         startRect,
@@ -202,7 +202,7 @@ export const usePointerSession = ({
       dispatch(startPointerSessionAction(session));
 
       logInteraction("drag:start", {
-        id: element.id,
+        id: widget.id,
         x: startRect.x,
         y: startRect.y,
         width: startRect.width,
@@ -216,8 +216,8 @@ export const usePointerSession = ({
 
   const beginResize = useCallback(
     (
-      element: SlideElement,
-      effective: SlideElement,
+      widget: SlideWidget,
+      effectiveWidget: SlideWidget,
       handle: ResizeHandle,
       event: React.PointerEvent<HTMLDivElement>
     ) => {
@@ -232,15 +232,15 @@ export const usePointerSession = ({
       };
 
       const startRect = {
-        x: effective.x,
-        y: effective.y,
-        width: effective.width,
-        height: effective.height,
+        x: effectiveWidget.x,
+        y: effectiveWidget.y,
+        width: effectiveWidget.width,
+        height: effectiveWidget.height,
       };
 
       const session: PointerSession = {
         type: "resize",
-        elementId: element.id,
+        widgetId: widget.id,
         pointerId: event.pointerId,
         handle,
         startPointer: pointer,
@@ -252,7 +252,7 @@ export const usePointerSession = ({
       dispatch(startPointerSessionAction(session));
 
       logInteraction("resize:start", {
-        id: element.id,
+        id: widget.id,
         x: startRect.x,
         y: startRect.y,
         width: startRect.width,

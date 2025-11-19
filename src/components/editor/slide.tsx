@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { TextElementNode } from "@/components/editor/widgets/text.widget";
-import { ShapeElementNode } from "@/components/editor/widgets/shape.widget";
+import { TextWidgetNode } from "@/components/editor/widgets/text.widget";
+import { ShapeWidgetNode } from "@/components/editor/widgets/shape.widget";
 import type {
-  SlideElement,
-  SlideElementUpdate,
-  TextElement,
-  RectangleElement,
-  CircleElement,
-  ArrowElement,
-  PolygonElement,
+  SlideWidget,
+  SlideWidgetUpdate,
+  TextWidget,
+  RectangleWidget,
+  CircleWidget,
+  ArrowWidget,
+  PolygonWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
 import type { SlideModel } from "@/store/slices/slidesSlice";
@@ -27,10 +27,10 @@ type SlideProps = {
   slide: SlideModel;
   selectedId: string | null;
   editingId: string | null;
-  liveOverrides: Record<string, SlideElementUpdate>;
-  onSelectElement: (elementId: string | null) => void;
-  onSetLiveOverride: (elementId: string, updates: SlideElementUpdate) => void;
-  onClearLiveOverride: (elementId: string) => void;
+  liveOverrides: Record<string, SlideWidgetUpdate>;
+  onSelectWidget: (widgetId: string | null) => void;
+  onSetLiveOverride: (widgetId: string, updates: SlideWidgetUpdate) => void;
+  onClearLiveOverride: (widgetId: string) => void;
   scale?: number; // Optional fixed scale for thumbnails/previews
 };
 
@@ -39,7 +39,7 @@ const Slide: React.FC<SlideProps> = ({
   selectedId,
   editingId,
   liveOverrides,
-  onSelectElement,
+  onSelectWidget,
   onSetLiveOverride,
   onClearLiveOverride,
   scale: fixedScale,
@@ -75,8 +75,8 @@ const Slide: React.FC<SlideProps> = ({
 
   const handleDragStart = useCallback(
     (
-      element: SlideElement,
-      effective: SlideElement,
+      widget: SlideWidget,
+      effectiveWidget: SlideWidget,
       isSelected: boolean,
       isEditing: boolean,
       event: React.PointerEvent<HTMLDivElement>
@@ -86,27 +86,29 @@ const Slide: React.FC<SlideProps> = ({
         return;
       }
       if (!isSelected) {
-        onSelectElement(element.id);
+        onSelectWidget(widget.id);
       }
       if (isEditing) {
         return;
       }
-      beginDrag(element, effective, event);
+      beginDrag(widget, effectiveWidget, event);
     },
-    [beginDrag, onSelectElement]
+    [beginDrag, onSelectWidget]
   );
 
   const handleResizeStart = useCallback(
     (
-      element: SlideElement,
-      effective: SlideElement,
+      widget: SlideWidget,
+      effectiveWidget: SlideWidget,
       handle: ResizeHandle,
       event: React.PointerEvent<HTMLDivElement>
     ) => {
-      beginResize(element, effective, handle, event);
+      beginResize(widget, effectiveWidget, handle, event);
     },
     [beginResize]
   );
+
+  const widgets = slide.widgets ?? [];
 
   return (
     <div
@@ -212,7 +214,7 @@ const Slide: React.FC<SlideProps> = ({
               >
                 <div className="selection-helper slide-selection-helper"></div>
 
-                {slide.elements.length === 0 && (
+                {widgets.length === 0 && (
                   <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                     <span className="rounded-full bg-white/80 px-4 py-2 text-sm text-muted-foreground shadow-sm">
                       Use the toolbar to add content to this slide.
@@ -220,13 +222,13 @@ const Slide: React.FC<SlideProps> = ({
                   </div>
                 )}
 
-                {slide.elements.map((element, index) => {
-                  const isSelected = selectedId === element.id;
-                  const isEditing = editingId === element.id;
-                  const override = liveOverrides[element.id];
+                {widgets.map((widget, index) => {
+                  const isSelected = selectedId === widget.id;
+                  const isEditing = editingId === widget.id;
+                  const override = liveOverrides[widget.id];
                   const effective = override
-                    ? ({ ...element, ...override } as SlideElement)
-                    : element;
+                    ? ({ ...widget, ...override } as SlideWidget)
+                    : widget;
 
                   // Use simple z-index based on array order
                   // This ensures strict layer stacking (last in array = top)
@@ -234,23 +236,17 @@ const Slide: React.FC<SlideProps> = ({
 
                   if (effective.type === "text") {
                     return (
-                      <TextElementNode
-                        key={element.id}
-                        element={effective as TextElement}
+                      <TextWidgetNode
+                        key={widget.id}
+                        widget={effective as TextWidget}
                         isSelected={isSelected}
                         isEditing={isEditing}
                         baseZIndex={baseZIndex}
                         onPointerDown={(e) =>
-                          handleDragStart(
-                            element,
-                            effective,
-                            isSelected,
-                            isEditing,
-                            e
-                          )
+                          handleDragStart(widget, effective, isSelected, isEditing, e)
                         }
                         getResizePointerDown={(handle) => (e) =>
-                          handleResizeStart(element, effective, handle, e)
+                          handleResizeStart(widget, effective, handle, e)
                         }
                         editingTextareaRef={editingTextareaRef}
                       />
@@ -258,29 +254,23 @@ const Slide: React.FC<SlideProps> = ({
                   }
 
                   return (
-                    <ShapeElementNode
-                      key={element.id}
-                      element={
+                    <ShapeWidgetNode
+                      key={widget.id}
+                      widget={
                         effective as
-                          | RectangleElement
-                          | CircleElement
-                          | ArrowElement
-                          | PolygonElement
+                          | RectangleWidget
+                          | CircleWidget
+                          | ArrowWidget
+                          | PolygonWidget
                       }
                       isSelected={isSelected}
                       isEditing={isEditing}
                       baseZIndex={baseZIndex}
                       onPointerDown={(e) =>
-                        handleDragStart(
-                          element,
-                          effective,
-                          isSelected,
-                          isEditing,
-                          e
-                        )
+                        handleDragStart(widget, effective, isSelected, isEditing, e)
                       }
                       getResizePointerDown={(handle) => (e) =>
-                        handleResizeStart(element, effective, handle, e)
+                        handleResizeStart(widget, effective, handle, e)
                       }
                     />
                   );

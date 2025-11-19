@@ -1,10 +1,10 @@
 import { useCallback } from "react";
-import type { SlideElementUpdate } from "@/components/editor/widgets/types";
+import type { SlideWidgetUpdate } from "@/components/editor/widgets/types";
 import type { PointerSession } from "@/store/slices/editorUiSlice";
 import { SLIDE_WIDTH, SLIDE_HEIGHT } from "@/hooks/use-canvas-viewport";
 import type { ScreenToSlideTransform } from "@/hooks/use-canvas-viewport";
 
-const MIN_ELEMENT_SIZE = 32;
+const MIN_WIDGET_SIZE = 32;
 
 export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
   const clamp = useCallback(
@@ -18,7 +18,7 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
       session: PointerSession,
       clientX: number,
       clientY: number
-    ): SlideElementUpdate => {
+    ): SlideWidgetUpdate => {
       const { startPointer, startRect } = session;
 
       // Convert screen coordinates to slide coordinates
@@ -46,7 +46,7 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
       session: PointerSession,
       clientX: number,
       clientY: number
-    ): SlideElementUpdate => {
+    ): SlideWidgetUpdate => {
       const { startPointer, startRect, handle } = session;
       if (!handle) {
         return startRect;
@@ -66,14 +66,14 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
 
       if (includes("left")) {
         const proposedX = startRect.x + dx;
-        const maxX = startRect.x + startRect.width - MIN_ELEMENT_SIZE;
+        const maxX = startRect.x + startRect.width - MIN_WIDGET_SIZE;
         const clampedX = clamp(proposedX, 0, maxX);
         width = clamp(
           startRect.width + (startRect.x - clampedX),
-          MIN_ELEMENT_SIZE,
+          MIN_WIDGET_SIZE,
           SLIDE_WIDTH
         );
-        x = clamp(clampedX, 0, SLIDE_WIDTH - MIN_ELEMENT_SIZE);
+        x = clamp(clampedX, 0, SLIDE_WIDTH - MIN_WIDGET_SIZE);
         if (x + width > SLIDE_WIDTH) {
           width = SLIDE_WIDTH - x;
         }
@@ -83,21 +83,21 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
         const proposedWidth = startRect.width + dx;
         width = clamp(
           proposedWidth,
-          MIN_ELEMENT_SIZE,
+          MIN_WIDGET_SIZE,
           SLIDE_WIDTH - startRect.x
         );
       }
 
       if (includes("top")) {
         const proposedY = startRect.y + dy;
-        const maxY = startRect.y + startRect.height - MIN_ELEMENT_SIZE;
+        const maxY = startRect.y + startRect.height - MIN_WIDGET_SIZE;
         const clampedY = clamp(proposedY, 0, maxY);
         height = clamp(
           startRect.height + (startRect.y - clampedY),
-          MIN_ELEMENT_SIZE,
+          MIN_WIDGET_SIZE,
           SLIDE_HEIGHT
         );
-        y = clamp(clampedY, 0, SLIDE_HEIGHT - MIN_ELEMENT_SIZE);
+        y = clamp(clampedY, 0, SLIDE_HEIGHT - MIN_WIDGET_SIZE);
         if (y + height > SLIDE_HEIGHT) {
           height = SLIDE_HEIGHT - y;
         }
@@ -107,13 +107,13 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
         const proposedHeight = startRect.height + dy;
         height = clamp(
           proposedHeight,
-          MIN_ELEMENT_SIZE,
+          MIN_WIDGET_SIZE,
           SLIDE_HEIGHT - startRect.y
         );
       }
 
-      width = clamp(width, MIN_ELEMENT_SIZE, SLIDE_WIDTH);
-      height = clamp(height, MIN_ELEMENT_SIZE, SLIDE_HEIGHT);
+      width = clamp(width, MIN_WIDGET_SIZE, SLIDE_WIDTH);
+      height = clamp(height, MIN_WIDGET_SIZE, SLIDE_HEIGHT);
       x = clamp(x, 0, SLIDE_WIDTH - width);
       y = clamp(y, 0, SLIDE_HEIGHT - height);
 
@@ -125,7 +125,7 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
   return {
     computeDrag,
     computeResize,
-    MIN_ELEMENT_SIZE,
+    MIN_WIDGET_SIZE,
   };
 };
 

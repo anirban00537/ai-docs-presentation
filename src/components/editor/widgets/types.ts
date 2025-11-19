@@ -1,4 +1,4 @@
-export type ElementCommon = {
+export type WidgetCommon = {
   id: string;
   x: number;
   y: number;
@@ -7,7 +7,7 @@ export type ElementCommon = {
   rotation?: number;
 };
 
-export type TextElement = ElementCommon & {
+export type TextWidget = WidgetCommon & {
   type: "text";
   text: string;
   fontSize: number;
@@ -17,7 +17,7 @@ export type TextElement = ElementCommon & {
   lineHeight: number;
 };
 
-export type RectangleElement = ElementCommon & {
+export type RectangleWidget = WidgetCommon & {
   type: "rectangle";
   fill: string;
   borderRadius: number;
@@ -25,14 +25,14 @@ export type RectangleElement = ElementCommon & {
   strokeWidth?: number;
 };
 
-export type CircleElement = ElementCommon & {
+export type CircleWidget = WidgetCommon & {
   type: "circle";
   fill: string;
   stroke?: string;
   strokeWidth?: number;
 };
 
-export type ArrowElement = ElementCommon & {
+export type ArrowWidget = WidgetCommon & {
   type: "arrow";
   stroke: string;
   strokeWidth: number;
@@ -40,7 +40,7 @@ export type ArrowElement = ElementCommon & {
 
 export type PolygonShape = "triangle" | "diamond" | "star";
 
-export type PolygonElement = ElementCommon & {
+export type PolygonWidget = WidgetCommon & {
   type: "polygon";
   shape: PolygonShape;
   fill: string;
@@ -48,15 +48,15 @@ export type PolygonElement = ElementCommon & {
   strokeWidth?: number;
 };
 
-export type SlideElement =
-  | TextElement
-  | RectangleElement
-  | CircleElement
-  | ArrowElement
-  | PolygonElement;
+export type SlideWidget =
+  | TextWidget
+  | RectangleWidget
+  | CircleWidget
+  | ArrowWidget
+  | PolygonWidget;
 
-export type SlideElementUpdate = Partial<
-  Omit<ElementCommon, "id"> & {
+export type SlideWidgetUpdate = Partial<
+  Omit<WidgetCommon, "id"> & {
     text: string;
     fontSize: number;
     fontWeight: number;

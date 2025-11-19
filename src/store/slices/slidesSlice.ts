@@ -1,14 +1,14 @@
 import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 import type {
-  SlideElement,
-  SlideElementUpdate,
+  SlideWidget,
+  SlideWidgetUpdate,
 } from "@/components/editor/widgets/types";
 import type { RootState } from "@/store";
 
 export type SlideModel = {
   id: string;
   title: string;
-  elements: SlideElement[];
+  widgets: SlideWidget[];
   backgroundColor?: string;
   backgroundGradient?: string[]; // Array of color stops for gradient
   backgroundGradientDirection?: string; // Gradient direction (e.g., "to top", "to bottom right")
@@ -26,7 +26,7 @@ type SlidesState = {
 const createEmptySlide = (title: string): SlideModel => ({
   id: nanoid(),
   title,
-  elements: [],
+  widgets: [],
   backgroundColor: "#ffffff",
   backgroundGradient: ["#ffffff", "#f0f0f0"],
   backgroundGradientDirection: "to bottom",
@@ -51,11 +51,8 @@ const resolveSlide = (
   return state.slides.find((slide) => slide.id === targetId);
 };
 
-const applyElementUpdates = (
-  element: SlideElement,
-  updates: SlideElementUpdate
-) => {
-  Object.assign(element, updates);
+const applyWidgetUpdates = (widget: SlideWidget, updates: SlideWidgetUpdate) => {
+  Object.assign(widget, updates);
 };
 
 const slidesSlice = createSlice({
@@ -65,17 +62,17 @@ const slidesSlice = createSlice({
     addSlide(
       state,
       action: PayloadAction<
-        { title?: string; elements?: SlideElement[] } | undefined
+        { title?: string; widgets?: SlideWidget[] } | undefined
       >
     ) {
       const insertIndex = state.slides.findIndex(
         (slide) => slide.id === state.activeSlideId
       );
       const defaultTitle = `Slide ${state.slides.length + 1}`;
-      const { title, elements } = action.payload ?? {};
+      const { title, widgets } = action.payload ?? {};
       const newSlide = createEmptySlide(title ?? defaultTitle);
-      if (elements) {
-        newSlide.elements = elements;
+      if (widgets) {
+        newSlide.widgets = widgets;
       }
       const targetIndex =
         insertIndex >= 0 ? insertIndex + 1 : state.slides.length;
@@ -104,60 +101,61 @@ const slidesSlice = createSlice({
         }
       }
     },
-    addElement(
+    addWidget(
       state,
-      action: PayloadAction<{ element: SlideElement; slideId?: string }>
+      action: PayloadAction<{ widget: SlideWidget; slideId?: string }>
     ) {
       const slide = resolveSlide(state, action.payload.slideId);
       if (!slide) return;
-      const existingIndex = slide.elements.findIndex(
-        (el) => el.id === action.payload.element.id
+      slide.widgets ??= [];
+      const existingIndex = slide.widgets.findIndex(
+        (el) => el.id === action.payload.widget.id
       );
       if (existingIndex >= 0) {
-        slide.elements[existingIndex] = action.payload.element;
+        slide.widgets[existingIndex] = action.payload.widget;
       } else {
-        slide.elements.push(action.payload.element);
+        slide.widgets.push(action.payload.widget);
       }
     },
-    updateElement(
+    updateWidget(
       state,
       action: PayloadAction<{
-        elementId: string;
-        updates: SlideElementUpdate;
+        widgetId: string;
+        updates: SlideWidgetUpdate;
         slideId?: string;
       }>
     ) {
       const slide = resolveSlide(state, action.payload.slideId);
       if (!slide) return;
-      const element = slide.elements.find(
-        (el) => el.id === action.payload.elementId
-      );
-      if (!element) return;
-      applyElementUpdates(element, action.payload.updates);
+      slide.widgets ??= [];
+      const widget = slide.widgets.find((el) => el.id === action.payload.widgetId);
+      if (!widget) return;
+      applyWidgetUpdates(widget, action.payload.updates);
     },
-    removeElement(
+    removeWidget(
       state,
-      action: PayloadAction<{ elementId: string; slideId?: string }>
+      action: PayloadAction<{ widgetId: string; slideId?: string }>
     ) {
       const slide = resolveSlide(state, action.payload.slideId);
       if (!slide) return;
-      slide.elements = slide.elements.filter(
-        (el) => el.id !== action.payload.elementId
+      slide.widgets ??= [];
+      slide.widgets = slide.widgets.filter(
+        (el) => el.id !== action.payload.widgetId
       );
     },
-    replaceElements(
+    replaceWidgets(
       state,
-      action: PayloadAction<{ elements: SlideElement[]; slideId?: string }>
+      action: PayloadAction<{ widgets: SlideWidget[]; slideId?: string }>
     ) {
       const slide = resolveSlide(state, action.payload.slideId);
       if (!slide) return;
-      slide.elements = action.payload.elements;
+      slide.widgets = action.payload.widgets;
     },
     updateSlide(
       state,
       action: PayloadAction<{
         slideId?: string;
-        updates: Partial<Omit<SlideModel, "id" | "elements">>;
+        updates: Partial<Omit<SlideModel, "id" | "widgets">>;
       }>
     ) {
       const slide = resolveSlide(state, action.payload.slideId);
@@ -174,10 +172,10 @@ export const {
   addSlide,
   setActiveSlide,
   removeSlide,
-  addElement,
-  updateElement,
-  removeElement,
-  replaceElements,
+  addWidget,
+  updateWidget,
+  removeWidget,
+  replaceWidgets,
   updateSlide,
   resetSlidesState,
 } = slidesSlice.actions;
@@ -190,7 +188,7 @@ export const selectActiveSlide = (state: RootState) =>
   state.slides.slides.find(
     (slide) => slide.id === state.slides.activeSlideId
   ) ?? null;
-export const selectActiveSlideElements = (state: RootState) =>
-  selectActiveSlide(state)?.elements ?? [];
+export const selectActiveSlideWidgets = (state: RootState) =>
+  selectActiveSlide(state)?.widgets ?? [];
 
 export default slidesSlice.reducer;

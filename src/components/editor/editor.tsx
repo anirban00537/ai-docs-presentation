@@ -4,7 +4,7 @@ import React from "react";
 import Slide from "@/components/editor/slide";
 import { useAppSelector } from "@/store/hooks";
 import { selectActiveSlide } from "@/store/slices/slidesSlice";
-import { useElementInteractions } from "@/hooks/use-element-interactions";
+import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
 
 const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
@@ -13,10 +13,10 @@ const Editor = () => {
     selectedId,
     editingId,
     liveOverrides,
-    onSelectElement,
+    onSelectWidget,
     onSetLiveOverride,
     onClearLiveOverride,
-  } = useElementInteractions();
+  } = useWidgetInteractions();
 
   if (!activeSlide) {
     return (
@@ -34,7 +34,7 @@ const Editor = () => {
           selectedId={selectedId}
           editingId={editingId}
           liveOverrides={liveOverrides}
-          onSelectElement={onSelectElement}
+          onSelectWidget={onSelectWidget}
           onSetLiveOverride={onSetLiveOverride}
           onClearLiveOverride={onClearLiveOverride}
         />

@@ -14,15 +14,15 @@ import {
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  updateElement as updateElementAction,
+  updateWidget as updateWidgetAction,
   selectActiveSlideId,
 } from "@/store/slices/slidesSlice";
 import {
-  startEditing as startEditingAction,
-  stopEditing as stopEditingAction,
+  startWidgetEditing as startWidgetEditingAction,
+  stopWidgetEditing as stopWidgetEditingAction,
 } from "@/store/slices/editorUiSlice";
 import type {
-  TextElement,
+  TextWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
 import { useDebouncedCallback } from "use-debounce";
@@ -65,7 +65,7 @@ const TEXT_STYLE_PRESETS = [
 ];
 
 const ALIGN_OPTIONS: Array<{
-  value: TextElement["align"];
+  value: TextWidget["align"];
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
 }> = [
@@ -95,8 +95,8 @@ const TEXT_COLORS = [
   "#ec4899", // pink-500
 ];
 
-type TextElementNodeProps = {
-  element: TextElement;
+type TextWidgetNodeProps = {
+  widget: TextWidget;
   isSelected: boolean;
   isEditing: boolean;
   baseZIndex: number;
@@ -107,8 +107,8 @@ type TextElementNodeProps = {
   editingTextareaRef: React.RefObject<HTMLTextAreaElement | null>;
 };
 
-const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
-  element,
+const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
+  widget,
   isSelected,
   isEditing,
   baseZIndex,
@@ -122,22 +122,22 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
   const contentRef = React.useRef<HTMLDivElement | HTMLTextAreaElement | null>(
     null
   );
-  const lastAppliedHeightRef = React.useRef<number>(element.height);
-  const [localText, setLocalText] = React.useState(element.text);
+  const lastAppliedHeightRef = React.useRef<number>(widget.height);
+  const [localText, setLocalText] = React.useState(widget.text);
 
   const debouncedUpdateText = useDebouncedCallback((nextText: string) => {
     dispatch(
-      updateElementAction({
+      updateWidgetAction({
         slideId: activeSlideId,
-        elementId: element.id,
+        widgetId: widget.id,
         updates: { text: nextText },
       })
     );
   }, 250);
 
   React.useEffect(() => {
-    setLocalText((prev) => (prev === element.text ? prev : element.text));
-  }, [element.id, element.text]);
+    setLocalText((prev) => (prev === widget.text ? prev : widget.text));
+  }, [widget.id, widget.text]);
 
   React.useEffect(() => {
     if (!isEditing) {
@@ -166,8 +166,8 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
   }, []);
 
   React.useEffect(() => {
-    lastAppliedHeightRef.current = element.height;
-  }, [element.height]);
+    lastAppliedHeightRef.current = widget.height;
+  }, [widget.height]);
 
   // Auto-focus textarea when entering edit mode
   React.useEffect(() => {
@@ -199,12 +199,12 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
 
     if (Number.isFinite(measuredHeight) && measuredHeight > 0) {
       const nextHeight = Math.max(1, measuredHeight);
-      if (!isEditing && Math.abs(nextHeight - element.height) > 0.5) {
+      if (!isEditing && Math.abs(nextHeight - widget.height) > 0.5) {
         lastAppliedHeightRef.current = nextHeight;
         dispatch(
-          updateElementAction({
+          updateWidgetAction({
             slideId: activeSlideId,
-            elementId: element.id,
+            widgetId: widget.id,
             updates: { height: nextHeight },
           })
         );
@@ -213,14 +213,14 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
   }, [
     activeSlideId,
     dispatch,
-    element.align,
-    element.fontSize,
-    element.fontWeight,
-    element.height,
-    element.id,
-    element.lineHeight,
-    element.text,
-    element.width,
+    widget.align,
+    widget.fontSize,
+    widget.fontWeight,
+    widget.height,
+    widget.id,
+    widget.lineHeight,
+    widget.text,
+    widget.width,
     isEditing,
   ]);
 
@@ -233,12 +233,12 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
       }
       if (event.detail >= 2 && !isEditing) {
         event.stopPropagation();
-        dispatch(startEditingAction(element.id));
+        dispatch(startWidgetEditingAction(widget.id));
         return;
       }
       onPointerDown(event);
     },
-    [dispatch, element.id, isEditing, onPointerDown]
+    [dispatch, widget.id, isEditing, onPointerDown]
   );
 
   return (
@@ -249,12 +249,12 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
         isEditing ? "cursor-text" : "cursor-move"
       )}
       style={{
-        left: element.x,
-        top: element.y,
-        width: element.width,
+        left: widget.x,
+        top: widget.y,
+        width: widget.width,
         // Use minHeight + height: auto to allow text to grow naturally
         // while respecting manual vertical resizing (if larger than content)
-        minHeight: element.height,
+        minHeight: widget.height,
         height: "auto",
         zIndex: baseZIndex,
       }}
@@ -266,12 +266,12 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
           return;
         }
         event.stopPropagation();
-        dispatch(startEditingAction(element.id));
+        dispatch(startWidgetEditingAction(widget.id));
       }}
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
         {isSelected && (
-          <TextEditingToolbar element={element} isEditing={isEditing} />
+          <TextEditingToolbar widget={widget} isEditing={isEditing} />
         )}
         {isEditing ? (
           <div className="flex h-full w-full items-start pt-1 px-1">
@@ -279,11 +279,11 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
               ref={setTextareaRef}
               className="w-full resize-none border-none bg-transparent p-0 text-foreground outline-none focus:ring-0"
               style={{
-                fontSize: element.fontSize,
-                fontWeight: element.fontWeight,
-                color: element.color,
-                textAlign: element.align,
-                lineHeight: element.lineHeight ?? 1.3,
+                fontSize: widget.fontSize,
+                fontWeight: widget.fontWeight,
+                color: widget.color,
+                textAlign: widget.align,
+                lineHeight: widget.lineHeight ?? 1.3,
                 wordWrap: "break-word",
                 overflowWrap: "break-word",
                 // Ensure textarea grows with content
@@ -298,13 +298,13 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
               }}
               onBlur={() => {
                 debouncedUpdateText.flush();
-                dispatch(stopEditingAction());
+                dispatch(stopWidgetEditingAction());
               }}
               onKeyDown={(event) => {
                 if (event.key === "Escape") {
                   event.preventDefault();
                   debouncedUpdateText.flush();
-                  dispatch(stopEditingAction());
+                  dispatch(stopWidgetEditingAction());
                 }
               }}
             />
@@ -315,11 +315,11 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
               ref={setDisplayRef}
               className="w-full cursor-text whitespace-pre-wrap wrap-break-word"
               style={{
-                fontSize: element.fontSize,
-                fontWeight: element.fontWeight,
-                color: element.color,
-                textAlign: element.align,
-                lineHeight: element.lineHeight ?? 1.3,
+                fontSize: widget.fontSize,
+                fontWeight: widget.fontWeight,
+                color: widget.color,
+                textAlign: widget.align,
+                lineHeight: widget.lineHeight ?? 1.3,
                 wordWrap: "break-word",
                 overflowWrap: "break-word",
               }}
@@ -330,10 +330,10 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
                   return;
                 }
                 event.stopPropagation();
-                dispatch(startEditingAction(element.id));
+                dispatch(startWidgetEditingAction(widget.id));
               }}
             >
-              {element.text || "Start typing…"}
+              {widget.text || "Start typing…"}
             </div>
           </div>
         )}
@@ -357,15 +357,15 @@ const TextElementNodeBase: React.FC<TextElementNodeProps> = ({
   );
 };
 
-export const TextElementNode = React.memo(TextElementNodeBase);
+export const TextWidgetNode = React.memo(TextWidgetNodeBase);
 
 type TextEditingToolbarProps = {
-  element: TextElement;
+  widget: TextWidget;
   isEditing: boolean;
 };
 
 const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
-  element,
+  widget,
   isEditing,
 }) => {
   const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
@@ -413,16 +413,16 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
     };
   }, [colorMenuOpen]);
 
-  const isBold = element.fontWeight >= 600;
+  const isBold = widget.fontWeight >= 600;
 
   const applyPreset = React.useCallback(
     (presetId: string) => {
       const preset = TEXT_STYLE_PRESETS.find((item) => item.id === presetId);
       if (!preset) return;
       dispatch(
-        updateElementAction({
+        updateWidgetAction({
           slideId: activeSlideId,
-          elementId: element.id,
+          widgetId: widget.id,
           updates: {
             fontSize: preset.fontSize,
             fontWeight: preset.fontWeight,
@@ -432,26 +432,26 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
         })
       );
     },
-    [activeSlideId, dispatch, element.id]
+    [activeSlideId, dispatch, widget.id]
   );
 
   const adjustFontSize = React.useCallback(
     (delta: number) => {
       const next = Math.min(
         300,
-        Math.max(8, Math.round(element.fontSize + delta))
+        Math.max(8, Math.round(widget.fontSize + delta))
       );
-      if (next !== element.fontSize) {
+      if (next !== widget.fontSize) {
         dispatch(
-          updateElementAction({
+          updateWidgetAction({
             slideId: activeSlideId,
-            elementId: element.id,
+            widgetId: widget.id,
             updates: { fontSize: next },
           })
         );
       }
     },
-    [activeSlideId, dispatch, element.fontSize, element.id]
+    [activeSlideId, dispatch, widget.fontSize, widget.id]
   );
 
   const handleFontSizeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -464,11 +464,11 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
       return;
     }
     const next = Math.min(300, Math.max(8, Math.round(value)));
-    if (next !== element.fontSize) {
+    if (next !== widget.fontSize) {
       dispatch(
-        updateElementAction({
+        updateWidgetAction({
           slideId: activeSlideId,
-          elementId: element.id,
+          widgetId: widget.id,
           updates: { fontSize: next },
         })
       );
@@ -478,20 +478,20 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   const toggleBold = () => {
     const nextWeight = isBold ? 400 : 700;
     dispatch(
-      updateElementAction({
+      updateWidgetAction({
         slideId: activeSlideId,
-        elementId: element.id,
+        widgetId: widget.id,
         updates: { fontWeight: nextWeight },
       })
     );
   };
 
-  const handleAlign = (align: TextElement["align"]) => {
-    if (align !== element.align) {
+  const handleAlign = (align: TextWidget["align"]) => {
+    if (align !== widget.align) {
       dispatch(
-        updateElementAction({
+        updateWidgetAction({
           slideId: activeSlideId,
-          elementId: element.id,
+          widgetId: widget.id,
           updates: { align },
         })
       );
@@ -500,9 +500,9 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
 
   const handleSetColor = (color: string) => {
     dispatch(
-      updateElementAction({
+      updateWidgetAction({
         slideId: activeSlideId,
-        elementId: element.id,
+        widgetId: widget.id,
         updates: { color },
       })
     );
@@ -512,10 +512,10 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   const currentPresetLabel =
     TEXT_STYLE_PRESETS.find(
       (preset) =>
-        preset.fontSize === element.fontSize &&
-        preset.fontWeight === element.fontWeight &&
+        preset.fontSize === widget.fontSize &&
+        preset.fontWeight === widget.fontWeight &&
         Math.abs(
-          preset.lineHeight - (element.lineHeight ?? preset.lineHeight)
+          preset.lineHeight - (widget.lineHeight ?? preset.lineHeight)
         ) < 0.01
     )?.label ?? "Custom";
 
@@ -586,7 +586,7 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
         <Input
           type="number"
           className="h-8 w-16 rounded-md text-center text-xs"
-          value={Number.isFinite(element.fontSize) ? element.fontSize : 0}
+          value={Number.isFinite(widget.fontSize) ? widget.fontSize : 0}
           onChange={handleFontSizeInput}
           min={8}
           max={300}
@@ -623,12 +623,12 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
             size="icon-sm"
             className={cn(
               "rounded-md",
-              element.align === value
+              widget.align === value
                 ? "bg-primary/10 text-primary hover:bg-primary/10"
                 : undefined
             )}
             onClick={() => handleAlign(value)}
-            aria-pressed={element.align === value}
+            aria-pressed={widget.align === value}
             title={label}
           >
             <Icon className="h-4 w-4" />
@@ -647,7 +647,7 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
             className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
             onClick={() => setColorMenuOpen((prev) => !prev)}
           >
-            <TextColorSwatch color={element.color} />
+            <TextColorSwatch color={widget.color} />
             <span className="text-[11px] font-medium text-muted-foreground">
               Custom
             </span>
@@ -661,7 +661,7 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
                     <TextColorChip
                       key={color}
                       color={color}
-                      active={color === element.color}
+                      active={color === widget.color}
                       onSelect={() => handleSetColor(color)}
                     />
                   ))}
