@@ -13,7 +13,7 @@ import {
   TEXT_PRESET_CONFIG,
   SHAPE_PRESET_CONFIG,
   SLIDE_DIMENSIONS,
-} from "@/lib/constants/element-presets";
+} from "@/lib/constants/widget-presets";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { addWidget, selectActiveSlideId } from "@/store/slices/slidesSlice";
 import {
