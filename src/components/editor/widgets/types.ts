@@ -48,12 +48,25 @@ export type PolygonWidget = WidgetCommon & {
   strokeWidth?: number;
 };
 
+export type FeatureCardWidget = WidgetCommon & {
+  type: "featureCard";
+  number: string;
+  title: string;
+  description: string;
+  backgroundColor?: string;
+  borderColor?: string;
+  numberColor?: string;
+  titleColor?: string;
+  descriptionColor?: string;
+};
+
 export type SlideWidget =
   | TextWidget
   | RectangleWidget
   | CircleWidget
   | ArrowWidget
-  | PolygonWidget;
+  | PolygonWidget
+  | FeatureCardWidget;
 
 export type SlideWidgetUpdate = Partial<
   Omit<WidgetCommon, "id"> & {
@@ -68,6 +81,14 @@ export type SlideWidgetUpdate = Partial<
     strokeWidth: number;
     lineHeight: number;
     shape: PolygonShape;
+    number: string;
+    title: string;
+    description: string;
+    backgroundColor: string;
+    borderColor: string;
+    numberColor: string;
+    titleColor: string;
+    descriptionColor: string;
   }
 >;
 

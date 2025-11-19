@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { TextWidgetNode } from "@/components/editor/widgets/text.widget";
 import { ShapeWidgetNode } from "@/components/editor/widgets/shape.widget";
+import { FeatureCardWidgetNode } from "@/components/editor/widgets/feature-card.widget";
 import type {
   SlideWidget,
   SlideWidgetUpdate,
@@ -11,6 +12,7 @@ import type {
   CircleWidget,
   ArrowWidget,
   PolygonWidget,
+  FeatureCardWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
 import type { SlideModel } from "@/store/slices/slidesSlice";
@@ -243,12 +245,40 @@ const Slide: React.FC<SlideProps> = ({
                         isEditing={isEditing}
                         baseZIndex={baseZIndex}
                         onPointerDown={(e) =>
-                          handleDragStart(widget, effective, isSelected, isEditing, e)
+                          handleDragStart(
+                            widget,
+                            effective,
+                            isSelected,
+                            isEditing,
+                            e
+                          )
                         }
                         getResizePointerDown={(handle) => (e) =>
-                          handleResizeStart(widget, effective, handle, e)
-                        }
+                          handleResizeStart(widget, effective, handle, e)}
                         editingTextareaRef={editingTextareaRef}
+                      />
+                    );
+                  }
+
+                  if (effective.type === "featureCard") {
+                    return (
+                      <FeatureCardWidgetNode
+                        key={widget.id}
+                        widget={effective as FeatureCardWidget}
+                        isSelected={isSelected}
+                        isEditing={isEditing}
+                        baseZIndex={baseZIndex}
+                        onPointerDown={(e) =>
+                          handleDragStart(
+                            widget,
+                            effective,
+                            isSelected,
+                            isEditing,
+                            e
+                          )
+                        }
+                        getResizePointerDown={(handle) => (e) =>
+                          handleResizeStart(widget, effective, handle, e)}
                       />
                     );
                   }
@@ -267,11 +297,16 @@ const Slide: React.FC<SlideProps> = ({
                       isEditing={isEditing}
                       baseZIndex={baseZIndex}
                       onPointerDown={(e) =>
-                        handleDragStart(widget, effective, isSelected, isEditing, e)
+                        handleDragStart(
+                          widget,
+                          effective,
+                          isSelected,
+                          isEditing,
+                          e
+                        )
                       }
                       getResizePointerDown={(handle) => (e) =>
-                        handleResizeStart(widget, effective, handle, e)
-                      }
+                        handleResizeStart(widget, effective, handle, e)}
                     />
                   );
                 })}

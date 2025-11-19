@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Shapes, Type, Share2, Presentation } from "lucide-react";
+import { Shapes, Type, Share2, Presentation, Square } from "lucide-react";
 
 export type TextPreset = {
   id: string;
@@ -28,6 +28,12 @@ export type ShapePreset = {
   title: string;
   category: ShapeCategory;
   preview: React.ReactNode;
+};
+
+export type FeatureCardPreset = {
+  id: string;
+  title: string;
+  description: string;
 };
 
 const textItems: TextPreset[] = [
@@ -243,11 +249,13 @@ const shapeItems: ShapePreset[] = [
 type EditorHeaderProps = {
   onAddText: (preset: TextPreset) => void;
   onAddShape?: (preset: ShapePreset) => void;
+  onAddFeatureCard?: (preset: FeatureCardPreset) => void;
 };
 
 export const EditorHeader: React.FC<EditorHeaderProps> = ({
   onAddText,
   onAddShape,
+  onAddFeatureCard,
 }) => {
   const [activeShapeCategory, setActiveShapeCategory] =
     React.useState<ShapeCategory>("essential");
@@ -375,6 +383,46 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 </div>
               </div>
             </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2 h-9 px-3 font-medium hover:bg-accent/60 transition-all"
+            >
+              <Square className="h-4 w-4" />
+              Feature Card
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-64 rounded-lg border-border/50"
+            align="center"
+          >
+            <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Feature Card
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="flex flex-col items-start gap-1 px-3 py-2.5 hover:bg-accent/60 cursor-pointer transition-colors"
+              onSelect={() => {
+                onAddFeatureCard?.({
+                  id: "default",
+                  title: "Multiple AI models",
+                  description:
+                    "Supports various AI models beyond Google's Gemini, including open source alternatives like GPT-OSS.",
+                });
+              }}
+            >
+              <span className="text-sm font-semibold text-foreground">
+                Default Feature Card
+              </span>
+              <span className="text-xs text-muted-foreground leading-relaxed">
+                Add a feature card with customizable number, title, and
+                description.
+              </span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

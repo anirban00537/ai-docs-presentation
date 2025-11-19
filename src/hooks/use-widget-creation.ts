@@ -1,12 +1,13 @@
 import { useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import type { TextPreset, ShapePreset } from "@/components/editor/editor-header";
+import type { TextPreset, ShapePreset, FeatureCardPreset } from "@/components/editor/editor-header";
 import type {
   TextWidget,
   RectangleWidget,
   CircleWidget,
   PolygonWidget,
   ArrowWidget,
+  FeatureCardWidget,
   SlideWidget,
 } from "@/components/editor/widgets/types";
 import {
@@ -149,9 +150,43 @@ export const useWidgetCreation = () => {
     [dispatch, ensureSlideId]
   );
 
+  const handleAddFeatureCard = useCallback(
+    (preset: FeatureCardPreset) => {
+      const slideId = ensureSlideId();
+      const id = `feature-card-${nanoid(8)}`;
+      const width = 480;
+      const height = 280;
+      const originX = Math.max(40, Math.round((SLIDE_DIMENSIONS.width - width) / 2));
+      const originY = Math.round((SLIDE_DIMENSIONS.height - height) / 2);
+
+      const newWidget: FeatureCardWidget = {
+        id,
+        type: "featureCard",
+        number: "01",
+        title: preset.title,
+        description: preset.description,
+        x: originX,
+        y: originY,
+        width,
+        height,
+        backgroundColor: "#374151", // gray-700
+        borderColor: "#f97316", // orange-500
+        numberColor: "#9ca3af", // gray-400
+        titleColor: "#d1d5db", // gray-300
+        descriptionColor: "#6b7280", // gray-500
+      };
+
+      dispatch(addWidget({ widget: newWidget, slideId }));
+      dispatch(selectWidgetAction(newWidget.id));
+      dispatch(stopWidgetEditingAction());
+    },
+    [dispatch, ensureSlideId]
+  );
+
   return {
     handleAddText,
     handleAddShape,
+    handleAddFeatureCard,
   };
 };
 

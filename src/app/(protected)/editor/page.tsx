@@ -8,13 +8,18 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useWidgetCreation } from "@/hooks/use-widget-creation";
 
 export default function Page() {
-  const { handleAddText, handleAddShape } = useWidgetCreation();
+  const { handleAddText, handleAddShape, handleAddFeatureCard } =
+    useWidgetCreation();
 
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="relative flex flex-col">
-        <EditorHeader onAddText={handleAddText} onAddShape={handleAddShape} />
+        <EditorHeader
+          onAddText={handleAddText}
+          onAddShape={handleAddShape}
+          onAddFeatureCard={handleAddFeatureCard}
+        />
         <div className="flex flex-1 flex-row overflow-hidden">
           <div className="flex-1 flex h-full items-center justify-center">
             <Editor />
