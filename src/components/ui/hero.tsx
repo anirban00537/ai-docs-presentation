@@ -126,13 +126,13 @@ export default function ShaderShowcase() {
       <MeshGradient
         className="absolute inset-0 w-full h-full"
         colors={["#000000", "#f97316", "#ea580c", "#c2410c", "#fb923c"]}
-        speed={0.3}
+        speed={0.8}
       />
 
       <MeshGradient
         className="absolute inset-0 w-full h-full opacity-60"
         colors={["#000000", "#ffffff", "#fb923c", "#f97316"]}
-        speed={0.2}
+        speed={0.5}
       />
 
       <header className="relative z-20 flex items-center justify-between p-6">
@@ -331,17 +331,17 @@ export default function ShaderShowcase() {
               "#ffffff",
             ]}
             colorBack="#00000000"
-            speed={1.5}
+            speed={2.5}
             roundness={1}
-            thickness={0.1}
-            softness={0.2}
-            intensity={5}
-            spotSize={0.1}
-            pulse={0.1}
-            smoke={0.5}
-            smokeSize={4}
+            thickness={0.15}
+            softness={0.3}
+            intensity={7}
+            spotSize={0.15}
+            pulse={0.3}
+            smoke={0.7}
+            smokeSize={5}
             scale={0.65}
-            rotation={0}
+            rotation={45}
             frame={9161408.251009725}
             style={{
               width: "60px",
@@ -359,7 +359,7 @@ export default function ShaderShowcase() {
             viewBox="0 0 100 100"
             animate={{ rotate: 360 }}
             transition={{
-              duration: 20,
+              duration: 15,
 
               repeat: Number.POSITIVE_INFINITY,
 
