@@ -4,7 +4,14 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AlignCenter, AlignLeft, AlignRight, Minus, Plus } from "lucide-react";
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Minus,
+  Plus,
+  ChevronDown,
+} from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   updateElement as updateElementAction,
@@ -23,9 +30,9 @@ const textResizeHandles: Array<{
   handle: Extract<ResizeHandle, "left" | "right">;
   className: string;
 }> = [
-    { handle: "left", className: "-left-1.5 top-1/2 -translate-y-1/2" },
-    { handle: "right", className: "-right-1.5 top-1/2 -translate-y-1/2" },
-  ];
+  { handle: "left", className: "-left-1.5 top-1/2 -translate-y-1/2" },
+  { handle: "right", className: "-right-1.5 top-1/2 -translate-y-1/2" },
+];
 
 const TOOLBAR_SELECTOR = '[data-text-toolbar="true"]';
 
@@ -61,10 +68,31 @@ const ALIGN_OPTIONS: Array<{
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
 }> = [
-    { value: "left", icon: AlignLeft, label: "Align left" },
-    { value: "center", icon: AlignCenter, label: "Align center" },
-    { value: "right", icon: AlignRight, label: "Align right" },
-  ];
+  { value: "left", icon: AlignLeft, label: "Align left" },
+  { value: "center", icon: AlignCenter, label: "Align center" },
+  { value: "right", icon: AlignRight, label: "Align right" },
+];
+
+const TEXT_COLORS = [
+  "#0f172a", // slate-900
+  "#1e293b", // slate-800
+  "#334155", // slate-700
+  "#475569", // slate-600
+  "#64748b", // slate-500
+  "#94a3b8", // slate-400
+  "#cbd5e1", // slate-300
+  "#e2e8f0", // slate-200
+  "#f1f5f9", // slate-100
+  "#ffffff", // white
+  "#ef4444", // red-500
+  "#f97316", // orange-500
+  "#facc15", // yellow-500
+  "#22c55e", // green-500
+  "#0ea5e9", // sky-500
+  "#6366f1", // indigo-500
+  "#a855f7", // purple-500
+  "#ec4899", // pink-500
+];
 
 type TextElementNodeProps = {
   element: TextElement;
@@ -315,7 +343,9 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   isEditing,
 }) => {
   const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
+  const [colorMenuOpen, setColorMenuOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement | null>(null);
+  const colorMenuRef = React.useRef<HTMLDivElement | null>(null);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
 
@@ -337,6 +367,25 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
       window.removeEventListener("mousedown", handleClickOutside);
     };
   }, [presetMenuOpen]);
+
+  React.useEffect(() => {
+    if (!colorMenuOpen) {
+      return;
+    }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        colorMenuRef.current &&
+        event.target instanceof Node &&
+        !colorMenuRef.current.contains(event.target)
+      ) {
+        setColorMenuOpen(false);
+      }
+    };
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [colorMenuOpen]);
 
   const isBold = element.fontWeight >= 600;
 
@@ -421,6 +470,17 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
         })
       );
     }
+  };
+
+  const handleSetColor = (color: string) => {
+    dispatch(
+      updateElementAction({
+        slideId: activeSlideId,
+        elementId: element.id,
+        updates: { color },
+      })
+    );
+    setColorMenuOpen(false);
   };
 
   const currentPresetLabel =
@@ -549,6 +609,86 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
           </Button>
         ))}
       </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-semibold text-muted-foreground">
+          Color
+        </span>
+        <div className="relative flex items-center" ref={colorMenuRef}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
+            onClick={() => setColorMenuOpen((prev) => !prev)}
+          >
+            <TextColorSwatch color={element.color} />
+            <span className="text-[11px] font-medium text-muted-foreground">
+              Custom
+            </span>
+            <ChevronDown className="h-3 w-3 opacity-60" />
+          </Button>
+          {colorMenuOpen && (
+            <TextColorPopover>
+              <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-6 gap-1">
+                  {TEXT_COLORS.map((color) => (
+                    <TextColorChip
+                      key={color}
+                      color={color}
+                      active={color === element.color}
+                      onSelect={() => handleSetColor(color)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </TextColorPopover>
+          )}
+        </div>
+      </div>
     </div>
+  );
+};
+
+const TextColorPopover: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <div className="absolute left-0 top-10 z-40 min-w-[180px] rounded-md border border-border bg-white p-3 shadow-lg">
+    {children}
+  </div>
+);
+
+type TextColorChipProps = {
+  color: string;
+  active: boolean;
+  onSelect: () => void;
+};
+
+const TextColorChip: React.FC<TextColorChipProps> = ({
+  color,
+  active,
+  onSelect,
+}) => (
+  <button
+    type="button"
+    aria-label={color}
+    className={cn(
+      "flex size-6 items-center justify-center rounded-full border border-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+      active ? "border-ring ring-2 ring-ring/30" : "border-border"
+    )}
+    onClick={onSelect}
+  >
+    <span
+      className="block size-4 rounded-full border border-white/70"
+      style={{ backgroundColor: color }}
+    />
+  </button>
+);
+
+const TextColorSwatch: React.FC<{ color: string }> = ({ color }) => {
+  return (
+    <span
+      className="block size-4 rounded-full border border-white/70"
+      style={{ backgroundColor: color }}
+    />
   );
 };
