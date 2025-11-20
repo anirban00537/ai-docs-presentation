@@ -298,7 +298,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   }, [activeSlide, dispatch]);
 
   return (
-    <header className="pointer-events-auto fixed bottom-6 left-1/2 z-40 flex w-[520px] max-w-[90vw] -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-border/60 bg-background/95 px-4 py-2 shadow-lg backdrop-blur-sm">
+    <header className="pointer-events-auto fixed bottom-6 left-1/2 z-40 flex w-[360px] max-w-[90vw] -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-border/60 bg-background/95 px-4 py-2 shadow-lg backdrop-blur-sm">
       <div className="flex flex-1 items-center justify-center gap-2">
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
