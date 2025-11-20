@@ -8,31 +8,41 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const StripeAnimation = () => {
   const stripes = [
-    { color: "rgba(245,87,2,0.4)", delay: 0, duration: 8 },
-    { color: "rgba(245,120,2,0.4)", delay: 2, duration: 10 },
-    { color: "rgba(245,140,2,0.4)", delay: 4, duration: 12 },
-    { color: "rgba(238,174,202,0.4)", delay: 1, duration: 9 },
-    { color: "rgba(202,179,214,0.4)", delay: 3, duration: 11 },
-    { color: "rgba(148,201,233,0.4)", delay: 5, duration: 13 },
+    { color: "rgba(245,87,2,0.6)", delay: 0, duration: 15 },
+    { color: "rgba(245,120,2,0.6)", delay: 2, duration: 18 },
+    { color: "rgba(245,140,2,0.6)", delay: 4, duration: 20 },
+    { color: "rgba(238,174,202,0.6)", delay: 1, duration: 16 },
+    { color: "rgba(202,179,214,0.6)", delay: 3, duration: 19 },
+    { color: "rgba(148,201,233,0.6)", delay: 5, duration: 22 },
   ];
 
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
-      <div className="absolute inset-0 bg-white/5 backdrop-blur-[100px]" />
+      {/* Subtle noise texture */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] mix-blend-overlay z-10" 
+        style={{ 
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")' 
+        }} 
+      />
+      
+      <div className="absolute inset-0 bg-white/5 backdrop-blur-[80px] z-0" />
+      
       {stripes.map((stripe, i) => (
         <motion.div
           key={i}
-          className="absolute top-[-50%] bottom-[-50%] w-[400px] blur-[80px]"
+          className="absolute top-[-50%] bottom-[-50%] w-[30%] blur-[60px]"
           style={{
             background: `linear-gradient(180deg, transparent 0%, ${stripe.color} 50%, transparent 100%)`,
-            left: `${(i / stripes.length) * 120 - 20}%`,
-            transform: "skewX(-25deg)",
+            left: `${(i / stripes.length) * 120 - 10}%`,
           }}
+          initial={{ skewX: -25 }}
           animate={{
             x: ["-10%", "10%"],
             y: ["-5%", "5%"],
-            opacity: [0.4, 0.8, 0.4],
-            scaleX: [1, 1.2, 1],
+            opacity: [0.4, 0.7, 0.4],
+            scaleX: [1, 1.1, 1],
+            skewX: -25,
           }}
           transition={{
             duration: stripe.duration,
