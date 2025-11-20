@@ -1,13 +1,14 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import { MeshGradient } from "@paper-design/shaders-react";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ShaderShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   // Generate random positions once using useState with lazy initializer
 
@@ -20,6 +21,15 @@ export default function ShaderShowcase() {
       xOffset: Math.random() * 20 - 10,
     }));
   });
+
+  // Auto-change slides
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % 3); // 3 slides for now
+    }, 4000); // Change every 4 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div
@@ -262,61 +272,103 @@ export default function ShaderShowcase() {
         </div>
       </header>
 
-      <main className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="text-center max-w-4xl px-8">
-          <motion.h1
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-none tracking-tight"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <motion.span className="block font-light text-white text-3xl md:text-4xl lg:text-5xl mb-2 tracking-wider">
-              AI-Powered
-            </motion.span>
-
-            <span className="block font-black text-white drop-shadow-2xl">
-              Presentations
-            </span>
-
-            <span className="block font-light text-white/80 italic">
-              Research-Based Excellence
-            </span>
-          </motion.h1>
-
-          <motion.p
-            className="text-lg font-light text-white/70 mb-8 leading-relaxed max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            Transform your research into compelling presentations with
-            AI-powered insights. Create data-driven, visually stunning
-            presentations that engage your audience and communicate your
-            findings effectively.
-          </motion.p>
-
-          <motion.div
-            className="flex items-center justify-center gap-6 flex-wrap"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            <motion.button
-              className="px-10 py-4 rounded-full bg-transparent border-2 border-white/30 text-white font-medium text-sm transition-all duration-300 hover:bg-white/10 hover:border-orange-400/50 hover:text-orange-100 cursor-pointer backdrop-blur-sm"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+      <main className="absolute inset-0 flex items-center z-20 pt-20">
+        <div className="w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-8 px-8 lg:px-12">
+          {/* Left side - Text content */}
+          <div className="flex flex-col justify-center items-start max-w-2xl">
+            <motion.h1
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-none tracking-tight text-left"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             >
-              View Research
-            </motion.button>
+              <motion.span className="block font-light text-white text-3xl md:text-4xl lg:text-5xl mb-2 tracking-wider">
+                AI-Powered
+              </motion.span>
 
-            <motion.button
-              className="px-10 py-4 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm transition-all duration-300 hover:from-orange-400 hover:to-orange-500 cursor-pointer shadow-lg hover:shadow-xl"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              <span className="block font-black text-white drop-shadow-2xl">
+                Presentations
+              </span>
+
+              <span className="block font-light text-white/80 italic">
+                Research-Based Excellence
+              </span>
+            </motion.h1>
+
+            <motion.p
+              className="text-lg font-light text-white/70 mb-8 leading-relaxed text-left"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
             >
-              Create Presentation
-            </motion.button>
-          </motion.div>
+              Transform your research into compelling presentations with
+              AI-powered insights. Create data-driven, visually stunning
+              presentations that engage your audience and communicate your
+              findings effectively.
+            </motion.p>
+
+            <motion.div
+              className="flex items-center gap-6 flex-wrap"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <motion.button
+                className="px-10 py-4 rounded-full bg-transparent border-2 border-white/30 text-white font-medium text-sm transition-all duration-300 hover:bg-white/10 hover:border-orange-400/50 hover:text-orange-100 cursor-pointer backdrop-blur-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                View Research
+              </motion.button>
+
+              <motion.button
+                className="px-10 py-4 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm transition-all duration-300 hover:from-orange-400 hover:to-orange-500 cursor-pointer shadow-lg hover:shadow-xl"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Create Presentation
+              </motion.button>
+            </motion.div>
+          </div>
+
+          {/* Right side - Slide changing animation */}
+          <div className="flex items-center justify-center">
+            <div className="relative w-full max-w-2xl aspect-video rounded-2xl overflow-hidden shadow-2xl">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlide}
+                  className="absolute inset-0 bg-white/10 backdrop-blur-sm border border-white/20"
+                  initial={{ opacity: 0, x: 50, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -50, scale: 0.95 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                >
+                  {/* Blank slide content for now */}
+                  <div className="w-full h-full flex items-center justify-center">
+                    <p className="text-white/50 text-lg">
+                      Slide {currentSlide + 1}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Slide indicators */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {[0, 1, 2].map((index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      currentSlide === index
+                        ? "w-8 bg-white"
+                        : "w-2 bg-white/40 hover:bg-white/60"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
