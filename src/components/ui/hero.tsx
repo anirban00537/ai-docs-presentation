@@ -2,9 +2,50 @@
 
 import { useRef, useState, useEffect } from "react";
 
-import { MeshGradient } from "@paper-design/shaders-react";
+
 
 import { motion, AnimatePresence } from "framer-motion";
+
+const StripeAnimation = () => {
+  const stripes = [
+    { color: "rgba(245,87,2,0.4)", delay: 0, duration: 8 },
+    { color: "rgba(245,120,2,0.4)", delay: 2, duration: 10 },
+    { color: "rgba(245,140,2,0.4)", delay: 4, duration: 12 },
+    { color: "rgba(238,174,202,0.4)", delay: 1, duration: 9 },
+    { color: "rgba(202,179,214,0.4)", delay: 3, duration: 11 },
+    { color: "rgba(148,201,233,0.4)", delay: 5, duration: 13 },
+  ];
+
+  return (
+    <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 bg-white/5 backdrop-blur-[100px]" />
+      {stripes.map((stripe, i) => (
+        <motion.div
+          key={i}
+          className="absolute top-[-50%] bottom-[-50%] w-[400px] blur-[80px]"
+          style={{
+            background: `linear-gradient(180deg, transparent 0%, ${stripe.color} 50%, transparent 100%)`,
+            left: `${(i / stripes.length) * 120 - 20}%`,
+            transform: "skewX(-25deg)",
+          }}
+          animate={{
+            x: ["-10%", "10%"],
+            y: ["-5%", "5%"],
+            opacity: [0.4, 0.8, 0.4],
+            scaleX: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: stripe.duration,
+            repeat: Infinity,
+            repeatType: "mirror",
+            ease: "easeInOut",
+            delay: stripe.delay,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 export default function ShaderShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -133,19 +174,7 @@ export default function ShaderShowcase() {
         </defs>
       </svg>
 
-      <MeshGradient
-        className="absolute inset-0 w-full h-full"
-        colors={[
-          "#f55702",
-          "#f57802",
-          "#f58c02",
-          "#f5aa64",
-          "#eeaeca",
-          "#cab3d6",
-          "#94c9e9",
-        ]}
-        speed={0.5}
-      />
+      <StripeAnimation />
 
       <header className="relative z-20 flex items-center justify-between p-6">
         <motion.div
