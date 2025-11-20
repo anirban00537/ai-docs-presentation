@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Shapes, Type, Share2, Presentation, Square } from "lucide-react";
+import { Shapes, Type, Square, Palette } from "lucide-react";
+import { BackgroundSection } from "@/components/editor/background/background-section";
+import { BackgroundImageSection } from "@/components/editor/background/background-image-section";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectActiveSlide, updateSlide } from "@/store/slices/slidesSlice";
 
 export type TextPreset = {
   id: string;
@@ -259,6 +261,8 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
 }) => {
   const [activeShapeCategory, setActiveShapeCategory] =
     React.useState<ShapeCategory>("essential");
+  const dispatch = useAppDispatch();
+  const activeSlide = useAppSelector(selectActiveSlide);
 
   const filteredShapeItems = React.useMemo(
     () => shapeItems.filter((item) => item.category === activeShapeCategory),
@@ -269,13 +273,136 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
     shapeCategories.find((category) => category.id === activeShapeCategory)
       ?.label ?? "Shapes";
 
+  const handleBackgroundColorChange = React.useCallback(
+    (color: string) => {
+      if (!activeSlide) return;
+      dispatch(
+        updateSlide({
+          slideId: activeSlide.id,
+          updates: {
+            backgroundColor: color,
+            backgroundType: "solid",
+          },
+        })
+      );
+    },
+    [activeSlide, dispatch]
+  );
+
+  const handleBackgroundTypeChange = React.useCallback(
+    (type: "solid" | "gradient") => {
+      if (!activeSlide) return;
+      dispatch(
+        updateSlide({
+          slideId: activeSlide.id,
+          updates: { backgroundType: type },
+        })
+      );
+    },
+    [activeSlide, dispatch]
+  );
+
+  const handleGradientColorChange = React.useCallback(
+    (index: number, color: string) => {
+      if (!activeSlide) return;
+      const currentGradient = activeSlide.backgroundGradient || [
+        "#ffffff",
+        "#f0f0f0",
+      ];
+      const next = [...currentGradient];
+      next[index] = color;
+      dispatch(
+        updateSlide({
+          slideId: activeSlide.id,
+          updates: {
+            backgroundGradient: next,
+            backgroundType: "gradient",
+          },
+        })
+      );
+    },
+    [activeSlide, dispatch]
+  );
+
+  const handleAddGradientColor = React.useCallback(() => {
+    if (!activeSlide) return;
+    const currentGradient = activeSlide.backgroundGradient || [
+      "#ffffff",
+      "#f0f0f0",
+    ];
+    dispatch(
+      updateSlide({
+        slideId: activeSlide.id,
+        updates: {
+          backgroundGradient: [...currentGradient, "#ffffff"],
+          backgroundType: "gradient",
+        },
+      })
+    );
+  }, [activeSlide, dispatch]);
+
+  const handleRemoveGradientColor = React.useCallback(
+    (index: number) => {
+      if (!activeSlide) return;
+      const currentGradient = activeSlide.backgroundGradient || [
+        "#ffffff",
+        "#f0f0f0",
+      ];
+      if (currentGradient.length <= 2) return;
+      dispatch(
+        updateSlide({
+          slideId: activeSlide.id,
+          updates: {
+            backgroundGradient: currentGradient.filter((_, i) => i !== index),
+            backgroundType: "gradient",
+          },
+        })
+      );
+    },
+    [activeSlide, dispatch]
+  );
+
+  const handleGradientDirectionChange = React.useCallback(
+    (direction: string) => {
+      if (!activeSlide) return;
+      dispatch(
+        updateSlide({
+          slideId: activeSlide.id,
+          updates: {
+            backgroundGradientDirection: direction,
+            backgroundType: "gradient",
+          },
+        })
+      );
+    },
+    [activeSlide, dispatch]
+  );
+
+  const handleBackgroundImageUpload = React.useCallback(
+    (imageData: string) => {
+      if (!activeSlide) return;
+      dispatch(
+        updateSlide({
+          slideId: activeSlide.id,
+          updates: { backgroundImage: imageData },
+        })
+      );
+    },
+    [activeSlide, dispatch]
+  );
+
+  const handleBackgroundImageRemove = React.useCallback(() => {
+    if (!activeSlide) return;
+    dispatch(
+      updateSlide({
+        slideId: activeSlide.id,
+        updates: { backgroundImage: undefined },
+      })
+    );
+  }, [activeSlide, dispatch]);
+
   return (
-    <header className="flex h-14 shrink-0 items-center px-4 border-b border-border/50 bg-background/95 backdrop-blur-sm">
-      <SidebarTrigger className="-ml-1 h-8 w-8 hover:bg-accent/60 transition-colors" />
-      <Separator
-        orientation="vertical"
-        className="mr-3 data-[orientation=vertical]:h-5"
-      />
+    <header className="pointer-events-auto fixed bottom-6 left-1/2 z-40 flex w-[680px] max-w-[90vw] -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-border/60 bg-background/95 px-4 py-2 shadow-lg backdrop-blur-sm">
       <div className="flex flex-1 items-center justify-center gap-2">
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
@@ -337,7 +464,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             align="center"
           >
             <div className="flex">
-              <div className="flex w-40 flex-col bg-gradient-to-b from-muted/50 to-muted/30 p-2 border-r border-border/50">
+              <div className="flex w-40 flex-col bg-linear-to-b from-muted/50 to-muted/30 p-2 border-r border-border/50">
                 {shapeCategories.map((category) => (
                   <button
                     key={category.id}
@@ -391,6 +518,74 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               variant="ghost"
               size="sm"
               className="gap-2 h-9 px-3 font-medium hover:bg-accent/60 transition-all"
+              disabled={!activeSlide}
+            >
+              <Palette className="h-4 w-4" />
+              Background
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-[400px] max-h-[75vh] overflow-y-auto rounded-lg border-border/50 px-3 py-4 custom-scrollbar"
+            align="center"
+          >
+            {activeSlide ? (
+              <div className="space-y-6">
+                <section className="space-y-2">
+                  <div>
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Canvas
+                    </h3>
+                    <p className="text-[11px] text-muted-foreground/80">
+                      Adjust solid colors or gradients for the slide background.
+                    </p>
+                  </div>
+                  <BackgroundSection
+                    backgroundColor={activeSlide.backgroundColor}
+                    backgroundType={activeSlide.backgroundType}
+                    backgroundGradient={activeSlide.backgroundGradient}
+                    backgroundGradientDirection={
+                      activeSlide.backgroundGradientDirection
+                    }
+                    onBackgroundColorChange={handleBackgroundColorChange}
+                    onBackgroundTypeChange={handleBackgroundTypeChange}
+                    onGradientColorChange={handleGradientColorChange}
+                    onAddGradientColor={handleAddGradientColor}
+                    onRemoveGradientColor={handleRemoveGradientColor}
+                    onGradientDirectionChange={handleGradientDirectionChange}
+                  />
+                </section>
+
+                <div className="h-px w-full bg-linear-to-r from-transparent via-border/60 to-transparent" />
+
+                <section className="space-y-2">
+                  <div>
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Assets
+                    </h3>
+                    <p className="text-[11px] text-muted-foreground/80">
+                      Upload or remove a background image.
+                    </p>
+                  </div>
+                  <BackgroundImageSection
+                    backgroundImage={activeSlide.backgroundImage}
+                    onImageUpload={handleBackgroundImageUpload}
+                    onImageRemove={handleBackgroundImageRemove}
+                  />
+                </section>
+              </div>
+            ) : (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                Select a slide to customize its background.
+              </div>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2 h-9 px-3 font-medium hover:bg-accent/60 transition-all"
             >
               <Square className="h-4 w-4" />
               Feature Card
@@ -425,24 +620,6 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="gap-2 h-9 px-3 font-medium hover:bg-accent/60 transition-all"
-        >
-          <Share2 className="h-4 w-4" />
-          Share
-        </Button>
-        <Button
-          variant="default"
-          size="sm"
-          className="gap-2 h-9 px-3 font-medium hover:bg-primary/90 rounded-full transition-all"
-        >
-          <Presentation className="h-4 w-4" />
-          Present
-        </Button>
       </div>
     </header>
   );

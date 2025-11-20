@@ -27,7 +27,7 @@ const Editor = () => {
   }
 
   return (
-    <div className="flex h-full flex-1 flex-col">
+    <div className="flex h-full flex-1 flex-col overflow-hidden px-4">
       <div className="flex flex-1 flex-col gap-4 overflow-hidden">
         <Slide
           slide={activeSlide}
