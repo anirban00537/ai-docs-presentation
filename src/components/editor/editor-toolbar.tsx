@@ -367,9 +367,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 Diagrams (Shapes)
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent
-                className="w-64 max-h-[300px] overflow-y-auto rounded-xl p-2 shadow-xl"
+                className="w-64 rounded-xl p-2 shadow-xl"
                 sideOffset={10}
-                alignOffset={-100}
+                alignOffset={-400}
               >
                 <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
                   Shapes
