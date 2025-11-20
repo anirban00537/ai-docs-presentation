@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 import {
   Shapes,
@@ -314,7 +315,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   }, [activeSlide, dispatch]);
 
   return (
-    <header className="pointer-events-auto fixed bottom-8 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-border/40 bg-background/80 p-1.5 shadow-2xl backdrop-blur-xl transition-all hover:border-border/60">
+    <header className="pointer-events-auto fixed bottom-8 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-border/50 bg-background/30 p-2 shadow-2xl backdrop-blur-2xl transition-all hover:border-border/80 hover:bg-background/40 hover:shadow-3xl">
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
@@ -329,7 +330,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         <DropdownMenuContent
           align="center"
           sideOffset={20}
-          className="w-64 rounded-xl p-2 shadow-xl"
+          className="w-64 rounded-2xl border border-border/60 bg-background/80 p-2 shadow-2xl backdrop-blur-xl"
         >
           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
             Insert widget
@@ -351,7 +352,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             Heading
           </DropdownMenuItem>
           <DropdownMenuItem
-            onSelect={() => onAddText({ id: "subheading", title: "Subheading" })}
+            onSelect={() =>
+              onAddText({ id: "subheading", title: "Subheading" })
+            }
             className="rounded-lg py-2"
           >
             <Heading2 className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -365,31 +368,33 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               <FlaskConical className="mr-2 h-4 w-4 text-muted-foreground" />
               Diagrams (Shapes)
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent
-              className="w-64 rounded-xl p-2 shadow-xl"
-              sideOffset={10}
-              alignOffset={-400}
-            >
-              <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
-                Shapes
-              </DropdownMenuLabel>
-              {shapeItems.map((item) => (
-                <DropdownMenuItem
-                  key={item.id}
-                  onSelect={() => {
-                    onAddShape?.(item);
-                  }}
-                  className="rounded-lg py-2"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="h-6 w-6 flex items-center justify-center">
-                      {item.preview}
-                    </span>
-                    <span>{item.title}</span>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuSubContent>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent
+                className="w-64 rounded-2xl border border-border/60 !bg-background/90 p-2 shadow-2xl backdrop-blur-xl z-[100]"
+                sideOffset={10}
+                alignOffset={-400}
+              >
+                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+                  Shapes
+                </DropdownMenuLabel>
+                {shapeItems.map((item) => (
+                  <DropdownMenuItem
+                    key={item.id}
+                    onSelect={() => {
+                      onAddShape?.(item);
+                    }}
+                    className="rounded-lg py-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="h-6 w-6 flex items-center justify-center">
+                        {item.preview}
+                      </span>
+                      <span>{item.title}</span>
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
           </DropdownMenuSub>
 
           <DropdownMenuSub>
@@ -397,25 +402,27 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               <LayoutTemplate className="mr-2 h-4 w-4 text-muted-foreground" />
               Cards
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent
-              className="w-64 rounded-xl p-2 shadow-xl"
-              sideOffset={10}
-            >
-              <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
-                Feature Cards
-              </DropdownMenuLabel>
-              {featureCardPresets.map((preset) => (
-                <DropdownMenuItem
-                  key={preset.id}
-                  onSelect={() => {
-                    onAddFeatureCard?.(preset);
-                  }}
-                  className="rounded-lg py-2"
-                >
-                  {preset.title}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuSubContent>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent
+                className="w-64 rounded-2xl border border-border/60 !bg-background/90 p-2 shadow-2xl backdrop-blur-xl z-[100]"
+                sideOffset={10}
+              >
+                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+                  Feature Cards
+                </DropdownMenuLabel>
+                {featureCardPresets.map((preset) => (
+                  <DropdownMenuItem
+                    key={preset.id}
+                    onSelect={() => {
+                      onAddFeatureCard?.(preset);
+                    }}
+                    className="rounded-lg py-2"
+                  >
+                    {preset.title}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
           </DropdownMenuSub>
 
           <DropdownMenuSeparator className="my-1" />
@@ -450,7 +457,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-[400px] max-h-[75vh] overflow-y-auto rounded-xl border-border/50 px-3 py-4 custom-scrollbar shadow-xl"
+          className="w-[400px] max-h-[75vh] overflow-y-auto rounded-3xl border border-border/60 bg-background/80 px-3 py-4 custom-scrollbar shadow-2xl backdrop-blur-xl"
           align="center"
           sideOffset={20}
         >
