@@ -7,8 +7,10 @@ import {
   selectSlides,
   selectActiveSlideId,
   setActiveSlide,
+  addSlide,
 } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
+import { Plus } from "lucide-react";
 
 export const SlidesPreview = () => {
   const slides = useAppSelector(selectSlides);
@@ -19,10 +21,29 @@ export const SlidesPreview = () => {
     dispatch(setActiveSlide(slideId));
   };
 
+  const handleAddSlide = () => {
+    dispatch(addSlide());
+  };
+
   return (
-    <div className="border-t border-border/50 bg-background/80 backdrop-blur-sm">
+    <div className="border-r border-border/50 bg-background/80 backdrop-blur-sm flex flex-col">
+      <div className="p-3 border-b border-border/50">
+        <button
+          onClick={handleAddSlide}
+          className={cn(
+            "w-full flex items-center justify-center gap-2 px-3 py-2.5",
+            "rounded-lg border border-border/50 bg-background/50",
+            "hover:bg-background hover:border-border hover:shadow-sm",
+            "transition-all duration-200 group",
+            "text-sm font-medium text-foreground/80 hover:text-foreground"
+          )}
+        >
+          <Plus className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+          <span>Add Slide</span>
+        </button>
+      </div>
       <div
-        className="flex gap-2 mx-auto p-2 overflow-x-auto pb-1 max-w-4xl"
+        className="flex flex-col gap-2 p-2 overflow-y-auto flex-1"
         style={{
           scrollbarWidth: "thin",
           scrollbarColor: "var(--border) transparent",
@@ -48,8 +69,8 @@ export const SlidesPreview = () => {
                     : "border border-border/50 hover:border-border"
                 )}
                 style={{
-                  width: "120px",
-                  height: "68px",
+                  width: "140px",
+                  height: "78px",
                 }}
               >
                 <div className="absolute inset-0 flex items-center justify-center bg-muted/30">
@@ -61,7 +82,7 @@ export const SlidesPreview = () => {
                     onSelectWidget={() => {}}
                     onSetLiveOverride={() => {}}
                     onClearLiveOverride={() => {}}
-                    scale={0.094}
+                    scale={0.11}
                   />
                 </div>
                 {isActive && (

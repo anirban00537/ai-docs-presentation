@@ -28,7 +28,8 @@ const Editor = () => {
   }
 
   return (
-    <div className="flex h-full flex-1 flex-col overflow-hidden">
+    <div className="flex h-full flex-1 flex-row overflow-hidden">
+      <SlidesPreview />
       <div className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pt-4">
         <Slide
           slide={activeSlide}
@@ -40,8 +41,6 @@ const Editor = () => {
           onClearLiveOverride={onClearLiveOverride}
         />
       </div>
-
-      <SlidesPreview />
     </div>
   );
 };
