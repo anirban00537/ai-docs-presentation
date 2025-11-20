@@ -1,4 +1,7 @@
-import type { TextPreset, ShapePreset } from "@/components/editor/editor-header";
+import type {
+  TextPreset,
+  ShapePreset,
+} from "@/components/editor/editor-toolbar";
 import type { PolygonShape } from "@/components/editor/widgets/types";
 
 type TextPresetId = TextPreset["id"];
@@ -188,4 +191,3 @@ export const SHAPE_PRESET_CONFIG: Record<
     strokeWidth: 8,
   },
 };
-

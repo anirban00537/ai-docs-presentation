@@ -4,7 +4,7 @@ import type {
   TextPreset,
   ShapePreset,
   FeatureCardPreset,
-} from "@/components/editor/editor-header";
+} from "@/components/editor/editor-toolbar";
 import type {
   TextWidget,
   RectangleWidget,
