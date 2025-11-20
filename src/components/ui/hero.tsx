@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 
-import { MeshGradient, PulsingBorder } from "@paper-design/shaders-react";
+import { MeshGradient } from "@paper-design/shaders-react";
 
 import { motion } from "framer-motion";
 
@@ -24,7 +24,7 @@ export default function ShaderShowcase() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-black relative overflow-hidden"
+      className="min-h-screen relative overflow-hidden bg-[radial-gradient(125%_125%_at_50%_101%,rgba(245,87,2,1)_10.5%,rgba(245,120,2,1)_16%,rgba(245,140,2,1)_17.5%,rgba(245,170,100,1)_25%,rgba(238,174,202,1)_40%,rgba(202,179,214,1)_65%,rgba(148,201,233,1)_100%)]"
     >
       <svg className="absolute inset-0 w-0 h-0">
         <defs>
@@ -125,13 +125,15 @@ export default function ShaderShowcase() {
 
       <MeshGradient
         className="absolute inset-0 w-full h-full"
-        colors={["#000000", "#f97316", "#ea580c", "#c2410c", "#fb923c"]}
-        speed={0.8}
-      />
-
-      <MeshGradient
-        className="absolute inset-0 w-full h-full opacity-60"
-        colors={["#000000", "#ffffff", "#fb923c", "#f97316"]}
+        colors={[
+          "#f55702",
+          "#f57802",
+          "#f58c02",
+          "#f5aa64",
+          "#eeaeca",
+          "#cab3d6",
+          "#94c9e9",
+        ]}
         speed={0.5}
       />
 
@@ -317,72 +319,6 @@ export default function ShaderShowcase() {
           </motion.div>
         </div>
       </main>
-
-      <div className="absolute bottom-8 right-8 z-30">
-        <div className="relative w-20 h-20 flex items-center justify-center">
-          <PulsingBorder
-            colors={[
-              "#f97316",
-              "#ea580c",
-              "#fb923c",
-              "#ff7a00",
-              "#ff9500",
-              "#c2410c",
-              "#ffffff",
-            ]}
-            colorBack="#00000000"
-            speed={2.5}
-            roundness={1}
-            thickness={0.15}
-            softness={0.3}
-            intensity={7}
-            spotSize={0.15}
-            pulse={0.3}
-            smoke={0.7}
-            smokeSize={5}
-            scale={0.65}
-            rotation={45}
-            frame={9161408.251009725}
-            style={{
-              width: "60px",
-
-              height: "60px",
-
-              borderRadius: "50%",
-            }}
-          />
-
-          {/* Rotating Text Around the Pulsing Border */}
-
-          <motion.svg
-            className="absolute inset-0 w-full h-full"
-            viewBox="0 0 100 100"
-            animate={{ rotate: 360 }}
-            transition={{
-              duration: 15,
-
-              repeat: Number.POSITIVE_INFINITY,
-
-              ease: "linear",
-            }}
-            style={{ transform: "scale(1.6)" }}
-          >
-            <defs>
-              <path
-                id="circle"
-                d="M 50, 50 m -38, 0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
-              />
-            </defs>
-
-            <text className="text-sm fill-white/80 font-medium">
-              <textPath href="#circle" startOffset="0%">
-                AI Presentations • Research-Based • Data-Driven • Intelligent
-                Design • AI Presentations •
-              </textPath>
-            </text>
-          </motion.svg>
-        </div>
-      </div>
     </div>
   );
 }
