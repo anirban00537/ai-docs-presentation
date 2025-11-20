@@ -314,196 +314,198 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   }, [activeSlide, dispatch]);
 
   return (
-    <header className="pointer-events-auto fixed bottom-6 left-1/2 z-40 flex w-[360px] max-w-[90vw] -translate-x-1/2 items-center justify-center gap-2 rounded-full border border-border/60 bg-background/95 px-4 py-2 shadow-lg backdrop-blur-sm">
-      <div className="flex flex-1 items-center justify-center gap-2">
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="gap-1.5 h-9 px-4 text-sm font-medium"
-            >
-              <Plus className="h-4 w-4" />
-              Insert
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="center"
-            sideOffset={20}
-            className="w-64 rounded-xl p-2 shadow-xl"
+    <header className="pointer-events-auto fixed bottom-8 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-border/40 bg-background/80 p-1.5 shadow-2xl backdrop-blur-xl transition-all hover:border-border/60">
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="h-9 rounded-full px-4 text-sm font-medium shadow-sm transition-colors hover:bg-secondary/80"
           >
-            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
-              Insert widget
-            </DropdownMenuLabel>
-            
-            <DropdownMenuItem
-              onSelect={() => onAddText({ id: "body", title: "Body Text" })}
-              className="rounded-lg py-2"
-            >
-              <Pilcrow className="mr-2 h-4 w-4 text-muted-foreground" />
-              Paragraph
-            </DropdownMenuItem>
-            
-            <DropdownMenuItem
-              onSelect={() => onAddText({ id: "heading", title: "Heading" })}
-              className="rounded-lg py-2"
-            >
-              <Heading1 className="mr-2 h-4 w-4 text-muted-foreground" />
-              Heading
-            </DropdownMenuItem>
-             <DropdownMenuItem
-              onSelect={() => onAddText({ id: "subheading", title: "Subheading" })}
-              className="rounded-lg py-2"
-            >
-              <Heading2 className="mr-2 h-4 w-4 text-muted-foreground" />
-              Subheading
-            </DropdownMenuItem>
+            <Plus className="mr-1.5 h-4 w-4" />
+            Insert
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="center"
+          sideOffset={20}
+          className="w-64 rounded-xl p-2 shadow-xl"
+        >
+          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+            Insert widget
+          </DropdownMenuLabel>
 
-            <DropdownMenuSeparator className="my-1" />
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="rounded-lg py-2">
-                <FlaskConical className="mr-2 h-4 w-4 text-muted-foreground" />
-                Diagrams (Shapes)
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent
-                className="w-64 rounded-xl p-2 shadow-xl"
-                sideOffset={10}
-                alignOffset={-400}
-              >
-                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
-                  Shapes
-                </DropdownMenuLabel>
-                {shapeItems.map((item) => (
-                  <DropdownMenuItem
-                    key={item.id}
-                    onSelect={() => {
-                      onAddShape?.(item);
-                    }}
-                    className="rounded-lg py-2"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="h-6 w-6 flex items-center justify-center">{item.preview}</span>
-                      <span>{item.title}</span>
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="rounded-lg py-2">
-                <LayoutTemplate className="mr-2 h-4 w-4 text-muted-foreground" />
-                Cards
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent
-                className="w-64 rounded-xl p-2 shadow-xl"
-                sideOffset={10}
-              >
-                 <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
-                  Feature Cards
-                </DropdownMenuLabel>
-                {featureCardPresets.map((preset) => (
-                  <DropdownMenuItem
-                    key={preset.id}
-                    onSelect={() => {
-                      onAddFeatureCard?.(preset);
-                    }}
-                    className="rounded-lg py-2"
-                  >
-                    {preset.title}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            
-             <DropdownMenuSeparator className="my-1" />
-             
-             <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
-                <ImageIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-                Image
-             </DropdownMenuItem>
-             <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
-                <Quote className="mr-2 h-4 w-4 text-muted-foreground" />
-                Quote
-             </DropdownMenuItem>
-             <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
-                <StickyNote className="mr-2 h-4 w-4 text-muted-foreground" />
-                Sticky Note
-             </DropdownMenuItem>
-
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-1.5 h-8 px-2.5 text-xs font-medium hover:bg-accent/60 transition-all"
-              disabled={!activeSlide}
-            >
-              <Palette className="h-3.5 w-3.5" />
-              Background
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-[400px] max-h-[75vh] overflow-y-auto rounded-xl border-border/50 px-3 py-4 custom-scrollbar shadow-xl"
-            align="center"
-            sideOffset={20}
+          <DropdownMenuItem
+            onSelect={() => onAddText({ id: "body", title: "Body Text" })}
+            className="rounded-lg py-2"
           >
-            {activeSlide ? (
-              <div className="space-y-6">
-                <section className="space-y-2">
-                  <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Canvas
-                    </h3>
-                    <p className="text-[11px] text-muted-foreground/80">
-                      Adjust solid colors or gradients for the slide background.
-                    </p>
-                  </div>
-                  <BackgroundSection
-                    backgroundColor={activeSlide.backgroundColor}
-                    backgroundType={activeSlide.backgroundType}
-                    backgroundGradient={activeSlide.backgroundGradient}
-                    backgroundGradientDirection={
-                      activeSlide.backgroundGradientDirection
-                    }
-                    onBackgroundColorChange={handleBackgroundColorChange}
-                    onBackgroundTypeChange={handleBackgroundTypeChange}
-                    onGradientColorChange={handleGradientColorChange}
-                    onAddGradientColor={handleAddGradientColor}
-                    onRemoveGradientColor={handleRemoveGradientColor}
-                    onGradientDirectionChange={handleGradientDirectionChange}
-                  />
-                </section>
+            <Pilcrow className="mr-2 h-4 w-4 text-muted-foreground" />
+            Paragraph
+          </DropdownMenuItem>
 
-                <div className="h-px w-full bg-linear-to-r from-transparent via-border/60 to-transparent" />
+          <DropdownMenuItem
+            onSelect={() => onAddText({ id: "heading", title: "Heading" })}
+            className="rounded-lg py-2"
+          >
+            <Heading1 className="mr-2 h-4 w-4 text-muted-foreground" />
+            Heading
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => onAddText({ id: "subheading", title: "Subheading" })}
+            className="rounded-lg py-2"
+          >
+            <Heading2 className="mr-2 h-4 w-4 text-muted-foreground" />
+            Subheading
+          </DropdownMenuItem>
 
-                <section className="space-y-2">
-                  <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Assets
-                    </h3>
-                    <p className="text-[11px] text-muted-foreground/80">
-                      Upload or remove a background image.
-                    </p>
+          <DropdownMenuSeparator className="my-1" />
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="rounded-lg py-2">
+              <FlaskConical className="mr-2 h-4 w-4 text-muted-foreground" />
+              Diagrams (Shapes)
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent
+              className="w-64 rounded-xl p-2 shadow-xl"
+              sideOffset={10}
+              alignOffset={-400}
+            >
+              <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+                Shapes
+              </DropdownMenuLabel>
+              {shapeItems.map((item) => (
+                <DropdownMenuItem
+                  key={item.id}
+                  onSelect={() => {
+                    onAddShape?.(item);
+                  }}
+                  className="rounded-lg py-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="h-6 w-6 flex items-center justify-center">
+                      {item.preview}
+                    </span>
+                    <span>{item.title}</span>
                   </div>
-                  <BackgroundImageSection
-                    backgroundImage={activeSlide.backgroundImage}
-                    onImageUpload={handleBackgroundImageUpload}
-                    onImageRemove={handleBackgroundImageRemove}
-                  />
-                </section>
-              </div>
-            ) : (
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                Select a slide to customize its background.
-              </div>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="rounded-lg py-2">
+              <LayoutTemplate className="mr-2 h-4 w-4 text-muted-foreground" />
+              Cards
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent
+              className="w-64 rounded-xl p-2 shadow-xl"
+              sideOffset={10}
+            >
+              <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+                Feature Cards
+              </DropdownMenuLabel>
+              {featureCardPresets.map((preset) => (
+                <DropdownMenuItem
+                  key={preset.id}
+                  onSelect={() => {
+                    onAddFeatureCard?.(preset);
+                  }}
+                  className="rounded-lg py-2"
+                >
+                  {preset.title}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
+          <DropdownMenuSeparator className="my-1" />
+
+          <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
+            <ImageIcon className="mr-2 h-4 w-4 text-muted-foreground" />
+            Image
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
+            <Quote className="mr-2 h-4 w-4 text-muted-foreground" />
+            Quote
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
+            <StickyNote className="mr-2 h-4 w-4 text-muted-foreground" />
+            Sticky Note
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <div className="h-4 w-px bg-border/40 mx-1" />
+
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 rounded-full px-4 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+            disabled={!activeSlide}
+          >
+            <Palette className="mr-1.5 h-4 w-4" />
+            Background
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="w-[400px] max-h-[75vh] overflow-y-auto rounded-xl border-border/50 px-3 py-4 custom-scrollbar shadow-xl"
+          align="center"
+          sideOffset={20}
+        >
+          {activeSlide ? (
+            <div className="space-y-6">
+              <section className="space-y-2">
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Canvas
+                  </h3>
+                  <p className="text-[11px] text-muted-foreground/80">
+                    Adjust solid colors or gradients for the slide background.
+                  </p>
+                </div>
+                <BackgroundSection
+                  backgroundColor={activeSlide.backgroundColor}
+                  backgroundType={activeSlide.backgroundType}
+                  backgroundGradient={activeSlide.backgroundGradient}
+                  backgroundGradientDirection={
+                    activeSlide.backgroundGradientDirection
+                  }
+                  onBackgroundColorChange={handleBackgroundColorChange}
+                  onBackgroundTypeChange={handleBackgroundTypeChange}
+                  onGradientColorChange={handleGradientColorChange}
+                  onAddGradientColor={handleAddGradientColor}
+                  onRemoveGradientColor={handleRemoveGradientColor}
+                  onGradientDirectionChange={handleGradientDirectionChange}
+                />
+              </section>
+
+              <div className="h-px w-full bg-linear-to-r from-transparent via-border/60 to-transparent" />
+
+              <section className="space-y-2">
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Assets
+                  </h3>
+                  <p className="text-[11px] text-muted-foreground/80">
+                    Upload or remove a background image.
+                  </p>
+                </div>
+                <BackgroundImageSection
+                  backgroundImage={activeSlide.backgroundImage}
+                  onImageUpload={handleBackgroundImageUpload}
+                  onImageRemove={handleBackgroundImageRemove}
+                />
+              </section>
+            </div>
+          ) : (
+            <div className="py-6 text-center text-sm text-muted-foreground">
+              Select a slide to customize its background.
+            </div>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </header>
   );
 };
