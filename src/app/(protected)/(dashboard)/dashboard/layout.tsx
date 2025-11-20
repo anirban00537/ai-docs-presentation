@@ -1,11 +1,9 @@
+import React from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { DataTable } from "@/components/data-table";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
-import data from "./data.json";
-
-export default function Page() {
+const layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider
       style={
@@ -16,9 +14,16 @@ export default function Page() {
       }
     >
       <AppSidebar variant="inset" />
-      <SidebarInset>
+      <SidebarInset className="relative flex flex-col">
         <SiteHeader />
+        <div className="flex flex-1 flex-row overflow-hidden">
+          <div className="flex-1 flex h-full items-center justify-center">
+            {children}
+          </div>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
-}
+};
+
+export default layout;

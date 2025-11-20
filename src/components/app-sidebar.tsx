@@ -2,18 +2,18 @@
 
 import * as React from "react";
 import {
-  IconCamera,
-  IconChartBar,
   IconDashboard,
-  IconFileAi,
-  IconFolder,
+  IconFileText,
+  IconPlus,
+  IconTemplate,
+  IconClock,
+  IconShare3,
+  IconChartBar,
+  IconTrash,
   IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -31,49 +31,44 @@ import {
 
 const navMainData = [
   {
-    title: "Outlier Research",
-    url: "#",
+    title: "Dashboard",
+    url: "/dashboard",
     icon: IconDashboard,
   },
   {
-    title: "Keyword Research",
-    url: "#",
-    icon: IconListDetails,
+    title: "My Presentations",
+    url: "/dashboard",
+    icon: IconFileText,
   },
   {
-    title: "Deep Research",
-    url: "#",
-    icon: IconFileAi,
+    title: "Create Presentation",
+    url: "/editor",
+    icon: IconPlus,
   },
   {
-    title: "Trends Analysis",
+    title: "Templates",
+    url: "#",
+    icon: IconTemplate,
+  },
+  {
+    title: "Recent",
+    url: "#",
+    icon: IconClock,
+  },
+  {
+    title: "Shared with Me",
+    url: "#",
+    icon: IconShare3,
+  },
+  {
+    title: "Analytics",
     url: "#",
     icon: IconChartBar,
   },
   {
-    title: "Analyze Video",
+    title: "Trash",
     url: "#",
-    icon: IconCamera,
-  },
-  {
-    title: "Analyze Channel",
-    url: "#",
-    icon: IconInnerShadowTop,
-  },
-  {
-    title: "Track Channels",
-    url: "#",
-    icon: IconReport,
-  },
-  {
-    title: "Bookmarks",
-    url: "#",
-    icon: IconFolder,
-  },
-  {
-    title: "Niches",
-    url: "#",
-    icon: IconUsers,
+    icon: IconTrash,
   },
 ];
 
