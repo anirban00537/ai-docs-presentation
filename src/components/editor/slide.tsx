@@ -34,6 +34,7 @@ type SlideProps = {
   onSetLiveOverride: (widgetId: string, updates: SlideWidgetUpdate) => void;
   onClearLiveOverride: (widgetId: string) => void;
   scale?: number; // Optional fixed scale for thumbnails/previews
+  padding?: number; // Optional padding for responsive scaling
 };
 
 const Slide: React.FC<SlideProps> = ({
@@ -45,6 +46,7 @@ const Slide: React.FC<SlideProps> = ({
   onSetLiveOverride,
   onClearLiveOverride,
   scale: fixedScale,
+  padding,
 }) => {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -55,7 +57,8 @@ const Slide: React.FC<SlideProps> = ({
   // Use the canvas viewport hook for viewport calculation and coordinate transformation
   const { viewport, screenToSlide, invScale } = useCanvasViewport(
     canvasContainerRef,
-    fixedScale
+    fixedScale,
+    padding
   );
 
   // Use pointer session hook for drag/resize operations

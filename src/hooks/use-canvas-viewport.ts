@@ -19,7 +19,8 @@ export type ScreenToSlideTransform = (screenX: number, screenY: number) => {
 
 export function useCanvasViewport(
   containerRef: RefObject<HTMLDivElement | null>,
-  fixedScale?: number
+  fixedScale?: number,
+  padding: number = CANVAS_PADDING
 ): {
   viewport: Viewport;
   screenToSlide: ScreenToSlideTransform;
@@ -84,8 +85,8 @@ export function useCanvasViewport(
       const containerHeight = containerRect.height;
 
       // Calculate scale to fit slide within available space with padding
-      const availableWidth = containerWidth - CANVAS_PADDING * 2;
-      const availableHeight = containerHeight - CANVAS_PADDING * 2;
+      const availableWidth = containerWidth - padding * 2;
+      const availableHeight = containerHeight - padding * 2;
 
       if (availableWidth <= 0 || availableHeight <= 0) {
         return;
@@ -101,8 +102,8 @@ export function useCanvasViewport(
       const scaledHeight = SLIDE_HEIGHT * scale;
 
       // Center the slide within the container (accounting for padding)
-      const translateX = CANVAS_PADDING + (availableWidth - scaledWidth) / 2;
-      const translateY = CANVAS_PADDING + (availableHeight - scaledHeight) / 2;
+      const translateX = padding + (availableWidth - scaledWidth) / 2;
+      const translateY = padding + (availableHeight - scaledHeight) / 2;
 
       setViewport({
         width: containerWidth,
@@ -126,7 +127,7 @@ export function useCanvasViewport(
       resizeObserver.disconnect();
       window.removeEventListener("resize", updateViewport);
     };
-  }, [containerRef, fixedScale]);
+  }, [containerRef, fixedScale, padding]);
 
   // Transform screen coordinates to slide coordinates
   const screenToSlide = useCallback(
@@ -161,4 +162,3 @@ export function useCanvasViewport(
 
 // Export constants for use in other components
 export { SLIDE_WIDTH, SLIDE_HEIGHT, CANVAS_PADDING };
-
