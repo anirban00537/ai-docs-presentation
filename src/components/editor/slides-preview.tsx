@@ -10,8 +10,9 @@ import {
   addSlide,
 } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const SlidesPreview = () => {
   const slides = useAppSelector(selectSlides);
@@ -46,20 +47,15 @@ export const SlidesPreview = () => {
     <div className="w-48 h-full flex flex-col border-r border-border/40 bg-muted/10 backdrop-blur-xl fixed left-0 top-0 bottom-0">
       {/* Header / Toolbar */}
       <div className="px-3 py-2.5 flex items-center justify-between border-b border-border/40 bg-background/50 backdrop-blur-md z-10 shrink-0">
-        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-          Slides
-        </span>
-        <button
+        <Button
           onClick={handleAddSlide}
-          className={cn(
-            "p-1 rounded-md transition-all duration-200",
-            "hover:bg-primary/10 hover:text-primary active:scale-95",
-            "text-muted-foreground"
-          )}
-          title="Add New Slide"
+          variant="outline"
+          size="sm"
+          className="text-[10px] w-full h-7 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground border-primary/10"
         >
-          <Plus className="h-3.5 w-3.5" />
-        </button>
+          <Plus className="h-3 w-3 text-primary" />
+          New Slide
+        </Button>
       </div>
 
       {/* Slides List */}
