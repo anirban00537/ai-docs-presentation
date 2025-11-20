@@ -5,6 +5,7 @@ import Slide from "@/components/editor/slide";
 import { useAppSelector } from "@/store/hooks";
 import { selectActiveSlide } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
+import { SlidesPreview } from "@/components/editor/slides-preview";
 
 const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
@@ -27,8 +28,8 @@ const Editor = () => {
   }
 
   return (
-    <div className="flex h-full flex-1 flex-col overflow-hidden px-4">
-      <div className="flex flex-1 flex-col gap-4 overflow-hidden">
+    <div className="flex h-full flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pt-4">
         <Slide
           slide={activeSlide}
           selectedId={selectedId}
@@ -39,6 +40,8 @@ const Editor = () => {
           onClearLiveOverride={onClearLiveOverride}
         />
       </div>
+
+      <SlidesPreview />
     </div>
   );
 };
