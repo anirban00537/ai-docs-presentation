@@ -10,8 +10,24 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Shapes, Type, Square, Palette, Plus } from "lucide-react";
+import {
+  Shapes,
+  Type,
+  Square,
+  Palette,
+  Plus,
+  Heading1,
+  Heading2,
+  Pilcrow,
+  LayoutTemplate,
+  ImageIcon,
+  Quote,
+  StickyNote,
+  FlaskConical,
+} from "lucide-react";
 import { BackgroundSection } from "@/components/editor/background/background-section";
 import { BackgroundImageSection } from "@/components/editor/background/background-image-section";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -311,70 +327,110 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               Insert
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" sideOffset={12}>
+          <DropdownMenuContent
+            align="center"
+            sideOffset={20}
+            className="w-64 rounded-xl p-2 shadow-xl"
+          >
+            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+              Insert widget
+            </DropdownMenuLabel>
+            
+            <DropdownMenuItem
+              onSelect={() => onAddText({ id: "body", title: "Body Text" })}
+              className="rounded-lg py-2"
+            >
+              <Pilcrow className="mr-2 h-4 w-4 text-muted-foreground" />
+              Paragraph
+            </DropdownMenuItem>
+            
+            <DropdownMenuItem
+              onSelect={() => onAddText({ id: "heading", title: "Heading" })}
+              className="rounded-lg py-2"
+            >
+              <Heading1 className="mr-2 h-4 w-4 text-muted-foreground" />
+              Heading
+            </DropdownMenuItem>
+             <DropdownMenuItem
+              onSelect={() => onAddText({ id: "subheading", title: "Subheading" })}
+              className="rounded-lg py-2"
+            >
+              <Heading2 className="mr-2 h-4 w-4 text-muted-foreground" />
+              Subheading
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className="my-1" />
+
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Type className="mr-2 h-4 w-4" />
-                Text
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-48" sideOffset={9}>
-                {textItems.map((item) => (
-                  <DropdownMenuItem
-                    key={item.id}
-                    onSelect={() => {
-                      onAddText(item);
-                    }}
-                  >
-                    {item.title}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Shapes className="mr-2 h-4 w-4" />
-                Shapes
+              <DropdownMenuSubTrigger className="rounded-lg py-2">
+                <FlaskConical className="mr-2 h-4 w-4 text-muted-foreground" />
+                Diagrams (Shapes)
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent
-                className="w-56 max-h-64 overflow-y-auto"
-                sideOffset={9}
+                className="w-64 max-h-[300px] overflow-y-auto rounded-xl p-2 shadow-xl"
+                sideOffset={10}
               >
+                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+                  Shapes
+                </DropdownMenuLabel>
                 {shapeItems.map((item) => (
                   <DropdownMenuItem
                     key={item.id}
                     onSelect={() => {
                       onAddShape?.(item);
                     }}
+                    className="rounded-lg py-2"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="h-8 w-8">{item.preview}</span>
+                      <span className="h-6 w-6 flex items-center justify-center">{item.preview}</span>
                       <span>{item.title}</span>
                     </div>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuSubContent>
             </DropdownMenuSub>
+
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Square className="mr-2 h-4 w-4" />
-                Feature Cards
+              <DropdownMenuSubTrigger className="rounded-lg py-2">
+                <LayoutTemplate className="mr-2 h-4 w-4 text-muted-foreground" />
+                Cards
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent
-                className="w-56 max-h-56 overflow-y-auto"
-                sideOffset={9}
+                className="w-64 rounded-xl p-2 shadow-xl"
+                sideOffset={10}
               >
+                 <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+                  Feature Cards
+                </DropdownMenuLabel>
                 {featureCardPresets.map((preset) => (
                   <DropdownMenuItem
                     key={preset.id}
                     onSelect={() => {
                       onAddFeatureCard?.(preset);
                     }}
+                    className="rounded-lg py-2"
                   >
                     {preset.title}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuSubContent>
             </DropdownMenuSub>
+            
+             <DropdownMenuSeparator className="my-1" />
+             
+             <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
+                <ImageIcon className="mr-2 h-4 w-4 text-muted-foreground" />
+                Image
+             </DropdownMenuItem>
+             <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
+                <Quote className="mr-2 h-4 w-4 text-muted-foreground" />
+                Quote
+             </DropdownMenuItem>
+             <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
+                <StickyNote className="mr-2 h-4 w-4 text-muted-foreground" />
+                Sticky Note
+             </DropdownMenuItem>
+
           </DropdownMenuContent>
         </DropdownMenu>
         <DropdownMenu modal={false}>
@@ -390,9 +446,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[400px] max-h-[75vh] overflow-y-auto rounded-lg border-border/50 px-3 py-4 custom-scrollbar"
+            className="w-[400px] max-h-[75vh] overflow-y-auto rounded-xl border-border/50 px-3 py-4 custom-scrollbar shadow-xl"
             align="center"
-            sideOffset={16}
+            sideOffset={20}
           >
             {activeSlide ? (
               <div className="space-y-6">
