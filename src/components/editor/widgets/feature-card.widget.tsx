@@ -2,6 +2,8 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { AlignCenter, AlignLeft, AlignRight, ChevronDown } from "lucide-react";
 import type {
   FeatureCardWidget,
   ResizeHandle,
@@ -26,6 +28,40 @@ type FeatureCardWidgetNodeProps = {
 };
 
 type EditingField = "number" | "title" | "description" | null;
+
+const TOOLBAR_SELECTOR = '[data-feature-card-toolbar="true"]';
+
+const BACKGROUND_COLORS = [
+  "#ffffff", // white
+  "#f8fafc", // slate-50
+  "#f1f5f9", // slate-100
+  "#e2e8f0", // slate-200
+  "#cbd5e1", // slate-300
+  "#94a3b8", // slate-400
+  "#64748b", // slate-500
+  "#475569", // slate-600
+  "#334155", // slate-700
+  "#1e293b", // slate-800
+  "#0f172a", // slate-900
+  "#ef4444", // red-500
+  "#f97316", // orange-500
+  "#facc15", // yellow-500
+  "#22c55e", // green-500
+  "#0ea5e9", // sky-500
+  "#6366f1", // indigo-500
+  "#a855f7", // purple-500
+  "#ec4899", // pink-500
+];
+
+const ALIGN_OPTIONS: Array<{
+  value: "left" | "center" | "right";
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  label: string;
+}> = [
+  { value: "left", icon: AlignLeft, label: "Align left" },
+  { value: "center", icon: AlignCenter, label: "Align center" },
+  { value: "right", icon: AlignRight, label: "Align right" },
+];
 
 const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
   widget,
@@ -141,13 +177,11 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       const target = event.target as HTMLElement;
-      // Don't start drag if clicking on input/textarea or field display divs
+      // Don't start drag if clicking on toolbar, input/textarea
       if (
+        target.closest(TOOLBAR_SELECTOR) ||
         target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.closest('[data-field="number"]') ||
-        target.closest('[data-field="title"]') ||
-        target.closest('[data-field="description"]')
+        target.tagName === "TEXTAREA"
       ) {
         return;
       }
@@ -161,8 +195,13 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
 
   const handleFieldPointerDown = React.useCallback(
     (field: EditingField, event: React.PointerEvent) => {
+      // If not selected, let the event bubble up to handlePointerDown to select the widget
+      if (!isSelected) {
+        return;
+      }
+      // If already selected, stop propagation and enter edit mode
       event.stopPropagation();
-      if (isSelected && event.detail === 1) {
+      if (event.detail === 1) {
         setEditingField(field);
       }
     },
@@ -171,10 +210,13 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
 
   const handleFieldClick = React.useCallback(
     (field: EditingField, event: React.MouseEvent) => {
-      event.stopPropagation();
-      if (isSelected) {
-        setEditingField(field);
+      // If not selected, let the event bubble up to select the widget
+      if (!isSelected) {
+        return;
       }
+      // If already selected, stop propagation and enter edit mode
+      event.stopPropagation();
+      setEditingField(field);
     },
     [isSelected]
   );
@@ -226,6 +268,7 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
   const numberColor = widget.numberColor ?? "#1f2937"; // gray-800 (dark)
   const titleColor = widget.titleColor ?? "#111827"; // gray-900 (darker)
   const descriptionColor = widget.descriptionColor ?? "#374151"; // gray-700 (dark)
+  const textAlign = widget.textAlign ?? "left";
 
   return (
     <div
@@ -246,13 +289,19 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
       onPointerDown={handlePointerDown}
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
+        {isSelected && (
+          <FeatureCardEditingToolbar
+            widget={widget}
+            isEditing={isEditing || editingField !== null}
+          />
+        )}
         <div
           className="relative h-full w-full rounded-lg p-6"
           style={{
             backgroundColor,
           }}
         >
-          <div className="flex h-full flex-col gap-3">
+          <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
             {/* Number field */}
             {editingField === "number" ? (
               <input
@@ -367,3 +416,173 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
 };
 
 export const FeatureCardWidgetNode = React.memo(FeatureCardWidgetNodeBase);
+
+type FeatureCardEditingToolbarProps = {
+  widget: FeatureCardWidget;
+  isEditing: boolean;
+};
+
+const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
+  widget,
+  isEditing,
+}) => {
+  const [colorMenuOpen, setColorMenuOpen] = React.useState(false);
+  const colorMenuRef = React.useRef<HTMLDivElement | null>(null);
+  const dispatch = useAppDispatch();
+  const activeSlideId = useAppSelector(selectActiveSlideId);
+
+  React.useEffect(() => {
+    if (!colorMenuOpen) {
+      return;
+    }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        colorMenuRef.current &&
+        event.target instanceof Node &&
+        !colorMenuRef.current.contains(event.target)
+      ) {
+        setColorMenuOpen(false);
+      }
+    };
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [colorMenuOpen]);
+
+  const handleSetBackgroundColor = (color: string) => {
+    dispatch(
+      updateWidgetAction({
+        slideId: activeSlideId,
+        widgetId: widget.id,
+        updates: { backgroundColor: color },
+      })
+    );
+    setColorMenuOpen(false);
+  };
+
+  const handleAlign = (align: "left" | "center" | "right") => {
+    if (align !== (widget.textAlign ?? "left")) {
+      dispatch(
+        updateWidgetAction({
+          slideId: activeSlideId,
+          widgetId: widget.id,
+          updates: { textAlign: align },
+        })
+      );
+    }
+  };
+
+  const currentAlign = widget.textAlign ?? "left";
+  const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
+
+  return (
+    <div
+      data-feature-card-toolbar="true"
+      className={cn(
+        "pointer-events-auto absolute left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur",
+        isEditing ? "top-full mt-2" : "-top-16"
+      )}
+      onPointerDown={(event) => {
+        event.stopPropagation();
+      }}
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-semibold text-muted-foreground">
+          Background
+        </span>
+        <div className="relative flex items-center" ref={colorMenuRef}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
+            onClick={() => setColorMenuOpen((prev) => !prev)}
+          >
+            <ColorSwatch color={currentBackgroundColor} />
+            <span className="text-[11px] font-medium text-muted-foreground">
+              Color
+            </span>
+            <ChevronDown className="h-3 w-3 opacity-60" />
+          </Button>
+          {colorMenuOpen && (
+            <ColorPopover>
+              <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-6 gap-1">
+                  {BACKGROUND_COLORS.map((color) => (
+                    <ColorChip
+                      key={color}
+                      color={color}
+                      active={color === currentBackgroundColor}
+                      onSelect={() => handleSetBackgroundColor(color)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </ColorPopover>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1">
+        {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
+          <Button
+            key={value}
+            variant="ghost"
+            size="icon-sm"
+            className={cn(
+              "rounded-md",
+              currentAlign === value
+                ? "bg-primary/10 text-primary hover:bg-primary/10"
+                : undefined
+            )}
+            onClick={() => handleAlign(value)}
+            aria-pressed={currentAlign === value}
+            title={label}
+          >
+            <Icon className="h-4 w-4" />
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ColorPopover: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <div className="absolute left-0 top-10 z-40 min-w-[180px] rounded-md border border-border bg-white p-3 shadow-lg">
+    {children}
+  </div>
+);
+
+type ColorChipProps = {
+  color: string;
+  active: boolean;
+  onSelect: () => void;
+};
+
+const ColorChip: React.FC<ColorChipProps> = ({ color, active, onSelect }) => (
+  <button
+    type="button"
+    aria-label={color}
+    className={cn(
+      "flex size-6 items-center justify-center rounded-full border border-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+      active ? "border-ring ring-2 ring-ring/30" : "border-border"
+    )}
+    onClick={onSelect}
+  >
+    <span
+      className="block size-4 rounded-full border border-white/70"
+      style={{ backgroundColor: color }}
+    />
+  </button>
+);
+
+const ColorSwatch: React.FC<{ color: string }> = ({ color }) => {
+  return (
+    <span
+      className="block size-4 rounded-full border border-white/70"
+      style={{ backgroundColor: color }}
+    />
+  );
+};

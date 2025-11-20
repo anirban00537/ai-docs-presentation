@@ -180,6 +180,7 @@ export const useWidgetCreation = () => {
         numberColor: "#1f2937", // gray-800 (dark)
         titleColor: "#111827", // gray-900 (darker)
         descriptionColor: "#374151", // gray-700 (dark)
+        textAlign: "left",
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));

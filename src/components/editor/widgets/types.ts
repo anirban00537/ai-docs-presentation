@@ -58,6 +58,7 @@ export type FeatureCardWidget = WidgetCommon & {
   numberColor?: string;
   titleColor?: string;
   descriptionColor?: string;
+  textAlign?: "left" | "center" | "right";
 };
 
 export type SlideWidget =
@@ -89,6 +90,7 @@ export type SlideWidgetUpdate = Partial<
     numberColor: string;
     titleColor: string;
     descriptionColor: string;
+    textAlign: "left" | "center" | "right";
   }
 >;
 
