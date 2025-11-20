@@ -311,13 +311,13 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               Insert
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
+          <DropdownMenuContent align="center" sideOffset={12}>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <Type className="mr-2 h-4 w-4" />
                 Text
               </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-48">
+              <DropdownMenuSubContent className="w-48" sideOffset={9}>
                 {textItems.map((item) => (
                   <DropdownMenuItem
                     key={item.id}
@@ -335,7 +335,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 <Shapes className="mr-2 h-4 w-4" />
                 Shapes
               </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-56 max-h-64 overflow-y-auto">
+              <DropdownMenuSubContent
+                className="w-56 max-h-64 overflow-y-auto"
+                sideOffset={9}
+              >
                 {shapeItems.map((item) => (
                   <DropdownMenuItem
                     key={item.id}
@@ -356,7 +359,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 <Square className="mr-2 h-4 w-4" />
                 Feature Cards
               </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-56 max-h-56 overflow-y-auto">
+              <DropdownMenuSubContent
+                className="w-56 max-h-56 overflow-y-auto"
+                sideOffset={9}
+              >
                 {featureCardPresets.map((preset) => (
                   <DropdownMenuItem
                     key={preset.id}
@@ -386,6 +392,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           <DropdownMenuContent
             className="w-[400px] max-h-[75vh] overflow-y-auto rounded-lg border-border/50 px-3 py-4 custom-scrollbar"
             align="center"
+            sideOffset={16}
           >
             {activeSlide ? (
               <div className="space-y-6">
