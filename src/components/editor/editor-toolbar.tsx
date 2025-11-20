@@ -315,66 +315,66 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   }, [activeSlide, dispatch]);
 
   return (
-    <header className="pointer-events-auto fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-border/50 bg-background/30 p-2 shadow-2xl backdrop-blur-2xl transition-all hover:border-border/80 hover:bg-background/40 hover:shadow-3xl">
+    <header className="pointer-events-auto fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-border/40 bg-background/60 p-1.5 shadow-sm backdrop-blur-xl transition-all hover:border-border/60 hover:shadow-md">
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="secondary"
+            variant="ghost"
             size="sm"
-            className="h-9 rounded-full px-4 text-sm font-medium shadow-sm transition-colors hover:bg-secondary/80"
+            className="h-8 rounded-full px-3 text-xs font-medium transition-colors hover:bg-primary/10 hover:text-primary data-[state=open]:bg-primary/10 data-[state=open]:text-primary"
           >
-            <Plus className="mr-1.5 h-4 w-4" />
+            <Plus className="mr-1.5 h-3.5 w-3.5" />
             Insert
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="center"
-          sideOffset={20}
-          className="w-64 rounded-2xl border border-border/60 bg-background/80 p-2 shadow-2xl backdrop-blur-xl"
+          sideOffset={10}
+          className="w-64 rounded-xl border border-border/40 bg-background/80 p-1.5 shadow-xl backdrop-blur-xl"
         >
-          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+          <DropdownMenuLabel className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 py-1.5">
             Insert widget
           </DropdownMenuLabel>
 
           <DropdownMenuItem
             onSelect={() => onAddText({ id: "body", title: "Body Text" })}
-            className="rounded-lg py-2"
+            className="rounded-md py-1.5 text-xs focus:bg-primary/10 focus:text-primary"
           >
-            <Pilcrow className="mr-2 h-4 w-4 text-muted-foreground" />
+            <Pilcrow className="mr-2 h-3.5 w-3.5 opacity-70" />
             Paragraph
           </DropdownMenuItem>
 
           <DropdownMenuItem
             onSelect={() => onAddText({ id: "heading", title: "Heading" })}
-            className="rounded-lg py-2"
+            className="rounded-md py-1.5 text-xs focus:bg-primary/10 focus:text-primary"
           >
-            <Heading1 className="mr-2 h-4 w-4 text-muted-foreground" />
+            <Heading1 className="mr-2 h-3.5 w-3.5 opacity-70" />
             Heading
           </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={() =>
               onAddText({ id: "subheading", title: "Subheading" })
             }
-            className="rounded-lg py-2"
+            className="rounded-md py-1.5 text-xs focus:bg-primary/10 focus:text-primary"
           >
-            <Heading2 className="mr-2 h-4 w-4 text-muted-foreground" />
+            <Heading2 className="mr-2 h-3.5 w-3.5 opacity-70" />
             Subheading
           </DropdownMenuItem>
 
-          <DropdownMenuSeparator className="my-1" />
+          <DropdownMenuSeparator className="my-1 bg-border/40" />
 
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="rounded-lg py-2">
-              <FlaskConical className="mr-2 h-4 w-4 text-muted-foreground" />
+            <DropdownMenuSubTrigger className="rounded-md py-1.5 text-xs focus:bg-primary/10 focus:text-primary">
+              <FlaskConical className="mr-2 h-3.5 w-3.5 opacity-70" />
               Diagrams (Shapes)
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent
-                className="w-64 rounded-2xl border border-border/60 !bg-background/90 p-2 shadow-2xl backdrop-blur-xl z-[100]"
-                sideOffset={10}
-                alignOffset={-400}
+                className="w-64 rounded-xl border border-border/40 bg-background/80 p-1.5 shadow-xl backdrop-blur-xl z-[100]"
+                sideOffset={5}
+                alignOffset={-5}
               >
-                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+                <DropdownMenuLabel className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 py-1.5">
                   Shapes
                 </DropdownMenuLabel>
                 {shapeItems.map((item) => (
@@ -383,10 +383,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     onSelect={() => {
                       onAddShape?.(item);
                     }}
-                    className="rounded-lg py-2"
+                    className="rounded-md py-1.5 text-xs focus:bg-primary/10 focus:text-primary"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="h-6 w-6 flex items-center justify-center">
+                      <span className="h-5 w-5 flex items-center justify-center opacity-70">
                         {item.preview}
                       </span>
                       <span>{item.title}</span>
@@ -398,16 +398,16 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           </DropdownMenuSub>
 
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="rounded-lg py-2">
-              <LayoutTemplate className="mr-2 h-4 w-4 text-muted-foreground" />
+            <DropdownMenuSubTrigger className="rounded-md py-1.5 text-xs focus:bg-primary/10 focus:text-primary">
+              <LayoutTemplate className="mr-2 h-3.5 w-3.5 opacity-70" />
               Cards
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent
-                className="w-64 rounded-2xl border border-border/60 !bg-background/90 p-2 shadow-2xl backdrop-blur-xl z-[100]"
-                sideOffset={10}
+                className="w-64 rounded-xl border border-border/40 bg-background/80 p-1.5 shadow-xl backdrop-blur-xl z-[100]"
+                sideOffset={5}
               >
-                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 py-1.5">
+                <DropdownMenuLabel className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 py-1.5">
                   Feature Cards
                 </DropdownMenuLabel>
                 {featureCardPresets.map((preset) => (
@@ -416,7 +416,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     onSelect={() => {
                       onAddFeatureCard?.(preset);
                     }}
-                    className="rounded-lg py-2"
+                    className="rounded-md py-1.5 text-xs focus:bg-primary/10 focus:text-primary"
                   >
                     {preset.title}
                   </DropdownMenuItem>
@@ -425,18 +425,18 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             </DropdownMenuPortal>
           </DropdownMenuSub>
 
-          <DropdownMenuSeparator className="my-1" />
+          <DropdownMenuSeparator className="my-1 bg-border/40" />
 
-          <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
-            <ImageIcon className="mr-2 h-4 w-4 text-muted-foreground" />
+          <DropdownMenuItem disabled className="rounded-md py-1.5 text-xs opacity-50">
+            <ImageIcon className="mr-2 h-3.5 w-3.5 opacity-70" />
             Image
           </DropdownMenuItem>
-          <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
-            <Quote className="mr-2 h-4 w-4 text-muted-foreground" />
+          <DropdownMenuItem disabled className="rounded-md py-1.5 text-xs opacity-50">
+            <Quote className="mr-2 h-3.5 w-3.5 opacity-70" />
             Quote
           </DropdownMenuItem>
-          <DropdownMenuItem disabled className="rounded-lg py-2 opacity-50">
-            <StickyNote className="mr-2 h-4 w-4 text-muted-foreground" />
+          <DropdownMenuItem disabled className="rounded-md py-1.5 text-xs opacity-50">
+            <StickyNote className="mr-2 h-3.5 w-3.5 opacity-70" />
             Sticky Note
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -449,26 +449,26 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            className="h-9 rounded-full px-4 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+            className="h-8 rounded-full px-3 text-xs font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary data-[state=open]:bg-primary/10 data-[state=open]:text-primary disabled:opacity-50"
             disabled={!activeSlide}
           >
-            <Palette className="mr-1.5 h-4 w-4" />
+            <Palette className="mr-1.5 h-3.5 w-3.5" />
             Background
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-[400px] max-h-[75vh] overflow-y-auto rounded-3xl border border-border/60 bg-background/80 px-3 py-4 custom-scrollbar shadow-2xl backdrop-blur-xl"
+          className="w-[400px] max-h-[75vh] overflow-y-auto rounded-2xl border border-border/40 bg-background/80 px-3 py-4 custom-scrollbar shadow-xl backdrop-blur-xl"
           align="center"
-          sideOffset={20}
+          sideOffset={10}
         >
           {activeSlide ? (
             <div className="space-y-6">
               <section className="space-y-2">
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Canvas
                   </h3>
-                  <p className="text-[11px] text-muted-foreground/80">
+                  <p className="text-[10px] text-muted-foreground/70">
                     Adjust solid colors or gradients for the slide background.
                   </p>
                 </div>
@@ -488,14 +488,14 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 />
               </section>
 
-              <div className="h-px w-full bg-linear-to-r from-transparent via-border/60 to-transparent" />
+              <div className="h-px w-full bg-gradient-to-r from-transparent via-border/40 to-transparent" />
 
               <section className="space-y-2">
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Assets
                   </h3>
-                  <p className="text-[11px] text-muted-foreground/80">
+                  <p className="text-[10px] text-muted-foreground/70">
                     Upload or remove a background image.
                   </p>
                 </div>
@@ -507,7 +507,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               </section>
             </div>
           ) : (
-            <div className="py-6 text-center text-sm text-muted-foreground">
+            <div className="py-6 text-center text-xs text-muted-foreground">
               Select a slide to customize its background.
             </div>
           )}
