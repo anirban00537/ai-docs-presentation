@@ -104,7 +104,7 @@ export const SlidesPreview = () => {
                 <button
                   onClick={() => handleSlideClick(slide.id)}
                   className={cn(
-                    "relative flex-1 aspect-video rounded-md overflow-hidden transition-all duration-200 outline-none",
+                    "relative flex-1 aspect-video overflow-hidden transition-all duration-200 outline-none",
                     "ring-1 ring-border/50 shadow-sm",
                     isActive
                       ? "ring-2 ring-primary shadow-md scale-[1.02]"
@@ -123,7 +123,6 @@ export const SlidesPreview = () => {
                         onSetLiveOverride={() => {}}
                         onClearLiveOverride={() => {}}
                         padding={0}
-                        scale={0.15}
                       />
                     </div>
                   </div>
