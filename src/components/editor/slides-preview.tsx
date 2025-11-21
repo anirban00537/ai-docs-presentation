@@ -44,33 +44,9 @@ export const SlidesPreview = () => {
     dispatch(addSlide());
   };
 
-  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
-    if (!activeSlideId || slides.length === 0) return;
-
-    // Only react to vertical scrolling
-    if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
-
-    event.preventDefault();
-
-    const currentIndex = slides.findIndex(
-      (slide) => slide.id === activeSlideId
-    );
-    if (currentIndex === -1) return;
-
-    const direction = event.deltaY > 0 ? 1 : -1; // down = next, up = previous
-    const nextIndex = currentIndex + direction;
-
-    if (nextIndex < 0 || nextIndex >= slides.length) return;
-
-    dispatch(setActiveSlide(slides[nextIndex].id));
-  };
-
   return (
-    <div
-      className="fixed inset-y-0 left-0 z-30 w-56 flex flex-col bg-slate-50 border-r border-border/60 overflow-hidden"
-      onWheel={handleWheel}
-    >
-      <div className="p-4 pb-4 z-10">
+    <div className="fixed inset-y-0 left-0 z-30 w-56 flex flex-col bg-slate-50 border-r border-border/60 overflow-hidden">
+      <div className="p-4  z-10">
         <Button
           onClick={handleAddSlide}
           variant="ghost"
