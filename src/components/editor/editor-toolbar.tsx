@@ -60,21 +60,6 @@ export type FeatureCardPreset = {
   description: string;
 };
 
-const textItems: TextPreset[] = [
-  {
-    id: "heading",
-    title: "Heading",
-  },
-  {
-    id: "subheading",
-    title: "Subheading",
-  },
-  {
-    id: "body",
-    title: "Body Text",
-  },
-];
-
 const featureCardPresets: FeatureCardPreset[] = [
   {
     id: "default",
@@ -315,7 +300,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   }, [activeSlide, dispatch]);
 
   return (
-    <header className="pointer-events-auto fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-border/40 bg-background/60 p-1.5 shadow-sm backdrop-blur-xl transition-all hover:border-border/60 hover:shadow-md">
+    <header className="pointer-events-auto bg-muted fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-border/40 bg-background/60 p-1.5 shadow-sm backdrop-blur-xl transition-all hover:border-border/60 hover:shadow-md">
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
@@ -427,15 +412,24 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
 
           <DropdownMenuSeparator className="my-1 bg-border/40" />
 
-          <DropdownMenuItem disabled className="rounded-md py-1.5 text-xs opacity-50">
+          <DropdownMenuItem
+            disabled
+            className="rounded-md py-1.5 text-xs opacity-50"
+          >
             <ImageIcon className="mr-2 h-3.5 w-3.5 opacity-70" />
             Image
           </DropdownMenuItem>
-          <DropdownMenuItem disabled className="rounded-md py-1.5 text-xs opacity-50">
+          <DropdownMenuItem
+            disabled
+            className="rounded-md py-1.5 text-xs opacity-50"
+          >
             <Quote className="mr-2 h-3.5 w-3.5 opacity-70" />
             Quote
           </DropdownMenuItem>
-          <DropdownMenuItem disabled className="rounded-md py-1.5 text-xs opacity-50">
+          <DropdownMenuItem
+            disabled
+            className="rounded-md py-1.5 text-xs opacity-50"
+          >
             <StickyNote className="mr-2 h-3.5 w-3.5 opacity-70" />
             Sticky Note
           </DropdownMenuItem>

@@ -8,6 +8,7 @@ import {
   selectActiveSlideId,
   setActiveSlide,
   addSlide,
+  removeSlide,
 } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -43,8 +44,32 @@ export const SlidesPreview = () => {
     dispatch(addSlide());
   };
 
+  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    if (!activeSlideId || slides.length === 0) return;
+
+    // Only react to vertical scrolling
+    if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+
+    event.preventDefault();
+
+    const currentIndex = slides.findIndex(
+      (slide) => slide.id === activeSlideId
+    );
+    if (currentIndex === -1) return;
+
+    const direction = event.deltaY > 0 ? 1 : -1; // down = next, up = previous
+    const nextIndex = currentIndex + direction;
+
+    if (nextIndex < 0 || nextIndex >= slides.length) return;
+
+    dispatch(setActiveSlide(slides[nextIndex].id));
+  };
+
   return (
-    <div className="w-48 h-full flex flex-col border-r bg-muted border-border/40 backdrop-blur-xl fixed left-0 top-0 bottom-0">
+    <div
+      className="w-48 h-full flex flex-col border-r bg-muted border-border/40 backdrop-blur-xl fixed left-0 top-0 bottom-0"
+      onWheel={handleWheel}
+    >
       {/* Header / Toolbar */}
       <div className="px-3 py-2.5 flex items-center justify-between border-b bg-muted border-border/40 backdrop-blur-md z-10 shrink-0">
         <Button
@@ -111,6 +136,22 @@ export const SlidesPreview = () => {
                       : "hover:ring-primary/40 hover:shadow-md hover:scale-[1.01]"
                   )}
                 >
+                  {/* Delete button (shown on hover) */}
+                  {slides.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch(removeSlide(slide.id));
+                      }}
+                      className="absolute right-1.5 top-1.5 z-20 h-5 w-5 rounded-full bg-background/90 text-destructive opacity-0 shadow-sm ring-1 ring-border/60 transition-opacity hover:bg-destructive hover:text-destructive-foreground hover:ring-destructive group-hover:opacity-100"
+                    >
+                      <span className="block text-[9px] leading-none font-medium">
+                        ×
+                      </span>
+                    </button>
+                  )}
+
                   {/* Slide Content Preview */}
                   <div className="absolute inset-0 bg-background pointer-events-none">
                     <div className="w-full h-full flex items-center justify-center overflow-hidden bg-white dark:bg-neutral-900">
