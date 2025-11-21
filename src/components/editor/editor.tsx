@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectActiveSlide,
   selectSlides,
+  selectGlobalTheme,
   setActiveSlide,
 } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
@@ -14,6 +15,7 @@ import { SlidesPreview } from "@/components/editor/slides-preview";
 const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
   const slides = useAppSelector(selectSlides);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const dispatch = useAppDispatch();
 
   const {
@@ -69,6 +71,7 @@ const Editor = () => {
           onSelectWidget={onSelectWidget}
           onSetLiveOverride={onSetLiveOverride}
           onClearLiveOverride={onClearLiveOverride}
+          theme={globalTheme}
         />
       </div>
     </div>

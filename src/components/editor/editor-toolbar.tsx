@@ -182,22 +182,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         updateSlide({
           slideId: activeSlide.id,
           updates: {
-            backgroundColor: color,
-            backgroundType: "solid",
+            // single-color background
+            backgroundColors: [color],
           },
-        })
-      );
-    },
-    [activeSlide, dispatch]
-  );
-
-  const handleBackgroundTypeChange = React.useCallback(
-    (type: "solid" | "gradient") => {
-      if (!activeSlide) return;
-      dispatch(
-        updateSlide({
-          slideId: activeSlide.id,
-          updates: { backgroundType: type },
         })
       );
     },
@@ -207,7 +194,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   const handleGradientColorChange = React.useCallback(
     (index: number, color: string) => {
       if (!activeSlide) return;
-      const currentGradient = activeSlide.backgroundGradient || [
+      const currentGradient = activeSlide.backgroundColors || [
         "#ffffff",
         "#f0f0f0",
       ];
@@ -217,8 +204,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         updateSlide({
           slideId: activeSlide.id,
           updates: {
-            backgroundGradient: next,
-            backgroundType: "gradient",
+            backgroundColors: next,
           },
         })
       );
@@ -228,7 +214,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
 
   const handleAddGradientColor = React.useCallback(() => {
     if (!activeSlide) return;
-    const currentGradient = activeSlide.backgroundGradient || [
+    const currentGradient = activeSlide.backgroundColors || [
       "#ffffff",
       "#f0f0f0",
     ];
@@ -236,8 +222,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
       updateSlide({
         slideId: activeSlide.id,
         updates: {
-          backgroundGradient: [...currentGradient, "#ffffff"],
-          backgroundType: "gradient",
+          backgroundColors: [...currentGradient, "#ffffff"],
         },
       })
     );
@@ -246,7 +231,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   const handleRemoveGradientColor = React.useCallback(
     (index: number) => {
       if (!activeSlide) return;
-      const currentGradient = activeSlide.backgroundGradient || [
+      const currentGradient = activeSlide.backgroundColors || [
         "#ffffff",
         "#f0f0f0",
       ];
@@ -255,8 +240,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         updateSlide({
           slideId: activeSlide.id,
           updates: {
-            backgroundGradient: currentGradient.filter((_, i) => i !== index),
-            backgroundType: "gradient",
+            backgroundColors: currentGradient.filter((_, i) => i !== index),
           },
         })
       );
@@ -272,7 +256,6 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           slideId: activeSlide.id,
           updates: {
             backgroundGradientDirection: direction,
-            backgroundType: "gradient",
           },
         })
       );
@@ -482,14 +465,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                   </p>
                 </div>
                 <BackgroundSection
-                  backgroundColor={activeSlide.backgroundColor}
-                  backgroundType={activeSlide.backgroundType}
-                  backgroundGradient={activeSlide.backgroundGradient}
+                  backgroundColors={activeSlide.backgroundColors}
                   backgroundGradientDirection={
                     activeSlide.backgroundGradientDirection
                   }
-                  onBackgroundColorChange={handleBackgroundColorChange}
-                  onBackgroundTypeChange={handleBackgroundTypeChange}
                   onGradientColorChange={handleGradientColorChange}
                   onAddGradientColor={handleAddGradientColor}
                   onRemoveGradientColor={handleRemoveGradientColor}

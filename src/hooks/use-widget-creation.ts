@@ -60,7 +60,7 @@ export const useWidgetCreation = () => {
         height: config.height,
         fontSize: config.fontSize,
         fontWeight: config.fontWeight,
-        color: "#0f172a",
+        // No explicit color – will fall back to theme text color
         align: config.align,
         lineHeight: config.lineHeight,
       };
@@ -93,10 +93,12 @@ export const useWidgetCreation = () => {
             y: centerY,
             width: config.width,
             height: config.height,
-            fill: config.fill,
+            // Use local fill only when preset is explicitly transparent;
+            // otherwise fall back to theme accent color at render time.
+            fill: config.fill === "transparent" ? "transparent" : undefined,
             borderRadius: config.borderRadius,
             ...(config.stroke
-              ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
+              ? { strokeWidth: config.strokeWidth ?? 4 }
               : {}),
           } satisfies RectangleWidget;
           break;
@@ -108,9 +110,9 @@ export const useWidgetCreation = () => {
             y: centerY,
             width: config.width,
             height: config.height,
-            fill: config.fill,
+            fill: config.fill === "transparent" ? "transparent" : undefined,
             ...(config.stroke
-              ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
+              ? { strokeWidth: config.strokeWidth ?? 4 }
               : {}),
           } satisfies CircleWidget;
           break;
@@ -123,9 +125,9 @@ export const useWidgetCreation = () => {
             width: config.width,
             height: config.height,
             shape: config.shape,
-            fill: config.fill,
+            fill: config.fill === "transparent" ? "transparent" : undefined,
             ...(config.stroke
-              ? { stroke: config.stroke, strokeWidth: config.strokeWidth ?? 4 }
+              ? { strokeWidth: config.strokeWidth ?? 4 }
               : {}),
           } satisfies PolygonWidget;
           break;
@@ -176,10 +178,7 @@ export const useWidgetCreation = () => {
         y: originY,
         width,
         height,
-        backgroundColor: "#ffffff", // white
-        numberColor: "#1f2937", // gray-800 (dark)
-        titleColor: "#111827", // gray-900 (darker)
-        descriptionColor: "#374151", // gray-700 (dark)
+        // No explicit colors – will fall back to theme background/text colors
         textAlign: "left",
       };
 

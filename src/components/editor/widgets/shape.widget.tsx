@@ -60,7 +60,7 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
               backgroundColor:
                 widget.fill === "transparent" || widget.fill === "none"
                   ? "transparent"
-                  : widget.fill,
+                  : widget.fill ?? "#22c55e",
               border:
                 widget.stroke && widget.strokeWidth
                   ? `${widget.strokeWidth}px solid ${widget.stroke}`
@@ -77,7 +77,7 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
               backgroundColor:
                 widget.fill === "transparent" || widget.fill === "none"
                   ? "transparent"
-                  : widget.fill,
+                  : widget.fill ?? "#22c55e",
               border:
                 widget.stroke && widget.strokeWidth
                   ? `${widget.strokeWidth}px solid ${widget.stroke}`
@@ -99,20 +99,25 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
               y1="40"
               x2="160"
               y2="40"
-              stroke={widget.stroke}
+              stroke={widget.stroke ?? DEFAULT_STROKE_COLOR}
               strokeWidth={widget.strokeWidth}
               strokeLinecap="round"
             />
-            <polygon points="160,15 190,40 160,65" fill={widget.stroke} />
+            <polygon
+              points="160,15 190,40 160,65"
+              fill={widget.stroke ?? DEFAULT_STROKE_COLOR}
+            />
           </svg>
         );
       case "polygon": {
         const strokeColor =
           widget.stroke ??
-          (widget.fill === "transparent" ? "#1f2937" : "none");
+          (widget.fill === "transparent" || widget.fill === "none"
+            ? DEFAULT_STROKE_COLOR
+            : "none");
         const strokeWidth = widget.strokeWidth ?? 0;
         const fillColor =
-          widget.fill === "none" ? "transparent" : widget.fill ?? "#1f2937";
+          widget.fill === "none" ? "transparent" : widget.fill ?? "#22c55e";
         const commonProps = {
           width: "100%",
           height: "100%",
@@ -251,7 +256,7 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ widget }) => {
     dispatch(
       updateWidgetAction({
         slideId: activeSlideId,
-            widgetId: widget.id,
+        widgetId: widget.id,
         updates: { fill: color },
       })
     );

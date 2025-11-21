@@ -15,7 +15,7 @@ import type {
   FeatureCardWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
-import type { SlideModel } from "@/store/slices/slidesSlice";
+import type { GlobalTheme, SlideModel } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import {
   useCanvasViewport,
@@ -35,6 +35,7 @@ type SlideProps = {
   onClearLiveOverride: (widgetId: string) => void;
   scale?: number; // Optional fixed scale for thumbnails/previews
   padding?: number; // Optional padding for responsive scaling
+  theme?: GlobalTheme;
 };
 
 const Slide: React.FC<SlideProps> = ({
@@ -47,6 +48,7 @@ const Slide: React.FC<SlideProps> = ({
   onClearLiveOverride,
   scale: fixedScale,
   padding,
+  theme,
 }) => {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -172,6 +174,14 @@ const Slide: React.FC<SlideProps> = ({
                 } as React.CSSProperties
               }
             >
+              {/*
+                Background resolution order:
+                1) Explicit background image
+                2) Explicit backgroundColors on slide:
+                   - length >= 2 -> gradient
+                   - length === 1 -> solid
+                3) Global theme background (if provided)
+              */}
               <div
                 className={cn(
                   "slide editable theme-background",
@@ -192,16 +202,24 @@ const Slide: React.FC<SlideProps> = ({
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
                       }
-                    : slide.backgroundType === "gradient" &&
-                      slide.backgroundGradient &&
-                      slide.backgroundGradient.length > 0
+                    : slide.backgroundColors &&
+                      slide.backgroundColors.length >= 2
                     ? {
                         background: `linear-gradient(${
                           slide.backgroundGradientDirection || "to bottom"
-                        }, ${slide.backgroundGradient.join(", ")})`,
+                        }, ${slide.backgroundColors.join(", ")})`,
+                      }
+                    : slide.backgroundColors &&
+                      slide.backgroundColors.length === 1
+                    ? {
+                        backgroundColor: slide.backgroundColors[0],
+                      }
+                    : theme
+                    ? {
+                        backgroundColor: theme.background[0],
                       }
                     : {
-                        backgroundColor: slide.backgroundColor || "#ffffff",
+                        backgroundColor: "#ffffff",
                       }),
                 }}
                 onPointerDown={(e) => {

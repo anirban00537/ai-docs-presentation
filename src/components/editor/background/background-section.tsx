@@ -1,23 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { BackgroundTabs } from "./background-tabs";
-import { SolidColorTab } from "./solid-color-tab";
+import React from "react";
 import { GradientColorTab } from "./gradient-color-tab";
 
 interface BackgroundSectionProps {
-  backgroundColor: string | undefined;
-  backgroundType: "solid" | "gradient" | undefined;
-  backgroundGradient: string[] | undefined;
+  /**
+   * Background colors for the slide.
+   * - If undefined/empty: fall back to theme.
+   * - If length === 1: treated as solid.
+   * - If length >= 2: treated as gradient.
+   */
+  backgroundColors: string[] | undefined;
   backgroundGradientDirection: string | undefined;
   onBackgroundColorChange: (color: string) => void;
-  onBackgroundTypeChange: (type: "solid" | "gradient") => void;
   onGradientColorChange: (index: number, color: string) => void;
   onAddGradientColor: () => void;
   onRemoveGradientColor: (index: number) => void;
@@ -25,35 +20,18 @@ interface BackgroundSectionProps {
 }
 
 export function BackgroundSection({
-  backgroundColor,
-  backgroundType,
-  backgroundGradient,
+  backgroundColors,
   backgroundGradientDirection,
-  onBackgroundColorChange,
-  onBackgroundTypeChange,
   onGradientColorChange,
   onAddGradientColor,
   onRemoveGradientColor,
   onGradientDirectionChange,
 }: BackgroundSectionProps) {
-  const [isOpen, setIsOpen] = useState(true);
-  const [localBackgroundType, setLocalBackgroundType] = useState<
-    "solid" | "gradient"
-  >(backgroundType || "solid");
-
-  useEffect(() => {
-    if (backgroundType) {
-      setLocalBackgroundType(backgroundType);
-    }
-  }, [backgroundType]);
-
-  const handleTypeChange = (type: "solid" | "gradient") => {
-    setLocalBackgroundType(type);
-    onBackgroundTypeChange(type);
-  };
-
   const defaultGradient = ["#ffffff", "#f0f0f0"];
-  const gradientColors = backgroundGradient || defaultGradient;
+  const gradientColors =
+    Array.isArray(backgroundColors) && backgroundColors.length > 0
+      ? backgroundColors
+      : defaultGradient;
 
   return (
     <div className="space-y-4">
@@ -62,32 +40,17 @@ export function BackgroundSection({
           Background
         </label>
       </div>
-      
-      <BackgroundTabs
-        backgroundType={localBackgroundType}
-        onTypeChange={handleTypeChange}
-      />
 
       <div className="pt-2">
-        {localBackgroundType === "solid" && (
-          <SolidColorTab
-            color={backgroundColor || "#ffffff"}
-            onChange={onBackgroundColorChange}
-          />
-        )}
-
-        {localBackgroundType === "gradient" && (
-          <GradientColorTab
-            gradientColors={gradientColors}
-            gradientDirection={backgroundGradientDirection}
-            onColorChange={onGradientColorChange}
-            onAddColor={onAddGradientColor}
-            onRemoveColor={onRemoveGradientColor}
-            onDirectionChange={onGradientDirectionChange}
-          />
-        )}
+        <GradientColorTab
+          gradientColors={gradientColors}
+          gradientDirection={backgroundGradientDirection}
+          onColorChange={onGradientColorChange}
+          onAddColor={onAddGradientColor}
+          onRemoveColor={onRemoveGradientColor}
+          onDirectionChange={onGradientDirectionChange}
+        />
       </div>
     </div>
   );
 }
-

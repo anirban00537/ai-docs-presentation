@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectSlides,
   selectActiveSlideId,
+  selectGlobalTheme,
   setActiveSlide,
   addSlide,
   removeSlide,
@@ -18,6 +19,7 @@ import { Plus, Trash2 } from "lucide-react";
 export const SlidesPreview = () => {
   const slides = useAppSelector(selectSlides);
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const dispatch = useAppDispatch();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -134,6 +136,7 @@ export const SlidesPreview = () => {
                           onSelectWidget={() => {}}
                           onSetLiveOverride={() => {}}
                           onClearLiveOverride={() => {}}
+                          theme={globalTheme}
                           padding={0}
                         />
                       </div>

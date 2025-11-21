@@ -281,7 +281,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
               style={{
                 fontSize: widget.fontSize,
                 fontWeight: widget.fontWeight,
-                color: widget.color,
+                color: widget.color ?? "#0f172a",
                 textAlign: widget.align,
                 lineHeight: widget.lineHeight ?? 1.3,
                 wordWrap: "break-word",
@@ -317,7 +317,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
               style={{
                 fontSize: widget.fontSize,
                 fontWeight: widget.fontWeight,
-                color: widget.color,
+                color: widget.color ?? "#0f172a",
                 textAlign: widget.align,
                 lineHeight: widget.lineHeight ?? 1.3,
                 wordWrap: "break-word",
@@ -514,9 +514,8 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
       (preset) =>
         preset.fontSize === widget.fontSize &&
         preset.fontWeight === widget.fontWeight &&
-        Math.abs(
-          preset.lineHeight - (widget.lineHeight ?? preset.lineHeight)
-        ) < 0.01
+        Math.abs(preset.lineHeight - (widget.lineHeight ?? preset.lineHeight)) <
+          0.01
     )?.label ?? "Custom";
 
   return (

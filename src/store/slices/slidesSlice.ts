@@ -10,10 +10,14 @@ export type SlideModel = {
   id: string;
   title: string;
   widgets: SlideWidget[];
-  backgroundColor?: string;
-  backgroundGradient?: string[]; // Array of color stops for gradient
+  /**
+   * Background colors for the slide.
+   * - If undefined/empty: fall back to global theme background.
+   * - If length === 1: rendered as a solid background.
+   * - If length >= 2: rendered as a linear gradient using all colors.
+   */
+  backgroundColors?: string[];
   backgroundGradientDirection?: string; // Gradient direction (e.g., "to top", "to bottom right")
-  backgroundType?: "solid" | "gradient"; // Type of background
   backgroundImage?: string;
   showSlideNumber?: boolean;
   slideStyle?: string;
@@ -21,9 +25,9 @@ export type SlideModel = {
 
 export type GlobalTheme = {
   id: string;
-  background: string;
-  text: string;
-  accent: string;
+  background: string[];
+  text: string[];
+  accent: string[];
 };
 
 type SlidesState = {
@@ -36,10 +40,8 @@ const createEmptySlide = (title: string): SlideModel => ({
   id: nanoid(),
   title,
   widgets: [],
-  backgroundColor: "#ffffff",
-  backgroundGradient: ["#ffffff", "#f0f0f0"],
-  backgroundGradientDirection: "to bottom",
-  backgroundType: "solid",
+  backgroundColors: undefined,
+  backgroundGradientDirection: undefined,
   backgroundImage: undefined,
   showSlideNumber: false,
   slideStyle: "Engineering Team Meeting",
@@ -194,12 +196,65 @@ const slidesSlice = createSlice({
     ) {
       const theme = SLIDE_THEMES.find((t) => t.id === action.payload.themeId);
       if (!theme) return;
+
+      // Ensure we always have at least one color for each slot
+      const backgroundColors =
+        Array.isArray(theme.background) && theme.background.length > 0
+          ? theme.background
+          : ["#ffffff"];
+      const textColors =
+        Array.isArray(theme.text) && theme.text.length > 0
+          ? theme.text
+          : ["#111827"];
+      const accentColors =
+        Array.isArray(theme.accent) && theme.accent.length > 0
+          ? theme.accent
+          : ["#2563eb"];
+
       state.globalTheme = {
         id: theme.id,
-        background: theme.background,
-        text: theme.text,
-        accent: theme.accent,
+        background: backgroundColors,
+        text: textColors,
+        accent: accentColors,
       };
+
+      // Apply theme to all slides and widgets
+      state.slides.forEach((slide) => {
+        // Only override background when there is no image
+        if (!slide.backgroundImage) {
+          slide.backgroundColors = [...backgroundColors];
+        }
+
+        if (!slide.widgets) return;
+
+        slide.widgets.forEach((widget) => {
+          switch (widget.type) {
+            case "text": {
+              widget.color = textColors[0];
+              break;
+            }
+            case "rectangle":
+            case "circle":
+            case "polygon": {
+              widget.fill = accentColors[0];
+              break;
+            }
+            case "arrow": {
+              widget.stroke = accentColors[0];
+              break;
+            }
+            case "featureCard": {
+              widget.backgroundColor = backgroundColors[0];
+              widget.numberColor = accentColors[0];
+              widget.titleColor = textColors[0];
+              widget.descriptionColor = textColors[0];
+              break;
+            }
+            default:
+              break;
+          }
+        });
+      });
     },
   },
 });

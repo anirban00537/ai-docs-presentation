@@ -44,7 +44,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  {[theme.background, theme.text, theme.accent].map(
+                  {[theme.background[0], theme.text[0], theme.accent[0]].map(
                     (color) => (
                       <span
                         key={color}

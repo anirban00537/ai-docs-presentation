@@ -263,11 +263,11 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
     ]
   );
 
-  // White background with black text design
-  const backgroundColor = widget.backgroundColor ?? "#ffffff"; // white
-  const numberColor = widget.numberColor ?? "#1f2937"; // gray-800 (dark)
-  const titleColor = widget.titleColor ?? "#111827"; // gray-900 (darker)
-  const descriptionColor = widget.descriptionColor ?? "#374151"; // gray-700 (dark)
+  // Widget-local colors with sensible defaults
+  const backgroundColor = widget.backgroundColor ?? "#ffffff";
+  const numberColor = widget.numberColor ?? "#0f172a";
+  const titleColor = widget.titleColor ?? "#0f172a";
+  const descriptionColor = widget.descriptionColor ?? "#475569";
   const textAlign = widget.textAlign ?? "left";
 
   return (
