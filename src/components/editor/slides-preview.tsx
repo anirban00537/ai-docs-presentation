@@ -67,7 +67,7 @@ export const SlidesPreview = () => {
 
   return (
     <div
-      className="w-72 h-full flex flex-col bg-background/80 backdrop-blur-xl border-r border-border/50 overflow-hidden"
+      className="w-56 h-full flex flex-col bg-background/80 backdrop-blur-xl border-r border-border/50 overflow-hidden"
       onWheel={handleWheel}
     >
       <div className="p-4 pb-2 bg-background/50 backdrop-blur-sm z-10">
@@ -85,7 +85,7 @@ export const SlidesPreview = () => {
       <div className="flex-1 flex flex-col min-h-0">
         <div
           ref={scrollContainerRef}
-          className="slides-scroll-container flex-1 overflow-y-auto py-4 px-4 space-y-4"
+          className="slides-scroll-container flex-1 overflow-y-auto py-3 px-3 space-y-4"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
