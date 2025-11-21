@@ -44,9 +44,9 @@ export const SlidesPreview = () => {
   };
 
   return (
-    <div className="w-48 h-full flex flex-col border-r border-border/40 bg-muted/10 backdrop-blur-xl fixed left-0 top-0 bottom-0">
+    <div className="w-48 h-full flex flex-col border-r bg-muted border-border/40 backdrop-blur-xl fixed left-0 top-0 bottom-0">
       {/* Header / Toolbar */}
-      <div className="px-3 py-2.5 flex items-center justify-between border-b border-border/40 bg-background/50 backdrop-blur-md z-10 shrink-0">
+      <div className="px-3 py-2.5 flex items-center justify-between border-b bg-muted border-border/40 backdrop-blur-md z-10 shrink-0">
         <Button
           onClick={handleAddSlide}
           variant="outline"
