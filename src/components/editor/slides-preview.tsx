@@ -67,19 +67,21 @@ export const SlidesPreview = () => {
 
   return (
     <div
-      className="w-56 h-full flex flex-col bg-muted/20 border-r border-border/60 overflow-hidden"
+      className="fixed inset-y-0 left-0 z-30 w-56 flex flex-col bg-slate-50 border-r border-border/60 overflow-hidden"
       onWheel={handleWheel}
     >
       <div className="p-4 pb-4 z-10">
         <Button
           onClick={handleAddSlide}
           variant="ghost"
-          className="w-full justify-center gap-2 h-11 px-3 bg-background shadow-sm border border-border/40 hover:bg-primary/5 hover:text-primary hover:border-primary/20 transition-all duration-200 group"
+          className="w-full justify-center gap-2 h-11 px-3 bg-muted/50 shadow-sm border border-border/40 hover:bg-primary/5 hover:text-primary hover:border-primary/20 transition-all duration-200 group"
         >
           <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-200">
             <Plus className="w-3 h-3" />
           </div>
-          <span className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">New Slide</span>
+          <span className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">
+            New Slide
+          </span>
         </Button>
       </div>
 
@@ -100,7 +102,7 @@ export const SlidesPreview = () => {
           `}</style>
 
           <AnimatePresence initial={false} mode="popLayout">
-            {slides.map((slide, index) => {
+            {slides.map((slide) => {
               const isActive = slide.id === activeSlideId;
               return (
                 <motion.div
@@ -126,7 +128,7 @@ export const SlidesPreview = () => {
                   >
                     {/* Delete button */}
                     {slides.length > 1 && (
-                      <div 
+                      <div
                         className={cn(
                           "absolute right-1.5 top-1.5 z-20 opacity-0 transition-all duration-200 transform translate-y-1",
                           "group-hover/btn:opacity-100 group-hover/btn:translate-y-0"

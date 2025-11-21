@@ -55,7 +55,7 @@ const Editor = () => {
   }
 
   return (
-    <div className="flex h-full flex-1 flex-row overflow-hidden">
+    <div className="relative flex h-full flex-1 overflow-hidden pl-56">
       <SlidesPreview />
       <div
         className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pt-4"
