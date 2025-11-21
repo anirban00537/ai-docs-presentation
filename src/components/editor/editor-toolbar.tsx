@@ -15,9 +15,6 @@ import {
   DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 import {
-  Shapes,
-  Type,
-  Square,
   Palette,
   Plus,
   Heading1,
@@ -32,7 +29,13 @@ import {
 import { BackgroundSection } from "@/components/editor/background/background-section";
 import { BackgroundImageSection } from "@/components/editor/background/background-image-section";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { selectActiveSlide, updateSlide } from "@/store/slices/slidesSlice";
+import {
+  selectActiveSlide,
+  selectGlobalTheme,
+  updateSlide,
+  setSlideTheme,
+} from "@/store/slices/slidesSlice";
+import { ThemeSelector } from "@/components/editor/theme-selector";
 import {
   ArrowPreview,
   CirclePreview,
@@ -170,6 +173,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlide = useAppSelector(selectActiveSlide);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleBackgroundColorChange = React.useCallback(
     (color: string) => {
@@ -298,6 +302,17 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
       })
     );
   }, [activeSlide, dispatch]);
+
+  const handleThemeSelect = React.useCallback(
+    (themeId: string) => {
+      dispatch(
+        setSlideTheme({
+          themeId,
+        })
+      );
+    },
+    [dispatch]
+  );
 
   return (
     <header className="pointer-events-auto bg-muted/40 fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-md border border-border/40 p-1.5 shadow-sm backdrop-blur-xl transition-all hover:border-border/60 hover:shadow-md">
@@ -505,6 +520,32 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               Select a slide to customize its background.
             </div>
           )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <div className="h-4 w-px bg-border/40 mx-1" />
+
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 rounded-md px-3 text-xs font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary data-[state=open]:bg-primary/10 data-[state=open]:text-primary disabled:opacity-50"
+            disabled={!activeSlide}
+          >
+            <LayoutTemplate className="mr-1.5 h-3.5 w-3.5" />
+            Theme
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="w-64 rounded-md border border-border/40 bg-background/80 p-2.5 shadow-xl backdrop-blur-xl"
+          align="center"
+          sideOffset={10}
+        >
+          <ThemeSelector
+            activeThemeId={globalTheme?.id}
+            onSelectTheme={handleThemeSelect}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

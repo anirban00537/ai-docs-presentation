@@ -4,6 +4,7 @@ import type {
   SlideWidgetUpdate,
 } from "@/components/editor/widgets/types";
 import type { RootState } from "@/store";
+import { SLIDE_THEMES } from "@/lib/slide-themes";
 
 export type SlideModel = {
   id: string;
@@ -18,9 +19,17 @@ export type SlideModel = {
   slideStyle?: string;
 };
 
+export type GlobalTheme = {
+  id: string;
+  background: string;
+  text: string;
+  accent: string;
+};
+
 type SlidesState = {
   slides: SlideModel[];
   activeSlideId: string;
+  globalTheme: GlobalTheme;
 };
 
 const createEmptySlide = (title: string): SlideModel => ({
@@ -37,10 +46,17 @@ const createEmptySlide = (title: string): SlideModel => ({
 });
 
 const initialSlide = createEmptySlide("Slide 1");
+const defaultTheme = SLIDE_THEMES[0];
 
 const initialState: SlidesState = {
   slides: [initialSlide],
   activeSlideId: initialSlide.id,
+  globalTheme: {
+    id: defaultTheme.id,
+    background: defaultTheme.background,
+    text: defaultTheme.text,
+    accent: defaultTheme.accent,
+  },
 };
 
 const resolveSlide = (
@@ -51,7 +67,10 @@ const resolveSlide = (
   return state.slides.find((slide) => slide.id === targetId);
 };
 
-const applyWidgetUpdates = (widget: SlideWidget, updates: SlideWidgetUpdate) => {
+const applyWidgetUpdates = (
+  widget: SlideWidget,
+  updates: SlideWidgetUpdate
+) => {
   Object.assign(widget, updates);
 };
 
@@ -128,7 +147,9 @@ const slidesSlice = createSlice({
       const slide = resolveSlide(state, action.payload.slideId);
       if (!slide) return;
       slide.widgets ??= [];
-      const widget = slide.widgets.find((el) => el.id === action.payload.widgetId);
+      const widget = slide.widgets.find(
+        (el) => el.id === action.payload.widgetId
+      );
       if (!widget) return;
       applyWidgetUpdates(widget, action.payload.updates);
     },
@@ -165,6 +186,21 @@ const slidesSlice = createSlice({
     resetSlidesState() {
       return initialState;
     },
+    setSlideTheme(
+      state,
+      action: PayloadAction<{
+        themeId: string;
+      }>
+    ) {
+      const theme = SLIDE_THEMES.find((t) => t.id === action.payload.themeId);
+      if (!theme) return;
+      state.globalTheme = {
+        id: theme.id,
+        background: theme.background,
+        text: theme.text,
+        accent: theme.accent,
+      };
+    },
   },
 });
 
@@ -178,6 +214,7 @@ export const {
   replaceWidgets,
   updateSlide,
   resetSlidesState,
+  setSlideTheme,
 } = slidesSlice.actions;
 
 export const selectSlidesState = (state: RootState) => state.slides;
@@ -190,5 +227,6 @@ export const selectActiveSlide = (state: RootState) =>
   ) ?? null;
 export const selectActiveSlideWidgets = (state: RootState) =>
   selectActiveSlide(state)?.widgets ?? [];
+export const selectGlobalTheme = (state: RootState) => state.slides.globalTheme;
 
 export default slidesSlice.reducer;
