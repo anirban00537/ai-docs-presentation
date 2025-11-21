@@ -60,7 +60,7 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
               backgroundColor:
                 widget.fill === "transparent" || widget.fill === "none"
                   ? "transparent"
-                  : widget.fill ?? "#22c55e",
+                  : widget.fill || "#22c55e",
               border:
                 widget.stroke && widget.strokeWidth
                   ? `${widget.strokeWidth}px solid ${widget.stroke}`
@@ -77,7 +77,7 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
               backgroundColor:
                 widget.fill === "transparent" || widget.fill === "none"
                   ? "transparent"
-                  : widget.fill ?? "#22c55e",
+                  : widget.fill || "#22c55e",
               border:
                 widget.stroke && widget.strokeWidth
                   ? `${widget.strokeWidth}px solid ${widget.stroke}`
@@ -117,7 +117,7 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
             : "none");
         const strokeWidth = widget.strokeWidth ?? 0;
         const fillColor =
-          widget.fill === "none" ? "transparent" : widget.fill ?? "#22c55e";
+          widget.fill === "none" ? "transparent" : widget.fill || "#22c55e";
         const commonProps = {
           width: "100%",
           height: "100%",

@@ -20,7 +20,11 @@ import {
   SLIDE_DIMENSIONS,
 } from "@/lib/constants/widget-presets";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { addWidget, selectActiveSlideId } from "@/store/slices/slidesSlice";
+import {
+  addWidget,
+  selectActiveSlideId,
+  selectGlobalTheme,
+} from "@/store/slices/slidesSlice";
 import {
   selectWidget as selectWidgetAction,
   startWidgetEditing as startWidgetEditingAction,
@@ -30,6 +34,7 @@ import {
 export const useWidgetCreation = () => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const ensureSlideId = useCallback(() => {
     if (!activeSlideId) {
@@ -60,7 +65,8 @@ export const useWidgetCreation = () => {
         height: config.height,
         fontSize: config.fontSize,
         fontWeight: config.fontWeight,
-        // No explicit color – will fall back to theme text color
+        // Seed with current theme text color so new text matches theme
+        color: globalTheme?.text ?? "#0f172a",
         align: config.align,
         lineHeight: config.lineHeight,
       };
@@ -69,7 +75,7 @@ export const useWidgetCreation = () => {
       dispatch(selectWidgetAction(newWidget.id));
       dispatch(startWidgetEditingAction(newWidget.id));
     },
-    [dispatch, ensureSlideId]
+    [dispatch, ensureSlideId, globalTheme]
   );
 
   const handleAddShape = useCallback(
@@ -95,11 +101,9 @@ export const useWidgetCreation = () => {
             height: config.height,
             // Use local fill only when preset is explicitly transparent;
             // otherwise fall back to theme accent color at render time.
-            fill: config.fill === "transparent" ? "transparent" : undefined,
+            fill: config.fill === "transparent" ? "transparent" : "",
             borderRadius: config.borderRadius,
-            ...(config.stroke
-              ? { strokeWidth: config.strokeWidth ?? 4 }
-              : {}),
+            ...(config.stroke ? { strokeWidth: config.strokeWidth ?? 4 } : {}),
           } satisfies RectangleWidget;
           break;
         case "circle":
@@ -110,10 +114,8 @@ export const useWidgetCreation = () => {
             y: centerY,
             width: config.width,
             height: config.height,
-            fill: config.fill === "transparent" ? "transparent" : undefined,
-            ...(config.stroke
-              ? { strokeWidth: config.strokeWidth ?? 4 }
-              : {}),
+            fill: config.fill === "transparent" ? "transparent" : "",
+            ...(config.stroke ? { strokeWidth: config.strokeWidth ?? 4 } : {}),
           } satisfies CircleWidget;
           break;
         case "polygon":
@@ -125,10 +127,8 @@ export const useWidgetCreation = () => {
             width: config.width,
             height: config.height,
             shape: config.shape,
-            fill: config.fill === "transparent" ? "transparent" : undefined,
-            ...(config.stroke
-              ? { strokeWidth: config.strokeWidth ?? 4 }
-              : {}),
+            fill: config.fill === "transparent" ? "transparent" : "",
+            ...(config.stroke ? { strokeWidth: config.strokeWidth ?? 4 } : {}),
           } satisfies PolygonWidget;
           break;
         case "arrow":
@@ -178,7 +178,11 @@ export const useWidgetCreation = () => {
         y: originY,
         width,
         height,
-        // No explicit colors – will fall back to theme background/text colors
+        // Seed with current theme colors so card matches active theme
+        backgroundColor: globalTheme?.surface ?? "#ffffff",
+        numberColor: globalTheme?.accent ?? "#0f172a",
+        titleColor: globalTheme?.text ?? "#0f172a",
+        descriptionColor: globalTheme?.text ?? "#475569",
         textAlign: "left",
       };
 
@@ -186,7 +190,7 @@ export const useWidgetCreation = () => {
       dispatch(selectWidgetAction(newWidget.id));
       dispatch(stopWidgetEditingAction());
     },
-    [dispatch, ensureSlideId]
+    [dispatch, ensureSlideId, globalTheme]
   );
 
   return {

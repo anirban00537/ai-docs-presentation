@@ -281,7 +281,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
               style={{
                 fontSize: widget.fontSize,
                 fontWeight: widget.fontWeight,
-                color: widget.color ?? "#0f172a",
+                color: widget.color || "#0f172a",
                 textAlign: widget.align,
                 lineHeight: widget.lineHeight ?? 1.3,
                 wordWrap: "break-word",
@@ -317,7 +317,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
               style={{
                 fontSize: widget.fontSize,
                 fontWeight: widget.fontWeight,
-                color: widget.color ?? "#0f172a",
+                color: widget.color || "#0f172a",
                 textAlign: widget.align,
                 lineHeight: widget.lineHeight ?? 1.3,
                 wordWrap: "break-word",
