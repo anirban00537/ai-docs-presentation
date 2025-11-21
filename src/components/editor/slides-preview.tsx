@@ -67,16 +67,16 @@ export const SlidesPreview = () => {
 
   return (
     <div
-      className="w-48 h-full flex flex-col border-r bg-muted border-border/40 backdrop-blur-xl fixed left-0 top-0 bottom-0"
+      className="w-48 h-full flex flex-col border-r bg-muted/40 shadow-[0_0_10px_0_rgba(0,0,0,0.1)] border-border/40 backdrop-blur-xl fixed left-0 top-0 bottom-0"
       onWheel={handleWheel}
     >
       {/* Header / Toolbar */}
-      <div className="px-3 py-2.5 flex items-center justify-between border-b bg-muted border-border/40 backdrop-blur-md z-10 shrink-0">
+      <div className="px-3 py-2.5 flex items-center justify-between border-b bg-muted/40 border-border/40 backdrop-blur-md z-10 shrink-0">
         <Button
           onClick={handleAddSlide}
           variant="outline"
           size="sm"
-          className="text-[10px] w-full h-7 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground border-primary/10"
+          className="text-[10px] w-full h-7 hover:bg-primary/10 border-primary/10 shadow-xs"
         >
           <Plus className="h-3 w-3 text-primary" />
           New Slide

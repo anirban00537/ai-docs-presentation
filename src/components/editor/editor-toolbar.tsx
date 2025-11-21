@@ -300,13 +300,13 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   }, [activeSlide, dispatch]);
 
   return (
-    <header className="pointer-events-auto bg-muted fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-border/40 bg-background/60 p-1.5 shadow-sm backdrop-blur-xl transition-all hover:border-border/60 hover:shadow-md">
+    <header className="pointer-events-auto bg-muted/40 fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-md border border-border/40 p-1.5 shadow-sm backdrop-blur-xl transition-all hover:border-border/60 hover:shadow-md">
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 rounded-full px-3 text-xs font-medium transition-colors hover:bg-primary/10 hover:text-primary data-[state=open]:bg-primary/10 data-[state=open]:text-primary"
+            className="h-8 rounded-md px-3 text-xs font-medium transition-colors hover:bg-primary/10 hover:text-primary data-[state=open]:bg-primary/10 data-[state=open]:text-primary"
           >
             <Plus className="mr-1.5 h-3.5 w-3.5" />
             Insert
@@ -315,7 +315,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         <DropdownMenuContent
           align="center"
           sideOffset={10}
-          className="w-64 rounded-xl border border-border/40 bg-background/80 p-1.5 shadow-xl backdrop-blur-xl"
+          className="w-64 rounded-md border border-border/40 bg-background/80 p-1.5 shadow-xl backdrop-blur-xl"
         >
           <DropdownMenuLabel className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 py-1.5">
             Insert widget
@@ -389,7 +389,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent
-                className="w-64 rounded-xl border border-border/40 bg-background/80 p-1.5 shadow-xl backdrop-blur-xl z-[100]"
+                className="w-64 rounded-md border border-border/40 bg-background/80 p-1.5 shadow-xl backdrop-blur-xl z-[100]"
                 sideOffset={5}
               >
                 <DropdownMenuLabel className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 py-1.5">
@@ -443,7 +443,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 rounded-full px-3 text-xs font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary data-[state=open]:bg-primary/10 data-[state=open]:text-primary disabled:opacity-50"
+            className="h-8 rounded-md px-3 text-xs font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary data-[state=open]:bg-primary/10 data-[state=open]:text-primary disabled:opacity-50"
             disabled={!activeSlide}
           >
             <Palette className="mr-1.5 h-3.5 w-3.5" />
@@ -451,7 +451,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-[400px] max-h-[75vh] overflow-y-auto rounded-2xl border border-border/40 bg-background/80 px-3 py-4 custom-scrollbar shadow-xl backdrop-blur-xl"
+          className="w-[400px] max-h-[75vh] overflow-y-auto rounded-md border border-border/40 bg-background/80 px-3 py-4 custom-scrollbar shadow-xl backdrop-blur-xl"
           align="center"
           sideOffset={10}
         >
