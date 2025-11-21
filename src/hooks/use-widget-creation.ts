@@ -160,8 +160,8 @@ export const useWidgetCreation = () => {
     (preset: FeatureCardPreset) => {
       const slideId = ensureSlideId();
       const id = `feature-card-${nanoid(8)}`;
-      const width = 480;
-      const height = 280;
+      const width = 400;
+      const height = 190;
       const originX = Math.max(
         40,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)

@@ -309,7 +309,7 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
                 type="text"
                 className="w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 cursor-text"
                 style={{
-                  fontSize: "3.75rem",
+                  fontSize: "2.5rem",
                   fontWeight: 700,
                   color: numberColor,
                   lineHeight: 1,
@@ -326,7 +326,7 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
             ) : (
               <div
                 data-field="number"
-                className="text-6xl font-bold leading-none cursor-text"
+                className="text-4xl font-bold leading-none cursor-text"
                 style={{ color: numberColor }}
                 onClick={(e) => handleFieldClick("number", e)}
                 onPointerDown={(e) => handleFieldPointerDown("number", e)}
@@ -342,7 +342,7 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
                 type="text"
                 className="w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 cursor-text"
                 style={{
-                  fontSize: "1.5rem",
+                  fontSize: "1.125rem",
                   fontWeight: 600,
                   color: titleColor,
                   lineHeight: 1.25,
@@ -359,7 +359,7 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
             ) : (
               <div
                 data-field="title"
-                className="text-2xl font-semibold leading-tight cursor-text"
+                className="text-lg font-semibold leading-tight cursor-text"
                 style={{ color: titleColor }}
                 onClick={(e) => handleFieldClick("title", e)}
                 onPointerDown={(e) => handleFieldPointerDown("title", e)}
