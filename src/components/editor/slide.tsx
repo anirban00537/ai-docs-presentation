@@ -174,14 +174,6 @@ const Slide: React.FC<SlideProps> = ({
                 } as React.CSSProperties
               }
             >
-              {/*
-                Background resolution order:
-                1) Explicit background image
-                2) Explicit backgroundColors on slide:
-                   - length >= 2 -> gradient
-                   - length === 1 -> solid
-                3) Global theme background (if provided)
-              */}
               <div
                 className={cn(
                   "slide editable theme-background",
@@ -202,21 +194,13 @@ const Slide: React.FC<SlideProps> = ({
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
                       }
-                    : slide.backgroundColors &&
-                      slide.backgroundColors.length >= 2
+                    : slide.backgroundColor
                     ? {
-                        background: `linear-gradient(${
-                          slide.backgroundGradientDirection || "to bottom"
-                        }, ${slide.backgroundColors.join(", ")})`,
-                      }
-                    : slide.backgroundColors &&
-                      slide.backgroundColors.length === 1
-                    ? {
-                        backgroundColor: slide.backgroundColors[0],
+                        backgroundColor: slide.backgroundColor,
                       }
                     : theme
                     ? {
-                        backgroundColor: theme.background[0],
+                        backgroundColor: theme.background,
                       }
                     : {
                         backgroundColor: "#ffffff",

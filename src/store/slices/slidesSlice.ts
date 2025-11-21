@@ -10,14 +10,7 @@ export type SlideModel = {
   id: string;
   title: string;
   widgets: SlideWidget[];
-  /**
-   * Background colors for the slide.
-   * - If undefined/empty: fall back to global theme background.
-   * - If length === 1: rendered as a solid background.
-   * - If length >= 2: rendered as a linear gradient using all colors.
-   */
-  backgroundColors?: string[];
-  backgroundGradientDirection?: string; // Gradient direction (e.g., "to top", "to bottom right")
+  backgroundColor?: string;
   backgroundImage?: string;
   showSlideNumber?: boolean;
   slideStyle?: string;
@@ -25,9 +18,9 @@ export type SlideModel = {
 
 export type GlobalTheme = {
   id: string;
-  background: string[];
-  text: string[];
-  accent: string[];
+  background: string;
+  text: string;
+  accent: string;
 };
 
 type SlidesState = {
@@ -40,8 +33,7 @@ const createEmptySlide = (title: string): SlideModel => ({
   id: nanoid(),
   title,
   widgets: [],
-  backgroundColors: undefined,
-  backgroundGradientDirection: undefined,
+  backgroundColor: undefined,
   backgroundImage: undefined,
   showSlideNumber: false,
   slideStyle: "Engineering Team Meeting",
@@ -197,32 +189,18 @@ const slidesSlice = createSlice({
       const theme = SLIDE_THEMES.find((t) => t.id === action.payload.themeId);
       if (!theme) return;
 
-      // Ensure we always have at least one color for each slot
-      const backgroundColors =
-        Array.isArray(theme.background) && theme.background.length > 0
-          ? theme.background
-          : ["#ffffff"];
-      const textColors =
-        Array.isArray(theme.text) && theme.text.length > 0
-          ? theme.text
-          : ["#111827"];
-      const accentColors =
-        Array.isArray(theme.accent) && theme.accent.length > 0
-          ? theme.accent
-          : ["#2563eb"];
-
       state.globalTheme = {
         id: theme.id,
-        background: backgroundColors,
-        text: textColors,
-        accent: accentColors,
+        background: theme.background,
+        text: theme.text,
+        accent: theme.accent,
       };
 
       // Apply theme to all slides and widgets
       state.slides.forEach((slide) => {
         // Only override background when there is no image
         if (!slide.backgroundImage) {
-          slide.backgroundColors = [...backgroundColors];
+          slide.backgroundColor = theme.background;
         }
 
         if (!slide.widgets) return;
@@ -230,24 +208,24 @@ const slidesSlice = createSlice({
         slide.widgets.forEach((widget) => {
           switch (widget.type) {
             case "text": {
-              widget.color = textColors[0];
+              widget.color = theme.text;
               break;
             }
             case "rectangle":
             case "circle":
             case "polygon": {
-              widget.fill = accentColors[0];
+              widget.fill = theme.accent;
               break;
             }
             case "arrow": {
-              widget.stroke = accentColors[0];
+              widget.stroke = theme.accent;
               break;
             }
             case "featureCard": {
-              widget.backgroundColor = backgroundColors[0];
-              widget.numberColor = accentColors[0];
-              widget.titleColor = textColors[0];
-              widget.descriptionColor = textColors[0];
+              widget.backgroundColor = theme.background;
+              widget.numberColor = theme.accent;
+              widget.titleColor = theme.text;
+              widget.descriptionColor = theme.text;
               break;
             }
             default:

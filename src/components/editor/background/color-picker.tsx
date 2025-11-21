@@ -7,19 +7,19 @@ import { X } from "lucide-react";
 import { PopoverPanelPortal } from "./popover-panel-portal";
 import { Input } from "@/components/ui/input";
 
-interface GradientColorPickerProps {
+interface ColorPickerProps {
   color: string;
   onChange: (color: string) => void;
   onRemove: () => void;
   showRemove: boolean;
 }
 
-export function GradientColorPicker({
+export function ColorPicker({
   color,
   onChange,
   onRemove,
   showRemove,
-}: GradientColorPickerProps) {
+}: ColorPickerProps) {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   
   return (

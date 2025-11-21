@@ -44,15 +44,13 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  {[theme.background[0], theme.text[0], theme.accent[0]].map(
-                    (color) => (
-                      <span
-                        key={color}
-                        className="h-3.5 w-3.5 rounded-full border border-border/40"
-                        style={{ backgroundColor: color }}
-                      />
-                    )
-                  )}
+                  {[theme.background, theme.text, theme.accent].map((color) => (
+                    <span
+                      key={color}
+                      className="h-3.5 w-3.5 rounded-full border border-border/40"
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
                 </div>
               </button>
             );

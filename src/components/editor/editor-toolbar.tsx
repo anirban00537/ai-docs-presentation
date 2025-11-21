@@ -27,7 +27,6 @@ import {
   FlaskConical,
 } from "lucide-react";
 import { BackgroundSection } from "@/components/editor/background/background-section";
-import { BackgroundImageSection } from "@/components/editor/background/background-image-section";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlide,
@@ -183,108 +182,13 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           slideId: activeSlide.id,
           updates: {
             // single-color background
-            backgroundColors: [color],
+            backgroundColor: color,
           },
         })
       );
     },
     [activeSlide, dispatch]
   );
-
-  const handleGradientColorChange = React.useCallback(
-    (index: number, color: string) => {
-      if (!activeSlide) return;
-      const currentGradient = activeSlide.backgroundColors || [
-        "#ffffff",
-        "#f0f0f0",
-      ];
-      const next = [...currentGradient];
-      next[index] = color;
-      dispatch(
-        updateSlide({
-          slideId: activeSlide.id,
-          updates: {
-            backgroundColors: next,
-          },
-        })
-      );
-    },
-    [activeSlide, dispatch]
-  );
-
-  const handleAddGradientColor = React.useCallback(() => {
-    if (!activeSlide) return;
-    const currentGradient = activeSlide.backgroundColors || [
-      "#ffffff",
-      "#f0f0f0",
-    ];
-    dispatch(
-      updateSlide({
-        slideId: activeSlide.id,
-        updates: {
-          backgroundColors: [...currentGradient, "#ffffff"],
-        },
-      })
-    );
-  }, [activeSlide, dispatch]);
-
-  const handleRemoveGradientColor = React.useCallback(
-    (index: number) => {
-      if (!activeSlide) return;
-      const currentGradient = activeSlide.backgroundColors || [
-        "#ffffff",
-        "#f0f0f0",
-      ];
-      if (currentGradient.length <= 2) return;
-      dispatch(
-        updateSlide({
-          slideId: activeSlide.id,
-          updates: {
-            backgroundColors: currentGradient.filter((_, i) => i !== index),
-          },
-        })
-      );
-    },
-    [activeSlide, dispatch]
-  );
-
-  const handleGradientDirectionChange = React.useCallback(
-    (direction: string) => {
-      if (!activeSlide) return;
-      dispatch(
-        updateSlide({
-          slideId: activeSlide.id,
-          updates: {
-            backgroundGradientDirection: direction,
-          },
-        })
-      );
-    },
-    [activeSlide, dispatch]
-  );
-
-  const handleBackgroundImageUpload = React.useCallback(
-    (imageData: string) => {
-      if (!activeSlide) return;
-      dispatch(
-        updateSlide({
-          slideId: activeSlide.id,
-          updates: { backgroundImage: imageData },
-        })
-      );
-    },
-    [activeSlide, dispatch]
-  );
-
-  const handleBackgroundImageRemove = React.useCallback(() => {
-    if (!activeSlide) return;
-    dispatch(
-      updateSlide({
-        slideId: activeSlide.id,
-        updates: { backgroundImage: undefined },
-      })
-    );
-  }, [activeSlide, dispatch]);
 
   const handleThemeSelect = React.useCallback(
     (themeId: string) => {
@@ -461,36 +365,12 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                     Canvas
                   </h3>
                   <p className="text-[10px] text-muted-foreground/70">
-                    Adjust solid colors or gradients for the slide background.
+                    Adjust colors for the slide background.
                   </p>
                 </div>
                 <BackgroundSection
-                  backgroundColors={activeSlide.backgroundColors}
-                  backgroundGradientDirection={
-                    activeSlide.backgroundGradientDirection
-                  }
-                  onGradientColorChange={handleGradientColorChange}
-                  onAddGradientColor={handleAddGradientColor}
-                  onRemoveGradientColor={handleRemoveGradientColor}
-                  onGradientDirectionChange={handleGradientDirectionChange}
-                />
-              </section>
-
-              <div className="h-px w-full bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-
-              <section className="space-y-2">
-                <div>
-                  <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Assets
-                  </h3>
-                  <p className="text-[10px] text-muted-foreground/70">
-                    Upload or remove a background image.
-                  </p>
-                </div>
-                <BackgroundImageSection
-                  backgroundImage={activeSlide.backgroundImage}
-                  onImageUpload={handleBackgroundImageUpload}
-                  onImageRemove={handleBackgroundImageRemove}
+                  backgroundColor={activeSlide.backgroundColor}
+                  onBackgroundColorChange={handleBackgroundColorChange}
                 />
               </section>
             </div>

@@ -1,37 +1,42 @@
 "use client";
 
 import React from "react";
-import { GradientColorTab } from "./gradient-color-tab";
+import { ColorPicker } from "./color-picker";
+
+const PRESET_COLORS = [
+  "#0f172a",
+  "#1d4ed8",
+  "#065f46",
+  "#92400e",
+  "#b91c1c",
+  "#6d28d9",
+  "#7c3aed",
+  "#f97316",
+  "#e11d48",
+  "#22c55e",
+  "#0ea5e9",
+  "#6366f1",
+  "#facc15",
+  "#64748b",
+  "#111827",
+  // extra accents
+  "#ecfeff",
+  "#fef9c3",
+  "#fee2e2",
+  "#e0e7ff",
+  "#f5f3ff",
+];
 
 interface BackgroundSectionProps {
-  /**
-   * Background colors for the slide.
-   * - If undefined/empty: fall back to theme.
-   * - If length === 1: treated as solid.
-   * - If length >= 2: treated as gradient.
-   */
-  backgroundColors: string[] | undefined;
-  backgroundGradientDirection: string | undefined;
+  backgroundColor: string | undefined;
   onBackgroundColorChange: (color: string) => void;
-  onGradientColorChange: (index: number, color: string) => void;
-  onAddGradientColor: () => void;
-  onRemoveGradientColor: (index: number) => void;
-  onGradientDirectionChange: (direction: string) => void;
 }
 
 export function BackgroundSection({
-  backgroundColors,
-  backgroundGradientDirection,
-  onGradientColorChange,
-  onAddGradientColor,
-  onRemoveGradientColor,
-  onGradientDirectionChange,
+  backgroundColor,
+  onBackgroundColorChange,
 }: BackgroundSectionProps) {
-  const defaultGradient = ["#ffffff", "#f0f0f0"];
-  const gradientColors =
-    Array.isArray(backgroundColors) && backgroundColors.length > 0
-      ? backgroundColors
-      : defaultGradient;
+  const color = backgroundColor ? backgroundColor : "#ffffff";
 
   return (
     <div className="space-y-4">
@@ -42,14 +47,49 @@ export function BackgroundSection({
       </div>
 
       <div className="pt-2">
-        <GradientColorTab
-          gradientColors={gradientColors}
-          gradientDirection={backgroundGradientDirection}
-          onColorChange={onGradientColorChange}
-          onAddColor={onAddGradientColor}
-          onRemoveColor={onRemoveGradientColor}
-          onDirectionChange={onGradientDirectionChange}
-        />
+        {/* Preset palette */}
+        <div className="space-y-2 mb-3">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-medium text-muted-foreground">
+              Presets
+            </label>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {PRESET_COLORS.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => onBackgroundColorChange(preset)}
+                className="relative flex h-7 w-7 items-center justify-center rounded-full border border-border/60 shadow-sm hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              >
+                <span
+                  className="h-5 w-5 rounded-full border border-white/70"
+                  style={{ backgroundColor: preset }}
+                />
+                {color === preset && (
+                  <span className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-offset-1 ring-primary/80 ring-offset-background" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Custom color */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-medium text-muted-foreground">
+              Custom Color
+            </label>
+          </div>
+          <div className="flex flex-wrap gap-3 items-center p-1">
+            <ColorPicker
+              color={color}
+              onChange={onBackgroundColorChange}
+              onRemove={() => {}}
+              showRemove={false}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
