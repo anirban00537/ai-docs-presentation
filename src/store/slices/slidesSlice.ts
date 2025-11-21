@@ -19,6 +19,7 @@ export type SlideModel = {
 export type GlobalTheme = {
   id: string;
   background: string;
+  surface: string;
   text: string;
   accent: string;
 };
@@ -48,6 +49,7 @@ const initialState: SlidesState = {
   globalTheme: {
     id: defaultTheme.id,
     background: defaultTheme.background,
+    surface: defaultTheme.surface,
     text: defaultTheme.text,
     accent: defaultTheme.accent,
   },
@@ -192,6 +194,7 @@ const slidesSlice = createSlice({
       state.globalTheme = {
         id: theme.id,
         background: theme.background,
+        surface: theme.surface,
         text: theme.text,
         accent: theme.accent,
       };
@@ -222,7 +225,7 @@ const slidesSlice = createSlice({
               break;
             }
             case "featureCard": {
-              widget.backgroundColor = theme.background;
+              widget.backgroundColor = theme.surface;
               widget.numberColor = theme.accent;
               widget.titleColor = theme.text;
               widget.descriptionColor = theme.text;
