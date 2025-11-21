@@ -67,17 +67,19 @@ export const SlidesPreview = () => {
 
   return (
     <div
-      className="w-56 h-full flex flex-col bg-background/80 backdrop-blur-xl border-r border-border/50 overflow-hidden"
+      className="w-56 h-full flex flex-col bg-muted/20 border-r border-border/60 overflow-hidden"
       onWheel={handleWheel}
     >
-      <div className="p-4 pb-2 bg-background/50 backdrop-blur-sm z-10">
+      <div className="p-4 pb-4 z-10">
         <Button
           onClick={handleAddSlide}
-          variant="outline"
-          className="w-full justify-center gap-2 h-10 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 hover:text-primary transition-all duration-300"
+          variant="ghost"
+          className="w-full justify-center gap-2 h-11 px-3 bg-background shadow-sm border border-border/40 hover:bg-primary/5 hover:text-primary hover:border-primary/20 transition-all duration-200 group"
         >
-          <Plus className="w-4 h-4" />
-          <span className="text-sm font-medium">Add Slide</span>
+          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-200">
+            <Plus className="w-3 h-3" />
+          </div>
+          <span className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">New Slide</span>
         </Button>
       </div>
 
@@ -85,7 +87,7 @@ export const SlidesPreview = () => {
       <div className="flex-1 flex flex-col min-h-0">
         <div
           ref={scrollContainerRef}
-          className="slides-scroll-container flex-1 overflow-y-auto py-3 px-3 space-y-4"
+          className="slides-scroll-container flex-1 overflow-y-auto py-2 px-4 space-y-4"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -115,11 +117,11 @@ export const SlidesPreview = () => {
                   <button
                     onClick={() => handleSlideClick(slide.id)}
                     className={cn(
-                      "relative flex-1 aspect-video rounded-lg overflow-hidden transition-all duration-300 outline-none group/btn",
-                      "ring-1 shadow-sm",
+                      "relative flex-1 aspect-video rounded-xl overflow-hidden transition-all duration-200 outline-none group/btn",
+                      "ring-1 shadow-sm bg-background",
                       isActive
-                        ? "ring-2 ring-primary shadow-md shadow-primary/10 scale-[1.02]"
-                        : "ring-border/60 hover:ring-primary/40 hover:shadow-md bg-muted/20"
+                        ? "ring-2 ring-primary shadow-md shadow-primary/10"
+                        : "ring-border/40 hover:ring-primary/40 hover:shadow-md"
                     )}
                   >
                     {/* Delete button */}
