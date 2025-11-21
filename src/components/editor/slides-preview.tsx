@@ -12,8 +12,8 @@ import {
 } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Plus, Trash2 } from "lucide-react";
 
 export const SlidesPreview = () => {
   const slides = useAppSelector(selectSlides);
@@ -67,122 +67,108 @@ export const SlidesPreview = () => {
 
   return (
     <div
-      className="w-56 max-h-[80vh] flex flex-col border bg-linear-to-b from-background/95 via-background/90 to-background/95 border-border/60 backdrop-blur-2xl rounded-xl"
+      className="w-72 h-full flex flex-col bg-background/80 backdrop-blur-xl border-r border-border/50 overflow-hidden"
       onWheel={handleWheel}
     >
-      {/* Header / Toolbar */}
-      <div className="px-3.5 py-2.5 flex items-center justify-between border-b bg-linear-to-r from-background/80 via-background/60 to-background/80 border-border/60 backdrop-blur-md z-10 shrink-0">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[11px] font-medium tracking-[0.16em] uppercase text-muted-foreground/70">
-            Slides
-          </span>
-        </div>
-
+      <div className="p-4 pb-2 bg-background/50 backdrop-blur-sm z-10">
         <Button
           onClick={handleAddSlide}
           variant="outline"
-          size="icon"
-          className="h-7 w-7 rounded-full border-border/70 bg-background/80 hover:bg-muted/80 hover:border-border shadow-sm"
-          aria-label="Add slide"
+          className="w-full justify-center gap-2 h-10 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 hover:text-primary transition-all duration-300"
         >
-          <Plus className="h-3 w-3 text-foreground/70" />
+          <Plus className="w-4 h-4" />
+          <span className="text-sm font-medium">Add Slide</span>
         </Button>
       </div>
 
       {/* Slides List */}
-      <div
-        ref={scrollContainerRef}
-        className="slides-scroll-container flex-1 overflow-y-auto py-3 px-2.5 space-y-2.5"
-        style={{
-          scrollbarWidth: "none", // Hide scrollbar for cleaner look
-          msOverflowStyle: "none",
-        }}
-      >
-        <style jsx>{`
-          .slides-scroll-container::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
+      <div className="flex-1 flex flex-col min-h-0">
+        <div
+          ref={scrollContainerRef}
+          className="slides-scroll-container flex-1 overflow-y-auto py-4 px-4 space-y-4"
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          <style jsx>{`
+            .slides-scroll-container::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
 
-        <AnimatePresence initial={false}>
-          {slides.map((slide, index) => {
-            const isActive = slide.id === activeSlideId;
-            return (
-              <motion.div
-                key={slide.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
-                className="flex items-start gap-2.5 group"
-                data-slide-id={slide.id}
-              >
-                {/* Slide Number */}
-                <div className="pt-1.5 w-5 flex justify-end">
-                  <span
+          <AnimatePresence initial={false} mode="popLayout">
+            {slides.map((slide, index) => {
+              const isActive = slide.id === activeSlideId;
+              return (
+                <motion.div
+                  key={slide.id}
+                  layout
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="group relative flex items-center"
+                  data-slide-id={slide.id}
+                >
+                  {/* Slide Thumbnail */}
+                  <button
+                    onClick={() => handleSlideClick(slide.id)}
                     className={cn(
-                      "inline-flex h-4 min-w-4 items-center justify-center rounded-full text-[9px] font-medium transition-all duration-200",
+                      "relative flex-1 aspect-video rounded-lg overflow-hidden transition-all duration-300 outline-none group/btn",
+                      "ring-1 shadow-sm",
                       isActive
-                        ? "bg-muted/80 text-foreground shadow-[0_0_0_1px_rgba(148,163,184,0.6)]"
-                        : "text-muted-foreground/60 group-hover:text-muted-foreground/80"
+                        ? "ring-2 ring-primary shadow-md shadow-primary/10 scale-[1.02]"
+                        : "ring-border/60 hover:ring-primary/40 hover:shadow-md bg-muted/20"
                     )}
                   >
-                    {index + 1}
-                  </span>
-                </div>
+                    {/* Delete button */}
+                    {slides.length > 1 && (
+                      <div 
+                        className={cn(
+                          "absolute right-1.5 top-1.5 z-20 opacity-0 transition-all duration-200 transform translate-y-1",
+                          "group-hover/btn:opacity-100 group-hover/btn:translate-y-0"
+                        )}
+                      >
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            dispatch(removeSlide(slide.id));
+                          }}
+                          className="h-6 w-6 flex items-center justify-center rounded-full bg-background/90 text-muted-foreground shadow-sm ring-1 ring-border/50 hover:bg-destructive hover:text-destructive-foreground hover:ring-destructive transition-colors"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
 
-                {/* Slide Thumbnail */}
-                <button
-                  onClick={() => handleSlideClick(slide.id)}
-                  className={cn(
-                    "relative flex-1 aspect-video overflow-hidden transition-all duration-200 outline-none",
-                    "ring-1 ring-border/60 bg-linear-to-b from-background/95 via-background/90 to-background/95",
-                    isActive
-                      ? "ring-2 ring-foreground/20 scale-[1.02]"
-                      : "hover:ring-foreground/15 hover:scale-[1.01]"
-                  )}
-                >
-                  {/* Delete button (shown on hover) */}
-                  {slides.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        dispatch(removeSlide(slide.id));
-                      }}
-                      className="absolute right-2 top-2 z-20 h-5 w-5 rounded-full bg-background/95 text-destructive opacity-0 shadow-sm ring-1 ring-border/60 transition-all duration-150 hover:bg-destructive hover:text-destructive-foreground hover:ring-destructive group-hover:opacity-90 group-hover:translate-y-px"
-                    >
-                      <span className="block text-[9px] leading-none font-medium">
-                        ×
-                      </span>
-                    </button>
-                  )}
-
-                  {/* Slide Content Preview */}
-                  <div className="absolute inset-0 bg-linear-to-br from-muted/80 via-background/90 to-muted/60 pointer-events-none">
-                    <div className="w-full h-full flex items-center justify-center overflow-hidden bg-white/95 dark:bg-neutral-900/95">
-                      <Slide
-                        slide={slide}
-                        selectedId={null}
-                        editingId={null}
-                        liveOverrides={{}}
-                        onSelectWidget={() => {}}
-                        onSetLiveOverride={() => {}}
-                        onClearLiveOverride={() => {}}
-                        padding={0}
-                      />
+                    {/* Slide Content Preview */}
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div className="w-full h-full flex items-center justify-center overflow-hidden">
+                        <Slide
+                          slide={slide}
+                          selectedId={null}
+                          editingId={null}
+                          liveOverrides={{}}
+                          onSelectWidget={() => {}}
+                          onSetLiveOverride={() => {}}
+                          onClearLiveOverride={() => {}}
+                          padding={0}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Active Overlay (Subtle) */}
-                  {isActive && (
-                    <div className="absolute inset-0 bg-muted/40 pointer-events-none" />
-                  )}
-                </button>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+                    {/* Active Overlay */}
+                    {!isActive && (
+                      <div className="absolute inset-0 bg-background/10 group-hover/btn:bg-transparent transition-colors duration-300" />
+                    )}
+                  </button>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
