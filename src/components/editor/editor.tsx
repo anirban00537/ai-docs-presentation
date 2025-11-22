@@ -39,6 +39,10 @@ const Editor = () => {
 
   const [activePanel, setActivePanel] = React.useState<SidebarPanel>(null);
 
+  const togglePanel = React.useCallback((panel: SidebarPanel) => {
+    setActivePanel((current) => (current === panel ? null : panel));
+  }, []);
+
   const handleBackgroundColorChange = React.useCallback(
     (color: string) => {
       if (!activeSlide) return;
@@ -94,11 +98,11 @@ const Editor = () => {
           onAddText={handleAddText}
           onAddShape={handleAddShape}
           onAddFeatureCard={handleAddFeatureCard}
-          onOpenInsertPanel={() => setActivePanel("insert")}
-          onOpenBackgroundPanel={() => setActivePanel("background")}
-          onOpenThemePanel={() => setActivePanel("theme")}
+          onOpenInsertPanel={() => togglePanel("insert")}
+          onOpenBackgroundPanel={() => togglePanel("background")}
+          onOpenThemePanel={() => togglePanel("theme")}
         />
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className="flex flex-1 min-h-0 overflow-hidden h-full">
           <div className="flex flex-1 flex-col items-center justify-center min-h-0">
             <p className="text-muted-foreground">No slide selected</p>
           </div>
@@ -130,7 +134,7 @@ const Editor = () => {
         onOpenBackgroundPanel={() => setActivePanel("background")}
         onOpenThemePanel={() => setActivePanel("theme")}
       />
-      <div className="flex flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden h-full">
         <div
           className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pt-4 min-h-0"
           onWheel={handleWheel}

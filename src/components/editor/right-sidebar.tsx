@@ -56,7 +56,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   };
 
   return (
-    <div className="w-[400px] h-full bg-background border-l border-border/40 flex flex-col min-h-0">
+    <div className="w-[400px] h-full bg-background border-l border-border/60 flex flex-col shrink-0 min-h-0">
       <div className="flex items-center justify-between p-4 border-b border-border/40 shrink-0">
         <h2 className="text-lg font-semibold">{getTitle()}</h2>
         <Button
@@ -69,7 +69,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           <span className="sr-only">Close</span>
         </Button>
       </div>
-      <div className="flex-1 overflow-y-auto p-4 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 min-h-0 overscroll-contain">
         {panel === "insert" && (
           <InsertPanelContent
             onAddText={onAddText || (() => {})}

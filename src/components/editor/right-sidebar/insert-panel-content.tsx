@@ -58,7 +58,9 @@ const shapeItems: ShapePreset[] = [
     id: "diamond-solid",
     title: "Diamond",
     category: "essential",
-    preview: <PolygonPreview points="50,6 94,50 50,94 6,50" className="h-8 w-8" />,
+    preview: (
+      <PolygonPreview points="50,6 94,50 50,94 6,50" className="h-8 w-8" />
+    ),
   },
   {
     id: "star-solid",
@@ -99,13 +101,21 @@ const shapeItems: ShapePreset[] = [
     id: "triangle-outline",
     title: "Triangle",
     category: "outlined",
-    preview: <PolygonPreview points="50,8 94,92 6,92" outline className="h-8 w-8" />,
+    preview: (
+      <PolygonPreview points="50,8 94,92 6,92" outline className="h-8 w-8" />
+    ),
   },
   {
     id: "diamond-outline",
     title: "Diamond",
     category: "outlined",
-    preview: <PolygonPreview points="50,6 94,50 50,94 6,50" outline className="h-8 w-8" />,
+    preview: (
+      <PolygonPreview
+        points="50,6 94,50 50,94 6,50"
+        outline
+        className="h-8 w-8"
+      />
+    ),
   },
 ];
 
@@ -242,4 +252,3 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
     </div>
   );
 };
-
