@@ -24,6 +24,9 @@ import {
 } from "@/hooks/use-canvas-viewport";
 import { usePointerSession } from "@/hooks/use-pointer-session";
 import { useCanvasInteractions } from "@/hooks/use-canvas-interactions";
+import { useAppSelector } from "@/store/hooks";
+import { selectSnapLines } from "@/store/slices/editorUiSlice";
+import { SnapLines } from "@/components/editor/snap-lines";
 
 type SlideProps = {
   slide: SlideModel;
@@ -55,6 +58,7 @@ const Slide: React.FC<SlideProps> = ({
   const dragLayerRef = useRef<HTMLDivElement>(null);
   const readLayerRef = useRef<HTMLDivElement>(null);
   const editingTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const snapLines = useAppSelector(selectSnapLines);
 
   // Use the canvas viewport hook for viewport calculation and coordinate transformation
   const { viewport, screenToSlide, invScale } = useCanvasViewport(
@@ -337,6 +341,8 @@ const Slide: React.FC<SlideProps> = ({
                     />
                   );
                 })}
+
+                <SnapLines lines={snapLines} />
               </div>
             </div>
             <div id="edit-layer"></div>

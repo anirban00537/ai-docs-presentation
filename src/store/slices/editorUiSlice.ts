@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { SlideWidgetUpdate, ResizeHandle } from "@/components/editor/widgets/types";
+import type { SlideWidgetUpdate, ResizeHandle, SnapLine } from "@/components/editor/widgets/types";
 import type { RootState } from "@/store";
 
 export type PointerSession = {
@@ -18,6 +18,7 @@ type EditorUiState = {
   liveOverrides: Record<string, SlideWidgetUpdate>;
   pointerSession: PointerSession | null;
   activePointerId: number | null;
+  snapLines: SnapLine[];
 };
 
 const initialState: EditorUiState = {
@@ -26,6 +27,7 @@ const initialState: EditorUiState = {
   liveOverrides: {},
   pointerSession: null,
   activePointerId: null,
+  snapLines: [],
 };
 
 const editorUiSlice = createSlice({
@@ -84,6 +86,9 @@ const editorUiSlice = createSlice({
     setActivePointerId(state, action: PayloadAction<number | null>) {
       state.activePointerId = action.payload;
     },
+    setSnapLines(state, action: PayloadAction<SnapLine[]>) {
+      state.snapLines = action.payload;
+    },
     resetEditorUi(state) {
       Object.assign(state, initialState);
     },
@@ -101,6 +106,7 @@ export const {
   updatePointerSession,
   endPointerSession,
   setActivePointerId,
+  setSnapLines,
   resetEditorUi,
 } = editorUiSlice.actions;
 
@@ -115,6 +121,7 @@ export const selectPointerSession = (state: RootState) =>
   state.editorUi.pointerSession;
 export const selectActivePointerId = (state: RootState) =>
   state.editorUi.activePointerId;
+export const selectSnapLines = (state: RootState) => state.editorUi.snapLines;
 
 export default editorUiSlice.reducer;
 

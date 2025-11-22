@@ -103,3 +103,10 @@ export type ResizeHandle =
   | "bottom"
   | "bottom-left"
   | "left";
+
+export type SnapLine = {
+  type: "vertical" | "horizontal";
+  position: number; // x or y coordinate
+  start: number; // start of the line segment (e.g. min y for vertical line)
+  end: number; // end of the line segment
+};

@@ -8,6 +8,7 @@ import type { PointerSession } from "@/store/slices/editorUiSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectActiveSlideWidgets,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import {
@@ -16,6 +17,7 @@ import {
   startPointerSession as startPointerSessionAction,
   updatePointerSession as updatePointerSessionAction,
   endPointerSession as endPointerSessionAction,
+  setSnapLines,
 } from "@/store/slices/editorUiSlice";
 import { useDragAndResize } from "./use-drag-and-resize";
 import type { ScreenToSlideTransform } from "./use-canvas-viewport";
@@ -33,6 +35,7 @@ export const usePointerSession = ({
 }: UsePointerSessionOptions) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const activeSlideWidgets = useAppSelector(selectActiveSlideWidgets);
   const activePointerId = useAppSelector(selectActivePointerId);
   const pointerSession = useAppSelector(selectPointerSession);
   const pointerSessionRef = useRef<PointerSession | null>(null);
@@ -86,6 +89,7 @@ export const usePointerSession = ({
       }
 
       onClearLiveOverride(widgetId);
+      dispatch(setSnapLines([]));
       pointerSessionRef.current = null;
       dispatch(endPointerSessionAction());
     },
@@ -107,9 +111,20 @@ export const usePointerSession = ({
 
       let override: SlideWidgetUpdate;
       if (session.type === "drag") {
-        override = computeDrag(session, event.clientX, event.clientY);
+        const otherWidgets = activeSlideWidgets.filter(
+          (w) => w.id !== session.widgetId
+        );
+        const result = computeDrag(
+          session,
+          event.clientX,
+          event.clientY,
+          otherWidgets
+        );
+        override = result.updates;
+        dispatch(setSnapLines(result.snapLines));
       } else {
         override = computeResize(session, event.clientX, event.clientY);
+        dispatch(setSnapLines([]));
       }
 
       const action = session.type === "drag" ? "drag:move" : "resize:move";
@@ -161,6 +176,7 @@ export const usePointerSession = ({
     };
   }, [
     activePointerId,
+    activeSlideWidgets,
     computeDrag,
     computeResize,
     finishPointerSession,
