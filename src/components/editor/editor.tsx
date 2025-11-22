@@ -44,14 +44,13 @@ const Editor = () => {
   }, []);
 
   const handleBackgroundColorChange = React.useCallback(
-    (color: string) => {
+    (colors: string[]) => {
       if (!activeSlide) return;
       dispatch(
         updateSlide({
           slideId: activeSlide.id,
           updates: {
-            // single-color background
-            backgroundColor: color,
+            backgroundColor: colors,
           },
         })
       );

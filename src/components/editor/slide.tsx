@@ -194,17 +194,38 @@ const Slide: React.FC<SlideProps> = ({
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
                       }
-                    : slide.backgroundColor
-                    ? {
-                        backgroundColor: slide.backgroundColor,
-                      }
-                    : theme
-                    ? {
-                        backgroundColor: theme.background,
-                      }
-                    : {
-                        backgroundColor: "#ffffff",
-                      }),
+                    : (() => {
+                        // Normalize backgroundColor to array (handle backward compatibility with string values)
+                        const bgColors = Array.isArray(slide.backgroundColor)
+                          ? slide.backgroundColor
+                          : slide.backgroundColor
+                          ? [slide.backgroundColor]
+                          : [];
+
+                        if (bgColors.length === 0) {
+                          if (theme && theme.background.length > 0) {
+                            if (theme.background.length === 1) {
+                              return { backgroundColor: theme.background[0] };
+                            }
+                            return {
+                              background: `linear-gradient(to right, ${theme.background.join(
+                                ", "
+                              )})`,
+                            };
+                          }
+                          return { backgroundColor: "#ffffff" };
+                        }
+
+                        if (bgColors.length === 1) {
+                          return { backgroundColor: bgColors[0] };
+                        }
+
+                        return {
+                          background: `linear-gradient(to right, ${bgColors.join(
+                            ", "
+                          )})`,
+                        };
+                      })()),
                 }}
                 onPointerDown={(e) => {
                   const target = e.target as HTMLElement;

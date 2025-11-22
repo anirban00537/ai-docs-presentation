@@ -4,8 +4,8 @@ import React from "react";
 import { BackgroundSection } from "@/components/editor/background/background-section";
 
 type BackgroundPanelContentProps = {
-  backgroundColor?: string;
-  onBackgroundColorChange?: (color: string) => void;
+  backgroundColor?: string[] | string;
+  onBackgroundColorChange?: (colors: string[]) => void;
 };
 
 export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({

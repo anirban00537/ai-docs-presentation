@@ -27,19 +27,134 @@ const PRESET_COLORS = [
   "#f5f3ff",
 ];
 
+const PRESET_GRADIENTS = [
+  ["#667eea", "#764ba2"], // Purple to deep purple
+  ["#f093fb", "#f5576c"], // Pink to coral
+  ["#4facfe", "#00f2fe"], // Blue to cyan
+  ["#43e97b", "#38f9d7"], // Green to turquoise
+  ["#fa709a", "#fee140"], // Pink to yellow
+  ["#30cfd0", "#330867"], // Cyan to deep purple
+  ["#a8edea", "#fed6e3"], // Light cyan to light pink
+  ["#ff9a9e", "#fecfef"], // Coral to light pink
+  ["#ffecd2", "#fcb69f"], // Cream to peach
+  ["#ff6e7f", "#bfe9ff"], // Coral to light blue
+  ["#c471f5", "#fa71cd"], // Purple to pink
+  ["#fbc2eb", "#a6c1ee"], // Light pink to light blue
+  ["#a8caba", "#5d4e75"], // Mint to purple
+  ["#ffecd2", "#fcb69f", "#ff8a80"], // Cream to peach to coral
+  ["#667eea", "#764ba2", "#f093fb"], // Purple gradient
+  ["#4facfe", "#00f2fe", "#43e97b"], // Blue to cyan to green
+  ["#fa709a", "#fee140", "#30cfd0"], // Pink to yellow to cyan
+  ["#ff9a9e", "#fecfef", "#ffecd2"], // Coral to pink to cream
+  ["#a8edea", "#fed6e3", "#ffecd2"], // Cyan to pink to cream
+  ["#c471f5", "#fa71cd", "#ff9a9e"], // Purple to pink to coral
+];
+
 interface BackgroundSectionProps {
-  backgroundColor: string | undefined;
-  onBackgroundColorChange: (color: string) => void;
+  backgroundColor: string[] | string | undefined;
+  onBackgroundColorChange: (colors: string[]) => void;
 }
 
 export function BackgroundSection({
   backgroundColor,
   onBackgroundColorChange,
 }: BackgroundSectionProps) {
-  const color = backgroundColor ? backgroundColor : "#ffffff";
+  // Normalize backgroundColor to array (handle backward compatibility with string values)
+  const colors = Array.isArray(backgroundColor)
+    ? backgroundColor.length > 0
+      ? backgroundColor
+      : ["#ffffff"]
+    : backgroundColor
+    ? [backgroundColor]
+    : ["#ffffff"];
+
+  const generateRandomColor = () => {
+    // Generate a random hex color
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  };
+
+  const handleColorChange = (index: number, newColor: string) => {
+    const newColors = [...colors];
+    newColors[index] = newColor;
+    onBackgroundColorChange(newColors);
+  };
+
+  const handleAddColor = () => {
+    const randomColor = generateRandomColor();
+    const newColors = [...colors, randomColor];
+    onBackgroundColorChange(newColors);
+  };
+
+  const handleRemoveColor = (index: number) => {
+    if (colors.length <= 1) return;
+    const newColors = colors.filter((_, i) => i !== index);
+    onBackgroundColorChange(newColors);
+  };
 
   return (
     <div className="space-y-6">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Background Colors
+          </h3>
+          <button
+            type="button"
+            onClick={handleAddColor}
+            className="text-xs font-medium text-primary hover:text-primary/80 transition-colors px-2 py-1 rounded-md hover:bg-primary/10"
+          >
+            + Add Color
+          </button>
+        </div>
+        <div className="grid grid-cols-7 gap-2 px-1">
+          {colors.map((color, index) => (
+            <div key={index} className="relative group/picker">
+              <ColorPicker
+                color={color}
+                onChange={(newColor) => handleColorChange(index, newColor)}
+                onRemove={() => handleRemoveColor(index)}
+                showRemove={colors.length > 1}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
+          Gradient Presets
+        </h3>
+        <div className="grid grid-cols-7 gap-2 px-1">
+          {PRESET_GRADIENTS.map((gradient, index) => {
+            const gradientString = `linear-gradient(to right, ${gradient.join(", ")})`;
+            const isActive =
+              colors.length === gradient.length &&
+              colors.every((c, i) => c === gradient[i]);
+            return (
+              <button
+                key={index}
+                type="button"
+                onClick={() => onBackgroundColorChange([...gradient])}
+                className="group relative flex aspect-square items-center justify-center rounded-full border border-black/5 dark:border-white/5 shadow-sm hover:scale-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 overflow-hidden"
+              >
+                <span
+                  className="h-full w-full rounded-full border border-black/5 dark:border-white/10"
+                  style={{ background: gradientString }}
+                />
+                {isActive && (
+                  <span className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-offset-2 ring-primary ring-offset-background shadow-lg" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="space-y-3">
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
           Solid Colors
@@ -49,36 +164,18 @@ export function BackgroundSection({
             <button
               key={preset}
               type="button"
-              onClick={() => onBackgroundColorChange(preset)}
+              onClick={() => onBackgroundColorChange([preset])}
               className="group relative flex aspect-square items-center justify-center rounded-full border border-black/5 dark:border-white/5 shadow-sm hover:scale-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
               <span
                 className="h-full w-full rounded-full border border-black/5 dark:border-white/10"
                 style={{ backgroundColor: preset }}
               />
-              {color === preset && (
+              {colors.length === 1 && colors[0] === preset && (
                 <span className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-offset-2 ring-primary ring-offset-background shadow-lg" />
               )}
             </button>
           ))}
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
-          Custom
-        </h3>
-        <div className="px-1">
-          <div className="flex items-center gap-3 p-3 rounded-xl border border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/20">
-            <div className="flex-1 min-w-0">
-              <ColorPicker
-                color={color}
-                onChange={onBackgroundColorChange}
-                onRemove={() => {}}
-                showRemove={false}
-              />
-            </div>
-          </div>
         </div>
       </div>
     </div>

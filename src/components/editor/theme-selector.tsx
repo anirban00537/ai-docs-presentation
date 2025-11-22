@@ -49,16 +49,24 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                 )}
               </div>
               <div className="flex items-center -space-x-1.5 shrink-0">
-                {[
-                  theme.background,
-                  theme.surface,
-                  theme.text,
-                  theme.accent,
-                ].map((color, i) => (
+                <span
+                  key={`${theme.id}-background`}
+                  className="h-5 w-5 rounded-full border-2 border-white dark:border-neutral-900 shadow-sm ring-1 ring-black/5"
+                  style={
+                    theme.background.length === 1
+                      ? { backgroundColor: theme.background[0] }
+                      : {
+                          background: `linear-gradient(to right, ${theme.background.join(
+                            ", "
+                          )})`,
+                        }
+                  }
+                />
+                {[theme.surface, theme.text, theme.accent].map((color, i) => (
                   <span
                     key={`${theme.id}-color-${i}`}
                     className="h-5 w-5 rounded-full border-2 border-white dark:border-neutral-900 shadow-sm ring-1 ring-black/5"
-                    style={{ backgroundColor: color, zIndex: 4 - i }}
+                    style={{ backgroundColor: color, zIndex: 3 - i }}
                   />
                 ))}
               </div>

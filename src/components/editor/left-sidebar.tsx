@@ -102,14 +102,23 @@ export const LeftSidebar = () => {
                   data-slide-id={slide.id}
                 >
                   {/* Slide Thumbnail */}
-                  <button
+                  <div
                     onClick={() => handleSlideClick(slide.id)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleSlideClick(slide.id);
+                      }
+                    }}
                     className={cn(
-                      "relative flex-1 aspect-video rounded-xl overflow-hidden transition-all duration-200 outline-none group/btn",
+                      "relative flex-1 aspect-video rounded-xl overflow-hidden transition-all duration-200 outline-none group/btn cursor-pointer",
                       "ring-1 shadow-sm bg-background",
                       isActive
                         ? "ring-2 ring-primary shadow-md shadow-primary/10"
-                        : "ring-border/40 hover:ring-primary/40 hover:shadow-md"
+                        : "ring-border/40 hover:ring-primary/40 hover:shadow-md",
+                      "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     )}
                   >
                     {/* Delete button */}
@@ -154,7 +163,7 @@ export const LeftSidebar = () => {
                     {!isActive && (
                       <div className="absolute inset-0 bg-background/10 group-hover/btn:bg-transparent transition-colors duration-300" />
                     )}
-                  </button>
+                  </div>
                 </motion.div>
               );
             })}

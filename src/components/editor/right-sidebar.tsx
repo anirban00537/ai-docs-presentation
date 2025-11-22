@@ -22,8 +22,8 @@ type RightSidebarProps = {
   onAddShape?: (preset: ShapePreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
   // Background panel props
-  backgroundColor?: string;
-  onBackgroundColorChange?: (color: string) => void;
+  backgroundColor?: string[] | string;
+  onBackgroundColorChange?: (colors: string[]) => void;
   // Theme panel props
   activeThemeId?: string;
   onSelectTheme?: (themeId: string) => void;

@@ -10,7 +10,7 @@ export type SlideModel = {
   id: string;
   title: string;
   widgets: SlideWidget[];
-  backgroundColor?: string;
+  backgroundColor?: string[];
   backgroundImage?: string;
   showSlideNumber?: boolean;
   slideStyle?: string;
@@ -18,7 +18,7 @@ export type SlideModel = {
 
 export type GlobalTheme = {
   id: string;
-  background: string;
+  background: string[];
   surface: string;
   text: string;
   accent: string;
@@ -203,7 +203,7 @@ const slidesSlice = createSlice({
       state.slides.forEach((slide) => {
         // Only override background when there is no image
         if (!slide.backgroundImage) {
-          slide.backgroundColor = theme.background;
+          slide.backgroundColor = [...theme.background];
         }
 
         if (!slide.widgets) return;
