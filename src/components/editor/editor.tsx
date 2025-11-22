@@ -10,7 +10,8 @@ import {
   setActiveSlide,
 } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
-import { SlidesPreview } from "@/components/editor/slides-preview";
+import { EditorHeader } from "@/components/editor/editor-toolbar";
+import { useWidgetCreation } from "@/hooks/use-widget-creation";
 
 const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
@@ -26,6 +27,9 @@ const Editor = () => {
     onSetLiveOverride,
     onClearLiveOverride,
   } = useWidgetInteractions();
+
+  const { handleAddText, handleAddShape, handleAddFeatureCard } =
+    useWidgetCreation();
 
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
     if (!activeSlide || slides.length === 0) return;
@@ -50,17 +54,28 @@ const Editor = () => {
 
   if (!activeSlide) {
     return (
-      <div className="flex h-full flex-1 flex-col items-center justify-center">
-        <p className="text-muted-foreground">No slide selected</p>
+      <div className="flex h-full flex-1 flex-col overflow-hidden">
+        <EditorHeader
+          onAddText={handleAddText}
+          onAddShape={handleAddShape}
+          onAddFeatureCard={handleAddFeatureCard}
+        />
+        <div className="flex flex-1 flex-col items-center justify-center min-h-0">
+          <p className="text-muted-foreground">No slide selected</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="relative flex h-full flex-1 overflow-hidden pl-56">
-      <SlidesPreview />
+    <div className="relative flex h-full flex-1 flex-col overflow-hidden">
+      <EditorHeader
+        onAddText={handleAddText}
+        onAddShape={handleAddShape}
+        onAddFeatureCard={handleAddFeatureCard}
+      />
       <div
-        className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pt-4"
+        className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pt-4 min-h-0"
         onWheel={handleWheel}
       >
         <Slide

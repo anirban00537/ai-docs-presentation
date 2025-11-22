@@ -15,6 +15,11 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+} from "@/components/ui/sidebar";
 
 export const SlidesPreview = () => {
   const slides = useAppSelector(selectSlides);
@@ -47,8 +52,12 @@ export const SlidesPreview = () => {
   };
 
   return (
-    <div className="fixed inset-y-0 left-0 z-30 w-56 flex flex-col bg-slate-50 border-r border-border/60 overflow-hidden">
-      <div className="p-4  z-10">
+    <Sidebar
+      variant="inset"
+      collapsible="icon"
+      className="border-r border-border/60"
+    >
+      <SidebarHeader className="p-4">
         <Button
           onClick={handleAddSlide}
           variant="ghost"
@@ -61,10 +70,9 @@ export const SlidesPreview = () => {
             New Slide
           </span>
         </Button>
-      </div>
+      </SidebarHeader>
 
-      {/* Slides List */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <SidebarContent>
         <div
           ref={scrollContainerRef}
           className="slides-scroll-container flex-1 overflow-y-auto py-2 px-4 space-y-4"
@@ -152,7 +160,7 @@ export const SlidesPreview = () => {
             })}
           </AnimatePresence>
         </div>
-      </div>
-    </div>
+      </SidebarContent>
+    </Sidebar>
   );
 };

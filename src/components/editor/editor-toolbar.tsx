@@ -202,7 +202,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   );
 
   return (
-    <header className="pointer-events-auto bg-muted/40 fixed top-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-md border border-border/40 p-1.5 shadow-sm backdrop-blur-xl transition-all hover:border-border/60 hover:shadow-md">
+    <header className="pointer-events-auto w-full bg-background/95 border-b border-border/40 flex items-center justify-center gap-1 px-4 py-2 shadow-sm backdrop-blur-xl z-50">
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button

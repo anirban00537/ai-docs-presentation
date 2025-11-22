@@ -1,25 +1,22 @@
 "use client";
 
+import React from "react";
 import Editor from "@/components/editor/editor";
-import { EditorHeader } from "@/components/editor/editor-toolbar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { useWidgetCreation } from "@/hooks/use-widget-creation";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { SlidesPreview } from "@/components/editor/slides-preview";
 
 export default function Page() {
-  const { handleAddText, handleAddShape, handleAddFeatureCard } =
-    useWidgetCreation();
-
   return (
-    <SidebarProvider>
-      <SidebarInset className="relative flex flex-col">
-        <EditorHeader
-          onAddText={handleAddText}
-          onAddShape={handleAddShape}
-          onAddFeatureCard={handleAddFeatureCard}
-        />
-        <div className="flex flex-1 overflow-hidden">
-          <Editor />
-        </div>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "14rem", // w-56 = 14rem
+        } as React.CSSProperties
+      }
+    >
+      <SlidesPreview />
+      <SidebarInset className="flex flex-col overflow-hidden">
+        <Editor />
       </SidebarInset>
     </SidebarProvider>
   );

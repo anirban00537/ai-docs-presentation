@@ -13,7 +13,7 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        {children}
+        <div className="h-full">{children}</div>
       </PersistGate>
     </Provider>
   );
