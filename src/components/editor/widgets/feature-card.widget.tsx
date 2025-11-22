@@ -17,6 +17,11 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ToolbarPortal } from "@/components/editor/toolbar-portal";
+import { Popover } from "@headlessui/react";
+import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
+import { HexColorPicker } from "react-colorful";
+import { Input } from "@/components/ui/input";
+import { X } from "lucide-react";
 
 type FeatureCardWidgetNodeProps = {
   widget: FeatureCardWidget;
@@ -443,29 +448,11 @@ const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
   viewport,
   containerRef,
 }) => {
-  const [colorMenuOpen, setColorMenuOpen] = React.useState(false);
-  const colorMenuRef = React.useRef<HTMLDivElement | null>(null);
+  const colorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
+  const presetButtonRef = React.useRef<HTMLButtonElement>(null);
+  const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-
-  React.useEffect(() => {
-    if (!colorMenuOpen) {
-      return;
-    }
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        colorMenuRef.current &&
-        event.target instanceof Node &&
-        !colorMenuRef.current.contains(event.target)
-      ) {
-        setColorMenuOpen(false);
-      }
-    };
-    window.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [colorMenuOpen]);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -475,7 +462,6 @@ const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
         updates: { backgroundColor: color },
       })
     );
-    setColorMenuOpen(false);
   };
 
   const handleAlign = (align: "left" | "center" | "right") => {
@@ -508,74 +494,127 @@ const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
           event.stopPropagation();
         }}
       >
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-semibold text-muted-foreground">
-          Background
-        </span>
-        <div className="relative flex items-center" ref={colorMenuRef}>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
-            onClick={() => setColorMenuOpen((prev) => !prev)}
-          >
-            <ColorSwatch color={currentBackgroundColor} />
-            <span className="text-[11px] font-medium text-muted-foreground">
-              Color
-            </span>
-            <ChevronDown className="h-3 w-3 opacity-60" />
-          </Button>
-          {colorMenuOpen && (
-            <ColorPopover>
-              <div className="flex flex-col gap-2">
-                <div className="grid grid-cols-6 gap-1">
-                  {BACKGROUND_COLORS.map((color) => (
-                    <ColorChip
-                      key={color}
-                      color={color}
-                      active={color === currentBackgroundColor}
-                      onSelect={() => handleSetBackgroundColor(color)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </ColorPopover>
-          )}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-muted-foreground">
+            Background
+          </span>
+          <div className="relative flex items-center gap-2">
+            <Popover>
+              {({ open }) => (
+                <>
+                  <Popover.Button
+                    ref={colorPickerButtonRef}
+                    className="relative w-8 h-8 rounded-full cursor-pointer border-[3px] border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
+                    style={{ backgroundColor: currentBackgroundColor }}
+                  >
+                    {currentBackgroundColor !== "#ffffff" && (
+                      <span
+                        className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full p-0.5 cursor-pointer opacity-0 group-hover/picker:opacity-100 hover:bg-destructive/90 transition-all shadow-sm scale-75 hover:scale-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSetBackgroundColor("#ffffff");
+                        }}
+                      >
+                        <X size={10} strokeWidth={3} />
+                      </span>
+                    )}
+                  </Popover.Button>
+                  {open && (
+                    <PopoverPanelPortal buttonRef={colorPickerButtonRef}>
+                      <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
+                        <div className="text-xs font-semibold text-muted-foreground">
+                          Custom
+                        </div>
+                        <HexColorPicker
+                          color={currentBackgroundColor}
+                          onChange={handleSetBackgroundColor}
+                          className="!w-full !h-32"
+                        />
+                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
+                          <div
+                            className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
+                            style={{
+                              backgroundColor: currentBackgroundColor,
+                            }}
+                          />
+                          <Input
+                            className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
+                            value={currentBackgroundColor}
+                            onChange={(e) =>
+                              handleSetBackgroundColor(e.target.value)
+                            }
+                            placeholder="#000000"
+                          />
+                        </div>
+                      </div>
+                    </PopoverPanelPortal>
+                  )}
+                </>
+              )}
+            </Popover>
+            <div className="relative flex items-center">
+              <Button
+                ref={presetButtonRef}
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
+                onClick={() => setPresetMenuOpen((prev) => !prev)}
+              >
+                <span className="text-[11px] font-medium text-muted-foreground">
+                  Color
+                </span>
+                <ChevronDown className="h-3 w-3 opacity-60" />
+              </Button>
+              {presetMenuOpen && (
+                <ColorPopover>
+                  <div className="flex flex-col gap-2">
+                    <div className="text-xs font-semibold text-muted-foreground mb-2 px-1">
+                      Presets
+                    </div>
+                    <div className="grid grid-cols-6 gap-1">
+                      {BACKGROUND_COLORS.map((color) => (
+                        <ColorChip
+                          key={color}
+                          color={color}
+                          active={color === currentBackgroundColor}
+                          onSelect={() => {
+                            handleSetBackgroundColor(color);
+                            setPresetMenuOpen(false);
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </ColorPopover>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="flex items-center gap-1">
-        {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
-          <Button
-            key={value}
-            variant="ghost"
-            size="icon-sm"
-            className={cn(
-              "rounded-md",
-              currentAlign === value
-                ? "bg-primary/10 text-primary hover:bg-primary/10"
-                : undefined
-            )}
-            onClick={() => handleAlign(value)}
-            aria-pressed={currentAlign === value}
-            title={label}
-          >
-            <Icon className="h-4 w-4" />
-          </Button>
-        ))}
-      </div>
+        <div className="flex items-center gap-1">
+          {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
+            <Button
+              key={value}
+              variant="ghost"
+              size="icon-sm"
+              className={cn(
+                "rounded-md",
+                currentAlign === value
+                  ? "bg-primary/10 text-primary hover:bg-primary/10"
+                  : undefined
+              )}
+              onClick={() => handleAlign(value)}
+              aria-pressed={currentAlign === value}
+              title={label}
+            >
+              <Icon className="h-4 w-4" />
+            </Button>
+          ))}
+        </div>
       </div>
     </ToolbarPortal>
   );
 };
-
-const ColorPopover: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
-  <div className="absolute left-0 top-10 z-40 min-w-[180px] rounded-md border border-border bg-white p-3 shadow-lg">
-    {children}
-  </div>
-);
 
 type ColorChipProps = {
   color: string;
@@ -600,11 +639,10 @@ const ColorChip: React.FC<ColorChipProps> = ({ color, active, onSelect }) => (
   </button>
 );
 
-const ColorSwatch: React.FC<{ color: string }> = ({ color }) => {
-  return (
-    <span
-      className="block size-4 rounded-full border border-white/70"
-      style={{ backgroundColor: color }}
-    />
-  );
-};
+const ColorPopover: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <div className="absolute left-0 top-full mt-1 z-40 min-w-[180px] rounded-md border border-border bg-white p-3 shadow-lg">
+    {children}
+  </div>
+);
