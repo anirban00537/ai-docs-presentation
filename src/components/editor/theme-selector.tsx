@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { SLIDE_THEMES } from "@/lib/slide-themes";
 import { cn } from "@/lib/utils";
 
@@ -16,9 +15,9 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <DropdownMenuLabel className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-1">
+      <h3 className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-1">
         Themes
-      </DropdownMenuLabel>
+      </h3>
       <div className="h-64 overflow-y-auto pr-1 custom-scrollbar">
         <div className="grid grid-cols-1 gap-1.5 px-1 pb-1">
           {SLIDE_THEMES.map((theme) => {

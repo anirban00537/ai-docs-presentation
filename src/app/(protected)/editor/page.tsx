@@ -3,7 +3,7 @@
 import React from "react";
 import Editor from "@/components/editor/editor";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { SlidesPreview } from "@/components/editor/slides-preview";
+import { LeftSidebar } from "@/components/editor/left-sidebar";
 
 export default function Page() {
   return (
@@ -14,7 +14,7 @@ export default function Page() {
         } as React.CSSProperties
       }
     >
-      <SlidesPreview />
+      <LeftSidebar />
       <SidebarInset className="flex flex-col overflow-hidden">
         <Editor />
       </SidebarInset>

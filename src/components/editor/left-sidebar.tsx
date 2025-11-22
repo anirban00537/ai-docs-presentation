@@ -21,7 +21,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 
-export const SlidesPreview = () => {
+export const LeftSidebar = () => {
   const slides = useAppSelector(selectSlides);
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const globalTheme = useAppSelector(selectGlobalTheme);

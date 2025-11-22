@@ -8,10 +8,16 @@ import {
   selectSlides,
   selectGlobalTheme,
   setActiveSlide,
+  updateSlide,
+  setSlideTheme,
 } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
 import { EditorHeader } from "@/components/editor/editor-toolbar";
 import { useWidgetCreation } from "@/hooks/use-widget-creation";
+import {
+  RightSidebar,
+  type SidebarPanel,
+} from "@/components/editor/right-sidebar";
 
 const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
@@ -30,6 +36,35 @@ const Editor = () => {
 
   const { handleAddText, handleAddShape, handleAddFeatureCard } =
     useWidgetCreation();
+
+  const [activePanel, setActivePanel] = React.useState<SidebarPanel>(null);
+
+  const handleBackgroundColorChange = React.useCallback(
+    (color: string) => {
+      if (!activeSlide) return;
+      dispatch(
+        updateSlide({
+          slideId: activeSlide.id,
+          updates: {
+            // single-color background
+            backgroundColor: color,
+          },
+        })
+      );
+    },
+    [activeSlide, dispatch]
+  );
+
+  const handleThemeSelect = React.useCallback(
+    (themeId: string) => {
+      dispatch(
+        setSlideTheme({
+          themeId,
+        })
+      );
+    },
+    [dispatch]
+  );
 
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
     if (!activeSlide || slides.length === 0) return;
@@ -59,9 +94,27 @@ const Editor = () => {
           onAddText={handleAddText}
           onAddShape={handleAddShape}
           onAddFeatureCard={handleAddFeatureCard}
+          onOpenInsertPanel={() => setActivePanel("insert")}
+          onOpenBackgroundPanel={() => setActivePanel("background")}
+          onOpenThemePanel={() => setActivePanel("theme")}
         />
-        <div className="flex flex-1 flex-col items-center justify-center min-h-0">
-          <p className="text-muted-foreground">No slide selected</p>
+        <div className="flex flex-1 min-h-0 overflow-hidden">
+          <div className="flex flex-1 flex-col items-center justify-center min-h-0">
+            <p className="text-muted-foreground">No slide selected</p>
+          </div>
+          {activePanel && (
+            <RightSidebar
+              panel={activePanel}
+              onClose={() => setActivePanel(null)}
+              onAddText={handleAddText}
+              onAddShape={handleAddShape}
+              onAddFeatureCard={handleAddFeatureCard}
+              backgroundColor={undefined}
+              onBackgroundColorChange={handleBackgroundColorChange}
+              activeThemeId={globalTheme?.id}
+              onSelectTheme={handleThemeSelect}
+            />
+          )}
         </div>
       </div>
     );
@@ -73,21 +126,39 @@ const Editor = () => {
         onAddText={handleAddText}
         onAddShape={handleAddShape}
         onAddFeatureCard={handleAddFeatureCard}
+        onOpenInsertPanel={() => setActivePanel("insert")}
+        onOpenBackgroundPanel={() => setActivePanel("background")}
+        onOpenThemePanel={() => setActivePanel("theme")}
       />
-      <div
-        className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pt-4 min-h-0"
-        onWheel={handleWheel}
-      >
-        <Slide
-          slide={activeSlide}
-          selectedId={selectedId}
-          editingId={editingId}
-          liveOverrides={liveOverrides}
-          onSelectWidget={onSelectWidget}
-          onSetLiveOverride={onSetLiveOverride}
-          onClearLiveOverride={onClearLiveOverride}
-          theme={globalTheme}
-        />
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div
+          className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pt-4 min-h-0"
+          onWheel={handleWheel}
+        >
+          <Slide
+            slide={activeSlide}
+            selectedId={selectedId}
+            editingId={editingId}
+            liveOverrides={liveOverrides}
+            onSelectWidget={onSelectWidget}
+            onSetLiveOverride={onSetLiveOverride}
+            onClearLiveOverride={onClearLiveOverride}
+            theme={globalTheme}
+          />
+        </div>
+        {activePanel && (
+          <RightSidebar
+            panel={activePanel}
+            onClose={() => setActivePanel(null)}
+            onAddText={handleAddText}
+            onAddShape={handleAddShape}
+            onAddFeatureCard={handleAddFeatureCard}
+            backgroundColor={activeSlide?.backgroundColor}
+            onBackgroundColorChange={handleBackgroundColorChange}
+            activeThemeId={globalTheme?.id}
+            onSelectTheme={handleThemeSelect}
+          />
+        )}
       </div>
     </div>
   );
