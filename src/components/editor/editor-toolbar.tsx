@@ -25,6 +25,8 @@ import {
   Quote,
   StickyNote,
   FlaskConical,
+  ExternalLink,
+  Play,
 } from "lucide-react";
 import { BackgroundSection } from "@/components/editor/background/background-section";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -41,6 +43,7 @@ import {
   PolygonPreview,
   SquarePreview,
 } from "@/components/editor/shape-previews";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export type TextPreset = {
   id: string;
@@ -203,6 +206,12 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
 
   return (
     <header className="pointer-events-auto w-full bg-background/95 border-b border-border/40 flex items-center justify-center gap-1 px-4 py-2 shadow-sm backdrop-blur-xl z-50">
+      <div className="absolute left-4 flex items-center gap-3">
+        <SidebarTrigger />
+        <h1 className="text-sm font-semibold text-foreground">
+          Presentation Title
+        </h1>
+      </div>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
@@ -407,6 +416,25 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           />
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <div className="absolute right-4 flex items-center gap-2">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="h-8 rounded-md px-3 text-xs font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80"
+        >
+          <Play className="mr-1.5 h-3.5 w-3.5" />
+          Play
+        </Button>
+        <Button
+          variant="default"
+          size="sm"
+          className="h-8 rounded-md px-3 text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+        >
+          <ExternalLink className="mr-1.5 h-3.5 w-3.5" />
+          Share
+        </Button>
+      </div>
     </header>
   );
 };
