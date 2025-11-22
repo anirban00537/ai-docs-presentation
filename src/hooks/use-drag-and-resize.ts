@@ -28,8 +28,9 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
       const dx = currentSlidePos.x - startSlidePos.x;
       const dy = currentSlidePos.y - startSlidePos.y;
 
-      const x = clamp(startRect.x + dx, 0, SLIDE_WIDTH - startRect.width);
-      const y = clamp(startRect.y + dy, 0, SLIDE_HEIGHT - startRect.height);
+      // Allow widgets to move beyond slide boundaries
+      const x = startRect.x + dx;
+      const y = startRect.y + dy;
 
       return {
         x,
@@ -67,55 +68,40 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
       if (includes("left")) {
         const proposedX = startRect.x + dx;
         const maxX = startRect.x + startRect.width - MIN_WIDGET_SIZE;
-        const clampedX = clamp(proposedX, 0, maxX);
+        const clampedX = clamp(proposedX, Number.NEGATIVE_INFINITY, maxX);
         width = clamp(
           startRect.width + (startRect.x - clampedX),
           MIN_WIDGET_SIZE,
-          SLIDE_WIDTH
+          Number.POSITIVE_INFINITY
         );
-        x = clamp(clampedX, 0, SLIDE_WIDTH - MIN_WIDGET_SIZE);
-        if (x + width > SLIDE_WIDTH) {
-          width = SLIDE_WIDTH - x;
-        }
+        x = clampedX;
       }
 
       if (includes("right")) {
         const proposedWidth = startRect.width + dx;
-        width = clamp(
-          proposedWidth,
-          MIN_WIDGET_SIZE,
-          SLIDE_WIDTH - startRect.x
-        );
+        width = clamp(proposedWidth, MIN_WIDGET_SIZE, Number.POSITIVE_INFINITY);
       }
 
       if (includes("top")) {
         const proposedY = startRect.y + dy;
         const maxY = startRect.y + startRect.height - MIN_WIDGET_SIZE;
-        const clampedY = clamp(proposedY, 0, maxY);
+        const clampedY = clamp(proposedY, Number.NEGATIVE_INFINITY, maxY);
         height = clamp(
           startRect.height + (startRect.y - clampedY),
           MIN_WIDGET_SIZE,
-          SLIDE_HEIGHT
+          Number.POSITIVE_INFINITY
         );
-        y = clamp(clampedY, 0, SLIDE_HEIGHT - MIN_WIDGET_SIZE);
-        if (y + height > SLIDE_HEIGHT) {
-          height = SLIDE_HEIGHT - y;
-        }
+        y = clampedY;
       }
 
       if (includes("bottom")) {
         const proposedHeight = startRect.height + dy;
-        height = clamp(
-          proposedHeight,
-          MIN_WIDGET_SIZE,
-          SLIDE_HEIGHT - startRect.y
-        );
+        height = clamp(proposedHeight, MIN_WIDGET_SIZE, Number.POSITIVE_INFINITY);
       }
 
-      width = clamp(width, MIN_WIDGET_SIZE, SLIDE_WIDTH);
-      height = clamp(height, MIN_WIDGET_SIZE, SLIDE_HEIGHT);
-      x = clamp(x, 0, SLIDE_WIDTH - width);
-      y = clamp(y, 0, SLIDE_HEIGHT - height);
+      // Only enforce minimum size constraints, no boundary limits
+      width = clamp(width, MIN_WIDGET_SIZE, Number.POSITIVE_INFINITY);
+      height = clamp(height, MIN_WIDGET_SIZE, Number.POSITIVE_INFINITY);
 
       return { x, y, width, height };
     },

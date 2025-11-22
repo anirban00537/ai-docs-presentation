@@ -148,6 +148,7 @@ const Slide: React.FC<SlideProps> = ({
             top: `${viewport.translateY}px`,
             width: `${SLIDE_WIDTH * viewport.scale}px`,
             height: `${SLIDE_HEIGHT * viewport.scale}px`,
+            overflow: "visible",
           }}
         >
           <div
@@ -157,6 +158,7 @@ const Slide: React.FC<SlideProps> = ({
               position: "relative",
               width: "100%",
               height: "100%",
+              overflow: "visible",
             }}
           >
             <div
@@ -171,6 +173,7 @@ const Slide: React.FC<SlideProps> = ({
                   transform: `scale(${viewport.scale})`,
                   transformOrigin: "0 0",
                   "--inv-scale": invScale,
+                  overflow: "visible",
                 } as React.CSSProperties
               }
             >
