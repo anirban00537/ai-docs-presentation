@@ -39,55 +39,45 @@ export function BackgroundSection({
   const color = backgroundColor ? backgroundColor : "#ffffff";
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-          Background
-        </label>
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
+          Solid Colors
+        </h3>
+        <div className="grid grid-cols-7 gap-2 px-1">
+          {PRESET_COLORS.map((preset) => (
+            <button
+              key={preset}
+              type="button"
+              onClick={() => onBackgroundColorChange(preset)}
+              className="group relative flex aspect-square items-center justify-center rounded-full border border-black/5 dark:border-white/5 shadow-sm hover:scale-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            >
+              <span
+                className="h-full w-full rounded-full border border-black/5 dark:border-white/10"
+                style={{ backgroundColor: preset }}
+              />
+              {color === preset && (
+                <span className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-offset-2 ring-primary ring-offset-background shadow-lg" />
+              )}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="pt-2">
-        {/* Preset palette */}
-        <div className="space-y-2 mb-3">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-muted-foreground">
-              Presets
-            </label>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {PRESET_COLORS.map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => onBackgroundColorChange(preset)}
-                className="relative flex h-7 w-7 items-center justify-center rounded-full border border-border/60 shadow-sm hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-              >
-                <span
-                  className="h-5 w-5 rounded-full border border-white/70"
-                  style={{ backgroundColor: preset }}
-                />
-                {color === preset && (
-                  <span className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-offset-1 ring-primary/80 ring-offset-background" />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Custom color */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-muted-foreground">
-              Custom Color
-            </label>
-          </div>
-          <div className="flex flex-wrap gap-3 items-center p-1">
-            <ColorPicker
-              color={color}
-              onChange={onBackgroundColorChange}
-              onRemove={() => {}}
-              showRemove={false}
-            />
+      <div className="space-y-3">
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
+          Custom
+        </h3>
+        <div className="px-1">
+          <div className="flex items-center gap-3 p-3 rounded-xl border border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/20">
+            <div className="flex-1 min-w-0">
+              <ColorPicker
+                color={color}
+                onChange={onBackgroundColorChange}
+                onRemove={() => {}}
+                showRemove={false}
+              />
+            </div>
           </div>
         </div>
       </div>

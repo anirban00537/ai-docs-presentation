@@ -221,14 +221,6 @@ const Slide: React.FC<SlideProps> = ({
               >
                 <div className="selection-helper slide-selection-helper"></div>
 
-                {widgets.length === 0 && (
-                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <span className="rounded-full bg-white/80 px-4 py-2 text-sm text-muted-foreground shadow-sm">
-                      Use the toolbar to add content to this slide.
-                    </span>
-                  </div>
-                )}
-
                 {widgets.map((widget, index) => {
                   const isSelected = selectedId === widget.id;
                   const isEditing = editingId === widget.id;
