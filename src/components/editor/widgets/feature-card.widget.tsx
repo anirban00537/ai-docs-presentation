@@ -496,7 +496,7 @@ const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
       >
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-muted-foreground">
-            Background
+            Custom
           </span>
           <div className="relative flex items-center gap-2">
             <Popover>
@@ -561,7 +561,7 @@ const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
                 onClick={() => setPresetMenuOpen((prev) => !prev)}
               >
                 <span className="text-[11px] font-medium text-muted-foreground">
-                  Color
+                  Preset
                 </span>
                 <ChevronDown className="h-3 w-3 opacity-60" />
               </Button>

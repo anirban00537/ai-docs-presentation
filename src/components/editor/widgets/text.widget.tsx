@@ -28,6 +28,10 @@ import type {
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ToolbarPortal } from "@/components/editor/toolbar-portal";
+import { Popover } from "@headlessui/react";
+import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
+import { HexColorPicker } from "react-colorful";
+import { X } from "lucide-react";
 
 const textResizeHandles: Array<{
   handle: Extract<ResizeHandle, "left" | "right">;
@@ -76,26 +80,6 @@ const ALIGN_OPTIONS: Array<{
   { value: "right", icon: AlignRight, label: "Align right" },
 ];
 
-const TEXT_COLORS = [
-  "#0f172a", // slate-900
-  "#1e293b", // slate-800
-  "#334155", // slate-700
-  "#475569", // slate-600
-  "#64748b", // slate-500
-  "#94a3b8", // slate-400
-  "#cbd5e1", // slate-300
-  "#e2e8f0", // slate-200
-  "#f1f5f9", // slate-100
-  "#ffffff", // white
-  "#ef4444", // red-500
-  "#f97316", // orange-500
-  "#facc15", // yellow-500
-  "#22c55e", // green-500
-  "#0ea5e9", // sky-500
-  "#6366f1", // indigo-500
-  "#a855f7", // purple-500
-  "#ec4899", // pink-500
-];
 
 type TextWidgetNodeProps = {
   widget: TextWidget;
@@ -389,9 +373,8 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   containerRef,
 }) => {
   const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
-  const [colorMenuOpen, setColorMenuOpen] = React.useState(false);
+  const colorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const menuRef = React.useRef<HTMLDivElement | null>(null);
-  const colorMenuRef = React.useRef<HTMLDivElement | null>(null);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
 
@@ -413,25 +396,6 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
       window.removeEventListener("mousedown", handleClickOutside);
     };
   }, [presetMenuOpen]);
-
-  React.useEffect(() => {
-    if (!colorMenuOpen) {
-      return;
-    }
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        colorMenuRef.current &&
-        event.target instanceof Node &&
-        !colorMenuRef.current.contains(event.target)
-      ) {
-        setColorMenuOpen(false);
-      }
-    };
-    window.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [colorMenuOpen]);
 
   const isBold = widget.fontWeight >= 600;
 
@@ -526,8 +490,9 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
         updates: { color },
       })
     );
-    setColorMenuOpen(false);
   };
+
+  const currentColor = widget.color || "#0f172a";
 
   const currentPresetLabel =
     TEXT_STYLE_PRESETS.find(
@@ -663,82 +628,56 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
         <span className="text-xs font-semibold text-muted-foreground">
           Color
         </span>
-        <div className="relative flex items-center" ref={colorMenuRef}>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
-            onClick={() => setColorMenuOpen((prev) => !prev)}
-          >
-            <TextColorSwatch color={widget.color} />
-            <span className="text-[11px] font-medium text-muted-foreground">
-              Custom
-            </span>
-            <ChevronDown className="h-3 w-3 opacity-60" />
-          </Button>
-          {colorMenuOpen && (
-            <TextColorPopover>
-              <div className="flex flex-col gap-2">
-                <div className="grid grid-cols-6 gap-1">
-                  {TEXT_COLORS.map((color) => (
-                    <TextColorChip
-                      key={color}
-                      color={color}
-                      active={color === widget.color}
-                      onSelect={() => handleSetColor(color)}
+        <Popover>
+          {({ open }) => (
+            <>
+              <Popover.Button
+                ref={colorPickerButtonRef}
+                className="relative w-8 h-8 rounded-full cursor-pointer border-[3px] border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
+                style={{ backgroundColor: currentColor }}
+              >
+                <span
+                  className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full p-0.5 cursor-pointer opacity-0 group-hover/picker:opacity-100 hover:bg-destructive/90 transition-all shadow-sm scale-75 hover:scale-100"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSetColor("#0f172a");
+                  }}
+                >
+                  <X size={10} strokeWidth={3} />
+                </span>
+              </Popover.Button>
+              {open && (
+                <PopoverPanelPortal buttonRef={colorPickerButtonRef}>
+                  <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
+                    <div className="text-xs font-semibold text-muted-foreground">
+                      Custom
+                    </div>
+                    <HexColorPicker
+                      color={currentColor}
+                      onChange={handleSetColor}
+                      className="!w-full !h-32"
                     />
-                  ))}
-                </div>
-              </div>
-            </TextColorPopover>
+                    <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
+                      <div
+                        className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
+                        style={{ backgroundColor: currentColor }}
+                      />
+                      <Input
+                        className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
+                        value={currentColor}
+                        onChange={(e) => handleSetColor(e.target.value)}
+                        placeholder="#000000"
+                      />
+                    </div>
+                  </div>
+                </PopoverPanelPortal>
+              )}
+            </>
           )}
-        </div>
+        </Popover>
       </div>
       </div>
     </ToolbarPortal>
   );
 };
 
-const TextColorPopover: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
-  <div className="absolute left-0 top-10 z-40 min-w-[180px] rounded-md border border-border bg-white p-3 shadow-lg">
-    {children}
-  </div>
-);
-
-type TextColorChipProps = {
-  color: string;
-  active: boolean;
-  onSelect: () => void;
-};
-
-const TextColorChip: React.FC<TextColorChipProps> = ({
-  color,
-  active,
-  onSelect,
-}) => (
-  <button
-    type="button"
-    aria-label={color}
-    className={cn(
-      "flex size-6 items-center justify-center rounded-full border border-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-      active ? "border-ring ring-2 ring-ring/30" : "border-border"
-    )}
-    onClick={onSelect}
-  >
-    <span
-      className="block size-4 rounded-full border border-white/70"
-      style={{ backgroundColor: color }}
-    />
-  </button>
-);
-
-const TextColorSwatch: React.FC<{ color: string }> = ({ color }) => {
-  return (
-    <span
-      className="block size-4 rounded-full border border-white/70"
-      style={{ backgroundColor: color }}
-    />
-  );
-};

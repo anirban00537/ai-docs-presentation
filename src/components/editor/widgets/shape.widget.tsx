@@ -12,7 +12,7 @@ import type {
 import { ResizeHandles } from "@/components/editor/resize-handles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, Minus, Plus } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
@@ -20,6 +20,9 @@ import {
 } from "@/store/slices/slidesSlice";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ToolbarPortal } from "@/components/editor/toolbar-portal";
+import { Popover } from "@headlessui/react";
+import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
+import { HexColorPicker } from "react-colorful";
 
 type ShapeWNodeProps = {
   widget: RectangleWidget | CircleWidget | ArrowWidget | PolygonWidget;
@@ -218,31 +221,6 @@ export const ShapeWidgetNode = React.memo(ShapeWidgetNodeBase);
 
 const SHAPE_TOOLBAR_SELECTOR = '[data-shape-toolbar="true"]';
 const DEFAULT_STROKE_COLOR = "#1f2937";
-const SHAPE_FILL_COLORS = [
-  "#ffffff",
-  "#0f172a",
-  "#ef4444",
-  "#f97316",
-  "#facc15",
-  "#22c55e",
-  "#0ea5e9",
-  "#6366f1",
-  "#a855f7",
-  "#ec4899",
-];
-
-const SHAPE_STROKE_COLORS = [
-  "#0f172a",
-  "#1f2937",
-  "#9ca3af",
-  "#f97316",
-  "#ef4444",
-  "#6366f1",
-  "#22c55e",
-  "#0ea5e9",
-  "#a855f7",
-  "#ffffff",
-];
 
 type ShapeStyleToolbarProps = {
   widget: RectangleWidget | CircleWidget | ArrowWidget | PolygonWidget;
@@ -260,9 +238,8 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const toolbarRef = React.useRef<HTMLDivElement | null>(null);
-  const [activePalette, setActivePalette] = React.useState<
-    "fill" | "stroke" | null
-  >(null);
+  const fillColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
+  const strokeColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
 
   const supportsFill = widget.type !== "arrow";
   const currentFill =
@@ -279,7 +256,7 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({
       ? 8
       : 0;
 
-  const handleSetFill = (color: string | "transparent") => {
+  const handleSetFill = (color: string) => {
     if (!supportsFill) return;
     dispatch(
       updateWidgetAction({
@@ -290,17 +267,18 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({
     );
   };
 
-  const handleSetStroke = (color: string | "transparent") => {
-    if (color === "transparent") {
-      dispatch(
-        updateWidgetAction({
-          slideId: activeSlideId,
-          widgetId: widget.id,
-          updates: { stroke: undefined, strokeWidth: 0 },
-        })
-      );
-      return;
-    }
+  const handleRemoveFill = () => {
+    if (!supportsFill) return;
+    dispatch(
+      updateWidgetAction({
+        slideId: activeSlideId,
+        widgetId: widget.id,
+        updates: { fill: "transparent" },
+      })
+    );
+  };
+
+  const handleSetStroke = (color: string) => {
     dispatch(
       updateWidgetAction({
         slideId: activeSlideId,
@@ -309,6 +287,16 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({
           stroke: color,
           strokeWidth: strokeWidth || 4,
         },
+      })
+    );
+  };
+
+  const handleRemoveStroke = () => {
+    dispatch(
+      updateWidgetAction({
+        slideId: activeSlideId,
+        widgetId: widget.id,
+        updates: { stroke: undefined, strokeWidth: 0 },
       })
     );
   };
@@ -356,29 +344,6 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({
     handleSetStrokeWidth(value);
   };
 
-  const togglePalette = (palette: "fill" | "stroke") => {
-    setActivePalette((prev) => (prev === palette ? null : palette));
-  };
-
-  React.useEffect(() => {
-    if (!activePalette) {
-      return;
-    }
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        toolbarRef.current &&
-        event.target instanceof Node &&
-        !toolbarRef.current.contains(event.target)
-      ) {
-        setActivePalette(null);
-      }
-    };
-    window.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [activePalette]);
-
   return (
     <ToolbarPortal
       widgetRef={widgetRef}
@@ -393,208 +358,185 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({
         onPointerDown={(event) => event.stopPropagation()}
         ref={toolbarRef}
       >
-      {supportsFill && (
+        {supportsFill && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-muted-foreground">
+              Background
+            </span>
+            <Popover>
+              {({ open }) => (
+                <>
+                  <Popover.Button
+                    ref={fillColorPickerButtonRef}
+                    className="relative w-8 h-8 rounded-full cursor-pointer border-[3px] border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
+                    style={{
+                      backgroundColor:
+                        currentFill === "transparent" || !currentFill
+                          ? "#ffffff"
+                          : currentFill,
+                    }}
+                  >
+                    {currentFill !== "transparent" && currentFill && (
+                      <span
+                        className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full p-0.5 cursor-pointer opacity-0 group-hover/picker:opacity-100 hover:bg-destructive/90 transition-all shadow-sm scale-75 hover:scale-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveFill();
+                        }}
+                      >
+                        <X size={10} strokeWidth={3} />
+                      </span>
+                    )}
+                    {currentFill === "transparent" && (
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <span className="h-[2px] w-6 rotate-45 rounded-full bg-destructive/70" />
+                      </span>
+                    )}
+                  </Popover.Button>
+                  {open && (
+                    <PopoverPanelPortal buttonRef={fillColorPickerButtonRef}>
+                      <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
+                        <div className="text-xs font-semibold text-muted-foreground">
+                          Custom
+                        </div>
+                        <HexColorPicker
+                          color={
+                            currentFill === "transparent" || !currentFill
+                              ? "#ffffff"
+                              : currentFill
+                          }
+                          onChange={handleSetFill}
+                          className="!w-full !h-32"
+                        />
+                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
+                          <div
+                            className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
+                            style={{
+                              backgroundColor:
+                                currentFill === "transparent" || !currentFill
+                                  ? "#ffffff"
+                                  : currentFill,
+                            }}
+                          />
+                          <Input
+                            className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
+                            value={
+                              currentFill === "transparent" || !currentFill
+                                ? "#ffffff"
+                                : currentFill
+                            }
+                            onChange={(e) => handleSetFill(e.target.value)}
+                            placeholder="#000000"
+                          />
+                        </div>
+                      </div>
+                    </PopoverPanelPortal>
+                  )}
+                </>
+              )}
+            </Popover>
+          </div>
+        )}
+
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-muted-foreground">
-            Fill
+            Border
           </span>
-          <div className="relative flex items-center">
+          <Popover>
+            {({ open }) => (
+              <>
+                <Popover.Button
+                  ref={strokeColorPickerButtonRef}
+                  className="relative w-8 h-8 rounded-full cursor-pointer border-[3px] border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
+                  style={{
+                    backgroundColor:
+                      !currentStroke || strokeWidth === 0
+                        ? "#ffffff"
+                        : currentStroke,
+                  }}
+                >
+                  {currentStroke && strokeWidth > 0 && (
+                    <span
+                      className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full p-0.5 cursor-pointer opacity-0 group-hover/picker:opacity-100 hover:bg-destructive/90 transition-all shadow-sm scale-75 hover:scale-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveStroke();
+                      }}
+                    >
+                      <X size={10} strokeWidth={3} />
+                    </span>
+                  )}
+                  {(!currentStroke || strokeWidth === 0) && (
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <span className="h-[2px] w-6 rotate-45 rounded-full bg-destructive/70" />
+                    </span>
+                  )}
+                </Popover.Button>
+                {open && currentStroke && strokeWidth > 0 && (
+                  <PopoverPanelPortal buttonRef={strokeColorPickerButtonRef}>
+                    <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
+                      <div className="text-xs font-semibold text-muted-foreground">
+                        Custom
+                      </div>
+                      <HexColorPicker
+                        color={currentStroke}
+                        onChange={handleSetStroke}
+                        className="!w-full !h-32"
+                      />
+                      <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
+                        <div
+                          className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
+                          style={{ backgroundColor: currentStroke }}
+                        />
+                        <Input
+                          className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
+                          value={currentStroke}
+                          onChange={(e) => handleSetStroke(e.target.value)}
+                          placeholder="#000000"
+                        />
+                      </div>
+                    </div>
+                  </PopoverPanelPortal>
+                )}
+              </>
+            )}
+          </Popover>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-muted-foreground">
+            Width
+          </span>
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
-              size="sm"
-              className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
-              onClick={() => togglePalette("fill")}
+              size="icon-sm"
+              className="rounded-md"
+              onClick={() => adjustStrokeWidth(-2)}
+              aria-label="Decrease border width"
             >
-              <SwatchPreview
-                color={currentFill ?? "transparent"}
-                isTransparent={currentFill === "transparent"}
-              />
-              <span className="text-[11px] font-medium text-muted-foreground">
-                {currentFill === "transparent" ? "None" : "Custom"}
-              </span>
-              <ChevronDown className="h-3 w-3 opacity-60" />
+              <Minus className="h-4 w-4" />
             </Button>
-            {activePalette === "fill" && (
-              <ColorPopover>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-1">
-                    <ColorChip
-                      label="None"
-                      isTransparent
-                      active={currentFill === "transparent"}
-                      onSelect={() => {
-                        handleSetFill("transparent");
-                        setActivePalette(null);
-                      }}
-                    />
-                    {SHAPE_FILL_COLORS.map((color) => (
-                      <ColorChip
-                        key={color}
-                        color={color}
-                        active={color === currentFill}
-                        onSelect={() => {
-                          handleSetFill(color);
-                          setActivePalette(null);
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </ColorPopover>
-            )}
+            <Input
+              type="number"
+              className="h-8 w-16 rounded-md text-center text-xs"
+              value={strokeWidth}
+              onChange={handleStrokeWidthInput}
+              min={0}
+              max={48}
+            />
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="rounded-md"
+              onClick={() => adjustStrokeWidth(2)}
+              aria-label="Increase border width"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-      )}
-
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-semibold text-muted-foreground">
-          Border
-        </span>
-        <div className="relative flex items-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
-            onClick={() => togglePalette("stroke")}
-          >
-            <SwatchPreview
-              color={currentStroke ?? "transparent"}
-              isTransparent={!currentStroke || strokeWidth === 0}
-            />
-            <span className="text-[11px] font-medium text-muted-foreground">
-              {!currentStroke || strokeWidth === 0 ? "None" : "Custom"}
-            </span>
-            <ChevronDown className="h-3 w-3 opacity-60" />
-          </Button>
-          {activePalette === "stroke" && (
-            <ColorPopover>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-1">
-                  <ColorChip
-                    label="None"
-                    isTransparent
-                    active={!currentStroke || strokeWidth === 0}
-                    onSelect={() => {
-                      handleSetStroke("transparent");
-                      setActivePalette(null);
-                    }}
-                  />
-                  {SHAPE_STROKE_COLORS.map((color) => (
-                    <ColorChip
-                      key={color}
-                      color={color}
-                      active={color === currentStroke}
-                      onSelect={() => {
-                        handleSetStroke(color);
-                        setActivePalette(null);
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </ColorPopover>
-          )}
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-semibold text-muted-foreground">
-          Width
-        </span>
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="rounded-md"
-            onClick={() => adjustStrokeWidth(-2)}
-            aria-label="Decrease border width"
-          >
-            <Minus className="h-4 w-4" />
-          </Button>
-          <Input
-            type="number"
-            className="h-8 w-16 rounded-md text-center text-xs"
-            value={strokeWidth}
-            onChange={handleStrokeWidthInput}
-            min={0}
-            max={48}
-          />
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="rounded-md"
-            onClick={() => adjustStrokeWidth(2)}
-            aria-label="Increase border width"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
       </div>
     </ToolbarPortal>
-  );
-};
-
-const ColorPopover: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
-  <div className="absolute left-0 top-10 z-40 min-w-[180px] rounded-md border border-border bg-white p-3 shadow-lg">
-    {children}
-  </div>
-);
-
-type ColorChipProps = {
-  color?: string;
-  label?: string;
-  isTransparent?: boolean;
-  active: boolean;
-  onSelect: () => void;
-};
-
-const ColorChip: React.FC<ColorChipProps> = ({
-  color,
-  label,
-  isTransparent = false,
-  active,
-  onSelect,
-}) => (
-  <button
-    type="button"
-    aria-label={label ?? color ?? "color"}
-    className={cn(
-      "flex size-6 items-center justify-center rounded-full border border-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-      active ? "border-ring ring-2 ring-ring/30" : "border-border"
-    )}
-    onClick={onSelect}
-  >
-    {isTransparent ? (
-      <span className="relative flex size-4 items-center justify-center rounded-full border border-border text-[10px] font-semibold text-muted-foreground">
-        <span className="absolute h-[2px] w-6 rotate-45 rounded-full bg-destructive/70" />
-      </span>
-    ) : (
-      <span
-        className="block size-4 rounded-full border border-white/70"
-        style={{ backgroundColor: color }}
-      />
-    )}
-  </button>
-);
-
-const SwatchPreview: React.FC<{
-  color?: string;
-  isTransparent?: boolean;
-}> = ({ color, isTransparent = false }) => {
-  if (isTransparent) {
-    return (
-      <span className="relative flex size-4 items-center justify-center rounded-full border border-border/70">
-        <span className="absolute h-[2px] w-4 rotate-45 rounded-full bg-destructive/70" />
-      </span>
-    );
-  }
-  return (
-    <span
-      className="block size-4 rounded-full border border-white/70"
-      style={{ backgroundColor: color ?? "transparent" }}
-    />
   );
 };
