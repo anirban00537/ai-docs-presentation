@@ -101,7 +101,7 @@ export const useWidgetCreation = () => {
             height: config.height,
             // Use local fill only when preset is explicitly transparent;
             // otherwise fall back to theme accent color at render time.
-            fill: config.fill === "transparent" ? "transparent" : "",
+            fill: config.fill === "transparent" ? "transparent" : undefined,
             borderRadius: config.borderRadius,
             ...(config.stroke ? { strokeWidth: config.strokeWidth ?? 4 } : {}),
           } satisfies RectangleWidget;
@@ -114,7 +114,7 @@ export const useWidgetCreation = () => {
             y: centerY,
             width: config.width,
             height: config.height,
-            fill: config.fill === "transparent" ? "transparent" : "",
+            fill: config.fill === "transparent" ? "transparent" : undefined,
             ...(config.stroke ? { strokeWidth: config.strokeWidth ?? 4 } : {}),
           } satisfies CircleWidget;
           break;
@@ -127,7 +127,7 @@ export const useWidgetCreation = () => {
             width: config.width,
             height: config.height,
             shape: config.shape,
-            fill: config.fill === "transparent" ? "transparent" : "",
+            fill: config.fill === "transparent" ? "transparent" : undefined,
             ...(config.stroke ? { strokeWidth: config.strokeWidth ?? 4 } : {}),
           } satisfies PolygonWidget;
           break;

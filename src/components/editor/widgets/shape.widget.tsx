@@ -242,7 +242,11 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ widget }) => {
 
   const supportsFill = widget.type !== "arrow";
   const currentFill =
-    widget.type === "arrow" ? undefined : widget.fill ?? "transparent";
+    widget.type === "arrow"
+      ? undefined
+      : widget.fill === "" || widget.fill === undefined
+      ? "transparent"
+      : widget.fill;
   const currentStroke = widget.stroke ?? undefined;
   const strokeWidth =
     typeof widget.strokeWidth === "number"

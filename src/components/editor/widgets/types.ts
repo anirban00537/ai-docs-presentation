@@ -19,7 +19,7 @@ export type TextWidget = WidgetCommon & {
 
 export type RectangleWidget = WidgetCommon & {
   type: "rectangle";
-  fill: string;
+  fill?: string;
   borderRadius: number;
   stroke?: string;
   strokeWidth?: number;
@@ -27,7 +27,7 @@ export type RectangleWidget = WidgetCommon & {
 
 export type CircleWidget = WidgetCommon & {
   type: "circle";
-  fill: string;
+  fill?: string;
   stroke?: string;
   strokeWidth?: number;
 };
@@ -43,7 +43,7 @@ export type PolygonShape = "triangle" | "diamond" | "star";
 export type PolygonWidget = WidgetCommon & {
   type: "polygon";
   shape: PolygonShape;
-  fill: string;
+  fill?: string;
   stroke?: string;
   strokeWidth?: number;
 };
