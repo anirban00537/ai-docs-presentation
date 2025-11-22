@@ -39,6 +39,7 @@ type SlideProps = {
   scale?: number; // Optional fixed scale for thumbnails/previews
   padding?: number; // Optional padding for responsive scaling
   theme?: GlobalTheme;
+  showSnapLines?: boolean; // Whether to show snap lines (default: true for main editor, false for previews)
 };
 
 const Slide: React.FC<SlideProps> = ({
@@ -52,6 +53,7 @@ const Slide: React.FC<SlideProps> = ({
   scale: fixedScale,
   padding,
   theme,
+  showSnapLines = true,
 }) => {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -342,7 +344,7 @@ const Slide: React.FC<SlideProps> = ({
                   );
                 })}
 
-                <SnapLines lines={snapLines} />
+                {showSnapLines && <SnapLines lines={snapLines} />}
               </div>
             </div>
             <div id="edit-layer"></div>

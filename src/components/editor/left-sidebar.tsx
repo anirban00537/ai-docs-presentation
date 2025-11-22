@@ -155,6 +155,7 @@ export const LeftSidebar = () => {
                           onClearLiveOverride={() => {}}
                           theme={globalTheme}
                           padding={0}
+                          showSnapLines={false}
                         />
                       </div>
                     </div>
