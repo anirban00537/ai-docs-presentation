@@ -15,7 +15,7 @@ export default function Page() {
       }
     >
       <LeftSidebar />
-      <SidebarInset className="flex flex-col overflow-hidden h-screen">
+      <SidebarInset className="flex flex-col overflow-hidden h-[calc(100vh-20px)]">
         <Editor />
       </SidebarInset>
     </SidebarProvider>
