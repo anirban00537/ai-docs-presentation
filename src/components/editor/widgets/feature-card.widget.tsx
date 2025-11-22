@@ -15,6 +15,8 @@ import {
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
+import type { Viewport } from "@/hooks/use-canvas-viewport";
+import { ToolbarPortal } from "@/components/editor/toolbar-portal";
 
 type FeatureCardWidgetNodeProps = {
   widget: FeatureCardWidget;
@@ -25,6 +27,8 @@ type FeatureCardWidgetNodeProps = {
   getResizePointerDown: (
     handle: ResizeHandle
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
+  viewport: Viewport;
+  containerRef: React.RefObject<HTMLElement | null>;
 };
 
 type EditingField = "number" | "title" | "description" | null;
@@ -70,9 +74,12 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
   baseZIndex,
   onPointerDown,
   getResizePointerDown,
+  viewport,
+  containerRef,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const widgetRef = React.useRef<HTMLDivElement>(null);
 
   const [localNumber, setLocalNumber] = React.useState(widget.number || "01");
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
@@ -272,6 +279,7 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
 
   return (
     <div
+      ref={widgetRef}
       className={cn(
         "canvas-element group absolute flex select-none border border-transparent transition",
         isSelected && !isEditing
@@ -293,6 +301,9 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
           <FeatureCardEditingToolbar
             widget={widget}
             isEditing={isEditing || editingField !== null}
+            widgetRef={widgetRef}
+            viewport={viewport}
+            containerRef={containerRef}
           />
         )}
         <div
@@ -420,11 +431,17 @@ export const FeatureCardWidgetNode = React.memo(FeatureCardWidgetNodeBase);
 type FeatureCardEditingToolbarProps = {
   widget: FeatureCardWidget;
   isEditing: boolean;
+  widgetRef: React.RefObject<HTMLElement | null>;
+  viewport: Viewport;
+  containerRef: React.RefObject<HTMLElement | null>;
 };
 
 const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
   widget,
   isEditing,
+  widgetRef,
+  viewport,
+  containerRef,
 }) => {
   const [colorMenuOpen, setColorMenuOpen] = React.useState(false);
   const colorMenuRef = React.useRef<HTMLDivElement | null>(null);
@@ -477,16 +494,20 @@ const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
   const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
 
   return (
-    <div
-      data-feature-card-toolbar="true"
-      className={cn(
-        "pointer-events-auto absolute left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur",
-        isEditing ? "top-full mt-2" : "-top-16"
-      )}
-      onPointerDown={(event) => {
-        event.stopPropagation();
-      }}
+    <ToolbarPortal
+      widgetRef={widgetRef}
+      viewport={viewport}
+      containerRef={containerRef}
+      placement={isEditing ? "bottom" : "top"}
+      offset={isEditing ? 8 : 16}
     >
+      <div
+        data-feature-card-toolbar="true"
+        className="pointer-events-auto flex items-center gap-3 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur"
+        onPointerDown={(event) => {
+          event.stopPropagation();
+        }}
+      >
       <div className="flex items-center gap-2">
         <span className="text-xs font-semibold text-muted-foreground">
           Background
@@ -543,7 +564,8 @@ const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
           </Button>
         ))}
       </div>
-    </div>
+      </div>
+    </ToolbarPortal>
   );
 };
 

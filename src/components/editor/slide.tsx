@@ -274,6 +274,8 @@ const Slide: React.FC<SlideProps> = ({
                         getResizePointerDown={(handle) => (e) =>
                           handleResizeStart(widget, effective, handle, e)}
                         editingTextareaRef={editingTextareaRef}
+                        viewport={viewport}
+                        containerRef={canvasContainerRef}
                       />
                     );
                   }
@@ -297,6 +299,8 @@ const Slide: React.FC<SlideProps> = ({
                         }
                         getResizePointerDown={(handle) => (e) =>
                           handleResizeStart(widget, effective, handle, e)}
+                        viewport={viewport}
+                        containerRef={canvasContainerRef}
                       />
                     );
                   }
@@ -325,6 +329,8 @@ const Slide: React.FC<SlideProps> = ({
                       }
                       getResizePointerDown={(handle) => (e) =>
                         handleResizeStart(widget, effective, handle, e)}
+                      viewport={viewport}
+                      containerRef={canvasContainerRef}
                     />
                   );
                 })}

@@ -26,6 +26,8 @@ import type {
   ResizeHandle,
 } from "@/components/editor/widgets/types";
 import { useDebouncedCallback } from "use-debounce";
+import type { Viewport } from "@/hooks/use-canvas-viewport";
+import { ToolbarPortal } from "@/components/editor/toolbar-portal";
 
 const textResizeHandles: Array<{
   handle: Extract<ResizeHandle, "left" | "right">;
@@ -105,6 +107,8 @@ type TextWidgetNodeProps = {
     handle: ResizeHandle
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   editingTextareaRef: React.RefObject<HTMLTextAreaElement | null>;
+  viewport: Viewport;
+  containerRef: React.RefObject<HTMLElement | null>;
 };
 
 const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
@@ -115,9 +119,12 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
   onPointerDown,
   getResizePointerDown,
   editingTextareaRef,
+  viewport,
+  containerRef,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const widgetRef = React.useRef<HTMLDivElement>(null);
 
   const contentRef = React.useRef<HTMLDivElement | HTMLTextAreaElement | null>(
     null
@@ -243,6 +250,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
 
   return (
     <div
+      ref={widgetRef}
       className={cn(
         "canvas-element group absolute flex select-none border border-transparent transition",
         isSelected && !isEditing ? "border-primary/70" : "border-transparent",
@@ -271,7 +279,13 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
         {isSelected && (
-          <TextEditingToolbar widget={widget} isEditing={isEditing} />
+          <TextEditingToolbar
+            widget={widget}
+            isEditing={isEditing}
+            widgetRef={widgetRef}
+            viewport={viewport}
+            containerRef={containerRef}
+          />
         )}
         {isEditing ? (
           <div className="flex h-full w-full items-start pt-1 px-1">
@@ -362,11 +376,17 @@ export const TextWidgetNode = React.memo(TextWidgetNodeBase);
 type TextEditingToolbarProps = {
   widget: TextWidget;
   isEditing: boolean;
+  widgetRef: React.RefObject<HTMLElement | null>;
+  viewport: Viewport;
+  containerRef: React.RefObject<HTMLElement | null>;
 };
 
 const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   widget,
   isEditing,
+  widgetRef,
+  viewport,
+  containerRef,
 }) => {
   const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
   const [colorMenuOpen, setColorMenuOpen] = React.useState(false);
@@ -519,16 +539,20 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
     )?.label ?? "Custom";
 
   return (
-    <div
-      data-text-toolbar="true"
-      className={cn(
-        "pointer-events-auto absolute left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur",
-        isEditing ? "top-full mt-2" : "-top-16"
-      )}
-      onPointerDown={(event) => {
-        event.stopPropagation();
-      }}
+    <ToolbarPortal
+      widgetRef={widgetRef}
+      viewport={viewport}
+      containerRef={containerRef}
+      placement={isEditing ? "bottom" : "top"}
+      offset={isEditing ? 8 : 16}
     >
+      <div
+        data-text-toolbar="true"
+        className="pointer-events-auto flex items-center gap-3 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur"
+        onPointerDown={(event) => {
+          event.stopPropagation();
+        }}
+      >
       <div className="relative flex items-center gap-1" ref={menuRef}>
         <Button
           variant="outline"
@@ -670,7 +694,8 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </ToolbarPortal>
   );
 };
 

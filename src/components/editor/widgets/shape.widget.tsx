@@ -18,6 +18,8 @@ import {
   selectActiveSlideId,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { Viewport } from "@/hooks/use-canvas-viewport";
+import { ToolbarPortal } from "@/components/editor/toolbar-portal";
 
 type ShapeWNodeProps = {
   widget: RectangleWidget | CircleWidget | ArrowWidget | PolygonWidget;
@@ -28,6 +30,8 @@ type ShapeWNodeProps = {
   getResizePointerDown: (
     handle: ResizeHandle
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
+  viewport: Viewport;
+  containerRef: React.RefObject<HTMLElement | null>;
 };
 
 const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
@@ -37,7 +41,11 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
   baseZIndex,
   onPointerDown,
   getResizePointerDown,
+  viewport,
+  containerRef,
 }) => {
+  const widgetRef = React.useRef<HTMLDivElement>(null);
+
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       const target = event.target as HTMLElement | null;
@@ -165,6 +173,7 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
 
   return (
     <div
+      ref={widgetRef}
       className={cn(
         "canvas-element group absolute flex select-none border border-transparent shadow-sm transition",
         isSelected && !isEditing
@@ -188,7 +197,14 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
       onPointerDown={handlePointerDown}
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
-        {isSelected && !isEditing && <ShapeStyleToolbar widget={widget} />}
+        {isSelected && !isEditing && (
+          <ShapeStyleToolbar
+            widget={widget}
+            widgetRef={widgetRef}
+            viewport={viewport}
+            containerRef={containerRef}
+          />
+        )}
         {renderContent()}
         {isSelected && !isEditing && (
           <ResizeHandles getResizePointerDown={getResizePointerDown} />
@@ -230,9 +246,17 @@ const SHAPE_STROKE_COLORS = [
 
 type ShapeStyleToolbarProps = {
   widget: RectangleWidget | CircleWidget | ArrowWidget | PolygonWidget;
+  widgetRef: React.RefObject<HTMLElement | null>;
+  viewport: Viewport;
+  containerRef: React.RefObject<HTMLElement | null>;
 };
 
-const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ widget }) => {
+const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({
+  widget,
+  widgetRef,
+  viewport,
+  containerRef,
+}) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const toolbarRef = React.useRef<HTMLDivElement | null>(null);
@@ -356,12 +380,19 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ widget }) => {
   }, [activePalette]);
 
   return (
-    <div
-      data-shape-toolbar="true"
-      className="pointer-events-auto absolute -top-16 left-1/2 z-30 flex -translate-x-1/2 items-center gap-4 rounded-lg border border-border bg-white/95 px-4 py-2 text-xs shadow-lg backdrop-blur"
-      onPointerDown={(event) => event.stopPropagation()}
-      ref={toolbarRef}
+    <ToolbarPortal
+      widgetRef={widgetRef}
+      viewport={viewport}
+      containerRef={containerRef}
+      placement="top"
+      offset={16}
     >
+      <div
+        data-shape-toolbar="true"
+        className="pointer-events-auto flex items-center gap-4 rounded-lg border border-border bg-white/95 px-4 py-2 text-xs shadow-lg backdrop-blur"
+        onPointerDown={(event) => event.stopPropagation()}
+        ref={toolbarRef}
+      >
       {supportsFill && (
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-muted-foreground">
@@ -499,7 +530,8 @@ const ShapeStyleToolbar: React.FC<ShapeStyleToolbarProps> = ({ widget }) => {
           </Button>
         </div>
       </div>
-    </div>
+      </div>
+    </ToolbarPortal>
   );
 };
 
