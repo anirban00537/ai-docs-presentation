@@ -231,6 +231,13 @@ const slidesSlice = createSlice({
               widget.descriptionColor = theme.text;
               break;
             }
+            case "iconCard": {
+              widget.backgroundColor = theme.surface;
+              widget.iconColor = theme.accent;
+              widget.titleColor = theme.text;
+              widget.descriptionColor = theme.text;
+              break;
+            }
             default:
               break;
           }
