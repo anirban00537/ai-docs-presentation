@@ -296,7 +296,11 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
             <input
               ref={numberInputRef}
               type="text"
-              className="w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 cursor-text"
+              readOnly={!isSelected}
+              className={cn(
+                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                isSelected ? "cursor-text" : "cursor-default"
+              )}
               style={{
                 fontSize: "2.5rem",
                 fontWeight: 700,
@@ -307,10 +311,14 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
               }}
               value={localNumber}
               onChange={(e) => {
+                if (!isSelected) return;
                 setLocalNumber(e.target.value);
                 debouncedUpdateNumber(e.target.value);
               }}
-              onFocus={() => handleFieldFocus("number")}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("number");
+              }}
               onBlur={() => handleFieldBlur("number")}
               onKeyDown={(e) => handleFieldKeyDown("number", e)}
               placeholder="01"
@@ -320,7 +328,11 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
             <input
               ref={titleInputRef}
               type="text"
-              className="w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 cursor-text"
+              readOnly={!isSelected}
+              className={cn(
+                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                isSelected ? "cursor-text" : "cursor-default"
+              )}
               style={{
                 fontSize: "1.125rem",
                 fontWeight: 600,
@@ -331,10 +343,14 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
               }}
               value={localTitle}
               onChange={(e) => {
+                if (!isSelected) return;
                 setLocalTitle(e.target.value);
                 debouncedUpdateTitle(e.target.value);
               }}
-              onFocus={() => handleFieldFocus("title")}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("title");
+              }}
               onBlur={() => handleFieldBlur("title")}
               onKeyDown={(e) => handleFieldKeyDown("title", e)}
               placeholder="Feature Title"
@@ -343,7 +359,11 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
             {/* Description field */}
             <textarea
               ref={descriptionTextareaRef}
-              className="w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 cursor-text overflow-hidden"
+              readOnly={!isSelected}
+              className={cn(
+                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 overflow-hidden",
+                isSelected ? "cursor-text" : "cursor-default"
+              )}
               style={{
                 fontSize: "0.875rem",
                 color: descriptionColor,
@@ -357,13 +377,17 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
               }}
               value={localDescription}
               onChange={(e) => {
+                if (!isSelected) return;
                 setLocalDescription(e.target.value);
                 debouncedUpdateDescription(e.target.value);
                 // Auto-resize on change
                 e.target.style.height = "auto";
                 e.target.style.height = `${e.target.scrollHeight}px`;
               }}
-              onFocus={() => handleFieldFocus("description")}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("description");
+              }}
               onBlur={() => handleFieldBlur("description")}
               onKeyDown={(e) => handleFieldKeyDown("description", e)}
               placeholder="Feature description goes here."

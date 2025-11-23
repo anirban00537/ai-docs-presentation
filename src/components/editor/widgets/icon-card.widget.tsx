@@ -498,12 +498,18 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 <button
                   data-icon-button
                   onClick={handleIconClick}
+                  disabled={!isSelected}
                   className={cn(
                     "rounded-lg p-2 transition-all duration-200",
-                    isSelected &&
-                      "hover:bg-muted/50 cursor-pointer ring-2 ring-transparent hover:ring-primary/20"
+                    isSelected
+                      ? "hover:bg-muted/50 cursor-pointer ring-2 ring-transparent hover:ring-primary/20"
+                      : "cursor-default"
                   )}
-                  title="Click to change icon"
+                  title={
+                    isSelected
+                      ? "Click to change icon"
+                      : "Select card to change icon"
+                  }
                 >
                   <IconComponent
                     size={iconSize}
@@ -527,7 +533,11 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
             <input
               ref={titleInputRef}
               type="text"
-              className="w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 cursor-text"
+              readOnly={!isSelected}
+              className={cn(
+                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                isSelected ? "cursor-text" : "cursor-default"
+              )}
               style={{
                 fontSize: "1.125rem",
                 fontWeight: 600,
@@ -538,10 +548,14 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
               }}
               value={localTitle}
               onChange={(e) => {
+                if (!isSelected) return;
                 setLocalTitle(e.target.value);
                 debouncedUpdateTitle(e.target.value);
               }}
-              onFocus={() => handleFieldFocus("title")}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("title");
+              }}
               onBlur={() => handleFieldBlur("title")}
               onKeyDown={(e) => handleFieldKeyDown("title", e)}
               placeholder="Feature Title"
@@ -550,7 +564,11 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
             {/* Description field */}
             <textarea
               ref={descriptionTextareaRef}
-              className="w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 cursor-text overflow-hidden"
+              readOnly={!isSelected}
+              className={cn(
+                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 overflow-hidden",
+                isSelected ? "cursor-text" : "cursor-default"
+              )}
               style={{
                 fontSize: "0.875rem",
                 color: descriptionColor,
@@ -564,13 +582,17 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
               }}
               value={localDescription}
               onChange={(e) => {
+                if (!isSelected) return;
                 setLocalDescription(e.target.value);
                 debouncedUpdateDescription(e.target.value);
                 // Auto-resize on change
                 e.target.style.height = "auto";
                 e.target.style.height = `${e.target.scrollHeight}px`;
               }}
-              onFocus={() => handleFieldFocus("description")}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("description");
+              }}
               onBlur={() => handleFieldBlur("description")}
               onKeyDown={(e) => handleFieldKeyDown("description", e)}
               placeholder="Feature description goes here."
