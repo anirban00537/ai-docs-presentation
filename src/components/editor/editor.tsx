@@ -34,7 +34,7 @@ const Editor = () => {
     onClearLiveOverride,
   } = useWidgetInteractions();
 
-  const { handleAddText, handleAddShape, handleAddFeatureCard } =
+  const { handleAddText, handleAddShape, handleAddFeatureCard, handleAddIconCard } =
     useWidgetCreation();
 
   const [activePanel, setActivePanel] = React.useState<SidebarPanel>(null);
@@ -112,6 +112,7 @@ const Editor = () => {
               onAddText={handleAddText}
               onAddShape={handleAddShape}
               onAddFeatureCard={handleAddFeatureCard}
+              onAddIconCard={handleAddIconCard}
               backgroundColor={undefined}
               onBackgroundColorChange={handleBackgroundColorChange}
               activeThemeId={globalTheme?.id}
@@ -156,6 +157,7 @@ const Editor = () => {
             onAddText={handleAddText}
             onAddShape={handleAddShape}
             onAddFeatureCard={handleAddFeatureCard}
+            onAddIconCard={handleAddIconCard}
             backgroundColor={activeSlide?.backgroundColor}
             onBackgroundColorChange={handleBackgroundColorChange}
             activeThemeId={globalTheme?.id}

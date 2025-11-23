@@ -64,13 +64,30 @@ export type NumberCardWidget = WidgetCommon & {
   textAlign?: "left" | "center" | "right";
 };
 
+export type IconCardWidget = WidgetCommon & {
+  type: "iconCard";
+  icon: string;
+  title: string;
+  description: string;
+  backgroundColor?: string;
+  borderColor?: string;
+  iconColor?: string;
+  titleColor?: string;
+  descriptionColor?: string;
+  iconSize?: number;
+  titleFontFamily?: string;
+  descriptionFontFamily?: string;
+  textAlign?: "left" | "center" | "right";
+};
+
 export type SlideWidget =
   | TextWidget
   | RectangleWidget
   | CircleWidget
   | ArrowWidget
   | PolygonWidget
-  | NumberCardWidget;
+  | NumberCardWidget
+  | IconCardWidget;
 
 export type SlideWidgetUpdate = Partial<
   Omit<WidgetCommon, "id"> & {
@@ -86,13 +103,16 @@ export type SlideWidgetUpdate = Partial<
     lineHeight: number;
     shape: PolygonShape;
     number: string;
+    icon: string;
     title: string;
     description: string;
     backgroundColor: string;
     borderColor: string;
     numberColor: string;
+    iconColor: string;
     titleColor: string;
     descriptionColor: string;
+    iconSize: number;
     numberFontFamily: string;
     titleFontFamily: string;
     descriptionFontFamily: string;

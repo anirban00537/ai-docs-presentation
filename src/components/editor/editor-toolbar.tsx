@@ -33,10 +33,18 @@ export type FeatureCardPreset = {
   description: string;
 };
 
+export type IconCardPreset = {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+};
+
 type EditorHeaderProps = {
   onAddText: (preset: TextPreset) => void;
   onAddShape?: (preset: ShapePreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
+  onAddIconCard?: (preset: IconCardPreset) => void;
   onOpenInsertPanel: () => void;
   onOpenBackgroundPanel: () => void;
   onOpenThemePanel: () => void;

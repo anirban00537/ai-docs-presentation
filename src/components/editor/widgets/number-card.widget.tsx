@@ -40,28 +40,6 @@ type ActiveField = "number" | "title" | "description" | null;
 
 const TOOLBAR_SELECTOR = '[data-number-card-toolbar="true"]';
 
-const BACKGROUND_COLORS = [
-  "#ffffff", // white
-  "#f8fafc", // slate-50
-  "#f1f5f9", // slate-100
-  "#e2e8f0", // slate-200
-  "#cbd5e1", // slate-300
-  "#94a3b8", // slate-400
-  "#64748b", // slate-500
-  "#475569", // slate-600
-  "#334155", // slate-700
-  "#1e293b", // slate-800
-  "#0f172a", // slate-900
-  "#ef4444", // red-500
-  "#f97316", // orange-500
-  "#facc15", // yellow-500
-  "#22c55e", // green-500
-  "#0ea5e9", // sky-500
-  "#6366f1", // indigo-500
-  "#a855f7", // purple-500
-  "#ec4899", // pink-500
-];
-
 const ALIGN_OPTIONS: Array<{
   value: "left" | "center" | "right";
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -418,14 +396,8 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
 }) => {
   const bgColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const textColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
-  const presetButtonRef = React.useRef<HTMLButtonElement>(null);
-  const textPresetButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontButtonRef = React.useRef<HTMLButtonElement>(null);
-  const presetMenuRef = React.useRef<HTMLDivElement>(null);
-  const textPresetMenuRef = React.useRef<HTMLDivElement>(null);
   const fontMenuRef = React.useRef<HTMLDivElement>(null);
-  const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
-  const [textPresetMenuOpen, setTextPresetMenuOpen] = React.useState(false);
   const [fontMenuOpen, setFontMenuOpen] = React.useState(false);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
@@ -434,26 +406,6 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-
-      if (
-        presetMenuOpen &&
-        presetMenuRef.current &&
-        !presetMenuRef.current.contains(target) &&
-        presetButtonRef.current &&
-        !presetButtonRef.current.contains(target)
-      ) {
-        setPresetMenuOpen(false);
-      }
-
-      if (
-        textPresetMenuOpen &&
-        textPresetMenuRef.current &&
-        !textPresetMenuRef.current.contains(target) &&
-        textPresetButtonRef.current &&
-        !textPresetButtonRef.current.contains(target)
-      ) {
-        setTextPresetMenuOpen(false);
-      }
 
       if (
         fontMenuOpen &&
@@ -470,7 +422,7 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [presetMenuOpen, textPresetMenuOpen, fontMenuOpen]);
+  }, [fontMenuOpen]);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -631,42 +583,6 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
                 </>
               )}
             </Popover>
-            <div className="relative flex items-center">
-              <Button
-                ref={presetButtonRef}
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
-                onClick={() => setPresetMenuOpen((prev) => !prev)}
-              >
-                <span className="text-[11px] font-medium text-muted-foreground">
-                  Preset
-                </span>
-                <ChevronDown className="h-3 w-3 opacity-60" />
-              </Button>
-              {presetMenuOpen && (
-                <ColorPopover ref={presetMenuRef}>
-                  <div className="flex flex-col gap-2">
-                    <div className="text-xs font-semibold text-muted-foreground mb-2 px-1">
-                      Background Presets
-                    </div>
-                    <div className="grid grid-cols-6 gap-1">
-                      {BACKGROUND_COLORS.map((color) => (
-                        <ColorChip
-                          key={color}
-                          color={color}
-                          active={color === currentBackgroundColor}
-                          onSelect={() => {
-                            handleSetBackgroundColor(color);
-                            setPresetMenuOpen(false);
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </ColorPopover>
-              )}
-            </div>
           </div>
         </div>
 
@@ -718,42 +634,6 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
                   </>
                 )}
               </Popover>
-              <div className="relative flex items-center">
-                <Button
-                  ref={textPresetButtonRef}
-                  variant="ghost"
-                  size="sm"
-                  className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs"
-                  onClick={() => setTextPresetMenuOpen((prev) => !prev)}
-                >
-                  <span className="text-[11px] font-medium text-muted-foreground">
-                    Preset
-                  </span>
-                  <ChevronDown className="h-3 w-3 opacity-60" />
-                </Button>
-                {textPresetMenuOpen && (
-                  <ColorPopover ref={textPresetMenuRef}>
-                    <div className="flex flex-col gap-2">
-                      <div className="text-xs font-semibold text-muted-foreground mb-2 px-1">
-                        Text Presets
-                      </div>
-                      <div className="grid grid-cols-6 gap-1">
-                        {BACKGROUND_COLORS.map((color) => (
-                          <ColorChip
-                            key={color}
-                            color={color}
-                            active={color === currentTextColor}
-                            onSelect={() => {
-                              handleSetTextColor(color);
-                              setTextPresetMenuOpen(false);
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </ColorPopover>
-                )}
-              </div>
             </div>
           </div>
         )}
@@ -837,40 +717,3 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
     </ToolbarPortal>
   );
 };
-
-type ColorChipProps = {
-  color: string;
-  active: boolean;
-  onSelect: () => void;
-};
-
-const ColorChip: React.FC<ColorChipProps> = ({ color, active, onSelect }) => (
-  <button
-    type="button"
-    aria-label={color}
-    className={cn(
-      "flex size-6 items-center justify-center rounded-full border border-transparent transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-      active ? "border-ring ring-2 ring-ring/30" : "border-border"
-    )}
-    onClick={onSelect}
-  >
-    <span
-      className="block size-4 rounded-full border border-white/70"
-      style={{ backgroundColor: color }}
-    />
-  </button>
-);
-
-const ColorPopover = React.forwardRef<
-  HTMLDivElement,
-  { children: React.ReactNode }
->(({ children }, ref) => (
-  <div
-    ref={ref}
-    className="absolute left-0 top-full mt-1 z-40 min-w-[180px] rounded-md border border-border bg-white p-3 shadow-lg"
-  >
-    {children}
-  </div>
-));
-
-ColorPopover.displayName = "ColorPopover";

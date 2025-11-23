@@ -4,6 +4,7 @@ import type {
   TextPreset,
   ShapePreset,
   FeatureCardPreset,
+  IconCardPreset,
 } from "@/components/editor/editor-toolbar";
 import type {
   TextWidget,
@@ -12,6 +13,7 @@ import type {
   PolygonWidget,
   ArrowWidget,
   NumberCardWidget,
+  IconCardWidget,
   SlideWidget,
 } from "@/components/editor/widgets/types";
 import {
@@ -193,9 +195,48 @@ export const useWidgetCreation = () => {
     [dispatch, ensureSlideId, globalTheme]
   );
 
+  const handleAddIconCard = useCallback(
+    (preset: IconCardPreset) => {
+      const slideId = ensureSlideId();
+      const id = `icon-card-${nanoid(8)}`;
+      const width = 400;
+      const height = 240;
+      const originX = Math.max(
+        40,
+        Math.round((SLIDE_DIMENSIONS.width - width) / 2)
+      );
+      const originY = Math.round((SLIDE_DIMENSIONS.height - height) / 2);
+
+      const newWidget: IconCardWidget = {
+        id,
+        type: "iconCard",
+        icon: preset.icon,
+        title: preset.title,
+        description: preset.description,
+        x: originX,
+        y: originY,
+        width,
+        height,
+        // Seed with current theme colors so card matches active theme
+        backgroundColor: globalTheme?.surface ?? "#ffffff",
+        iconColor: globalTheme?.accent ?? "#0f172a",
+        iconSize: 48,
+        titleColor: globalTheme?.text ?? "#0f172a",
+        descriptionColor: globalTheme?.text ?? "#475569",
+        textAlign: "left",
+      };
+
+      dispatch(addWidget({ widget: newWidget, slideId }));
+      dispatch(selectWidgetAction(newWidget.id));
+      dispatch(stopWidgetEditingAction());
+    },
+    [dispatch, ensureSlideId, globalTheme]
+  );
+
   return {
     handleAddText,
     handleAddShape,
     handleAddFeatureCard,
+    handleAddIconCard,
   };
 };
