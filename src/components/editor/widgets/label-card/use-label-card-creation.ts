@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import type { LabelCardPreset } from "@/components/editor/editor-toolbar";
+import type { LabelCardPreset } from "@/components/editor/types";
 import type { LabelCardWidget } from "./types";
 import { SLIDE_DIMENSIONS } from "@/lib/constants/widget-presets";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";

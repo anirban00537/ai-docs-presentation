@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import type { IconCardPreset } from "@/components/editor/editor-toolbar";
+import type { IconCardPreset } from "@/components/editor/types";
 import type { IconCardWidget } from "./types";
 import { SLIDE_DIMENSIONS } from "@/lib/constants/widget-presets";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";

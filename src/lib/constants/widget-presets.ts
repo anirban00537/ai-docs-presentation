@@ -1,7 +1,7 @@
 import type {
   TextPreset,
   ShapePreset,
-} from "@/components/editor/editor-toolbar";
+} from "@/components/editor/types";
 import type { PolygonShape } from "@/components/editor/widgets/types";
 
 type TextPresetId = TextPreset["id"];

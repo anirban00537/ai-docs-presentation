@@ -36,6 +36,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
     handleAddIconCard,
     handleAddLabelCard,
     handleAddListCard,
+    handleAddQuote,
   } = useWidgetCreation();
   if (!panel) return null;
 
@@ -86,6 +87,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             onAddIconCard={handleAddIconCard}
             onAddLabelCard={handleAddLabelCard}
             onAddListCard={handleAddListCard}
+            onAddQuote={handleAddQuote}
             onClose={onClose}
           />
         )}

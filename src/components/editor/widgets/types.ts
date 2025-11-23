@@ -23,6 +23,7 @@ export type { IconCardWidget } from "./icon-card/types";
 
 export type { LabelCardWidget } from "./label-card/types";
 export type { ListWidget } from "./list-card/types";
+export type { QuoteWidget, QuoteStyle } from "./quote/types";
 
 export type SlideWidget =
   | TextWidget
@@ -33,7 +34,8 @@ export type SlideWidget =
   | import("./number-card/types").NumberCardWidget
   | import("./icon-card/types").IconCardWidget
   | import("./label-card/types").LabelCardWidget
-  | import("./list-card/types").ListWidget;
+  | import("./list-card/types").ListWidget
+  | import("./quote/types").QuoteWidget;
 
 export type SlideWidgetUpdate = Partial<
   Omit<WidgetCommon, "id"> & {
@@ -73,6 +75,13 @@ export type SlideWidgetUpdate = Partial<
     itemFontFamily: string;
     textAlign: "left" | "center" | "right";
     backgroundType: "solid" | "glass";
+    quote: string;
+    attribution: string;
+    style: import("./quote/types").QuoteStyle;
+    quoteColor: string;
+    attributionColor: string;
+    quoteFontFamily: string;
+    attributionFontFamily: string;
   }
 >;
 

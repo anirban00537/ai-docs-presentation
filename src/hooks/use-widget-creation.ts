@@ -1,9 +1,6 @@
 import { useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import type {
-  TextPreset,
-  ShapePreset,
-} from "@/components/editor/editor-toolbar";
+import type { TextPreset, ShapePreset } from "@/components/editor/types";
 import type {
   TextWidget,
   SlideWidget,
@@ -18,6 +15,7 @@ import { useListCardCreation } from "@/components/editor/widgets/list-card/use-l
 import { useIconCardCreation } from "@/components/editor/widgets/icon-card/use-icon-card-creation";
 import { useLabelCardCreation } from "@/components/editor/widgets/label-card/use-label-card-creation";
 import { useNumberCardCreation } from "@/components/editor/widgets/number-card/use-number-card-creation";
+import { useQuoteCreation } from "@/components/editor/widgets/quote/use-quote-creation";
 import {
   TEXT_PRESET_CONFIG,
   SHAPE_PRESET_CONFIG,
@@ -170,6 +168,8 @@ export const useWidgetCreation = () => {
 
   const { handleAddListCard } = useListCardCreation();
 
+  const { handleAddQuote } = useQuoteCreation();
+
   return {
     handleAddText,
     handleAddShape,
@@ -177,5 +177,6 @@ export const useWidgetCreation = () => {
     handleAddIconCard,
     handleAddLabelCard,
     handleAddListCard,
+    handleAddQuote,
   };
 };

@@ -7,6 +7,7 @@ import { NumberCardWidgetNode } from "@/components/editor/widgets/number-card";
 import { IconCardWidgetNode } from "@/components/editor/widgets/icon-card";
 import { LabelCardWidgetNode } from "@/components/editor/widgets/label-card";
 import { ListCardWidgetNode } from "@/components/editor/widgets/list-card";
+import { QuoteWidgetNode } from "@/components/editor/widgets/quote";
 import type {
   SlideWidget,
   SlideWidgetUpdate,
@@ -21,6 +22,7 @@ import type { NumberCardWidget } from "@/components/editor/widgets/number-card/t
 import type { IconCardWidget } from "@/components/editor/widgets/icon-card/types";
 import type { LabelCardWidget } from "@/components/editor/widgets/label-card/types";
 import type { ListWidget } from "@/components/editor/widgets/list-card";
+import type { QuoteWidget } from "@/components/editor/widgets/quote/types";
 import type { GlobalTheme, SlideModel } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import {
@@ -375,6 +377,31 @@ const Slide: React.FC<SlideProps> = ({
                       <ListCardWidgetNode
                         key={widget.id}
                         widget={effective as ListWidget}
+                        isSelected={isSelected}
+                        isEditing={isEditing}
+                        baseZIndex={baseZIndex}
+                        onPointerDown={(e) =>
+                          handleDragStart(
+                            widget,
+                            effective,
+                            isSelected,
+                            isEditing,
+                            e
+                          )
+                        }
+                        getResizePointerDown={(handle) => (e) =>
+                          handleResizeStart(widget, effective, handle, e)}
+                        viewport={viewport}
+                        containerRef={canvasContainerRef}
+                      />
+                    );
+                  }
+
+                  if (effective.type === "quote") {
+                    return (
+                      <QuoteWidgetNode
+                        key={widget.id}
+                        widget={effective as QuoteWidget}
                         isSelected={isSelected}
                         isEditing={isEditing}
                         baseZIndex={baseZIndex}
