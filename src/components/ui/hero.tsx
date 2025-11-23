@@ -57,7 +57,7 @@ const StripeAnimation = () => {
   );
 };
 
-export default function ShaderShowcase() {
+export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
