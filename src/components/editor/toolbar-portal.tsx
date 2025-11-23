@@ -21,7 +21,11 @@ export function ToolbarPortal({
   placement = "top",
   offset = 16,
 }: ToolbarPortalProps) {
-  const [position, setPosition] = useState({ top: 0, left: 0, placement: "top" as "top" | "bottom" });
+  const [position, setPosition] = useState({
+    top: 0,
+    left: 0,
+    placement: "top" as "top" | "bottom",
+  });
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,7 +50,7 @@ export function ToolbarPortal({
       // Check if there's enough space above the widget
       const spaceAbove = widgetRect.top - containerRect.top;
       const spaceBelow = containerRect.bottom - widgetRect.bottom;
-      
+
       // Use placement prop as preference, but flip if not enough space
       let finalPlacement: "top" | "bottom" = placement;
       if (placement === "top" && spaceAbove < measuredHeight + offset + 10) {
@@ -54,7 +58,10 @@ export function ToolbarPortal({
         if (spaceBelow >= measuredHeight + offset + 10) {
           finalPlacement = "bottom";
         }
-      } else if (placement === "bottom" && spaceBelow < measuredHeight + offset + 10) {
+      } else if (
+        placement === "bottom" &&
+        spaceBelow < measuredHeight + offset + 10
+      ) {
         // Not enough space below, try top
         if (spaceAbove >= measuredHeight + offset + 10) {
           finalPlacement = "top";
@@ -74,7 +81,7 @@ export function ToolbarPortal({
 
       // Get toolbar width for boundary detection
       const toolbarWidth = toolbarRef.current?.offsetWidth || 400; // Default fallback
-      
+
       // Boundary detection - ensure toolbar doesn't go outside container
       const minLeft = containerRect.left + 10 + toolbarWidth / 2; // Account for centering
       const maxLeft = containerRect.right - toolbarWidth / 2 - 10;
@@ -158,4 +165,3 @@ export function ToolbarPortal({
     document.body
   );
 }
-
