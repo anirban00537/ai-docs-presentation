@@ -2,13 +2,14 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type {
   RectangleWidget,
   CircleWidget,
   ArrowWidget,
   PolygonWidget,
-  ResizeHandle,
-} from "@/components/editor/widgets/types";
+} from "./types";
+import { SHAPE_TOOLBAR_SELECTOR, DEFAULT_STROKE_COLOR } from "./constants";
 import { ResizeHandles } from "@/components/editor/resize-handles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -218,9 +219,6 @@ const ShapeWidgetNodeBase: React.FC<ShapeWNodeProps> = ({
 };
 
 export const ShapeWidgetNode = React.memo(ShapeWidgetNodeBase);
-
-const SHAPE_TOOLBAR_SELECTOR = '[data-shape-toolbar="true"]';
-const DEFAULT_STROKE_COLOR = "#1f2937";
 
 type ShapeStyleToolbarProps = {
   widget: RectangleWidget | CircleWidget | ArrowWidget | PolygonWidget;

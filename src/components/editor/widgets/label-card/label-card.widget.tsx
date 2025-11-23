@@ -4,17 +4,16 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
   ChevronDown,
   Sparkles,
 } from "lucide-react";
-import * as Icons from "lucide-react";
-import type {
-  IconCardWidget,
-  ResizeHandle,
-} from "@/components/editor/widgets/types";
+import type { ResizeHandle } from "@/components/editor/widgets/types";
+import type { LabelCardWidget } from "./types";
+import {
+  TOOLBAR_SELECTOR,
+  ALIGN_OPTIONS,
+  GOOGLE_FONTS,
+} from "./constants";
 import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -28,10 +27,10 @@ import { Popover } from "@headlessui/react";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
-import { X, Search as SearchIcon } from "lucide-react";
+import { X } from "lucide-react";
 
-type IconCardWidgetNodeProps = {
-  widget: IconCardWidget;
+type LabelCardWidgetNodeProps = {
+  widget: LabelCardWidget;
   isSelected: boolean;
   isEditing: boolean;
   baseZIndex: number;
@@ -43,240 +42,9 @@ type IconCardWidgetNodeProps = {
   containerRef: React.RefObject<HTMLElement | null>;
 };
 
-type ActiveField = "title" | "description" | null;
+type ActiveField = "label" | "title" | "description" | null;
 
-type LucideIcon = React.ComponentType<
-  React.SVGProps<SVGSVGElement> & { size?: number; strokeWidth?: number }
->;
-
-const TOOLBAR_SELECTOR = '[data-icon-card-toolbar="true"]';
-
-const ALIGN_OPTIONS: Array<{
-  value: "left" | "center" | "right";
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  label: string;
-}> = [
-  { value: "left", icon: AlignLeft, label: "Align left" },
-  { value: "center", icon: AlignCenter, label: "Align center" },
-  { value: "right", icon: AlignRight, label: "Align right" },
-];
-
-const GOOGLE_FONTS = [
-  {
-    value: "var(--font-poppins)",
-    label: "Poppins",
-    style: "var(--font-poppins)",
-  },
-  { value: "var(--font-inter)", label: "Inter", style: "var(--font-inter)" },
-  { value: "var(--font-roboto)", label: "Roboto", style: "var(--font-roboto)" },
-  {
-    value: "var(--font-open-sans)",
-    label: "Open Sans",
-    style: "var(--font-open-sans)",
-  },
-  {
-    value: "var(--font-montserrat)",
-    label: "Montserrat",
-    style: "var(--font-montserrat)",
-  },
-  { value: "var(--font-lato)", label: "Lato", style: "var(--font-lato)" },
-  {
-    value: "var(--font-playfair)",
-    label: "Playfair Display",
-    style: "var(--font-playfair)",
-  },
-  {
-    value: "var(--font-merriweather)",
-    label: "Merriweather",
-    style: "var(--font-merriweather)",
-  },
-  {
-    value: "var(--font-raleway)",
-    label: "Raleway",
-    style: "var(--font-raleway)",
-  },
-  { value: "var(--font-ubuntu)", label: "Ubuntu", style: "var(--font-ubuntu)" },
-];
-
-// Categorized Lucide icons for selection
-const ICON_CATEGORIES = {
-  Popular: [
-    "Star",
-    "Heart",
-    "Zap",
-    "Rocket",
-    "Award",
-    "Trophy",
-    "Crown",
-    "Sparkles",
-  ],
-  Business: [
-    "Briefcase",
-    "Building",
-    "Building2",
-    "Store",
-    "Factory",
-    "Landmark",
-    "TrendingUp",
-    "TrendingDown",
-    "BarChart",
-    "LineChart",
-    "PieChart",
-    "Activity",
-  ],
-  Communication: [
-    "Mail",
-    "Phone",
-    "MessageCircle",
-    "MessageSquare",
-    "Send",
-    "Inbox",
-    "Bell",
-    "BellRing",
-    "Volume2",
-    "Mic",
-    "Video",
-  ],
-  Technology: [
-    "Smartphone",
-    "Monitor",
-    "Laptop",
-    "Tablet",
-    "Cpu",
-    "HardDrive",
-    "Wifi",
-    "Cloud",
-    "Database",
-    "Server",
-    "Code",
-    "Terminal",
-    "GitBranch",
-  ],
-  Shopping: [
-    "ShoppingCart",
-    "ShoppingBag",
-    "CreditCard",
-    "DollarSign",
-    "Package",
-    "Truck",
-    "Tag",
-    "Receipt",
-    "Wallet",
-  ],
-  People: [
-    "User",
-    "Users",
-    "UserPlus",
-    "UserCheck",
-    "UserX",
-    "UsersRound",
-    "Smile",
-    "Frown",
-    "Meh",
-    "ThumbsUp",
-    "ThumbsDown",
-    "Heart",
-  ],
-  Media: [
-    "Camera",
-    "Image",
-    "Film",
-    "Video",
-    "Music",
-    "Headphones",
-    "Play",
-    "Pause",
-    "Square",
-    "Circle",
-    "Triangle",
-  ],
-  Files: [
-    "FileText",
-    "File",
-    "Files",
-    "Folder",
-    "FolderOpen",
-    "Save",
-    "Download",
-    "Upload",
-    "Share2",
-    "Copy",
-    "Clipboard",
-  ],
-  Time: [
-    "Clock",
-    "Calendar",
-    "Timer",
-    "Hourglass",
-    "CalendarDays",
-    "CalendarCheck",
-  ],
-  Location: ["MapPin", "Map", "Globe", "Navigation", "Compass", "Home"],
-  Security: [
-    "Shield",
-    "ShieldCheck",
-    "Lock",
-    "Unlock",
-    "Key",
-    "Eye",
-    "EyeOff",
-    "Fingerprint",
-  ],
-  Status: [
-    "CheckCircle",
-    "XCircle",
-    "AlertCircle",
-    "AlertTriangle",
-    "Info",
-    "HelpCircle",
-    "Check",
-    "X",
-    "Plus",
-    "Minus",
-  ],
-  Design: [
-    "Palette",
-    "Paintbrush",
-    "Pencil",
-    "Edit",
-    "Layout",
-    "Layers",
-    "Grid",
-    "Move",
-    "Maximize",
-    "Minimize",
-  ],
-  Nature: [
-    "Sun",
-    "Moon",
-    "Star",
-    "Cloud",
-    "CloudRain",
-    "Snowflake",
-    "Wind",
-    "Umbrella",
-    "Flame",
-    "Droplet",
-  ],
-  Food: ["Coffee", "Pizza", "Apple", "Cake", "Cookie", "IceCream"],
-  Actions: [
-    "Search",
-    "Filter",
-    "Settings",
-    "Tool",
-    "Wrench",
-    "Hammer",
-    "Target",
-    "Flag",
-    "Bookmark",
-    "Link",
-  ],
-};
-
-// Flatten all icons for search
-const ALL_ICONS = Object.values(ICON_CATEGORIES).flat();
-
-const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
+const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
   widget,
   isSelected,
   isEditing,
@@ -290,13 +58,14 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const widgetRef = React.useRef<HTMLDivElement>(null);
 
+  const [localLabel, setLocalLabel] = React.useState(widget.label || "Label");
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
   const [localDescription, setLocalDescription] = React.useState(
     widget.description || ""
   );
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
-  const [showIconSelector, setShowIconSelector] = React.useState(false);
 
+  const labelInputRef = React.useRef<HTMLInputElement | null>(null);
   const titleInputRef = React.useRef<HTMLInputElement | null>(null);
   const descriptionTextareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
@@ -308,6 +77,16 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   }, [localDescription]);
+
+  const debouncedUpdateLabel = useDebouncedCallback((value: string) => {
+    dispatch(
+      updateWidgetAction({
+        slideId: activeSlideId,
+        widgetId: widget.id,
+        updates: { label: value },
+      })
+    );
+  }, 250);
 
   const debouncedUpdateTitle = useDebouncedCallback((value: string) => {
     dispatch(
@@ -330,6 +109,12 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   }, 250);
 
   React.useEffect(() => {
+    setLocalLabel((prev) =>
+      prev === widget.label ? prev : widget.label || "Label"
+    );
+  }, [widget.label]);
+
+  React.useEffect(() => {
     setLocalTitle((prev) =>
       prev === widget.title ? prev : widget.title || ""
     );
@@ -343,10 +128,11 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
 
   React.useEffect(() => {
     return () => {
+      debouncedUpdateLabel.flush();
       debouncedUpdateTitle.flush();
       debouncedUpdateDescription.flush();
     };
-  }, [debouncedUpdateTitle, debouncedUpdateDescription]);
+  }, [debouncedUpdateLabel, debouncedUpdateTitle, debouncedUpdateDescription]);
 
   // Reset active field when widget is deselected
   React.useEffect(() => {
@@ -358,11 +144,9 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       const target = event.target as HTMLElement;
-      // Don't start drag if clicking on toolbar, input/textarea, or icon selector
+      // Don't start drag if clicking on toolbar, input/textarea
       if (
         target.closest(TOOLBAR_SELECTOR) ||
-        target.closest("[data-icon-selector]") ||
-        target.closest("[data-icon-button]") ||
         target.tagName === "INPUT" ||
         target.tagName === "TEXTAREA"
       ) {
@@ -376,82 +160,60 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
     [onPointerDown]
   );
 
-  const handleIconClick = React.useCallback(
-    (event: React.MouseEvent) => {
-      event.stopPropagation();
-      if (isSelected) {
-        setShowIconSelector(true);
-      }
-    },
-    [isSelected]
-  );
-
-  const handleSelectIcon = React.useCallback(
-    (iconName: string) => {
-      dispatch(
-        updateWidgetAction({
-          slideId: activeSlideId,
-          widgetId: widget.id,
-          updates: { icon: iconName },
-        })
-      );
-      setShowIconSelector(false);
-    },
-    [dispatch, activeSlideId, widget.id]
-  );
-
   const handleFieldFocus = React.useCallback((field: ActiveField) => {
     setActiveField(field);
   }, []);
 
   const handleFieldBlur = React.useCallback(
     (field: ActiveField) => {
-      if (field === "title") {
+      if (field === "label") {
+        debouncedUpdateLabel.flush();
+      } else if (field === "title") {
         debouncedUpdateTitle.flush();
       } else if (field === "description") {
         debouncedUpdateDescription.flush();
       }
     },
-    [debouncedUpdateTitle, debouncedUpdateDescription]
+    [debouncedUpdateLabel, debouncedUpdateTitle, debouncedUpdateDescription]
   );
 
   const handleFieldKeyDown = React.useCallback(
     (field: ActiveField, event: React.KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        if (field === "title") {
+        if (field === "label") {
+          debouncedUpdateLabel.flush();
+        } else if (field === "title") {
           debouncedUpdateTitle.flush();
         } else if (field === "description") {
           debouncedUpdateDescription.flush();
         }
         // Blur the field
-        if (field === "title" && titleInputRef.current) {
+        if (field === "label" && labelInputRef.current) {
+          labelInputRef.current.blur();
+        } else if (field === "title" && titleInputRef.current) {
           titleInputRef.current.blur();
         } else if (field === "description" && descriptionTextareaRef.current) {
           descriptionTextareaRef.current.blur();
         }
       }
     },
-    [debouncedUpdateTitle, debouncedUpdateDescription]
+    [debouncedUpdateLabel, debouncedUpdateTitle, debouncedUpdateDescription]
   );
 
   // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
-  const iconColor = widget.iconColor ?? "#0f172a";
+  const labelColor = widget.labelColor ?? "#0f172a";
+  const labelTextColor = widget.labelTextColor ?? "#ffffff";
   const titleColor = widget.titleColor ?? "#0f172a";
   const descriptionColor = widget.descriptionColor ?? "#475569";
-  const iconSize = widget.iconSize ?? 48;
+  const labelFontFamily = widget.labelFontFamily ?? "var(--font-poppins)";
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "left";
   const backgroundType = widget.backgroundType ?? "solid";
   const isGlassBackground = backgroundType === "glass";
-
-  // Get the icon component
-  const IconComponent = (Icons as unknown as Record<string, LucideIcon>)[
-    widget.icon || "Star"
-  ];
 
   return (
     <div
@@ -474,7 +236,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
         {isSelected && (
-          <IconCardEditingToolbar
+          <LabelCardEditingToolbar
             widget={widget}
             isEditing={isEditing}
             activeField={activeField}
@@ -502,9 +264,9 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
           }}
         >
           <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
-            {/* Icon */}
+            {/* Label field */}
             <div
-              className="flex relative"
+              className="flex"
               style={{
                 justifyContent:
                   textAlign === "center"
@@ -514,39 +276,41 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                     : "flex-start",
               }}
             >
-              {IconComponent && (
-                <button
-                  data-icon-button
-                  onClick={handleIconClick}
-                  disabled={!isSelected}
+              <div
+                className="relative inline-flex items-center justify-center px-3 py-1.5 rounded-full text-sm font-medium"
+                style={{
+                  backgroundColor: labelColor,
+                }}
+              >
+                <input
+                  ref={labelInputRef}
+                  type="text"
+                  readOnly={!isSelected}
                   className={cn(
-                    "rounded-lg p-2 transition-all duration-200",
-                    isSelected
-                      ? "hover:bg-muted/50 cursor-pointer ring-2 ring-transparent hover:ring-primary/20"
-                      : "cursor-default"
+                    "w-auto min-w-[60px] resize-none border-none bg-transparent p-0 outline-none focus:ring-0 text-center",
+                    isSelected ? "cursor-text" : "cursor-default"
                   )}
-                  title={
-                    isSelected
-                      ? "Click to change icon"
-                      : "Select card to change icon"
-                  }
-                >
-                  <IconComponent
-                    size={iconSize}
-                    style={{ color: iconColor }}
-                    strokeWidth={2}
-                  />
-                </button>
-              )}
-
-              {/* Icon Selector Modal */}
-              {showIconSelector && isSelected && (
-                <IconSelectorModal
-                  currentIcon={widget.icon || "Star"}
-                  onSelectIcon={handleSelectIcon}
-                  onClose={() => setShowIconSelector(false)}
+                  style={{
+                    color: labelTextColor,
+                    fontFamily: labelFontFamily,
+                    lineHeight: 1.2,
+                  }}
+                  size={localLabel.length || 5}
+                  value={localLabel}
+                  onChange={(e) => {
+                    if (!isSelected) return;
+                    setLocalLabel(e.target.value);
+                    debouncedUpdateLabel(e.target.value);
+                  }}
+                  onFocus={() => {
+                    if (!isSelected) return;
+                    handleFieldFocus("label");
+                  }}
+                  onBlur={() => handleFieldBlur("label")}
+                  onKeyDown={(e) => handleFieldKeyDown("label", e)}
+                  placeholder="Label"
                 />
-              )}
+              </div>
             </div>
 
             {/* Title field */}
@@ -559,11 +323,11 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.125rem",
-                fontWeight: 600,
+                fontSize: "2.5rem",
+                fontWeight: 700,
                 color: titleColor,
                 fontFamily: titleFontFamily,
-                lineHeight: 1.25,
+                lineHeight: 1.1,
                 textAlign,
               }}
               value={localTitle}
@@ -578,7 +342,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
               }}
               onBlur={() => handleFieldBlur("title")}
               onKeyDown={(e) => handleFieldKeyDown("title", e)}
-              placeholder="Feature Title"
+              placeholder="Card Title"
             />
 
             {/* Description field */}
@@ -590,7 +354,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "0.875rem",
+                fontSize: "1rem",
                 color: descriptionColor,
                 fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,
@@ -615,7 +379,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
               }}
               onBlur={() => handleFieldBlur("description")}
               onKeyDown={(e) => handleFieldKeyDown("description", e)}
-              placeholder="Feature description goes here."
+              placeholder="Description text goes here."
             />
           </div>
         </div>
@@ -627,10 +391,10 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   );
 };
 
-export const IconCardWidgetNode = React.memo(IconCardWidgetNodeBase);
+export const LabelCardWidgetNode = React.memo(LabelCardWidgetNodeBase);
 
-type IconCardEditingToolbarProps = {
-  widget: IconCardWidget;
+type LabelCardEditingToolbarProps = {
+  widget: LabelCardWidget;
   isEditing: boolean;
   activeField: ActiveField;
   widgetRef: React.RefObject<HTMLElement | null>;
@@ -638,7 +402,7 @@ type IconCardEditingToolbarProps = {
   containerRef: React.RefObject<HTMLElement | null>;
 };
 
-const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
+const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
   widget,
   isEditing,
   activeField,
@@ -647,7 +411,7 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
   containerRef,
 }) => {
   const bgColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
-  const iconColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
+  const labelColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const textColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontMenuRef = React.useRef<HTMLDivElement>(null);
@@ -699,18 +463,29 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
     );
   };
 
-  const handleSetIconColor = (color: string) => {
+  const handleSetLabelColor = (color: string) => {
     dispatch(
       updateWidgetAction({
         slideId: activeSlideId,
         widgetId: widget.id,
-        updates: { iconColor: color },
+        updates: { labelColor: color },
       })
     );
   };
 
   const handleSetTextColor = (color: string) => {
     if (!activeField) return;
+
+    if (activeField === "label") {
+      dispatch(
+        updateWidgetAction({
+          slideId: activeSlideId,
+          widgetId: widget.id,
+          updates: { labelTextColor: color },
+        })
+      );
+      return;
+    }
 
     const colorKey =
       activeField === "title" ? "titleColor" : "descriptionColor";
@@ -728,23 +503,17 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
     if (!activeField) return;
 
     const fontKey =
-      activeField === "title" ? "titleFontFamily" : "descriptionFontFamily";
+      activeField === "label"
+        ? "labelFontFamily"
+        : activeField === "title"
+        ? "titleFontFamily"
+        : "descriptionFontFamily";
 
     dispatch(
       updateWidgetAction({
         slideId: activeSlideId,
         widgetId: widget.id,
         updates: { [fontKey]: fontFamily },
-      })
-    );
-  };
-
-  const handleSetIconSize = (size: number) => {
-    dispatch(
-      updateWidgetAction({
-        slideId: activeSlideId,
-        widgetId: widget.id,
-        updates: { iconSize: size },
       })
     );
   };
@@ -763,17 +532,21 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
 
   const currentAlign = widget.textAlign ?? "left";
   const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
-  const currentIconColor = widget.iconColor ?? "#0f172a";
+  const currentLabelColor = widget.labelColor ?? "#0f172a";
 
   const currentTextColor =
-    activeField === "title"
+    activeField === "label"
+      ? widget.labelTextColor ?? "#ffffff"
+      : activeField === "title"
       ? widget.titleColor ?? "#0f172a"
       : activeField === "description"
       ? widget.descriptionColor ?? "#475569"
       : "#0f172a";
 
   const currentFontFamily =
-    activeField === "title"
+    activeField === "label"
+      ? widget.labelFontFamily ?? "var(--font-poppins)"
+      : activeField === "title"
       ? widget.titleFontFamily ?? "var(--font-poppins)"
       : activeField === "description"
       ? widget.descriptionFontFamily ?? "var(--font-poppins)"
@@ -782,8 +555,6 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
   const currentFontLabel =
     GOOGLE_FONTS.find((font) => font.value === currentFontFamily)?.label ??
     "Poppins";
-
-  const currentIconSize = widget.iconSize ?? 48;
 
   return (
     <ToolbarPortal
@@ -794,74 +565,63 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
       offset={isEditing ? 12 : 16}
     >
       <div
-        data-icon-card-toolbar="true"
+        data-label-card-toolbar="true"
         className="pointer-events-auto flex items-center gap-3 rounded-full border border-white/20 bg-white/80 px-4 py-2.5 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.2)] backdrop-blur-xl transition-all duration-300 hover:bg-white/90 hover:shadow-[0_12px_48px_-12px_rgba(0,0,0,0.25)]"
         onPointerDown={(event) => {
           event.stopPropagation();
         }}
       >
-        {/* Icon Section */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex items-center gap-2 group/icon">
-            <Popover>
-              {({ open }) => (
-                <>
-                  <Popover.Button
-                    ref={iconColorPickerButtonRef}
-                    className="relative w-6 h-6 rounded-full cursor-pointer ring-1 ring-black/5 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all hover:scale-110 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] focus:outline-none active:scale-95"
-                    style={{ backgroundColor: currentIconColor }}
-                  >
-                    <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-black/5" />
-                  </Popover.Button>
-                  {open && (
-                    <PopoverPanelPortal buttonRef={iconColorPickerButtonRef}>
-                      <div className="flex flex-col gap-3 p-3 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 animate-in fade-in zoom-in-95 duration-200 min-w-[240px]">
-                        <div className="text-[11px] font-semibold text-muted-foreground/80 uppercase tracking-wider px-1">
-                          Icon Color
-                        </div>
-                        <HexColorPicker
-                          color={currentIconColor}
-                          onChange={handleSetIconColor}
-                          className="w-full! h-32! rounded-xl!"
-                        />
-                        <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-lg border border-black/5">
-                          <div
-                            className="w-6 h-6 rounded-full border border-black/10 shadow-sm shrink-0"
-                            style={{
-                              backgroundColor: currentIconColor,
-                            }}
+        {/* Label Background Color - Only when label is active */}
+        {activeField === "label" && (
+          <div className="flex items-center gap-3">
+            <div className="relative flex items-center gap-2 group/label">
+              <Popover>
+                {({ open }) => (
+                  <>
+                    <Popover.Button
+                      ref={labelColorPickerButtonRef}
+                      className="relative w-6 h-6 rounded-full cursor-pointer ring-1 ring-black/5 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all hover:scale-110 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] focus:outline-none active:scale-95"
+                      style={{ backgroundColor: currentLabelColor }}
+                    >
+                      <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-black/5" />
+                    </Popover.Button>
+                    {open && (
+                      <PopoverPanelPortal buttonRef={labelColorPickerButtonRef}>
+                        <div className="flex flex-col gap-3 p-3 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 animate-in fade-in zoom-in-95 duration-200 min-w-[240px]">
+                          <div className="text-[11px] font-semibold text-muted-foreground/80 uppercase tracking-wider px-1">
+                            Label Badge Color
+                          </div>
+                          <HexColorPicker
+                            color={currentLabelColor}
+                            onChange={handleSetLabelColor}
+                            className="w-full! h-32! rounded-xl!"
                           />
-                          <Input
-                            className="h-7 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-full text-muted-foreground"
-                            value={currentIconColor}
-                            onChange={(e) => handleSetIconColor(e.target.value)}
-                            placeholder="#000000"
-                          />
+                          <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-lg border border-black/5">
+                            <div
+                              className="w-6 h-6 rounded-full border border-black/10 shadow-sm shrink-0"
+                              style={{
+                                backgroundColor: currentLabelColor,
+                              }}
+                            />
+                            <Input
+                              className="h-7 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-full text-muted-foreground"
+                              value={currentLabelColor}
+                              onChange={(e) =>
+                                handleSetLabelColor(e.target.value)
+                              }
+                              placeholder="#000000"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </PopoverPanelPortal>
-                  )}
-                </>
-              )}
-            </Popover>
-
-            <div className="flex items-center gap-1.5 bg-black/5 rounded-full pl-2 pr-1 py-0.5 transition-colors hover:bg-black/10">
-              <span className="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wider select-none">
-                Size
-              </span>
-              <Input
-                type="number"
-                min="16"
-                max="128"
-                value={currentIconSize}
-                onChange={(e) => handleSetIconSize(Number(e.target.value))}
-                className="h-6 w-12 rounded-full border-none bg-transparent text-center text-xs font-medium p-0 focus-visible:ring-0"
-              />
+                      </PopoverPanelPortal>
+                    )}
+                  </>
+                )}
+              </Popover>
             </div>
+            <div className="h-5 w-px bg-black/10 rounded-full" />
           </div>
-        </div>
-
-        <div className="h-5 w-px bg-black/10 rounded-full" />
+        )}
 
         {/* Background Section */}
         <div className="flex items-center gap-3">
@@ -891,7 +651,7 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
                     <PopoverPanelPortal buttonRef={bgColorPickerButtonRef}>
                       <div className="flex flex-col gap-3 p-3 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 animate-in fade-in zoom-in-95 duration-200 min-w-[240px]">
                         <div className="text-[11px] font-semibold text-muted-foreground/80 uppercase tracking-wider px-1">
-                          Background
+                          Card Background
                         </div>
                         <HexColorPicker
                           color={currentBackgroundColor}
@@ -963,7 +723,10 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
                         >
                           <div className="flex flex-col gap-3 p-3 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 animate-in fade-in zoom-in-95 duration-200 min-w-[240px]">
                             <div className="text-[11px] font-semibold text-muted-foreground/80 uppercase tracking-wider px-1">
-                              {activeField} Color
+                              {activeField === "label"
+                                ? "Label Text"
+                                : activeField}{" "}
+                              Color
                             </div>
                             <HexColorPicker
                               color={currentTextColor}
@@ -1071,182 +834,3 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
   );
 };
 
-type IconSelectorModalProps = {
-  currentIcon: string;
-  onSelectIcon: (iconName: string) => void;
-  onClose: () => void;
-};
-
-const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
-  currentIcon,
-  onSelectIcon,
-  onClose,
-}) => {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedCategory, setSelectedCategory] =
-    React.useState<string>("Popular");
-  const modalRef = React.useRef<HTMLDivElement>(null);
-
-  // Click outside to close
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        onClose();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
-
-  // Filter icons based on search
-  const filteredIcons = React.useMemo(() => {
-    if (!searchQuery) {
-      return (
-        ICON_CATEGORIES[selectedCategory as keyof typeof ICON_CATEGORIES] || []
-      );
-    }
-    return ALL_ICONS.filter((icon) =>
-      icon.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery, selectedCategory]);
-
-  return (
-    <div
-      data-icon-selector
-      className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
-    >
-      <div
-        ref={modalRef}
-        className="relative w-[700px] max-h-[80vh] bg-white rounded-2xl shadow-2xl border border-border/50 animate-in zoom-in-95 duration-200 flex flex-col"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border/50">
-          <div>
-            <h2 className="text-xl font-semibold text-foreground">
-              Choose an Icon
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Select from {ALL_ICONS.length}+ beautiful icons
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="rounded-full hover:bg-muted"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {/* Search Bar */}
-        <div className="px-6 pt-4">
-          <div className="relative">
-            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search icons..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-11"
-              autoFocus
-            />
-          </div>
-        </div>
-
-        {/* Categories */}
-        {!searchQuery && (
-          <div className="px-6 pt-4">
-            <div className="flex flex-wrap gap-2">
-              {Object.keys(ICON_CATEGORIES).map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={cn(
-                    "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200",
-                    selectedCategory === category
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80"
-                  )}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Icons Grid */}
-        <div className="flex-1 overflow-y-auto p-6 min-h-0">
-          {filteredIcons.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-center">
-              <div className="text-4xl mb-4">🔍</div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                No icons found
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Try searching with different keywords
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-8 gap-2">
-              {filteredIcons.map((iconName) => {
-                const IconComp = (
-                  Icons as unknown as Record<string, LucideIcon>
-                )[iconName];
-                if (!IconComp) return null;
-                const isSelected = iconName === currentIcon;
-
-                return (
-                  <button
-                    key={iconName}
-                    onClick={() => onSelectIcon(iconName)}
-                    className={cn(
-                      "flex flex-col items-center justify-center p-3 rounded-lg transition-all duration-200 group",
-                      isSelected
-                        ? "bg-primary text-primary-foreground shadow-md ring-2 ring-primary/20"
-                        : "hover:bg-muted/80 text-foreground/70 hover:text-foreground"
-                    )}
-                    title={iconName}
-                  >
-                    <IconComp
-                      className={cn(
-                        "h-6 w-6 transition-transform duration-200",
-                        !isSelected && "group-hover:scale-110"
-                      )}
-                    />
-                    <span className="text-[9px] mt-1.5 font-medium truncate w-full text-center">
-                      {iconName}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-border/50 bg-muted/30">
-          <p className="text-xs text-muted-foreground">
-            {filteredIcons.length} icon{filteredIcons.length !== 1 ? "s" : ""}{" "}
-            available
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClose}
-            className="rounded-lg"
-          >
-            Close
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-};

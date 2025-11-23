@@ -3,22 +3,21 @@ import { nanoid } from "@reduxjs/toolkit";
 import type {
   TextPreset,
   ShapePreset,
-  FeatureCardPreset,
-  IconCardPreset,
-  LabelCardPreset,
 } from "@/components/editor/editor-toolbar";
 import type {
   TextWidget,
+  SlideWidget,
+} from "@/components/editor/widgets/types";
+import type {
   RectangleWidget,
   CircleWidget,
   PolygonWidget,
   ArrowWidget,
-  NumberCardWidget,
-  IconCardWidget,
-  LabelCardWidget,
-  SlideWidget,
-} from "@/components/editor/widgets/types";
+} from "@/components/editor/widgets/shape/types";
 import { useListCardCreation } from "@/components/editor/widgets/list-card/use-list-card-creation";
+import { useIconCardCreation } from "@/components/editor/widgets/icon-card/use-icon-card-creation";
+import { useLabelCardCreation } from "@/components/editor/widgets/label-card/use-label-card-creation";
+import { useNumberCardCreation } from "@/components/editor/widgets/number-card/use-number-card-creation";
 import {
   TEXT_PRESET_CONFIG,
   SHAPE_PRESET_CONFIG,
@@ -163,124 +162,11 @@ export const useWidgetCreation = () => {
     [dispatch, ensureSlideId]
   );
 
-  const handleAddFeatureCard = useCallback(
-    (preset: FeatureCardPreset) => {
-      const slideId = ensureSlideId();
-      if (!slideId) return;
-      const id = `feature-card-${nanoid(8)}`;
-      const width = 400;
-      const height = 190;
-      const originX = Math.max(
-        40,
-        Math.round((SLIDE_DIMENSIONS.width - width) / 2)
-      );
-      const originY = Math.round((SLIDE_DIMENSIONS.height - height) / 2);
+  const { handleAddFeatureCard } = useNumberCardCreation();
 
-      const newWidget: NumberCardWidget = {
-        id,
-        type: "numberCard",
-        number: "01",
-        title: preset.title,
-        description: preset.description,
-        x: originX,
-        y: originY,
-        width,
-        height,
-        // Seed with current theme colors so card matches active theme
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        numberColor: globalTheme?.accent ?? "#0f172a",
-        titleColor: globalTheme?.text ?? "#0f172a",
-        descriptionColor: globalTheme?.text ?? "#475569",
-        textAlign: "left",
-        backgroundType: "glass",
-      };
+  const { handleAddIconCard } = useIconCardCreation();
 
-      dispatch(addWidget({ widget: newWidget, slideId }));
-      dispatch(selectWidgetAction(newWidget.id));
-      dispatch(stopWidgetEditingAction());
-    },
-    [dispatch, ensureSlideId, globalTheme]
-  );
-
-  const handleAddIconCard = useCallback(
-    (preset: IconCardPreset) => {
-      const slideId = ensureSlideId();
-      if (!slideId) return;
-      const id = `icon-card-${nanoid(8)}`;
-      const width = 400;
-      const height = 240;
-      const originX = Math.max(
-        40,
-        Math.round((SLIDE_DIMENSIONS.width - width) / 2)
-      );
-      const originY = Math.round((SLIDE_DIMENSIONS.height - height) / 2);
-
-      const newWidget: IconCardWidget = {
-        id,
-        type: "iconCard",
-        icon: preset.icon,
-        title: preset.title,
-        description: preset.description,
-        x: originX,
-        y: originY,
-        width,
-        height,
-        // Seed with current theme colors so card matches active theme
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        iconColor: globalTheme?.accent ?? "#0f172a",
-        iconSize: 48,
-        titleColor: globalTheme?.text ?? "#0f172a",
-        descriptionColor: globalTheme?.text ?? "#475569",
-        textAlign: "left",
-        backgroundType: "glass",
-      };
-
-      dispatch(addWidget({ widget: newWidget, slideId }));
-      dispatch(selectWidgetAction(newWidget.id));
-      dispatch(stopWidgetEditingAction());
-    },
-    [dispatch, ensureSlideId, globalTheme]
-  );
-
-  const handleAddLabelCard = useCallback(
-    (preset: LabelCardPreset) => {
-      const slideId = ensureSlideId();
-      if (!slideId) return;
-      const id = `label-card-${nanoid(8)}`;
-      const width = 400;
-      const height = 240;
-      const originX = Math.max(
-        40,
-        Math.round((SLIDE_DIMENSIONS.width - width) / 2)
-      );
-      const originY = Math.round((SLIDE_DIMENSIONS.height - height) / 2);
-
-      const newWidget: LabelCardWidget = {
-        id,
-        type: "labelCard",
-        label: preset.label,
-        title: preset.title,
-        description: preset.description,
-        x: originX,
-        y: originY,
-        width,
-        height,
-        // Seed with current theme colors so card matches active theme
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        labelColor: globalTheme?.accent ?? "#0f172a",
-        labelTextColor: "#ffffff",
-        titleColor: globalTheme?.text ?? "#0f172a",
-        descriptionColor: globalTheme?.text ?? "#475569",
-        textAlign: "left",
-        backgroundType: "glass",
-      };
-
-      dispatch(addWidget({ widget: newWidget, slideId }));
-      dispatch(selectWidgetAction(newWidget.id));
-      dispatch(stopWidgetEditingAction());
-    },
-    [dispatch, ensureSlideId, globalTheme]
-  );
+  const { handleAddLabelCard } = useLabelCardCreation();
 
   const { handleAddListCard } = useListCardCreation();
 

@@ -7,110 +7,32 @@ export type WidgetCommon = {
   rotation?: number;
 };
 
-export type TextWidget = WidgetCommon & {
-  type: "text";
-  text: string;
-  fontSize: number;
-  fontWeight: number;
-  color: string;
-  align: "left" | "center" | "right";
-  lineHeight: number;
-};
+import type { TextWidget } from "./text/types";
+export type { TextWidget };
 
-export type RectangleWidget = WidgetCommon & {
-  type: "rectangle";
-  fill?: string;
-  borderRadius: number;
-  stroke?: string;
-  strokeWidth?: number;
-};
+export type {
+  RectangleWidget,
+  CircleWidget,
+  ArrowWidget,
+  PolygonWidget,
+  PolygonShape,
+} from "./shape/types";
 
-export type CircleWidget = WidgetCommon & {
-  type: "circle";
-  fill?: string;
-  stroke?: string;
-  strokeWidth?: number;
-};
+export type { NumberCardWidget } from "./number-card/types";
+export type { IconCardWidget } from "./icon-card/types";
 
-export type ArrowWidget = WidgetCommon & {
-  type: "arrow";
-  stroke: string;
-  strokeWidth: number;
-};
-
-export type PolygonShape = "triangle" | "diamond" | "star";
-
-export type PolygonWidget = WidgetCommon & {
-  type: "polygon";
-  shape: PolygonShape;
-  fill?: string;
-  stroke?: string;
-  strokeWidth?: number;
-};
-
-export type NumberCardWidget = WidgetCommon & {
-  type: "numberCard";
-  number: string;
-  title: string;
-  description: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  numberColor?: string;
-  titleColor?: string;
-  descriptionColor?: string;
-  numberFontFamily?: string;
-  titleFontFamily?: string;
-  descriptionFontFamily?: string;
-  textAlign?: "left" | "center" | "right";
-  backgroundType?: "solid" | "glass";
-};
-
-export type IconCardWidget = WidgetCommon & {
-  type: "iconCard";
-  icon: string;
-  title: string;
-  description: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  iconColor?: string;
-  titleColor?: string;
-  descriptionColor?: string;
-  iconSize?: number;
-  titleFontFamily?: string;
-  descriptionFontFamily?: string;
-  textAlign?: "left" | "center" | "right";
-  backgroundType?: "solid" | "glass";
-};
-
-export type LabelCardWidget = WidgetCommon & {
-  type: "labelCard";
-  label: string;
-  title: string;
-  description: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  labelColor?: string;
-  labelTextColor?: string;
-  titleColor?: string;
-  descriptionColor?: string;
-  labelFontFamily?: string;
-  titleFontFamily?: string;
-  descriptionFontFamily?: string;
-  textAlign?: "left" | "center" | "right";
-  backgroundType?: "solid" | "glass";
-};
-
+export type { LabelCardWidget } from "./label-card/types";
 export type { ListWidget } from "./list-card/types";
 
 export type SlideWidget =
   | TextWidget
-  | RectangleWidget
-  | CircleWidget
-  | ArrowWidget
-  | PolygonWidget
-  | NumberCardWidget
-  | IconCardWidget
-  | LabelCardWidget
+  | import("./shape/types").RectangleWidget
+  | import("./shape/types").CircleWidget
+  | import("./shape/types").ArrowWidget
+  | import("./shape/types").PolygonWidget
+  | import("./number-card/types").NumberCardWidget
+  | import("./icon-card/types").IconCardWidget
+  | import("./label-card/types").LabelCardWidget
   | import("./list-card/types").ListWidget;
 
 export type SlideWidgetUpdate = Partial<
@@ -125,7 +47,7 @@ export type SlideWidgetUpdate = Partial<
     stroke: string;
     strokeWidth: number;
     lineHeight: number;
-    shape: PolygonShape;
+    shape: import("./shape/types").PolygonShape;
     number: string;
     icon: string;
     label: string;

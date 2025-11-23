@@ -4,14 +4,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
-  Minus,
-  Plus,
-  ChevronDown,
-} from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   updateWidget as updateWidgetAction,
@@ -21,10 +14,9 @@ import {
   startWidgetEditing as startWidgetEditingAction,
   stopWidgetEditing as stopWidgetEditingAction,
 } from "@/store/slices/editorUiSlice";
-import type {
-  TextWidget,
-  ResizeHandle,
-} from "@/components/editor/widgets/types";
+import type { ResizeHandle } from "@/components/editor/widgets/types";
+import type { TextWidget } from "./types";
+import { TOOLBAR_SELECTOR, TEXT_STYLE_PRESETS, ALIGN_OPTIONS } from "./constants";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ToolbarPortal } from "@/components/editor/toolbar-portal";
@@ -40,46 +32,6 @@ const textResizeHandles: Array<{
   { handle: "left", className: "-left-1.5 top-1/2 -translate-y-1/2" },
   { handle: "right", className: "-right-1.5 top-1/2 -translate-y-1/2" },
 ];
-
-const TOOLBAR_SELECTOR = '[data-text-toolbar="true"]';
-
-const TEXT_STYLE_PRESETS = [
-  {
-    id: "title",
-    label: "Title",
-    fontSize: 96,
-    fontWeight: 600,
-    lineHeight: 1,
-    align: "center" as const,
-  },
-  {
-    id: "subtitle",
-    label: "Subtitle",
-    fontSize: 48,
-    fontWeight: 500,
-    lineHeight: 1.05,
-    align: "center" as const,
-  },
-  {
-    id: "body",
-    label: "Body",
-    fontSize: 24,
-    fontWeight: 400,
-    lineHeight: 1.4,
-    align: "left" as const,
-  },
-];
-
-const ALIGN_OPTIONS: Array<{
-  value: TextWidget["align"];
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  label: string;
-}> = [
-  { value: "left", icon: AlignLeft, label: "Align left" },
-  { value: "center", icon: AlignCenter, label: "Align center" },
-  { value: "right", icon: AlignRight, label: "Align right" },
-];
-
 
 type TextWidgetNodeProps = {
   widget: TextWidget;

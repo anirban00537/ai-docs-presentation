@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef } from "react";
-import { TextWidgetNode } from "@/components/editor/widgets/text.widget";
-import { ShapeWidgetNode } from "@/components/editor/widgets/shape.widget";
-import { NumberCardWidgetNode } from "@/components/editor/widgets/number-card.widget";
-import { IconCardWidgetNode } from "@/components/editor/widgets/icon-card.widget";
-import { LabelCardWidgetNode } from "@/components/editor/widgets/label-card.widget";
+import { TextWidgetNode } from "@/components/editor/widgets/text";
+import { ShapeWidgetNode } from "@/components/editor/widgets/shape";
+import { NumberCardWidgetNode } from "@/components/editor/widgets/number-card";
+import { IconCardWidgetNode } from "@/components/editor/widgets/icon-card";
+import { LabelCardWidgetNode } from "@/components/editor/widgets/label-card";
 import { ListCardWidgetNode } from "@/components/editor/widgets/list-card";
 import type {
   SlideWidget,
@@ -15,11 +15,11 @@ import type {
   CircleWidget,
   ArrowWidget,
   PolygonWidget,
-  NumberCardWidget,
-  IconCardWidget,
-  LabelCardWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
+import type { NumberCardWidget } from "@/components/editor/widgets/number-card/types";
+import type { IconCardWidget } from "@/components/editor/widgets/icon-card/types";
+import type { LabelCardWidget } from "@/components/editor/widgets/label-card/types";
 import type { ListWidget } from "@/components/editor/widgets/list-card";
 import type { GlobalTheme, SlideModel } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
