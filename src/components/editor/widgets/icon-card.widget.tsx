@@ -445,7 +445,8 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "left";
-  const isGlassBackground = widget.isGlassBackground ?? false;
+  const backgroundType = widget.backgroundType ?? "solid";
+  const isGlassBackground = backgroundType === "glass";
 
   // Get the icon component
   const IconComponent = (Icons as unknown as Record<string, LucideIcon>)[
@@ -687,11 +688,13 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
   };
 
   const handleToggleGlassBackground = () => {
+    const newBackgroundType =
+      widget.backgroundType === "glass" ? "solid" : "glass";
     dispatch(
       updateWidgetAction({
         slideId: activeSlideId,
         widgetId: widget.id,
-        updates: { isGlassBackground: !widget.isGlassBackground },
+        updates: { backgroundType: newBackgroundType },
       })
     );
   };
@@ -921,14 +924,14 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
               size="icon-sm"
               className={cn(
                 "rounded-md",
-                widget.isGlassBackground
+                widget.backgroundType === "glass"
                   ? "bg-primary/10 text-primary hover:bg-primary/10"
                   : undefined
               )}
               onClick={handleToggleGlassBackground}
-              aria-pressed={widget.isGlassBackground}
+              aria-pressed={widget.backgroundType === "glass"}
               title={
-                widget.isGlassBackground
+                widget.backgroundType === "glass"
                   ? "Glass effect on"
                   : "Glass effect off"
               }

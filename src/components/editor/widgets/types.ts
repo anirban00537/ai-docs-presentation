@@ -62,7 +62,7 @@ export type NumberCardWidget = WidgetCommon & {
   titleFontFamily?: string;
   descriptionFontFamily?: string;
   textAlign?: "left" | "center" | "right";
-  isGlassBackground?: boolean;
+  backgroundType?: "solid" | "glass";
 };
 
 export type IconCardWidget = WidgetCommon & {
@@ -79,7 +79,7 @@ export type IconCardWidget = WidgetCommon & {
   titleFontFamily?: string;
   descriptionFontFamily?: string;
   textAlign?: "left" | "center" | "right";
-  isGlassBackground?: boolean;
+  backgroundType?: "solid" | "glass";
 };
 
 export type SlideWidget =
@@ -119,7 +119,7 @@ export type SlideWidgetUpdate = Partial<
     titleFontFamily: string;
     descriptionFontFamily: string;
     textAlign: "left" | "center" | "right";
-    isGlassBackground: boolean;
+    backgroundType: "solid" | "glass";
   }
 >;
 

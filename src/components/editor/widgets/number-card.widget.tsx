@@ -260,7 +260,8 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "left";
-  const isGlassBackground = widget.isGlassBackground ?? false;
+  const backgroundType = widget.backgroundType ?? "solid";
+  const isGlassBackground = backgroundType === "glass";
 
   return (
     <div
@@ -481,11 +482,13 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
   };
 
   const handleToggleGlassBackground = () => {
+    const newBackgroundType =
+      widget.backgroundType === "glass" ? "solid" : "glass";
     dispatch(
       updateWidgetAction({
         slideId: activeSlideId,
         widgetId: widget.id,
-        updates: { isGlassBackground: !widget.isGlassBackground },
+        updates: { backgroundType: newBackgroundType },
       })
     );
   };
@@ -644,14 +647,14 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
               size="icon-sm"
               className={cn(
                 "rounded-md",
-                widget.isGlassBackground
+                widget.backgroundType === "glass"
                   ? "bg-primary/10 text-primary hover:bg-primary/10"
                   : undefined
               )}
               onClick={handleToggleGlassBackground}
-              aria-pressed={widget.isGlassBackground}
+              aria-pressed={widget.backgroundType === "glass"}
               title={
-                widget.isGlassBackground
+                widget.backgroundType === "glass"
                   ? "Glass effect on"
                   : "Glass effect off"
               }
