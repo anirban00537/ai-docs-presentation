@@ -295,23 +295,23 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-lg p-6",
+            "relative h-full w-full rounded-[32px] p-8 transition-all duration-300 ease-out",
             isGlassBackground &&
-              "backdrop-blur-md border border-white/20 shadow-lg"
+              "backdrop-blur-2xl border border-white/10 shadow-2xl"
           )}
           style={{
             backgroundColor: isGlassBackground
-              ? `${backgroundColor}33`
+              ? `${backgroundColor}03` // Almost clear for maximum transparency
               : backgroundColor,
             backgroundImage: isGlassBackground
-              ? "linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%)"
+              ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
               : undefined,
             boxShadow: isGlassBackground
-              ? "inset 0 1px 0 0 rgba(255, 255, 255, 0.3), 0 8px 32px 0 rgba(0, 0, 0, 0.1)"
+              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 8px 32px -8px rgba(0, 0, 0, 0.1)"
               : undefined,
           }}
         >
-          <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
+          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
             {/* Number field */}
             <input
               ref={numberInputRef}
