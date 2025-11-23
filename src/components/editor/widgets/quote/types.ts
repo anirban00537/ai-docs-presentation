@@ -15,6 +15,8 @@ export type QuoteWidget = WidgetCommon & {
   iconColor?: string;
   quoteFontFamily?: string;
   attributionFontFamily?: string;
+  quoteFontSize?: number;
+  attributionFontSize?: number;
   textAlign?: "left" | "center" | "right";
   backgroundType?: "solid" | "glass";
   iconSize?: number;

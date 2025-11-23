@@ -31,8 +31,8 @@ export const useQuoteCreation = () => {
       const slideId = ensureSlideId();
       if (!slideId) return;
       const id = `quote-${nanoid(8)}`;
-      const width = 500;
-      const height = 200;
+      const width = 350;
+      const height = 280;
       const originX = Math.max(
         40,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)
@@ -55,9 +55,11 @@ export const useQuoteCreation = () => {
         quoteColor: globalTheme?.text ?? "#0f172a",
         attributionColor: globalTheme?.text ?? "#64748b",
         iconColor: globalTheme?.accent ?? "#0f172a",
-        iconSize: 32,
+        iconSize: 24,
         textAlign: "left",
         backgroundType: "glass", // Default to glassmorphism
+        quoteFontSize: preset.style === "bold" ? 28 : 20,
+        attributionFontSize: 12,
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));
