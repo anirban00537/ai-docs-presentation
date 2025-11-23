@@ -3,7 +3,13 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { AlignCenter, AlignLeft, AlignRight, ChevronDown } from "lucide-react";
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  ChevronDown,
+  Sparkles,
+} from "lucide-react";
 import type {
   NumberCardWidget,
   ResizeHandle,
@@ -254,6 +260,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "left";
+  const isGlassBackground = widget.isGlassBackground ?? false;
 
   return (
     <div
@@ -286,9 +293,21 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
           />
         )}
         <div
-          className="relative h-full w-full rounded-lg p-6"
+          className={cn(
+            "relative h-full w-full rounded-lg p-6",
+            isGlassBackground &&
+              "backdrop-blur-md border border-white/20 shadow-lg"
+          )}
           style={{
-            backgroundColor,
+            backgroundColor: isGlassBackground
+              ? `${backgroundColor}33`
+              : backgroundColor,
+            backgroundImage: isGlassBackground
+              ? "linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%)"
+              : undefined,
+            boxShadow: isGlassBackground
+              ? "inset 0 1px 0 0 rgba(255, 255, 255, 0.3), 0 8px 32px 0 rgba(0, 0, 0, 0.1)"
+              : undefined,
           }}
         >
           <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
@@ -461,6 +480,16 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
     );
   };
 
+  const handleToggleGlassBackground = () => {
+    dispatch(
+      updateWidgetAction({
+        slideId: activeSlideId,
+        widgetId: widget.id,
+        updates: { isGlassBackground: !widget.isGlassBackground },
+      })
+    );
+  };
+
   const handleSetTextColor = (color: string) => {
     if (!activeField) return;
 
@@ -610,6 +639,25 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
                 </>
               )}
             </Popover>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className={cn(
+                "rounded-md",
+                widget.isGlassBackground
+                  ? "bg-primary/10 text-primary hover:bg-primary/10"
+                  : undefined
+              )}
+              onClick={handleToggleGlassBackground}
+              aria-pressed={widget.isGlassBackground}
+              title={
+                widget.isGlassBackground
+                  ? "Glass effect on"
+                  : "Glass effect off"
+              }
+            >
+              <Sparkles className="h-4 w-4" />
+            </Button>
           </div>
         </div>
 
