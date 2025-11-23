@@ -791,49 +791,48 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
       viewport={viewport}
       containerRef={containerRef}
       placement={isEditing ? "bottom" : "top"}
-      offset={isEditing ? 8 : 16}
+      offset={isEditing ? 12 : 16}
     >
       <div
         data-icon-card-toolbar="true"
-        className="pointer-events-auto flex items-center gap-4 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur"
+        className="pointer-events-auto flex items-center gap-3 rounded-full border border-white/20 bg-white/80 px-4 py-2.5 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.2)] backdrop-blur-xl transition-all duration-300 hover:bg-white/90 hover:shadow-[0_12px_48px_-12px_rgba(0,0,0,0.25)]"
         onPointerDown={(event) => {
           event.stopPropagation();
         }}
       >
-        {/* Icon Color Section */}
-        <div className="flex items-center gap-2 border-r border-border pr-3">
-          <span className="text-xs font-semibold text-muted-foreground">
-            Icon Color
-          </span>
-          <div className="relative flex items-center gap-2">
+        {/* Icon Section */}
+        <div className="flex items-center gap-3">
+          <div className="relative flex items-center gap-2 group/icon">
             <Popover>
               {({ open }) => (
                 <>
                   <Popover.Button
                     ref={iconColorPickerButtonRef}
-                    className="relative w-8 h-8 rounded-full cursor-pointer border-[3px] border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
+                    className="relative w-6 h-6 rounded-full cursor-pointer ring-1 ring-black/5 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all hover:scale-110 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] focus:outline-none active:scale-95"
                     style={{ backgroundColor: currentIconColor }}
-                  />
+                  >
+                    <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-black/5" />
+                  </Popover.Button>
                   {open && (
                     <PopoverPanelPortal buttonRef={iconColorPickerButtonRef}>
-                      <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
-                        <div className="text-xs font-semibold text-muted-foreground">
+                      <div className="flex flex-col gap-3 p-3 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 animate-in fade-in zoom-in-95 duration-200 min-w-[240px]">
+                        <div className="text-[11px] font-semibold text-muted-foreground/80 uppercase tracking-wider px-1">
                           Icon Color
                         </div>
                         <HexColorPicker
                           color={currentIconColor}
                           onChange={handleSetIconColor}
-                          className="w-full! h-32!"
+                          className="w-full! h-32! rounded-xl!"
                         />
-                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
+                        <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-lg border border-black/5">
                           <div
-                            className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
+                            className="w-6 h-6 rounded-full border border-black/10 shadow-sm shrink-0"
                             style={{
                               backgroundColor: currentIconColor,
                             }}
                           />
                           <Input
-                            className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
+                            className="h-7 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-full text-muted-foreground"
                             value={currentIconColor}
                             onChange={(e) => handleSetIconColor(e.target.value)}
                             placeholder="#000000"
@@ -845,67 +844,69 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
                 </>
               )}
             </Popover>
-          </div>
-          {/* Icon Size Control */}
-          <div className="flex items-center gap-1">
-            <Input
-              type="number"
-              min="16"
-              max="128"
-              value={currentIconSize}
-              onChange={(e) => handleSetIconSize(Number(e.target.value))}
-              className="h-7 w-16 text-xs"
-            />
-            <span className="text-[10px] text-muted-foreground">px</span>
+
+            <div className="flex items-center gap-1.5 bg-black/5 rounded-full pl-2 pr-1 py-0.5 transition-colors hover:bg-black/10">
+              <span className="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wider select-none">
+                Size
+              </span>
+              <Input
+                type="number"
+                min="16"
+                max="128"
+                value={currentIconSize}
+                onChange={(e) => handleSetIconSize(Number(e.target.value))}
+                className="h-6 w-12 rounded-full border-none bg-transparent text-center text-xs font-medium p-0 focus-visible:ring-0"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Background Color Section */}
-        <div className="flex items-center gap-2 border-r border-border pr-3">
-          <span className="text-xs font-semibold text-muted-foreground">
-            Background
-          </span>
+        <div className="h-5 w-px bg-black/10 rounded-full" />
+
+        {/* Background Section */}
+        <div className="flex items-center gap-3">
           <div className="relative flex items-center gap-2">
             <Popover>
               {({ open }) => (
                 <>
                   <Popover.Button
                     ref={bgColorPickerButtonRef}
-                    className="relative w-8 h-8 rounded-full cursor-pointer border-[3px] border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
+                    className="relative w-6 h-6 rounded-full cursor-pointer ring-1 ring-black/5 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all hover:scale-110 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] focus:outline-none active:scale-95"
                     style={{ backgroundColor: currentBackgroundColor }}
                   >
+                    <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-black/5" />
                     {currentBackgroundColor !== "#ffffff" && (
                       <span
-                        className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full p-0.5 cursor-pointer opacity-0 group-hover/picker:opacity-100 hover:bg-destructive/90 transition-all shadow-sm scale-75 hover:scale-100"
+                        className="absolute -top-1 -right-1 flex items-center justify-center w-3.5 h-3.5 bg-neutral-900 text-white rounded-full cursor-pointer opacity-0 group-hover/picker:opacity-100 transition-all shadow-sm scale-75 hover:scale-100"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleSetBackgroundColor("#ffffff");
                         }}
                       >
-                        <X size={10} strokeWidth={3} />
+                        <X size={8} strokeWidth={3} />
                       </span>
                     )}
                   </Popover.Button>
                   {open && (
                     <PopoverPanelPortal buttonRef={bgColorPickerButtonRef}>
-                      <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
-                        <div className="text-xs font-semibold text-muted-foreground">
-                          Background Color
+                      <div className="flex flex-col gap-3 p-3 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 animate-in fade-in zoom-in-95 duration-200 min-w-[240px]">
+                        <div className="text-[11px] font-semibold text-muted-foreground/80 uppercase tracking-wider px-1">
+                          Background
                         </div>
                         <HexColorPicker
                           color={currentBackgroundColor}
                           onChange={handleSetBackgroundColor}
-                          className="w-full! h-32!"
+                          className="w-full! h-32! rounded-xl!"
                         />
-                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
+                        <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-lg border border-black/5">
                           <div
-                            className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
+                            className="w-6 h-6 rounded-full border border-black/10 shadow-sm shrink-0"
                             style={{
                               backgroundColor: currentBackgroundColor,
                             }}
                           />
                           <Input
-                            className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
+                            className="h-7 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-full text-muted-foreground"
                             value={currentBackgroundColor}
                             onChange={(e) =>
                               handleSetBackgroundColor(e.target.value)
@@ -923,17 +924,16 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
               variant="ghost"
               size="icon-sm"
               className={cn(
-                "rounded-md",
+                "w-8 h-8 rounded-full transition-all duration-200",
                 widget.backgroundType === "glass"
-                  ? "bg-primary/10 text-primary hover:bg-primary/10"
-                  : undefined
+                  ? "bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 shadow-inner"
+                  : "hover:bg-black/5 text-muted-foreground"
               )}
               onClick={handleToggleGlassBackground}
-              aria-pressed={widget.backgroundType === "glass"}
               title={
                 widget.backgroundType === "glass"
-                  ? "Glass effect on"
-                  : "Glass effect off"
+                  ? "Disable Glass Effect"
+                  : "Enable Glass Effect"
               }
             >
               <Sparkles className="h-4 w-4" />
@@ -941,130 +941,128 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
           </div>
         </div>
 
-        {/* Text Color Section - Only show when a field is active */}
+        {/* Text & Font Section - Only show when a field is active */}
         {activeField && (
-          <div className="flex items-center gap-2 border-r border-border pr-3">
-            <span className="text-xs font-semibold text-muted-foreground">
-              Text ({activeField})
-            </span>
-            <div className="relative flex items-center gap-2">
-              <Popover>
-                {({ open }) => (
-                  <>
-                    <Popover.Button
-                      ref={textColorPickerButtonRef}
-                      className="relative w-8 h-8 rounded-full cursor-pointer border-[3px] border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
-                      style={{ backgroundColor: currentTextColor }}
-                    />
-                    {open && (
-                      <PopoverPanelPortal buttonRef={textColorPickerButtonRef}>
-                        <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
-                          <div className="text-xs font-semibold text-muted-foreground">
-                            {activeField} Color
-                          </div>
-                          <HexColorPicker
-                            color={currentTextColor}
-                            onChange={handleSetTextColor}
-                            className="w-full! h-32!"
-                          />
-                          <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
-                            <div
-                              className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
-                              style={{
-                                backgroundColor: currentTextColor,
-                              }}
+          <>
+            <div className="h-5 w-px bg-black/10 rounded-full animate-in fade-in zoom-in duration-200" />
+            <div className="flex items-center gap-3 animate-in slide-in-from-left-2 duration-200 fade-in">
+              <div className="relative flex items-center gap-2">
+                <Popover>
+                  {({ open }) => (
+                    <>
+                      <Popover.Button
+                        ref={textColorPickerButtonRef}
+                        className="relative w-6 h-6 rounded-full cursor-pointer ring-1 ring-black/5 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all hover:scale-110 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] focus:outline-none active:scale-95"
+                        style={{ backgroundColor: currentTextColor }}
+                      >
+                        <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-black/5" />
+                      </Popover.Button>
+                      {open && (
+                        <PopoverPanelPortal
+                          buttonRef={textColorPickerButtonRef}
+                        >
+                          <div className="flex flex-col gap-3 p-3 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 animate-in fade-in zoom-in-95 duration-200 min-w-[240px]">
+                            <div className="text-[11px] font-semibold text-muted-foreground/80 uppercase tracking-wider px-1">
+                              {activeField} Color
+                            </div>
+                            <HexColorPicker
+                              color={currentTextColor}
+                              onChange={handleSetTextColor}
+                              className="w-full! h-32! rounded-xl!"
                             />
-                            <Input
-                              className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
-                              value={currentTextColor}
-                              onChange={(e) =>
-                                handleSetTextColor(e.target.value)
-                              }
-                              placeholder="#000000"
-                            />
+                            <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-lg border border-black/5">
+                              <div
+                                className="w-6 h-6 rounded-full border border-black/10 shadow-sm shrink-0"
+                                style={{
+                                  backgroundColor: currentTextColor,
+                                }}
+                              />
+                              <Input
+                                className="h-7 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-full text-muted-foreground"
+                                value={currentTextColor}
+                                onChange={(e) =>
+                                  handleSetTextColor(e.target.value)
+                                }
+                                placeholder="#000000"
+                              />
+                            </div>
                           </div>
-                        </div>
-                      </PopoverPanelPortal>
-                    )}
-                  </>
+                        </PopoverPanelPortal>
+                      )}
+                    </>
+                  )}
+                </Popover>
+              </div>
+
+              <div className="relative flex items-center">
+                <Button
+                  ref={fontButtonRef}
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2 rounded-full bg-black/5 border border-transparent px-3 py-1.5 text-xs hover:bg-black/10 transition-all w-[110px] justify-between group"
+                  onClick={() => setFontMenuOpen((prev) => !prev)}
+                >
+                  <span className="text-[11px] font-medium text-foreground/80 truncate group-hover:text-foreground">
+                    {currentFontLabel}
+                  </span>
+                  <ChevronDown className="h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                </Button>
+                {fontMenuOpen && (
+                  <div
+                    ref={fontMenuRef}
+                    className="absolute left-0 top-full mt-2 z-50 min-w-[200px] max-h-[300px] overflow-y-auto rounded-xl border border-white/20 bg-white/90 backdrop-blur-xl p-1.5 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] animate-in fade-in zoom-in-95 duration-150"
+                  >
+                    <div className="flex flex-col gap-0.5">
+                      {GOOGLE_FONTS.map((font) => (
+                        <button
+                          key={font.value}
+                          type="button"
+                          className={cn(
+                            "flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-all duration-200",
+                            currentFontFamily === font.value
+                              ? "bg-black/5 text-foreground font-medium"
+                              : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                          )}
+                          style={{ fontFamily: font.style }}
+                          onClick={() => {
+                            handleSetFontFamily(font.value);
+                            setFontMenuOpen(false);
+                          }}
+                        >
+                          <span>{font.label}</span>
+                          {currentFontFamily === font.value && (
+                            <span className="text-blue-600 text-xs">●</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </Popover>
+              </div>
             </div>
-          </div>
+          </>
         )}
 
-        {/* Font Family Section - Only show when a field is active */}
-        {activeField && (
-          <div className="flex items-center gap-2 border-r border-border pr-3">
-            <span className="text-xs font-semibold text-muted-foreground">
-              Font
-            </span>
-            <div className="relative flex items-center">
-              <Button
-                ref={fontButtonRef}
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs min-w-[100px] justify-between"
-                onClick={() => setFontMenuOpen((prev) => !prev)}
-              >
-                <span className="text-[11px] font-medium text-muted-foreground truncate">
-                  {currentFontLabel}
-                </span>
-                <ChevronDown className="h-3 w-3 opacity-60" />
-              </Button>
-              {fontMenuOpen && (
-                <div
-                  ref={fontMenuRef}
-                  className="absolute left-0 top-full mt-1 z-40 min-w-[200px] max-h-[300px] overflow-y-auto rounded-md border border-border bg-white p-2 shadow-lg"
-                >
-                  <div className="flex flex-col gap-1">
-                    {GOOGLE_FONTS.map((font) => (
-                      <button
-                        key={font.value}
-                        type="button"
-                        className={cn(
-                          "flex items-center justify-between px-3 py-2 text-sm rounded-md transition hover:bg-muted/80",
-                          currentFontFamily === font.value
-                            ? "bg-primary/10 text-primary font-medium"
-                            : "text-foreground"
-                        )}
-                        style={{ fontFamily: font.style }}
-                        onClick={() => {
-                          handleSetFontFamily(font.value);
-                          setFontMenuOpen(false);
-                        }}
-                      >
-                        <span>{font.label}</span>
-                        {currentFontFamily === font.value && (
-                          <span className="text-primary">✓</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        <div className="h-5 w-px bg-black/10 rounded-full" />
 
         {/* Alignment Section */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 bg-black/5 rounded-full p-1">
           {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
             <Button
               key={value}
               variant="ghost"
               size="icon-sm"
               className={cn(
-                "rounded-md",
+                "w-7 h-7 rounded-full transition-all duration-200",
                 currentAlign === value
-                  ? "bg-primary/10 text-primary hover:bg-primary/10"
-                  : undefined
+                  ? "bg-white text-foreground shadow-sm ring-1 ring-black/5"
+                  : "text-muted-foreground hover:text-foreground hover:bg-black/5"
               )}
               onClick={() => handleAlign(value)}
               aria-pressed={currentAlign === value}
               title={label}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-3.5 w-3.5" />
             </Button>
           ))}
         </div>
