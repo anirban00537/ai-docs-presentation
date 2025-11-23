@@ -1,9 +1,9 @@
-import Hero from "@/components/ui/hero";
+import { HeroSection } from "@/components/blocks/hero-section-1";
 
 export default function Home() {
   return (
-    <div className="min-h-screen h-full w-full">
-      <Hero />
-    </div>
+    <main className="min-h-screen h-full w-full">
+      <HeroSection />
+    </main>
   );
 }
