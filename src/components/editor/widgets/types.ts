@@ -82,6 +82,24 @@ export type IconCardWidget = WidgetCommon & {
   backgroundType?: "solid" | "glass";
 };
 
+export type LabelCardWidget = WidgetCommon & {
+  type: "labelCard";
+  label: string;
+  title: string;
+  description: string;
+  backgroundColor?: string;
+  borderColor?: string;
+  labelColor?: string;
+  labelTextColor?: string;
+  titleColor?: string;
+  descriptionColor?: string;
+  labelFontFamily?: string;
+  titleFontFamily?: string;
+  descriptionFontFamily?: string;
+  textAlign?: "left" | "center" | "right";
+  backgroundType?: "solid" | "glass";
+};
+
 export type SlideWidget =
   | TextWidget
   | RectangleWidget
@@ -89,7 +107,8 @@ export type SlideWidget =
   | ArrowWidget
   | PolygonWidget
   | NumberCardWidget
-  | IconCardWidget;
+  | IconCardWidget
+  | LabelCardWidget;
 
 export type SlideWidgetUpdate = Partial<
   Omit<WidgetCommon, "id"> & {
@@ -106,18 +125,22 @@ export type SlideWidgetUpdate = Partial<
     shape: PolygonShape;
     number: string;
     icon: string;
+    label: string;
     title: string;
     description: string;
     backgroundColor: string;
     borderColor: string;
     numberColor: string;
     iconColor: string;
+    labelColor: string;
+    labelTextColor: string;
     titleColor: string;
     descriptionColor: string;
     iconSize: number;
     numberFontFamily: string;
     titleFontFamily: string;
     descriptionFontFamily: string;
+    labelFontFamily: string;
     textAlign: "left" | "center" | "right";
     backgroundType: "solid" | "glass";
   }

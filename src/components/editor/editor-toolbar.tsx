@@ -40,11 +40,19 @@ export type IconCardPreset = {
   description: string;
 };
 
+export type LabelCardPreset = {
+  id: string;
+  label: string;
+  title: string;
+  description: string;
+};
+
 type EditorHeaderProps = {
   onAddText: (preset: TextPreset) => void;
   onAddShape?: (preset: ShapePreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
   onAddIconCard?: (preset: IconCardPreset) => void;
+  onAddLabelCard?: (preset: LabelCardPreset) => void;
   onOpenInsertPanel: () => void;
   onOpenBackgroundPanel: () => void;
   onOpenThemePanel: () => void;

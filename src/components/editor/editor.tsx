@@ -39,6 +39,7 @@ const Editor = () => {
     handleAddShape,
     handleAddFeatureCard,
     handleAddIconCard,
+    handleAddLabelCard,
   } = useWidgetCreation();
 
   const [activePanel, setActivePanel] = React.useState<SidebarPanel>(null);
@@ -117,6 +118,7 @@ const Editor = () => {
               onAddShape={handleAddShape}
               onAddFeatureCard={handleAddFeatureCard}
               onAddIconCard={handleAddIconCard}
+              onAddLabelCard={handleAddLabelCard}
               backgroundColor={undefined}
               onBackgroundColorChange={handleBackgroundColorChange}
               activeThemeId={globalTheme?.id}
@@ -162,6 +164,7 @@ const Editor = () => {
             onAddShape={handleAddShape}
             onAddFeatureCard={handleAddFeatureCard}
             onAddIconCard={handleAddIconCard}
+            onAddLabelCard={handleAddLabelCard}
             backgroundColor={activeSlide?.backgroundColor}
             onBackgroundColorChange={handleBackgroundColorChange}
             activeThemeId={globalTheme?.id}

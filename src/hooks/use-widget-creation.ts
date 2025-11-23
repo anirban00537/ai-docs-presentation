@@ -5,6 +5,7 @@ import type {
   ShapePreset,
   FeatureCardPreset,
   IconCardPreset,
+  LabelCardPreset,
 } from "@/components/editor/editor-toolbar";
 import type {
   TextWidget,
@@ -14,6 +15,7 @@ import type {
   ArrowWidget,
   NumberCardWidget,
   IconCardWidget,
+  LabelCardWidget,
   SlideWidget,
 } from "@/components/editor/widgets/types";
 import {
@@ -237,10 +239,50 @@ export const useWidgetCreation = () => {
     [dispatch, ensureSlideId, globalTheme]
   );
 
+  const handleAddLabelCard = useCallback(
+    (preset: LabelCardPreset) => {
+      const slideId = ensureSlideId();
+      if (!slideId) return;
+      const id = `label-card-${nanoid(8)}`;
+      const width = 400;
+      const height = 240;
+      const originX = Math.max(
+        40,
+        Math.round((SLIDE_DIMENSIONS.width - width) / 2)
+      );
+      const originY = Math.round((SLIDE_DIMENSIONS.height - height) / 2);
+
+      const newWidget: LabelCardWidget = {
+        id,
+        type: "labelCard",
+        label: preset.label,
+        title: preset.title,
+        description: preset.description,
+        x: originX,
+        y: originY,
+        width,
+        height,
+        // Seed with current theme colors so card matches active theme
+        backgroundColor: globalTheme?.surface ?? "#ffffff",
+        labelColor: globalTheme?.accent ?? "#0f172a",
+        labelTextColor: "#ffffff",
+        titleColor: globalTheme?.text ?? "#0f172a",
+        descriptionColor: globalTheme?.text ?? "#475569",
+        textAlign: "left",
+      };
+
+      dispatch(addWidget({ widget: newWidget, slideId }));
+      dispatch(selectWidgetAction(newWidget.id));
+      dispatch(stopWidgetEditingAction());
+    },
+    [dispatch, ensureSlideId, globalTheme]
+  );
+
   return {
     handleAddText,
     handleAddShape,
     handleAddFeatureCard,
     handleAddIconCard,
+    handleAddLabelCard,
   };
 };

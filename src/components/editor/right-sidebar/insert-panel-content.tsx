@@ -11,6 +11,7 @@ import {
   Zap,
   Heart,
   Rocket,
+  Tag,
 } from "lucide-react";
 import {
   ArrowPreview,
@@ -23,6 +24,7 @@ import type {
   ShapePreset,
   FeatureCardPreset,
   IconCardPreset,
+  LabelCardPreset,
 } from "@/components/editor/editor-toolbar";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +42,15 @@ const iconCardPresets: IconCardPreset[] = [
     icon: "Star",
     title: "Feature Title",
     description: "Feature description goes here.",
+  },
+];
+
+const labelCardPresets: LabelCardPreset[] = [
+  {
+    id: "default",
+    label: "Key insight",
+    title: "Label Card",
+    description: "Card with a colored label badge.",
   },
 ];
 
@@ -138,6 +149,7 @@ type InsertPanelContentProps = {
   onAddShape?: (preset: ShapePreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
   onAddIconCard?: (preset: IconCardPreset) => void;
+  onAddLabelCard?: (preset: LabelCardPreset) => void;
   onClose: () => void;
 };
 
@@ -175,6 +187,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   onAddShape,
   onAddFeatureCard,
   onAddIconCard,
+  onAddLabelCard,
   onClose,
 }) => {
   const handleAddText = (preset: TextPreset) => {
@@ -194,6 +207,11 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
 
   const handleAddIconCard = (preset: IconCardPreset) => {
     onAddIconCard?.(preset);
+    onClose();
+  };
+
+  const handleAddLabelCard = (preset: LabelCardPreset) => {
+    onAddLabelCard?.(preset);
     onClose();
   };
 
@@ -292,6 +310,34 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
                 </div>
                 <div className="text-[10px] text-muted-foreground line-clamp-1">
                   Card with icon, title and description
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Label Cards */}
+      <div className="space-y-2">
+        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+          Label Cards
+        </h3>
+        <div className="grid grid-cols-1 gap-2">
+          {labelCardPresets.map((preset) => (
+            <button
+              key={preset.id}
+              onClick={() => handleAddLabelCard(preset)}
+              className="group flex w-full items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-[0.98]"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
+                <Tag className="h-4 w-4" />
+              </div>
+              <div className="flex-1 space-y-0.5">
+                <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
+                  {preset.title}
+                </div>
+                <div className="text-[10px] text-muted-foreground line-clamp-1">
+                  {preset.description}
                 </div>
               </div>
             </button>

@@ -7,6 +7,7 @@ import type {
   ShapePreset,
   FeatureCardPreset,
   IconCardPreset,
+  LabelCardPreset,
 } from "@/components/editor/editor-toolbar";
 import { Button } from "@/components/ui/button";
 import { InsertPanelContent } from "./right-sidebar/insert-panel-content";
@@ -23,6 +24,7 @@ type RightSidebarProps = {
   onAddShape?: (preset: ShapePreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
   onAddIconCard?: (preset: IconCardPreset) => void;
+  onAddLabelCard?: (preset: LabelCardPreset) => void;
   // Background panel props
   backgroundColor?: string[] | string;
   onBackgroundColorChange?: (colors: string[]) => void;
@@ -38,6 +40,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   onAddShape,
   onAddFeatureCard,
   onAddIconCard,
+  onAddLabelCard,
   backgroundColor,
   onBackgroundColorChange,
   activeThemeId,
@@ -90,6 +93,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             onAddShape={onAddShape}
             onAddFeatureCard={onAddFeatureCard}
             onAddIconCard={onAddIconCard}
+            onAddLabelCard={onAddLabelCard}
             onClose={onClose}
           />
         )}
