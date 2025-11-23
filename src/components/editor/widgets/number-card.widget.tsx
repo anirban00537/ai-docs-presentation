@@ -303,6 +303,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 color: numberColor,
                 fontFamily: numberFontFamily,
                 lineHeight: 1,
+                textAlign,
               }}
               value={localNumber}
               onChange={(e) => {
@@ -326,6 +327,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 color: titleColor,
                 fontFamily: titleFontFamily,
                 lineHeight: 1.25,
+                textAlign,
               }}
               value={localTitle}
               onChange={(e) => {
@@ -351,6 +353,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 overflowWrap: "break-word",
                 minHeight: "3rem",
                 overflow: "hidden",
+                textAlign,
               }}
               value={localDescription}
               onChange={(e) => {

@@ -534,6 +534,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 color: titleColor,
                 fontFamily: titleFontFamily,
                 lineHeight: 1.25,
+                textAlign,
               }}
               value={localTitle}
               onChange={(e) => {
@@ -559,6 +560,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 overflowWrap: "break-word",
                 minHeight: "3rem",
                 overflow: "hidden",
+                textAlign,
               }}
               value={localDescription}
               onChange={(e) => {
