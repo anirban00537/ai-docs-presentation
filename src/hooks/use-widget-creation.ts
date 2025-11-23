@@ -191,6 +191,7 @@ export const useWidgetCreation = () => {
         titleColor: globalTheme?.text ?? "#0f172a",
         descriptionColor: globalTheme?.text ?? "#475569",
         textAlign: "left",
+        backgroundType: "glass",
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));
@@ -230,6 +231,7 @@ export const useWidgetCreation = () => {
         titleColor: globalTheme?.text ?? "#0f172a",
         descriptionColor: globalTheme?.text ?? "#475569",
         textAlign: "left",
+        backgroundType: "glass",
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));
@@ -269,6 +271,7 @@ export const useWidgetCreation = () => {
         titleColor: globalTheme?.text ?? "#0f172a",
         descriptionColor: globalTheme?.text ?? "#475569",
         textAlign: "left",
+        backgroundType: "glass",
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));
