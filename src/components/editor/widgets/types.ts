@@ -58,6 +58,9 @@ export type NumberCardWidget = WidgetCommon & {
   numberColor?: string;
   titleColor?: string;
   descriptionColor?: string;
+  numberFontFamily?: string;
+  titleFontFamily?: string;
+  descriptionFontFamily?: string;
   textAlign?: "left" | "center" | "right";
 };
 
@@ -90,6 +93,9 @@ export type SlideWidgetUpdate = Partial<
     numberColor: string;
     titleColor: string;
     descriptionColor: string;
+    numberFontFamily: string;
+    titleFontFamily: string;
+    descriptionFontFamily: string;
     textAlign: "left" | "center" | "right";
   }
 >;

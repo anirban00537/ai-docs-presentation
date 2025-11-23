@@ -72,6 +72,43 @@ const ALIGN_OPTIONS: Array<{
   { value: "right", icon: AlignRight, label: "Align right" },
 ];
 
+const GOOGLE_FONTS = [
+  {
+    value: "var(--font-poppins)",
+    label: "Poppins",
+    style: "var(--font-poppins)",
+  },
+  { value: "var(--font-inter)", label: "Inter", style: "var(--font-inter)" },
+  { value: "var(--font-roboto)", label: "Roboto", style: "var(--font-roboto)" },
+  {
+    value: "var(--font-open-sans)",
+    label: "Open Sans",
+    style: "var(--font-open-sans)",
+  },
+  {
+    value: "var(--font-montserrat)",
+    label: "Montserrat",
+    style: "var(--font-montserrat)",
+  },
+  { value: "var(--font-lato)", label: "Lato", style: "var(--font-lato)" },
+  {
+    value: "var(--font-playfair)",
+    label: "Playfair Display",
+    style: "var(--font-playfair)",
+  },
+  {
+    value: "var(--font-merriweather)",
+    label: "Merriweather",
+    style: "var(--font-merriweather)",
+  },
+  {
+    value: "var(--font-raleway)",
+    label: "Raleway",
+    style: "var(--font-raleway)",
+  },
+  { value: "var(--font-ubuntu)", label: "Ubuntu", style: "var(--font-ubuntu)" },
+];
+
 const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
   widget,
   isSelected,
@@ -229,11 +266,15 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
     [debouncedUpdateNumber, debouncedUpdateTitle, debouncedUpdateDescription]
   );
 
-  // Widget-local colors with sensible defaults
+  // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
   const numberColor = widget.numberColor ?? "#0f172a";
   const titleColor = widget.titleColor ?? "#0f172a";
   const descriptionColor = widget.descriptionColor ?? "#475569";
+  const numberFontFamily = widget.numberFontFamily ?? "var(--font-poppins)";
+  const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
+  const descriptionFontFamily =
+    widget.descriptionFontFamily ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "left";
 
   return (
@@ -282,6 +323,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 fontSize: "2.5rem",
                 fontWeight: 700,
                 color: numberColor,
+                fontFamily: numberFontFamily,
                 lineHeight: 1,
               }}
               value={localNumber}
@@ -304,6 +346,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 fontSize: "1.125rem",
                 fontWeight: 600,
                 color: titleColor,
+                fontFamily: titleFontFamily,
                 lineHeight: 1.25,
               }}
               value={localTitle}
@@ -324,6 +367,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
               style={{
                 fontSize: "0.875rem",
                 color: descriptionColor,
+                fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,
                 wordWrap: "break-word",
                 overflowWrap: "break-word",
@@ -376,10 +420,57 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
   const textColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const presetButtonRef = React.useRef<HTMLButtonElement>(null);
   const textPresetButtonRef = React.useRef<HTMLButtonElement>(null);
+  const fontButtonRef = React.useRef<HTMLButtonElement>(null);
+  const presetMenuRef = React.useRef<HTMLDivElement>(null);
+  const textPresetMenuRef = React.useRef<HTMLDivElement>(null);
+  const fontMenuRef = React.useRef<HTMLDivElement>(null);
   const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
   const [textPresetMenuOpen, setTextPresetMenuOpen] = React.useState(false);
+  const [fontMenuOpen, setFontMenuOpen] = React.useState(false);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+
+  // Close menus when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (
+        presetMenuOpen &&
+        presetMenuRef.current &&
+        !presetMenuRef.current.contains(target) &&
+        presetButtonRef.current &&
+        !presetButtonRef.current.contains(target)
+      ) {
+        setPresetMenuOpen(false);
+      }
+
+      if (
+        textPresetMenuOpen &&
+        textPresetMenuRef.current &&
+        !textPresetMenuRef.current.contains(target) &&
+        textPresetButtonRef.current &&
+        !textPresetButtonRef.current.contains(target)
+      ) {
+        setTextPresetMenuOpen(false);
+      }
+
+      if (
+        fontMenuOpen &&
+        fontMenuRef.current &&
+        !fontMenuRef.current.contains(target) &&
+        fontButtonRef.current &&
+        !fontButtonRef.current.contains(target)
+      ) {
+        setFontMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [presetMenuOpen, textPresetMenuOpen, fontMenuOpen]);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -410,6 +501,25 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
     );
   };
 
+  const handleSetFontFamily = (fontFamily: string) => {
+    if (!activeField) return;
+
+    const fontKey =
+      activeField === "number"
+        ? "numberFontFamily"
+        : activeField === "title"
+        ? "titleFontFamily"
+        : "descriptionFontFamily";
+
+    dispatch(
+      updateWidgetAction({
+        slideId: activeSlideId,
+        widgetId: widget.id,
+        updates: { [fontKey]: fontFamily },
+      })
+    );
+  };
+
   const handleAlign = (align: "left" | "center" | "right") => {
     if (align !== (widget.textAlign ?? "left")) {
       dispatch(
@@ -433,6 +543,19 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
       : activeField === "description"
       ? widget.descriptionColor ?? "#475569"
       : "#0f172a";
+
+  const currentFontFamily =
+    activeField === "number"
+      ? widget.numberFontFamily ?? "var(--font-poppins)"
+      : activeField === "title"
+      ? widget.titleFontFamily ?? "var(--font-poppins)"
+      : activeField === "description"
+      ? widget.descriptionFontFamily ?? "var(--font-poppins)"
+      : "var(--font-poppins)";
+
+  const currentFontLabel =
+    GOOGLE_FONTS.find((font) => font.value === currentFontFamily)?.label ??
+    "Poppins";
 
   return (
     <ToolbarPortal
@@ -522,7 +645,7 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
                 <ChevronDown className="h-3 w-3 opacity-60" />
               </Button>
               {presetMenuOpen && (
-                <ColorPopover>
+                <ColorPopover ref={presetMenuRef}>
                   <div className="flex flex-col gap-2">
                     <div className="text-xs font-semibold text-muted-foreground mb-2 px-1">
                       Background Presets
@@ -609,7 +732,7 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
                   <ChevronDown className="h-3 w-3 opacity-60" />
                 </Button>
                 {textPresetMenuOpen && (
-                  <ColorPopover>
+                  <ColorPopover ref={textPresetMenuRef}>
                     <div className="flex flex-col gap-2">
                       <div className="text-xs font-semibold text-muted-foreground mb-2 px-1">
                         Text Presets
@@ -631,6 +754,60 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
                   </ColorPopover>
                 )}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Font Family Section - Only show when a field is active */}
+        {activeField && (
+          <div className="flex items-center gap-2 border-r border-border pr-3">
+            <span className="text-xs font-semibold text-muted-foreground">
+              Font
+            </span>
+            <div className="relative flex items-center">
+              <Button
+                ref={fontButtonRef}
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-2 rounded-md border border-transparent px-2 py-1 text-xs min-w-[100px] justify-between"
+                onClick={() => setFontMenuOpen((prev) => !prev)}
+              >
+                <span className="text-[11px] font-medium text-muted-foreground truncate">
+                  {currentFontLabel}
+                </span>
+                <ChevronDown className="h-3 w-3 opacity-60" />
+              </Button>
+              {fontMenuOpen && (
+                <div
+                  ref={fontMenuRef}
+                  className="absolute left-0 top-full mt-1 z-40 min-w-[200px] max-h-[300px] overflow-y-auto rounded-md border border-border bg-white p-2 shadow-lg"
+                >
+                  <div className="flex flex-col gap-1">
+                    {GOOGLE_FONTS.map((font) => (
+                      <button
+                        key={font.value}
+                        type="button"
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm rounded-md transition hover:bg-muted/80",
+                          currentFontFamily === font.value
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "text-foreground"
+                        )}
+                        style={{ fontFamily: font.style }}
+                        onClick={() => {
+                          handleSetFontFamily(font.value);
+                          setFontMenuOpen(false);
+                        }}
+                      >
+                        <span>{font.label}</span>
+                        {currentFontFamily === font.value && (
+                          <span className="text-primary">✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -684,10 +861,16 @@ const ColorChip: React.FC<ColorChipProps> = ({ color, active, onSelect }) => (
   </button>
 );
 
-const ColorPopover: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
-  <div className="absolute left-0 top-full mt-1 z-40 min-w-[180px] rounded-md border border-border bg-white p-3 shadow-lg">
+const ColorPopover = React.forwardRef<
+  HTMLDivElement,
+  { children: React.ReactNode }
+>(({ children }, ref) => (
+  <div
+    ref={ref}
+    className="absolute left-0 top-full mt-1 z-40 min-w-[180px] rounded-md border border-border bg-white p-3 shadow-lg"
+  >
     {children}
   </div>
-);
+));
+
+ColorPopover.displayName = "ColorPopover";
