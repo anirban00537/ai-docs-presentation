@@ -61,12 +61,12 @@ export const LeftSidebar = () => {
         <Button
           onClick={handleAddSlide}
           variant="ghost"
-          className="w-full justify-center gap-2 h-11 px-3 bg-primary shadow-sm border border-border/40 hover:bg-primary/5 hover:text-primary hover:border-primary/20 transition-all duration-200 group"
+          className="w-full justify-center gap-2 h-11 px-3 bg-primary shadow-sm border border-border/40 hover:bg-primary/90 hover:text-primary-foreground hover:border-primary/20 transition-all duration-200 group"
         >
-          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-200">
+          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary-foreground/20 text-primary-foreground group-hover:bg-primary-foreground/30 transition-colors duration-200">
             <Plus className="w-3 h-3" />
           </div>
-          <span className="text-sm font-medium text-primary-foreground group-hover:text-primary-foreground transition-colors">
+          <span className="text-sm font-medium text-primary-foreground transition-colors">
             New Slide
           </span>
         </Button>
