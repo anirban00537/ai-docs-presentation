@@ -224,7 +224,7 @@ const slidesSlice = createSlice({
               widget.stroke = theme.accent;
               break;
             }
-            case "featureCard": {
+            case "numberCard": {
               widget.backgroundColor = theme.surface;
               widget.numberColor = theme.accent;
               widget.titleColor = theme.text;

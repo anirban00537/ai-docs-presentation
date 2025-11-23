@@ -11,7 +11,7 @@ import type {
   CircleWidget,
   PolygonWidget,
   ArrowWidget,
-  FeatureCardWidget,
+  NumberCardWidget,
   SlideWidget,
 } from "@/components/editor/widgets/types";
 import {
@@ -168,9 +168,9 @@ export const useWidgetCreation = () => {
       );
       const originY = Math.round((SLIDE_DIMENSIONS.height - height) / 2);
 
-      const newWidget: FeatureCardWidget = {
+      const newWidget: NumberCardWidget = {
         id,
-        type: "featureCard",
+        type: "numberCard",
         number: "01",
         title: preset.title,
         description: preset.description,

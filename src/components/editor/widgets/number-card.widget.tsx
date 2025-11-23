@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { AlignCenter, AlignLeft, AlignRight, ChevronDown } from "lucide-react";
 import type {
-  FeatureCardWidget,
+  NumberCardWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
 import { ResizeHandles } from "@/components/editor/resize-handles";
@@ -23,8 +23,8 @@ import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 
-type FeatureCardWidgetNodeProps = {
-  widget: FeatureCardWidget;
+type NumberCardWidgetNodeProps = {
+  widget: NumberCardWidget;
   isSelected: boolean;
   isEditing: boolean;
   baseZIndex: number;
@@ -38,7 +38,7 @@ type FeatureCardWidgetNodeProps = {
 
 type EditingField = "number" | "title" | "description" | null;
 
-const TOOLBAR_SELECTOR = '[data-feature-card-toolbar="true"]';
+const TOOLBAR_SELECTOR = '[data-number-card-toolbar="true"]';
 
 const BACKGROUND_COLORS = [
   "#ffffff", // white
@@ -72,7 +72,7 @@ const ALIGN_OPTIONS: Array<{
   { value: "right", icon: AlignRight, label: "Align right" },
 ];
 
-const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
+const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
   widget,
   isSelected,
   isEditing,
@@ -303,7 +303,7 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
     >
       <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
         {isSelected && (
-          <FeatureCardEditingToolbar
+          <NumberCardEditingToolbar
             widget={widget}
             isEditing={isEditing || editingField !== null}
             widgetRef={widgetRef}
@@ -431,17 +431,17 @@ const FeatureCardWidgetNodeBase: React.FC<FeatureCardWidgetNodeProps> = ({
   );
 };
 
-export const FeatureCardWidgetNode = React.memo(FeatureCardWidgetNodeBase);
+export const NumberCardWidgetNode = React.memo(NumberCardWidgetNodeBase);
 
-type FeatureCardEditingToolbarProps = {
-  widget: FeatureCardWidget;
+type NumberCardEditingToolbarProps = {
+  widget: NumberCardWidget;
   isEditing: boolean;
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
 };
 
-const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
+const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
   widget,
   isEditing,
   widgetRef,
@@ -488,7 +488,7 @@ const FeatureCardEditingToolbar: React.FC<FeatureCardEditingToolbarProps> = ({
       offset={isEditing ? 8 : 16}
     >
       <div
-        data-feature-card-toolbar="true"
+        data-number-card-toolbar="true"
         className="pointer-events-auto flex items-center gap-3 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur"
         onPointerDown={(event) => {
           event.stopPropagation();

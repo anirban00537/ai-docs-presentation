@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { TextWidgetNode } from "@/components/editor/widgets/text.widget";
 import { ShapeWidgetNode } from "@/components/editor/widgets/shape.widget";
-import { FeatureCardWidgetNode } from "@/components/editor/widgets/feature-card.widget";
+import { NumberCardWidgetNode } from "@/components/editor/widgets/number-card.widget";
 import type {
   SlideWidget,
   SlideWidgetUpdate,
@@ -12,7 +12,7 @@ import type {
   CircleWidget,
   ArrowWidget,
   PolygonWidget,
-  FeatureCardWidget,
+  NumberCardWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
 import type { GlobalTheme, SlideModel } from "@/store/slices/slidesSlice";
@@ -289,11 +289,11 @@ const Slide: React.FC<SlideProps> = ({
                     );
                   }
 
-                  if (effective.type === "featureCard") {
+                  if (effective.type === "numberCard") {
                     return (
-                      <FeatureCardWidgetNode
+                      <NumberCardWidgetNode
                         key={widget.id}
-                        widget={effective as FeatureCardWidget}
+                        widget={effective as NumberCardWidget}
                         isSelected={isSelected}
                         isEditing={isEditing}
                         baseZIndex={baseZIndex}

@@ -48,8 +48,8 @@ export type PolygonWidget = WidgetCommon & {
   strokeWidth?: number;
 };
 
-export type FeatureCardWidget = WidgetCommon & {
-  type: "featureCard";
+export type NumberCardWidget = WidgetCommon & {
+  type: "numberCard";
   number: string;
   title: string;
   description: string;
@@ -67,7 +67,7 @@ export type SlideWidget =
   | CircleWidget
   | ArrowWidget
   | PolygonWidget
-  | FeatureCardWidget;
+  | NumberCardWidget;
 
 export type SlideWidgetUpdate = Partial<
   Omit<WidgetCommon, "id"> & {
