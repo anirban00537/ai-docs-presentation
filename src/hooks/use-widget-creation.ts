@@ -40,7 +40,7 @@ export const useWidgetCreation = () => {
 
   const ensureSlideId = useCallback(() => {
     if (!activeSlideId) {
-      throw new Error("No active slide available");
+      return null;
     }
     return activeSlideId;
   }, [activeSlideId]);
@@ -48,6 +48,7 @@ export const useWidgetCreation = () => {
   const handleAddText = useCallback(
     (preset: TextPreset) => {
       const slideId = ensureSlideId();
+      if (!slideId) return;
       const config = TEXT_PRESET_CONFIG[preset.id] ?? TEXT_PRESET_CONFIG.body;
       const originX = Math.max(
         40,
@@ -83,6 +84,7 @@ export const useWidgetCreation = () => {
   const handleAddShape = useCallback(
     (preset: ShapePreset) => {
       const slideId = ensureSlideId();
+      if (!slideId) return;
       const config = SHAPE_PRESET_CONFIG[preset.id];
       if (!config) return;
 
@@ -161,6 +163,7 @@ export const useWidgetCreation = () => {
   const handleAddFeatureCard = useCallback(
     (preset: FeatureCardPreset) => {
       const slideId = ensureSlideId();
+      if (!slideId) return;
       const id = `feature-card-${nanoid(8)}`;
       const width = 400;
       const height = 190;
@@ -198,6 +201,7 @@ export const useWidgetCreation = () => {
   const handleAddIconCard = useCallback(
     (preset: IconCardPreset) => {
       const slideId = ensureSlideId();
+      if (!slideId) return;
       const id = `icon-card-${nanoid(8)}`;
       const width = 400;
       const height = 240;

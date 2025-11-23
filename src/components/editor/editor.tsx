@@ -34,8 +34,12 @@ const Editor = () => {
     onClearLiveOverride,
   } = useWidgetInteractions();
 
-  const { handleAddText, handleAddShape, handleAddFeatureCard, handleAddIconCard } =
-    useWidgetCreation();
+  const {
+    handleAddText,
+    handleAddShape,
+    handleAddFeatureCard,
+    handleAddIconCard,
+  } = useWidgetCreation();
 
   const [activePanel, setActivePanel] = React.useState<SidebarPanel>(null);
 
@@ -130,9 +134,9 @@ const Editor = () => {
         onAddText={handleAddText}
         onAddShape={handleAddShape}
         onAddFeatureCard={handleAddFeatureCard}
-        onOpenInsertPanel={() => setActivePanel("insert")}
-        onOpenBackgroundPanel={() => setActivePanel("background")}
-        onOpenThemePanel={() => setActivePanel("theme")}
+        onOpenInsertPanel={() => togglePanel("insert")}
+        onOpenBackgroundPanel={() => togglePanel("background")}
+        onOpenThemePanel={() => togglePanel("theme")}
       />
       <div className="flex flex-1 min-h-0 overflow-hidden h-full">
         <div
