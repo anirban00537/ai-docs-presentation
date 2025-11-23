@@ -100,21 +100,7 @@ export type LabelCardWidget = WidgetCommon & {
   backgroundType?: "solid" | "glass";
 };
 
-export type ListWidget = WidgetCommon & {
-  type: "list";
-  items: string[];
-  listType?: "bullet" | "numbered";
-  title?: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  titleColor?: string;
-  itemColor?: string;
-  bulletColor?: string;
-  titleFontFamily?: string;
-  itemFontFamily?: string;
-  textAlign?: "left" | "center" | "right";
-  backgroundType?: "solid" | "glass";
-};
+export type { ListWidget } from "./list-card/types";
 
 export type SlideWidget =
   | TextWidget
@@ -125,7 +111,7 @@ export type SlideWidget =
   | NumberCardWidget
   | IconCardWidget
   | LabelCardWidget
-  | ListWidget;
+  | import("./list-card/types").ListWidget;
 
 export type SlideWidgetUpdate = Partial<
   Omit<WidgetCommon, "id"> & {

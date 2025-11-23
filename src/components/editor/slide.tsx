@@ -6,7 +6,7 @@ import { ShapeWidgetNode } from "@/components/editor/widgets/shape.widget";
 import { NumberCardWidgetNode } from "@/components/editor/widgets/number-card.widget";
 import { IconCardWidgetNode } from "@/components/editor/widgets/icon-card.widget";
 import { LabelCardWidgetNode } from "@/components/editor/widgets/label-card.widget";
-import { ListCardWidgetNode } from "@/components/editor/widgets/list-card.widget";
+import { ListCardWidgetNode } from "@/components/editor/widgets/list-card";
 import type {
   SlideWidget,
   SlideWidgetUpdate,
@@ -18,9 +18,9 @@ import type {
   NumberCardWidget,
   IconCardWidget,
   LabelCardWidget,
-  ListWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
+import type { ListWidget } from "@/components/editor/widgets/list-card";
 import type { GlobalTheme, SlideModel } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import {

@@ -4,9 +4,6 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
   ChevronDown,
   Sparkles,
   Plus,
@@ -14,10 +11,9 @@ import {
   List,
   ListOrdered,
 } from "lucide-react";
-import type {
-  ListWidget,
-  ResizeHandle,
-} from "@/components/editor/widgets/types";
+import type { ListWidget } from "./types";
+import type { ResizeHandle } from "../types";
+import { TOOLBAR_SELECTOR, ALIGN_OPTIONS, GOOGLE_FONTS } from "./constants";
 import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -44,55 +40,6 @@ type ListCardWidgetNodeProps = {
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
 };
-
-const TOOLBAR_SELECTOR = '[data-list-card-toolbar="true"]';
-
-const ALIGN_OPTIONS: Array<{
-  value: "left" | "center" | "right";
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  label: string;
-}> = [
-  { value: "left", icon: AlignLeft, label: "Align left" },
-  { value: "center", icon: AlignCenter, label: "Align center" },
-  { value: "right", icon: AlignRight, label: "Align right" },
-];
-
-const GOOGLE_FONTS = [
-  {
-    value: "var(--font-poppins)",
-    label: "Poppins",
-    style: "var(--font-poppins)",
-  },
-  { value: "var(--font-inter)", label: "Inter", style: "var(--font-inter)" },
-  { value: "var(--font-roboto)", label: "Roboto", style: "var(--font-roboto)" },
-  {
-    value: "var(--font-open-sans)",
-    label: "Open Sans",
-    style: "var(--font-open-sans)",
-  },
-  {
-    value: "var(--font-montserrat)",
-    label: "Montserrat",
-    style: "var(--font-montserrat)",
-  },
-  { value: "var(--font-lato)", label: "Lato", style: "var(--font-lato)" },
-  {
-    value: "var(--font-playfair)",
-    label: "Playfair Display",
-    style: "var(--font-playfair)",
-  },
-  {
-    value: "var(--font-merriweather)",
-    label: "Merriweather",
-    style: "var(--font-merriweather)",
-  },
-  {
-    value: "var(--font-raleway)",
-    label: "Raleway",
-    style: "var(--font-raleway)",
-  },
-  { value: "var(--font-ubuntu)", label: "Ubuntu", style: "var(--font-ubuntu)" },
-];
 
 const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   widget,
@@ -138,7 +85,8 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
 
   React.useEffect(() => {
     setLocalItems((prev) => {
-      const widgetItems = widget.items && widget.items.length > 0 ? widget.items : [""];
+      const widgetItems =
+        widget.items && widget.items.length > 0 ? widget.items : [""];
       if (JSON.stringify(prev) === JSON.stringify(widgetItems)) {
         return prev;
       }
@@ -220,7 +168,11 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
         handleAddItem();
-      } else if (event.key === "Backspace" && localItems[index] === "" && localItems.length > 1) {
+      } else if (
+        event.key === "Backspace" &&
+        localItems[index] === "" &&
+        localItems.length > 1
+      ) {
         event.preventDefault();
         handleRemoveItem(index);
         // Focus previous item
@@ -580,7 +532,8 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
   const currentAlign = widget.textAlign ?? "left";
   const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
   const currentTextColor = widget.itemColor ?? "#0f172a";
-  const currentBulletColor = widget.bulletColor ?? widget.itemColor ?? "#0f172a";
+  const currentBulletColor =
+    widget.bulletColor ?? widget.itemColor ?? "#0f172a";
   const currentTitleColor = widget.titleColor ?? "#0f172a";
   const currentFontFamily = widget.itemFontFamily ?? "var(--font-poppins)";
 
@@ -887,4 +840,3 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
     </ToolbarPortal>
   );
 };
-
