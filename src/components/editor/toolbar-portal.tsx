@@ -85,10 +85,11 @@ export function ToolbarPortal({
         left = maxLeft;
       }
 
-      // Convert to absolute screen coordinates
+      // Use viewport coordinates directly (getBoundingClientRect already accounts for scroll)
+      // Position fixed elements use viewport coordinates, so no need to add scroll offsets
       setPosition({
-        top: top + window.scrollY,
-        left: left + window.scrollX,
+        top: top,
+        left: left,
         placement: finalPlacement,
       });
     };
