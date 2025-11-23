@@ -6,6 +6,7 @@ import { ShapeWidgetNode } from "@/components/editor/widgets/shape.widget";
 import { NumberCardWidgetNode } from "@/components/editor/widgets/number-card.widget";
 import { IconCardWidgetNode } from "@/components/editor/widgets/icon-card.widget";
 import { LabelCardWidgetNode } from "@/components/editor/widgets/label-card.widget";
+import { ListCardWidgetNode } from "@/components/editor/widgets/list-card.widget";
 import type {
   SlideWidget,
   SlideWidgetUpdate,
@@ -17,6 +18,7 @@ import type {
   NumberCardWidget,
   IconCardWidget,
   LabelCardWidget,
+  ListWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
 import type { GlobalTheme, SlideModel } from "@/store/slices/slidesSlice";
@@ -348,6 +350,31 @@ const Slide: React.FC<SlideProps> = ({
                       <LabelCardWidgetNode
                         key={widget.id}
                         widget={effective as LabelCardWidget}
+                        isSelected={isSelected}
+                        isEditing={isEditing}
+                        baseZIndex={baseZIndex}
+                        onPointerDown={(e) =>
+                          handleDragStart(
+                            widget,
+                            effective,
+                            isSelected,
+                            isEditing,
+                            e
+                          )
+                        }
+                        getResizePointerDown={(handle) => (e) =>
+                          handleResizeStart(widget, effective, handle, e)}
+                        viewport={viewport}
+                        containerRef={canvasContainerRef}
+                      />
+                    );
+                  }
+
+                  if (effective.type === "list") {
+                    return (
+                      <ListCardWidgetNode
+                        key={widget.id}
+                        widget={effective as ListWidget}
                         isSelected={isSelected}
                         isEditing={isEditing}
                         baseZIndex={baseZIndex}

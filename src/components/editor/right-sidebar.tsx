@@ -2,29 +2,17 @@
 
 import React from "react";
 import { XIcon } from "lucide-react";
-import type {
-  TextPreset,
-  ShapePreset,
-  FeatureCardPreset,
-  IconCardPreset,
-  LabelCardPreset,
-} from "@/components/editor/editor-toolbar";
 import { Button } from "@/components/ui/button";
 import { InsertPanelContent } from "./right-sidebar/insert-panel-content";
 import { BackgroundPanelContent } from "./right-sidebar/background-panel-content";
 import { ThemePanelContent } from "./right-sidebar/theme-panel-content";
+import { useWidgetCreation } from "@/hooks/use-widget-creation";
 
 export type SidebarPanel = "insert" | "background" | "theme" | null;
 
 type RightSidebarProps = {
   panel: SidebarPanel;
   onClose: () => void;
-  // Insert panel props
-  onAddText?: (preset: TextPreset) => void;
-  onAddShape?: (preset: ShapePreset) => void;
-  onAddFeatureCard?: (preset: FeatureCardPreset) => void;
-  onAddIconCard?: (preset: IconCardPreset) => void;
-  onAddLabelCard?: (preset: LabelCardPreset) => void;
   // Background panel props
   backgroundColor?: string[] | string;
   onBackgroundColorChange?: (colors: string[]) => void;
@@ -36,16 +24,19 @@ type RightSidebarProps = {
 export const RightSidebar: React.FC<RightSidebarProps> = ({
   panel,
   onClose,
-  onAddText,
-  onAddShape,
-  onAddFeatureCard,
-  onAddIconCard,
-  onAddLabelCard,
   backgroundColor,
   onBackgroundColorChange,
   activeThemeId,
   onSelectTheme,
 }) => {
+  const {
+    handleAddText,
+    handleAddShape,
+    handleAddFeatureCard,
+    handleAddIconCard,
+    handleAddLabelCard,
+    handleAddListCard,
+  } = useWidgetCreation();
   if (!panel) return null;
 
   const getTitle = () => {
@@ -89,11 +80,12 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
         `}</style>
         {panel === "insert" && (
           <InsertPanelContent
-            onAddText={onAddText || (() => {})}
-            onAddShape={onAddShape}
-            onAddFeatureCard={onAddFeatureCard}
-            onAddIconCard={onAddIconCard}
-            onAddLabelCard={onAddLabelCard}
+            onAddText={handleAddText}
+            onAddShape={handleAddShape}
+            onAddFeatureCard={handleAddFeatureCard}
+            onAddIconCard={handleAddIconCard}
+            onAddLabelCard={handleAddLabelCard}
+            onAddListCard={handleAddListCard}
             onClose={onClose}
           />
         )}

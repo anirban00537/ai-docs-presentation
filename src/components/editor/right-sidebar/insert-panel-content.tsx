@@ -12,6 +12,8 @@ import {
   Heart,
   Rocket,
   Tag,
+  List,
+  ListOrdered,
 } from "lucide-react";
 import {
   ArrowPreview,
@@ -25,6 +27,7 @@ import type {
   FeatureCardPreset,
   IconCardPreset,
   LabelCardPreset,
+  ListCardPreset,
 } from "@/components/editor/editor-toolbar";
 import { cn } from "@/lib/utils";
 
@@ -51,6 +54,20 @@ const labelCardPresets: LabelCardPreset[] = [
     label: "Key insight",
     title: "Label Card",
     description: "Card with a colored label badge.",
+  },
+];
+
+const listCardPresets: ListCardPreset[] = [
+  {
+    id: "bullet",
+    title: "Features",
+    items: ["Feature one", "Feature two", "Feature three"],
+    listType: "bullet",
+  },
+  {
+    id: "numbered",
+    items: ["First step", "Second step", "Third step"],
+    listType: "numbered",
   },
 ];
 
@@ -150,6 +167,7 @@ type InsertPanelContentProps = {
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
   onAddIconCard?: (preset: IconCardPreset) => void;
   onAddLabelCard?: (preset: LabelCardPreset) => void;
+  onAddListCard?: (preset: ListCardPreset) => void;
   onClose: () => void;
 };
 
@@ -188,6 +206,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   onAddFeatureCard,
   onAddIconCard,
   onAddLabelCard,
+  onAddListCard,
   onClose,
 }) => {
   const handleAddText = (preset: TextPreset) => {
@@ -212,6 +231,11 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
 
   const handleAddLabelCard = (preset: LabelCardPreset) => {
     onAddLabelCard?.(preset);
+    onClose();
+  };
+
+  const handleAddListCard = (preset: ListCardPreset) => {
+    onAddListCard?.(preset);
     onClose();
   };
 
@@ -338,6 +362,38 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
                 </div>
                 <div className="text-[10px] text-muted-foreground line-clamp-1">
                   {preset.description}
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* List Cards */}
+      <div className="space-y-2">
+        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+          Lists
+        </h3>
+        <div className="grid grid-cols-1 gap-2">
+          {listCardPresets.map((preset) => (
+            <button
+              key={preset.id}
+              onClick={() => handleAddListCard(preset)}
+              className="group flex w-full items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-[0.98]"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
+                {preset.listType === "numbered" ? (
+                  <ListOrdered className="h-4 w-4" />
+                ) : (
+                  <List className="h-4 w-4" />
+                )}
+              </div>
+              <div className="flex-1 space-y-0.5">
+                <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
+                  {preset.title || `${preset.listType === "numbered" ? "Numbered" : "Bullet"} List`}
+                </div>
+                <div className="text-[10px] text-muted-foreground line-clamp-1">
+                  {preset.items.length} items
                 </div>
               </div>
             </button>

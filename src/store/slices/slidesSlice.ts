@@ -246,6 +246,13 @@ const slidesSlice = createSlice({
               widget.descriptionColor = theme.text;
               break;
             }
+            case "list": {
+              widget.backgroundColor = theme.surface;
+              widget.itemColor = theme.text;
+              widget.bulletColor = theme.accent;
+              widget.titleColor = theme.text;
+              break;
+            }
             default:
               break;
           }

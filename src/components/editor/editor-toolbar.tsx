@@ -47,12 +47,14 @@ export type LabelCardPreset = {
   description: string;
 };
 
+export type ListCardPreset = {
+  id: string;
+  title?: string;
+  items: string[];
+  listType?: "bullet" | "numbered";
+};
+
 type EditorHeaderProps = {
-  onAddText: (preset: TextPreset) => void;
-  onAddShape?: (preset: ShapePreset) => void;
-  onAddFeatureCard?: (preset: FeatureCardPreset) => void;
-  onAddIconCard?: (preset: IconCardPreset) => void;
-  onAddLabelCard?: (preset: LabelCardPreset) => void;
   onOpenInsertPanel: () => void;
   onOpenBackgroundPanel: () => void;
   onOpenThemePanel: () => void;

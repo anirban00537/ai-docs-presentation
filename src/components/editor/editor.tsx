@@ -13,7 +13,6 @@ import {
 } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
 import { EditorHeader } from "@/components/editor/editor-toolbar";
-import { useWidgetCreation } from "@/hooks/use-widget-creation";
 import {
   RightSidebar,
   type SidebarPanel,
@@ -33,14 +32,6 @@ const Editor = () => {
     onSetLiveOverride,
     onClearLiveOverride,
   } = useWidgetInteractions();
-
-  const {
-    handleAddText,
-    handleAddShape,
-    handleAddFeatureCard,
-    handleAddIconCard,
-    handleAddLabelCard,
-  } = useWidgetCreation();
 
   const [activePanel, setActivePanel] = React.useState<SidebarPanel>(null);
 
@@ -99,9 +90,6 @@ const Editor = () => {
     return (
       <div className="flex h-full flex-1 flex-col overflow-hidden">
         <EditorHeader
-          onAddText={handleAddText}
-          onAddShape={handleAddShape}
-          onAddFeatureCard={handleAddFeatureCard}
           onOpenInsertPanel={() => togglePanel("insert")}
           onOpenBackgroundPanel={() => togglePanel("background")}
           onOpenThemePanel={() => togglePanel("theme")}
@@ -114,11 +102,6 @@ const Editor = () => {
             <RightSidebar
               panel={activePanel}
               onClose={() => setActivePanel(null)}
-              onAddText={handleAddText}
-              onAddShape={handleAddShape}
-              onAddFeatureCard={handleAddFeatureCard}
-              onAddIconCard={handleAddIconCard}
-              onAddLabelCard={handleAddLabelCard}
               backgroundColor={undefined}
               onBackgroundColorChange={handleBackgroundColorChange}
               activeThemeId={globalTheme?.id}
@@ -133,9 +116,6 @@ const Editor = () => {
   return (
     <div className="relative flex h-full flex-1 flex-col overflow-hidden">
       <EditorHeader
-        onAddText={handleAddText}
-        onAddShape={handleAddShape}
-        onAddFeatureCard={handleAddFeatureCard}
         onOpenInsertPanel={() => togglePanel("insert")}
         onOpenBackgroundPanel={() => togglePanel("background")}
         onOpenThemePanel={() => togglePanel("theme")}
@@ -160,11 +140,6 @@ const Editor = () => {
           <RightSidebar
             panel={activePanel}
             onClose={() => setActivePanel(null)}
-            onAddText={handleAddText}
-            onAddShape={handleAddShape}
-            onAddFeatureCard={handleAddFeatureCard}
-            onAddIconCard={handleAddIconCard}
-            onAddLabelCard={handleAddLabelCard}
             backgroundColor={activeSlide?.backgroundColor}
             onBackgroundColorChange={handleBackgroundColorChange}
             activeThemeId={globalTheme?.id}
