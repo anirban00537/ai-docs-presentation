@@ -240,8 +240,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
         <div
           className={cn(
             "relative h-full w-full rounded-2xl p-5 transition-all duration-300 ease-out",
-            isGlassBackground &&
-              "backdrop-blur-2xl border border-white/10 shadow-2xl"
+            isGlassBackground && "backdrop-blur-2xl border border-white/10"
           )}
           style={{
             backgroundColor: isGlassBackground
@@ -251,8 +250,8 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
               ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
               : undefined,
             boxShadow: isGlassBackground
-              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 8px 32px -8px rgba(0, 0, 0, 0.1)"
-              : "0 2px 8px -2px rgba(0, 0, 0, 0.08)",
+              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)"
+              : "none",
           }}
         >
           <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
