@@ -18,13 +18,10 @@ export default function Page() {
 }
 
 const EditorWorkspace = () => {
-  const { collapsed } = useEditorSidebar();
-
   return (
     <div
       className={cn(
-        "flex h-[calc(100vh-20px)] w-full transition-all duration-300",
-        collapsed ? "gap-0" : "gap-3"
+        "flex h-[calc(100vh-20px)] w-full transition-all duration-300"
       )}
     >
       <LeftSidebar />
