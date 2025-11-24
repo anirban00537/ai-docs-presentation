@@ -27,7 +27,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   const activeSlide = useAppSelector(selectActiveSlide);
 
   return (
-    <header className="pointer-events-auto w-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-b border-border/60 dark:border-border/40 flex items-center justify-between px-5 h-16 z-50 transition-all duration-300 shadow-sm">
+    <header className="pointer-events-auto w-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-b border-border/60 dark:border-border/40 flex items-center justify-between px-5 h-16 z-50 transition-all duration-300">
       <div className="flex items-center gap-5">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors h-8 w-8 hover:bg-accent/50 rounded-md" />
         <div className="h-7 w-px bg-border/60" />
@@ -37,7 +37,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
       </div>
 
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="flex items-center gap-0.5 p-1 rounded-xl bg-muted/50 dark:bg-muted/30 border border-border/40 backdrop-blur-md shadow-sm">
+        <div className="flex items-center gap-0.5 p-1 rounded-xl">
           <Button
             variant="ghost"
             size="sm"
