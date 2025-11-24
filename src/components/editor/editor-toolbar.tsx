@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import { selectActiveSlide } from "@/store/slices/slidesSlice";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { EditorSidebarTrigger } from "@/components/editor/editor-sidebar-shell";
 
 type EditorHeaderProps = {
   onOpenInsertPanel: () => void;
@@ -29,7 +29,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   return (
     <header className="pointer-events-auto w-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-b border-border/60 dark:border-border/40 flex items-center justify-between px-5 h-16 z-50 transition-all duration-300">
       <div className="flex items-center gap-5">
-        <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors h-8 w-8 hover:bg-accent/50 rounded-md" />
+        <EditorSidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors h-8 w-8 hover:bg-accent/50 rounded-md" />
         <div className="h-7 w-px bg-border/60" />
         <h1 className="text-sm font-semibold text-foreground/90 hover:text-foreground transition-colors cursor-text tracking-tight">
           Presentation Title
