@@ -258,7 +258,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-2xl p-5 transition-all duration-300 ease-out",
+            "relative h-full w-full rounded-2xl p-6 transition-all duration-300 ease-out",
             isGlassBackground && "backdrop-blur-2xl border border-white/10"
           )}
           style={{
@@ -273,7 +273,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
               : "none",
           }}
         >
-          <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
+          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
             {/* Icon */}
             <div
               className="flex relative"
@@ -332,7 +332,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.6875rem",
+                fontSize: "1.5rem",
                 fontWeight: 600,
                 color: titleColor,
                 fontFamily: titleFontFamily,
@@ -363,7 +363,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.3125rem",
+                fontSize: "1.125rem",
                 color: descriptionColor,
                 fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,

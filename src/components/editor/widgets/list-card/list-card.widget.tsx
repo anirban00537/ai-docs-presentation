@@ -233,7 +233,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-2xl px-7 py-5 transition-all duration-300 ease-out",
+            "relative h-full w-full rounded-2xl p-6 transition-all duration-300 ease-out",
             isGlassBackground && "backdrop-blur-2xl border border-white/10"
           )}
           style={{
@@ -258,13 +258,13 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "2.5rem",
+                fontSize: "2.125rem",
                 fontWeight: 700,
                 color: titleColor,
                 fontFamily: titleFontFamily,
                 lineHeight: 1.2,
                 textAlign,
-                letterSpacing: "-0.02em",
+                letterSpacing: "-0.01em",
               }}
               value={localTitle}
               onChange={(e) => {
@@ -298,13 +298,13 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                     }}
                   >
                     {listType === "numbered" ? (
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-current/10 text-current">
-                        <span className="text-lg font-bold leading-none">
+                      <div className="flex items-center justify-center w-7 h-7 rounded-full bg-current/10 text-current">
+                        <span className="text-base font-semibold leading-none">
                           {index + 1}
                         </span>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center w-2 h-2 rounded-full bg-current" />
+                      <div className="flex items-center justify-center w-1.5 h-1.5 rounded-full bg-current" />
                     )}
                   </div>
 
@@ -321,10 +321,10 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                         isSelected ? "cursor-text" : "cursor-default"
                       )}
                       style={{
-                        fontSize: "1.75rem",
+                        fontSize: "1.375rem",
                         color: itemColor,
                         fontFamily: itemFontFamily,
-                        lineHeight: 1.6,
+                        lineHeight: 1.5,
                         textAlign,
                         fontWeight: 400,
                       }}

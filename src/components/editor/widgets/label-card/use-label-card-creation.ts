@@ -31,8 +31,8 @@ export const useLabelCardCreation = () => {
       const slideId = ensureSlideId();
       if (!slideId) return;
       const id = `label-card-${nanoid(8)}`;
-      const width = 525;
-      const height = 240;
+      const width = 420;
+      const height = 210;
       const originX = Math.max(
         60,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)
@@ -70,4 +70,3 @@ export const useLabelCardCreation = () => {
     handleAddLabelCard,
   };
 };
-

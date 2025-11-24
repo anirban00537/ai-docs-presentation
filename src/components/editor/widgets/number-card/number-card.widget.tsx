@@ -239,7 +239,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-2xl p-5 transition-all duration-300 ease-out",
+            "relative h-full w-full rounded-2xl p-6 transition-all duration-300 ease-out",
             isGlassBackground && "backdrop-blur-2xl border border-white/10"
           )}
           style={{
@@ -254,7 +254,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
               : "none",
           }}
         >
-          <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
+          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
             {/* Number field */}
             <input
               ref={numberInputRef}
@@ -265,7 +265,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "4.5rem",
+                fontSize: "3.5rem",
                 fontWeight: 800,
                 color: numberColor,
                 fontFamily: numberFontFamily,
@@ -297,7 +297,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.6875rem",
+                fontSize: "1.5rem",
                 fontWeight: 600,
                 color: titleColor,
                 fontFamily: titleFontFamily,
@@ -328,7 +328,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.3125rem",
+                fontSize: "1.125rem",
                 color: descriptionColor,
                 fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,

@@ -270,7 +270,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative w-full h-full transition-all duration-300 ease-out overflow-hidden rounded-2xl p-6",
+            "relative w-full h-full transition-all duration-300 ease-out overflow-hidden rounded-2xl p-7",
             isGlassBackground && "backdrop-blur-2xl border border-white/10"
           )}
           style={{
@@ -287,7 +287,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
         >
           <div
             ref={contentContainerRef}
-            className="flex flex-col gap-4 justify-center h-full"
+            className="flex flex-col gap-5 justify-center h-full"
             style={{ textAlign }}
           >
             {renderQuote()}

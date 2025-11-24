@@ -31,8 +31,8 @@ export const useListCardCreation = () => {
       const slideId = ensureSlideId();
       if (!slideId) return;
       const id = `list-card-${nanoid(8)}`;
-      const width = 450;
-      const height = 450;
+      const width = 380;
+      const height = 380;
       const originX = Math.max(
         60,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)

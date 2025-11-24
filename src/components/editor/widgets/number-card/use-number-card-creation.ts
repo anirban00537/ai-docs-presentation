@@ -31,8 +31,8 @@ export const useNumberCardCreation = () => {
       const slideId = ensureSlideId();
       if (!slideId) return;
       const id = `feature-card-${nanoid(8)}`;
-      const width = 525;
-      const height = 285;
+      const width = 420;
+      const height = 240;
       const originX = Math.max(
         60,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)

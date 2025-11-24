@@ -31,8 +31,8 @@ export const useIconCardCreation = () => {
       const slideId = ensureSlideId();
       if (!slideId) return;
       const id = `icon-card-${nanoid(8)}`;
-      const width = 525;
-      const height = 285;
+      const width = 420;
+      const height = 240;
       const originX = Math.max(
         60,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)
@@ -54,7 +54,7 @@ export const useIconCardCreation = () => {
         iconColor: globalTheme?.accent ?? "#0f172a",
         titleColor: globalTheme?.text ?? "#0f172a",
         descriptionColor: globalTheme?.text ?? "#475569",
-        iconSize: 72,
+        iconSize: 60,
         textAlign: "left",
         backgroundType: "glass", // Default to glassmorphism
       };

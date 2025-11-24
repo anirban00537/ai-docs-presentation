@@ -31,8 +31,8 @@ export const useQuoteCreation = () => {
       const slideId = ensureSlideId();
       if (!slideId) return;
       const id = `quote-${nanoid(8)}`;
-      const width = 525;
-      const height = 330; // Default height
+      const width = 420;
+      const height = 264; // Default height
       const originX = Math.max(
         60,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)
@@ -55,8 +55,8 @@ export const useQuoteCreation = () => {
         attributionColor: globalTheme?.text ?? "#64748b",
         textAlign: "center", // Center by default for better look with quotes
         backgroundType: "glass", // Default to glassmorphism
-        quoteFontSize: 36,
-        attributionFontSize: 21,
+        quoteFontSize: 30,
+        attributionFontSize: 18,
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));
