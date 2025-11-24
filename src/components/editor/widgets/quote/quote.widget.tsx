@@ -141,9 +141,6 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
         target.closest(".ProseMirror");
 
       if (isTextTarget) {
-        if (!isSelected) {
-          onPointerDown(event);
-        }
         return;
       }
 
@@ -152,7 +149,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
       }
       onPointerDown(event);
     },
-    [isSelected, onPointerDown]
+    [onPointerDown]
   );
 
   const handleFieldFocus = React.useCallback((field: ActiveField) => {

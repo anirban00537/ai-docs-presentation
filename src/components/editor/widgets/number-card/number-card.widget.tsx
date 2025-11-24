@@ -144,9 +144,6 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
         target.closest(".ProseMirror");
 
       if (isTextTarget) {
-        if (!isSelected) {
-          onPointerDown(event);
-        }
         return;
       }
 
@@ -155,7 +152,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
       }
       onPointerDown(event);
     },
-    [isSelected, onPointerDown]
+    [onPointerDown]
   );
 
   const handleFieldFocus = React.useCallback((field: ActiveField) => {

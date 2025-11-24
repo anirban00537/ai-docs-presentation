@@ -144,9 +144,6 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
         target.closest(".ProseMirror");
 
       if (isTextTarget) {
-        if (!isSelected) {
-          onPointerDown(event);
-        }
         return;
       }
 
@@ -155,7 +152,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
       }
       onPointerDown(event);
     },
-    [isSelected, onPointerDown]
+    [onPointerDown]
   );
 
   const handleFieldFocus = React.useCallback((field: ActiveField) => {

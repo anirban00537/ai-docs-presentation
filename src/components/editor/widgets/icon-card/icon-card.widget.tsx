@@ -139,9 +139,6 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
         target.closest(".ProseMirror");
 
       if (isTextTarget) {
-        if (!isSelected) {
-          onPointerDown(event);
-        }
         return;
       }
 
@@ -151,7 +148,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
 
       onPointerDown(event);
     },
-    [isSelected, onPointerDown]
+    [onPointerDown]
   );
 
   const handleIconClick = React.useCallback(

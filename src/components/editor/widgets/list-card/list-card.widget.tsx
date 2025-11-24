@@ -135,9 +135,6 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
         target.closest("[data-list-item]");
 
       if (isTextTarget) {
-        if (!isSelected) {
-          onPointerDown(event);
-        }
         return;
       }
 
@@ -146,7 +143,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
       }
       onPointerDown(event);
     },
-    [isSelected, onPointerDown]
+    [onPointerDown]
   );
 
   const handleItemChange = React.useCallback(
