@@ -74,6 +74,11 @@ export const BACKGROUND_TYPE_OPTIONS = [
     value: "glass" as const,
     description: "Frosted glass effect",
   },
+  {
+    label: "Transparent",
+    value: "transparent" as const,
+    description: "No fill, inherits slide background",
+  },
 ];
 
 // Categorized Lucide icons for selection

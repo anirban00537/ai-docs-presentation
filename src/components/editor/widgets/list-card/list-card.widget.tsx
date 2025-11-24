@@ -212,6 +212,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   const listType = widget.listType ?? "bullet";
   const backgroundType = widget.backgroundType ?? "solid";
   const isGlassBackground = backgroundType === "glass";
+  const isTransparentBackground = backgroundType === "transparent";
 
   return (
     <div
@@ -246,11 +247,15 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
         <div
           className={cn(
             "relative h-full w-full rounded-2xl p-6 transition-all duration-300 ease-out",
-            isGlassBackground && "backdrop-blur-2xl border border-white/10"
+            isGlassBackground && "backdrop-blur-2xl border border-white/10",
+            isTransparentBackground &&
+              "bg-transparent border border-dashed border-border/60 dark:border-border/40"
           )}
           style={{
             backgroundColor: isGlassBackground
               ? `${backgroundColor}03`
+              : isTransparentBackground
+              ? "transparent"
               : backgroundColor,
             backgroundImage: isGlassBackground
               ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
@@ -495,7 +500,7 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
     );
   };
 
-  const handleSetBackgroundType = (type: "solid" | "glass") => {
+  const handleSetBackgroundType = (type: ListWidget["backgroundType"]) => {
     if (type === (widget.backgroundType ?? "solid")) return;
     dispatch(
       updateWidgetAction({

@@ -74,7 +74,7 @@ export type SlideWidgetUpdate = Partial<
     bulletColor: string;
     itemFontFamily: string;
     textAlign: "left" | "center" | "right";
-    backgroundType: "solid" | "glass";
+    backgroundType: "solid" | "glass" | "transparent";
     quote: string;
     attribution: string;
     style: import("./quote/types").QuoteStyle;

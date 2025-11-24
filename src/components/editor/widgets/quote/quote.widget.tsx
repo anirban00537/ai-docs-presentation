@@ -3,7 +3,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Sparkles, Plus, Minus, Quote as QuoteIcon } from "lucide-react";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { QuoteWidget } from "./types";
 import {
@@ -26,7 +26,6 @@ import { Popover } from "@headlessui/react";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
-import { Plus, Minus, Quote as QuoteIcon } from "lucide-react";
 
 type QuoteWidgetNodeProps = {
   widget: QuoteWidget;
@@ -42,6 +41,20 @@ type QuoteWidgetNodeProps = {
 };
 
 type ActiveField = "quote" | "attribution" | null;
+
+const BACKGROUND_TYPE_OPTIONS: Array<{
+  label: string;
+  value: QuoteWidget["backgroundType"];
+  description: string;
+}> = [
+  { label: "Solid", value: "solid", description: "Flat color fill" },
+  { label: "Glass", value: "glass", description: "Frosted glass effect" },
+  {
+    label: "Transparent",
+    value: "transparent",
+    description: "No fill, inherits slide background",
+  },
+];
 
 const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
   widget,
@@ -181,6 +194,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
   const quoteFontSize = widget.quoteFontSize ?? 24;
   const attributionFontSize = widget.attributionFontSize ?? 14;
   const isGlassBackground = backgroundType === "glass";
+  const isTransparentBackground = backgroundType === "transparent";
 
   // Auto-resize logic removed to allow manual resizing and scrolling
 
@@ -271,11 +285,15 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
         <div
           className={cn(
             "relative w-full h-full transition-all duration-300 ease-out overflow-hidden rounded-2xl p-7",
-            isGlassBackground && "backdrop-blur-2xl border border-white/10"
+            isGlassBackground && "backdrop-blur-2xl border border-white/10",
+            isTransparentBackground &&
+              "bg-transparent border border-dashed border-border/60 dark:border-border/40"
           )}
           style={{
             backgroundColor: isGlassBackground
               ? `${backgroundColor}03`
+              : isTransparentBackground
+              ? "transparent"
               : backgroundColor,
             backgroundImage: isGlassBackground
               ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
@@ -369,6 +387,7 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
   const quoteColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const attributionColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const iconColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
+  const bgTypeButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontSizeMenuRef = React.useRef<HTMLDivElement>(null);
   const fontMenuRef = React.useRef<HTMLDivElement>(null);
@@ -457,13 +476,13 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
     );
   };
 
-  const handleToggleBackgroundType = () => {
-    const nextType = widget.backgroundType === "glass" ? "solid" : "glass";
+  const handleSetBackgroundType = (type: QuoteWidget["backgroundType"]) => {
+    if (type === (widget.backgroundType ?? "solid")) return;
     dispatch(
       updateWidgetAction({
         slideId: activeSlideId,
         widgetId: widget.id,
-        updates: { backgroundType: nextType },
+        updates: { backgroundType: type },
       })
     );
   };
@@ -527,6 +546,10 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
     widget.quoteColor ?? globalTheme?.accent ?? "#0f172a";
   const currentAttributionColor = widget.attributionColor ?? "#64748b";
   const currentIconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a";
+  const currentBackgroundType = widget.backgroundType ?? "solid";
+  const currentBackgroundTypeLabel =
+    BACKGROUND_TYPE_OPTIONS.find((option) => option.value === currentBackgroundType)
+      ?.label ?? "Solid";
 
   const currentFontFamily =
     activeField === "quote"
@@ -582,17 +605,6 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
             </Button>
           ))}
         </div>
-
-        {/* Background type toggle */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="rounded-md px-2 py-1 text-xs"
-          onClick={handleToggleBackgroundType}
-          title="Toggle background type"
-        >
-          {widget.backgroundType === "glass" ? "Glass" : "Solid"}
-        </Button>
 
         {/* Font Size and Family - Only show when a field is active */}
         {activeField && (
@@ -700,46 +712,90 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
 
         {/* Color pickers */}
         <div className="flex items-center gap-1">
-          <Popover>
-            {({ open }) => (
-              <>
-                <Popover.Button
-                  ref={bgColorPickerButtonRef}
-                  className="relative h-8 w-8 rounded-full cursor-pointer border-2 border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
-                  style={{ backgroundColor: currentBgColor }}
-                />
-                {open && (
-                  <PopoverPanelPortal buttonRef={bgColorPickerButtonRef}>
-                    <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
-                      <div className="text-xs font-semibold text-muted-foreground">
-                        Background
-                      </div>
-                      <HexColorPicker
-                        color={currentBgColor}
-                        onChange={handleSetBackgroundColor}
-                        className="!w-full !h-32"
-                      />
-                      <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
-                        <div
-                          className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
-                          style={{ backgroundColor: currentBgColor }}
+          <div className="flex items-center gap-2">
+            <Popover>
+              {({ open }) => (
+                <>
+                  <Popover.Button
+                    ref={bgColorPickerButtonRef}
+                    className="relative h-8 w-8 rounded-full cursor-pointer border-2 border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
+                    style={{ backgroundColor: currentBgColor }}
+                  />
+                  {open && (
+                    <PopoverPanelPortal buttonRef={bgColorPickerButtonRef}>
+                      <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
+                        <div className="text-xs font-semibold text-muted-foreground">
+                          Background
+                        </div>
+                        <HexColorPicker
+                          color={currentBgColor}
+                          onChange={handleSetBackgroundColor}
+                          className="!w-full !h-32"
                         />
-                        <Input
-                          className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
-                          value={currentBgColor}
-                          onChange={(e) =>
-                            handleSetBackgroundColor(e.target.value)
-                          }
-                          placeholder="#000000"
-                        />
+                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
+                          <div
+                            className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
+                            style={{ backgroundColor: currentBgColor }}
+                          />
+                          <Input
+                            className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
+                            value={currentBgColor}
+                            onChange={(e) =>
+                              handleSetBackgroundColor(e.target.value)
+                            }
+                            placeholder="#000000"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </PopoverPanelPortal>
-                )}
-              </>
-            )}
-          </Popover>
-
+                    </PopoverPanelPortal>
+                  )}
+                </>
+              )}
+            </Popover>
+            <Popover>
+              {({ open }) => (
+                <>
+                  <Popover.Button
+                    ref={bgTypeButtonRef}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-muted-foreground/80 transition-all hover:bg-black/10",
+                      open && "bg-black/10 text-foreground"
+                    )}
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span className="uppercase tracking-wide text-[10px]">
+                      {currentBackgroundTypeLabel}
+                    </span>
+                    <ChevronDown className="h-3 w-3" />
+                  </Popover.Button>
+                  {open && (
+                    <PopoverPanelPortal buttonRef={bgTypeButtonRef}>
+                      <div className="flex flex-col gap-1.5 p-3 bg-white/95 backdrop-blur-2xl rounded-xl shadow-2xl border border-white/20 min-w-[200px] animate-in fade-in zoom-in-95 duration-150">
+                        {BACKGROUND_TYPE_OPTIONS.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            className={cn(
+                              "flex flex-col rounded-lg px-3 py-2 text-xs transition-all text-left",
+                              option.value === currentBackgroundType
+                                ? "bg-black/5 text-foreground font-semibold"
+                                : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                            )}
+                            onClick={() => handleSetBackgroundType(option.value)}
+                          >
+                            <span>{option.label}</span>
+                            <span className="text-[10px] opacity-70">
+                              {option.description}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverPanelPortal>
+                  )}
+                </>
+              )}
+            </Popover>
+          </div>
           <Popover>
             {({ open }) => (
               <>

@@ -16,6 +16,6 @@ export type IconCardWidget = WidgetCommon & {
   titleFontFamily?: string;
   descriptionFontFamily?: string;
   textAlign?: "left" | "center" | "right";
-  backgroundType?: "solid" | "glass";
+  backgroundType?: "solid" | "glass" | "transparent";
 };
 

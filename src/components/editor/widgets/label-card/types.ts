@@ -18,5 +18,5 @@ export type LabelCardWidget = WidgetCommon & {
   descriptionFontFamily?: string;
   descriptionFontSize?: number;
   textAlign?: "left" | "center" | "right";
-  backgroundType?: "solid" | "glass";
+  backgroundType?: "solid" | "glass" | "transparent";
 };

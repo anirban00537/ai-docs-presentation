@@ -15,5 +15,5 @@ export type ListWidget = WidgetCommon & {
   itemFontFamily?: string;
   itemFontSize?: number;
   textAlign?: "left" | "center" | "right";
-  backgroundType?: "solid" | "glass";
+  backgroundType?: "solid" | "glass" | "transparent";
 };

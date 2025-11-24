@@ -17,6 +17,6 @@ export type NumberCardWidget = WidgetCommon & {
   descriptionFontFamily?: string;
   descriptionFontSize?: number;
   textAlign?: "left" | "center" | "right";
-  backgroundType?: "solid" | "glass";
+  backgroundType?: "solid" | "glass" | "transparent";
 };
 

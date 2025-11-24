@@ -225,6 +225,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const textAlign = widget.textAlign ?? "left";
   const backgroundType = widget.backgroundType ?? "solid";
   const isGlassBackground = backgroundType === "glass";
+  const isTransparentBackground = backgroundType === "transparent";
 
   // Get the icon component
   const IconComponent = (Icons as unknown as Record<string, LucideIcon>)[
@@ -264,18 +265,20 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
         <div
           className={cn(
             "relative h-full w-full rounded-2xl p-6 transition-all duration-300 ease-out",
-            isGlassBackground && "backdrop-blur-2xl border border-white/10"
+            isGlassBackground && "backdrop-blur-2xl border border-white/10",
+            isTransparentBackground &&
+              "bg-transparent border border-dashed border-border/60 dark:border-border/40"
           )}
           style={{
             backgroundColor: isGlassBackground
-              ? `${backgroundColor}03` // Almost clear for maximum transparency
+              ? `${backgroundColor}03`
+              : isTransparentBackground
+              ? "transparent"
               : backgroundColor,
             backgroundImage: isGlassBackground
               ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
               : undefined,
-            boxShadow: isGlassBackground
-              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)"
-              : "none",
+            boxShadow: isGlassBackground ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)" : "none",
           }}
         >
           <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
@@ -468,7 +471,7 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
     );
   };
 
-  const handleSetBackgroundType = (type: "solid" | "glass") => {
+  const handleSetBackgroundType = (type: IconCardWidget["backgroundType"]) => {
     if (type === (widget.backgroundType ?? "solid")) return;
     dispatch(
       updateWidgetAction({
