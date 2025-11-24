@@ -132,21 +132,30 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       const target = event.target as HTMLElement;
-      // Don't start drag if clicking on toolbar, input/textarea
-      if (
-        target.closest(TOOLBAR_SELECTOR) ||
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.closest(".prosemirror-editor")
-      ) {
+      // Don't start drag if clicking on toolbar controls
+      if (target.closest(TOOLBAR_SELECTOR)) {
         return;
       }
+
+      const isTextTarget =
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.closest(".prosemirror-editor") ||
+        target.closest(".ProseMirror");
+
+      if (isTextTarget) {
+        if (!isSelected) {
+          onPointerDown(event);
+        }
+        return;
+      }
+
       if (event.detail > 1) {
         return;
       }
       onPointerDown(event);
     },
-    [onPointerDown]
+    [isSelected, onPointerDown]
   );
 
   const handleFieldFocus = React.useCallback((field: ActiveField) => {

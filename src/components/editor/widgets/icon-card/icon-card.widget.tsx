@@ -74,7 +74,6 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
   const [showIconSelector, setShowIconSelector] = React.useState(false);
 
-
   const debouncedUpdateTitle = useDebouncedCallback((value: string) => {
     dispatch(
       updateWidgetAction({
@@ -124,23 +123,35 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       const target = event.target as HTMLElement;
-      // Don't start drag if clicking on toolbar, input/textarea, or icon selector
+      // Don't start drag if clicking on toolbar or icon selector controls
       if (
         target.closest(TOOLBAR_SELECTOR) ||
         target.closest("[data-icon-selector]") ||
-        target.closest("[data-icon-button]") ||
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.closest(".prosemirror-editor")
+        target.closest("[data-icon-button]")
       ) {
         return;
       }
+
+      const isTextTarget =
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.closest(".prosemirror-editor") ||
+        target.closest(".ProseMirror");
+
+      if (isTextTarget) {
+        if (!isSelected) {
+          onPointerDown(event);
+        }
+        return;
+      }
+
       if (event.detail > 1) {
         return;
       }
+
       onPointerDown(event);
     },
-    [onPointerDown]
+    [isSelected, onPointerDown]
   );
 
   const handleIconClick = React.useCallback(
@@ -181,7 +192,6 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
     },
     [debouncedUpdateTitle, debouncedUpdateDescription]
   );
-
 
   // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
@@ -250,7 +260,9 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
             backgroundImage: isGlassBackground
               ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
               : undefined,
-            boxShadow: isGlassBackground ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)" : "none",
+            boxShadow: isGlassBackground
+              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)"
+              : "none",
           }}
         >
           <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
@@ -554,8 +566,8 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
 
   const currentIconSize = widget.iconSize ?? 48;
   const currentIconSizeLabel =
-    ICON_SIZE_OPTIONS.find((option) => option.value === currentIconSize)?.label ??
-    `${currentIconSize}px`;
+    ICON_SIZE_OPTIONS.find((option) => option.value === currentIconSize)
+      ?.label ?? `${currentIconSize}px`;
   const currentBackgroundTypeLabel =
     BACKGROUND_TYPE_OPTIONS.find(
       (option) => option.value === currentBackgroundType
@@ -621,51 +633,51 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
               )}
             </Popover>
 
-          <Popover>
-            {({ open }) => (
-              <>
-                <Popover.Button
-                  ref={iconSizeButtonRef}
-                  className={cn(
-                    "flex items-center gap-1.5 bg-black/5 rounded-full pl-3 pr-2 py-0.5 text-xs font-medium text-muted-foreground/80 transition-colors hover:bg-black/10",
-                    open && "bg-black/10 text-foreground"
+            <Popover>
+              {({ open }) => (
+                <>
+                  <Popover.Button
+                    ref={iconSizeButtonRef}
+                    className={cn(
+                      "flex items-center gap-1.5 bg-black/5 rounded-full pl-3 pr-2 py-0.5 text-xs font-medium text-muted-foreground/80 transition-colors hover:bg-black/10",
+                      open && "bg-black/10 text-foreground"
+                    )}
+                  >
+                    <span className="text-[9px] uppercase tracking-widest">
+                      Size
+                    </span>
+                    <span className="text-[11px] font-semibold">
+                      {currentIconSizeLabel}
+                    </span>
+                    <ChevronDown className="h-3 w-3" />
+                  </Popover.Button>
+                  {open && (
+                    <PopoverPanelPortal buttonRef={iconSizeButtonRef}>
+                      <div className="flex flex-col gap-1 p-2 bg-white/95 backdrop-blur-2xl rounded-xl shadow-2xl border border-white/20 min-w-[170px] animate-in fade-in zoom-in-95 duration-150">
+                        {ICON_SIZE_OPTIONS.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            className={cn(
+                              "flex items-center justify-between rounded-lg px-3 py-2 text-xs transition-all",
+                              option.value === currentIconSize
+                                ? "bg-black/5 text-foreground font-semibold"
+                                : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                            )}
+                            onClick={() => handleSetIconSize(option.value)}
+                          >
+                            <span>{option.label}</span>
+                            <span className="text-[10px] uppercase">
+                              {option.value}px
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverPanelPortal>
                   )}
-                >
-                  <span className="text-[9px] uppercase tracking-widest">
-                    Size
-                  </span>
-                  <span className="text-[11px] font-semibold">
-                    {currentIconSizeLabel}
-                  </span>
-                  <ChevronDown className="h-3 w-3" />
-                </Popover.Button>
-                {open && (
-                  <PopoverPanelPortal buttonRef={iconSizeButtonRef}>
-                    <div className="flex flex-col gap-1 p-2 bg-white/95 backdrop-blur-2xl rounded-xl shadow-2xl border border-white/20 min-w-[170px] animate-in fade-in zoom-in-95 duration-150">
-                      {ICON_SIZE_OPTIONS.map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          className={cn(
-                            "flex items-center justify-between rounded-lg px-3 py-2 text-xs transition-all",
-                            option.value === currentIconSize
-                              ? "bg-black/5 text-foreground font-semibold"
-                              : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
-                          )}
-                          onClick={() => handleSetIconSize(option.value)}
-                        >
-                          <span>{option.label}</span>
-                          <span className="text-[10px] uppercase">
-                            {option.value}px
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </PopoverPanelPortal>
-                )}
-              </>
-            )}
-          </Popover>
+                </>
+              )}
+            </Popover>
           </div>
         </div>
 
@@ -757,7 +769,9 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
                                 ? "bg-black/5 text-foreground font-semibold"
                                 : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
                             )}
-                            onClick={() => handleSetBackgroundType(option.value)}
+                            onClick={() =>
+                              handleSetBackgroundType(option.value)
+                            }
                           >
                             <span>{option.label}</span>
                             <span className="text-[10px] opacity-70">
@@ -1001,7 +1015,7 @@ const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
   return createPortal(
     <div
       data-icon-selector
-      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-10000 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}

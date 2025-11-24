@@ -119,23 +119,34 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   const handlePointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       const target = event.target as HTMLElement;
-      // Don't start drag if clicking on toolbar, input, or buttons
+      // Don't start drag if clicking toolbar or action buttons
       if (
         target.closest(TOOLBAR_SELECTOR) ||
-        target.closest("[data-list-item]") ||
         target.closest("[data-add-item]") ||
-        target.closest("[data-remove-item]") ||
-        target.tagName === "INPUT" ||
-        target.closest(".prosemirror-editor")
+        target.closest("[data-remove-item]")
       ) {
         return;
       }
+
+      const isTextTarget =
+        target.tagName === "INPUT" ||
+        target.closest(".prosemirror-editor") ||
+        target.closest(".ProseMirror") ||
+        target.closest("[data-list-item]");
+
+      if (isTextTarget) {
+        if (!isSelected) {
+          onPointerDown(event);
+        }
+        return;
+      }
+
       if (event.detail > 1) {
         return;
       }
       onPointerDown(event);
     },
-    [onPointerDown]
+    [isSelected, onPointerDown]
   );
 
   const handleItemChange = React.useCallback(
