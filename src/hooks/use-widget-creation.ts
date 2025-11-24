@@ -14,6 +14,7 @@ import type {
 import { useListCardCreation } from "@/components/editor/widgets/list-card/use-list-card-creation";
 import { useIconCardCreation } from "@/components/editor/widgets/icon-card/use-icon-card-creation";
 import { useLabelCardCreation } from "@/components/editor/widgets/label-card/use-label-card-creation";
+import { useImageCardCreation } from "@/components/editor/widgets/image-card/use-image-card-creation";
 import { useNumberCardCreation } from "@/components/editor/widgets/number-card/use-number-card-creation";
 import { useQuoteCreation } from "@/components/editor/widgets/quote/use-quote-creation";
 import {
@@ -165,6 +166,7 @@ export const useWidgetCreation = () => {
   const { handleAddIconCard } = useIconCardCreation();
 
   const { handleAddLabelCard } = useLabelCardCreation();
+  const { handleAddImageCard } = useImageCardCreation();
 
   const { handleAddListCard } = useListCardCreation();
 
@@ -175,6 +177,7 @@ export const useWidgetCreation = () => {
     handleAddShape,
     handleAddFeatureCard,
     handleAddIconCard,
+    handleAddImageCard,
     handleAddLabelCard,
     handleAddListCard,
     handleAddQuote,

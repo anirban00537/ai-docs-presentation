@@ -11,6 +11,7 @@ import {
   List,
   ListOrdered,
   Quote,
+  Image as ImageIcon,
 } from "lucide-react";
 import {
   ArrowPreview,
@@ -23,6 +24,7 @@ import type {
   ShapePreset,
   FeatureCardPreset,
   IconCardPreset,
+  ImageCardPreset,
   LabelCardPreset,
   ListCardPreset,
   QuotePreset,
@@ -43,6 +45,14 @@ const iconCardPresets: IconCardPreset[] = [
     icon: "Star",
     title: "Feature Title",
     description: "Feature description goes here.",
+  },
+];
+
+const imageCardPresets: ImageCardPreset[] = [
+  {
+    id: "default",
+    title: "Image Card",
+    description: "Add a visual with supporting text.",
   },
 ];
 
@@ -173,6 +183,7 @@ type InsertPanelContentProps = {
   onAddShape?: (preset: ShapePreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
   onAddIconCard?: (preset: IconCardPreset) => void;
+  onAddImageCard?: (preset: ImageCardPreset) => void;
   onAddLabelCard?: (preset: LabelCardPreset) => void;
   onAddListCard?: (preset: ListCardPreset) => void;
   onAddQuote?: (preset: QuotePreset) => void;
@@ -213,6 +224,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   onAddShape,
   onAddFeatureCard,
   onAddIconCard,
+  onAddImageCard,
   onAddLabelCard,
   onAddListCard,
   onAddQuote,
@@ -243,6 +255,11 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
     onClose();
   };
 
+  const handleAddImageCard = (preset: ImageCardPreset) => {
+    onAddImageCard?.(preset);
+    onClose();
+  };
+
   const handleAddListCard = (preset: ListCardPreset) => {
     onAddListCard?.(preset);
     onClose();
@@ -270,6 +287,14 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
       title: "Icon Card",
       description: "Card with icon, title and description",
       onClick: () => handleAddIconCard(preset),
+    })),
+    ...imageCardPresets.map((preset) => ({
+      type: "image" as const,
+      preset,
+      icon: <ImageIcon className="h-4 w-4" />,
+      title: "Image Card",
+      description: "Top image with title and copy",
+      onClick: () => handleAddImageCard(preset),
     })),
     ...labelCardPresets.map((preset) => ({
       type: "label" as const,

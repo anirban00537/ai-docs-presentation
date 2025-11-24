@@ -34,6 +34,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
     handleAddShape,
     handleAddFeatureCard,
     handleAddIconCard,
+    handleAddImageCard,
     handleAddLabelCard,
     handleAddListCard,
     handleAddQuote,
@@ -87,6 +88,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             onAddShape={handleAddShape}
             onAddFeatureCard={handleAddFeatureCard}
             onAddIconCard={handleAddIconCard}
+            onAddImageCard={handleAddImageCard}
             onAddLabelCard={handleAddLabelCard}
             onAddListCard={handleAddListCard}
             onAddQuote={handleAddQuote}

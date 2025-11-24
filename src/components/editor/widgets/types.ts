@@ -20,6 +20,7 @@ export type {
 
 export type { NumberCardWidget } from "./number-card/types";
 export type { IconCardWidget } from "./icon-card/types";
+export type { ImageCardWidget } from "./image-card/types";
 
 export type { LabelCardWidget } from "./label-card/types";
 export type { ListWidget } from "./list-card/types";
@@ -33,6 +34,7 @@ export type SlideWidget =
   | import("./shape/types").PolygonWidget
   | import("./number-card/types").NumberCardWidget
   | import("./icon-card/types").IconCardWidget
+  | import("./image-card/types").ImageCardWidget
   | import("./label-card/types").LabelCardWidget
   | import("./list-card/types").ListWidget
   | import("./quote/types").QuoteWidget;
@@ -75,6 +77,8 @@ export type SlideWidgetUpdate = Partial<
     itemFontFamily: string;
     textAlign: "left" | "center" | "right";
     backgroundType: "solid" | "glass" | "transparent";
+    imageUrl: string;
+    imageStyle: "hero" | "background" | "backgroundGlass";
     quote: string;
     attribution: string;
     style: import("./quote/types").QuoteStyle;

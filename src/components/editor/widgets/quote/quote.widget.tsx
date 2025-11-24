@@ -203,28 +203,28 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
       fontWeight: 500,
     };
 
-    return (
+      return (
       <div className="relative px-8 py-4 w-full h-full flex flex-col">
         <QuoteIcon
           className="absolute top-0 left-0 w-12 h-12 opacity-20"
           style={{ color: iconColor }}
-        />
+          />
         <ProseMirrorEditor
-          value={localQuote}
+              value={localQuote}
           onChange={(value) => {
-            if (!isSelected) return;
+                if (!isSelected) return;
             setLocalQuote(value);
             debouncedUpdateQuote(value);
-          }}
-          onFocus={() => {
-            if (!isSelected) return;
-            handleFieldFocus("quote");
-          }}
-          onBlur={() => handleFieldBlur("quote")}
-          placeholder="Enter your quote here..."
-          readOnly={!isSelected}
-          className={baseQuoteClasses}
-          style={quoteStyle}
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("quote");
+              }}
+              onBlur={() => handleFieldBlur("quote")}
+              placeholder="Enter your quote here..."
+        readOnly={!isSelected}
+        className={baseQuoteClasses}
+        style={quoteStyle}
         />
         <QuoteIcon
           className="absolute bottom-0 right-0 w-12 h-12 rotate-180 opacity-20"
@@ -693,45 +693,45 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
         {/* Color pickers */}
         <div className="flex items-center gap-1">
           <div className="flex items-center gap-2">
-            <Popover>
-              {({ open }) => (
-                <>
-                  <Popover.Button
-                    ref={bgColorPickerButtonRef}
-                    className="relative h-8 w-8 rounded-full cursor-pointer border-2 border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
-                    style={{ backgroundColor: currentBgColor }}
-                  />
-                  {open && (
-                    <PopoverPanelPortal buttonRef={bgColorPickerButtonRef}>
-                      <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
-                        <div className="text-xs font-semibold text-muted-foreground">
-                          Background
-                        </div>
-                        <HexColorPicker
-                          color={currentBgColor}
-                          onChange={handleSetBackgroundColor}
-                          className="!w-full !h-32"
-                        />
-                        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
-                          <div
-                            className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
-                            style={{ backgroundColor: currentBgColor }}
-                          />
-                          <Input
-                            className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
-                            value={currentBgColor}
-                            onChange={(e) =>
-                              handleSetBackgroundColor(e.target.value)
-                            }
-                            placeholder="#000000"
-                          />
-                        </div>
+          <Popover>
+            {({ open }) => (
+              <>
+                <Popover.Button
+                  ref={bgColorPickerButtonRef}
+                  className="relative h-8 w-8 rounded-full cursor-pointer border-2 border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
+                  style={{ backgroundColor: currentBgColor }}
+                />
+                {open && (
+                  <PopoverPanelPortal buttonRef={bgColorPickerButtonRef}>
+                    <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
+                      <div className="text-xs font-semibold text-muted-foreground">
+                        Background
                       </div>
-                    </PopoverPanelPortal>
-                  )}
-                </>
-              )}
-            </Popover>
+                      <HexColorPicker
+                        color={currentBgColor}
+                        onChange={handleSetBackgroundColor}
+                        className="!w-full !h-32"
+                      />
+                      <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
+                        <div
+                          className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
+                          style={{ backgroundColor: currentBgColor }}
+                        />
+                        <Input
+                          className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
+                          value={currentBgColor}
+                          onChange={(e) =>
+                            handleSetBackgroundColor(e.target.value)
+                          }
+                          placeholder="#000000"
+                        />
+                      </div>
+                    </div>
+                  </PopoverPanelPortal>
+                )}
+              </>
+            )}
+          </Popover>
             <Popover>
               {({ open }) => (
                 <>

@@ -27,6 +27,13 @@ export type IconCardPreset = {
   description: string;
 };
 
+export type ImageCardPreset = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+};
+
 export type LabelCardPreset = {
   id: string;
   label: string;

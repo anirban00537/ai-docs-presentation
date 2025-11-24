@@ -640,8 +640,8 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
                     )}
                   >
                     <span className="text-[9px] uppercase tracking-widest">
-                      Size
-                    </span>
+                Size
+              </span>
                     <span className="text-[11px] font-semibold">
                       {currentIconSizeLabel}
                     </span>
@@ -668,7 +668,7 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
                             </span>
                           </button>
                         ))}
-                      </div>
+            </div>
                     </PopoverPanelPortal>
                   )}
                 </>
@@ -741,7 +741,7 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
                 <>
                   <Popover.Button
                     ref={bgTypeButtonRef}
-                    className={cn(
+              className={cn(
                       "flex items-center gap-1.5 rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-muted-foreground/80 transition-all hover:bg-black/10",
                       open && "bg-black/10 text-foreground"
                     )}
@@ -767,8 +767,8 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
                             )}
                             onClick={() =>
                               handleSetBackgroundType(option.value)
-                            }
-                          >
+              }
+            >
                             <span>{option.label}</span>
                             <span className="text-[10px] opacity-70">
                               {option.description}
@@ -838,51 +838,51 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="relative flex items-center">
-                  <Button
-                    ref={fontButtonRef}
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-2 rounded-full bg-black/5 border border-transparent px-3 py-1.5 text-xs hover:bg-black/10 transition-all w-[110px] justify-between group"
-                    onClick={() => setFontMenuOpen((prev) => !prev)}
+              <div className="relative flex items-center">
+                <Button
+                  ref={fontButtonRef}
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2 rounded-full bg-black/5 border border-transparent px-3 py-1.5 text-xs hover:bg-black/10 transition-all w-[110px] justify-between group"
+                  onClick={() => setFontMenuOpen((prev) => !prev)}
+                >
+                  <span className="text-[11px] font-medium text-foreground/80 truncate group-hover:text-foreground">
+                    {currentFontLabel}
+                  </span>
+                  <ChevronDown className="h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                </Button>
+                {fontMenuOpen && (
+                  <div
+                    ref={fontMenuRef}
+                    className="absolute left-0 top-full mt-2 z-50 min-w-[200px] max-h-[300px] overflow-y-auto rounded-xl border border-white/20 bg-white/90 backdrop-blur-xl p-1.5 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] animate-in fade-in zoom-in-95 duration-150"
                   >
-                    <span className="text-[11px] font-medium text-foreground/80 truncate group-hover:text-foreground">
-                      {currentFontLabel}
-                    </span>
-                    <ChevronDown className="h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                  </Button>
-                  {fontMenuOpen && (
-                    <div
-                      ref={fontMenuRef}
-                      className="absolute left-0 top-full mt-2 z-50 min-w-[200px] max-h-[300px] overflow-y-auto rounded-xl border border-white/20 bg-white/90 backdrop-blur-xl p-1.5 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] animate-in fade-in zoom-in-95 duration-150"
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        {GOOGLE_FONTS.map((font) => (
-                          <button
-                            key={font.value}
-                            type="button"
-                            className={cn(
-                              "flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-all duration-200",
-                              currentFontFamily === font.value
-                                ? "bg-black/5 text-foreground font-medium"
-                                : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
-                            )}
-                            style={{ fontFamily: font.style }}
-                            onClick={() => {
-                              handleSetFontFamily(font.value);
-                              setFontMenuOpen(false);
-                            }}
-                          >
-                            <span>{font.label}</span>
-                            {currentFontFamily === font.value && (
-                              <span className="text-blue-600 text-xs">●</span>
-                            )}
-                          </button>
-                        ))}
-                      </div>
+                    <div className="flex flex-col gap-0.5">
+                      {GOOGLE_FONTS.map((font) => (
+                        <button
+                          key={font.value}
+                          type="button"
+                          className={cn(
+                            "flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-all duration-200",
+                            currentFontFamily === font.value
+                              ? "bg-black/5 text-foreground font-medium"
+                              : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                          )}
+                          style={{ fontFamily: font.style }}
+                          onClick={() => {
+                            handleSetFontFamily(font.value);
+                            setFontMenuOpen(false);
+                          }}
+                        >
+                          <span>{font.label}</span>
+                          {currentFontFamily === font.value && (
+                            <span className="text-blue-600 text-xs">●</span>
+                          )}
+                        </button>
+                      ))}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
+              </div>
                 <Popover>
                   {({ open }) => (
                     <>
