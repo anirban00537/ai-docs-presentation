@@ -44,7 +44,7 @@ export const useListCardCreation = () => {
         type: "list",
         items: preset.items && preset.items.length > 0 ? preset.items : [""],
         listType: preset.listType ?? "bullet",
-        title: preset.title,
+        title: preset.title || "List Title",
         x: originX,
         y: originY,
         width,
@@ -69,4 +69,3 @@ export const useListCardCreation = () => {
     handleAddListCard,
   };
 };
-

@@ -248,67 +248,68 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
               : "none",
           }}
         >
-          <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
-            {/* Title field */}
-            {widget.title !== undefined && (
-              <input
-                type="text"
-                readOnly={!isSelected}
-                className={cn(
-                  "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
-                  isSelected ? "cursor-text" : "cursor-default"
-                )}
-                style={{
-                  fontSize: "1.875rem",
-                  fontWeight: 600,
-                  color: titleColor,
-                  fontFamily: titleFontFamily,
-                  lineHeight: 1.3,
-                  textAlign,
-                }}
-                value={localTitle}
-                onChange={(e) => {
-                  if (!isSelected) return;
-                  setLocalTitle(e.target.value);
-                  debouncedUpdateTitle(e.target.value);
-                }}
-                onFocus={() => {
-                  if (!isSelected) return;
-                }}
-                onBlur={() => {
-                  debouncedUpdateTitle.flush();
-                }}
-                placeholder="List Title (optional)"
-              />
-            )}
+          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
+            {/* Title field - Always visible */}
+            <input
+              type="text"
+              readOnly={!isSelected}
+              className={cn(
+                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                isSelected ? "cursor-text" : "cursor-default"
+              )}
+              style={{
+                fontSize: "2.5rem",
+                fontWeight: 700,
+                color: titleColor,
+                fontFamily: titleFontFamily,
+                lineHeight: 1.2,
+                textAlign,
+                letterSpacing: "-0.02em",
+              }}
+              value={localTitle}
+              onChange={(e) => {
+                if (!isSelected) return;
+                setLocalTitle(e.target.value);
+                debouncedUpdateTitle(e.target.value);
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+              }}
+              onBlur={() => {
+                debouncedUpdateTitle.flush();
+              }}
+              placeholder="List Title"
+            />
 
             {/* List items */}
-            <div className="flex flex-col gap-1.5 flex-1 min-h-0 overflow-y-auto">
+            <div className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto">
               {localItems.map((item, index) => (
                 <div
                   key={index}
                   data-list-item
-                  className="flex items-start gap-2.5 group/item"
+                  className="flex items-start gap-4 group/item"
                 >
-                  {/* Bullet/Number */}
+                  {/* Bullet/Number - Enhanced styling */}
                   <div
-                    className="flex-shrink-0 mt-0.5"
+                    className="shrink-0 flex items-center justify-center"
                     style={{
                       color: bulletColor,
                       fontFamily: itemFontFamily,
                     }}
                   >
                     {listType === "numbered" ? (
-                      <span className="text-sm font-semibold">
-                        {index + 1}.
-                      </span>
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-current/10 text-current">
+                        <span className="text-lg font-bold leading-none">
+                          {index + 1}
+                        </span>
+                      </div>
                     ) : (
-                      <span className="text-base">•</span>
+                      <div className="flex items-center justify-center w-2 h-2 rounded-full bg-current mt-2.5" />
                     )}
                   </div>
 
                   {/* Item input */}
-                  <div className="flex-1 flex items-center gap-2 min-w-0">
+                  <div className="flex-1 flex items-center gap-3 min-w-0">
                     <input
                       ref={(el) => {
                         itemInputRefs.current[index] = el;
@@ -320,11 +321,12 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                         isSelected ? "cursor-text" : "cursor-default"
                       )}
                       style={{
-                        fontSize: "1.5rem",
+                        fontSize: "1.75rem",
                         color: itemColor,
                         fontFamily: itemFontFamily,
-                        lineHeight: 1.5,
+                        lineHeight: 1.6,
                         textAlign,
+                        fontWeight: 400,
                       }}
                       value={item}
                       onChange={(e) => handleItemChange(index, e.target.value)}
@@ -348,10 +350,10 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                           e.stopPropagation();
                           handleRemoveItem(index);
                         }}
-                        className="opacity-0 group-hover/item:opacity-100 transition-opacity p-1 rounded hover:bg-muted/50"
+                        className="opacity-0 group-hover/item:opacity-100 transition-all duration-200 p-1.5 rounded-lg hover:bg-destructive/10 hover:text-destructive"
                         title="Remove item"
                       >
-                        <X className="h-4 w-4 text-muted-foreground" />
+                        <X className="h-4 w-4" />
                       </button>
                     )}
                   </div>
@@ -366,11 +368,13 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                     e.stopPropagation();
                     handleAddItem();
                   }}
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-2 opacity-0 group-hover:opacity-100"
+                  className="flex items-center gap-2.5 text-base text-muted-foreground hover:text-foreground transition-all duration-200 mt-1 opacity-0 group-hover:opacity-100 hover:gap-3"
                   title="Add item"
                 >
-                  <Plus className="h-4 w-4" />
-                  <span>Add item</span>
+                  <div className="flex items-center justify-center w-6 h-6 rounded-full border-2 border-dashed border-current/30 hover:border-current/60 transition-colors">
+                    <Plus className="h-3.5 w-3.5" />
+                  </div>
+                  <span className="font-medium">Add item</span>
                 </button>
               )}
             </div>
