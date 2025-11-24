@@ -194,8 +194,7 @@ const Slide: React.FC<SlideProps> = ({
               <div
                 className={cn(
                   "slide editable theme-background",
-                  "relative overflow-hidden bg-white transition-[box-shadow,border] duration-300 ease-out border border-border/60",
-                  "shadow-[0_25px_70px_-30px_rgba(15,23,42,0.4)]"
+                  "relative overflow-hidden bg-white transition-[box-shadow,border] duration-300 ease-out"
                 )}
                 data-slide-index="0"
                 role="region"

@@ -8,8 +8,8 @@ type TextPresetId = TextPreset["id"];
 type ShapePresetId = ShapePreset["id"];
 
 export const SLIDE_DIMENSIONS = {
-  width: 1280,
-  height: 720,
+  width: 1920,
+  height: 1080,
 };
 
 export const TEXT_PRESET_CONFIG: Record<

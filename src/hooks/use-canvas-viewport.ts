@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState, RefObject } from "react";
 
-const SLIDE_WIDTH = 1280;
-const SLIDE_HEIGHT = 720;
-const CANVAS_PADDING = 40;
+const SLIDE_WIDTH = 1920;
+const SLIDE_HEIGHT = 1080;
+const CANVAS_PADDING = 8;
 
 export type Viewport = {
   width: number;
@@ -12,7 +12,10 @@ export type Viewport = {
   translateY: number;
 };
 
-export type ScreenToSlideTransform = (screenX: number, screenY: number) => {
+export type ScreenToSlideTransform = (
+  screenX: number,
+  screenY: number
+) => {
   x: number;
   y: number;
 };
@@ -27,8 +30,8 @@ export function useCanvasViewport(
   invScale: number;
 } {
   const [viewport, setViewport] = useState<Viewport>({
-    width: 1280,
-    height: 720,
+    width: 1920,
+    height: 1080,
     scale: fixedScale ?? 1,
     translateX: 0,
     translateY: 0,
@@ -93,9 +96,10 @@ export function useCanvasViewport(
       }
 
       // Calculate scale to fit slide within available space
+      // Allow scaling up when there's extra space available
       const scaleX = availableWidth / SLIDE_WIDTH;
       const scaleY = availableHeight / SLIDE_HEIGHT;
-      const scale = Math.min(scaleX, scaleY, 1); // Don't scale up beyond 1
+      const scale = Math.min(scaleX, scaleY); // Scale to fill available space
 
       // Calculate scaled dimensions
       const scaledWidth = SLIDE_WIDTH * scale;

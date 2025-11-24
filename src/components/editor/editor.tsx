@@ -124,7 +124,7 @@ const Editor = () => {
       />
       <div className="flex flex-1 min-h-0 overflow-hidden h-full">
         <div
-          className="flex flex-1 flex-col gap-6 overflow-hidden px-6 pt-6 min-h-0"
+          className="flex flex-1 flex-col gap-1 overflow-hidden px-1 pt-1 min-h-0"
           onWheel={handleWheel}
         >
           <Slide
