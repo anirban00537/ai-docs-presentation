@@ -25,6 +25,7 @@ type ProseMirrorEditorProps = {
   onChange: (value: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  onKeyDown?: (event: KeyboardEvent) => void;
   placeholder?: string;
   readOnly?: boolean;
   className?: string;
@@ -38,6 +39,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   onFocus,
   onBlur,
   placeholder,
+  onKeyDown,
   readOnly = false,
   className,
   style,
@@ -48,13 +50,18 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   const onChangeRef = useRef(onChange);
   const onFocusRef = useRef(onFocus);
   const onBlurRef = useRef(onBlur);
+  const onKeyDownRef = useRef(onKeyDown);
 
   // Keep refs updated
   useEffect(() => {
     onChangeRef.current = onChange;
     onFocusRef.current = onFocus;
     onBlurRef.current = onBlur;
-  }, [onChange, onFocus, onBlur]);
+  }, [onChange, onFocus, onBlur, onKeyDown]);
+
+  useEffect(() => {
+    onKeyDownRef.current = onKeyDown;
+  }, [onKeyDown]);
 
   useEffect(() => {
     if (!editorRef.current) return;
@@ -169,7 +176,16 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       }, 0);
     }
 
+    const dom = view.dom as HTMLElement;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (onKeyDownRef.current) {
+        onKeyDownRef.current(event);
+      }
+    };
+    dom.addEventListener("keydown", handleKeyDown);
+
     return () => {
+      dom.removeEventListener("keydown", handleKeyDown);
       view.destroy();
       viewRef.current = null;
     };

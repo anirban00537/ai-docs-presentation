@@ -179,8 +179,27 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     [isSelected, localItems, debouncedUpdateItems]
   );
 
-  // Note: ProseMirror handles keyboard events internally
-  // Enter key behavior can be customized via ProseMirror keymap if needed
+  const handleItemKeyDown = React.useCallback(
+    (index: number, event: KeyboardEvent) => {
+      if (!isSelected) return;
+
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        handleAddItem();
+        return;
+      }
+
+      if (
+        event.key === "Backspace" &&
+        localItems[index] === "" &&
+        localItems.length > 1
+      ) {
+        event.preventDefault();
+        handleRemoveItem(index);
+      }
+    },
+    [handleAddItem, handleRemoveItem, isSelected, localItems]
+  );
 
   // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
@@ -352,6 +371,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                         setEditingIndex(null);
                         setActiveField(null);
                       }}
+                      onKeyDown={(event) => handleItemKeyDown(index, event)}
                       placeholder={`Item ${index + 1}`}
                       readOnly={!isSelected}
                       className={cn(
