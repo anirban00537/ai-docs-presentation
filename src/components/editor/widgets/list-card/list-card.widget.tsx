@@ -287,7 +287,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                 <div
                   key={index}
                   data-list-item
-                  className="flex items-start gap-4 group/item"
+                  className="flex items-center gap-4 group/item"
                 >
                   {/* Bullet/Number - Enhanced styling */}
                   <div
@@ -304,7 +304,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                         </span>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center w-2 h-2 rounded-full bg-current mt-2.5" />
+                      <div className="flex items-center justify-center w-2 h-2 rounded-full bg-current" />
                     )}
                   </div>
 
