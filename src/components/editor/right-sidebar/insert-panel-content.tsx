@@ -253,6 +253,57 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
     onClose();
   };
 
+  // Combine all card presets into a single array for the grid
+  const allCards = [
+    ...featureCardPresets.map((preset) => ({
+      type: "feature" as const,
+      preset,
+      icon: <LayoutTemplate className="h-4 w-4" />,
+      title: preset.title,
+      description: preset.description,
+      onClick: () => handleAddFeatureCard(preset),
+    })),
+    ...iconCardPresets.map((preset) => ({
+      type: "icon" as const,
+      preset,
+      icon: <Star className="h-4 w-4" />,
+      title: "Icon Card",
+      description: "Card with icon, title and description",
+      onClick: () => handleAddIconCard(preset),
+    })),
+    ...labelCardPresets.map((preset) => ({
+      type: "label" as const,
+      preset,
+      icon: <Tag className="h-4 w-4" />,
+      title: preset.title,
+      description: preset.description,
+      onClick: () => handleAddLabelCard(preset),
+    })),
+    ...listCardPresets.map((preset) => ({
+      type: "list" as const,
+      preset,
+      icon:
+        preset.listType === "numbered" ? (
+          <ListOrdered className="h-4 w-4" />
+        ) : (
+          <List className="h-4 w-4" />
+        ),
+      title:
+        preset.title ||
+        `${preset.listType === "numbered" ? "Numbered" : "Bullet"} List`,
+      description: `${preset.items.length} items`,
+      onClick: () => handleAddListCard(preset),
+    })),
+    ...quotePresets.map((preset) => ({
+      type: "quote" as const,
+      preset,
+      icon: <Quote className="h-4 w-4" />,
+      title: "Quote Card",
+      description: `${preset.quote.substring(0, 40)}...`,
+      onClick: () => handleAddQuote(preset),
+    })),
+  ];
+
   return (
     <div className="space-y-6 pb-6">
       {/* Text Options */}
@@ -281,6 +332,34 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
         </div>
       </div>
 
+      {/* All Cards */}
+      <div className="space-y-2">
+        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+          Cards
+        </h3>
+        <div className="grid grid-cols-4 gap-2">
+          {allCards.map((card, index) => (
+            <button
+              key={`${card.type}-${card.preset.id}-${index}`}
+              onClick={card.onClick}
+              className="group flex flex-col items-center justify-center gap-2 rounded-lg border border-border/40 bg-background/50 p-2.5 transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-95"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
+                {card.icon}
+              </div>
+              <div className="text-center space-y-0.5">
+                <div className="text-[10px] font-medium text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                  {card.title}
+                </div>
+                <div className="text-[9px] text-muted-foreground line-clamp-1">
+                  {card.description}
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Shapes */}
       <div className="space-y-2">
         <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
@@ -295,153 +374,6 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
               onClick={() => handleAddShape(item)}
               className="aspect-square"
             />
-          ))}
-        </div>
-      </div>
-
-      {/* Feature Cards */}
-      <div className="space-y-2">
-        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-          Number Cards
-        </h3>
-        <div className="grid grid-cols-1 gap-2">
-          {featureCardPresets.map((preset) => (
-            <button
-              key={preset.id}
-              onClick={() => handleAddFeatureCard(preset)}
-              className="group flex w-full items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-[0.98]"
-            >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
-                <LayoutTemplate className="h-4 w-4" />
-              </div>
-              <div className="flex-1 space-y-0.5">
-                <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
-                  {preset.title}
-                </div>
-                <div className="text-[10px] text-muted-foreground line-clamp-1">
-                  {preset.description}
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Icon Cards */}
-      <div className="space-y-2">
-        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-          Icon Cards
-        </h3>
-        <div className="grid grid-cols-1 gap-2">
-          {iconCardPresets.map((preset) => (
-            <button
-              key={preset.id}
-              onClick={() => handleAddIconCard(preset)}
-              className="group flex w-full items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-[0.98]"
-            >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
-                <Star className="h-4 w-4" />
-              </div>
-              <div className="flex-1 space-y-0.5">
-                <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
-                  Icon Card
-                </div>
-                <div className="text-[10px] text-muted-foreground line-clamp-1">
-                  Card with icon, title and description
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Label Cards */}
-      <div className="space-y-2">
-        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-          Label Cards
-        </h3>
-        <div className="grid grid-cols-1 gap-2">
-          {labelCardPresets.map((preset) => (
-            <button
-              key={preset.id}
-              onClick={() => handleAddLabelCard(preset)}
-              className="group flex w-full items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-[0.98]"
-            >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
-                <Tag className="h-4 w-4" />
-              </div>
-              <div className="flex-1 space-y-0.5">
-                <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
-                  {preset.title}
-                </div>
-                <div className="text-[10px] text-muted-foreground line-clamp-1">
-                  {preset.description}
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* List Cards */}
-      <div className="space-y-2">
-        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-          Lists
-        </h3>
-        <div className="grid grid-cols-1 gap-2">
-          {listCardPresets.map((preset) => (
-            <button
-              key={preset.id}
-              onClick={() => handleAddListCard(preset)}
-              className="group flex w-full items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-[0.98]"
-            >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
-                {preset.listType === "numbered" ? (
-                  <ListOrdered className="h-4 w-4" />
-                ) : (
-                  <List className="h-4 w-4" />
-                )}
-              </div>
-              <div className="flex-1 space-y-0.5">
-                <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
-                  {preset.title ||
-                    `${
-                      preset.listType === "numbered" ? "Numbered" : "Bullet"
-                    } List`}
-                </div>
-                <div className="text-[10px] text-muted-foreground line-clamp-1">
-                  {preset.items.length} items
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Quote Widgets */}
-      <div className="space-y-2">
-        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-          Quotes
-        </h3>
-        <div className="grid grid-cols-1 gap-2">
-          {quotePresets.map((preset) => (
-            <button
-              key={preset.id}
-              onClick={() => handleAddQuote(preset)}
-              className="group flex w-full items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3 text-left transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-[0.98]"
-            >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
-                <Quote className="h-4 w-4" />
-              </div>
-              <div className="flex-1 space-y-0.5">
-                <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
-                  Quote Card
-                </div>
-                <div className="text-[10px] text-muted-foreground line-clamp-1">
-                  {preset.quote.substring(0, 40)}...
-                </div>
-              </div>
-            </button>
           ))}
         </div>
       </div>
