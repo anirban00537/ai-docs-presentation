@@ -32,7 +32,9 @@ export const useQuoteCreation = () => {
       if (!slideId) return;
       const id = `quote-${nanoid(8)}`;
       const width = 350;
-      const height = 280;
+      // Reduced height for minimal and bordered styles
+      const style = preset.style || "minimal";
+      const height = style === "minimal" || style === "bordered" ? 180 : 280;
       const originX = Math.max(
         40,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)
@@ -73,4 +75,3 @@ export const useQuoteCreation = () => {
     handleAddQuote,
   };
 };
-

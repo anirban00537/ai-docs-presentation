@@ -212,13 +212,16 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
         const totalHeight =
           newHeight + attributionHeight + iconHeight + padding + gap;
 
+        // Style-specific minimum height: reduced for minimal and bordered
+        const minHeight = style === "minimal" || style === "bordered" ? 180 : 280;
+
         // Only update if height changed significantly (more than 5px difference)
         if (Math.abs(widget.height - totalHeight) > 5) {
           dispatch(
             updateWidgetAction({
               slideId: activeSlideId,
               widgetId: widget.id,
-              updates: { height: Math.max(280, totalHeight) },
+              updates: { height: Math.max(minHeight, totalHeight) },
             })
           );
         }
