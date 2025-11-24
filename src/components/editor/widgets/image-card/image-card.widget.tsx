@@ -194,9 +194,9 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
         boxShadow: "none",
       };
   const heroTextPanelClasses = cn(
-    "flex flex-1 flex-col gap-3 px-6 pb-6 pt-5",
+    "flex flex-1 flex-col gap-3 px-8 pb-8 pt-6",
     isGlassBackground &&
-      "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_25px_60px_-30px_rgba(15,23,42,0.7)]"
+      "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_40px_80px_-20px_rgba(15,23,42,0.5)] rounded-[24px]"
   );
   const heroTextPanelStyle = isGlassBackground
     ? {
@@ -205,7 +205,7 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
       }
     : undefined;
   const glassOverlayClasses =
-    "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_25px_60px_-30px_rgba(15,23,42,0.8)]";
+    "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_40px_80px_-20px_rgba(15,23,42,0.5)] rounded-[24px]";
 
   return (
     <div
@@ -239,9 +239,9 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full overflow-hidden rounded-2xl transition-all duration-300 ease-out",
+            "relative h-full w-full overflow-hidden rounded-[32px] transition-all duration-300 ease-out shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
             isHeroImage && isGlassBackground && "backdrop-blur-2xl",
-            isHeroImage && isTransparentBackground && "bg-transparent"
+            isHeroImage && isTransparentBackground && "bg-transparent shadow-none"
           )}
           style={isHeroImage ? heroSurfaceStyle : undefined}
         >

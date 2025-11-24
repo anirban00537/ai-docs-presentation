@@ -223,9 +223,9 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-2xl p-6 transition-all duration-300 ease-out",
+            "relative h-full w-full rounded-[32px] p-8 transition-all duration-300 ease-out shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
             isGlassBackground && "backdrop-blur-2xl",
-            isTransparentBackground && "bg-transparent"
+            isTransparentBackground && "bg-transparent shadow-none"
           )}
           style={{
             backgroundColor: isGlassBackground
