@@ -556,7 +556,7 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
     >
       <div
         data-quote-toolbar="true"
-        className="pointer-events-auto flex items-center gap-2 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur"
+        className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-border bg-white/90 px-3 py-1.5 text-xs shadow-[0_6px_30px_-14px_rgba(0,0,0,0.25)] backdrop-blur"
         onPointerDown={(event) => {
           event.stopPropagation();
         }}
