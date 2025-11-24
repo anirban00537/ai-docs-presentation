@@ -54,6 +54,8 @@ export const useListCardCreation = () => {
         itemColor: globalTheme?.text ?? "#0f172a",
         bulletColor: globalTheme?.accent ?? "#0f172a",
         titleColor: globalTheme?.text ?? "#0f172a",
+        titleFontSize: 34,
+        itemFontSize: 22,
         textAlign: "left",
         backgroundType: "glass",
       };

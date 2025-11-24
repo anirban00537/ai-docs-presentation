@@ -11,8 +11,11 @@ export type NumberCardWidget = WidgetCommon & {
   titleColor?: string;
   descriptionColor?: string;
   numberFontFamily?: string;
+  numberFontSize?: number;
   titleFontFamily?: string;
+  titleFontSize?: number;
   descriptionFontFamily?: string;
+  descriptionFontSize?: number;
   textAlign?: "left" | "center" | "right";
   backgroundType?: "solid" | "glass";
 };

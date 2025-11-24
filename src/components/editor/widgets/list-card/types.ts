@@ -11,7 +11,9 @@ export type ListWidget = WidgetCommon & {
   itemColor?: string;
   bulletColor?: string;
   titleFontFamily?: string;
+  titleFontSize?: number;
   itemFontFamily?: string;
+  itemFontSize?: number;
   textAlign?: "left" | "center" | "right";
   backgroundType?: "solid" | "glass";
 };

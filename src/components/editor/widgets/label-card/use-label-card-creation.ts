@@ -55,6 +55,9 @@ export const useLabelCardCreation = () => {
         labelTextColor: "#ffffff",
         titleColor: globalTheme?.text ?? "#0f172a",
         descriptionColor: globalTheme?.text ?? "#475569",
+        labelFontSize: 13,
+        titleFontSize: 40,
+        descriptionFontSize: 20,
         textAlign: "left",
         backgroundType: "glass", // Default to glassmorphism
       };

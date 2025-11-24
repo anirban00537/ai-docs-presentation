@@ -214,6 +214,8 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const titleColor = widget.titleColor ?? "#0f172a";
   const descriptionColor = widget.descriptionColor ?? "#475569";
   const iconSize = widget.iconSize ?? 48;
+  const titleFontSize = widget.titleFontSize ?? 24;
+  const descriptionFontSize = widget.descriptionFontSize ?? 18;
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? "var(--font-poppins)";
@@ -332,7 +334,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.5rem",
+                fontSize: `${titleFontSize}px`,
                 fontWeight: 600,
                 color: titleColor,
                 fontFamily: titleFontFamily,
@@ -363,7 +365,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.125rem",
+                fontSize: `${descriptionFontSize}px`,
                 color: descriptionColor,
                 fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,

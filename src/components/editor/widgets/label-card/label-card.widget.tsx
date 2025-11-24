@@ -204,6 +204,9 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? "var(--font-poppins)";
+  const labelFontSize = widget.labelFontSize ?? 13;
+  const titleFontSize = widget.titleFontSize ?? 40;
+  const descriptionFontSize = widget.descriptionFontSize ?? 20;
   const textAlign = widget.textAlign ?? "left";
   const backgroundType = widget.backgroundType ?? "solid";
   const isGlassBackground = backgroundType === "glass";
@@ -269,7 +272,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
               }}
             >
               <div
-                className="relative inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
+                className="relative inline-flex items-center justify-center px-3 py-1 rounded-full shadow-sm"
                 style={{
                   backgroundColor: labelColor,
                 }}
@@ -285,6 +288,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                   style={{
                     color: labelTextColor,
                     fontFamily: labelFontFamily,
+                    fontSize: `${labelFontSize}px`,
                     lineHeight: 1.2,
                   }}
                   size={localLabel.length || 5}
@@ -315,7 +319,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "2.5rem",
+                fontSize: `${titleFontSize}px`,
                 fontWeight: 700,
                 color: titleColor,
                 fontFamily: titleFontFamily,
@@ -346,7 +350,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.25rem",
+                fontSize: `${descriptionFontSize}px`,
                 color: descriptionColor,
                 fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,

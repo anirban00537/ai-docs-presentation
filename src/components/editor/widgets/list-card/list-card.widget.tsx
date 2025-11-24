@@ -197,6 +197,8 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   const bulletColor = widget.bulletColor ?? widget.itemColor ?? "#0f172a";
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
   const itemFontFamily = widget.itemFontFamily ?? "var(--font-poppins)";
+  const titleFontSize = widget.titleFontSize ?? 34;
+  const itemFontSize = widget.itemFontSize ?? 22;
   const textAlign = widget.textAlign ?? "left";
   const listType = widget.listType ?? "bullet";
   const backgroundType = widget.backgroundType ?? "solid";
@@ -258,7 +260,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "2.125rem",
+                fontSize: `${titleFontSize}px`,
                 fontWeight: 700,
                 color: titleColor,
                 fontFamily: titleFontFamily,
@@ -298,13 +300,42 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                     }}
                   >
                     {listType === "numbered" ? (
-                      <div className="flex items-center justify-center w-7 h-7 rounded-full bg-current/10 text-current">
-                        <span className="text-base font-semibold leading-none">
+                      <div
+                        className="flex items-center justify-center rounded-full bg-current/10 text-current"
+                        style={{
+                          width: `${Math.max(
+                            26,
+                            Math.round(itemFontSize * 0.9)
+                          )}px`,
+                          height: `${Math.max(
+                            26,
+                            Math.round(itemFontSize * 0.9)
+                          )}px`,
+                        }}
+                      >
+                        <span
+                          className="font-semibold leading-none"
+                          style={{
+                            fontSize: `${Math.round(itemFontSize * 0.75)}px`,
+                          }}
+                        >
                           {index + 1}
                         </span>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center w-1.5 h-1.5 rounded-full bg-current" />
+                      <div
+                        className="flex items-center justify-center rounded-full bg-current"
+                        style={{
+                          width: `${Math.max(
+                            6,
+                            Math.round(itemFontSize * 0.35)
+                          )}px`,
+                          height: `${Math.max(
+                            6,
+                            Math.round(itemFontSize * 0.35)
+                          )}px`,
+                        }}
+                      />
                     )}
                   </div>
 
@@ -321,7 +352,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                         isSelected ? "cursor-text" : "cursor-default"
                       )}
                       style={{
-                        fontSize: "1.375rem",
+                        fontSize: `${itemFontSize}px`,
                         color: itemColor,
                         fontFamily: itemFontFamily,
                         lineHeight: 1.5,

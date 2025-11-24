@@ -54,6 +54,9 @@ export const useNumberCardCreation = () => {
         numberColor: globalTheme?.accent ?? "#0f172a",
         titleColor: globalTheme?.text ?? "#0f172a",
         descriptionColor: globalTheme?.text ?? "#475569",
+        numberFontSize: 56,
+        titleFontSize: 24,
+        descriptionFontSize: 18,
         textAlign: "left",
         backgroundType: "glass", // Default to glassmorphism
       };

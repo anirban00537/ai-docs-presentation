@@ -203,6 +203,9 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? "var(--font-poppins)";
+  const numberFontSize = widget.numberFontSize ?? 56;
+  const titleFontSize = widget.titleFontSize ?? 24;
+  const descriptionFontSize = widget.descriptionFontSize ?? 18;
   const textAlign = widget.textAlign ?? "left";
   const backgroundType = widget.backgroundType ?? "solid";
   const isGlassBackground = backgroundType === "glass";
@@ -265,7 +268,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "3.5rem",
+                fontSize: `${numberFontSize}px`,
                 fontWeight: 800,
                 color: numberColor,
                 fontFamily: numberFontFamily,
@@ -297,7 +300,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.5rem",
+                fontSize: `${titleFontSize}px`,
                 fontWeight: 600,
                 color: titleColor,
                 fontFamily: titleFontFamily,
@@ -328,7 +331,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.125rem",
+                fontSize: `${descriptionFontSize}px`,
                 color: descriptionColor,
                 fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,

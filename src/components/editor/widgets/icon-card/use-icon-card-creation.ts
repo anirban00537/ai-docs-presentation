@@ -55,6 +55,8 @@ export const useIconCardCreation = () => {
         titleColor: globalTheme?.text ?? "#0f172a",
         descriptionColor: globalTheme?.text ?? "#475569",
         iconSize: 60,
+        titleFontSize: 24,
+        descriptionFontSize: 18,
         textAlign: "left",
         backgroundType: "glass", // Default to glassmorphism
       };

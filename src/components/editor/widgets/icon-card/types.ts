@@ -11,6 +11,8 @@ export type IconCardWidget = WidgetCommon & {
   titleColor?: string;
   descriptionColor?: string;
   iconSize?: number;
+  titleFontSize?: number;
+  descriptionFontSize?: number;
   titleFontFamily?: string;
   descriptionFontFamily?: string;
   textAlign?: "left" | "center" | "right";
