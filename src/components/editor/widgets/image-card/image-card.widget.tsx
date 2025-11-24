@@ -196,7 +196,7 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
   const heroTextPanelClasses = cn(
     "flex flex-1 flex-col gap-3 px-8 pb-8 pt-6",
     isGlassBackground &&
-      "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_40px_80px_-20px_rgba(15,23,42,0.5)] rounded-[24px]"
+      "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_40px_80px_-20px_rgba(15,23,42,0.5)] rounded-b-[32px] rounded-t-none"
   );
   const heroTextPanelStyle = isGlassBackground
     ? {
