@@ -233,7 +233,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-2xl p-5 transition-all duration-300 ease-out",
+            "relative h-full w-full rounded-2xl px-7 py-5 transition-all duration-300 ease-out",
             isGlassBackground && "backdrop-blur-2xl border border-white/10"
           )}
           style={{
