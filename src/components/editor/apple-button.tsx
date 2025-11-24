@@ -10,11 +10,11 @@ const appleButtonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-primary text-primary-foreground shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] hover:shadow-[0_2px_4px_0_rgba(0,0,0,0.1)] hover:bg-primary/95 active:scale-[0.97] active:shadow-[0_1px_1px_0_rgba(0,0,0,0.05)]",
+          "bg-primary text-primary-foreground relative overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.12),0_1px_2px_0_rgba(0,0,0,0.24)] before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.15),0_2px_4px_0_rgba(0,0,0,0.2)] hover:bg-primary/95 hover:-translate-y-[1px] active:scale-[0.97] active:translate-y-0 active:shadow-[0_1px_2px_0_rgba(0,0,0,0.15)]",
         secondary:
-          "bg-secondary/80 text-secondary-foreground shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] hover:bg-secondary/90 hover:shadow-[0_2px_4px_0_rgba(0,0,0,0.1)] active:scale-[0.97] active:shadow-[0_1px_1px_0_rgba(0,0,0,0.05)]",
+          "bg-secondary/80 text-secondary-foreground relative overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.12),0_1px_2px_0_rgba(0,0,0,0.24)] before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none hover:bg-secondary/90 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.15),0_2px_4px_0_rgba(0,0,0,0.2)] hover:-translate-y-[1px] active:scale-[0.97] active:translate-y-0 active:shadow-[0_1px_2px_0_rgba(0,0,0,0.15)]",
         tertiary:
-          "bg-background/60 text-foreground border border-border/60 shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] hover:bg-background/80 hover:shadow-[0_2px_4px_0_rgba(0,0,0,0.1)] hover:border-border active:scale-[0.97] active:shadow-[0_1px_1px_0_rgba(0,0,0,0.05)]",
+          "bg-background/60 text-foreground border border-border/60 relative overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.12),0_1px_2px_0_rgba(0,0,0,0.24)] before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/30 before:to-transparent before:pointer-events-none hover:bg-background/80 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.15),0_2px_4px_0_rgba(0,0,0,0.2)] hover:border-border hover:-translate-y-[1px] active:scale-[0.97] active:translate-y-0 active:shadow-[0_1px_2px_0_rgba(0,0,0,0.15)]",
         ghost:
           "bg-transparent text-foreground hover:bg-accent/50 active:scale-[0.97]",
       },
