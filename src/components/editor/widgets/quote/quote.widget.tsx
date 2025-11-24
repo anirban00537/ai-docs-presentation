@@ -26,6 +26,7 @@ import { Popover } from "@headlessui/react";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
+import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 
 type QuoteWidgetNodeProps = {
   widget: QuoteWidget;
@@ -77,8 +78,6 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
   );
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
 
-  const quoteTextareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-  const attributionInputRef = React.useRef<HTMLInputElement | null>(null);
   const contentContainerRef = React.useRef<HTMLDivElement | null>(null);
 
   const debouncedUpdateQuote = useDebouncedCallback((value: string) => {
@@ -134,7 +133,8 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
       if (
         target.closest(TOOLBAR_SELECTOR) ||
         target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA"
+        target.tagName === "TEXTAREA" ||
+        target.closest(".prosemirror-editor")
       ) {
         return;
       }
@@ -161,25 +161,6 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
     [debouncedUpdateQuote, debouncedUpdateAttribution]
   );
 
-  const handleFieldKeyDown = React.useCallback(
-    (field: ActiveField, event: React.KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        if (field === "quote") {
-          debouncedUpdateQuote.flush();
-        } else if (field === "attribution") {
-          debouncedUpdateAttribution.flush();
-        }
-        // Blur the field
-        if (field === "quote" && quoteTextareaRef.current) {
-          quoteTextareaRef.current.blur();
-        } else if (field === "attribution" && attributionInputRef.current) {
-          attributionInputRef.current.blur();
-        }
-      }
-    },
-    [debouncedUpdateQuote, debouncedUpdateAttribution]
-  );
 
   // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
@@ -222,24 +203,22 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
           className="absolute top-0 left-0 w-12 h-12 opacity-20"
           style={{ color: iconColor }}
         />
-        <textarea
-          ref={quoteTextareaRef}
-          readOnly={!isSelected}
-          className={baseQuoteClasses}
-          style={quoteStyle}
+        <ProseMirrorEditor
           value={localQuote}
-          onChange={(e) => {
+          onChange={(value) => {
             if (!isSelected) return;
-            setLocalQuote(e.target.value);
-            debouncedUpdateQuote(e.target.value);
+            setLocalQuote(value);
+            debouncedUpdateQuote(value);
           }}
           onFocus={() => {
             if (!isSelected) return;
             handleFieldFocus("quote");
           }}
           onBlur={() => handleFieldBlur("quote")}
-          onKeyDown={(e) => handleFieldKeyDown("quote", e)}
           placeholder="Enter your quote here..."
+          readOnly={!isSelected}
+          className={baseQuoteClasses}
+          style={quoteStyle}
         />
         <QuoteIcon
           className="absolute bottom-0 right-0 w-12 h-12 rotate-180 opacity-20"
@@ -322,12 +301,22 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
                       : "flex-start",
                 }}
               >
-                <input
-                  ref={attributionInputRef}
-                  type="text"
+                <ProseMirrorEditor
+                  value={localAttribution}
+                  onChange={(value) => {
+                    if (!isSelected) return;
+                    setLocalAttribution(value);
+                    debouncedUpdateAttribution(value);
+                  }}
+                  onFocus={() => {
+                    if (!isSelected) return;
+                    handleFieldFocus("attribution");
+                  }}
+                  onBlur={() => handleFieldBlur("attribution")}
+                  placeholder="— Attribution"
                   readOnly={!isSelected}
                   className={cn(
-                    "w-auto min-w-[100px] resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                    "w-auto min-w-[100px]",
                     isSelected ? "cursor-text" : "cursor-default"
                   )}
                   style={{
@@ -338,20 +327,6 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
                     lineHeight: 1.4,
                     textAlign,
                   }}
-                  size={localAttribution.length || 10}
-                  value={localAttribution}
-                  onChange={(e) => {
-                    if (!isSelected) return;
-                    setLocalAttribution(e.target.value);
-                    debouncedUpdateAttribution(e.target.value);
-                  }}
-                  onFocus={() => {
-                    if (!isSelected) return;
-                    handleFieldFocus("attribution");
-                  }}
-                  onBlur={() => handleFieldBlur("attribution")}
-                  onKeyDown={(e) => handleFieldKeyDown("attribution", e)}
-                  placeholder="— Attribution"
                 />
               </div>
             )}

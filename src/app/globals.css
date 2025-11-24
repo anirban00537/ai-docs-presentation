@@ -198,3 +198,38 @@
     letter-spacing: var(--tracking-normal);
   }
 }
+
+/* ProseMirror Editor Styles */
+.prosemirror-editor {
+  min-height: 1.5em;
+}
+
+.prosemirror-editor .ProseMirror {
+  outline: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.prosemirror-editor .ProseMirror p {
+  margin: 0;
+}
+
+.prosemirror-editor .ProseMirror.is-editor-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: hsl(var(--muted-foreground));
+  pointer-events: none;
+  height: 0;
+}
+
+.prosemirror-editor .ProseMirror:focus {
+  outline: none;
+}
+
+.prosemirror-editor .ProseMirror .ProseMirror-selectednode {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}

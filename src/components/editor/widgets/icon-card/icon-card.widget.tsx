@@ -32,6 +32,7 @@ import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
 import { X, Search as SearchIcon } from "lucide-react";
 import { createPortal } from "react-dom";
+import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 
 type IconCardWidgetNodeProps = {
   widget: IconCardWidget;
@@ -73,17 +74,6 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
   const [showIconSelector, setShowIconSelector] = React.useState(false);
 
-  const titleInputRef = React.useRef<HTMLInputElement | null>(null);
-  const descriptionTextareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-
-  // Auto-resize textarea based on content
-  React.useLayoutEffect(() => {
-    const textarea = descriptionTextareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [localDescription]);
 
   const debouncedUpdateTitle = useDebouncedCallback((value: string) => {
     dispatch(
@@ -140,7 +130,8 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
         target.closest("[data-icon-selector]") ||
         target.closest("[data-icon-button]") ||
         target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA"
+        target.tagName === "TEXTAREA" ||
+        target.closest(".prosemirror-editor")
       ) {
         return;
       }
@@ -191,25 +182,6 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
     [debouncedUpdateTitle, debouncedUpdateDescription]
   );
 
-  const handleFieldKeyDown = React.useCallback(
-    (field: ActiveField, event: React.KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        if (field === "title") {
-          debouncedUpdateTitle.flush();
-        } else if (field === "description") {
-          debouncedUpdateDescription.flush();
-        }
-        // Blur the field
-        if (field === "title" && titleInputRef.current) {
-          titleInputRef.current.blur();
-        } else if (field === "description" && descriptionTextareaRef.current) {
-          descriptionTextareaRef.current.blur();
-        }
-      }
-    },
-    [debouncedUpdateTitle, debouncedUpdateDescription]
-  );
 
   // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
@@ -331,12 +303,22 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
             </div>
 
             {/* Title field */}
-            <input
-              ref={titleInputRef}
-              type="text"
+            <ProseMirrorEditor
+              value={localTitle}
+              onChange={(value) => {
+                if (!isSelected) return;
+                setLocalTitle(value);
+                debouncedUpdateTitle(value);
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("title");
+              }}
+              onBlur={() => handleFieldBlur("title")}
+              placeholder="Feature Title"
               readOnly={!isSelected}
               className={cn(
-                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                "w-full",
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
@@ -347,27 +329,25 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 lineHeight: 1.25,
                 textAlign,
               }}
-              value={localTitle}
-              onChange={(e) => {
-                if (!isSelected) return;
-                setLocalTitle(e.target.value);
-                debouncedUpdateTitle(e.target.value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("title");
-              }}
-              onBlur={() => handleFieldBlur("title")}
-              onKeyDown={(e) => handleFieldKeyDown("title", e)}
-              placeholder="Feature Title"
             />
 
             {/* Description field */}
-            <textarea
-              ref={descriptionTextareaRef}
+            <ProseMirrorEditor
+              value={localDescription}
+              onChange={(value) => {
+                if (!isSelected) return;
+                setLocalDescription(value);
+                debouncedUpdateDescription(value);
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("description");
+              }}
+              onBlur={() => handleFieldBlur("description")}
+              placeholder="Feature description goes here."
               readOnly={!isSelected}
               className={cn(
-                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 overflow-hidden",
+                "w-full",
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
@@ -378,25 +358,8 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 wordWrap: "break-word",
                 overflowWrap: "break-word",
                 minHeight: "3rem",
-                overflow: "hidden",
                 textAlign,
               }}
-              value={localDescription}
-              onChange={(e) => {
-                if (!isSelected) return;
-                setLocalDescription(e.target.value);
-                debouncedUpdateDescription(e.target.value);
-                // Auto-resize on change
-                e.target.style.height = "auto";
-                e.target.style.height = `${e.target.scrollHeight}px`;
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("description");
-              }}
-              onBlur={() => handleFieldBlur("description")}
-              onKeyDown={(e) => handleFieldKeyDown("description", e)}
-              placeholder="Feature description goes here."
             />
           </div>
         </div>

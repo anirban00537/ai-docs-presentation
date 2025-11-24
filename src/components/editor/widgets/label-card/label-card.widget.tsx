@@ -27,6 +27,7 @@ import { PopoverPanelPortal } from "@/components/editor/background/popover-panel
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
+import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 
 type LabelCardWidgetNodeProps = {
   widget: LabelCardWidget;
@@ -64,18 +65,6 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
   );
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
 
-  const labelInputRef = React.useRef<HTMLInputElement | null>(null);
-  const titleInputRef = React.useRef<HTMLInputElement | null>(null);
-  const descriptionTextareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-
-  // Auto-resize textarea based on content
-  React.useLayoutEffect(() => {
-    const textarea = descriptionTextareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [localDescription]);
 
   const debouncedUpdateLabel = useDebouncedCallback((value: string) => {
     dispatch(
@@ -147,7 +136,8 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
       if (
         target.closest(TOOLBAR_SELECTOR) ||
         target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA"
+        target.tagName === "TEXTAREA" ||
+        target.closest(".prosemirror-editor")
       ) {
         return;
       }
@@ -176,29 +166,6 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
     [debouncedUpdateLabel, debouncedUpdateTitle, debouncedUpdateDescription]
   );
 
-  const handleFieldKeyDown = React.useCallback(
-    (field: ActiveField, event: React.KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        if (field === "label") {
-          debouncedUpdateLabel.flush();
-        } else if (field === "title") {
-          debouncedUpdateTitle.flush();
-        } else if (field === "description") {
-          debouncedUpdateDescription.flush();
-        }
-        // Blur the field
-        if (field === "label" && labelInputRef.current) {
-          labelInputRef.current.blur();
-        } else if (field === "title" && titleInputRef.current) {
-          titleInputRef.current.blur();
-        } else if (field === "description" && descriptionTextareaRef.current) {
-          descriptionTextareaRef.current.blur();
-        }
-      }
-    },
-    [debouncedUpdateLabel, debouncedUpdateTitle, debouncedUpdateDescription]
-  );
 
   // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
@@ -288,12 +255,22 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                   backgroundColor: labelColor,
                 }}
               >
-                <input
-                  ref={labelInputRef}
-                  type="text"
+                <ProseMirrorEditor
+                  value={localLabel}
+                  onChange={(value) => {
+                    if (!isSelected) return;
+                    setLocalLabel(value);
+                    debouncedUpdateLabel(value);
+                  }}
+                  onFocus={() => {
+                    if (!isSelected) return;
+                    handleFieldFocus("label");
+                  }}
+                  onBlur={() => handleFieldBlur("label")}
+                  placeholder="Label"
                   readOnly={!isSelected}
                   className={cn(
-                    "w-auto min-w-[60px] resize-none border-none bg-transparent p-0 outline-none focus:ring-0 text-center",
+                    "w-auto min-w-[60px] text-center",
                     isSelected ? "cursor-text" : "cursor-default"
                   )}
                   style={{
@@ -302,31 +279,27 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                     fontSize: `${labelFontSize}px`,
                     lineHeight: 1.2,
                   }}
-                  size={localLabel.length || 5}
-                  value={localLabel}
-                  onChange={(e) => {
-                    if (!isSelected) return;
-                    setLocalLabel(e.target.value);
-                    debouncedUpdateLabel(e.target.value);
-                  }}
-                  onFocus={() => {
-                    if (!isSelected) return;
-                    handleFieldFocus("label");
-                  }}
-                  onBlur={() => handleFieldBlur("label")}
-                  onKeyDown={(e) => handleFieldKeyDown("label", e)}
-                  placeholder="Label"
                 />
               </div>
             </div>
 
             {/* Title field */}
-            <input
-              ref={titleInputRef}
-              type="text"
+            <ProseMirrorEditor
+              value={localTitle}
+              onChange={(value) => {
+                if (!isSelected) return;
+                setLocalTitle(value);
+                debouncedUpdateTitle(value);
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("title");
+              }}
+              onBlur={() => handleFieldBlur("title")}
+              placeholder="Card Title"
               readOnly={!isSelected}
               className={cn(
-                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                "w-full",
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
@@ -337,27 +310,25 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                 lineHeight: 1.2,
                 textAlign,
               }}
-              value={localTitle}
-              onChange={(e) => {
-                if (!isSelected) return;
-                setLocalTitle(e.target.value);
-                debouncedUpdateTitle(e.target.value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("title");
-              }}
-              onBlur={() => handleFieldBlur("title")}
-              onKeyDown={(e) => handleFieldKeyDown("title", e)}
-              placeholder="Card Title"
             />
 
             {/* Description field */}
-            <textarea
-              ref={descriptionTextareaRef}
+            <ProseMirrorEditor
+              value={localDescription}
+              onChange={(value) => {
+                if (!isSelected) return;
+                setLocalDescription(value);
+                debouncedUpdateDescription(value);
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("description");
+              }}
+              onBlur={() => handleFieldBlur("description")}
+              placeholder="Description text goes here."
               readOnly={!isSelected}
               className={cn(
-                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 overflow-hidden",
+                "w-full",
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
@@ -368,25 +339,8 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                 wordWrap: "break-word",
                 overflowWrap: "break-word",
                 minHeight: "3rem",
-                overflow: "hidden",
                 textAlign,
               }}
-              value={localDescription}
-              onChange={(e) => {
-                if (!isSelected) return;
-                setLocalDescription(e.target.value);
-                debouncedUpdateDescription(e.target.value);
-                // Auto-resize on change
-                e.target.style.height = "auto";
-                e.target.style.height = `${e.target.scrollHeight}px`;
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("description");
-              }}
-              onBlur={() => handleFieldBlur("description")}
-              onKeyDown={(e) => handleFieldKeyDown("description", e)}
-              placeholder="Description text goes here."
             />
           </div>
         </div>

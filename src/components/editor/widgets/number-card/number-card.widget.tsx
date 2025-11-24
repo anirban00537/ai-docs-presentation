@@ -27,6 +27,7 @@ import { PopoverPanelPortal } from "@/components/editor/background/popover-panel
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
+import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 
 type NumberCardWidgetNodeProps = {
   widget: NumberCardWidget;
@@ -64,18 +65,6 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
   );
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
 
-  const numberInputRef = React.useRef<HTMLInputElement | null>(null);
-  const titleInputRef = React.useRef<HTMLInputElement | null>(null);
-  const descriptionTextareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-
-  // Auto-resize textarea based on content
-  React.useLayoutEffect(() => {
-    const textarea = descriptionTextareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [localDescription]);
 
   const debouncedUpdateNumber = useDebouncedCallback((value: string) => {
     dispatch(
@@ -147,7 +136,8 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
       if (
         target.closest(TOOLBAR_SELECTOR) ||
         target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA"
+        target.tagName === "TEXTAREA" ||
+        target.closest(".prosemirror-editor")
       ) {
         return;
       }
@@ -176,29 +166,6 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
     [debouncedUpdateNumber, debouncedUpdateTitle, debouncedUpdateDescription]
   );
 
-  const handleFieldKeyDown = React.useCallback(
-    (field: ActiveField, event: React.KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        if (field === "number") {
-          debouncedUpdateNumber.flush();
-        } else if (field === "title") {
-          debouncedUpdateTitle.flush();
-        } else if (field === "description") {
-          debouncedUpdateDescription.flush();
-        }
-        // Blur the field
-        if (field === "number" && numberInputRef.current) {
-          numberInputRef.current.blur();
-        } else if (field === "title" && titleInputRef.current) {
-          titleInputRef.current.blur();
-        } else if (field === "description" && descriptionTextareaRef.current) {
-          descriptionTextareaRef.current.blur();
-        }
-      }
-    },
-    [debouncedUpdateNumber, debouncedUpdateTitle, debouncedUpdateDescription]
-  );
 
   // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
@@ -270,12 +237,22 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
         >
           <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
             {/* Number field */}
-            <input
-              ref={numberInputRef}
-              type="text"
+            <ProseMirrorEditor
+              value={localNumber}
+              onChange={(value) => {
+                if (!isSelected) return;
+                setLocalNumber(value);
+                debouncedUpdateNumber(value);
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("number");
+              }}
+              onBlur={() => handleFieldBlur("number")}
+              placeholder="01"
               readOnly={!isSelected}
               className={cn(
-                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                "w-full",
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
@@ -286,28 +263,25 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 lineHeight: 1,
                 textAlign,
               }}
-              value={localNumber}
-              onChange={(e) => {
-                if (!isSelected) return;
-                setLocalNumber(e.target.value);
-                debouncedUpdateNumber(e.target.value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("number");
-              }}
-              onBlur={() => handleFieldBlur("number")}
-              onKeyDown={(e) => handleFieldKeyDown("number", e)}
-              placeholder="01"
             />
 
             {/* Title field */}
-            <input
-              ref={titleInputRef}
-              type="text"
+            <ProseMirrorEditor
+              value={localTitle}
+              onChange={(value) => {
+                if (!isSelected) return;
+                setLocalTitle(value);
+                debouncedUpdateTitle(value);
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("title");
+              }}
+              onBlur={() => handleFieldBlur("title")}
+              placeholder="Feature Title"
               readOnly={!isSelected}
               className={cn(
-                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                "w-full",
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
@@ -318,27 +292,25 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 lineHeight: 1.25,
                 textAlign,
               }}
-              value={localTitle}
-              onChange={(e) => {
-                if (!isSelected) return;
-                setLocalTitle(e.target.value);
-                debouncedUpdateTitle(e.target.value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("title");
-              }}
-              onBlur={() => handleFieldBlur("title")}
-              onKeyDown={(e) => handleFieldKeyDown("title", e)}
-              placeholder="Feature Title"
             />
 
             {/* Description field */}
-            <textarea
-              ref={descriptionTextareaRef}
+            <ProseMirrorEditor
+              value={localDescription}
+              onChange={(value) => {
+                if (!isSelected) return;
+                setLocalDescription(value);
+                debouncedUpdateDescription(value);
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus("description");
+              }}
+              onBlur={() => handleFieldBlur("description")}
+              placeholder="Feature description goes here."
               readOnly={!isSelected}
               className={cn(
-                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 overflow-hidden",
+                "w-full",
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
@@ -349,25 +321,8 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 wordWrap: "break-word",
                 overflowWrap: "break-word",
                 minHeight: "3rem",
-                overflow: "hidden",
                 textAlign,
               }}
-              value={localDescription}
-              onChange={(e) => {
-                if (!isSelected) return;
-                setLocalDescription(e.target.value);
-                debouncedUpdateDescription(e.target.value);
-                // Auto-resize on change
-                e.target.style.height = "auto";
-                e.target.style.height = `${e.target.scrollHeight}px`;
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("description");
-              }}
-              onBlur={() => handleFieldBlur("description")}
-              onKeyDown={(e) => handleFieldKeyDown("description", e)}
-              placeholder="Feature description goes here."
             />
           </div>
         </div>

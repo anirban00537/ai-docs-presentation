@@ -33,6 +33,7 @@ import { Popover } from "@headlessui/react";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
+import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 
 type ActiveField = "title" | "item" | null;
 
@@ -70,7 +71,6 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
 
-  const itemInputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
   const debouncedUpdateItems = useDebouncedCallback((items: string[]) => {
     dispatch(
@@ -125,7 +125,8 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
         target.closest("[data-list-item]") ||
         target.closest("[data-add-item]") ||
         target.closest("[data-remove-item]") ||
-        target.tagName === "INPUT"
+        target.tagName === "INPUT" ||
+        target.closest(".prosemirror-editor")
       ) {
         return;
       }
@@ -153,12 +154,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     const newItems = [...localItems, ""];
     setLocalItems(newItems);
     debouncedUpdateItems(newItems);
-    // Focus the new input
-    setTimeout(() => {
-      const newIndex = newItems.length - 1;
-      itemInputRefs.current[newIndex]?.focus();
-      setEditingIndex(newIndex);
-    }, 0);
+    setEditingIndex(newItems.length - 1);
   }, [isSelected, localItems, debouncedUpdateItems]);
 
   const handleRemoveItem = React.useCallback(
@@ -172,32 +168,8 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     [isSelected, localItems, debouncedUpdateItems]
   );
 
-  const handleItemKeyDown = React.useCallback(
-    (index: number, event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        handleAddItem();
-      } else if (
-        event.key === "Backspace" &&
-        localItems[index] === "" &&
-        localItems.length > 1
-      ) {
-        event.preventDefault();
-        handleRemoveItem(index);
-        // Focus previous item
-        if (index > 0) {
-          setTimeout(() => {
-            itemInputRefs.current[index - 1]?.focus();
-          }, 0);
-        }
-      } else if (event.key === "Escape") {
-        event.preventDefault();
-        itemInputRefs.current[index]?.blur();
-        setEditingIndex(null);
-      }
-    },
-    [localItems, handleAddItem, handleRemoveItem]
-  );
+  // Note: ProseMirror handles keyboard events internally
+  // Enter key behavior can be customized via ProseMirror keymap if needed
 
   // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
@@ -267,11 +239,25 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
         >
           <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
             {/* Title field - Always visible */}
-            <input
-              type="text"
+            <ProseMirrorEditor
+              value={localTitle}
+              onChange={(value) => {
+                if (!isSelected) return;
+                setLocalTitle(value);
+                debouncedUpdateTitle(value);
+              }}
+              onFocus={() => {
+                if (!isSelected) return;
+                setActiveField("title");
+              }}
+              onBlur={() => {
+                debouncedUpdateTitle.flush();
+                setActiveField(null);
+              }}
+              placeholder="List Title"
               readOnly={!isSelected}
               className={cn(
-                "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+                "w-full",
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
@@ -283,21 +269,6 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                 textAlign,
                 letterSpacing: "-0.01em",
               }}
-              value={localTitle}
-              onChange={(e) => {
-                if (!isSelected) return;
-                setLocalTitle(e.target.value);
-                debouncedUpdateTitle(e.target.value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                setActiveField("title");
-              }}
-              onBlur={() => {
-                debouncedUpdateTitle.flush();
-                setActiveField(null);
-              }}
-              placeholder="List Title"
             />
 
             {/* List items */}
@@ -358,26 +329,9 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
 
                   {/* Item input */}
                   <div className="flex-1 flex items-center gap-3 min-w-0">
-                    <input
-                      ref={(el) => {
-                        itemInputRefs.current[index] = el;
-                      }}
-                      type="text"
-                      readOnly={!isSelected}
-                      className={cn(
-                        "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 flex-1",
-                        isSelected ? "cursor-text" : "cursor-default"
-                      )}
-                      style={{
-                        fontSize: `${itemFontSize}px`,
-                        color: itemColor,
-                        fontFamily: itemFontFamily,
-                        lineHeight: 1.5,
-                        textAlign,
-                        fontWeight: 400,
-                      }}
+                    <ProseMirrorEditor
                       value={item}
-                      onChange={(e) => handleItemChange(index, e.target.value)}
+                      onChange={(value) => handleItemChange(index, value)}
                       onFocus={() => {
                         if (!isSelected) return;
                         setEditingIndex(index);
@@ -388,8 +342,20 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                         setEditingIndex(null);
                         setActiveField(null);
                       }}
-                      onKeyDown={(e) => handleItemKeyDown(index, e)}
                       placeholder={`Item ${index + 1}`}
+                      readOnly={!isSelected}
+                      className={cn(
+                        "w-full flex-1",
+                        isSelected ? "cursor-text" : "cursor-default"
+                      )}
+                      style={{
+                        fontSize: `${itemFontSize}px`,
+                        color: itemColor,
+                        fontFamily: itemFontFamily,
+                        lineHeight: 1.5,
+                        textAlign,
+                        fontWeight: 400,
+                      }}
                     />
 
                     {/* Remove button */}
