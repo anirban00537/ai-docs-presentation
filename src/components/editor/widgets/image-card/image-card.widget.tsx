@@ -26,6 +26,7 @@ import { ToolbarPortal } from "@/components/editor/toolbar-portal";
 import { Popover } from "@headlessui/react";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
 import { HexColorPicker } from "react-colorful";
+import { Input } from "@/components/ui/input";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 
 type ImageCardWidgetNodeProps = {
@@ -447,7 +448,7 @@ type ImageCardToolbarProps = {
   widget: ImageCardWidget;
   isEditing: boolean;
   activeField: ActiveField;
-  widgetRef: React.RefObject<HTMLDivElement>;
+  widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
 };
@@ -702,9 +703,9 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
                         <Input
                           className="h-7 flex-1 border-none bg-transparent text-xs font-mono uppercase text-muted-foreground focus-visible:ring-0"
                           value={currentBackgroundColor}
-                          onChange={(event) =>
-                            handleSetBackgroundColor(event.target.value)
-                          }
+                          onChange={(
+                            event: React.ChangeEvent<HTMLInputElement>
+                          ) => handleSetBackgroundColor(event.target.value)}
                         />
                       </div>
                     </div>
@@ -790,9 +791,9 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
                             <Input
                               className="h-7 flex-1 border-none bg-transparent text-xs font-mono uppercase text-muted-foreground focus-visible:ring-0"
                               value={currentTextColor}
-                              onChange={(event) =>
-                                handleSetTextColor(event.target.value)
-                              }
+                              onChange={(
+                                event: React.ChangeEvent<HTMLInputElement>
+                              ) => handleSetTextColor(event.target.value)}
                             />
                           </div>
                         </div>
