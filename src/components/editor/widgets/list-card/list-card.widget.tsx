@@ -13,7 +13,12 @@ import {
 } from "lucide-react";
 import type { ListWidget } from "./types";
 import type { ResizeHandle } from "../types";
-import { TOOLBAR_SELECTOR, ALIGN_OPTIONS, GOOGLE_FONTS } from "./constants";
+import {
+  TOOLBAR_SELECTOR,
+  ALIGN_OPTIONS,
+  GOOGLE_FONTS,
+  FONT_SIZE_OPTIONS,
+} from "./constants";
 import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -27,6 +32,8 @@ import { Popover } from "@headlessui/react";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
+
+type ActiveField = "title" | "item" | null;
 
 type ListCardWidgetNodeProps = {
   widget: ListWidget;
@@ -54,6 +61,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const widgetRef = React.useRef<HTMLDivElement>(null);
+  const [activeField, setActiveField] = React.useState<ActiveField>(null);
 
   const [localItems, setLocalItems] = React.useState<string[]>(
     widget.items && widget.items.length > 0 ? widget.items : [""]
@@ -231,6 +239,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
             widgetRef={widgetRef}
             viewport={viewport}
             containerRef={containerRef}
+            activeField={activeField}
           />
         )}
         <div
@@ -276,9 +285,11 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
               }}
               onFocus={() => {
                 if (!isSelected) return;
+                setActiveField("title");
               }}
               onBlur={() => {
                 debouncedUpdateTitle.flush();
+                setActiveField(null);
               }}
               placeholder="List Title"
             />
@@ -364,10 +375,12 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                       onFocus={() => {
                         if (!isSelected) return;
                         setEditingIndex(index);
+                        setActiveField("item");
                       }}
                       onBlur={() => {
                         debouncedUpdateItems.flush();
                         setEditingIndex(null);
+                        setActiveField(null);
                       }}
                       onKeyDown={(e) => handleItemKeyDown(index, e)}
                       placeholder={`Item ${index + 1}`}
@@ -427,6 +440,7 @@ type ListCardEditingToolbarProps = {
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  activeField: ActiveField;
 };
 
 const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
@@ -435,11 +449,13 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
   widgetRef,
   viewport,
   containerRef,
+  activeField,
 }) => {
   const bgColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const textColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const bulletColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontButtonRef = React.useRef<HTMLButtonElement>(null);
+  const fontSizeButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontMenuRef = React.useRef<HTMLDivElement>(null);
   const [fontMenuOpen, setFontMenuOpen] = React.useState(false);
   const dispatch = useAppDispatch();
@@ -529,6 +545,20 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
     );
   };
 
+  const handleSetFontSize = (size: number) => {
+    if (!activeField) return;
+
+    const sizeKey = activeField === "title" ? "titleFontSize" : "itemFontSize";
+
+    dispatch(
+      updateWidgetAction({
+        slideId: activeSlideId,
+        widgetId: widget.id,
+        updates: { [sizeKey]: size },
+      })
+    );
+  };
+
   const handleToggleListType = () => {
     const newListType = widget.listType === "numbered" ? "bullet" : "numbered";
     dispatch(
@@ -574,6 +604,22 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
   const currentFontLabel =
     GOOGLE_FONTS.find((font) => font.value === currentFontFamily)?.label ??
     "Poppins";
+  const currentFontSize =
+    activeField === "title"
+      ? widget.titleFontSize ?? 34
+      : activeField === "item"
+      ? widget.itemFontSize ?? 22
+      : null;
+  const currentFontSizeLabel = currentFontSize
+    ? FONT_SIZE_OPTIONS.find((option) => option.value === currentFontSize)
+        ?.label ?? `${currentFontSize}px`
+    : null;
+  const fontSizePopoverLabel =
+    activeField === "title"
+      ? "Title Size"
+      : activeField === "item"
+      ? "Item Size"
+      : "";
 
   const currentListType = widget.listType ?? "bullet";
 
@@ -623,6 +669,57 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
             <ListOrdered className="h-3.5 w-3.5" />
           </Button>
         </div>
+
+        {activeField && currentFontSize && (
+          <>
+            <div className="h-5 w-px bg-black/10 rounded-full" />
+            <Popover>
+              {({ open }) => (
+                <>
+                  <Popover.Button
+                    ref={fontSizeButtonRef}
+                    className={cn(
+                      "flex items-center gap-2 rounded-full bg-black/5 px-3 py-1.5 text-xs font-medium text-foreground/80 transition-all hover:bg-black/10",
+                      open && "bg-black/10 text-foreground"
+                    )}
+                  >
+                    <span className="uppercase tracking-wide text-[10px]">
+                      {fontSizePopoverLabel}
+                    </span>
+                    <span className="text-[10px] font-semibold">
+                      {currentFontSizeLabel}
+                    </span>
+                    <ChevronDown className="h-3 w-3" />
+                  </Popover.Button>
+                  {open && (
+                    <PopoverPanelPortal buttonRef={fontSizeButtonRef}>
+                      <div className="flex flex-col gap-1 p-2 bg-white/95 backdrop-blur-2xl rounded-xl shadow-2xl border border-white/20 min-w-[190px] animate-in fade-in zoom-in-95 duration-150">
+                        {FONT_SIZE_OPTIONS.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            className={cn(
+                              "flex items-center justify-between rounded-lg px-3 py-2 text-xs transition-all",
+                              option.value === currentFontSize
+                                ? "bg-black/5 text-foreground font-semibold"
+                                : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                            )}
+                            onClick={() => handleSetFontSize(option.value)}
+                          >
+                            <span>{option.label}</span>
+                            <span className="text-[10px] uppercase">
+                              {option.value}px
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverPanelPortal>
+                  )}
+                </>
+              )}
+            </Popover>
+          </>
+        )}
 
         <div className="h-5 w-px bg-black/10 rounded-full" />
 

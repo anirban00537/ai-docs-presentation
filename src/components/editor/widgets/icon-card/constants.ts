@@ -49,6 +49,24 @@ export const GOOGLE_FONTS = [
   { value: "var(--font-ubuntu)", label: "Ubuntu", style: "var(--font-ubuntu)" },
 ];
 
+export const FONT_SIZE_OPTIONS = [
+  { label: "Extra Small", value: 14 },
+  { label: "Small", value: 18 },
+  { label: "Medium", value: 24 },
+  { label: "Large", value: 32 },
+  { label: "Extra Large", value: 42 },
+  { label: "Huge", value: 56 },
+];
+
+export const ICON_SIZE_OPTIONS = [
+  { label: "Extra Small", value: 32 },
+  { label: "Small", value: 40 },
+  { label: "Medium", value: 48 },
+  { label: "Large", value: 56 },
+  { label: "Extra Large", value: 64 },
+  { label: "Huge", value: 72 },
+];
+
 // Categorized Lucide icons for selection
 export const ICON_CATEGORIES = {
   Popular: [

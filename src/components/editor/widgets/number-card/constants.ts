@@ -49,3 +49,11 @@ export const GOOGLE_FONTS = [
   { value: "var(--font-ubuntu)", label: "Ubuntu", style: "var(--font-ubuntu)" },
 ];
 
+export const FONT_SIZE_OPTIONS = [
+  { label: "Extra Small", value: 16 },
+  { label: "Small", value: 24 },
+  { label: "Medium", value: 36 },
+  { label: "Large", value: 48 },
+  { label: "Extra Large", value: 56 },
+  { label: "Huge", value: 72 },
+];
