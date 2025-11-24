@@ -46,7 +46,7 @@ export const useImageCardCreation = () => {
         title: preset.title || "Image Card",
         description: preset.description || "Add description here.",
         imageUrl: preset.imageUrl || DEFAULT_IMAGE_URL,
-        imageStyle: "hero",
+        imageStyle: preset.imageStyle || "hero",
         x: originX,
         y: originY,
         width,

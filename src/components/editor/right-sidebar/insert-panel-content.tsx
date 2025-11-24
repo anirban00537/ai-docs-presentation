@@ -50,9 +50,40 @@ const iconCardPresets: IconCardPreset[] = [
 
 const imageCardPresets: ImageCardPreset[] = [
   {
-    id: "default",
-    title: "Image Card",
-    description: "Add a visual with supporting text.",
+    id: "hero",
+    title: "Hero Image",
+    description: "Large image on top with content below.",
+    imageStyle: "hero",
+  },
+  {
+    id: "left",
+    title: "Left Image",
+    description: "Image on the left, content on the right.",
+    imageStyle: "left",
+  },
+  {
+    id: "right",
+    title: "Right Image",
+    description: "Image on the right, content on the left.",
+    imageStyle: "right",
+  },
+  {
+    id: "bottom",
+    title: "Bottom Image",
+    description: "Image on the bottom, content on top.",
+    imageStyle: "bottom",
+  },
+  {
+    id: "background",
+    title: "Background",
+    description: "Text overlays directly on the background.",
+    imageStyle: "background",
+  },
+  {
+    id: "background-glass",
+    title: "Glass Background",
+    description: "Background image with glassmorphism panel.",
+    imageStyle: "backgroundGlass",
   },
 ];
 
@@ -232,42 +263,34 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
 }) => {
   const handleAddText = (preset: TextPreset) => {
     onAddText(preset);
-    onClose();
   };
 
   const handleAddShape = (preset: ShapePreset) => {
     onAddShape?.(preset);
-    onClose();
   };
 
   const handleAddFeatureCard = (preset: FeatureCardPreset) => {
     onAddFeatureCard?.(preset);
-    onClose();
   };
 
   const handleAddIconCard = (preset: IconCardPreset) => {
     onAddIconCard?.(preset);
-    onClose();
   };
 
   const handleAddLabelCard = (preset: LabelCardPreset) => {
     onAddLabelCard?.(preset);
-    onClose();
   };
 
   const handleAddImageCard = (preset: ImageCardPreset) => {
     onAddImageCard?.(preset);
-    onClose();
   };
 
   const handleAddListCard = (preset: ListCardPreset) => {
     onAddListCard?.(preset);
-    onClose();
   };
 
   const handleAddQuote = (preset: QuotePreset) => {
     onAddQuote?.(preset);
-    onClose();
   };
 
   // Combine all card presets into a single array for the grid
@@ -276,7 +299,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
       type: "feature" as const,
       preset,
       icon: <LayoutTemplate className="h-4 w-4" />,
-      title: preset.title,
+      title: "Number Card",
       description: preset.description,
       onClick: () => handleAddFeatureCard(preset),
     })),
@@ -292,15 +315,15 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
       type: "image" as const,
       preset,
       icon: <ImageIcon className="h-4 w-4" />,
-      title: "Image Card",
-      description: "Top image with title and copy",
+      title: preset.title, // Presets now have specific titles like "Hero Image", "Left Image"
+      description: preset.description,
       onClick: () => handleAddImageCard(preset),
     })),
     ...labelCardPresets.map((preset) => ({
       type: "label" as const,
       preset,
       icon: <Tag className="h-4 w-4" />,
-      title: preset.title,
+      title: "Label Card",
       description: preset.description,
       onClick: () => handleAddLabelCard(preset),
     })),
@@ -313,9 +336,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
         ) : (
           <List className="h-4 w-4" />
         ),
-      title:
-        preset.title ||
-        `${preset.listType === "numbered" ? "Numbered" : "Bullet"} List`,
+      title: preset.listType === "numbered" ? "Numbered List" : "Bullet List",
       description: `${preset.items.length} items`,
       onClick: () => handleAddListCard(preset),
     })),
@@ -324,7 +345,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
       preset,
       icon: <Quote className="h-4 w-4" />,
       title: "Quote Card",
-      description: `${preset.quote.substring(0, 40)}...`,
+      description: "Quote with attribution",
       onClick: () => handleAddQuote(preset),
     })),
   ];
@@ -362,7 +383,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
         <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
           Cards
         </h3>
-        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2.5">
           {allCards.map((card, index) => (
             <button
               key={`${card.type}-${card.preset.id}-${index}`}
@@ -390,7 +411,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
         <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
           Shapes & Diagrams
         </h3>
-        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2.5">
           {shapeItems.map((item) => (
             <InsertItem
               key={item.id}
