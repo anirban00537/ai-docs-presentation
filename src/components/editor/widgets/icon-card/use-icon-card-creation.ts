@@ -31,8 +31,8 @@ export const useIconCardCreation = () => {
       const slideId = ensureSlideId();
       if (!slideId) return;
       const id = `icon-card-${nanoid(8)}`;
-      const width = 400;
-      const height = 240;
+      const width = 350;
+      const height = 190;
       const originX = Math.max(
         40,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)

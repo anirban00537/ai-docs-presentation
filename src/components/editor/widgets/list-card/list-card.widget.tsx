@@ -233,7 +233,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-[32px] p-8 transition-all duration-300 ease-out",
+            "relative h-full w-full rounded-2xl p-5 transition-all duration-300 ease-out",
             isGlassBackground &&
               "backdrop-blur-2xl border border-white/10 shadow-2xl"
           )}
@@ -246,10 +246,10 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
               : undefined,
             boxShadow: isGlassBackground
               ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 8px 32px -8px rgba(0, 0, 0, 0.1)"
-              : undefined,
+              : "0 2px 8px -2px rgba(0, 0, 0, 0.08)",
           }}
         >
-          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
+          <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
             {/* Title field */}
             {widget.title !== undefined && (
               <input
@@ -260,11 +260,11 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                   isSelected ? "cursor-text" : "cursor-default"
                 )}
                 style={{
-                  fontSize: "1.5rem",
+                  fontSize: "1.25rem",
                   fontWeight: 600,
                   color: titleColor,
                   fontFamily: titleFontFamily,
-                  lineHeight: 1.2,
+                  lineHeight: 1.3,
                   textAlign,
                 }}
                 value={localTitle}
@@ -284,27 +284,27 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
             )}
 
             {/* List items */}
-            <div className="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto">
+            <div className="flex flex-col gap-1.5 flex-1 min-h-0 overflow-y-auto">
               {localItems.map((item, index) => (
                 <div
                   key={index}
                   data-list-item
-                  className="flex items-start gap-3 group/item"
+                  className="flex items-start gap-2.5 group/item"
                 >
                   {/* Bullet/Number */}
                   <div
-                    className="flex-shrink-0 mt-1"
+                    className="flex-shrink-0 mt-0.5"
                     style={{
                       color: bulletColor,
                       fontFamily: itemFontFamily,
                     }}
                   >
                     {listType === "numbered" ? (
-                      <span className="text-base font-medium">
+                      <span className="text-sm font-semibold">
                         {index + 1}.
                       </span>
                     ) : (
-                      <span className="text-lg">•</span>
+                      <span className="text-base">•</span>
                     )}
                   </div>
 

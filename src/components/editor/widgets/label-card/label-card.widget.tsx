@@ -247,7 +247,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-[32px] p-8 transition-all duration-300 ease-out",
+            "relative h-full w-full rounded-2xl p-5 transition-all duration-300 ease-out",
             isGlassBackground &&
               "backdrop-blur-2xl border border-white/10 shadow-2xl"
           )}
@@ -260,10 +260,10 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
               : undefined,
             boxShadow: isGlassBackground
               ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 8px 32px -8px rgba(0, 0, 0, 0.1)"
-              : undefined,
+              : "0 2px 8px -2px rgba(0, 0, 0, 0.08)",
           }}
         >
-          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
+          <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
             {/* Label field */}
             <div
               className="flex"
@@ -277,7 +277,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
               }}
             >
               <div
-                className="relative inline-flex items-center justify-center px-3 py-1.5 rounded-full text-sm font-medium"
+                className="relative inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
                 style={{
                   backgroundColor: labelColor,
                 }}
@@ -323,11 +323,11 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "2.5rem",
+                fontSize: "2rem",
                 fontWeight: 700,
                 color: titleColor,
                 fontFamily: titleFontFamily,
-                lineHeight: 1.1,
+                lineHeight: 1.15,
                 textAlign,
               }}
               value={localTitle}

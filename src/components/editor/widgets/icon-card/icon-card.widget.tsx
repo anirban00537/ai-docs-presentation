@@ -3,10 +3,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronDown,
-  Sparkles,
-} from "lucide-react";
+import { ChevronDown, Sparkles } from "lucide-react";
 import * as Icons from "lucide-react";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { IconCardWidget } from "./types";
@@ -31,6 +28,7 @@ import { PopoverPanelPortal } from "@/components/editor/background/popover-panel
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
 import { X, Search as SearchIcon } from "lucide-react";
+import { createPortal } from "react-dom";
 
 type IconCardWidgetNodeProps = {
   widget: IconCardWidget;
@@ -260,7 +258,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-[32px] p-8 transition-all duration-300 ease-out",
+            "relative h-full w-full rounded-2xl p-5 transition-all duration-300 ease-out",
             isGlassBackground &&
               "backdrop-blur-2xl border border-white/10 shadow-2xl"
           )}
@@ -273,10 +271,10 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
               : undefined,
             boxShadow: isGlassBackground
               ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 8px 32px -8px rgba(0, 0, 0, 0.1)"
-              : undefined,
+              : "0 2px 8px -2px rgba(0, 0, 0, 0.08)",
           }}
         >
-          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
+          <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
             {/* Icon */}
             <div
               className="flex relative"
@@ -295,9 +293,9 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                   onClick={handleIconClick}
                   disabled={!isSelected}
                   className={cn(
-                    "rounded-lg p-2 transition-all duration-200",
+                    "rounded-xl p-2.5 transition-all duration-200 group/icon-btn",
                     isSelected
-                      ? "hover:bg-muted/50 cursor-pointer ring-2 ring-transparent hover:ring-primary/20"
+                      ? "hover:bg-muted/40 cursor-pointer ring-1 ring-transparent hover:ring-primary/30 hover:scale-105"
                       : "cursor-default"
                   )}
                   title={
@@ -310,11 +308,12 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                     size={iconSize}
                     style={{ color: iconColor }}
                     strokeWidth={2}
+                    className="transition-transform duration-200 group-hover/icon-btn:scale-105"
                   />
                 </button>
               )}
 
-              {/* Icon Selector Modal */}
+              {/* Icon Selector Modal - Rendered in portal */}
               {showIconSelector && isSelected && (
                 <IconSelectorModal
                   currentIcon={widget.icon || "Star"}
@@ -891,10 +890,13 @@ const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
     );
   }, [searchQuery, selectedCategory]);
 
-  return (
+  // Render modal in portal to appear above everything
+  if (typeof window === "undefined") return null;
+
+  return createPortal(
     <div
       data-icon-selector
-      className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
@@ -1022,7 +1024,7 @@ const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
-

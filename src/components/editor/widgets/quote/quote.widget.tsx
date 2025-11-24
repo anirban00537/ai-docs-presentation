@@ -264,7 +264,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
             className="absolute left-0 top-0 h-full w-1 rounded-full"
             style={{ backgroundColor: iconColor }}
           />
-          <div className="pl-6">
+          <div className="pl-4">
             <textarea
               ref={quoteTextareaRef}
               readOnly={!isSelected}
@@ -351,10 +351,10 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
           className={cn(
             "relative w-full h-full transition-all duration-300 ease-out overflow-visible",
             style === "bordered"
-              ? "rounded-lg border-2 p-6"
+              ? "rounded-lg border-2 p-5"
               : style === "bold"
-              ? "rounded-[32px] p-6"
-              : "rounded-xl p-6",
+              ? "rounded-2xl p-5"
+              : "rounded-lg p-5",
             isGlassBackground &&
               "backdrop-blur-2xl border border-white/10 shadow-2xl"
           )}
@@ -369,13 +369,13 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
             boxShadow: isGlassBackground
               ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 8px 32px -8px rgba(0, 0, 0, 0.1)"
               : style === "bold"
-              ? "0 12px 40px -12px rgba(0, 0, 0, 0.15)"
-              : undefined,
+              ? "0 8px 24px -8px rgba(0, 0, 0, 0.12)"
+              : "0 2px 8px -2px rgba(0, 0, 0, 0.08)",
           }}
         >
           <div
             ref={contentContainerRef}
-            className="flex flex-col gap-4 justify-center"
+            className="flex flex-col gap-3 justify-center"
             style={{ textAlign }}
           >
             {/* Icon (optional, shown for minimal and bold styles) */}

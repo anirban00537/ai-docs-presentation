@@ -246,7 +246,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative h-full w-full rounded-[32px] p-8 transition-all duration-300 ease-out",
+            "relative h-full w-full rounded-2xl p-5 transition-all duration-300 ease-out",
             isGlassBackground &&
               "backdrop-blur-2xl border border-white/10 shadow-2xl"
           )}
@@ -259,10 +259,10 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
               : undefined,
             boxShadow: isGlassBackground
               ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 8px 32px -8px rgba(0, 0, 0, 0.1)"
-              : undefined,
+              : "0 2px 8px -2px rgba(0, 0, 0, 0.08)",
           }}
         >
-          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
+          <div className="flex h-full flex-col gap-3" style={{ textAlign }}>
             {/* Number field */}
             <input
               ref={numberInputRef}
@@ -273,8 +273,8 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "2.5rem",
-                fontWeight: 700,
+                fontSize: "3rem",
+                fontWeight: 800,
                 color: numberColor,
                 fontFamily: numberFontFamily,
                 lineHeight: 1,
