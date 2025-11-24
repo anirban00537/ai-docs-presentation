@@ -3,17 +3,10 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronDown,
-  Sparkles,
-} from "lucide-react";
+import { ChevronDown, Sparkles } from "lucide-react";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { NumberCardWidget } from "./types";
-import {
-  TOOLBAR_SELECTOR,
-  ALIGN_OPTIONS,
-  GOOGLE_FONTS,
-} from "./constants";
+import { TOOLBAR_SELECTOR, ALIGN_OPTIONS, GOOGLE_FONTS } from "./constants";
 import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -273,7 +266,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "3rem",
+                fontSize: "4.5rem",
                 fontWeight: 800,
                 color: numberColor,
                 fontFamily: numberFontFamily,
@@ -305,7 +298,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.125rem",
+                fontSize: "1.6875rem",
                 fontWeight: 600,
                 color: titleColor,
                 fontFamily: titleFontFamily,
@@ -336,7 +329,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "0.875rem",
+                fontSize: "1.3125rem",
                 color: descriptionColor,
                 fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,
@@ -741,4 +734,3 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
     </ToolbarPortal>
   );
 };
-

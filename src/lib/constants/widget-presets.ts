@@ -1,7 +1,4 @@
-import type {
-  TextPreset,
-  ShapePreset,
-} from "@/components/editor/types";
+import type { TextPreset, ShapePreset } from "@/components/editor/types";
 import type { PolygonShape } from "@/components/editor/widgets/types";
 
 type TextPresetId = TextPreset["id"];
@@ -24,25 +21,25 @@ export const TEXT_PRESET_CONFIG: Record<
   }
 > = {
   heading: {
-    width: 960,
-    height: 184,
-    fontSize: 96,
+    width: 1440,
+    height: 276,
+    fontSize: 144,
     fontWeight: 600,
     align: "center",
     lineHeight: 1,
   },
   subheading: {
-    width: 820,
-    height: 140,
-    fontSize: 48,
+    width: 1230,
+    height: 210,
+    fontSize: 72,
     fontWeight: 500,
     align: "center",
     lineHeight: 1.05,
   },
   body: {
-    width: 720,
-    height: 240,
-    fontSize: 24,
+    width: 1080,
+    height: 360,
+    fontSize: 36,
     fontWeight: 400,
     align: "left",
     lineHeight: 1.4,

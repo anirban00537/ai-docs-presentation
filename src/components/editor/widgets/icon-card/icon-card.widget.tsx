@@ -333,7 +333,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1.125rem",
+                fontSize: "1.6875rem",
                 fontWeight: 600,
                 color: titleColor,
                 fontFamily: titleFontFamily,
@@ -364,7 +364,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "0.875rem",
+                fontSize: "1.3125rem",
                 color: descriptionColor,
                 fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,

@@ -3,17 +3,10 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronDown,
-  Sparkles,
-} from "lucide-react";
+import { ChevronDown, Sparkles } from "lucide-react";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { LabelCardWidget } from "./types";
-import {
-  TOOLBAR_SELECTOR,
-  ALIGN_OPTIONS,
-  GOOGLE_FONTS,
-} from "./constants";
+import { TOOLBAR_SELECTOR, ALIGN_OPTIONS, GOOGLE_FONTS } from "./constants";
 import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -323,7 +316,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "2rem",
+                fontSize: "3rem",
                 fontWeight: 700,
                 color: titleColor,
                 fontFamily: titleFontFamily,
@@ -354,7 +347,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
                 isSelected ? "cursor-text" : "cursor-default"
               )}
               style={{
-                fontSize: "1rem",
+                fontSize: "1.5rem",
                 color: descriptionColor,
                 fontFamily: descriptionFontFamily,
                 lineHeight: 1.5,
@@ -833,4 +826,3 @@ const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
     </ToolbarPortal>
   );
 };
-
