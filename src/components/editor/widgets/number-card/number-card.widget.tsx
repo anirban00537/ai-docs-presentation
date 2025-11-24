@@ -11,6 +11,7 @@ import {
   ALIGN_OPTIONS,
   GOOGLE_FONTS,
   FONT_SIZE_OPTIONS,
+  BACKGROUND_TYPE_OPTIONS,
 } from "./constants";
 import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -393,6 +394,7 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
   containerRef,
 }) => {
   const bgColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
+  const bgTypeButtonRef = React.useRef<HTMLButtonElement>(null);
   const textColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontSizeButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -433,14 +435,13 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
     );
   };
 
-  const handleToggleGlassBackground = () => {
-    const newBackgroundType =
-      widget.backgroundType === "glass" ? "solid" : "glass";
+  const handleSetBackgroundType = (type: "solid" | "glass") => {
+    if (type === (widget.backgroundType ?? "solid")) return;
     dispatch(
       updateWidgetAction({
         slideId: activeSlideId,
         widgetId: widget.id,
-        updates: { backgroundType: newBackgroundType },
+        updates: { backgroundType: type },
       })
     );
   };
@@ -516,6 +517,7 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
 
   const currentAlign = widget.textAlign ?? "left";
   const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
+  const currentBackgroundType = widget.backgroundType ?? "solid";
 
   const currentTextColor =
     activeField === "number"
@@ -547,6 +549,10 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
   const currentFontSizeLabel =
     FONT_SIZE_OPTIONS.find((option) => option.value === currentFontSize)
       ?.label ?? `${currentFontSize}px`;
+  const currentBackgroundTypeLabel =
+    BACKGROUND_TYPE_OPTIONS.find(
+      (option) => option.value === currentBackgroundType
+    )?.label ?? "Solid";
 
   return (
     <ToolbarPortal
@@ -620,24 +626,51 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
                 </>
               )}
             </Popover>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className={cn(
-                "w-8 h-8 rounded-full transition-all duration-200",
-                widget.backgroundType === "glass"
-                  ? "bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 shadow-inner"
-                  : "hover:bg-black/5 text-muted-foreground"
+            <Popover>
+              {({ open }) => (
+                <>
+                  <Popover.Button
+                    ref={bgTypeButtonRef}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-muted-foreground/80 transition-all hover:bg-black/10",
+                      open && "bg-black/10 text-foreground"
+                    )}
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span className="uppercase tracking-wide text-[10px]">
+                      {currentBackgroundTypeLabel}
+                    </span>
+                    <ChevronDown className="h-3 w-3" />
+                  </Popover.Button>
+                  {open && (
+                    <PopoverPanelPortal buttonRef={bgTypeButtonRef}>
+                      <div className="flex flex-col gap-1.5 p-3 bg-white/95 backdrop-blur-2xl rounded-xl shadow-2xl border border-white/20 min-w-[200px] animate-in fade-in zoom-in-95 duration-150">
+                        {BACKGROUND_TYPE_OPTIONS.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            className={cn(
+                              "flex flex-col rounded-lg px-3 py-2 text-xs transition-all text-left",
+                              option.value === currentBackgroundType
+                                ? "bg-black/5 text-foreground font-semibold"
+                                : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                            )}
+                            onClick={() =>
+                              handleSetBackgroundType(option.value)
+                            }
+                          >
+                            <span>{option.label}</span>
+                            <span className="text-[10px] opacity-70">
+                              {option.description}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverPanelPortal>
+                  )}
+                </>
               )}
-              onClick={handleToggleGlassBackground}
-              title={
-                widget.backgroundType === "glass"
-                  ? "Disable Glass Effect"
-                  : "Enable Glass Effect"
-              }
-            >
-              <Sparkles className="h-4 w-4" />
-            </Button>
+            </Popover>
           </div>
         </div>
 

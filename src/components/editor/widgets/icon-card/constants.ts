@@ -67,6 +67,15 @@ export const ICON_SIZE_OPTIONS = [
   { label: "Huge", value: 72 },
 ];
 
+export const BACKGROUND_TYPE_OPTIONS = [
+  { label: "Solid", value: "solid" as const, description: "Flat color fill" },
+  {
+    label: "Glass",
+    value: "glass" as const,
+    description: "Frosted glass effect",
+  },
+];
+
 // Categorized Lucide icons for selection
 export const ICON_CATEGORIES = {
   Popular: [

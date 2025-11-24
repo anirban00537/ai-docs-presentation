@@ -57,3 +57,12 @@ export const FONT_SIZE_OPTIONS = [
   { label: "Extra Large", value: 38 },
   { label: "Huge", value: 48 },
 ];
+
+export const BACKGROUND_TYPE_OPTIONS = [
+  { label: "Solid", value: "solid" as const, description: "Flat color fill" },
+  {
+    label: "Glass",
+    value: "glass" as const,
+    description: "Frosted glass effect",
+  },
+];
