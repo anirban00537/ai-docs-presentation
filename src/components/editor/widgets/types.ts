@@ -78,7 +78,7 @@ export type SlideWidgetUpdate = Partial<
     textAlign: "left" | "center" | "right";
     backgroundType: "solid" | "glass" | "transparent";
     imageUrl: string;
-    imageStyle: "hero" | "background" | "backgroundGlass";
+    imageStyle: "hero" | "background" | "backgroundGlass" | "left" | "right" | "bottom";
     quote: string;
     attribution: string;
     style: import("./quote/types").QuoteStyle;

@@ -89,6 +89,21 @@ export const IMAGE_STYLE_OPTIONS = [
     label: "Glass Background",
     description: "Background image with glassmorphism panel",
   },
+  {
+    value: "left" as const,
+    label: "Left Image",
+    description: "Image on the left, content on the right",
+  },
+  {
+    value: "right" as const,
+    label: "Right Image",
+    description: "Image on the right, content on the left",
+  },
+  {
+    value: "bottom" as const,
+    label: "Bottom Image",
+    description: "Image on the bottom, content on top",
+  },
 ];
 
 const UNSPLASH_PARAMS = "?auto=format&fit=crop&w=1200&q=80";

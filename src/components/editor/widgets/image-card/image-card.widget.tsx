@@ -231,16 +231,55 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
         <div
           className={cn(
             "relative h-full w-full overflow-hidden rounded-[16px] transition-all duration-300 ease-out shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
-            isHeroImage && isGlassBackground && "backdrop-blur-2xl",
-            isHeroImage && isTransparentBackground && "bg-transparent shadow-none"
+            (isHeroImage ||
+              imageStyle === "left" ||
+              imageStyle === "right" ||
+              imageStyle === "bottom") &&
+              isGlassBackground &&
+              "backdrop-blur-2xl",
+            (isHeroImage ||
+              imageStyle === "left" ||
+              imageStyle === "right" ||
+              imageStyle === "bottom") &&
+              isTransparentBackground &&
+              "bg-transparent shadow-none"
           )}
-          style={isHeroImage ? heroSurfaceStyle : undefined}
+          style={
+            isHeroImage ||
+            imageStyle === "left" ||
+            imageStyle === "right" ||
+            imageStyle === "bottom"
+              ? heroSurfaceStyle
+              : undefined
+          }
         >
-          {isHeroImage ? (
-            <div className="flex h-full flex-col" style={{ textAlign }}>
+          {isHeroImage ||
+          imageStyle === "left" ||
+          imageStyle === "right" ||
+          imageStyle === "bottom" ? (
+            <div
+              className={cn(
+                "flex h-full",
+                isHeroImage
+                  ? "flex-col"
+                  : imageStyle === "bottom"
+                  ? "flex-col-reverse"
+                  : imageStyle === "right"
+                  ? "flex-row-reverse"
+                  : "flex-row"
+              )}
+              style={{ textAlign }}
+            >
               <div
-                className="relative w-full overflow-hidden"
-                style={{ height: heroImageHeight }}
+                className="relative overflow-hidden"
+                style={{
+                  width:
+                    isHeroImage || imageStyle === "bottom" ? "100%" : "50%",
+                  height:
+                    isHeroImage || imageStyle === "bottom"
+                      ? heroImageHeight
+                      : "100%",
+                }}
               >
                 {imagePreviewUrl ? (
                   <img
@@ -263,7 +302,16 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
                   </div>
                 )}
               </div>
-              <div className={heroTextPanelClasses} style={heroTextPanelStyle}>
+              <div
+                className={cn(
+                  heroTextPanelClasses,
+                  !isHeroImage &&
+                    imageStyle !== "bottom" &&
+                    "w-1/2 justify-center",
+                  imageStyle === "bottom" && "justify-end pb-6 pt-8"
+                )}
+                style={heroTextPanelStyle}
+              >
                 <ProseMirrorEditor
                   value={localTitle}
                   onChange={(value) => {
@@ -561,7 +609,13 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
   };
 
   const handleSetImageStyle = (
-    style: "hero" | "background" | "backgroundGlass"
+    style:
+      | "hero"
+      | "background"
+      | "backgroundGlass"
+      | "left"
+      | "right"
+      | "bottom"
   ) => {
     if (style === (widget.imageStyle ?? "hero")) return;
     dispatch(
