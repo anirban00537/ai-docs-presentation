@@ -247,9 +247,8 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
         <div
           className={cn(
             "relative h-full w-full rounded-2xl p-6 transition-all duration-300 ease-out",
-            isGlassBackground && "backdrop-blur-2xl border border-white/10",
-            isTransparentBackground &&
-              "bg-transparent border border-dashed border-border/60 dark:border-border/40"
+            isGlassBackground && "backdrop-blur-2xl",
+            isTransparentBackground && "bg-transparent"
           )}
           style={{
             backgroundColor: isGlassBackground

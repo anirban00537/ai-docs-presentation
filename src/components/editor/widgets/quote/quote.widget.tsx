@@ -273,9 +273,8 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
         <div
           className={cn(
             "relative w-full h-full transition-all duration-300 ease-out overflow-hidden rounded-2xl p-7",
-            isGlassBackground && "backdrop-blur-2xl border border-white/10",
-            isTransparentBackground &&
-              "bg-transparent border border-dashed border-border/60 dark:border-border/40"
+            isGlassBackground && "backdrop-blur-2xl",
+            isTransparentBackground && "bg-transparent"
           )}
           style={{
             backgroundColor: isGlassBackground
