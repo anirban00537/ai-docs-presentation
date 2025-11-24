@@ -13,12 +13,12 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
   onBackgroundColorChange,
 }) => {
   return (
-    <section className="space-y-2">
-      <div>
-        <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+    <section className="space-y-6">
+      <div className="space-y-1.5">
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
           Canvas
         </h3>
-        <p className="text-[10px] text-muted-foreground/70">
+        <p className="text-xs text-muted-foreground/70 leading-relaxed">
           Adjust colors for the slide background.
         </p>
       </div>

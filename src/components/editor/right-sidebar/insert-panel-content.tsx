@@ -195,14 +195,14 @@ const InsertItem: React.FC<InsertItemProps> = ({
   <button
     onClick={onClick}
     className={cn(
-      "group flex flex-col items-center justify-center gap-2 rounded-lg border border-border/40 bg-background/50 p-2.5 transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-95",
+      "group flex flex-col items-center justify-center gap-2.5 rounded-xl border border-border/50 bg-background/60 dark:bg-background/40 p-3 transition-all duration-200 hover:border-primary/40 hover:bg-accent/80 hover:shadow-md active:scale-[0.96]",
       className
     )}
   >
-    <div className="text-foreground/70 transition-colors duration-200 group-hover:text-primary group-hover:scale-110">
+    <div className="text-foreground/70 transition-all duration-200 group-hover:text-primary group-hover:scale-110">
       {icon}
     </div>
-    <span className="text-[10px] font-medium text-muted-foreground transition-colors duration-200 group-hover:text-foreground">
+    <span className="text-[10px] font-semibold text-muted-foreground transition-colors duration-200 group-hover:text-foreground tracking-tight">
       {label}
     </span>
   </button>
@@ -305,13 +305,13 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   ];
 
   return (
-    <div className="space-y-6 pb-6">
+    <div className="space-y-7 pb-6">
       {/* Text Options */}
-      <div className="space-y-2">
-        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+      <div className="space-y-3">
+        <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
           Typography
         </h3>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2.5">
           <InsertItem
             icon={<Heading1 className="h-5 w-5" />}
             label="Heading"
@@ -333,25 +333,25 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
       </div>
 
       {/* All Cards */}
-      <div className="space-y-2">
-        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+      <div className="space-y-3">
+        <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
           Cards
         </h3>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-2.5">
           {allCards.map((card, index) => (
             <button
               key={`${card.type}-${card.preset.id}-${index}`}
               onClick={card.onClick}
-              className="group flex flex-col items-center justify-center gap-2 rounded-lg border border-border/40 bg-background/50 p-2.5 transition-all duration-200 hover:border-primary/20 hover:bg-accent hover:shadow-sm active:scale-95"
+              className="group flex flex-col items-center justify-center gap-2.5 rounded-xl border border-border/50 bg-background/60 dark:bg-background/40 p-3 transition-all duration-200 hover:border-primary/40 hover:bg-accent/80 hover:shadow-md active:scale-[0.96]"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/80 dark:bg-muted/60 text-muted-foreground transition-all duration-200 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110">
                 {card.icon}
               </div>
               <div className="text-center space-y-0.5">
-                <div className="text-[10px] font-medium text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                <div className="text-[10px] font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1 tracking-tight">
                   {card.title}
                 </div>
-                <div className="text-[9px] text-muted-foreground line-clamp-1">
+                <div className="text-[9px] text-muted-foreground/80 line-clamp-1">
                   {card.description}
                 </div>
               </div>
@@ -361,11 +361,11 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
       </div>
 
       {/* Shapes */}
-      <div className="space-y-2">
-        <h3 className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+      <div className="space-y-3">
+        <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
           Shapes & Diagrams
         </h3>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-2.5">
           {shapeItems.map((item) => (
             <InsertItem
               key={item.id}

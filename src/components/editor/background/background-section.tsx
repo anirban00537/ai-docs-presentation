@@ -97,21 +97,21 @@ export function BackgroundSection({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-3">
+    <div className="space-y-7">
+      <div className="space-y-3.5">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">
             Background Colors
           </h3>
           <button
             type="button"
             onClick={handleAddColor}
-            className="text-xs font-medium text-primary hover:text-primary/80 transition-colors px-2 py-1 rounded-md hover:bg-primary/10"
+            className="text-xs font-semibold text-primary hover:text-primary/90 transition-all duration-200 px-2.5 py-1 rounded-lg hover:bg-primary/10 active:scale-95"
           >
             + Add Color
           </button>
         </div>
-        <div className="grid grid-cols-7 gap-2 px-1">
+        <div className="grid grid-cols-7 gap-2.5 px-1">
           {colors.map((color, index) => (
             <div key={index} className="relative group/picker">
               <ColorPicker
@@ -125,11 +125,11 @@ export function BackgroundSection({
         </div>
       </div>
 
-      <div className="space-y-3">
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
+      <div className="space-y-3.5">
+        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
           Gradient Presets
         </h3>
-        <div className="grid grid-cols-7 gap-2 px-1">
+        <div className="grid grid-cols-7 gap-2.5 px-1">
           {PRESET_GRADIENTS.map((gradient, index) => {
             const gradientString = `linear-gradient(to right, ${gradient.join(", ")})`;
             const isActive =
@@ -140,14 +140,14 @@ export function BackgroundSection({
                 key={index}
                 type="button"
                 onClick={() => onBackgroundColorChange([...gradient])}
-                className="group relative flex aspect-square items-center justify-center rounded-full border border-black/5 dark:border-white/5 shadow-sm hover:scale-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 overflow-hidden"
+                className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 overflow-hidden active:scale-105"
               >
                 <span
-                  className="h-full w-full rounded-full border border-black/5 dark:border-white/10"
+                  className="h-full w-full rounded-xl border border-border/40"
                   style={{ background: gradientString }}
                 />
                 {isActive && (
-                  <span className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-offset-2 ring-primary ring-offset-background shadow-lg" />
+                  <span className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg" />
                 )}
               </button>
             );
@@ -155,24 +155,24 @@ export function BackgroundSection({
         </div>
       </div>
 
-      <div className="space-y-3">
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
+      <div className="space-y-3.5">
+        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
           Solid Colors
         </h3>
-        <div className="grid grid-cols-7 gap-2 px-1">
+        <div className="grid grid-cols-7 gap-2.5 px-1">
           {PRESET_COLORS.map((preset) => (
             <button
               key={preset}
               type="button"
               onClick={() => onBackgroundColorChange([preset])}
-              className="group relative flex aspect-square items-center justify-center rounded-full border border-black/5 dark:border-white/5 shadow-sm hover:scale-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 active:scale-105"
             >
               <span
-                className="h-full w-full rounded-full border border-black/5 dark:border-white/10"
+                className="h-full w-full rounded-xl border border-border/40"
                 style={{ backgroundColor: preset }}
               />
               {colors.length === 1 && colors[0] === preset && (
-                <span className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-offset-2 ring-primary ring-offset-background shadow-lg" />
+                <span className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg" />
               )}
             </button>
           ))}

@@ -88,7 +88,7 @@ const Editor = () => {
 
   if (!activeSlide) {
     return (
-      <div className="flex h-full flex-1 flex-col overflow-hidden">
+      <div className="flex h-full flex-1 flex-col overflow-hidden bg-background">
         <EditorHeader
           onOpenInsertPanel={() => togglePanel("insert")}
           onOpenBackgroundPanel={() => togglePanel("background")}
@@ -96,7 +96,9 @@ const Editor = () => {
         />
         <div className="flex flex-1 min-h-0 overflow-hidden h-full">
           <div className="flex flex-1 flex-col items-center justify-center min-h-0">
-            <p className="text-muted-foreground">No slide selected</p>
+            <p className="text-muted-foreground/70 text-sm font-medium">
+              No slide selected
+            </p>
           </div>
           {activePanel && (
             <RightSidebar
@@ -114,7 +116,7 @@ const Editor = () => {
   }
 
   return (
-    <div className="relative flex h-full flex-1 flex-col overflow-hidden">
+    <div className="relative flex h-full flex-1 flex-col overflow-hidden bg-background">
       <EditorHeader
         onOpenInsertPanel={() => togglePanel("insert")}
         onOpenBackgroundPanel={() => togglePanel("background")}
@@ -122,7 +124,7 @@ const Editor = () => {
       />
       <div className="flex flex-1 min-h-0 overflow-hidden h-full">
         <div
-          className="flex flex-1 flex-col gap-4 overflow-hidden px-4 pt-4 min-h-0"
+          className="flex flex-1 flex-col gap-6 overflow-hidden px-6 pt-6 min-h-0"
           onWheel={handleWheel}
         >
           <Slide

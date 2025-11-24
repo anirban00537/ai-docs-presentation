@@ -57,16 +57,16 @@ export const LeftSidebar = () => {
       collapsible="icon"
       className="border-r border-border/60"
     >
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="p-4 pb-3">
         <Button
           onClick={handleAddSlide}
-          variant="ghost"
-          className="w-full justify-center gap-2 h-11 px-3 bg-primary shadow-sm border border-border/40 hover:bg-primary/90 hover:text-primary-foreground hover:border-primary/20 transition-all duration-200 group"
+          variant="default"
+          className="w-full justify-center gap-2.5 h-11 px-4 bg-primary shadow-md hover:shadow-lg border-0 hover:bg-primary/95 hover:text-primary-foreground transition-all duration-200 active:scale-[0.98] group"
         >
           <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary-foreground/20 text-primary-foreground group-hover:bg-primary-foreground/30 transition-colors duration-200">
-            <Plus className="w-3 h-3" />
+            <Plus className="w-3.5 h-3.5" />
           </div>
-          <span className="text-sm font-medium text-primary-foreground transition-colors">
+          <span className="text-sm font-semibold text-primary-foreground transition-colors tracking-tight">
             New Slide
           </span>
         </Button>
@@ -75,7 +75,7 @@ export const LeftSidebar = () => {
       <SidebarContent>
         <div
           ref={scrollContainerRef}
-          className="slides-scroll-container flex-1 overflow-y-auto py-2 px-4 space-y-4"
+          className="slides-scroll-container flex-1 overflow-y-auto py-3 px-4 space-y-3"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -113,20 +113,20 @@ export const LeftSidebar = () => {
                       }
                     }}
                     className={cn(
-                      "relative flex-1 aspect-video rounded-xl overflow-hidden transition-all duration-200 outline-none group/btn cursor-pointer",
-                      "ring-1 shadow-sm bg-background",
+                      "relative flex-1 aspect-video rounded-xl overflow-hidden transition-all duration-300 outline-none group/btn cursor-pointer",
+                      "ring-1 shadow-md bg-background",
                       isActive
-                        ? "ring-2 ring-primary shadow-md shadow-primary/10"
-                        : "ring-border/40 hover:ring-primary/40 hover:shadow-md",
-                      "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                        ? "ring-2 ring-primary shadow-lg shadow-primary/20 scale-[1.02]"
+                        : "ring-border/50 hover:ring-primary/60 hover:shadow-lg hover:scale-[1.01]",
+                      "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     )}
                   >
                     {/* Delete button */}
                     {slides.length > 1 && (
                       <div
                         className={cn(
-                          "absolute right-1.5 top-1.5 z-20 opacity-0 transition-all duration-200 transform translate-y-1",
-                          "group-hover/btn:opacity-100 group-hover/btn:translate-y-0"
+                          "absolute right-2 top-2 z-20 opacity-0 transition-all duration-200 transform translate-y-1 scale-95",
+                          "group-hover/btn:opacity-100 group-hover/btn:translate-y-0 group-hover/btn:scale-100"
                         )}
                       >
                         <button
@@ -135,9 +135,9 @@ export const LeftSidebar = () => {
                             e.stopPropagation();
                             dispatch(removeSlide(slide.id));
                           }}
-                          className="h-6 w-6 flex items-center justify-center rounded-full bg-background/90 text-muted-foreground shadow-sm ring-1 ring-border/50 hover:bg-destructive hover:text-destructive-foreground hover:ring-destructive transition-colors"
+                          className="h-7 w-7 flex items-center justify-center rounded-lg bg-background/95 backdrop-blur-sm text-muted-foreground shadow-lg ring-1 ring-border/60 hover:bg-destructive hover:text-destructive-foreground hover:ring-destructive transition-all duration-200 active:scale-95"
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     )}
@@ -162,7 +162,7 @@ export const LeftSidebar = () => {
 
                     {/* Active Overlay */}
                     {!isActive && (
-                      <div className="absolute inset-0 bg-background/10 group-hover/btn:bg-transparent transition-colors duration-300" />
+                      <div className="absolute inset-0 bg-background/5 group-hover/btn:bg-transparent transition-colors duration-300" />
                     )}
                   </div>
                 </motion.div>

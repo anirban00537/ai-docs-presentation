@@ -54,13 +54,15 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   };
 
   return (
-    <div className="w-[400px] h-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border-l border-black/5 dark:border-white/5 flex flex-col shrink-0 min-h-0 transition-all duration-300 z-40">
-      <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5 shrink-0 h-14">
-        <h2 className="text-sm font-medium text-foreground/80">{getTitle()}</h2>
+    <div className="w-[400px] h-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-l border-border/60 dark:border-border/40 flex flex-col shrink-0 min-h-0 transition-all duration-300 z-40 shadow-lg">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 dark:border-border/40 shrink-0 h-16">
+        <h2 className="text-sm font-semibold text-foreground/90 tracking-tight">
+          {getTitle()}
+        </h2>
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-200 active:scale-95"
           onClick={onClose}
         >
           <XIcon className="h-4 w-4" />
@@ -68,7 +70,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
         </Button>
       </div>
       <div
-        className="flex-1 overflow-y-auto p-4 min-h-0 overscroll-contain space-y-4"
+        className="flex-1 overflow-y-auto px-5 py-5 min-h-0 overscroll-contain space-y-6"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",

@@ -27,70 +27,70 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   const activeSlide = useAppSelector(selectActiveSlide);
 
   return (
-    <header className="pointer-events-auto w-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5 flex items-center justify-between px-4 h-14 z-50 transition-all duration-300">
-      <div className="flex items-center gap-4">
-        <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
-        <div className="h-6 w-px bg-black/5 dark:bg-white/10" />
-        <h1 className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors cursor-text">
+    <header className="pointer-events-auto w-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-b border-border/60 dark:border-border/40 flex items-center justify-between px-5 h-16 z-50 transition-all duration-300 shadow-sm">
+      <div className="flex items-center gap-5">
+        <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors h-8 w-8 hover:bg-accent/50 rounded-md" />
+        <div className="h-7 w-px bg-border/60" />
+        <h1 className="text-sm font-semibold text-foreground/90 hover:text-foreground transition-colors cursor-text tracking-tight">
           Presentation Title
         </h1>
       </div>
 
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 backdrop-blur-sm">
+        <div className="flex items-center gap-0.5 p-1 rounded-xl bg-muted/50 dark:bg-muted/30 border border-border/40 backdrop-blur-md shadow-sm">
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 rounded-lg px-3 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white dark:hover:bg-neutral-800 hover:shadow-sm transition-all duration-200"
+            className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-background dark:hover:bg-neutral-800/80 hover:shadow-sm transition-all duration-200 active:scale-[0.97]"
             onClick={onOpenInsertPanel}
           >
-            <Plus className="mr-2 h-3.5 w-3.5" />
+            <Plus className="mr-2 h-4 w-4" />
             Insert
           </Button>
 
-          <div className="h-4 w-px bg-black/10 dark:bg-white/10 mx-1" />
+          <div className="h-5 w-px bg-border/60 mx-0.5" />
 
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 rounded-lg px-3 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white dark:hover:bg-neutral-800 hover:shadow-sm transition-all duration-200 disabled:opacity-50"
+            className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-background dark:hover:bg-neutral-800/80 hover:shadow-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent active:scale-[0.97]"
             disabled={!activeSlide}
             onClick={onOpenBackgroundPanel}
           >
-            <Palette className="mr-2 h-3.5 w-3.5" />
+            <Palette className="mr-2 h-4 w-4" />
             Background
           </Button>
 
-          <div className="h-4 w-px bg-black/10 dark:bg-white/10 mx-1" />
+          <div className="h-5 w-px bg-border/60 mx-0.5" />
 
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 rounded-lg px-3 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white dark:hover:bg-neutral-800 hover:shadow-sm transition-all duration-200 disabled:opacity-50"
+            className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-background dark:hover:bg-neutral-800/80 hover:shadow-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent active:scale-[0.97]"
             disabled={!activeSlide}
             onClick={onOpenThemePanel}
           >
-            <LayoutTemplate className="mr-2 h-3.5 w-3.5" />
+            <LayoutTemplate className="mr-2 h-4 w-4" />
             Theme
           </Button>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
         <Button
           variant="ghost"
           size="sm"
-          className="h-9 rounded-lg px-4 text-xs font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200"
+          className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200 active:scale-[0.97]"
         >
-          <Play className="mr-2 h-3.5 w-3.5 fill-current" />
+          <Play className="mr-2 h-4 w-4 fill-current" />
           Play
         </Button>
         <Button
           variant="default"
           size="sm"
-          className="h-9 rounded-lg px-4 text-xs font-medium bg-primary text-primary-foreground shadow-sm hover:shadow-md hover:bg-primary/90 transition-all duration-300 active:scale-[0.98]"
+          className="h-9 rounded-lg px-4 text-xs font-semibold bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:bg-primary/95 transition-all duration-200 active:scale-[0.97]"
         >
-          <ExternalLink className="mr-2 h-3.5 w-3.5" />
+          <ExternalLink className="mr-2 h-4 w-4" />
           Share
         </Button>
       </div>
