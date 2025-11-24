@@ -193,17 +193,8 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
           : backgroundColor,
         boxShadow: "none",
       };
-  const heroTextPanelClasses = cn(
-    "flex flex-1 flex-col gap-3 px-8 pb-8 pt-6",
-    isGlassBackground &&
-      "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_40px_80px_-20px_rgba(15,23,42,0.5)] rounded-b-[16px] rounded-t-none"
-  );
-  const heroTextPanelStyle = isGlassBackground
-    ? {
-        backgroundImage:
-          "linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 100%)",
-      }
-    : undefined;
+  const heroTextPanelClasses = "flex flex-1 flex-col gap-3 px-8 pb-8 pt-6";
+  const heroTextPanelStyle = undefined;
   const glassOverlayClasses =
     "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_40px_80px_-20px_rgba(15,23,42,0.5)] rounded-[12px]";
 
