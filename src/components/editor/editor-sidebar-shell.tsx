@@ -66,7 +66,7 @@ export const EditorSidebarShell: React.FC<ShellProps> = ({
         "relative flex h-[calc(100vh-20px)] flex-col overflow-hidden bg-white/85 dark:bg-neutral-950/70 backdrop-blur-2xl transition-all duration-300",
         collapsed
           ? "w-0 min-w-0 opacity-0 pointer-events-none border-transparent"
-          : "w-72 opacity-100 pointer-events-auto",
+          : "w-48 opacity-100 pointer-events-auto",
         className
       )}
       aria-hidden={collapsed}
