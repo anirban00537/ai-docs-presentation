@@ -337,7 +337,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
         <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
           Cards
         </h3>
-        <div className="grid grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3">
           {allCards.map((card, index) => (
             <button
               key={`${card.type}-${card.preset.id}-${index}`}
@@ -365,7 +365,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
         <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
           Shapes & Diagrams
         </h3>
-        <div className="grid grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3">
           {shapeItems.map((item) => (
             <InsertItem
               key={item.id}

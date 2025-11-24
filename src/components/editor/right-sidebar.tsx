@@ -54,7 +54,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   };
 
   return (
-    <div className="w-[400px] h-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-l border-border/60 dark:border-border/40 flex flex-col shrink-0 min-h-0 transition-all duration-300 z-40 shadow-lg">
+    <div className="w-[340px] h-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-l border-border/60 dark:border-border/40 flex flex-col shrink-0 min-h-0 transition-all duration-300 z-40 shadow-lg">
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 dark:border-border/40 shrink-0 h-16">
         <h2 className="text-sm font-semibold text-foreground/90 tracking-tight">
           {getTitle()}
