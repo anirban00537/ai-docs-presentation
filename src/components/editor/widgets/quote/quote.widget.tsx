@@ -4,14 +4,11 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import * as Icons from "lucide-react";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { QuoteWidget } from "./types";
 import {
   TOOLBAR_SELECTOR,
-  QUOTE_STYLES,
   ALIGN_OPTIONS,
-  QUOTE_ICONS,
   GOOGLE_FONTS,
   FONT_SIZES,
 } from "./constants";
@@ -19,6 +16,7 @@ import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
@@ -28,7 +26,7 @@ import { Popover } from "@headlessui/react";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
-import { Search as SearchIcon, Plus, Minus } from "lucide-react";
+import { Plus, Minus, Quote as QuoteIcon } from "lucide-react";
 
 type QuoteWidgetNodeProps = {
   widget: QuoteWidget;
@@ -45,10 +43,6 @@ type QuoteWidgetNodeProps = {
 
 type ActiveField = "quote" | "attribution" | null;
 
-type LucideIcon = React.ComponentType<
-  React.SVGProps<SVGSVGElement> & { size?: number; strokeWidth?: number }
->;
-
 const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
   widget,
   isSelected,
@@ -61,6 +55,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement>(null);
 
   const [localQuote, setLocalQuote] = React.useState(widget.quote || "");
@@ -175,77 +170,24 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
 
   // Widget-local colors and fonts with sensible defaults
   const backgroundColor = widget.backgroundColor ?? "#ffffff";
-  const quoteColor = widget.quoteColor ?? "#0f172a";
+  const quoteColor = widget.quoteColor ?? globalTheme?.accent ?? "#0f172a";
   const attributionColor = widget.attributionColor ?? "#64748b";
-  const iconColor = widget.iconColor ?? "#0f172a";
-  const borderColor = widget.borderColor ?? "#e2e8f0";
+  const iconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a"; // Used for quote marks
   const quoteFontFamily = widget.quoteFontFamily ?? "var(--font-poppins)";
   const attributionFontFamily =
     widget.attributionFontFamily ?? "var(--font-poppins)";
-  const textAlign = widget.textAlign ?? "left";
+  const textAlign = widget.textAlign ?? "center";
   const backgroundType = widget.backgroundType ?? "solid";
-  const style = widget.style ?? "minimal";
-  const quoteFontSize = widget.quoteFontSize ?? (style === "bold" ? 28 : 20);
-  const attributionFontSize = widget.attributionFontSize ?? 12;
-  const icon = widget.icon || "Quote";
-  const iconSize = widget.iconSize ?? 24;
+  const quoteFontSize = widget.quoteFontSize ?? 24;
+  const attributionFontSize = widget.attributionFontSize ?? 14;
   const isGlassBackground = backgroundType === "glass";
 
-  // Auto-resize textarea and update widget height based on content
-  React.useLayoutEffect(() => {
-    const textarea = quoteTextareaRef.current;
-    const container = contentContainerRef.current;
+  // Auto-resize logic removed to allow manual resizing and scrolling
 
-    if (textarea) {
-      textarea.style.height = "auto";
-      const newHeight = textarea.scrollHeight;
-      textarea.style.height = `${newHeight}px`;
-
-      // Update widget height to fit content
-      if (container) {
-        const padding = 48; // p-6 = 24px * 2 = 48px
-        const gap = 16; // gap-4 = 16px
-        const attributionHeight = localAttribution ? 20 : 0; // Approximate attribution height
-        const iconHeight =
-          (style === "minimal" || style === "bold") && icon ? 24 + gap : 0;
-
-        const totalHeight =
-          newHeight + attributionHeight + iconHeight + padding + gap;
-
-        // Style-specific minimum height: reduced for minimal and bordered
-        const minHeight = style === "minimal" || style === "bordered" ? 180 : 280;
-
-        // Only update if height changed significantly (more than 5px difference)
-        if (Math.abs(widget.height - totalHeight) > 5) {
-          dispatch(
-            updateWidgetAction({
-              slideId: activeSlideId,
-              widgetId: widget.id,
-              updates: { height: Math.max(minHeight, totalHeight) },
-            })
-          );
-        }
-      }
-    }
-  }, [
-    localQuote,
-    localAttribution,
-    style,
-    icon,
-    widget.height,
-    widget.id,
-    activeSlideId,
-    dispatch,
-  ]);
-
-  // Get icon component
-  const IconComponent =
-    (Icons as unknown as Record<string, LucideIcon>)[icon] || Icons.Quote;
-
-  // Style-specific rendering
   const renderQuote = () => {
     const baseQuoteClasses = cn(
-      "w-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0 overflow-visible",
+      "w-full h-full resize-none border-none bg-transparent p-0 outline-none focus:ring-0",
+      "overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
       isSelected ? "cursor-text" : "cursor-default"
     );
 
@@ -255,65 +197,41 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
       textAlign,
       wordWrap: "break-word",
       overflowWrap: "break-word",
-      lineHeight: style === "bold" ? 1.2 : 1.4,
+      lineHeight: 1.4,
       fontSize: `${quoteFontSize}px`,
-      fontWeight: style === "bold" ? 700 : 500,
+      fontWeight: 500,
     };
 
-    if (style === "bordered") {
-      return (
-        <div className="relative">
-          <div
-            className="absolute left-0 top-0 h-full w-1 rounded-full"
-            style={{ backgroundColor: iconColor }}
-          />
-          <div className="pl-4">
-            <textarea
-              ref={quoteTextareaRef}
-              readOnly={!isSelected}
-              className={baseQuoteClasses}
-              style={quoteStyle}
-              value={localQuote}
-              onChange={(e) => {
-                if (!isSelected) return;
-                setLocalQuote(e.target.value);
-                debouncedUpdateQuote(e.target.value);
-                // Height will be updated by useLayoutEffect
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("quote");
-              }}
-              onBlur={() => handleFieldBlur("quote")}
-              onKeyDown={(e) => handleFieldKeyDown("quote", e)}
-              placeholder="Enter your quote here..."
-            />
-          </div>
-        </div>
-      );
-    }
-
     return (
-      <textarea
-        ref={quoteTextareaRef}
-        readOnly={!isSelected}
-        className={baseQuoteClasses}
-        style={quoteStyle}
-        value={localQuote}
-        onChange={(e) => {
-          if (!isSelected) return;
-          setLocalQuote(e.target.value);
-          debouncedUpdateQuote(e.target.value);
-          // Height will be updated by useLayoutEffect
-        }}
-        onFocus={() => {
-          if (!isSelected) return;
-          handleFieldFocus("quote");
-        }}
-        onBlur={() => handleFieldBlur("quote")}
-        onKeyDown={(e) => handleFieldKeyDown("quote", e)}
-        placeholder="Enter your quote here..."
-      />
+      <div className="relative px-8 py-4 w-full h-full flex flex-col">
+        <QuoteIcon
+          className="absolute top-0 left-0 w-12 h-12 opacity-20"
+          style={{ color: iconColor }}
+        />
+        <textarea
+          ref={quoteTextareaRef}
+          readOnly={!isSelected}
+          className={baseQuoteClasses}
+          style={quoteStyle}
+          value={localQuote}
+          onChange={(e) => {
+            if (!isSelected) return;
+            setLocalQuote(e.target.value);
+            debouncedUpdateQuote(e.target.value);
+          }}
+          onFocus={() => {
+            if (!isSelected) return;
+            handleFieldFocus("quote");
+          }}
+          onBlur={() => handleFieldBlur("quote")}
+          onKeyDown={(e) => handleFieldKeyDown("quote", e)}
+          placeholder="Enter your quote here..."
+        />
+        <QuoteIcon
+          className="absolute bottom-0 right-0 w-12 h-12 rotate-180 opacity-20"
+          style={{ color: iconColor }}
+        />
+      </div>
     );
   };
 
@@ -352,12 +270,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
         )}
         <div
           className={cn(
-            "relative w-full h-full transition-all duration-300 ease-out overflow-visible",
-            style === "bordered"
-              ? "rounded-lg border-2 p-5"
-              : style === "bold"
-              ? "rounded-2xl p-5"
-              : "rounded-lg p-5",
+            "relative w-full h-full transition-all duration-300 ease-out overflow-hidden rounded-2xl p-6",
             isGlassBackground &&
               "backdrop-blur-2xl border border-white/10 shadow-2xl"
           )}
@@ -365,50 +278,24 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
             backgroundColor: isGlassBackground
               ? `${backgroundColor}03`
               : backgroundColor,
-            borderColor: style === "bordered" ? borderColor : undefined,
             backgroundImage: isGlassBackground
               ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
               : undefined,
             boxShadow: isGlassBackground
               ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 8px 32px -8px rgba(0, 0, 0, 0.1)"
-              : style === "bold"
-              ? "0 8px 24px -8px rgba(0, 0, 0, 0.12)"
               : "0 2px 8px -2px rgba(0, 0, 0, 0.08)",
           }}
         >
           <div
             ref={contentContainerRef}
-            className="flex flex-col gap-3 justify-center"
+            className="flex flex-col gap-4 justify-center h-full"
             style={{ textAlign }}
           >
-            {/* Icon (optional, shown for minimal and bold styles) */}
-            {(style === "minimal" || style === "bold") && icon && (
-              <div
-                className="flex"
-                style={{
-                  justifyContent:
-                    textAlign === "center"
-                      ? "center"
-                      : textAlign === "right"
-                      ? "flex-end"
-                      : "flex-start",
-                }}
-              >
-                <IconComponent
-                  size={iconSize}
-                  strokeWidth={style === "bold" ? 2.5 : 2}
-                  style={{ color: iconColor }}
-                />
-              </div>
-            )}
-
-            {/* Quote text */}
             {renderQuote()}
 
-            {/* Attribution */}
             {localAttribution && (
               <div
-                className="flex"
+                className="flex mt-2"
                 style={{
                   justifyContent:
                     textAlign === "center"
@@ -483,18 +370,11 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
   const quoteColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const attributionColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
   const iconColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
-  const styleButtonRef = React.useRef<HTMLButtonElement>(null);
-  const iconButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontSizeMenuRef = React.useRef<HTMLDivElement>(null);
-  const styleMenuRef = React.useRef<HTMLDivElement>(null);
-  const iconMenuRef = React.useRef<HTMLDivElement>(null);
   const fontMenuRef = React.useRef<HTMLDivElement>(null);
-  const [styleMenuOpen, setStyleMenuOpen] = React.useState(false);
-  const [iconMenuOpen, setIconMenuOpen] = React.useState(false);
   const [fontMenuOpen, setFontMenuOpen] = React.useState(false);
   const [fontSizeMenuOpen, setFontSizeMenuOpen] = React.useState(false);
-  const [iconSearch, setIconSearch] = React.useState("");
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
 
@@ -502,26 +382,6 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-
-      if (
-        styleMenuOpen &&
-        styleMenuRef.current &&
-        !styleMenuRef.current.contains(target) &&
-        styleButtonRef.current &&
-        !styleButtonRef.current.contains(target)
-      ) {
-        setStyleMenuOpen(false);
-      }
-
-      if (
-        iconMenuOpen &&
-        iconMenuRef.current &&
-        !iconMenuRef.current.contains(target) &&
-        iconButtonRef.current &&
-        !iconButtonRef.current.contains(target)
-      ) {
-        setIconMenuOpen(false);
-      }
 
       if (
         fontMenuOpen &&
@@ -546,7 +406,7 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [styleMenuOpen, iconMenuOpen, fontMenuOpen, fontSizeMenuOpen]);
+  }, [fontMenuOpen, fontSizeMenuOpen]);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -586,28 +446,6 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
         updates: { iconColor: color },
       })
     );
-  };
-
-  const handleSetStyle = (style: QuoteWidget["style"]) => {
-    dispatch(
-      updateWidgetAction({
-        slideId: activeSlideId,
-        widgetId: widget.id,
-        updates: { style },
-      })
-    );
-    setStyleMenuOpen(false);
-  };
-
-  const handleSetIcon = (icon: string) => {
-    dispatch(
-      updateWidgetAction({
-        slideId: activeSlideId,
-        widgetId: widget.id,
-        updates: { icon },
-      })
-    );
-    setIconMenuOpen(false);
   };
 
   const handleSetTextAlign = (align: QuoteWidget["textAlign"]) => {
@@ -684,12 +522,12 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
     );
   };
 
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const currentBgColor = widget.backgroundColor ?? "#ffffff";
-  const currentQuoteColor = widget.quoteColor ?? "#0f172a";
+  const currentQuoteColor =
+    widget.quoteColor ?? globalTheme?.accent ?? "#0f172a";
   const currentAttributionColor = widget.attributionColor ?? "#64748b";
-  const currentIconColor = widget.iconColor ?? "#0f172a";
-  const currentStyle = widget.style ?? "minimal";
-  const currentIcon = widget.icon || "Quote";
+  const currentIconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a";
 
   const currentFontFamily =
     activeField === "quote"
@@ -700,22 +538,14 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
 
   const currentFontSize =
     activeField === "quote"
-      ? widget.quoteFontSize ?? (widget.style === "bold" ? 28 : 20)
+      ? widget.quoteFontSize ?? 24
       : activeField === "attribution"
-      ? widget.attributionFontSize ?? 12
-      : 12;
+      ? widget.attributionFontSize ?? 14
+      : 14;
 
   const currentFontLabel =
     GOOGLE_FONTS.find((font) => font.value === currentFontFamily)?.label ??
     "Poppins";
-
-  const filteredIcons = QUOTE_ICONS.filter((iconName) =>
-    iconName.toLowerCase().includes(iconSearch.toLowerCase())
-  );
-
-  const IconComponent =
-    (Icons as unknown as Record<string, LucideIcon>)[currentIcon] ||
-    Icons.Quote;
 
   return (
     <ToolbarPortal
@@ -732,102 +562,6 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
           event.stopPropagation();
         }}
       >
-        {/* Style selector */}
-        <div className="relative" ref={styleMenuRef}>
-          <Button
-            ref={styleButtonRef}
-            variant="outline"
-            size="sm"
-            className="min-w-[100px] justify-between px-3 py-1 text-xs font-medium"
-            onClick={() => setStyleMenuOpen((prev) => !prev)}
-          >
-            {QUOTE_STYLES.find((s) => s.value === currentStyle)?.label ||
-              "Minimal"}
-            <ChevronDown
-              className={cn(
-                "ml-2 h-3 w-3 transition-transform",
-                styleMenuOpen ? "rotate-180" : "rotate-0"
-              )}
-            />
-          </Button>
-          {styleMenuOpen && (
-            <div className="absolute left-0 top-full z-40 mt-1 w-48 overflow-hidden rounded-md border border-border bg-white shadow-lg">
-              {QUOTE_STYLES.map((styleOption) => (
-                <button
-                  key={styleOption.value}
-                  type="button"
-                  className={cn(
-                    "block w-full px-3 py-2 text-left text-xs hover:bg-accent",
-                    currentStyle === styleOption.value && "bg-accent"
-                  )}
-                  onClick={() => handleSetStyle(styleOption.value)}
-                >
-                  <div className="font-medium">{styleOption.label}</div>
-                  <div className="text-[10px] text-muted-foreground">
-                    {styleOption.description}
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Icon selector - only for minimal and bold styles */}
-        {currentStyle !== "bordered" && (
-          <div className="relative" ref={iconMenuRef}>
-            <Button
-              ref={iconButtonRef}
-              variant="outline"
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={() => setIconMenuOpen((prev) => !prev)}
-              title="Select icon"
-            >
-              <IconComponent className="h-4 w-4" />
-            </Button>
-            {iconMenuOpen && (
-              <div className="absolute left-0 top-full z-40 mt-1 w-64 overflow-hidden rounded-md border border-border bg-white shadow-lg">
-                <div className="p-2">
-                  <div className="relative">
-                    <SearchIcon className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      className="h-8 pl-8 pr-2 text-xs"
-                      placeholder="Search icons..."
-                      value={iconSearch}
-                      onChange={(e) => setIconSearch(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="max-h-64 overflow-y-auto p-2">
-                  <div className="grid grid-cols-4 gap-2">
-                    {filteredIcons.map((iconName) => {
-                      const Icon =
-                        (Icons as unknown as Record<string, LucideIcon>)[
-                          iconName
-                        ] || Icons.Quote;
-                      return (
-                        <button
-                          key={iconName}
-                          type="button"
-                          className={cn(
-                            "flex h-10 w-10 items-center justify-center rounded-md border transition-colors hover:bg-accent",
-                            currentIcon === iconName &&
-                              "border-primary bg-primary/10"
-                          )}
-                          onClick={() => handleSetIcon(iconName)}
-                          title={iconName}
-                        >
-                          <Icon className="h-4 w-4" />
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Alignment options */}
         <div className="flex items-center gap-1">
           {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
@@ -1099,9 +833,7 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
                   <PopoverPanelPortal buttonRef={iconColorPickerButtonRef}>
                     <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
                       <div className="text-xs font-semibold text-muted-foreground">
-                        {currentStyle === "bordered"
-                          ? "Accent Color"
-                          : "Icon Color"}
+                        Quote Mark Color
                       </div>
                       <HexColorPicker
                         color={currentIconColor}

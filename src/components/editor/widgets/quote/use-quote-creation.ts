@@ -32,9 +32,7 @@ export const useQuoteCreation = () => {
       if (!slideId) return;
       const id = `quote-${nanoid(8)}`;
       const width = 350;
-      // Reduced height for minimal and bordered styles
-      const style = preset.style || "minimal";
-      const height = style === "minimal" || style === "bordered" ? 180 : 280;
+      const height = 220; // Default height
       const originX = Math.max(
         40,
         Math.round((SLIDE_DIMENSIONS.width - width) / 2)
@@ -46,22 +44,19 @@ export const useQuoteCreation = () => {
         type: "quote",
         quote: preset.quote || "",
         attribution: preset.attribution || "",
-        icon: preset.icon || "Quote",
-        style: preset.style || "minimal",
+        style: "minimal", // Enforce minimal style
         x: originX,
         y: originY,
         width,
         height,
         // Seed with current theme colors so quote matches active theme
         backgroundColor: globalTheme?.surface ?? "#ffffff",
-        quoteColor: globalTheme?.text ?? "#0f172a",
+        quoteColor: globalTheme?.accent ?? "#0f172a",
         attributionColor: globalTheme?.text ?? "#64748b",
-        iconColor: globalTheme?.accent ?? "#0f172a",
-        iconSize: 24,
-        textAlign: "left",
+        textAlign: "center", // Center by default for better look with quotes
         backgroundType: "glass", // Default to glassmorphism
-        quoteFontSize: preset.style === "bold" ? 28 : 20,
-        attributionFontSize: 12,
+        quoteFontSize: 24,
+        attributionFontSize: 14,
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));

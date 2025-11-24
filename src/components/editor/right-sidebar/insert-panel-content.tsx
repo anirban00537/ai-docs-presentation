@@ -6,11 +6,7 @@ import {
   Heading2,
   Pilcrow,
   LayoutTemplate,
-  Type,
   Star,
-  Zap,
-  Heart,
-  Rocket,
   Tag,
   List,
   ListOrdered,
@@ -75,24 +71,10 @@ const listCardPresets: ListCardPreset[] = [
 
 const quotePresets: QuotePreset[] = [
   {
-    id: "minimal",
+    id: "default",
     quote: "The only way to do great work is to love what you do.",
     attribution: "Steve Jobs",
-    icon: "Quote",
     style: "minimal",
-  },
-  {
-    id: "bold",
-    quote: "Innovation distinguishes between a leader and a follower.",
-    attribution: "Steve Jobs",
-    icon: "Sparkles",
-    style: "bold",
-  },
-  {
-    id: "bordered",
-    quote: "Design is not just what it looks like and feels like. Design is how it works.",
-    attribution: "Steve Jobs",
-    style: "bordered",
   },
 ];
 
@@ -422,7 +404,10 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
               </div>
               <div className="flex-1 space-y-0.5">
                 <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
-                  {preset.title || `${preset.listType === "numbered" ? "Numbered" : "Bullet"} List`}
+                  {preset.title ||
+                    `${
+                      preset.listType === "numbered" ? "Numbered" : "Bullet"
+                    } List`}
                 </div>
                 <div className="text-[10px] text-muted-foreground line-clamp-1">
                   {preset.items.length} items
@@ -449,8 +434,8 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
                 <Quote className="h-4 w-4" />
               </div>
               <div className="flex-1 space-y-0.5">
-                <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors capitalize">
-                  {preset.style || "Minimal"} Quote
+                <div className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
+                  Quote Card
                 </div>
                 <div className="text-[10px] text-muted-foreground line-clamp-1">
                   {preset.quote.substring(0, 40)}...
