@@ -14,12 +14,11 @@ import {
 } from "@/store/slices/editorUiSlice";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { TextWidget } from "./types";
-import { TOOLBAR_SELECTOR, TEXT_STYLE_PRESETS } from "./constants";
+import { TOOLBAR_SELECTOR } from "./constants";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { WidgetToolbar } from "@/components/editor/widgets/shared/toolbar-controls/widget-toolbar";
 import type { ToolbarControlConfig } from "@/components/editor/widgets/shared/toolbar-controls/types";
-import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
 import { useWidgetPointerDown } from "@/components/editor/widgets/shared";
 
 const textResizeHandles: Array<{
@@ -316,55 +315,10 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   viewport,
   containerRef,
 }) => {
-  const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
-  const presetButtonRef = React.useRef<HTMLButtonElement>(null);
-  const presetMenuRef = React.useRef<HTMLDivElement | null>(null);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
 
-  React.useEffect(() => {
-    if (!presetMenuOpen) {
-      return;
-    }
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        presetMenuRef.current &&
-        event.target instanceof Node &&
-        !presetMenuRef.current.contains(event.target) &&
-        presetButtonRef.current &&
-        !presetButtonRef.current.contains(event.target as Node)
-      ) {
-        setPresetMenuOpen(false);
-      }
-    };
-    window.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [presetMenuOpen]);
-
   const isBold = widget.fontWeight >= 600;
-
-  const applyPreset = React.useCallback(
-    (presetId: string) => {
-      const preset = TEXT_STYLE_PRESETS.find((item) => item.id === presetId);
-      if (!preset) return;
-      dispatch(
-        updateWidgetAction({
-          slideId: activeSlideId,
-          widgetId: widget.id,
-          updates: {
-            fontSize: preset.fontSize,
-            fontWeight: preset.fontWeight,
-            lineHeight: preset.lineHeight,
-            align: preset.align,
-          },
-        })
-      );
-      setPresetMenuOpen(false);
-    },
-    [activeSlideId, dispatch, widget.id]
-  );
 
   const handleSetColor = (color: string) => {
     dispatch(
@@ -414,61 +368,6 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
 
   const currentColor = widget.color || "#0f172a";
 
-  const currentPresetLabel =
-    TEXT_STYLE_PRESETS.find(
-      (preset) =>
-        preset.fontSize === widget.fontSize &&
-        preset.fontWeight === widget.fontWeight &&
-        Math.abs(preset.lineHeight - (widget.lineHeight ?? preset.lineHeight)) <
-          0.01
-    )?.label ?? "Custom";
-
-  // Preset selector custom control
-  const presetSelectorControl = (
-    <div className="relative flex items-center" ref={presetMenuRef}>
-      <Button
-        ref={presetButtonRef}
-        variant="outline"
-        size="sm"
-        className="min-w-[90px] justify-between px-3 py-1 text-xs font-medium"
-        onClick={() => setPresetMenuOpen((prev) => !prev)}
-      >
-        {currentPresetLabel}
-        <svg
-          className={cn(
-            "h-3 w-3 transition-transform",
-            presetMenuOpen ? "rotate-180" : "rotate-0"
-          )}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      </Button>
-      {presetMenuOpen && (
-        <PopoverPanelPortal buttonRef={presetButtonRef}>
-          <div className="flex flex-col gap-1 rounded-xl border border-white/20 bg-white/95 p-2 shadow-2xl backdrop-blur-xl min-w-[120px]">
-            {TEXT_STYLE_PRESETS.map((preset) => (
-              <button
-                key={preset.id}
-                type="button"
-                className="block w-full px-3 py-2 text-left text-xs hover:bg-accent rounded-lg transition-all"
-                onClick={() => applyPreset(preset.id)}
-              >
-                {preset.label}
-              </button>
-            ))}
-          </div>
-        </PopoverPanelPortal>
-      )}
-    </div>
-  );
-
   // Bold toggle custom control
   const boldToggleControl = (
     <Button
@@ -484,12 +383,6 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   );
 
   const controls: ToolbarControlConfig[] = [
-    // Preset selector (custom)
-    {
-      type: "custom",
-      customRender: () => presetSelectorControl,
-    },
-    { type: "separator" },
     // Font size selector
     {
       type: "font-size",
