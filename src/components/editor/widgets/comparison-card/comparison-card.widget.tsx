@@ -452,10 +452,10 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
 
     return (
       <div
-        className="flex-1 rounded-2xl border border-white/10 p-5 backdrop-blur-sm shadow-[0_12px_60px_-32px_rgba(15,23,42,0.5)]"
+        className="flex-1 rounded-2xl border border-white/5 p-5"
         style={{
           textAlign,
-          background: "transparent",
+          backgroundColor: "rgba(255, 255, 255, 0.02)",
         }}
       >
         <div className="flex flex-col h-full gap-5">
