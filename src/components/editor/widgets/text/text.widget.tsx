@@ -279,22 +279,22 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
             </div>
           </div>
         )}
-
-        {isSelected && !isEditing && (
-          <>
-            {textResizeHandles.map(({ handle, className }) => (
-              <div
-                key={handle}
-                className={cn(
-                  "absolute h-3 w-3 rounded-sm border border-white bg-primary cursor-ew-resize",
-                  className
-                )}
-                onPointerDown={getResizePointerDown(handle)}
-              />
-            ))}
-          </>
-        )}
       </div>
+
+      {isSelected && !isEditing && (
+        <>
+          {textResizeHandles.map(({ handle, className }) => (
+            <div
+              key={handle}
+              className={cn(
+                "absolute h-3 w-3 rounded-sm border border-white bg-primary cursor-ew-resize z-10",
+                className
+              )}
+              onPointerDown={getResizePointerDown(handle)}
+            />
+          ))}
+        </>
+      )}
     </div>
   );
 };
