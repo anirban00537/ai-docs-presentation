@@ -2,18 +2,10 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, Image as ImageIcon, Sparkles } from "lucide-react";
+import { ChevronDown, Image as ImageIcon } from "lucide-react";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { ImageCardWidget } from "./types";
-import {
-  TOOLBAR_SELECTOR,
-  ALIGN_OPTIONS,
-  GOOGLE_FONTS,
-  FONT_SIZE_OPTIONS,
-  BACKGROUND_TYPE_OPTIONS,
-  IMAGE_STYLE_OPTIONS,
-} from "./constants";
+import { TOOLBAR_SELECTOR, IMAGE_STYLE_OPTIONS } from "./constants";
 import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -22,12 +14,11 @@ import {
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
-import { ToolbarPortal } from "@/components/editor/toolbar-portal";
 import { Popover } from "@headlessui/react";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
-import { HexColorPicker } from "react-colorful";
-import { Input } from "@/components/ui/input";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
+import { WidgetToolbar } from "@/components/editor/widgets/shared/toolbar-controls/widget-toolbar";
+import type { ToolbarControlConfig } from "@/components/editor/widgets/shared/toolbar-controls/types";
 
 type ImageCardWidgetNodeProps = {
   widget: ImageCardWidget;
@@ -500,36 +491,9 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
   viewport,
   containerRef,
 }) => {
-  const bgColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
-  const bgTypeButtonRef = React.useRef<HTMLButtonElement>(null);
-  const textColorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
-  const fontButtonRef = React.useRef<HTMLButtonElement>(null);
-  const fontSizeButtonRef = React.useRef<HTMLButtonElement>(null);
   const imageStyleButtonRef = React.useRef<HTMLButtonElement>(null);
-  const fontMenuRef = React.useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const [fontMenuOpen, setFontMenuOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        fontMenuOpen &&
-        fontMenuRef.current &&
-        !fontMenuRef.current.contains(target) &&
-        fontButtonRef.current &&
-        !fontButtonRef.current.contains(target)
-      ) {
-        setFontMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [fontMenuOpen]);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -641,326 +605,132 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
     activeField === "title"
       ? widget.titleFontFamily ?? "var(--font-poppins)"
       : widget.descriptionFontFamily ?? "var(--font-poppins)";
-  const currentFontLabel =
-    GOOGLE_FONTS.find((font) => font.value === currentFontFamily)?.label ??
-    "Poppins";
   const currentFontSize =
     activeField === "title"
       ? widget.titleFontSize ?? 26
       : widget.descriptionFontSize ?? 18;
-  const currentFontSizeLabel =
-    FONT_SIZE_OPTIONS.find((option) => option.value === currentFontSize)
-      ?.label ?? `${currentFontSize}px`;
-  const currentBackgroundTypeLabel =
-    BACKGROUND_TYPE_OPTIONS.find(
-      (option) => option.value === currentBackgroundType
-    )?.label ?? "Solid";
+
   const currentImageStyleLabel =
     IMAGE_STYLE_OPTIONS.find((option) => option.value === currentImageStyle)
       ?.label ?? "Hero Image";
 
+  // Image style selector custom control
+  const imageStyleControl = (
+    <Popover>
+      {({ open }) => (
+        <>
+          <Popover.Button
+            ref={imageStyleButtonRef}
+            className={cn(
+              "flex items-center gap-1.5 rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-muted-foreground/80 transition-all hover:bg-black/10",
+              open && "bg-black/10 text-foreground"
+            )}
+          >
+            <span>{currentImageStyleLabel}</span>
+            <ChevronDown className="h-3 w-3" />
+          </Popover.Button>
+          {open && (
+            <PopoverPanelPortal buttonRef={imageStyleButtonRef}>
+              <div className="flex flex-col gap-1.5 rounded-xl border border-white/20 bg-white/95 p-2 shadow-2xl backdrop-blur-xl min-w-[220px]">
+                {IMAGE_STYLE_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={cn(
+                      "flex flex-col rounded-lg px-3 py-2 text-xs text-left transition-all",
+                      option.value === currentImageStyle
+                        ? "bg-black/5 text-foreground font-semibold"
+                        : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                    )}
+                    onClick={() => handleSetImageStyle(option.value)}
+                  >
+                    <span>{option.label}</span>
+                    <span className="text-[10px] opacity-70">
+                      {option.description}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </PopoverPanelPortal>
+          )}
+        </>
+      )}
+    </Popover>
+  );
+
+  const controls: ToolbarControlConfig[] = [
+    // Image style selector (custom)
+    {
+      type: "custom",
+      customRender: () => imageStyleControl,
+    },
+    { type: "separator" },
+    // Background color picker
+    {
+      type: "color-picker",
+      config: {
+        color: currentBackgroundColor,
+        onChange: handleSetBackgroundColor,
+        label: "Background",
+      },
+    },
+    // Background type selector
+    {
+      type: "background-type",
+      config: {
+        value: currentBackgroundType,
+        onChange: handleSetBackgroundType,
+      },
+    },
+    // Text color picker (conditional)
+    {
+      type: "color-picker",
+      config: {
+        color: currentTextColor,
+        onChange: handleSetTextColor,
+        label: activeField ? `${activeField} Color` : "Text Color",
+      },
+      showWhen: (field) => !!field,
+    },
+    // Font family selector (conditional)
+    {
+      type: "font-family",
+      config: {
+        value: currentFontFamily,
+        onChange: handleSetFontFamily,
+      },
+      showWhen: (field) => !!field,
+    },
+    // Font size selector (conditional)
+    {
+      type: "font-size",
+      config: {
+        value: currentFontSize,
+        onChange: handleSetFontSize,
+      },
+      showWhen: (field) => !!field,
+    },
+    { type: "separator" },
+    // Alignment controls
+    {
+      type: "alignment",
+      config: {
+        value: currentAlign,
+        onChange: handleAlign,
+      },
+    },
+  ];
+
   return (
-    <ToolbarPortal
+    <WidgetToolbar
       widgetRef={widgetRef}
       viewport={viewport}
       containerRef={containerRef}
-      placement={isEditing ? "bottom" : "top"}
-      offset={isEditing ? 12 : 16}
-    >
-      <div
-        data-image-card-toolbar="true"
-        className="pointer-events-auto flex flex-wrap items-center gap-3 rounded-2xl border border-white/20 bg-white/80 px-3.5 py-1.5 shadow-[0_6px_30px_-14px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-all duration-300 hover:bg-white/90 hover:shadow-[0_10px_38px_-14px_rgba(0,0,0,0.3)]"
-        onPointerDown={(event) => {
-          event.stopPropagation();
-        }}
-      >
-        <Popover>
-          {({ open }) => (
-            <>
-              <Popover.Button
-                ref={imageStyleButtonRef}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-muted-foreground/80 transition-all hover:bg-black/10",
-                  open && "bg-black/10 text-foreground"
-                )}
-              >
-                <span>{currentImageStyleLabel}</span>
-                <ChevronDown className="h-3 w-3" />
-              </Popover.Button>
-              {open && (
-                <PopoverPanelPortal buttonRef={imageStyleButtonRef}>
-                  <div className="flex flex-col gap-1.5 rounded-xl border border-white/20 bg-white/95 p-2 shadow-2xl backdrop-blur-xl min-w-[220px]">
-                    {IMAGE_STYLE_OPTIONS.map((option) => (
-                      <button
-                        key={option.value}
-                        type="button"
-                        className={cn(
-                          "flex flex-col rounded-lg px-3 py-2 text-xs text-left transition-all",
-                          option.value === currentImageStyle
-                            ? "bg-black/5 text-foreground font-semibold"
-                            : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
-                        )}
-                        onClick={() => handleSetImageStyle(option.value)}
-                      >
-                        <span>{option.label}</span>
-                        <span className="text-[10px] opacity-70">
-                          {option.description}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </PopoverPanelPortal>
-              )}
-            </>
-          )}
-        </Popover>
-
-        <div className="h-5 w-px bg-black/10 rounded-full" />
-
-        {/* Background */}
-        <div className="flex items-center gap-2">
-          <Popover>
-            {({ open }) => (
-              <>
-                <Popover.Button
-                  ref={bgColorPickerButtonRef}
-                  className="relative h-6 w-6 rounded-full ring-1 ring-black/5 transition-all hover:scale-110 focus:outline-none"
-                  style={{ backgroundColor: currentBackgroundColor }}
-                >
-                  <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-black/5" />
-                </Popover.Button>
-                {open && (
-                  <PopoverPanelPortal buttonRef={bgColorPickerButtonRef}>
-                    <div className="flex flex-col gap-3 rounded-2xl border border-white/20 bg-white/95 p-3 shadow-2xl backdrop-blur-2xl min-w-[240px]">
-                      <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
-                        Background
-                      </div>
-                      <HexColorPicker
-                        color={currentBackgroundColor}
-                        onChange={handleSetBackgroundColor}
-                        className="h-32! w-full! rounded-xl"
-                      />
-                      <div className="flex items-center gap-2 rounded-lg border border-black/5 bg-muted/30 p-1.5">
-                        <div
-                          className="h-6 w-6 rounded-full border border-black/10 shadow-sm"
-                          style={{ backgroundColor: currentBackgroundColor }}
-                        />
-                        <Input
-                          className="h-7 flex-1 border-none bg-transparent text-xs font-mono uppercase text-muted-foreground focus-visible:ring-0"
-                          value={currentBackgroundColor}
-                          onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                          ) => handleSetBackgroundColor(event.target.value)}
-                        />
-                      </div>
-                    </div>
-                  </PopoverPanelPortal>
-                )}
-              </>
-            )}
-          </Popover>
-
-          <Popover>
-            {({ open }) => (
-              <>
-                <Popover.Button
-                  ref={bgTypeButtonRef}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-muted-foreground/80 transition-all hover:bg-black/10",
-                    open && "bg-black/10 text-foreground"
-                  )}
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  <span>{currentBackgroundTypeLabel}</span>
-                  <ChevronDown className="h-3 w-3" />
-                </Popover.Button>
-                {open && (
-                  <PopoverPanelPortal buttonRef={bgTypeButtonRef}>
-                    <div className="flex flex-col gap-1.5 rounded-xl border border-white/20 bg-white/95 p-3 shadow-2xl backdrop-blur-xl min-w-[200px]">
-                      {BACKGROUND_TYPE_OPTIONS.map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          className={cn(
-                            "flex flex-col rounded-lg px-3 py-2 text-xs text-left transition-all",
-                            option.value === currentBackgroundType
-                              ? "bg-black/5 text-foreground font-semibold"
-                              : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
-                          )}
-                          onClick={() => handleSetBackgroundType(option.value)}
-                        >
-                          <span>{option.label}</span>
-                          <span className="text-[10px] opacity-70">
-                            {option.description}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </PopoverPanelPortal>
-                )}
-              </>
-            )}
-          </Popover>
-        </div>
-
-        {activeField && (
-          <>
-            <div className="h-5 w-px bg-black/10 rounded-full" />
-            <div className="flex items-center gap-2">
-              <Popover>
-                {({ open }) => (
-                  <>
-                    <Popover.Button
-                      ref={textColorPickerButtonRef}
-                      className="relative h-6 w-6 rounded-full ring-1 ring-black/5 transition-all hover:scale-110 focus:outline-none"
-                      style={{ backgroundColor: currentTextColor }}
-                    >
-                      <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-black/5" />
-                    </Popover.Button>
-                    {open && (
-                      <PopoverPanelPortal buttonRef={textColorPickerButtonRef}>
-                        <div className="flex flex-col gap-3 rounded-2xl border border-white/20 bg-white/95 p-3 shadow-2xl backdrop-blur-2xl min-w-[240px]">
-                          <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
-                            {activeField} Color
-                          </div>
-                          <HexColorPicker
-                            color={currentTextColor}
-                            onChange={handleSetTextColor}
-                            className="h-32! w-full! rounded-xl"
-                          />
-                          <div className="flex items-center gap-2 rounded-lg border border-black/5 bg-muted/30 p-1.5">
-                            <div
-                              className="h-6 w-6 rounded-full border border-black/10 shadow-sm"
-                              style={{ backgroundColor: currentTextColor }}
-                            />
-                            <Input
-                              className="h-7 flex-1 border-none bg-transparent text-xs font-mono uppercase text-muted-foreground focus-visible:ring-0"
-                              value={currentTextColor}
-                              onChange={(
-                                event: React.ChangeEvent<HTMLInputElement>
-                              ) => handleSetTextColor(event.target.value)}
-                            />
-                          </div>
-                        </div>
-                      </PopoverPanelPortal>
-                    )}
-                  </>
-                )}
-              </Popover>
-
-              <div className="relative flex items-center">
-                <Button
-                  ref={fontButtonRef}
-                  variant="ghost"
-                  size="sm"
-                  className="group flex w-[110px] items-center justify-between gap-2 rounded-full border border-transparent bg-black/5 px-3 py-1.5 text-xs hover:bg-black/10"
-                  onClick={() => setFontMenuOpen((prev) => !prev)}
-                >
-                  <span className="truncate text-[11px] font-medium text-foreground/80 group-hover:text-foreground">
-                    {currentFontLabel}
-                  </span>
-                  <ChevronDown className="h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                </Button>
-                {fontMenuOpen && (
-                  <div
-                    ref={fontMenuRef}
-                    className="absolute left-0 top-full mt-2 z-50 max-h-[280px] min-w-[200px] overflow-y-auto rounded-xl border border-white/20 bg-white/90 p-1.5 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] backdrop-blur-xl"
-                  >
-                    <div className="flex flex-col gap-0.5">
-                      {GOOGLE_FONTS.map((font) => (
-                        <button
-                          key={font.value}
-                          type="button"
-                          className={cn(
-                            "flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-all",
-                            currentFontFamily === font.value
-                              ? "bg-black/5 text-foreground font-medium"
-                              : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
-                          )}
-                          style={{ fontFamily: font.style }}
-                          onClick={() => {
-                            handleSetFontFamily(font.value);
-                            setFontMenuOpen(false);
-                          }}
-                        >
-                          <span>{font.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <Popover>
-                {({ open }) => (
-                  <>
-                    <Popover.Button
-                      ref={fontSizeButtonRef}
-                      className={cn(
-                        "flex items-center gap-1 rounded-full bg-black/5 px-3 py-1.5 text-xs font-medium text-foreground/80 transition-all hover:bg-black/10",
-                        open && "bg-black/10 text-foreground"
-                      )}
-                    >
-                      <span className="uppercase tracking-wide text-[10px]">
-                        {currentFontSizeLabel}
-                      </span>
-                      <ChevronDown className="h-3 w-3" />
-                    </Popover.Button>
-                    {open && (
-                      <PopoverPanelPortal buttonRef={fontSizeButtonRef}>
-                        <div className="flex flex-col gap-1 rounded-xl border border-white/20 bg-white/95 p-2 shadow-2xl backdrop-blur-xl min-w-[160px]">
-                          {FONT_SIZE_OPTIONS.map((option) => (
-                            <button
-                              key={option.value}
-                              type="button"
-                              className={cn(
-                                "flex items-center justify-between rounded-lg px-3 py-2 text-xs transition-all",
-                                option.value === currentFontSize
-                                  ? "bg-black/5 text-foreground font-semibold"
-                                  : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
-                              )}
-                              onClick={() => handleSetFontSize(option.value)}
-                            >
-                              <span>{option.label}</span>
-                              <span className="text-[10px] uppercase">
-                                {option.value}px
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </PopoverPanelPortal>
-                    )}
-                  </>
-                )}
-              </Popover>
-            </div>
-          </>
-        )}
-
-        <div className="h-5 w-px bg-black/10 rounded-full" />
-
-        <div className="flex items-center gap-1 rounded-full bg-black/5 p-1">
-          {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
-            <Button
-              key={value}
-              variant="ghost"
-              size="icon-sm"
-              className={cn(
-                "h-7 w-7 rounded-full transition-all",
-                currentAlign === value
-                  ? "bg-white text-foreground shadow-sm ring-1 ring-black/5"
-                  : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
-              )}
-              onClick={() => handleAlign(value)}
-              aria-pressed={currentAlign === value}
-              title={label}
-            >
-              <Icon className="h-3.5 w-3.5" />
-            </Button>
-          ))}
-        </div>
-      </div>
-    </ToolbarPortal>
+      isEditing={isEditing}
+      activeField={activeField}
+      controls={controls}
+      toolbarSelector="data-image-card-toolbar"
+    />
   );
 };
 
