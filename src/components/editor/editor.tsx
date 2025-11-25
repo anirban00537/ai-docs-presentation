@@ -10,6 +10,7 @@ import {
   setActiveSlide,
   updateSlide,
   setSlideTheme,
+  removeWidget,
 } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
 import { EditorHeader } from "@/components/editor/editor-toolbar";
@@ -97,6 +98,46 @@ const Editor = () => {
 
     dispatch(setActiveSlide(slides[nextIndex].id));
   };
+
+  React.useEffect(() => {
+    if (!selectedId || !activeSlide) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Delete") {
+        return;
+      }
+
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (editingId) {
+        return;
+      }
+
+      event.preventDefault();
+      dispatch(
+        removeWidget({
+          widgetId: selectedId,
+          slideId: activeSlide.id,
+        })
+      );
+      onSelectWidget(null);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedId, activeSlide, editingId, dispatch, onSelectWidget]);
 
   // Presentation Mode
   if (isPresentationMode) {
