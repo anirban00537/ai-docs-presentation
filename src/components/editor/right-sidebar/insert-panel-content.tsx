@@ -14,15 +14,8 @@ import {
   Image as ImageIcon,
   PanelsLeftRight,
 } from "lucide-react";
-import {
-  ArrowPreview,
-  CirclePreview,
-  PolygonPreview,
-  SquarePreview,
-} from "@/components/editor/shape-previews";
 import type {
   TextPreset,
-  ShapePreset,
   FeatureCardPreset,
   IconCardPreset,
   ImageCardPreset,
@@ -142,99 +135,8 @@ const comparisonCardPresets: ComparisonCardPreset[] = [
   },
 ];
 
-const shapeItems: ShapePreset[] = [
-  {
-    id: "square-solid",
-    title: "Square",
-    category: "essential",
-    preview: <SquarePreview className="h-6 w-6" />,
-  },
-  {
-    id: "rounded-square-solid",
-    title: "Rounded",
-    category: "essential",
-    preview: <SquarePreview rounded className="h-6 w-6" />,
-  },
-  {
-    id: "circle-solid",
-    title: "Circle",
-    category: "essential",
-    preview: <CirclePreview className="h-6 w-6" />,
-  },
-  {
-    id: "triangle-solid",
-    title: "Triangle",
-    category: "essential",
-    preview: <PolygonPreview points="50,8 94,92 6,92" className="h-8 w-8" />,
-  },
-  {
-    id: "diamond-solid",
-    title: "Diamond",
-    category: "essential",
-    preview: (
-      <PolygonPreview points="50,6 94,50 50,94 6,50" className="h-8 w-8" />
-    ),
-  },
-  {
-    id: "star-solid",
-    title: "Star",
-    category: "essential",
-    preview: (
-      <PolygonPreview
-        points="50,5 61,32 90,35 68,55 74,84 50,69 26,84 32,55 10,35 39,32"
-        className="h-8 w-8"
-      />
-    ),
-  },
-  {
-    id: "arrow",
-    title: "Arrow",
-    category: "lines",
-    preview: <ArrowPreview className="h-4 w-8" />,
-  },
-  {
-    id: "square-outline",
-    title: "Square",
-    category: "outlined",
-    preview: <SquarePreview outline className="h-6 w-6" />,
-  },
-  {
-    id: "rounded-square-outline",
-    title: "Rounded",
-    category: "outlined",
-    preview: <SquarePreview rounded outline className="h-6 w-6" />,
-  },
-  {
-    id: "circle-outline",
-    title: "Circle",
-    category: "outlined",
-    preview: <CirclePreview outline className="h-6 w-6" />,
-  },
-  {
-    id: "triangle-outline",
-    title: "Triangle",
-    category: "outlined",
-    preview: (
-      <PolygonPreview points="50,8 94,92 6,92" outline className="h-8 w-8" />
-    ),
-  },
-  {
-    id: "diamond-outline",
-    title: "Diamond",
-    category: "outlined",
-    preview: (
-      <PolygonPreview
-        points="50,6 94,50 50,94 6,50"
-        outline
-        className="h-8 w-8"
-      />
-    ),
-  },
-];
-
 type InsertPanelContentProps = {
   onAddText: (preset: TextPreset) => void;
-  onAddShape?: (preset: ShapePreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
   onAddIconCard?: (preset: IconCardPreset) => void;
   onAddImageCard?: (preset: ImageCardPreset) => void;
@@ -276,7 +178,6 @@ const InsertItem: React.FC<InsertItemProps> = ({
 
 export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   onAddText,
-  onAddShape,
   onAddFeatureCard,
   onAddIconCard,
   onAddImageCard,
@@ -288,10 +189,6 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
 }) => {
   const handleAddText = (preset: TextPreset) => {
     onAddText(preset);
-  };
-
-  const handleAddShape = (preset: ShapePreset) => {
-    onAddShape?.(preset);
   };
 
   const handleAddFeatureCard = (preset: FeatureCardPreset) => {
@@ -443,23 +340,6 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
         </div>
       </div>
 
-      {/* Shapes */}
-      <div className="space-y-3">
-        <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
-          Shapes & Diagrams
-        </h3>
-        <div className="grid grid-cols-2 gap-2.5">
-          {shapeItems.map((item) => (
-            <InsertItem
-              key={item.id}
-              icon={item.preview}
-              label={item.title}
-              onClick={() => handleAddShape(item)}
-              className="aspect-square"
-            />
-          ))}
-        </div>
-      </div>
     </div>
   );
 };

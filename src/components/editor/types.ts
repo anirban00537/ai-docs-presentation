@@ -1,17 +1,6 @@
-import React from "react";
-
 export type TextPreset = {
   id: string;
   title: string;
-};
-
-export type ShapeCategory = "essential" | "outlined" | "lines";
-
-export type ShapePreset = {
-  id: string;
-  title: string;
-  category: ShapeCategory;
-  preview: React.ReactNode;
 };
 
 export type FeatureCardPreset = {

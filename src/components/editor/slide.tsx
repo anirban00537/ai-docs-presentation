@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useRef } from "react";
 import { TextWidgetNode } from "@/components/editor/widgets/text";
-import { ShapeWidgetNode } from "@/components/editor/widgets/shape";
 import { NumberCardWidgetNode } from "@/components/editor/widgets/number-card";
 import { IconCardWidgetNode } from "@/components/editor/widgets/icon-card";
 import { ImageCardWidgetNode } from "@/components/editor/widgets/image-card";
@@ -14,10 +13,6 @@ import type {
   SlideWidget,
   SlideWidgetUpdate,
   TextWidget,
-  RectangleWidget,
-  CircleWidget,
-  ArrowWidget,
-  PolygonWidget,
   ResizeHandle,
 } from "@/components/editor/widgets/types";
 import type { NumberCardWidget } from "@/components/editor/widgets/number-card/types";
@@ -475,34 +470,7 @@ const Slide: React.FC<SlideProps> = ({
                     );
                   }
 
-                  return (
-                    <ShapeWidgetNode
-                      key={widget.id}
-                      widget={
-                        effective as
-                          | RectangleWidget
-                          | CircleWidget
-                          | ArrowWidget
-                          | PolygonWidget
-                      }
-                      isSelected={isSelected}
-                      isEditing={isEditing}
-                      baseZIndex={baseZIndex}
-                      onPointerDown={(e) =>
-                        handleDragStart(
-                          widget,
-                          effective,
-                          isSelected,
-                          isEditing,
-                          e
-                        )
-                      }
-                      getResizePointerDown={(handle) => (e) =>
-                        handleResizeStart(widget, effective, handle, e)}
-                      viewport={viewport}
-                      containerRef={canvasContainerRef}
-                    />
-                  );
+                  return null;
                 })}
 
                 {showSnapLines && <SnapLines lines={snapLines} />}

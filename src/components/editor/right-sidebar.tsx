@@ -31,7 +31,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
 }) => {
   const {
     handleAddText,
-    handleAddShape,
     handleAddFeatureCard,
     handleAddIconCard,
     handleAddImageCard,
@@ -86,7 +85,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
         {panel === "insert" && (
           <InsertPanelContent
             onAddText={handleAddText}
-            onAddShape={handleAddShape}
             onAddFeatureCard={handleAddFeatureCard}
             onAddIconCard={handleAddIconCard}
             onAddImageCard={handleAddImageCard}

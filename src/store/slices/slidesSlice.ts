@@ -214,16 +214,6 @@ const slidesSlice = createSlice({
               widget.color = theme.text;
               break;
             }
-            case "rectangle":
-            case "circle":
-            case "polygon": {
-              widget.fill = theme.accent;
-              break;
-            }
-            case "arrow": {
-              widget.stroke = theme.accent;
-              break;
-            }
             case "numberCard": {
               widget.backgroundColor = theme.surface;
               widget.numberColor = theme.accent;

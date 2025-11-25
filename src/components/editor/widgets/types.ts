@@ -10,14 +10,6 @@ export type WidgetCommon = {
 import type { TextWidget } from "./text/types";
 export type { TextWidget };
 
-export type {
-  RectangleWidget,
-  CircleWidget,
-  ArrowWidget,
-  PolygonWidget,
-  PolygonShape,
-} from "./shape/types";
-
 export type { NumberCardWidget } from "./number-card/types";
 export type { IconCardWidget } from "./icon-card/types";
 export type { ImageCardWidget } from "./image-card/types";
@@ -29,10 +21,6 @@ export type { ComparisonCardWidget } from "./comparison-card/types";
 
 export type SlideWidget =
   | TextWidget
-  | import("./shape/types").RectangleWidget
-  | import("./shape/types").CircleWidget
-  | import("./shape/types").ArrowWidget
-  | import("./shape/types").PolygonWidget
   | import("./number-card/types").NumberCardWidget
   | import("./icon-card/types").IconCardWidget
   | import("./image-card/types").ImageCardWidget
@@ -53,7 +41,6 @@ export type SlideWidgetUpdate = Partial<
     stroke: string;
     strokeWidth: number;
     lineHeight: number;
-    shape: import("./shape/types").PolygonShape;
     number: string;
     icon: string;
     label: string;
