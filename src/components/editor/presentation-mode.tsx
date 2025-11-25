@@ -27,15 +27,26 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
   const isFirstSlide = currentIndex === 0;
   const isLastSlide = currentIndex === slides.length - 1;
 
-  const gradientBackground = useMemo(() => {
+  const meshBackground = useMemo(() => {
     const backgroundStops =
-      globalTheme?.background?.length && globalTheme.background.length > 0
+      globalTheme?.background && globalTheme.background.length > 0
         ? globalTheme.background
-        : ["#0f172a", "#1e293b"];
-    const surfaceColor = globalTheme?.surface ?? "rgba(15,23,42,0.85)";
+        : ["#0f172a", "#1e293b", "#111827"];
+    const surfaceColor = globalTheme?.surface ?? "rgba(15,23,42,0.92)";
     const accentColor = globalTheme?.accent ?? "#6366f1";
-    const stops = [...backgroundStops, surfaceColor, accentColor];
-    return `linear-gradient(135deg, ${stops.join(", ")})`;
+
+    const baseGradient =
+      backgroundStops.length === 1
+        ? `linear-gradient(135deg, ${backgroundStops[0]}, ${backgroundStops[0]})`
+        : `linear-gradient(135deg, ${backgroundStops.join(", ")})`;
+
+    return [
+      baseGradient,
+      `radial-gradient(at 25% 25%, ${surfaceColor} 0%, transparent 55%)`,
+      `radial-gradient(at 70% 65%, ${surfaceColor} 0%, transparent 60%)`,
+      `radial-gradient(at 85% 20%, ${accentColor} 0%, transparent 45%)`,
+      `radial-gradient(at 15% 80%, ${accentColor}33 0%, transparent 50%)`,
+    ].join(", ");
   }, [globalTheme]);
 
   const goToNext = useCallback(() => {
@@ -100,7 +111,7 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
         isExiting ? "opacity-0" : "opacity-100"
       )}
       style={{
-        backgroundImage: gradientBackground,
+        backgroundImage: meshBackground,
       }}
     >
       {/* Exit Button */}
