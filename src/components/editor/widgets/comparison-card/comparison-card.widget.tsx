@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import type { KeyboardEvent } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -295,8 +294,7 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
     widget.leftLabelFontFamily ?? "var(--font-poppins)";
   const rightLabelFontFamily =
     widget.rightLabelFontFamily ?? "var(--font-poppins)";
-  const leftItemFontFamily =
-    widget.leftItemFontFamily ?? "var(--font-poppins)";
+  const leftItemFontFamily = widget.leftItemFontFamily ?? "var(--font-poppins)";
   const rightItemFontFamily =
     widget.rightItemFontFamily ?? "var(--font-poppins)";
 
@@ -318,11 +316,7 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
         debouncedUpdateRightTitle(value);
       }
     },
-    [
-      isSelected,
-      debouncedUpdateLeftTitle,
-      debouncedUpdateRightTitle,
-    ]
+    [isSelected, debouncedUpdateLeftTitle, debouncedUpdateRightTitle]
   );
 
   const handleItemsChange = React.useCallback(
@@ -439,12 +433,8 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
     const label = isLeft ? localLeftLabel : localRightLabel;
     const accentColor = isLeft ? leftAccentColor : rightAccentColor;
     const textColor = isLeft ? leftTextColor : rightTextColor;
-    const labelFontFamily = isLeft
-      ? leftLabelFontFamily
-      : rightLabelFontFamily;
-    const titleFontFamily = isLeft
-      ? leftTitleFontFamily
-      : rightTitleFontFamily;
+    const labelFontFamily = isLeft ? leftLabelFontFamily : rightLabelFontFamily;
+    const titleFontFamily = isLeft ? leftTitleFontFamily : rightTitleFontFamily;
     const itemFontFamily = isLeft ? leftItemFontFamily : rightItemFontFamily;
     const labelFontSize = isLeft ? leftLabelFontSize : rightLabelFontSize;
     const titleFontSize = isLeft ? leftTitleFontSize : rightTitleFontSize;
@@ -555,7 +545,7 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
                 {...{ [listItemAttr]: true }}
                 className="group/item flex items-start gap-3"
               >
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-current/10 text-current transition-all duration-200">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-current/10 text-current transition-all duration-200">
                   <span
                     className="font-semibold"
                     style={{ color: accentColor, fontSize: "0.8rem" }}
@@ -579,9 +569,7 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
                       }
                       scheduleActiveFieldReset();
                     }}
-                    onKeyDown={(event) =>
-                      handleItemKeyDown(side, index, event)
-                    }
+                    onKeyDown={(event) => handleItemKeyDown(side, index, event)}
                     placeholder={`Detail ${index + 1}`}
                     readOnly={!isSelected}
                     className={cn(
@@ -753,8 +741,10 @@ const ComparisonCardEditingToolbar: React.FC<
     }
   }, [
     activeField,
+    widget.leftLabelFontFamily,
     widget.leftTitleFontFamily,
     widget.leftItemFontFamily,
+    widget.rightLabelFontFamily,
     widget.rightTitleFontFamily,
     widget.rightItemFontFamily,
   ]);
@@ -778,8 +768,10 @@ const ComparisonCardEditingToolbar: React.FC<
     }
   }, [
     activeField,
+    widget.leftLabelFontSize,
     widget.leftTitleFontSize,
     widget.leftItemFontSize,
+    widget.rightLabelFontSize,
     widget.rightTitleFontSize,
     widget.rightItemFontSize,
   ]);
@@ -789,7 +781,7 @@ const ComparisonCardEditingToolbar: React.FC<
       type: "color-picker",
       config: {
         color: widget.backgroundColor ?? "rgba(15,23,42,0.05)",
-        onChange: (color) => handleUpdate({ backgroundColor: color }),
+        onChange: (color: string) => handleUpdate({ backgroundColor: color }),
         label: "Surface",
       },
     },
@@ -797,7 +789,9 @@ const ComparisonCardEditingToolbar: React.FC<
       type: "background-type",
       config: {
         value: widget.backgroundType ?? "glass",
-        onChange: (value) => handleUpdate({ backgroundType: value }),
+        onChange: (
+          value: NonNullable<ComparisonCardWidget["backgroundType"]>
+        ) => handleUpdate({ backgroundType: value }),
       },
     },
     { type: "separator" },
@@ -805,7 +799,7 @@ const ComparisonCardEditingToolbar: React.FC<
       type: "color-picker",
       config: {
         color: widget.leftAccentColor ?? "#2563eb",
-        onChange: (color) => handleUpdate({ leftAccentColor: color }),
+        onChange: (color: string) => handleUpdate({ leftAccentColor: color }),
         label: "Plan A accent",
       },
     },
@@ -813,7 +807,7 @@ const ComparisonCardEditingToolbar: React.FC<
       type: "color-picker",
       config: {
         color: widget.rightAccentColor ?? "#f97316",
-        onChange: (color) => handleUpdate({ rightAccentColor: color }),
+        onChange: (color: string) => handleUpdate({ rightAccentColor: color }),
         label: "Plan B accent",
       },
     },
@@ -822,7 +816,7 @@ const ComparisonCardEditingToolbar: React.FC<
       showWhen: () => isLeftTextField,
       config: {
         color: widget.leftTextColor ?? "#0f172a",
-        onChange: (color) => handleUpdate({ leftTextColor: color }),
+        onChange: (color: string) => handleUpdate({ leftTextColor: color }),
         label: "Text color",
       },
     },
@@ -831,7 +825,7 @@ const ComparisonCardEditingToolbar: React.FC<
       showWhen: () => isRightTextField,
       config: {
         color: widget.rightTextColor ?? "#0f172a",
-        onChange: (color) => handleUpdate({ rightTextColor: color }),
+        onChange: (color: string) => handleUpdate({ rightTextColor: color }),
         label: "Text color",
       },
     },
@@ -855,7 +849,8 @@ const ComparisonCardEditingToolbar: React.FC<
       type: "alignment",
       config: {
         value: widget.textAlign ?? "left",
-        onChange: (align) => handleUpdate({ textAlign: align }),
+        onChange: (align: NonNullable<ComparisonCardWidget["textAlign"]>) =>
+          handleUpdate({ textAlign: align }),
       },
     },
   ];
@@ -876,5 +871,3 @@ const ComparisonCardEditingToolbar: React.FC<
 export const ComparisonCardWidgetNode = React.memo(
   ComparisonCardWidgetNodeBase
 );
-
-
