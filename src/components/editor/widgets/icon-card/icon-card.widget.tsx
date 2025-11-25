@@ -120,10 +120,15 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
     }
   }, [isSelected]);
 
+  const iconPointerExclusionSelectors = React.useMemo(
+    () => ["[data-icon-selector]", "[data-icon-button]"],
+    []
+  );
+
   const handlePointerDown = useWidgetPointerDown({
     onPointerDown,
     toolbarSelector: TOOLBAR_SELECTOR,
-    additionalSelectors: ["[data-icon-selector]", "[data-icon-button]"],
+    additionalSelectors: iconPointerExclusionSelectors,
   });
 
   const handleIconClick = React.useCallback(

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import type { PointerEvent } from "react";
 
 interface UseWidgetPointerDownOptions {
@@ -12,6 +12,14 @@ export const useWidgetPointerDown = ({
   toolbarSelector,
   additionalSelectors = [],
 }: UseWidgetPointerDownOptions) => {
+  const selectorsKey = additionalSelectors.join("|");
+  const memoizedSelectors = useMemo(() => {
+    if (!selectorsKey) {
+      return [];
+    }
+    return selectorsKey.split("|");
+  }, [selectorsKey]);
+
   const handlePointerDown = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       const target = event.target as HTMLElement;
@@ -22,7 +30,7 @@ export const useWidgetPointerDown = ({
       }
 
       // Don't start drag if clicking additional selectors (e.g., action buttons)
-      for (const selector of additionalSelectors) {
+      for (const selector of memoizedSelectors) {
         if (target.closest(selector)) {
           return;
         }
@@ -46,7 +54,7 @@ export const useWidgetPointerDown = ({
 
       onPointerDown(event);
     },
-    [onPointerDown, toolbarSelector, additionalSelectors]
+    [onPointerDown, toolbarSelector, memoizedSelectors]
   );
 
   return handlePointerDown;

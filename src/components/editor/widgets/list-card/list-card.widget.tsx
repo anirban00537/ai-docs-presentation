@@ -128,14 +128,15 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     });
   }, []);
 
+  const listPointerExclusionSelectors = React.useMemo(
+    () => ["[data-add-item]", "[data-remove-item]", "[data-list-item]"],
+    []
+  );
+
   const handlePointerDown = useWidgetPointerDown({
     onPointerDown,
     toolbarSelector: TOOLBAR_SELECTOR,
-    additionalSelectors: [
-      "[data-add-item]",
-      "[data-remove-item]",
-      "[data-list-item]",
-    ],
+    additionalSelectors: listPointerExclusionSelectors,
   });
 
   const handleItemChange = React.useCallback(
