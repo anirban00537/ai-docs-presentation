@@ -10,15 +10,12 @@ interface UseWidgetPointerDownOptions {
 export const useWidgetPointerDown = ({
   onPointerDown,
   toolbarSelector,
-  additionalSelectors = [],
+  additionalSelectors,
 }: UseWidgetPointerDownOptions) => {
-  const selectorsKey = additionalSelectors.join("|");
-  const memoizedSelectors = useMemo(() => {
-    if (!selectorsKey) {
-      return [];
-    }
-    return selectorsKey.split("|");
-  }, [selectorsKey]);
+  const memoizedSelectors = useMemo(
+    () => additionalSelectors ?? [],
+    [additionalSelectors]
+  );
 
   const handlePointerDown = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
