@@ -46,6 +46,27 @@ export const GOOGLE_FONTS = [
     style: "var(--font-raleway)",
   },
   { value: "var(--font-ubuntu)", label: "Ubuntu", style: "var(--font-ubuntu)" },
+  {
+    value: "var(--font-great-vibes)",
+    label: "Great Vibes",
+    style: "var(--font-great-vibes)",
+  },
+  {
+    value: "var(--font-dancing-script)",
+    label: "Dancing Script",
+    style: "var(--font-dancing-script)",
+  },
+  {
+    value: "var(--font-caveat)",
+    label: "Caveat",
+    style: "var(--font-caveat)",
+  },
+  {
+    value: "var(--font-abril-fatface)",
+    label: "Abril Fatface",
+    style: "var(--font-abril-fatface)",
+  },
+  { value: "var(--font-lora)", label: "Lora", style: "var(--font-lora)" },
 ];
 
 export const FONT_SIZE_OPTIONS = [
