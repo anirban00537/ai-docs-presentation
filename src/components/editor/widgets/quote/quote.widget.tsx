@@ -120,6 +120,25 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
     setActiveField(field);
   }, []);
 
+  const scheduleActiveFieldReset = React.useCallback(() => {
+    if (typeof window === "undefined") {
+      setActiveField(null);
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      const activeElement = document.activeElement as HTMLElement | null;
+      if (
+        activeElement &&
+        (activeElement.closest(TOOLBAR_SELECTOR) ||
+          activeElement.closest('[data-widget-toolbar="true"]'))
+      ) {
+        return;
+      }
+      setActiveField(null);
+    });
+  }, []);
+
   const handleFieldBlur = React.useCallback(
     (field: ActiveField) => {
       if (field === "quote") {
@@ -127,8 +146,9 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
       } else if (field === "attribution") {
         debouncedUpdateAttribution.flush();
       }
+      scheduleActiveFieldReset();
     },
-    [debouncedUpdateQuote, debouncedUpdateAttribution]
+    [debouncedUpdateQuote, debouncedUpdateAttribution, scheduleActiveFieldReset]
   );
 
   // Widget-local colors and fonts with sensible defaults

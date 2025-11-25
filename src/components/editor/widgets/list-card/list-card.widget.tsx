@@ -57,7 +57,6 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     widget.items && widget.items.length > 0 ? widget.items : [""]
   );
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
-  const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
 
   const debouncedUpdateItems = useDebouncedCallback((items: string[]) => {
     dispatch(
@@ -110,6 +109,25 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     }
   }, [isSelected]);
 
+  const scheduleActiveFieldReset = React.useCallback(() => {
+    if (typeof window === "undefined") {
+      setActiveField(null);
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      const activeElement = document.activeElement as HTMLElement | null;
+      if (
+        activeElement &&
+        (activeElement.closest(TOOLBAR_SELECTOR) ||
+          activeElement.closest('[data-widget-toolbar="true"]'))
+      ) {
+        return;
+      }
+      setActiveField(null);
+    });
+  }, []);
+
   const handlePointerDown = useWidgetPointerDown({
     onPointerDown,
     toolbarSelector: TOOLBAR_SELECTOR,
@@ -136,7 +154,6 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     const newItems = [...localItems, ""];
     setLocalItems(newItems);
     debouncedUpdateItems(newItems);
-    setEditingIndex(newItems.length - 1);
   }, [isSelected, localItems, debouncedUpdateItems]);
 
   const handleRemoveItem = React.useCallback(
@@ -226,6 +243,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
             }}
             onBlur={() => {
               debouncedUpdateTitle.flush();
+              scheduleActiveFieldReset();
             }}
             placeholder="List Title"
             readOnly={!isSelected}
@@ -307,12 +325,11 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                     onChange={(value) => handleItemChange(index, value)}
                     onFocus={() => {
                       if (!isSelected) return;
-                      setEditingIndex(index);
                       setActiveField("item");
                     }}
                     onBlur={() => {
                       debouncedUpdateItems.flush();
-                      setEditingIndex(null);
+                      scheduleActiveFieldReset();
                     }}
                     onKeyDown={(event) => handleItemKeyDown(index, event)}
                     placeholder={`Item ${index + 1}`}

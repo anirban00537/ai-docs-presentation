@@ -154,6 +154,25 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
     setActiveField(field);
   }, []);
 
+  const scheduleActiveFieldReset = React.useCallback(() => {
+    if (typeof window === "undefined") {
+      setActiveField(null);
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      const activeElement = document.activeElement as HTMLElement | null;
+      if (
+        activeElement &&
+        (activeElement.closest(TOOLBAR_SELECTOR) ||
+          activeElement.closest('[data-widget-toolbar="true"]'))
+      ) {
+        return;
+      }
+      setActiveField(null);
+    });
+  }, []);
+
   const handleFieldBlur = React.useCallback(
     (field: ActiveField) => {
       if (field === "title") {
@@ -161,8 +180,9 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
       } else if (field === "description") {
         debouncedUpdateDescription.flush();
       }
+      scheduleActiveFieldReset();
     },
-    [debouncedUpdateTitle, debouncedUpdateDescription]
+    [debouncedUpdateTitle, debouncedUpdateDescription, scheduleActiveFieldReset]
   );
 
   // Widget-local colors and fonts with sensible defaults
