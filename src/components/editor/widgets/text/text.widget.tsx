@@ -3,8 +3,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Minus, Plus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   updateWidget as updateWidgetAction,
@@ -16,14 +14,13 @@ import {
 } from "@/store/slices/editorUiSlice";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { TextWidget } from "./types";
-import { TOOLBAR_SELECTOR, TEXT_STYLE_PRESETS, ALIGN_OPTIONS } from "./constants";
+import { TOOLBAR_SELECTOR, TEXT_STYLE_PRESETS } from "./constants";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
-import { ToolbarPortal } from "@/components/editor/toolbar-portal";
-import { Popover } from "@headlessui/react";
+import { WidgetToolbar } from "@/components/editor/widgets/shared/toolbar-controls/widget-toolbar";
+import type { ToolbarControlConfig } from "@/components/editor/widgets/shared/toolbar-controls/types";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
-import { HexColorPicker } from "react-colorful";
-import { X } from "lucide-react";
+import { useWidgetPointerDown } from "@/components/editor/widgets/shared";
 
 const textResizeHandles: Array<{
   handle: Extract<ResizeHandle, "left" | "right">;
@@ -167,13 +164,8 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
     isEditing,
   ]);
 
-  const handlePointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      const target = event.target as HTMLElement | null;
-      if (target?.closest(TOOLBAR_SELECTOR)) {
-        event.stopPropagation();
-        return;
-      }
+  const handlePointerDown = useWidgetPointerDown({
+    onPointerDown: (event) => {
       if (event.detail >= 2 && !isEditing) {
         event.stopPropagation();
         dispatch(startWidgetEditingAction(widget.id));
@@ -181,8 +173,8 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
       }
       onPointerDown(event);
     },
-    [dispatch, widget.id, isEditing, onPointerDown]
-  );
+    toolbarSelector: TOOLBAR_SELECTOR,
+  });
 
   return (
     <div
@@ -325,8 +317,8 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   containerRef,
 }) => {
   const [presetMenuOpen, setPresetMenuOpen] = React.useState(false);
-  const colorPickerButtonRef = React.useRef<HTMLButtonElement>(null);
-  const menuRef = React.useRef<HTMLDivElement | null>(null);
+  const presetButtonRef = React.useRef<HTMLButtonElement>(null);
+  const presetMenuRef = React.useRef<HTMLDivElement | null>(null);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
 
@@ -336,9 +328,11 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
     }
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        menuRef.current &&
+        presetMenuRef.current &&
         event.target instanceof Node &&
-        !menuRef.current.contains(event.target)
+        !presetMenuRef.current.contains(event.target) &&
+        presetButtonRef.current &&
+        !presetButtonRef.current.contains(event.target as Node)
       ) {
         setPresetMenuOpen(false);
       }
@@ -367,39 +361,23 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
           },
         })
       );
+      setPresetMenuOpen(false);
     },
     [activeSlideId, dispatch, widget.id]
   );
 
-  const adjustFontSize = React.useCallback(
-    (delta: number) => {
-      const next = Math.min(
-        300,
-        Math.max(8, Math.round(widget.fontSize + delta))
-      );
-      if (next !== widget.fontSize) {
-        dispatch(
-          updateWidgetAction({
-            slideId: activeSlideId,
-            widgetId: widget.id,
-            updates: { fontSize: next },
-          })
-        );
-      }
-    },
-    [activeSlideId, dispatch, widget.fontSize, widget.id]
-  );
+  const handleSetColor = (color: string) => {
+    dispatch(
+      updateWidgetAction({
+        slideId: activeSlideId,
+        widgetId: widget.id,
+        updates: { color },
+      })
+    );
+  };
 
-  const handleFontSizeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = event.target.value;
-    if (rawValue.trim() === "") {
-      return;
-    }
-    const value = Number(rawValue);
-    if (!Number.isFinite(value)) {
-      return;
-    }
-    const next = Math.min(300, Math.max(8, Math.round(value)));
+  const handleSetFontSize = (size: number) => {
+    const next = Math.min(300, Math.max(8, Math.round(size)));
     if (next !== widget.fontSize) {
       dispatch(
         updateWidgetAction({
@@ -422,7 +400,7 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
     );
   };
 
-  const handleAlign = (align: TextWidget["align"]) => {
+  const handleAlign = (align: "left" | "center" | "right") => {
     if (align !== widget.align) {
       dispatch(
         updateWidgetAction({
@@ -432,16 +410,6 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
         })
       );
     }
-  };
-
-  const handleSetColor = (color: string) => {
-    dispatch(
-      updateWidgetAction({
-        slideId: activeSlideId,
-        widgetId: widget.id,
-        updates: { color },
-      })
-    );
   };
 
   const currentColor = widget.color || "#0f172a";
@@ -455,181 +423,118 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
           0.01
     )?.label ?? "Custom";
 
-  return (
-    <ToolbarPortal
-      widgetRef={widgetRef}
-      viewport={viewport}
-      containerRef={containerRef}
-      placement={isEditing ? "bottom" : "top"}
-      offset={isEditing ? 8 : 16}
-    >
-      <div
-        data-text-toolbar="true"
-        className="pointer-events-auto flex items-center gap-3 rounded-lg border border-border bg-white/95 px-3 py-2 text-xs shadow-lg backdrop-blur"
-        onPointerDown={(event) => {
-          event.stopPropagation();
-        }}
+  // Preset selector custom control
+  const presetSelectorControl = (
+    <div className="relative flex items-center" ref={presetMenuRef}>
+      <Button
+        ref={presetButtonRef}
+        variant="outline"
+        size="sm"
+        className="min-w-[90px] justify-between px-3 py-1 text-xs font-medium"
+        onClick={() => setPresetMenuOpen((prev) => !prev)}
       >
-      <div className="relative flex items-center gap-1" ref={menuRef}>
-        <Button
-          variant="outline"
-          size="sm"
-          className="min-w-[90px] justify-between px-3 py-1 text-xs font-medium"
-          onClick={() => setPresetMenuOpen((prev) => !prev)}
+        {currentPresetLabel}
+        <svg
+          className={cn(
+            "h-3 w-3 transition-transform",
+            presetMenuOpen ? "rotate-180" : "rotate-0"
+          )}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
         >
-          {currentPresetLabel}
-          <svg
-            className={cn(
-              "h-3 w-3 transition-transform",
-              presetMenuOpen ? "rotate-180" : "rotate-0"
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </Button>
-        {presetMenuOpen && (
-          <div className="absolute left-0 top-full z-40 mt-1 w-40 overflow-hidden rounded-md border border-border bg-white shadow-lg">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </Button>
+      {presetMenuOpen && (
+        <PopoverPanelPortal buttonRef={presetButtonRef}>
+          <div className="flex flex-col gap-1 rounded-xl border border-white/20 bg-white/95 p-2 shadow-2xl backdrop-blur-xl min-w-[120px]">
             {TEXT_STYLE_PRESETS.map((preset) => (
               <button
                 key={preset.id}
                 type="button"
-                className="block w-full px-3 py-2 text-left text-xs hover:bg-accent"
-                onClick={() => {
-                  applyPreset(preset.id);
-                  setPresetMenuOpen(false);
-                }}
+                className="block w-full px-3 py-2 text-left text-xs hover:bg-accent rounded-lg transition-all"
+                onClick={() => applyPreset(preset.id)}
               >
                 {preset.label}
               </button>
             ))}
           </div>
-        )}
-      </div>
+        </PopoverPanelPortal>
+      )}
+    </div>
+  );
 
-      <div className="flex items-center gap-1">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          className="rounded-md"
-          onClick={() => adjustFontSize(-4)}
-          aria-label="Decrease font size"
-        >
-          <Minus className="h-4 w-4" />
-        </Button>
-        <Input
-          type="number"
-          className="h-8 w-16 rounded-md text-center text-xs"
-          value={Number.isFinite(widget.fontSize) ? widget.fontSize : 0}
-          onChange={handleFontSizeInput}
-          min={8}
-          max={300}
-        />
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          className="rounded-md"
-          onClick={() => adjustFontSize(4)}
-          aria-label="Increase font size"
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
-      </div>
+  // Bold toggle custom control
+  const boldToggleControl = (
+    <Button
+      variant={isBold ? "default" : "ghost"}
+      size="sm"
+      className="rounded-md px-2 py-1 text-xs font-semibold"
+      onClick={toggleBold}
+      aria-pressed={isBold}
+      aria-label="Toggle bold"
+    >
+      B
+    </Button>
+  );
 
-      <div className="flex items-center gap-1">
-        <Button
-          variant={isBold ? "default" : "ghost"}
-          size="sm"
-          className="rounded-md px-2 py-1 text-xs font-semibold"
-          onClick={toggleBold}
-          aria-pressed={isBold}
-          aria-label="Toggle bold"
-        >
-          B
-        </Button>
-      </div>
+  const controls: ToolbarControlConfig[] = [
+    // Preset selector (custom)
+    {
+      type: "custom",
+      customRender: () => presetSelectorControl,
+    },
+    { type: "separator" },
+    // Font size selector
+    {
+      type: "font-size",
+      config: {
+        value: widget.fontSize,
+        onChange: handleSetFontSize,
+      },
+    },
+    // Bold toggle (custom)
+    {
+      type: "custom",
+      customRender: () => boldToggleControl,
+    },
+    { type: "separator" },
+    // Color picker
+    {
+      type: "color-picker",
+      config: {
+        color: currentColor,
+        onChange: handleSetColor,
+        label: "Text Color",
+        showReset: true,
+        resetValue: "#0f172a",
+      },
+    },
+    { type: "separator" },
+    // Alignment controls
+    {
+      type: "alignment",
+      config: {
+        value: widget.align,
+        onChange: handleAlign,
+      },
+    },
+  ];
 
-      <div className="flex items-center gap-1">
-        {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
-          <Button
-            key={value}
-            variant="ghost"
-            size="icon-sm"
-            className={cn(
-              "rounded-md",
-              widget.align === value
-                ? "bg-primary/10 text-primary hover:bg-primary/10"
-                : undefined
-            )}
-            onClick={() => handleAlign(value)}
-            aria-pressed={widget.align === value}
-            title={label}
-          >
-            <Icon className="h-4 w-4" />
-          </Button>
-        ))}
-      </div>
-
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-semibold text-muted-foreground">
-          Color
-        </span>
-        <Popover>
-          {({ open }) => (
-            <>
-              <Popover.Button
-                ref={colorPickerButtonRef}
-                className="relative w-8 h-8 rounded-full cursor-pointer border-[3px] border-background ring-1 ring-border/30 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
-                style={{ backgroundColor: currentColor }}
-              >
-                <span
-                  className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full p-0.5 cursor-pointer opacity-0 group-hover/picker:opacity-100 hover:bg-destructive/90 transition-all shadow-sm scale-75 hover:scale-100"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSetColor("#0f172a");
-                  }}
-                >
-                  <X size={10} strokeWidth={3} />
-                </span>
-              </Popover.Button>
-              {open && (
-                <PopoverPanelPortal buttonRef={colorPickerButtonRef}>
-                  <div className="flex flex-col gap-3 p-3 bg-popover rounded-xl shadow-2xl border border-border/50 animate-in fade-in zoom-in-95 duration-200 min-w-[220px]">
-                    <div className="text-xs font-semibold text-muted-foreground">
-                      Custom
-                    </div>
-                    <HexColorPicker
-                      color={currentColor}
-                      onChange={handleSetColor}
-                      className="!w-full !h-32"
-                    />
-                    <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-md border border-border/50">
-                      <div
-                        className="w-5 h-5 rounded-full border border-border/20 shadow-sm shrink-0"
-                        style={{ backgroundColor: currentColor }}
-                      />
-                      <Input
-                        className="h-6 text-xs font-mono border-none bg-transparent focus-visible:ring-0 px-1 uppercase w-20"
-                        value={currentColor}
-                        onChange={(e) => handleSetColor(e.target.value)}
-                        placeholder="#000000"
-                      />
-                    </div>
-                  </div>
-                </PopoverPanelPortal>
-              )}
-            </>
-          )}
-        </Popover>
-      </div>
-      </div>
-    </ToolbarPortal>
+  return (
+    <WidgetToolbar
+      widgetRef={widgetRef}
+      viewport={viewport}
+      containerRef={containerRef}
+      isEditing={isEditing}
+      activeField={null}
+      controls={controls}
+      toolbarSelector="data-text-toolbar"
+    />
   );
 };
-
