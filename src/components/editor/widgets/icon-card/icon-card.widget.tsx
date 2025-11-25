@@ -155,9 +155,28 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
     [dispatch, activeSlideId, widget.id]
   );
 
-  const handleFieldFocus = React.useCallback((field: ActiveField) => {
-    setActiveField(field);
+  const activeFieldResetRef = React.useRef<number | null>(null);
+
+  const cancelScheduledReset = React.useCallback(() => {
+    if (activeFieldResetRef.current !== null) {
+      cancelAnimationFrame(activeFieldResetRef.current);
+      activeFieldResetRef.current = null;
+    }
   }, []);
+
+  React.useEffect(() => {
+    return () => {
+      cancelScheduledReset();
+    };
+  }, [cancelScheduledReset]);
+
+  const handleFieldFocus = React.useCallback(
+    (field: ActiveField) => {
+      cancelScheduledReset();
+      setActiveField(field);
+    },
+    [cancelScheduledReset]
+  );
 
   const scheduleActiveFieldReset = React.useCallback(() => {
     if (typeof window === "undefined") {
@@ -165,7 +184,9 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
       return;
     }
 
-    window.requestAnimationFrame(() => {
+    cancelScheduledReset();
+    activeFieldResetRef.current = window.requestAnimationFrame(() => {
+      activeFieldResetRef.current = null;
       const activeElement = document.activeElement as HTMLElement | null;
       if (
         activeElement &&
@@ -176,7 +197,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
       }
       setActiveField(null);
     });
-  }, []);
+  }, [cancelScheduledReset]);
 
   const handleFieldBlur = React.useCallback(
     (field: ActiveField) => {

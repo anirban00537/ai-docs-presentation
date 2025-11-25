@@ -116,9 +116,26 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
     toolbarSelector: TOOLBAR_SELECTOR,
   });
 
-  const handleFieldFocus = React.useCallback((field: ActiveField) => {
-    setActiveField(field);
+  const activeFieldResetRef = React.useRef<number | null>(null);
+
+  const cancelScheduledReset = React.useCallback(() => {
+    if (activeFieldResetRef.current !== null) {
+      cancelAnimationFrame(activeFieldResetRef.current);
+      activeFieldResetRef.current = null;
+    }
   }, []);
+
+  React.useEffect(() => {
+    return () => cancelScheduledReset();
+  }, [cancelScheduledReset]);
+
+  const handleFieldFocus = React.useCallback(
+    (field: ActiveField) => {
+      cancelScheduledReset();
+      setActiveField(field);
+    },
+    [cancelScheduledReset]
+  );
 
   const scheduleActiveFieldReset = React.useCallback(() => {
     if (typeof window === "undefined") {
@@ -126,7 +143,9 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
       return;
     }
 
-    window.requestAnimationFrame(() => {
+    cancelScheduledReset();
+    activeFieldResetRef.current = window.requestAnimationFrame(() => {
+      activeFieldResetRef.current = null;
       const activeElement = document.activeElement as HTMLElement | null;
       if (
         activeElement &&
@@ -137,7 +156,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
       }
       setActiveField(null);
     });
-  }, []);
+  }, [cancelScheduledReset]);
 
   const handleFieldBlur = React.useCallback(
     (field: ActiveField) => {

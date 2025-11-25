@@ -102,6 +102,15 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     };
   }, [debouncedUpdateItems, debouncedUpdateTitle]);
 
+  const activeFieldResetRef = React.useRef<number | null>(null);
+
+  const cancelScheduledReset = React.useCallback(() => {
+    if (activeFieldResetRef.current !== null) {
+      cancelAnimationFrame(activeFieldResetRef.current);
+      activeFieldResetRef.current = null;
+    }
+  }, []);
+
   // Reset active field when widget is deselected
   React.useEffect(() => {
     if (!isSelected) {
@@ -109,13 +118,19 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     }
   }, [isSelected]);
 
+  React.useEffect(() => {
+    return () => cancelScheduledReset();
+  }, [cancelScheduledReset]);
+
   const scheduleActiveFieldReset = React.useCallback(() => {
     if (typeof window === "undefined") {
       setActiveField(null);
       return;
     }
 
-    window.requestAnimationFrame(() => {
+    cancelScheduledReset();
+    activeFieldResetRef.current = window.requestAnimationFrame(() => {
+      activeFieldResetRef.current = null;
       const activeElement = document.activeElement as HTMLElement | null;
       if (
         activeElement &&
@@ -126,7 +141,15 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
       }
       setActiveField(null);
     });
-  }, []);
+  }, [cancelScheduledReset]);
+
+  const handleFieldFocus = React.useCallback(
+    (field: ActiveField) => {
+      cancelScheduledReset();
+      setActiveField(field);
+    },
+    [cancelScheduledReset]
+  );
 
   const listPointerExclusionSelectors = React.useMemo(
     () => ["[data-add-item]", "[data-remove-item]", "[data-list-item]"],
@@ -240,7 +263,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
             }}
             onFocus={() => {
               if (!isSelected) return;
-              setActiveField("title");
+              handleFieldFocus("title");
             }}
             onBlur={() => {
               debouncedUpdateTitle.flush();
@@ -326,7 +349,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
                     onChange={(value) => handleItemChange(index, value)}
                     onFocus={() => {
                       if (!isSelected) return;
-                      setActiveField("item");
+                      handleFieldFocus("item");
                     }}
                     onBlur={() => {
                       debouncedUpdateItems.flush();
