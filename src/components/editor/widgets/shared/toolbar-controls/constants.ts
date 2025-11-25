@@ -70,18 +70,13 @@ export const GOOGLE_FONTS = [
 ];
 
 export const FONT_SIZE_OPTIONS = [
-  { label: "Small", value: 12 },
-  { label: "Body", value: 16 },
-  { label: "Medium", value: 24 },
-  { label: "Large", value: 36 },
-  { label: "Extra Large", value: 48 },
-  { label: "Huge", value: 64 },
-  { label: "Massive", value: 80 },
-  { label: "Giant", value: 96 },
-  { label: "Enormous", value: 120 },
-  { label: "Colossal", value: 144 },
-  { label: "Titanic", value: 180 },
-  { label: "Monumental", value: 240 },
+  { label: "Extra Small", value: 16 },
+  { label: "Small", value: 28 },
+  { label: "Medium", value: 44 },
+  { label: "Large", value: 64 },
+  { label: "Extra Large", value: 96 },
+  { label: "Display", value: 132 },
+  { label: "Huge", value: 180 },
 ];
 
 export const BACKGROUND_TYPE_OPTIONS = [
