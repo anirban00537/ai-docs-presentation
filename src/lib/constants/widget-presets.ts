@@ -23,7 +23,7 @@ export const TEXT_PRESET_CONFIG: Record<
     height: 276,
     fontSize: 144,
     fontWeight: 600,
-    align: "center",
+    align: "left",
     lineHeight: 1,
   },
   subheading: {
@@ -31,7 +31,7 @@ export const TEXT_PRESET_CONFIG: Record<
     height: 210,
     fontSize: 72,
     fontWeight: 500,
-    align: "center",
+    align: "left",
     lineHeight: 1.05,
   },
   body: {
