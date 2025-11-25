@@ -17,6 +17,7 @@ import { useLabelCardCreation } from "@/components/editor/widgets/label-card/use
 import { useImageCardCreation } from "@/components/editor/widgets/image-card/use-image-card-creation";
 import { useNumberCardCreation } from "@/components/editor/widgets/number-card/use-number-card-creation";
 import { useQuoteCreation } from "@/components/editor/widgets/quote/use-quote-creation";
+import { useComparisonCardCreation } from "@/components/editor/widgets/comparison-card/use-comparison-card-creation";
 import {
   TEXT_PRESET_CONFIG,
   SHAPE_PRESET_CONFIG,
@@ -171,6 +172,7 @@ export const useWidgetCreation = () => {
   const { handleAddListCard } = useListCardCreation();
 
   const { handleAddQuote } = useQuoteCreation();
+  const { handleAddComparisonCard } = useComparisonCardCreation();
 
   return {
     handleAddText,
@@ -181,5 +183,6 @@ export const useWidgetCreation = () => {
     handleAddLabelCard,
     handleAddListCard,
     handleAddQuote,
+    handleAddComparisonCard,
   };
 };

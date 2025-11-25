@@ -12,6 +12,7 @@ import {
   ListOrdered,
   Quote,
   Image as ImageIcon,
+  PanelsLeftRight,
 } from "lucide-react";
 import {
   ArrowPreview,
@@ -28,6 +29,7 @@ import type {
   LabelCardPreset,
   ListCardPreset,
   QuotePreset,
+  ComparisonCardPreset,
 } from "@/components/editor/types";
 import { cn } from "@/lib/utils";
 
@@ -116,6 +118,27 @@ const quotePresets: QuotePreset[] = [
     quote: "The only way to do great work is to love what you do.",
     attribution: "Steve Jobs",
     style: "minimal",
+  },
+];
+
+const comparisonCardPresets: ComparisonCardPreset[] = [
+  {
+    id: "plans",
+    leftTitle: "Growth Plan",
+    rightTitle: "Competitor",
+    leftItems: ["Unlimited projects", "Priority support", "Advanced reports"],
+    rightItems: ["Limited projects", "Email support", "Basic reports"],
+    leftAccentColor: "#2563eb",
+    rightAccentColor: "#f97316",
+  },
+  {
+    id: "features",
+    leftTitle: "Plan A",
+    rightTitle: "Plan B",
+    leftItems: ["AI-assisted decks", "Shared libraries", "Version history"],
+    rightItems: ["Manual updates", "Local files", "Single version"],
+    leftAccentColor: "#14b8a6",
+    rightAccentColor: "#ec4899",
   },
 ];
 
@@ -218,6 +241,7 @@ type InsertPanelContentProps = {
   onAddLabelCard?: (preset: LabelCardPreset) => void;
   onAddListCard?: (preset: ListCardPreset) => void;
   onAddQuote?: (preset: QuotePreset) => void;
+  onAddComparisonCard?: (preset: ComparisonCardPreset) => void;
   onClose: () => void;
 };
 
@@ -259,6 +283,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   onAddLabelCard,
   onAddListCard,
   onAddQuote,
+  onAddComparisonCard,
   onClose,
 }) => {
   const handleAddText = (preset: TextPreset) => {
@@ -291,6 +316,10 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
 
   const handleAddQuote = (preset: QuotePreset) => {
     onAddQuote?.(preset);
+  };
+
+  const handleAddComparisonCard = (preset: ComparisonCardPreset) => {
+    onAddComparisonCard?.(preset);
   };
 
   // Combine all card presets into a single array for the grid
@@ -347,6 +376,14 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
       title: "Quote Card",
       description: "Quote with attribution",
       onClick: () => handleAddQuote(preset),
+    })),
+    ...comparisonCardPresets.map((preset) => ({
+      type: "comparison" as const,
+      preset,
+      icon: <PanelsLeftRight className="h-4 w-4" />,
+      title: "Comparison Card",
+      description: "Plan A vs Plan B",
+      onClick: () => handleAddComparisonCard(preset),
     })),
   ];
 

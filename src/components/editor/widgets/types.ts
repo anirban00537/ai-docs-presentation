@@ -25,6 +25,7 @@ export type { ImageCardWidget } from "./image-card/types";
 export type { LabelCardWidget } from "./label-card/types";
 export type { ListWidget } from "./list-card/types";
 export type { QuoteWidget, QuoteStyle } from "./quote/types";
+export type { ComparisonCardWidget } from "./comparison-card/types";
 
 export type SlideWidget =
   | TextWidget
@@ -37,7 +38,8 @@ export type SlideWidget =
   | import("./image-card/types").ImageCardWidget
   | import("./label-card/types").LabelCardWidget
   | import("./list-card/types").ListWidget
-  | import("./quote/types").QuoteWidget;
+  | import("./quote/types").QuoteWidget
+  | import("./comparison-card/types").ComparisonCardWidget;
 
 export type SlideWidgetUpdate = Partial<
   Omit<WidgetCommon, "id"> & {
@@ -78,7 +80,13 @@ export type SlideWidgetUpdate = Partial<
     textAlign: "left" | "center" | "right";
     backgroundType: "solid" | "glass" | "transparent";
     imageUrl: string;
-    imageStyle: "hero" | "background" | "backgroundGlass" | "left" | "right" | "bottom";
+    imageStyle:
+      | "hero"
+      | "background"
+      | "backgroundGlass"
+      | "left"
+      | "right"
+      | "bottom";
     quote: string;
     attribution: string;
     style: import("./quote/types").QuoteStyle;
@@ -86,6 +94,29 @@ export type SlideWidgetUpdate = Partial<
     attributionColor: string;
     quoteFontFamily: string;
     attributionFontFamily: string;
+    leftTitle: string;
+    rightTitle: string;
+    leftItems: string[];
+    rightItems: string[];
+    leftAccentColor: string;
+    rightAccentColor: string;
+    leftTextColor: string;
+    rightTextColor: string;
+    leftTitleFontFamily: string;
+    rightTitleFontFamily: string;
+    leftItemFontFamily: string;
+    rightItemFontFamily: string;
+    leftTitleFontSize: number;
+    rightTitleFontSize: number;
+    leftItemFontSize: number;
+    rightItemFontSize: number;
+    dividerColor: string;
+    leftLabel: string;
+    rightLabel: string;
+    leftLabelFontFamily: string;
+    rightLabelFontFamily: string;
+    leftLabelFontSize: number;
+    rightLabelFontSize: number;
   }
 >;
 

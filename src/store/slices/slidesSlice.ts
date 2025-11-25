@@ -266,6 +266,15 @@ const slidesSlice = createSlice({
               widget.iconColor = theme.accent;
               break;
             }
+            case "comparisonCard": {
+              widget.backgroundColor = theme.surface;
+              widget.leftTextColor = theme.text;
+              widget.rightTextColor = theme.text;
+              widget.leftAccentColor = theme.accent;
+              widget.rightAccentColor = theme.accent;
+              widget.dividerColor = "rgba(15,23,42,0.12)";
+              break;
+            }
             default:
               break;
           }

@@ -49,6 +49,18 @@ export type ListCardPreset = {
   listType?: "bullet" | "numbered";
 };
 
+export type ComparisonCardPreset = {
+  id: string;
+  leftLabel?: string;
+  rightLabel?: string;
+  leftTitle?: string;
+  rightTitle?: string;
+  leftItems?: string[];
+  rightItems?: string[];
+  leftAccentColor?: string;
+  rightAccentColor?: string;
+};
+
 export type QuotePreset = {
   id: string;
   quote: string;
