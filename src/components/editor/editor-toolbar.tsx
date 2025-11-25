@@ -19,12 +19,14 @@ type EditorHeaderProps = {
   onOpenInsertPanel: () => void;
   onOpenBackgroundPanel: () => void;
   onOpenThemePanel: () => void;
+  onStartPresentation: () => void;
 };
 
 export const EditorHeader: React.FC<EditorHeaderProps> = ({
   onOpenInsertPanel,
   onOpenBackgroundPanel,
   onOpenThemePanel,
+  onStartPresentation,
 }) => {
   const activeSlide = useAppSelector(selectActiveSlide);
   const [isHovered, setIsHovered] = useState(false);
@@ -63,7 +65,8 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           <h1
             className={cn(
               "text-sm font-semibold text-foreground/85 transition-all duration-200 cursor-text tracking-tight focus:outline-none",
-              titleActive && "text-foreground translate-y-[-1px] tracking-[0.08em]"
+              titleActive &&
+                "text-foreground translate-y-[-1px] tracking-[0.08em]"
             )}
             tabIndex={0}
             onMouseEnter={() => setTitleActive(true)}
@@ -127,6 +130,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           variant="ghost"
           size="sm"
           className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200 active:scale-[0.97] border border-border/60 dark:border-border/40"
+          onClick={onStartPresentation}
         >
           <Play className="mr-2 h-4 w-4 fill-current" />
           Play

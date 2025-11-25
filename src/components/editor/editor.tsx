@@ -17,6 +17,7 @@ import {
   RightSidebar,
   type SidebarPanel,
 } from "@/components/editor/right-sidebar";
+import { PresentationMode } from "@/components/editor/presentation-mode";
 
 const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
@@ -34,9 +35,20 @@ const Editor = () => {
   } = useWidgetInteractions();
 
   const [activePanel, setActivePanel] = React.useState<SidebarPanel>(null);
+  const [isPresentationMode, setIsPresentationMode] = React.useState(false);
 
   const togglePanel = React.useCallback((panel: SidebarPanel) => {
     setActivePanel((current) => (current === panel ? null : panel));
+  }, []);
+
+  const handleStartPresentation = React.useCallback(() => {
+    if (slides.length > 0) {
+      setIsPresentationMode(true);
+    }
+  }, [slides.length]);
+
+  const handleExitPresentation = React.useCallback(() => {
+    setIsPresentationMode(false);
   }, []);
 
   const handleBackgroundColorChange = React.useCallback(
@@ -86,6 +98,22 @@ const Editor = () => {
     dispatch(setActiveSlide(slides[nextIndex].id));
   };
 
+  // Presentation Mode
+  if (isPresentationMode) {
+    const currentSlideIndex = activeSlide
+      ? slides.findIndex((s) => s.id === activeSlide.id)
+      : 0;
+
+    return (
+      <PresentationMode
+        slides={slides}
+        initialSlideIndex={Math.max(0, currentSlideIndex)}
+        globalTheme={globalTheme}
+        onExit={handleExitPresentation}
+      />
+    );
+  }
+
   if (!activeSlide) {
     return (
       <div className="flex h-full flex-1 flex-col overflow-hidden bg-background">
@@ -93,6 +121,7 @@ const Editor = () => {
           onOpenInsertPanel={() => togglePanel("insert")}
           onOpenBackgroundPanel={() => togglePanel("background")}
           onOpenThemePanel={() => togglePanel("theme")}
+          onStartPresentation={handleStartPresentation}
         />
         <div className="flex flex-1 min-h-0 overflow-hidden h-full">
           <div className="flex flex-1 flex-col items-center justify-center min-h-0">
@@ -121,6 +150,7 @@ const Editor = () => {
         onOpenInsertPanel={() => togglePanel("insert")}
         onOpenBackgroundPanel={() => togglePanel("background")}
         onOpenThemePanel={() => togglePanel("theme")}
+        onStartPresentation={handleStartPresentation}
       />
       <div className="flex flex-1 min-h-0 overflow-hidden h-full">
         <div
