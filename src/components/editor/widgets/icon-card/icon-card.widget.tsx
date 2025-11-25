@@ -13,7 +13,6 @@ import {
   ALL_ICONS,
   ICON_SIZE_OPTIONS,
 } from "./constants";
-import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
@@ -29,6 +28,11 @@ import { WidgetToolbar } from "@/components/editor/widgets/shared/toolbar-contro
 import type { ToolbarControlConfig } from "@/components/editor/widgets/shared/toolbar-controls/types";
 import { createPortal } from "react-dom";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
+import {
+  WidgetContainer,
+  WidgetBackground,
+  useWidgetPointerDown,
+} from "@/components/editor/widgets/shared";
 
 type IconCardWidgetNodeProps = {
   widget: IconCardWidget;
@@ -61,7 +65,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const widgetRef = React.useRef<HTMLDivElement>(null);
+  const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
   const [localDescription, setLocalDescription] = React.useState(
@@ -116,36 +120,11 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
     }
   }, [isSelected]);
 
-  const handlePointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      const target = event.target as HTMLElement;
-      // Don't start drag if clicking on toolbar or icon selector controls
-      if (
-        target.closest(TOOLBAR_SELECTOR) ||
-        target.closest("[data-icon-selector]") ||
-        target.closest("[data-icon-button]")
-      ) {
-        return;
-      }
-
-      const isTextTarget =
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.closest(".prosemirror-editor") ||
-        target.closest(".ProseMirror");
-
-      if (isTextTarget) {
-        return;
-      }
-
-      if (event.detail > 1) {
-        return;
-      }
-
-      onPointerDown(event);
-    },
-    [onPointerDown]
-  );
+  const handlePointerDown = useWidgetPointerDown({
+    onPointerDown,
+    toolbarSelector: TOOLBAR_SELECTOR,
+    additionalSelectors: ["[data-icon-selector]", "[data-icon-button]"],
+  });
 
   const handleIconClick = React.useCallback(
     (event: React.MouseEvent) => {
@@ -199,179 +178,149 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
     widget.descriptionFontFamily ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "left";
   const backgroundType = widget.backgroundType ?? "solid";
-  const isGlassBackground = backgroundType === "glass";
-  const isTransparentBackground = backgroundType === "transparent";
 
   // Get the icon component
   const IconComponent = (Icons as unknown as Record<string, LucideIcon>)[
     widget.icon || "Star"
   ];
 
+  const toolbar = isSelected ? (
+    <IconCardEditingToolbar
+      widget={widget}
+      isEditing={isEditing}
+      activeField={activeField}
+      widgetRef={widgetRef}
+      viewport={viewport}
+      containerRef={containerRef}
+    />
+  ) : null;
+
   return (
-    <div
-      ref={widgetRef}
-      className={cn(
-        "canvas-element group absolute flex select-none border border-transparent transition",
-        isSelected && !isEditing
-          ? "border-primary/70 ring-1 ring-primary/60"
-          : "border-transparent",
-        "cursor-move"
-      )}
-      style={{
-        left: widget.x,
-        top: widget.y,
-        width: widget.width,
-        height: widget.height,
-        zIndex: baseZIndex,
-      }}
+    <WidgetContainer
+      widgetRef={widgetRef}
+      isSelected={isSelected}
+      isEditing={isEditing}
+      widget={widget}
+      baseZIndex={baseZIndex}
       onPointerDown={handlePointerDown}
+      getResizePointerDown={getResizePointerDown}
+      toolbar={toolbar}
     >
-      <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
-        {isSelected && (
-          <IconCardEditingToolbar
-            widget={widget}
-            isEditing={isEditing}
-            activeField={activeField}
-            widgetRef={widgetRef}
-            viewport={viewport}
-            containerRef={containerRef}
-          />
-        )}
-        <div
-          className={cn(
-            "relative h-full w-full rounded-[16px] p-8 transition-all duration-300 ease-out shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
-            isGlassBackground && "backdrop-blur-2xl",
-            isTransparentBackground && "bg-transparent shadow-none"
-          )}
-          style={{
-            backgroundColor: isGlassBackground
-              ? `${backgroundColor}03`
-              : isTransparentBackground
-              ? "transparent"
-              : backgroundColor,
-            backgroundImage: isGlassBackground
-              ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
-              : undefined,
-            boxShadow: isGlassBackground
-              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)"
-              : "none",
-          }}
-        >
-          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
-            {/* Icon */}
-            <div
-              className="flex relative"
-              style={{
-                justifyContent:
-                  textAlign === "center"
-                    ? "center"
-                    : textAlign === "right"
-                    ? "flex-end"
-                    : "flex-start",
-              }}
-            >
-              {IconComponent && (
-                <button
-                  data-icon-button
-                  onClick={handleIconClick}
-                  disabled={!isSelected}
-                  className={cn(
-                    "rounded-xl p-2.5 transition-all duration-200 group/icon-btn",
-                    isSelected
-                      ? "hover:bg-muted/40 cursor-pointer ring-1 ring-transparent hover:ring-primary/30 hover:scale-105"
-                      : "cursor-default"
-                  )}
-                  title={
-                    isSelected
-                      ? "Click to change icon"
-                      : "Select card to change icon"
-                  }
-                >
-                  <IconComponent
-                    size={iconSize}
-                    style={{ color: iconColor }}
-                    strokeWidth={2}
-                    className="transition-transform duration-200 group-hover/icon-btn:scale-105"
-                  />
-                </button>
-              )}
-
-              {/* Icon Selector Modal - Rendered in portal */}
-              {showIconSelector && isSelected && (
-                <IconSelectorModal
-                  currentIcon={widget.icon || "Star"}
-                  onSelectIcon={handleSelectIcon}
-                  onClose={() => setShowIconSelector(false)}
+      <WidgetBackground
+        backgroundType={backgroundType}
+        backgroundColor={backgroundColor}
+      >
+        <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
+          {/* Icon */}
+          <div
+            className="flex relative"
+            style={{
+              justifyContent:
+                textAlign === "center"
+                  ? "center"
+                  : textAlign === "right"
+                  ? "flex-end"
+                  : "flex-start",
+            }}
+          >
+            {IconComponent && (
+              <button
+                data-icon-button
+                onClick={handleIconClick}
+                disabled={!isSelected}
+                className={cn(
+                  "rounded-xl p-2.5 transition-all duration-200 group/icon-btn",
+                  isSelected
+                    ? "hover:bg-muted/40 cursor-pointer ring-1 ring-transparent hover:ring-primary/30 hover:scale-105"
+                    : "cursor-default"
+                )}
+                title={
+                  isSelected
+                    ? "Click to change icon"
+                    : "Select card to change icon"
+                }
+              >
+                <IconComponent
+                  size={iconSize}
+                  style={{ color: iconColor }}
+                  strokeWidth={2}
+                  className="transition-transform duration-200 group-hover/icon-btn:scale-105"
                 />
-              )}
-            </div>
+              </button>
+            )}
 
-            {/* Title field */}
-            <ProseMirrorEditor
-              value={localTitle}
-              onChange={(value) => {
-                if (!isSelected) return;
-                setLocalTitle(value);
-                debouncedUpdateTitle(value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("title");
-              }}
-              onBlur={() => handleFieldBlur("title")}
-              placeholder="Feature Title"
-              readOnly={!isSelected}
-              className={cn(
-                "w-full",
-                isSelected ? "cursor-text" : "cursor-default"
-              )}
-              style={{
-                fontSize: `${titleFontSize}px`,
-                fontWeight: 600,
-                color: titleColor,
-                fontFamily: titleFontFamily,
-                lineHeight: 1.25,
-                textAlign,
-              }}
-            />
-
-            {/* Description field */}
-            <ProseMirrorEditor
-              value={localDescription}
-              onChange={(value) => {
-                if (!isSelected) return;
-                setLocalDescription(value);
-                debouncedUpdateDescription(value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("description");
-              }}
-              onBlur={() => handleFieldBlur("description")}
-              placeholder="Feature description goes here."
-              readOnly={!isSelected}
-              className={cn(
-                "w-full",
-                isSelected ? "cursor-text" : "cursor-default"
-              )}
-              style={{
-                fontSize: `${descriptionFontSize}px`,
-                color: descriptionColor,
-                fontFamily: descriptionFontFamily,
-                lineHeight: 1.5,
-                wordWrap: "break-word",
-                overflowWrap: "break-word",
-                minHeight: "3rem",
-                textAlign,
-              }}
-            />
+            {/* Icon Selector Modal - Rendered in portal */}
+            {showIconSelector && isSelected && (
+              <IconSelectorModal
+                currentIcon={widget.icon || "Star"}
+                onSelectIcon={handleSelectIcon}
+                onClose={() => setShowIconSelector(false)}
+              />
+            )}
           </div>
+
+          {/* Title field */}
+          <ProseMirrorEditor
+            value={localTitle}
+            onChange={(value) => {
+              if (!isSelected) return;
+              setLocalTitle(value);
+              debouncedUpdateTitle(value);
+            }}
+            onFocus={() => {
+              if (!isSelected) return;
+              handleFieldFocus("title");
+            }}
+            onBlur={() => handleFieldBlur("title")}
+            placeholder="Feature Title"
+            readOnly={!isSelected}
+            className={cn(
+              "w-full",
+              isSelected ? "cursor-text" : "cursor-default"
+            )}
+            style={{
+              fontSize: `${titleFontSize}px`,
+              fontWeight: 600,
+              color: titleColor,
+              fontFamily: titleFontFamily,
+              lineHeight: 1.25,
+              textAlign,
+            }}
+          />
+
+          {/* Description field */}
+          <ProseMirrorEditor
+            value={localDescription}
+            onChange={(value) => {
+              if (!isSelected) return;
+              setLocalDescription(value);
+              debouncedUpdateDescription(value);
+            }}
+            onFocus={() => {
+              if (!isSelected) return;
+              handleFieldFocus("description");
+            }}
+            onBlur={() => handleFieldBlur("description")}
+            placeholder="Feature description goes here."
+            readOnly={!isSelected}
+            className={cn(
+              "w-full",
+              isSelected ? "cursor-text" : "cursor-default"
+            )}
+            style={{
+              fontSize: `${descriptionFontSize}px`,
+              color: descriptionColor,
+              fontFamily: descriptionFontFamily,
+              lineHeight: 1.5,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              minHeight: "3rem",
+              textAlign,
+            }}
+          />
         </div>
-        {isSelected && !isEditing && (
-          <ResizeHandles getResizePointerDown={getResizePointerDown} />
-        )}
-      </div>
-    </div>
+      </WidgetBackground>
+    </WidgetContainer>
   );
 };
 

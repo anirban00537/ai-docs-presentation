@@ -7,7 +7,6 @@ import { Plus, X, List, ListOrdered } from "lucide-react";
 import type { ListWidget } from "./types";
 import type { ResizeHandle } from "../types";
 import { TOOLBAR_SELECTOR } from "./constants";
-import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
@@ -18,6 +17,11 @@ import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 import { WidgetToolbar } from "@/components/editor/widgets/shared/toolbar-controls/widget-toolbar";
 import type { ToolbarControlConfig } from "@/components/editor/widgets/shared/toolbar-controls/types";
+import {
+  WidgetContainer,
+  WidgetBackground,
+  useWidgetPointerDown,
+} from "@/components/editor/widgets/shared";
 
 type ActiveField = "title" | "item" | null;
 
@@ -46,7 +50,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const widgetRef = React.useRef<HTMLDivElement>(null);
+  const widgetRef = React.useRef<HTMLDivElement | null>(null);
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
 
   const [localItems, setLocalItems] = React.useState<string[]>(
@@ -106,35 +110,15 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     }
   }, [isSelected]);
 
-  const handlePointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      const target = event.target as HTMLElement;
-      // Don't start drag if clicking toolbar or action buttons
-      if (
-        target.closest(TOOLBAR_SELECTOR) ||
-        target.closest("[data-add-item]") ||
-        target.closest("[data-remove-item]")
-      ) {
-        return;
-      }
-
-      const isTextTarget =
-        target.tagName === "INPUT" ||
-        target.closest(".prosemirror-editor") ||
-        target.closest(".ProseMirror") ||
-        target.closest("[data-list-item]");
-
-      if (isTextTarget) {
-        return;
-      }
-
-      if (event.detail > 1) {
-        return;
-      }
-      onPointerDown(event);
-    },
-    [onPointerDown]
-  );
+  const handlePointerDown = useWidgetPointerDown({
+    onPointerDown,
+    toolbarSelector: TOOLBAR_SELECTOR,
+    additionalSelectors: [
+      "[data-add-item]",
+      "[data-remove-item]",
+      "[data-list-item]",
+    ],
+  });
 
   const handleItemChange = React.useCallback(
     (index: number, value: string) => {
@@ -200,222 +184,192 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   const textAlign = widget.textAlign ?? "left";
   const listType = widget.listType ?? "bullet";
   const backgroundType = widget.backgroundType ?? "solid";
-  const isGlassBackground = backgroundType === "glass";
-  const isTransparentBackground = backgroundType === "transparent";
+
+  const toolbar = isSelected ? (
+    <ListCardEditingToolbar
+      widget={widget}
+      isEditing={isEditing}
+      widgetRef={widgetRef}
+      viewport={viewport}
+      containerRef={containerRef}
+      activeField={activeField}
+    />
+  ) : null;
 
   return (
-    <div
-      ref={widgetRef}
-      className={cn(
-        "canvas-element group absolute flex select-none border border-transparent transition",
-        isSelected && !isEditing
-          ? "border-primary/70 ring-1 ring-primary/60"
-          : "border-transparent",
-        "cursor-move"
-      )}
-      style={{
-        left: widget.x,
-        top: widget.y,
-        width: widget.width,
-        height: widget.height,
-        zIndex: baseZIndex,
-      }}
+    <WidgetContainer
+      widgetRef={widgetRef}
+      isSelected={isSelected}
+      isEditing={isEditing}
+      widget={widget}
+      baseZIndex={baseZIndex}
       onPointerDown={handlePointerDown}
+      getResizePointerDown={getResizePointerDown}
+      toolbar={toolbar}
     >
-      <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
-        {isSelected && (
-          <ListCardEditingToolbar
-            widget={widget}
-            isEditing={isEditing}
-            widgetRef={widgetRef}
-            viewport={viewport}
-            containerRef={containerRef}
-            activeField={activeField}
+      <WidgetBackground
+        backgroundType={backgroundType}
+        backgroundColor={backgroundColor}
+      >
+        <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
+          {/* Title field - Always visible */}
+          <ProseMirrorEditor
+            value={localTitle}
+            onChange={(value) => {
+              if (!isSelected) return;
+              setLocalTitle(value);
+              debouncedUpdateTitle(value);
+            }}
+            onFocus={() => {
+              if (!isSelected) return;
+              setActiveField("title");
+            }}
+            onBlur={() => {
+              debouncedUpdateTitle.flush();
+            }}
+            placeholder="List Title"
+            readOnly={!isSelected}
+            className={cn(
+              "w-full",
+              isSelected ? "cursor-text" : "cursor-default"
+            )}
+            style={{
+              fontSize: `${titleFontSize}px`,
+              fontWeight: 700,
+              color: titleColor,
+              fontFamily: titleFontFamily,
+              lineHeight: 1.2,
+              textAlign,
+              letterSpacing: "-0.01em",
+            }}
           />
-        )}
-        <div
-          className={cn(
-            "relative h-full w-full rounded-[16px] p-8 transition-all duration-300 ease-out shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
-            isGlassBackground && "backdrop-blur-2xl",
-            isTransparentBackground && "bg-transparent shadow-none"
-          )}
-          style={{
-            backgroundColor: isGlassBackground
-              ? `${backgroundColor}03`
-              : isTransparentBackground
-              ? "transparent"
-              : backgroundColor,
-            backgroundImage: isGlassBackground
-              ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
-              : undefined,
-            boxShadow: isGlassBackground
-              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)"
-              : "none",
-          }}
-        >
-          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
-            {/* Title field - Always visible */}
-            <ProseMirrorEditor
-              value={localTitle}
-              onChange={(value) => {
-                if (!isSelected) return;
-                setLocalTitle(value);
-                debouncedUpdateTitle(value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                setActiveField("title");
-              }}
-              onBlur={() => {
-                debouncedUpdateTitle.flush();
-              }}
-              placeholder="List Title"
-              readOnly={!isSelected}
-              className={cn(
-                "w-full",
-                isSelected ? "cursor-text" : "cursor-default"
-              )}
-              style={{
-                fontSize: `${titleFontSize}px`,
-                fontWeight: 700,
-                color: titleColor,
-                fontFamily: titleFontFamily,
-                lineHeight: 1.2,
-                textAlign,
-                letterSpacing: "-0.01em",
-              }}
-            />
 
-            {/* List items */}
-            <div className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto">
-              {localItems.map((item, index) => (
+          {/* List items */}
+          <div className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto">
+            {localItems.map((item, index) => (
+              <div
+                key={index}
+                data-list-item
+                className="flex items-center gap-4 group/item"
+              >
+                {/* Bullet/Number - Enhanced styling */}
                 <div
-                  key={index}
-                  data-list-item
-                  className="flex items-center gap-4 group/item"
+                  className="shrink-0 flex items-center justify-center"
+                  style={{
+                    color: bulletColor,
+                    fontFamily: itemFontFamily,
+                  }}
                 >
-                  {/* Bullet/Number - Enhanced styling */}
-                  <div
-                    className="shrink-0 flex items-center justify-center"
-                    style={{
-                      color: bulletColor,
-                      fontFamily: itemFontFamily,
-                    }}
-                  >
-                    {listType === "numbered" ? (
-                      <div
-                        className="flex items-center justify-center rounded-full bg-current/10 text-current"
+                  {listType === "numbered" ? (
+                    <div
+                      className="flex items-center justify-center rounded-full bg-current/10 text-current"
+                      style={{
+                        width: `${Math.max(
+                          26,
+                          Math.round(itemFontSize * 0.9)
+                        )}px`,
+                        height: `${Math.max(
+                          26,
+                          Math.round(itemFontSize * 0.9)
+                        )}px`,
+                      }}
+                    >
+                      <span
+                        className="font-semibold leading-none"
                         style={{
-                          width: `${Math.max(
-                            26,
-                            Math.round(itemFontSize * 0.9)
-                          )}px`,
-                          height: `${Math.max(
-                            26,
-                            Math.round(itemFontSize * 0.9)
-                          )}px`,
+                          fontSize: `${Math.round(itemFontSize * 0.75)}px`,
                         }}
                       >
-                        <span
-                          className="font-semibold leading-none"
-                          style={{
-                            fontSize: `${Math.round(itemFontSize * 0.75)}px`,
-                          }}
-                        >
-                          {index + 1}
-                        </span>
-                      </div>
-                    ) : (
-                      <div
-                        className="flex items-center justify-center rounded-full bg-current"
-                        style={{
-                          width: `${Math.max(
-                            6,
-                            Math.round(itemFontSize * 0.35)
-                          )}px`,
-                          height: `${Math.max(
-                            6,
-                            Math.round(itemFontSize * 0.35)
-                          )}px`,
-                        }}
-                      />
-                    )}
-                  </div>
-
-                  {/* Item input */}
-                  <div className="flex-1 flex items-center gap-3 min-w-0">
-                    <ProseMirrorEditor
-                      value={item}
-                      onChange={(value) => handleItemChange(index, value)}
-                      onFocus={() => {
-                        if (!isSelected) return;
-                        setEditingIndex(index);
-                        setActiveField("item");
-                      }}
-                      onBlur={() => {
-                        debouncedUpdateItems.flush();
-                        setEditingIndex(null);
-                      }}
-                      onKeyDown={(event) => handleItemKeyDown(index, event)}
-                      placeholder={`Item ${index + 1}`}
-                      readOnly={!isSelected}
-                      className={cn(
-                        "w-full flex-1",
-                        isSelected ? "cursor-text" : "cursor-default"
-                      )}
+                        {index + 1}
+                      </span>
+                    </div>
+                  ) : (
+                    <div
+                      className="flex items-center justify-center rounded-full bg-current"
                       style={{
-                        fontSize: `${itemFontSize}px`,
-                        color: itemColor,
-                        fontFamily: itemFontFamily,
-                        lineHeight: 1.5,
-                        textAlign,
-                        fontWeight: 400,
+                        width: `${Math.max(
+                          6,
+                          Math.round(itemFontSize * 0.35)
+                        )}px`,
+                        height: `${Math.max(
+                          6,
+                          Math.round(itemFontSize * 0.35)
+                        )}px`,
                       }}
                     />
-
-                    {/* Remove button */}
-                    {isSelected && localItems.length > 1 && (
-                      <button
-                        data-remove-item
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveItem(index);
-                        }}
-                        className="opacity-0 group-hover/item:opacity-100 transition-all duration-200 p-1.5 rounded-lg hover:bg-destructive/10 hover:text-destructive"
-                        title="Remove item"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
+                  )}
                 </div>
-              ))}
 
-              {/* Add item button */}
-              {isSelected && (
-                <button
-                  data-add-item
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddItem();
-                  }}
-                  className="flex items-center gap-2.5 text-base text-muted-foreground hover:text-foreground transition-all duration-200 mt-1 opacity-0 group-hover:opacity-100 hover:gap-3"
-                  title="Add item"
-                >
-                  <div className="flex items-center justify-center w-6 h-6 rounded-full border-2 border-dashed border-current/30 hover:border-current/60 transition-colors">
-                    <Plus className="h-3.5 w-3.5" />
-                  </div>
-                  <span className="font-medium">Add item</span>
-                </button>
-              )}
-            </div>
+                {/* Item input */}
+                <div className="flex-1 flex items-center gap-3 min-w-0">
+                  <ProseMirrorEditor
+                    value={item}
+                    onChange={(value) => handleItemChange(index, value)}
+                    onFocus={() => {
+                      if (!isSelected) return;
+                      setEditingIndex(index);
+                      setActiveField("item");
+                    }}
+                    onBlur={() => {
+                      debouncedUpdateItems.flush();
+                      setEditingIndex(null);
+                    }}
+                    onKeyDown={(event) => handleItemKeyDown(index, event)}
+                    placeholder={`Item ${index + 1}`}
+                    readOnly={!isSelected}
+                    className={cn(
+                      "w-full flex-1",
+                      isSelected ? "cursor-text" : "cursor-default"
+                    )}
+                    style={{
+                      fontSize: `${itemFontSize}px`,
+                      color: itemColor,
+                      fontFamily: itemFontFamily,
+                      lineHeight: 1.5,
+                      textAlign,
+                      fontWeight: 400,
+                    }}
+                  />
+
+                  {/* Remove button */}
+                  {isSelected && localItems.length > 1 && (
+                    <button
+                      data-remove-item
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveItem(index);
+                      }}
+                      className="opacity-0 group-hover/item:opacity-100 transition-all duration-200 p-1.5 rounded-lg hover:bg-destructive/10 hover:text-destructive"
+                      title="Remove item"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {/* Add item button */}
+            {isSelected && (
+              <button
+                data-add-item
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddItem();
+                }}
+                className="flex items-center gap-2.5 text-base text-muted-foreground hover:text-foreground transition-all duration-200 mt-1 opacity-0 group-hover:opacity-100 hover:gap-3"
+                title="Add item"
+              >
+                <div className="flex items-center justify-center w-6 h-6 rounded-full border-2 border-dashed border-current/30 hover:border-current/60 transition-colors">
+                  <Plus className="h-3.5 w-3.5" />
+                </div>
+                <span className="font-medium">Add item</span>
+              </button>
+            )}
           </div>
         </div>
-        {isSelected && !isEditing && (
-          <ResizeHandles getResizePointerDown={getResizePointerDown} />
-        )}
-      </div>
-    </div>
+      </WidgetBackground>
+    </WidgetContainer>
   );
 };
 

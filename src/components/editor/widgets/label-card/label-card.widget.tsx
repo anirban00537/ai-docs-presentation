@@ -9,7 +9,6 @@ import type { LabelCardWidget } from "./types";
 import {
   TOOLBAR_SELECTOR,
 } from "./constants";
-import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
@@ -20,6 +19,11 @@ import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 import { WidgetToolbar } from "@/components/editor/widgets/shared/toolbar-controls/widget-toolbar";
 import type { ToolbarControlConfig } from "@/components/editor/widgets/shared/toolbar-controls/types";
+import {
+  WidgetContainer,
+  WidgetBackground,
+  useWidgetPointerDown,
+} from "@/components/editor/widgets/shared";
 
 type LabelCardWidgetNodeProps = {
   widget: LabelCardWidget;
@@ -48,7 +52,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const widgetRef = React.useRef<HTMLDivElement>(null);
+  const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localLabel, setLocalLabel] = React.useState(widget.label || "Label");
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
@@ -121,31 +125,10 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
     }
   }, [isSelected]);
 
-  const handlePointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      const target = event.target as HTMLElement;
-      // Don't start drag if clicking on toolbar controls
-      if (target.closest(TOOLBAR_SELECTOR)) {
-        return;
-      }
-
-      const isTextTarget =
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.closest(".prosemirror-editor") ||
-        target.closest(".ProseMirror");
-
-      if (isTextTarget) {
-        return;
-      }
-
-      if (event.detail > 1) {
-        return;
-      }
-      onPointerDown(event);
-    },
-    [onPointerDown]
-  );
+  const handlePointerDown = useWidgetPointerDown({
+    onPointerDown,
+    toolbarSelector: TOOLBAR_SELECTOR,
+  });
 
   const handleFieldFocus = React.useCallback((field: ActiveField) => {
     setActiveField(field);
@@ -180,59 +163,33 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
   const descriptionFontSize = widget.descriptionFontSize ?? 20;
   const textAlign = widget.textAlign ?? "left";
   const backgroundType = widget.backgroundType ?? "solid";
-  const isGlassBackground = backgroundType === "glass";
-  const isTransparentBackground = backgroundType === "transparent";
+
+  const toolbar = isSelected ? (
+    <LabelCardEditingToolbar
+      widget={widget}
+      isEditing={isEditing}
+      activeField={activeField}
+      widgetRef={widgetRef}
+      viewport={viewport}
+      containerRef={containerRef}
+    />
+  ) : null;
 
   return (
-    <div
-      ref={widgetRef}
-      className={cn(
-        "canvas-element group absolute flex select-none border border-transparent transition",
-        isSelected && !isEditing
-          ? "border-primary/70 ring-1 ring-primary/60"
-          : "border-transparent",
-        "cursor-move"
-      )}
-      style={{
-        left: widget.x,
-        top: widget.y,
-        width: widget.width,
-        height: widget.height,
-        zIndex: baseZIndex,
-      }}
+    <WidgetContainer
+      widgetRef={widgetRef}
+      isSelected={isSelected}
+      isEditing={isEditing}
+      widget={widget}
+      baseZIndex={baseZIndex}
       onPointerDown={handlePointerDown}
+      getResizePointerDown={getResizePointerDown}
+      toolbar={toolbar}
     >
-      <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
-        {isSelected && (
-          <LabelCardEditingToolbar
-            widget={widget}
-            isEditing={isEditing}
-            activeField={activeField}
-            widgetRef={widgetRef}
-            viewport={viewport}
-            containerRef={containerRef}
-          />
-        )}
-        <div
-          className={cn(
-            "relative h-full w-full rounded-[16px] p-8 transition-all duration-300 ease-out shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
-            isGlassBackground && "backdrop-blur-2xl",
-            isTransparentBackground && "bg-transparent shadow-none"
-          )}
-          style={{
-            backgroundColor: isGlassBackground
-              ? `${backgroundColor}03`
-              : isTransparentBackground
-              ? "transparent"
-              : backgroundColor,
-            backgroundImage: isGlassBackground
-              ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
-              : undefined,
-            boxShadow: isGlassBackground
-              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)"
-              : "none",
-          }}
-        >
+      <WidgetBackground
+        backgroundType={backgroundType}
+        backgroundColor={backgroundColor}
+      >
           <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
             {/* Label field */}
             <div
@@ -340,12 +297,8 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
               }}
             />
           </div>
-        </div>
-        {isSelected && !isEditing && (
-          <ResizeHandles getResizePointerDown={getResizePointerDown} />
-        )}
-      </div>
-    </div>
+      </WidgetBackground>
+    </WidgetContainer>
   );
 };
 

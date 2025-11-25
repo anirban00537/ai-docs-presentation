@@ -6,7 +6,6 @@ import { ChevronDown, Image as ImageIcon } from "lucide-react";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { ImageCardWidget } from "./types";
 import { TOOLBAR_SELECTOR, IMAGE_STYLE_OPTIONS } from "./constants";
-import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
@@ -19,6 +18,10 @@ import { PopoverPanelPortal } from "@/components/editor/background/popover-panel
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 import { WidgetToolbar } from "@/components/editor/widgets/shared/toolbar-controls/widget-toolbar";
 import type { ToolbarControlConfig } from "@/components/editor/widgets/shared/toolbar-controls/types";
+import {
+  WidgetContainer,
+  useWidgetPointerDown,
+} from "@/components/editor/widgets/shared";
 
 type ImageCardWidgetNodeProps = {
   widget: ImageCardWidget;
@@ -47,7 +50,7 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const widgetRef = React.useRef<HTMLDivElement>(null);
+  const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
   const [localDescription, setLocalDescription] = React.useState(
@@ -109,31 +112,10 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
     }
   }, [isSelected]);
 
-  const handlePointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      const target = event.target as HTMLElement;
-      if (target.closest(TOOLBAR_SELECTOR)) {
-        return;
-      }
-
-      const isTextTarget =
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.closest(".prosemirror-editor") ||
-        target.closest(".ProseMirror");
-
-      if (isTextTarget) {
-        return;
-      }
-
-      if (event.detail > 1) {
-        return;
-      }
-
-      onPointerDown(event);
-    },
-    [onPointerDown]
-  );
+  const handlePointerDown = useWidgetPointerDown({
+    onPointerDown,
+    toolbarSelector: TOOLBAR_SELECTOR,
+  });
 
   const handleFieldFocus = React.useCallback((field: ActiveField) => {
     setActiveField(field);
@@ -189,119 +171,212 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
   const glassOverlayClasses =
     "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_40px_80px_-20px_rgba(15,23,42,0.5)] rounded-[12px]";
 
+  const toolbar = isSelected ? (
+    <ImageCardToolbar
+      widget={widget}
+      isEditing={isEditing}
+      activeField={activeField}
+      widgetRef={widgetRef}
+      viewport={viewport}
+      containerRef={containerRef}
+    />
+  ) : null;
+
   return (
-    <div
-      ref={widgetRef}
-      className={cn(
-        "canvas-element group absolute flex select-none border border-transparent transition",
-        isSelected && !isEditing
-          ? "border-primary/70 ring-1 ring-primary/60"
-          : "border-transparent",
-        "cursor-move"
-      )}
-      style={{
-        left: widget.x,
-        top: widget.y,
-        width: widget.width,
-        height: widget.height,
-        zIndex: baseZIndex,
-      }}
+    <WidgetContainer
+      widgetRef={widgetRef}
+      isSelected={isSelected}
+      isEditing={isEditing}
+      widget={widget}
+      baseZIndex={baseZIndex}
       onPointerDown={handlePointerDown}
+      getResizePointerDown={getResizePointerDown}
+      toolbar={toolbar}
     >
-      <div className="canvas-element__content relative flex h-full w-full items-stretch justify-stretch rounded">
-        {isSelected && (
-          <ImageCardToolbar
-            widget={widget}
-            isEditing={isEditing}
-            activeField={activeField}
-            widgetRef={widgetRef}
-            viewport={viewport}
-            containerRef={containerRef}
-          />
-        )}
-        <div
-          className={cn(
-            "relative h-full w-full overflow-hidden rounded-[16px] transition-all duration-300 ease-out shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
-            (isHeroImage ||
-              imageStyle === "left" ||
-              imageStyle === "right" ||
-              imageStyle === "bottom") &&
-              isGlassBackground &&
-              "backdrop-blur-2xl",
-            (isHeroImage ||
-              imageStyle === "left" ||
-              imageStyle === "right" ||
-              imageStyle === "bottom") &&
-              isTransparentBackground &&
-              "bg-transparent shadow-none"
-          )}
-          style={
-            isHeroImage ||
+      <div
+        className={cn(
+          "relative h-full w-full overflow-hidden rounded-[16px] transition-all duration-300 ease-out shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
+          (isHeroImage ||
             imageStyle === "left" ||
             imageStyle === "right" ||
-            imageStyle === "bottom"
-              ? heroSurfaceStyle
-              : undefined
-          }
-        >
-          {isHeroImage ||
+            imageStyle === "bottom") &&
+            isGlassBackground &&
+            "backdrop-blur-2xl",
+          (isHeroImage ||
+            imageStyle === "left" ||
+            imageStyle === "right" ||
+            imageStyle === "bottom") &&
+            isTransparentBackground &&
+            "bg-transparent shadow-none"
+        )}
+        style={
+          isHeroImage ||
           imageStyle === "left" ||
           imageStyle === "right" ||
-          imageStyle === "bottom" ? (
+          imageStyle === "bottom"
+            ? heroSurfaceStyle
+            : undefined
+        }
+      >
+        {isHeroImage ||
+        imageStyle === "left" ||
+        imageStyle === "right" ||
+        imageStyle === "bottom" ? (
+          <div
+            className={cn(
+              "flex h-full",
+              isHeroImage
+                ? "flex-col"
+                : imageStyle === "bottom"
+                ? "flex-col-reverse"
+                : imageStyle === "right"
+                ? "flex-row-reverse"
+                : "flex-row"
+            )}
+            style={{ textAlign }}
+          >
+            <div
+              className="relative overflow-hidden"
+              style={{
+                width: isHeroImage || imageStyle === "bottom" ? "100%" : "50%",
+                height:
+                  isHeroImage || imageStyle === "bottom"
+                    ? heroImageHeight
+                    : "100%",
+              }}
+            >
+              {imagePreviewUrl ? (
+                <img
+                  src={imagePreviewUrl}
+                  alt={widget.title || "Card image"}
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                />
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted/30 text-muted-foreground/80">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/70 text-foreground/70 shadow-inner">
+                    <ImageIcon className="h-5 w-5" />
+                  </div>
+                  <p className="text-xs font-semibold tracking-wide uppercase">
+                    Add an image
+                  </p>
+                  <p className="text-[11px] text-muted-foreground/80">
+                    Use the toolbar to paste a link
+                  </p>
+                </div>
+              )}
+            </div>
             <div
               className={cn(
-                "flex h-full",
-                isHeroImage
-                  ? "flex-col"
-                  : imageStyle === "bottom"
-                  ? "flex-col-reverse"
-                  : imageStyle === "right"
-                  ? "flex-row-reverse"
-                  : "flex-row"
+                heroTextPanelClasses,
+                !isHeroImage &&
+                  imageStyle !== "bottom" &&
+                  "w-1/2 justify-center",
+                imageStyle === "bottom" && "justify-end pb-6 pt-8"
               )}
+              style={heroTextPanelStyle}
+            >
+              <ProseMirrorEditor
+                value={localTitle}
+                onChange={(value) => {
+                  if (!isSelected) return;
+                  setLocalTitle(value);
+                  debouncedUpdateTitle(value);
+                }}
+                onFocus={() => {
+                  if (!isSelected) return;
+                  handleFieldFocus("title");
+                }}
+                onBlur={() => handleFieldBlur("title")}
+                placeholder="Add a headline"
+                readOnly={!isSelected}
+                className={cn(
+                  "w-full",
+                  isSelected ? "cursor-text" : "cursor-default"
+                )}
+                style={{
+                  fontSize: `${titleFontSize}px`,
+                  fontWeight: 600,
+                  color: titleColor,
+                  fontFamily: titleFontFamily,
+                  lineHeight: 1.2,
+                  textAlign,
+                }}
+              />
+
+              <ProseMirrorEditor
+                value={localDescription}
+                onChange={(value) => {
+                  if (!isSelected) return;
+                  setLocalDescription(value);
+                  debouncedUpdateDescription(value);
+                }}
+                onFocus={() => {
+                  if (!isSelected) return;
+                  handleFieldFocus("description");
+                }}
+                onBlur={() => handleFieldBlur("description")}
+                placeholder="Write a supporting description."
+                readOnly={!isSelected}
+                className={cn(
+                  "w-full",
+                  isSelected ? "cursor-text" : "cursor-default"
+                )}
+                style={{
+                  fontSize: `${descriptionFontSize}px`,
+                  color: descriptionColor,
+                  fontFamily: descriptionFontFamily,
+                  lineHeight: 1.5,
+                  textAlign,
+                }}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="relative flex h-full w-full flex-col justify-end">
+            <div className="absolute inset-0">
+              {imagePreviewUrl ? (
+                <img
+                  src={imagePreviewUrl}
+                  alt={widget.title || "Background image"}
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                />
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted/30 text-muted-foreground/80">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/70 text-foreground/70 shadow-inner">
+                    <ImageIcon className="h-5 w-5" />
+                  </div>
+                  <p className="text-xs font-semibold tracking-wide uppercase">
+                    Add an image
+                  </p>
+                  <p className="text-[11px] text-muted-foreground/80">
+                    Use the toolbar to paste a link
+                  </p>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
+            </div>
+
+            <div
+              className="relative z-10 flex flex-col gap-3 p-6"
               style={{ textAlign }}
             >
               <div
-                className="relative overflow-hidden"
-                style={{
-                  width:
-                    isHeroImage || imageStyle === "bottom" ? "100%" : "50%",
-                  height:
-                    isHeroImage || imageStyle === "bottom"
-                      ? heroImageHeight
-                      : "100%",
-                }}
-              >
-                {imagePreviewUrl ? (
-                  <img
-                    src={imagePreviewUrl}
-                    alt={widget.title || "Card image"}
-                    className="h-full w-full object-cover"
-                    draggable={false}
-                  />
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted/30 text-muted-foreground/80">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/70 text-foreground/70 shadow-inner">
-                      <ImageIcon className="h-5 w-5" />
-                    </div>
-                    <p className="text-xs font-semibold tracking-wide uppercase">
-                      Add an image
-                    </p>
-                    <p className="text-[11px] text-muted-foreground/80">
-                      Use the toolbar to paste a link
-                    </p>
-                  </div>
-                )}
-              </div>
-              <div
                 className={cn(
-                  heroTextPanelClasses,
-                  !isHeroImage &&
-                    imageStyle !== "bottom" &&
-                    "w-1/2 justify-center",
-                  imageStyle === "bottom" && "justify-end pb-6 pt-8"
+                  "flex flex-col gap-3 p-5",
+                  useGlassPanel
+                    ? glassOverlayClasses
+                    : "text-white drop-shadow-lg"
                 )}
-                style={heroTextPanelStyle}
+                style={
+                  useGlassPanel
+                    ? {
+                        backgroundImage:
+                          "linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 100%)",
+                      }
+                    : undefined
+                }
               >
                 <ProseMirrorEditor
                   value={localTitle}
@@ -324,7 +399,7 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
                   style={{
                     fontSize: `${titleFontSize}px`,
                     fontWeight: 600,
-                    color: titleColor,
+                    color: useGlassPanel ? titleColor : "#f8fafc",
                     fontFamily: titleFontFamily,
                     lineHeight: 1.2,
                     textAlign,
@@ -351,7 +426,9 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
                   )}
                   style={{
                     fontSize: `${descriptionFontSize}px`,
-                    color: descriptionColor,
+                    color: useGlassPanel
+                      ? descriptionColor
+                      : "rgba(248,250,252,0.9)",
                     fontFamily: descriptionFontFamily,
                     lineHeight: 1.5,
                     textAlign,
@@ -359,118 +436,10 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
                 />
               </div>
             </div>
-          ) : (
-            <div className="relative flex h-full w-full flex-col justify-end">
-              <div className="absolute inset-0">
-                {imagePreviewUrl ? (
-                  <img
-                    src={imagePreviewUrl}
-                    alt={widget.title || "Background image"}
-                    className="h-full w-full object-cover"
-                    draggable={false}
-                  />
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted/30 text-muted-foreground/80">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/70 text-foreground/70 shadow-inner">
-                      <ImageIcon className="h-5 w-5" />
-                    </div>
-                    <p className="text-xs font-semibold tracking-wide uppercase">
-                      Add an image
-                    </p>
-                    <p className="text-[11px] text-muted-foreground/80">
-                      Use the toolbar to paste a link
-                    </p>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
-              </div>
-
-              <div
-                className="relative z-10 flex flex-col gap-3 p-6"
-                style={{ textAlign }}
-              >
-                <div
-                  className={cn(
-                    "flex flex-col gap-3 p-5",
-                    useGlassPanel
-                      ? glassOverlayClasses
-                      : "text-white drop-shadow-lg"
-                  )}
-                  style={
-                    useGlassPanel
-                      ? {
-                          backgroundImage:
-                            "linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 100%)",
-                        }
-                      : undefined
-                  }
-                >
-                  <ProseMirrorEditor
-                    value={localTitle}
-                    onChange={(value) => {
-                      if (!isSelected) return;
-                      setLocalTitle(value);
-                      debouncedUpdateTitle(value);
-                    }}
-                    onFocus={() => {
-                      if (!isSelected) return;
-                      handleFieldFocus("title");
-                    }}
-                    onBlur={() => handleFieldBlur("title")}
-                    placeholder="Add a headline"
-                    readOnly={!isSelected}
-                    className={cn(
-                      "w-full",
-                      isSelected ? "cursor-text" : "cursor-default"
-                    )}
-                    style={{
-                      fontSize: `${titleFontSize}px`,
-                      fontWeight: 600,
-                      color: useGlassPanel ? titleColor : "#f8fafc",
-                      fontFamily: titleFontFamily,
-                      lineHeight: 1.2,
-                      textAlign,
-                    }}
-                  />
-
-                  <ProseMirrorEditor
-                    value={localDescription}
-                    onChange={(value) => {
-                      if (!isSelected) return;
-                      setLocalDescription(value);
-                      debouncedUpdateDescription(value);
-                    }}
-                    onFocus={() => {
-                      if (!isSelected) return;
-                      handleFieldFocus("description");
-                    }}
-                    onBlur={() => handleFieldBlur("description")}
-                    placeholder="Write a supporting description."
-                    readOnly={!isSelected}
-                    className={cn(
-                      "w-full",
-                      isSelected ? "cursor-text" : "cursor-default"
-                    )}
-                    style={{
-                      fontSize: `${descriptionFontSize}px`,
-                      color: useGlassPanel
-                        ? descriptionColor
-                        : "rgba(248,250,252,0.9)",
-                      fontFamily: descriptionFontFamily,
-                      lineHeight: 1.5,
-                      textAlign,
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-        {isSelected && !isEditing && (
-          <ResizeHandles getResizePointerDown={getResizePointerDown} />
+          </div>
         )}
       </div>
-    </div>
+    </WidgetContainer>
   );
 };
 

@@ -6,7 +6,6 @@ import { Quote as QuoteIcon } from "lucide-react";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { QuoteWidget } from "./types";
 import { TOOLBAR_SELECTOR } from "./constants";
-import { ResizeHandles } from "@/components/editor/resize-handles";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
@@ -22,6 +21,11 @@ import { ALIGN_OPTIONS } from "@/components/editor/widgets/shared/toolbar-contro
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ToolbarControlConfig } from "@/components/editor/widgets/shared/toolbar-controls/types";
+import {
+  WidgetContainer,
+  WidgetBackground,
+  useWidgetPointerDown,
+} from "@/components/editor/widgets/shared";
 
 type QuoteWidgetNodeProps = {
   widget: QuoteWidget;
@@ -51,7 +55,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const globalTheme = useAppSelector(selectGlobalTheme);
-  const widgetRef = React.useRef<HTMLDivElement>(null);
+  const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localQuote, setLocalQuote] = React.useState(widget.quote || "");
   const [localAttribution, setLocalAttribution] = React.useState(
@@ -107,31 +111,10 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
     }
   }, [isSelected]);
 
-  const handlePointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      const target = event.target as HTMLElement;
-      // Don't start drag if clicking toolbar controls
-      if (target.closest(TOOLBAR_SELECTOR)) {
-        return;
-      }
-
-      const isTextTarget =
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.closest(".prosemirror-editor") ||
-        target.closest(".ProseMirror");
-
-      if (isTextTarget) {
-        return;
-      }
-
-      if (event.detail > 1) {
-        return;
-      }
-      onPointerDown(event);
-    },
-    [onPointerDown]
-  );
+  const handlePointerDown = useWidgetPointerDown({
+    onPointerDown,
+    toolbarSelector: TOOLBAR_SELECTOR,
+  });
 
   const handleFieldFocus = React.useCallback((field: ActiveField) => {
     setActiveField(field);
@@ -160,8 +143,6 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
   const backgroundType = widget.backgroundType ?? "solid";
   const quoteFontSize = widget.quoteFontSize ?? 24;
   const attributionFontSize = widget.attributionFontSize ?? 14;
-  const isGlassBackground = backgroundType === "glass";
-  const isTransparentBackground = backgroundType === "transparent";
 
   // Auto-resize logic removed to allow manual resizing and scrolling
 
@@ -214,114 +195,84 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
     );
   };
 
-  return (
-    <div
-      ref={widgetRef}
-      className={cn(
-        "canvas-element group absolute flex select-none border border-transparent transition",
-        isSelected && !isEditing
-          ? "border-primary/70 ring-1 ring-primary/60"
-          : "border-transparent",
-        "cursor-move"
-      )}
-      style={{
-        left: widget.x,
-        top: widget.y,
-        width: widget.width,
-        height: widget.height,
-        zIndex: baseZIndex,
-      }}
-      onPointerDown={handlePointerDown}
-    >
-      <div
-        className="canvas-element__content relative flex w-full items-stretch justify-stretch rounded"
-        style={{ height: widget.height }}
-      >
-        {isSelected && (
-          <QuoteEditingToolbar
-            widget={widget}
-            isEditing={isEditing}
-            activeField={activeField}
-            widgetRef={widgetRef}
-            viewport={viewport}
-            containerRef={containerRef}
-          />
-        )}
-        <div
-          className={cn(
-            "relative w-full h-full transition-all duration-300 ease-out overflow-hidden rounded-[16px] p-8 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
-            isGlassBackground && "backdrop-blur-2xl",
-            isTransparentBackground && "bg-transparent shadow-none"
-          )}
-          style={{
-            backgroundColor: isGlassBackground
-              ? `${backgroundColor}03`
-              : isTransparentBackground
-              ? "transparent"
-              : backgroundColor,
-            backgroundImage: isGlassBackground
-              ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)"
-              : undefined,
-            boxShadow: isGlassBackground
-              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)"
-              : "none",
-          }}
-        >
-          <div
-            ref={contentContainerRef}
-            className="flex flex-col gap-5 justify-center h-full"
-            style={{ textAlign }}
-          >
-            {renderQuote()}
+  const toolbar = isSelected ? (
+    <QuoteEditingToolbar
+      widget={widget}
+      isEditing={isEditing}
+      activeField={activeField}
+      widgetRef={widgetRef}
+      viewport={viewport}
+      containerRef={containerRef}
+    />
+  ) : null;
 
-            {localAttribution && (
-              <div
-                className="flex mt-2"
-                style={{
-                  justifyContent:
-                    textAlign === "center"
-                      ? "center"
-                      : textAlign === "right"
-                      ? "flex-end"
-                      : "flex-start",
+  return (
+    <WidgetContainer
+      widgetRef={widgetRef}
+      isSelected={isSelected}
+      isEditing={isEditing}
+      widget={widget}
+      baseZIndex={baseZIndex}
+      onPointerDown={handlePointerDown}
+      getResizePointerDown={getResizePointerDown}
+      toolbar={toolbar}
+    >
+      <WidgetBackground
+        backgroundType={backgroundType}
+        backgroundColor={backgroundColor}
+        className="overflow-hidden"
+      >
+        <div
+          ref={contentContainerRef}
+          className="flex flex-col gap-5 justify-center h-full"
+          style={{ textAlign }}
+        >
+          {renderQuote()}
+
+          {localAttribution && (
+            <div
+              className="flex mt-2"
+              style={{
+                justifyContent:
+                  textAlign === "center"
+                    ? "center"
+                    : textAlign === "right"
+                    ? "flex-end"
+                    : "flex-start",
+              }}
+            >
+              <ProseMirrorEditor
+                value={localAttribution}
+                onChange={(value) => {
+                  if (!isSelected) return;
+                  setLocalAttribution(value);
+                  debouncedUpdateAttribution(value);
                 }}
-              >
-                <ProseMirrorEditor
-                  value={localAttribution}
-                  onChange={(value) => {
-                    if (!isSelected) return;
-                    setLocalAttribution(value);
-                    debouncedUpdateAttribution(value);
-                  }}
-                  onFocus={() => {
-                    if (!isSelected) return;
-                    handleFieldFocus("attribution");
-                  }}
-                  onBlur={() => handleFieldBlur("attribution")}
-                  placeholder="— Attribution"
-                  readOnly={!isSelected}
-                  className={cn(
-                    "w-auto min-w-[100px]",
-                    isSelected ? "cursor-text" : "cursor-default"
-                  )}
-                  style={{
-                    fontSize: `${attributionFontSize}px`,
-                    fontWeight: 500,
-                    color: attributionColor,
-                    fontFamily: attributionFontFamily,
-                    lineHeight: 1.4,
-                    textAlign,
-                  }}
-                />
-              </div>
-            )}
-          </div>
+                onFocus={() => {
+                  if (!isSelected) return;
+                  handleFieldFocus("attribution");
+                }}
+                onBlur={() => handleFieldBlur("attribution")}
+                placeholder="— Attribution"
+                readOnly={!isSelected}
+                className={cn(
+                  "w-auto min-w-[100px]",
+                  isSelected ? "cursor-text" : "cursor-default"
+                )}
+                style={{
+                  fontSize: `${attributionFontSize}px`,
+                  fontWeight: 500,
+                  color: attributionColor,
+                  fontFamily: attributionFontFamily,
+                  lineHeight: 1.4,
+                  textAlign,
+                }}
+              />
+            </div>
+          )}
         </div>
-        {isSelected && !isEditing && (
-          <ResizeHandles getResizePointerDown={getResizePointerDown} />
-        )}
-      </div>
-    </div>
+      </WidgetBackground>
+    </WidgetContainer>
   );
 };
 
