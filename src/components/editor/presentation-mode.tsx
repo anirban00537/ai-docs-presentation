@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Slide from "@/components/editor/slide";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
@@ -26,6 +26,17 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
   const currentSlide = slides[currentIndex];
   const isFirstSlide = currentIndex === 0;
   const isLastSlide = currentIndex === slides.length - 1;
+
+  const gradientBackground = useMemo(() => {
+    const backgroundStops =
+      globalTheme?.background?.length && globalTheme.background.length > 0
+        ? globalTheme.background
+        : ["#0f172a", "#1e293b"];
+    const surfaceColor = globalTheme?.surface ?? "rgba(15,23,42,0.85)";
+    const accentColor = globalTheme?.accent ?? "#6366f1";
+    const stops = [...backgroundStops, surfaceColor, accentColor];
+    return `linear-gradient(135deg, ${stops.join(", ")})`;
+  }, [globalTheme]);
 
   const goToNext = useCallback(() => {
     if (!isLastSlide) {
@@ -85,9 +96,12 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-[9999] bg-black transition-opacity duration-200",
+        "fixed inset-0 z-9999 transition-opacity duration-200",
         isExiting ? "opacity-0" : "opacity-100"
       )}
+      style={{
+        backgroundImage: gradientBackground,
+      }}
     >
       {/* Exit Button */}
       <Button
@@ -105,7 +119,7 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
       </div>
 
       {/* Main Slide Area */}
-      <div className="relative w-full h-full flex items-center justify-center">
+      <div className="relative flex h-full w-full items-center justify-center px-4 py-6 sm:px-10 sm:py-10 md:px-16 md:py-12">
         <div
           className={cn(
             "w-full h-full transition-transform duration-300",
@@ -188,4 +202,3 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
     </div>
   );
 };
-
