@@ -64,8 +64,7 @@ export const useNumberCardCreation = () => {
           globalTheme?.fonts?.heading ??
           "var(--font-montserrat), Montserrat, sans-serif",
         descriptionFontFamily:
-          globalTheme?.fonts?.body ??
-          "var(--font-inter), Inter, sans-serif",
+          globalTheme?.fonts?.body ?? "var(--font-inter), Inter, sans-serif",
         textAlign: "left",
         backgroundType: "glass", // Default to glassmorphism
       };
@@ -81,4 +80,3 @@ export const useNumberCardCreation = () => {
     handleAddFeatureCard,
   };
 };
-

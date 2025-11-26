@@ -9,7 +9,10 @@ import { useImageCardCreation } from "@/components/editor/widgets/image-card/use
 import { useNumberCardCreation } from "@/components/editor/widgets/number-card/use-number-card-creation";
 import { useQuoteCreation } from "@/components/editor/widgets/quote/use-quote-creation";
 import { useComparisonCardCreation } from "@/components/editor/widgets/comparison-card/use-comparison-card-creation";
-import { TEXT_PRESET_CONFIG, SLIDE_DIMENSIONS } from "@/lib/constants/widget-presets";
+import {
+  TEXT_PRESET_CONFIG,
+  SLIDE_DIMENSIONS,
+} from "@/lib/constants/widget-presets";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   addWidget,

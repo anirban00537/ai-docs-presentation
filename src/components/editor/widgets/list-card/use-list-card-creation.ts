@@ -60,8 +60,7 @@ export const useListCardCreation = () => {
           globalTheme?.fonts?.heading ??
           "var(--font-montserrat), Montserrat, sans-serif",
         itemFontFamily:
-          globalTheme?.fonts?.body ??
-          "var(--font-inter), Inter, sans-serif",
+          globalTheme?.fonts?.body ?? "var(--font-inter), Inter, sans-serif",
         textAlign: "left",
         backgroundType: "glass",
       };

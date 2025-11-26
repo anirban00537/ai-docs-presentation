@@ -60,8 +60,7 @@ export const useImageCardCreation = () => {
           globalTheme?.fonts?.heading ??
           "var(--font-playfair), 'Playfair Display', serif",
         descriptionFontFamily:
-          globalTheme?.fonts?.body ??
-          "var(--font-inter), Inter, sans-serif",
+          globalTheme?.fonts?.body ?? "var(--font-inter), Inter, sans-serif",
         textAlign: "left",
         backgroundType: "glass",
       };

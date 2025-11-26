@@ -62,11 +62,7 @@ export const useComparisonCardCreation = () => {
         rightItems:
           preset.rightItems && preset.rightItems.length > 0
             ? preset.rightItems
-            : [
-                "Limited projects",
-                "Standard support",
-                "Basic analytics",
-              ],
+            : ["Limited projects", "Standard support", "Basic analytics"],
         leftAccentColor:
           preset.leftAccentColor ?? globalTheme?.accent ?? "#2563eb",
         rightAccentColor: preset.rightAccentColor ?? "#f97316",
@@ -85,11 +81,9 @@ export const useComparisonCardCreation = () => {
           globalTheme?.fonts?.heading ??
           "var(--font-montserrat), Montserrat, sans-serif",
         leftItemFontFamily:
-          globalTheme?.fonts?.body ??
-          "var(--font-inter), Inter, sans-serif",
+          globalTheme?.fonts?.body ?? "var(--font-inter), Inter, sans-serif",
         rightItemFontFamily:
-          globalTheme?.fonts?.body ??
-          "var(--font-inter), Inter, sans-serif",
+          globalTheme?.fonts?.body ?? "var(--font-inter), Inter, sans-serif",
         leftLabelFontSize: 13,
         rightLabelFontSize: 13,
         leftTitleFontSize: 30,
@@ -109,5 +103,3 @@ export const useComparisonCardCreation = () => {
     handleAddComparisonCard,
   };
 };
-
-
