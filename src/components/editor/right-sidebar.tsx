@@ -7,8 +7,14 @@ import { InsertPanelContent } from "./right-sidebar/insert-panel-content";
 import { BackgroundPanelContent } from "./right-sidebar/background-panel-content";
 import { ThemePanelContent } from "./right-sidebar/theme-panel-content";
 import { useWidgetCreation } from "@/hooks/use-widget-creation";
+import { cn } from "@/lib/utils";
 
 export type SidebarPanel = "insert" | "background" | "theme" | null;
+
+const DEFAULT_WIDTH = 340;
+const MIN_WIDTH = 240;
+const MAX_WIDTH = 600;
+const STORAGE_KEY = "right-sidebar-width";
 
 type RightSidebarProps = {
   panel: SidebarPanel;
@@ -41,6 +47,71 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
     handleAddTitleCard,
     handleAddPricingCard,
   } = useWidgetCreation();
+
+  // Load width from localStorage or use default
+  const [width, setWidth] = React.useState(() => {
+    if (typeof window === "undefined") return DEFAULT_WIDTH;
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored
+      ? Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, parseInt(stored, 10)))
+      : DEFAULT_WIDTH;
+  });
+
+  const [isResizing, setIsResizing] = React.useState(false);
+  const sidebarRef = React.useRef<HTMLDivElement>(null);
+
+  // Save width to localStorage when it changes
+  React.useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, width.toString());
+  }, [width]);
+
+  const handlePointerDown = React.useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setIsResizing(true);
+      e.currentTarget.setPointerCapture(e.pointerId);
+    },
+    []
+  );
+
+  const handlePointerMove = React.useCallback(
+    (e: PointerEvent) => {
+      if (!isResizing) return;
+
+      if (!sidebarRef.current) return;
+
+      const sidebarRect = sidebarRef.current.getBoundingClientRect();
+      const newWidth = sidebarRect.right - e.clientX;
+
+      // Clamp width between min and max
+      const clampedWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, newWidth));
+      setWidth(clampedWidth);
+    },
+    [isResizing]
+  );
+
+  const handlePointerUp = React.useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  React.useEffect(() => {
+    if (isResizing) {
+      window.addEventListener("pointermove", handlePointerMove);
+      window.addEventListener("pointerup", handlePointerUp);
+      document.body.style.cursor = "ew-resize";
+      document.body.style.userSelect = "none";
+
+      return () => {
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handlePointerUp);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      };
+    }
+  }, [isResizing, handlePointerMove, handlePointerUp]);
+
   if (!panel) return null;
 
   const getTitle = () => {
@@ -57,7 +128,26 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   };
 
   return (
-    <div className="w-[340px] h-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-l border-border/30 dark:border-border/30 flex flex-col shrink-0 min-h-0 transition-all duration-300 z-40 shadow-[0_12px_32px_-24px_rgba(15,23,42,0.35)]">
+    <div
+      ref={sidebarRef}
+      className="h-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-l border-border/30 dark:border-border/30 flex flex-col shrink-0 min-h-0 z-40 shadow-[0_12px_32px_-24px_rgba(15,23,42,0.35)] relative"
+      style={{ width: `${width}px` }}
+    >
+      {/* Resize handle */}
+      <div
+        className={cn(
+          "absolute left-0 top-0 bottom-0 w-[4px] cursor-ew-resize z-50 transition-colors",
+          "hover:bg-primary/40 active:bg-primary/60",
+          isResizing && "bg-primary/60"
+        )}
+        onPointerDown={handlePointerDown}
+        aria-label="Resize sidebar"
+        role="separator"
+        aria-orientation="vertical"
+        style={{
+          marginLeft: "-2px",
+        }}
+      />
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/30 dark:border-border/25 shrink-0 h-16">
         <h2 className="text-sm font-semibold text-foreground/90 tracking-tight">
           {getTitle()}
