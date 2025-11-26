@@ -10,6 +10,7 @@ import {
   setActiveSlide,
   updateSlide,
   setSlideTheme,
+  updateGlobalTheme,
   removeWidget,
 } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
@@ -72,6 +73,17 @@ const Editor = () => {
       dispatch(
         setSlideTheme({
           themeId,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const handleThemeChange = React.useCallback(
+    (updates: Partial<Omit<typeof globalTheme, "id">>) => {
+      dispatch(
+        updateGlobalTheme({
+          updates,
         })
       );
     },
@@ -178,6 +190,8 @@ const Editor = () => {
               onBackgroundColorChange={handleBackgroundColorChange}
               activeThemeId={globalTheme?.id}
               onSelectTheme={handleThemeSelect}
+              globalTheme={globalTheme}
+              onThemeChange={handleThemeChange}
             />
           )}
         </div>
@@ -217,6 +231,8 @@ const Editor = () => {
             onBackgroundColorChange={handleBackgroundColorChange}
             activeThemeId={globalTheme?.id}
             onSelectTheme={handleThemeSelect}
+            globalTheme={globalTheme}
+            onThemeChange={handleThemeChange}
           />
         )}
       </div>

@@ -25,6 +25,12 @@ type RightSidebarProps = {
   // Theme panel props
   activeThemeId?: string;
   onSelectTheme?: (themeId: string) => void;
+  globalTheme?: import("@/store/slices/slidesSlice").GlobalTheme;
+  onThemeChange?: (
+    updates: Partial<
+      Omit<import("@/store/slices/slidesSlice").GlobalTheme, "id">
+    >
+  ) => void;
 };
 
 export const RightSidebar: React.FC<RightSidebarProps> = ({
@@ -34,6 +40,8 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   onBackgroundColorChange,
   activeThemeId,
   onSelectTheme,
+  globalTheme,
+  onThemeChange,
 }) => {
   const {
     handleAddText,
@@ -201,6 +209,8 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           <ThemePanelContent
             activeThemeId={activeThemeId}
             onSelectTheme={onSelectTheme}
+            globalTheme={globalTheme}
+            onThemeChange={onThemeChange}
           />
         )}
       </div>

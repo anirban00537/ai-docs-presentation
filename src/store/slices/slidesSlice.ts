@@ -354,6 +354,208 @@ const slidesSlice = createSlice({
         });
       });
     },
+    updateGlobalTheme(
+      state,
+      action: PayloadAction<{
+        updates: Partial<Omit<GlobalTheme, "id">>;
+      }>
+    ) {
+      Object.assign(state.globalTheme, action.payload.updates);
+      // Apply updated theme properties to all slides and widgets
+      state.slides.forEach((slide) => {
+        // Update background if theme background changed and no image set
+        if (action.payload.updates.background && !slide.backgroundImage) {
+          slide.backgroundColor = [...action.payload.updates.background];
+        }
+
+        if (!slide.widgets || !action.payload.updates) return;
+
+        const themeFont = action.payload.updates.font ?? state.globalTheme.font;
+        const cardBackgroundType =
+          action.payload.updates.cardBackgroundType ??
+          state.globalTheme.cardBackgroundType;
+        const surface =
+          action.payload.updates.surface ?? state.globalTheme.surface;
+        const text = action.payload.updates.text ?? state.globalTheme.text;
+        const accent =
+          action.payload.updates.accent ?? state.globalTheme.accent;
+
+        slide.widgets.forEach((widget) => {
+          switch (widget.type) {
+            case "text": {
+              if (action.payload.updates.text)
+                widget.color = action.payload.updates.text;
+              if (action.payload.updates.font) widget.fontFamily = themeFont;
+              break;
+            }
+            case "numberCard": {
+              if (action.payload.updates.surface)
+                widget.backgroundColor = surface;
+              if (action.payload.updates.accent) widget.numberColor = accent;
+              if (action.payload.updates.text) {
+                widget.titleColor = text;
+                widget.descriptionColor = text;
+              }
+              if (action.payload.updates.font) {
+                widget.numberFontFamily = themeFont;
+                widget.titleFontFamily = themeFont;
+                widget.descriptionFontFamily = themeFont;
+              }
+              if (action.payload.updates.cardBackgroundType)
+                widget.backgroundType = cardBackgroundType;
+              break;
+            }
+            case "iconCard": {
+              if (action.payload.updates.surface)
+                widget.backgroundColor = surface;
+              if (action.payload.updates.accent) widget.iconColor = accent;
+              if (action.payload.updates.text) {
+                widget.titleColor = text;
+                widget.descriptionColor = text;
+              }
+              if (action.payload.updates.font) {
+                widget.titleFontFamily = themeFont;
+                widget.descriptionFontFamily = themeFont;
+              }
+              if (action.payload.updates.cardBackgroundType)
+                widget.backgroundType = cardBackgroundType;
+              break;
+            }
+            case "imageCard": {
+              if (action.payload.updates.surface)
+                widget.backgroundColor = surface;
+              if (action.payload.updates.text) {
+                widget.titleColor = text;
+                widget.descriptionColor = text;
+              }
+              if (action.payload.updates.font) {
+                widget.titleFontFamily = themeFont;
+                widget.descriptionFontFamily = themeFont;
+              }
+              if (action.payload.updates.cardBackgroundType)
+                widget.backgroundType = cardBackgroundType;
+              break;
+            }
+            case "labelCard": {
+              if (action.payload.updates.surface)
+                widget.backgroundColor = surface;
+              if (action.payload.updates.accent) widget.labelColor = accent;
+              if (action.payload.updates.text) {
+                widget.titleColor = text;
+                widget.descriptionColor = text;
+              }
+              if (action.payload.updates.font) {
+                widget.labelFontFamily = themeFont;
+                widget.titleFontFamily = themeFont;
+                widget.descriptionFontFamily = themeFont;
+              }
+              if (action.payload.updates.cardBackgroundType)
+                widget.backgroundType = cardBackgroundType;
+              break;
+            }
+            case "titleCard": {
+              if (action.payload.updates.surface)
+                widget.backgroundColor = surface;
+              if (action.payload.updates.accent) widget.eyebrowColor = accent;
+              if (action.payload.updates.text) {
+                widget.titleColor = text;
+                widget.subtitleColor = text;
+              }
+              if (action.payload.updates.font) {
+                widget.eyebrowFontFamily = themeFont;
+                widget.titleFontFamily = themeFont;
+                widget.subtitleFontFamily = themeFont;
+              }
+              if (action.payload.updates.cardBackgroundType)
+                widget.backgroundType = cardBackgroundType;
+              break;
+            }
+            case "list": {
+              if (action.payload.updates.surface)
+                widget.backgroundColor = surface;
+              if (action.payload.updates.text) {
+                widget.itemColor = text;
+                widget.titleColor = text;
+              }
+              if (action.payload.updates.accent) widget.bulletColor = accent;
+              if (action.payload.updates.font) {
+                widget.titleFontFamily = themeFont;
+                widget.itemFontFamily = themeFont;
+              }
+              if (action.payload.updates.cardBackgroundType)
+                widget.backgroundType = cardBackgroundType;
+              break;
+            }
+            case "quote": {
+              if (action.payload.updates.surface)
+                widget.backgroundColor = surface;
+              if (action.payload.updates.text) {
+                widget.quoteColor = text;
+                widget.attributionColor = text;
+              }
+              if (action.payload.updates.accent) widget.iconColor = accent;
+              if (action.payload.updates.font) {
+                widget.quoteFontFamily = themeFont;
+                widget.attributionFontFamily = themeFont;
+              }
+              if (action.payload.updates.cardBackgroundType)
+                widget.backgroundType = cardBackgroundType;
+              break;
+            }
+            case "comparisonCard": {
+              if (action.payload.updates.surface)
+                widget.backgroundColor = surface;
+              if (action.payload.updates.text) {
+                widget.leftTextColor = text;
+                widget.rightTextColor = text;
+              }
+              if (action.payload.updates.accent) {
+                widget.leftAccentColor = accent;
+                widget.rightAccentColor = accent;
+              }
+              if (action.payload.updates.font) {
+                widget.leftLabelFontFamily = themeFont;
+                widget.rightLabelFontFamily = themeFont;
+                widget.leftTitleFontFamily = themeFont;
+                widget.rightTitleFontFamily = themeFont;
+                widget.leftItemFontFamily = themeFont;
+                widget.rightItemFontFamily = themeFont;
+              }
+              if (action.payload.updates.cardBackgroundType)
+                widget.backgroundType = cardBackgroundType;
+              break;
+            }
+            case "pricingCard": {
+              if (action.payload.updates.surface)
+                widget.backgroundColor = surface;
+              if (action.payload.updates.text) {
+                widget.planNameColor = text;
+                widget.priceColor = text;
+                widget.periodColor = text;
+                widget.featureColor = text;
+              }
+              if (action.payload.updates.accent) {
+                widget.badgeColor = accent;
+                widget.buttonColor = accent;
+              }
+              if (action.payload.updates.font) {
+                widget.planNameFontFamily = themeFont;
+                widget.priceFontFamily = themeFont;
+                widget.periodFontFamily = themeFont;
+                widget.badgeFontFamily = themeFont;
+                widget.featureFontFamily = themeFont;
+                widget.buttonFontFamily = themeFont;
+              }
+              if (action.payload.updates.cardBackgroundType)
+                widget.backgroundType = cardBackgroundType;
+              break;
+            }
+            default:
+              break;
+          }
+        });
+      });
+    },
   },
 });
 
@@ -369,6 +571,7 @@ export const {
   reorderSlides,
   resetSlidesState,
   setSlideTheme,
+  updateGlobalTheme,
 } = slidesSlice.actions;
 
 export const selectSlidesState = (state: RootState) => state.slides;
