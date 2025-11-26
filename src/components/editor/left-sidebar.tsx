@@ -9,6 +9,8 @@ import {
   addSlide,
   removeSlide,
   reorderSlides,
+  type SlideModel,
+  type GlobalTheme,
 } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import { Plus, Trash2 } from "lucide-react";
@@ -30,7 +32,6 @@ import {
   DragEndEvent,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -41,12 +42,12 @@ import { createPortal } from "react-dom";
 
 // Sortable Slide Item Component
 interface SortableSlideItemProps {
-  slide: any;
+  slide: SlideModel;
   isActive: boolean;
   onClick: () => void;
   onRemove: (e: React.MouseEvent) => void;
   showDelete: boolean;
-  globalTheme: any;
+  globalTheme: GlobalTheme;
 }
 
 const SortableSlideItem = ({
@@ -234,10 +235,7 @@ export const LeftSidebar = () => {
           onClick={handleAddSlide}
           variant="primary"
           size={collapsed ? "default" : "lg"}
-          className={cn(
-            "w-full justify-center",
-            collapsed && "w-10 h-10 p-0"
-          )}
+          className={cn("w-full justify-center", collapsed && "w-10 h-10 p-0")}
         >
           <Plus className="w-4 h-4" />
           {!collapsed && (
