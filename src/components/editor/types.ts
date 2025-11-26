@@ -21,7 +21,13 @@ export type ImageCardPreset = {
   title: string;
   description: string;
   imageUrl?: string;
-  imageStyle?: "hero" | "background" | "backgroundGlass" | "left" | "right" | "bottom";
+  imageStyle?:
+    | "hero"
+    | "background"
+    | "backgroundGlass"
+    | "left"
+    | "right"
+    | "bottom";
 };
 
 export type LabelCardPreset = {
@@ -48,6 +54,13 @@ export type ComparisonCardPreset = {
   rightItems?: string[];
   leftAccentColor?: string;
   rightAccentColor?: string;
+};
+
+export type TitleCardPreset = {
+  id: string;
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
 };
 
 export type QuotePreset = {

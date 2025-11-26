@@ -269,6 +269,17 @@ const slidesSlice = createSlice({
               widget.backgroundType = cardBackgroundType;
               break;
             }
+            case "titleCard": {
+              widget.backgroundColor = theme.surface;
+              widget.eyebrowColor = theme.accent;
+              widget.titleColor = theme.text;
+              widget.subtitleColor = theme.text;
+              widget.eyebrowFontFamily = themeFont;
+              widget.titleFontFamily = themeFont;
+              widget.subtitleFontFamily = themeFont;
+              widget.backgroundType = cardBackgroundType;
+              break;
+            }
             case "list": {
               widget.backgroundColor = theme.surface;
               widget.itemColor = theme.text;

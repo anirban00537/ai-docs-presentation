@@ -18,6 +18,7 @@ export type { LabelCardWidget } from "./label-card/types";
 export type { ListWidget } from "./list-card/types";
 export type { QuoteWidget, QuoteStyle } from "./quote/types";
 export type { ComparisonCardWidget } from "./comparison-card/types";
+export type { TitleCardWidget } from "./title-card/types";
 
 export type SlideWidget =
   | TextWidget
@@ -25,6 +26,7 @@ export type SlideWidget =
   | import("./icon-card/types").IconCardWidget
   | import("./image-card/types").ImageCardWidget
   | import("./label-card/types").LabelCardWidget
+  | import("./title-card/types").TitleCardWidget
   | import("./list-card/types").ListWidget
   | import("./quote/types").QuoteWidget
   | import("./comparison-card/types").ComparisonCardWidget;
@@ -46,6 +48,8 @@ export type SlideWidgetUpdate = Partial<
     icon: string;
     label: string;
     title: string;
+    eyebrow: string;
+    subtitle: string;
     description: string;
     backgroundColor: string;
     borderColor: string;
@@ -53,6 +57,8 @@ export type SlideWidgetUpdate = Partial<
     iconColor: string;
     labelColor: string;
     labelTextColor: string;
+    eyebrowColor: string;
+    subtitleColor: string;
     titleColor: string;
     descriptionColor: string;
     iconSize: number;
@@ -60,6 +66,8 @@ export type SlideWidgetUpdate = Partial<
     titleFontFamily: string;
     descriptionFontFamily: string;
     labelFontFamily: string;
+    eyebrowFontFamily: string;
+    subtitleFontFamily: string;
     items: string[];
     listType: "bullet" | "numbered";
     itemColor: string;
@@ -105,6 +113,8 @@ export type SlideWidgetUpdate = Partial<
     rightLabelFontFamily: string;
     leftLabelFontSize: number;
     rightLabelFontSize: number;
+    eyebrowFontSize: number;
+    subtitleFontSize: number;
   }
 >;
 

@@ -13,6 +13,7 @@ import {
   Quote,
   Image as ImageIcon,
   PanelsLeftRight,
+  Sparkles,
 } from "lucide-react";
 import type {
   TextPreset,
@@ -23,6 +24,7 @@ import type {
   ListCardPreset,
   QuotePreset,
   ComparisonCardPreset,
+  TitleCardPreset,
 } from "@/components/editor/types";
 import { cn } from "@/lib/utils";
 
@@ -135,6 +137,15 @@ const comparisonCardPresets: ComparisonCardPreset[] = [
   },
 ];
 
+const titleCardPresets: TitleCardPreset[] = [
+  {
+    id: "default",
+    eyebrow: "Presentation",
+    title: "Title Card",
+    subtitle: "Add a short supporting subheading",
+  },
+];
+
 type InsertPanelContentProps = {
   onAddText: (preset: TextPreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
@@ -144,6 +155,7 @@ type InsertPanelContentProps = {
   onAddListCard?: (preset: ListCardPreset) => void;
   onAddQuote?: (preset: QuotePreset) => void;
   onAddComparisonCard?: (preset: ComparisonCardPreset) => void;
+  onAddTitleCard?: (preset: TitleCardPreset) => void;
   onClose: () => void;
 };
 
@@ -185,6 +197,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   onAddListCard,
   onAddQuote,
   onAddComparisonCard,
+  onAddTitleCard,
   onClose,
 }) => {
   const handleAddText = (preset: TextPreset) => {
@@ -219,8 +232,20 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
     onAddComparisonCard?.(preset);
   };
 
+  const handleAddTitleCard = (preset: TitleCardPreset) => {
+    onAddTitleCard?.(preset);
+  };
+
   // Combine all card presets into a single array for the grid
   const allCards = [
+    ...titleCardPresets.map((preset) => ({
+      type: "title" as const,
+      preset,
+      icon: <Sparkles className="h-4 w-4" />,
+      title: "Title Card",
+      description: "Large title block",
+      onClick: () => handleAddTitleCard(preset),
+    })),
     ...featureCardPresets.map((preset) => ({
       type: "feature" as const,
       preset,
@@ -339,7 +364,6 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
           ))}
         </div>
       </div>
-
     </div>
   );
 };
