@@ -185,6 +185,19 @@ const slidesSlice = createSlice({
       if (!slide) return;
       Object.assign(slide, action.payload.updates);
     },
+    reorderSlides(
+      state,
+      action: PayloadAction<{ activeId: string; overId: string }>
+    ) {
+      const { activeId, overId } = action.payload;
+      const oldIndex = state.slides.findIndex((slide) => slide.id === activeId);
+      const newIndex = state.slides.findIndex((slide) => slide.id === overId);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const [movedSlide] = state.slides.splice(oldIndex, 1);
+        state.slides.splice(newIndex, 0, movedSlide);
+      }
+    },
     resetSlidesState() {
       return initialState;
     },
@@ -353,6 +366,7 @@ export const {
   removeWidget,
   replaceWidgets,
   updateSlide,
+  reorderSlides,
   resetSlidesState,
   setSlideTheme,
 } = slidesSlice.actions;
