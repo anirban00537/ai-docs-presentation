@@ -54,7 +54,7 @@ export const useQuoteCreation = () => {
         quoteColor: globalTheme?.accent ?? "#0f172a",
         attributionColor: globalTheme?.text ?? "#64748b",
         textAlign: "center", // Center by default for better look with quotes
-        backgroundType: "glass", // Default to glassmorphism
+        backgroundType: globalTheme?.cardBackgroundType ?? "glass",
         quoteFontSize: 30,
         attributionFontSize: 18,
         quoteFontFamily:

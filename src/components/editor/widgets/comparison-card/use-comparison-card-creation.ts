@@ -48,7 +48,7 @@ export const useComparisonCardCreation = () => {
         width,
         height,
         backgroundColor: globalTheme?.surface ?? "rgba(15,23,42,0.05)",
-        backgroundType: "glass",
+        backgroundType: globalTheme?.cardBackgroundType ?? "glass",
         dividerColor: "rgba(15,23,42,0.12)",
         textAlign: "left",
         leftLabel: preset.leftLabel ?? "Plan A",

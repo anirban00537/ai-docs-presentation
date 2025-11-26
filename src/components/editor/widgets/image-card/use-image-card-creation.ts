@@ -62,7 +62,7 @@ export const useImageCardCreation = () => {
         descriptionFontFamily:
           globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
         textAlign: "left",
-        backgroundType: "glass",
+        backgroundType: globalTheme?.cardBackgroundType ?? "glass",
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));

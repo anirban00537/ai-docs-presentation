@@ -67,7 +67,7 @@ export const useLabelCardCreation = () => {
         descriptionFontFamily:
           globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
         textAlign: "left",
-        backgroundType: "glass", // Default to glassmorphism
+        backgroundType: globalTheme?.cardBackgroundType ?? "glass",
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));

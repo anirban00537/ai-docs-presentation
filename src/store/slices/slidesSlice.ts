@@ -4,7 +4,7 @@ import type {
   SlideWidgetUpdate,
 } from "@/components/editor/widgets/types";
 import type { RootState } from "@/store";
-import { SLIDE_THEMES } from "@/lib/slide-themes";
+import { SLIDE_THEMES, type WidgetBackgroundType } from "@/lib/slide-themes";
 
 export type SlideModel = {
   id: string;
@@ -23,6 +23,7 @@ export type GlobalTheme = {
   text: string;
   accent: string;
   font: string;
+  cardBackgroundType: WidgetBackgroundType;
 };
 
 type SlidesState = {
@@ -54,6 +55,7 @@ const initialState: SlidesState = {
     text: defaultTheme.text,
     accent: defaultTheme.accent,
     font: defaultTheme.font,
+    cardBackgroundType: defaultTheme.cardBackgroundType,
   },
 };
 
@@ -200,6 +202,7 @@ const slidesSlice = createSlice({
         text: theme.text,
         accent: theme.accent,
         font: theme.font,
+        cardBackgroundType: theme.cardBackgroundType,
       };
 
       // Apply theme to all slides and widgets
@@ -213,6 +216,7 @@ const slidesSlice = createSlice({
 
         slide.widgets.forEach((widget) => {
           const themeFont = theme.font;
+          const cardBackgroundType = theme.cardBackgroundType;
 
           switch (widget.type) {
             case "text": {
@@ -228,6 +232,7 @@ const slidesSlice = createSlice({
               widget.numberFontFamily = themeFont;
               widget.titleFontFamily = themeFont;
               widget.descriptionFontFamily = themeFont;
+              widget.backgroundType = cardBackgroundType;
               break;
             }
             case "iconCard": {
@@ -237,6 +242,7 @@ const slidesSlice = createSlice({
               widget.descriptionColor = theme.text;
               widget.titleFontFamily = themeFont;
               widget.descriptionFontFamily = themeFont;
+              widget.backgroundType = cardBackgroundType;
               break;
             }
             case "imageCard": {
@@ -245,6 +251,7 @@ const slidesSlice = createSlice({
               widget.descriptionColor = theme.text;
               widget.titleFontFamily = themeFont;
               widget.descriptionFontFamily = themeFont;
+              widget.backgroundType = cardBackgroundType;
               break;
             }
             case "labelCard": {
@@ -256,6 +263,7 @@ const slidesSlice = createSlice({
               widget.labelFontFamily = themeFont;
               widget.titleFontFamily = themeFont;
               widget.descriptionFontFamily = themeFont;
+              widget.backgroundType = cardBackgroundType;
               break;
             }
             case "list": {
@@ -265,6 +273,7 @@ const slidesSlice = createSlice({
               widget.titleColor = theme.text;
               widget.titleFontFamily = themeFont;
               widget.itemFontFamily = themeFont;
+              widget.backgroundType = cardBackgroundType;
               break;
             }
             case "quote": {
@@ -274,6 +283,7 @@ const slidesSlice = createSlice({
               widget.iconColor = theme.accent;
               widget.quoteFontFamily = themeFont;
               widget.attributionFontFamily = themeFont;
+              widget.backgroundType = cardBackgroundType;
               break;
             }
             case "comparisonCard": {
@@ -289,6 +299,7 @@ const slidesSlice = createSlice({
               widget.rightTitleFontFamily = themeFont;
               widget.leftItemFontFamily = themeFont;
               widget.rightItemFontFamily = themeFont;
+              widget.backgroundType = cardBackgroundType;
               break;
             }
             default:
