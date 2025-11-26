@@ -287,7 +287,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
           />
 
           {/* List items */}
-          <div className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto">
+          <div className="flex flex-col gap-2.5">
             {localItems.map((item, index) => (
               <div
                 key={index}

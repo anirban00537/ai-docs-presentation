@@ -9,6 +9,7 @@ import { useImageCardCreation } from "@/components/editor/widgets/image-card/use
 import { useNumberCardCreation } from "@/components/editor/widgets/number-card/use-number-card-creation";
 import { useQuoteCreation } from "@/components/editor/widgets/quote/use-quote-creation";
 import { useComparisonCardCreation } from "@/components/editor/widgets/comparison-card/use-comparison-card-creation";
+import { usePricingCardCreation } from "@/components/editor/widgets/pricing-card/use-pricing-card-creation";
 import { useTitleCardCreation } from "@/components/editor/widgets/title-card/use-title-card-creation";
 import {
   TEXT_PRESET_CONFIG,
@@ -87,6 +88,7 @@ export const useWidgetCreation = () => {
   const { handleAddQuote } = useQuoteCreation();
   const { handleAddComparisonCard } = useComparisonCardCreation();
   const { handleAddTitleCard } = useTitleCardCreation();
+  const { handleAddPricingCard } = usePricingCardCreation();
 
   return {
     handleAddText,
@@ -98,5 +100,6 @@ export const useWidgetCreation = () => {
     handleAddQuote,
     handleAddComparisonCard,
     handleAddTitleCard,
+    handleAddPricingCard,
   };
 };

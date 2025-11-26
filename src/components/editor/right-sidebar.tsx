@@ -39,6 +39,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
     handleAddQuote,
     handleAddComparisonCard,
     handleAddTitleCard,
+    handleAddPricingCard,
   } = useWidgetCreation();
   if (!panel) return null;
 
@@ -94,6 +95,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             onAddQuote={handleAddQuote}
             onAddComparisonCard={handleAddComparisonCard}
             onAddTitleCard={handleAddTitleCard}
+            onAddPricingCard={handleAddPricingCard}
             onClose={onClose}
           />
         )}

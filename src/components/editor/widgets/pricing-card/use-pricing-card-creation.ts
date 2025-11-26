@@ -1,0 +1,91 @@
+import { useCallback } from "react";
+import { nanoid } from "@reduxjs/toolkit";
+import type { PricingCardPreset } from "@/components/editor/types";
+import type { PricingCardWidget } from "./types";
+import { SLIDE_DIMENSIONS } from "@/lib/constants/widget-presets";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  addWidget,
+  selectActiveSlideId,
+  selectGlobalTheme,
+} from "@/store/slices/slidesSlice";
+import {
+  selectWidget as selectWidgetAction,
+  stopWidgetEditing as stopWidgetEditingAction,
+} from "@/store/slices/editorUiSlice";
+
+export const usePricingCardCreation = () => {
+  const dispatch = useAppDispatch();
+  const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
+
+  const ensureSlideId = useCallback(() => {
+    if (!activeSlideId) {
+      return null;
+    }
+    return activeSlideId;
+  }, [activeSlideId]);
+
+  const handleAddPricingCard = useCallback(
+    (preset: PricingCardPreset) => {
+      const slideId = ensureSlideId();
+      if (!slideId) return;
+      const id = `pricing-card-${nanoid(8)}`;
+      const width = 380;
+      const height = 520;
+      const originX = Math.max(
+        60,
+        Math.round((SLIDE_DIMENSIONS.width - width) / 2)
+      );
+      const originY = Math.round((SLIDE_DIMENSIONS.height - height) / 2);
+
+      const newWidget: PricingCardWidget = {
+        id,
+        type: "pricingCard",
+        planName: preset.planName || "Plan Name",
+        price: preset.price || "$0",
+        period: preset.period || "/mo",
+        badge: preset.badge || "",
+        features: preset.features && preset.features.length > 0 ? preset.features : ["Feature one", "Feature two", "Feature three"],
+        buttonText: preset.buttonText || "Get Started",
+        x: originX,
+        y: originY,
+        width,
+        height,
+        backgroundColor: globalTheme?.surface ?? "#ffffff",
+        planNameColor: globalTheme?.text ?? "#0f172a",
+        priceColor: globalTheme?.text ?? "#0f172a",
+        periodColor: globalTheme?.text ?? "#64748b",
+        badgeColor: globalTheme?.accent ?? "#2563eb",
+        badgeTextColor: "#ffffff",
+        featureColor: globalTheme?.text ?? "#0f172a",
+        buttonColor: globalTheme?.accent ?? "#2563eb",
+        buttonTextColor: "#ffffff",
+        planNameFontSize: 28,
+        priceFontSize: 48,
+        periodFontSize: 18,
+        badgeFontSize: 12,
+        featureFontSize: 16,
+        buttonFontSize: 16,
+        planNameFontFamily: globalTheme?.font ?? "var(--font-montserrat), Montserrat, sans-serif",
+        priceFontFamily: globalTheme?.font ?? "var(--font-montserrat), Montserrat, sans-serif",
+        periodFontFamily: globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        badgeFontFamily: globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        featureFontFamily: globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        buttonFontFamily: globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        textAlign: "center",
+        backgroundType: globalTheme?.cardBackgroundType ?? "glass",
+      };
+
+      dispatch(addWidget({ widget: newWidget, slideId }));
+      dispatch(selectWidgetAction(newWidget.id));
+      dispatch(stopWidgetEditingAction());
+    },
+    [dispatch, ensureSlideId, globalTheme]
+  );
+
+  return {
+    handleAddPricingCard,
+  };
+};
+

@@ -316,6 +316,25 @@ const slidesSlice = createSlice({
               widget.backgroundType = cardBackgroundType;
               break;
             }
+            case "pricingCard": {
+              widget.backgroundColor = theme.surface;
+              widget.planNameColor = theme.text;
+              widget.priceColor = theme.text;
+              widget.periodColor = theme.text;
+              widget.badgeColor = theme.accent;
+              widget.badgeTextColor = "#ffffff";
+              widget.featureColor = theme.text;
+              widget.buttonColor = theme.accent;
+              widget.buttonTextColor = "#ffffff";
+              widget.planNameFontFamily = themeFont;
+              widget.priceFontFamily = themeFont;
+              widget.periodFontFamily = themeFont;
+              widget.badgeFontFamily = themeFont;
+              widget.featureFontFamily = themeFont;
+              widget.buttonFontFamily = themeFont;
+              widget.backgroundType = cardBackgroundType;
+              break;
+            }
             default:
               break;
           }

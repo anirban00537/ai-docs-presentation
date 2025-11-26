@@ -19,6 +19,7 @@ export type { ListWidget } from "./list-card/types";
 export type { QuoteWidget, QuoteStyle } from "./quote/types";
 export type { ComparisonCardWidget } from "./comparison-card/types";
 export type { TitleCardWidget } from "./title-card/types";
+export type { PricingCardWidget } from "./pricing-card/types";
 
 export type SlideWidget =
   | TextWidget
@@ -29,7 +30,8 @@ export type SlideWidget =
   | import("./title-card/types").TitleCardWidget
   | import("./list-card/types").ListWidget
   | import("./quote/types").QuoteWidget
-  | import("./comparison-card/types").ComparisonCardWidget;
+  | import("./comparison-card/types").ComparisonCardWidget
+  | import("./pricing-card/types").PricingCardWidget;
 
 export type SlideWidgetUpdate = Partial<
   Omit<WidgetCommon, "id"> & {
@@ -115,6 +117,32 @@ export type SlideWidgetUpdate = Partial<
     rightLabelFontSize: number;
     eyebrowFontSize: number;
     subtitleFontSize: number;
+    planName: string;
+    price: string;
+    period: string;
+    badge: string;
+    features: string[];
+    buttonText: string;
+    planNameColor: string;
+    priceColor: string;
+    periodColor: string;
+    badgeColor: string;
+    badgeTextColor: string;
+    featureColor: string;
+    buttonColor: string;
+    buttonTextColor: string;
+    planNameFontFamily: string;
+    planNameFontSize: number;
+    priceFontFamily: string;
+    priceFontSize: number;
+    periodFontFamily: string;
+    periodFontSize: number;
+    badgeFontFamily: string;
+    badgeFontSize: number;
+    featureFontFamily: string;
+    featureFontSize: number;
+    buttonFontFamily: string;
+    buttonFontSize: number;
   }
 >;
 

@@ -70,3 +70,13 @@ export type QuotePreset = {
   icon?: string;
   style?: "minimal" | "bold" | "bordered";
 };
+
+export type PricingCardPreset = {
+  id: string;
+  planName?: string;
+  price?: string;
+  period?: string;
+  badge?: string;
+  features?: string[];
+  buttonText?: string;
+};

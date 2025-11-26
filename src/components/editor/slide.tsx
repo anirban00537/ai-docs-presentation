@@ -10,6 +10,7 @@ import { ListCardWidgetNode } from "@/components/editor/widgets/list-card";
 import { QuoteWidgetNode } from "@/components/editor/widgets/quote";
 import { ComparisonCardWidgetNode } from "@/components/editor/widgets/comparison-card";
 import { TitleCardWidgetNode } from "@/components/editor/widgets/title-card";
+import { PricingCardWidgetNode } from "@/components/editor/widgets/pricing-card";
 import type {
   SlideWidget,
   SlideWidgetUpdate,
@@ -24,6 +25,7 @@ import type { ListWidget } from "@/components/editor/widgets/list-card";
 import type { QuoteWidget } from "@/components/editor/widgets/quote/types";
 import type { ComparisonCardWidget } from "@/components/editor/widgets/comparison-card/types";
 import type { TitleCardWidget } from "@/components/editor/widgets/title-card/types";
+import type { PricingCardWidget } from "@/components/editor/widgets/pricing-card/types";
 import type { GlobalTheme, SlideModel } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import {
@@ -479,6 +481,31 @@ const Slide: React.FC<SlideProps> = ({
                       <QuoteWidgetNode
                         key={widget.id}
                         widget={effective as QuoteWidget}
+                        isSelected={isSelected}
+                        isEditing={isEditing}
+                        baseZIndex={baseZIndex}
+                        onPointerDown={(e) =>
+                          handleDragStart(
+                            widget,
+                            effective,
+                            isSelected,
+                            isEditing,
+                            e
+                          )
+                        }
+                        getResizePointerDown={(handle) => (e) =>
+                          handleResizeStart(widget, effective, handle, e)}
+                        viewport={viewport}
+                        containerRef={canvasContainerRef}
+                      />
+                    );
+                  }
+
+                  if (effective.type === "pricingCard") {
+                    return (
+                      <PricingCardWidgetNode
+                        key={widget.id}
+                        widget={effective as PricingCardWidget}
                         isSelected={isSelected}
                         isEditing={isEditing}
                         baseZIndex={baseZIndex}

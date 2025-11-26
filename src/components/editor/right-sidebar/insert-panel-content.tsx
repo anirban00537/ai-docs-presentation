@@ -14,6 +14,7 @@ import {
   Image as ImageIcon,
   PanelsLeftRight,
   Sparkles,
+  DollarSign,
 } from "lucide-react";
 import type {
   TextPreset,
@@ -25,6 +26,7 @@ import type {
   QuotePreset,
   ComparisonCardPreset,
   TitleCardPreset,
+  PricingCardPreset,
 } from "@/components/editor/types";
 import { cn } from "@/lib/utils";
 
@@ -146,6 +148,26 @@ const titleCardPresets: TitleCardPreset[] = [
   },
 ];
 
+const pricingCardPresets: PricingCardPreset[] = [
+  {
+    id: "default",
+    planName: "Starter",
+    price: "$29",
+    period: "/mo",
+    badge: "Popular",
+    features: ["Up to 5 projects", "10GB storage", "Email support"],
+    buttonText: "Get Started",
+  },
+  {
+    id: "pro",
+    planName: "Professional",
+    price: "$99",
+    period: "/mo",
+    features: ["Unlimited projects", "100GB storage", "Priority support", "Advanced analytics"],
+    buttonText: "Get Started",
+  },
+];
+
 type InsertPanelContentProps = {
   onAddText: (preset: TextPreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
@@ -156,6 +178,7 @@ type InsertPanelContentProps = {
   onAddQuote?: (preset: QuotePreset) => void;
   onAddComparisonCard?: (preset: ComparisonCardPreset) => void;
   onAddTitleCard?: (preset: TitleCardPreset) => void;
+  onAddPricingCard?: (preset: PricingCardPreset) => void;
   onClose: () => void;
 };
 
@@ -198,6 +221,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   onAddQuote,
   onAddComparisonCard,
   onAddTitleCard,
+  onAddPricingCard,
   onClose,
 }) => {
   const handleAddText = (preset: TextPreset) => {
@@ -234,6 +258,10 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
 
   const handleAddTitleCard = (preset: TitleCardPreset) => {
     onAddTitleCard?.(preset);
+  };
+
+  const handleAddPricingCard = (preset: PricingCardPreset) => {
+    onAddPricingCard?.(preset);
   };
 
   // Combine all card presets into a single array for the grid
@@ -306,6 +334,14 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
       title: "Comparison Card",
       description: "Plan A vs Plan B",
       onClick: () => handleAddComparisonCard(preset),
+    })),
+    ...pricingCardPresets.map((preset) => ({
+      type: "pricing" as const,
+      preset,
+      icon: <DollarSign className="h-4 w-4" />,
+      title: "Pricing Card",
+      description: preset.planName || "Pricing plan",
+      onClick: () => handleAddPricingCard(preset),
     })),
   ];
 
