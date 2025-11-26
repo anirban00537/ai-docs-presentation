@@ -22,7 +22,7 @@ export type GlobalTheme = {
   surface: string;
   text: string;
   accent: string;
-  fonts: (typeof SLIDE_THEMES)[number]["fonts"];
+  font: string;
 };
 
 type SlidesState = {
@@ -53,7 +53,7 @@ const initialState: SlidesState = {
     surface: defaultTheme.surface,
     text: defaultTheme.text,
     accent: defaultTheme.accent,
-    fonts: { ...defaultTheme.fonts },
+    font: defaultTheme.font,
   },
 };
 
@@ -199,7 +199,7 @@ const slidesSlice = createSlice({
         surface: theme.surface,
         text: theme.text,
         accent: theme.accent,
-        fonts: { ...theme.fonts },
+        font: theme.font,
       };
 
       // Apply theme to all slides and widgets
@@ -212,25 +212,12 @@ const slidesSlice = createSlice({
         if (!slide.widgets) return;
 
         slide.widgets.forEach((widget) => {
-          const headingFont = theme.fonts.heading;
-          const bodyFont = theme.fonts.body;
-          const accentFont = theme.fonts.accent;
-
-          const applyTextFont = (fontSize?: number) => {
-            if (!fontSize) return bodyFont;
-            if (fontSize >= 96) {
-              return headingFont;
-            }
-            if (fontSize >= 48) {
-              return headingFont;
-            }
-            return bodyFont;
-          };
+          const themeFont = theme.font;
 
           switch (widget.type) {
             case "text": {
               widget.color = theme.text;
-              widget.fontFamily = applyTextFont(widget.fontSize);
+              widget.fontFamily = themeFont;
               break;
             }
             case "numberCard": {
@@ -238,9 +225,9 @@ const slidesSlice = createSlice({
               widget.numberColor = theme.accent;
               widget.titleColor = theme.text;
               widget.descriptionColor = theme.text;
-              widget.numberFontFamily = headingFont;
-              widget.titleFontFamily = headingFont;
-              widget.descriptionFontFamily = bodyFont;
+              widget.numberFontFamily = themeFont;
+              widget.titleFontFamily = themeFont;
+              widget.descriptionFontFamily = themeFont;
               break;
             }
             case "iconCard": {
@@ -248,16 +235,16 @@ const slidesSlice = createSlice({
               widget.iconColor = theme.accent;
               widget.titleColor = theme.text;
               widget.descriptionColor = theme.text;
-              widget.titleFontFamily = headingFont;
-              widget.descriptionFontFamily = bodyFont;
+              widget.titleFontFamily = themeFont;
+              widget.descriptionFontFamily = themeFont;
               break;
             }
             case "imageCard": {
               widget.backgroundColor = theme.surface;
               widget.titleColor = theme.text;
               widget.descriptionColor = theme.text;
-              widget.titleFontFamily = headingFont;
-              widget.descriptionFontFamily = bodyFont;
+              widget.titleFontFamily = themeFont;
+              widget.descriptionFontFamily = themeFont;
               break;
             }
             case "labelCard": {
@@ -266,9 +253,9 @@ const slidesSlice = createSlice({
               widget.labelTextColor = "#ffffff";
               widget.titleColor = theme.text;
               widget.descriptionColor = theme.text;
-              widget.labelFontFamily = accentFont;
-              widget.titleFontFamily = headingFont;
-              widget.descriptionFontFamily = bodyFont;
+              widget.labelFontFamily = themeFont;
+              widget.titleFontFamily = themeFont;
+              widget.descriptionFontFamily = themeFont;
               break;
             }
             case "list": {
@@ -276,8 +263,8 @@ const slidesSlice = createSlice({
               widget.itemColor = theme.text;
               widget.bulletColor = theme.accent;
               widget.titleColor = theme.text;
-              widget.titleFontFamily = headingFont;
-              widget.itemFontFamily = bodyFont;
+              widget.titleFontFamily = themeFont;
+              widget.itemFontFamily = themeFont;
               break;
             }
             case "quote": {
@@ -285,8 +272,8 @@ const slidesSlice = createSlice({
               widget.quoteColor = theme.text;
               widget.attributionColor = theme.text;
               widget.iconColor = theme.accent;
-              widget.quoteFontFamily = headingFont;
-              widget.attributionFontFamily = accentFont;
+              widget.quoteFontFamily = themeFont;
+              widget.attributionFontFamily = themeFont;
               break;
             }
             case "comparisonCard": {
@@ -296,12 +283,12 @@ const slidesSlice = createSlice({
               widget.leftAccentColor = theme.accent;
               widget.rightAccentColor = theme.accent;
               widget.dividerColor = "rgba(15,23,42,0.12)";
-              widget.leftLabelFontFamily = accentFont;
-              widget.rightLabelFontFamily = accentFont;
-              widget.leftTitleFontFamily = headingFont;
-              widget.rightTitleFontFamily = headingFont;
-              widget.leftItemFontFamily = bodyFont;
-              widget.rightItemFontFamily = bodyFont;
+              widget.leftLabelFontFamily = themeFont;
+              widget.rightLabelFontFamily = themeFont;
+              widget.leftTitleFontFamily = themeFont;
+              widget.rightTitleFontFamily = themeFont;
+              widget.leftItemFontFamily = themeFont;
+              widget.rightItemFontFamily = themeFont;
               break;
             }
             default:

@@ -59,13 +59,13 @@ export const useLabelCardCreation = () => {
         titleFontSize: 40,
         descriptionFontSize: 20,
         labelFontFamily:
-          globalTheme?.fonts?.accent ??
+          globalTheme?.font ??
           "var(--font-great-vibes), 'Great Vibes', cursive",
         titleFontFamily:
-          globalTheme?.fonts?.heading ??
+          globalTheme?.font ??
           "var(--font-playfair), 'Playfair Display', serif",
         descriptionFontFamily:
-          globalTheme?.fonts?.body ?? "var(--font-inter), Inter, sans-serif",
+          globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
         textAlign: "left",
         backgroundType: "glass", // Default to glassmorphism
       };

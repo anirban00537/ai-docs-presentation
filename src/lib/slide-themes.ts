@@ -1,8 +1,4 @@
-type SlideThemeFonts = {
-  heading: string;
-  body: string;
-  accent: string;
-};
+import { FONT_STACKS } from "@/lib/fonts";
 
 export type SlideTheme = {
   id: string;
@@ -13,28 +9,8 @@ export type SlideTheme = {
   surface: string;
   text: string;
   accent: string;
-  fonts: SlideThemeFonts;
+  font: string;
 };
-
-const FONT_STACKS = {
-  poppins: "var(--font-poppins), Poppins, sans-serif",
-  inter: "var(--font-inter), Inter, sans-serif",
-  roboto: "var(--font-roboto), Roboto, sans-serif",
-  openSans: "var(--font-open-sans), 'Open Sans', sans-serif",
-  montserrat: "var(--font-montserrat), Montserrat, sans-serif",
-  lato: "var(--font-lato), Lato, sans-serif",
-  playfair: "var(--font-playfair), 'Playfair Display', serif",
-  merriweather: "var(--font-merriweather), Merriweather, serif",
-  raleway: "var(--font-raleway), Raleway, sans-serif",
-  ubuntu: "var(--font-ubuntu), Ubuntu, sans-serif",
-  greatVibes: "var(--font-great-vibes), 'Great Vibes', cursive",
-  dancingScript:
-    "var(--font-dancing-script), 'Dancing Script', cursive",
-  caveat: "var(--font-caveat), Caveat, cursive",
-  abrilFatface:
-    "var(--font-abril-fatface), 'Abril Fatface', serif",
-  lora: "var(--font-lora), Lora, serif",
-} as const;
 
 export const SLIDE_THEMES: SlideTheme[] = [
   {
@@ -45,11 +21,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#111829",
     text: "#dfe7ff",
     accent: "#3b82f6",
-    fonts: {
-      heading: FONT_STACKS.montserrat,
-      body: FONT_STACKS.inter,
-      accent: FONT_STACKS.greatVibes,
-    },
+    font: FONT_STACKS.montserrat,
   },
   {
     id: "midnight",
@@ -59,11 +31,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#111827",
     text: "#e5e7eb",
     accent: "#06b6d4",
-    fonts: {
-      heading: FONT_STACKS.ubuntu,
-      body: FONT_STACKS.roboto,
-      accent: FONT_STACKS.caveat,
-    },
+    font: FONT_STACKS.ubuntu,
   },
   {
     id: "lumen",
@@ -73,11 +41,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#161b2a",
     text: "#f5f5ff",
     accent: "#f472b6",
-    fonts: {
-      heading: FONT_STACKS.playfair,
-      body: FONT_STACKS.lato,
-      accent: FONT_STACKS.dancingScript,
-    },
+    font: FONT_STACKS.playfair,
   },
   {
     id: "forest",
@@ -87,11 +51,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#0f241f",
     text: "#d8f7ea",
     accent: "#22c55e",
-    fonts: {
-      heading: FONT_STACKS.lora,
-      body: FONT_STACKS.openSans,
-      accent: FONT_STACKS.caveat,
-    },
+    font: FONT_STACKS.lora,
   },
   {
     id: "abyss",
@@ -101,11 +61,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#0c1e2f",
     text: "#e0f2fe",
     accent: "#38bdf8",
-    fonts: {
-      heading: FONT_STACKS.merriweather,
-      body: FONT_STACKS.ubuntu,
-      accent: FONT_STACKS.greatVibes,
-    },
+    font: FONT_STACKS.merriweather,
   },
   {
     id: "ember",
@@ -115,11 +71,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#1f1410",
     text: "#f8e7dd",
     accent: "#fb923c",
-    fonts: {
-      heading: FONT_STACKS.abrilFatface,
-      body: FONT_STACKS.raleway,
-      accent: FONT_STACKS.dancingScript,
-    },
+    font: FONT_STACKS.abrilFatface,
   },
   {
     id: "graphite",
@@ -129,11 +81,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#161a24",
     text: "#f9fafb",
     accent: "#8b96ac",
-    fonts: {
-      heading: FONT_STACKS.montserrat,
-      body: FONT_STACKS.roboto,
-      accent: FONT_STACKS.playfair,
-    },
+    font: FONT_STACKS.montserrat,
   },
   {
     id: "modern-light",
@@ -143,11 +91,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#ffffff",
     text: "#0f172a",
     accent: "#2563eb",
-    fonts: {
-      heading: FONT_STACKS.poppins,
-      body: FONT_STACKS.inter,
-      accent: FONT_STACKS.openSans,
-    },
+    font: FONT_STACKS.poppins,
   },
   {
     id: "sunset",
@@ -157,11 +101,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#fff9f5",
     text: "#1d1a2b",
     accent: "#f97316",
-    fonts: {
-      heading: FONT_STACKS.playfair,
-      body: FONT_STACKS.lora,
-      accent: FONT_STACKS.caveat,
-    },
+    font: FONT_STACKS.playfair,
   },
   {
     id: "lagoon",
@@ -171,11 +111,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#f0fbff",
     text: "#05304f",
     accent: "#0ea5e9",
-    fonts: {
-      heading: FONT_STACKS.raleway,
-      body: FONT_STACKS.openSans,
-      accent: FONT_STACKS.dancingScript,
-    },
+    font: FONT_STACKS.raleway,
   },
   {
     id: "lavender",
@@ -185,11 +121,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#ffffff",
     text: "#1e1b4b",
     accent: "#8b5cf6",
-    fonts: {
-      heading: FONT_STACKS.poppins,
-      body: FONT_STACKS.roboto,
-      accent: FONT_STACKS.greatVibes,
-    },
+    font: FONT_STACKS.poppins,
   },
   {
     id: "honey",
@@ -199,11 +131,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#fffaf1",
     text: "#3b2412",
     accent: "#fbbf24",
-    fonts: {
-      heading: FONT_STACKS.playfair,
-      body: FONT_STACKS.lato,
-      accent: FONT_STACKS.abrilFatface,
-    },
+    font: FONT_STACKS.playfair,
   },
   {
     id: "rose",
@@ -213,11 +141,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#fff7f8",
     text: "#3b1421",
     accent: "#fb7185",
-    fonts: {
-      heading: FONT_STACKS.lora,
-      body: FONT_STACKS.openSans,
-      accent: FONT_STACKS.greatVibes,
-    },
+    font: FONT_STACKS.lora,
   },
   {
     id: "mint",
@@ -227,11 +151,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#fbfffd",
     text: "#065f46",
     accent: "#10b981",
-    fonts: {
-      heading: FONT_STACKS.ubuntu,
-      body: FONT_STACKS.raleway,
-      accent: FONT_STACKS.caveat,
-    },
+    font: FONT_STACKS.ubuntu,
   },
   {
     id: "skyline",
@@ -241,10 +161,6 @@ export const SLIDE_THEMES: SlideTheme[] = [
     surface: "#ffffff",
     text: "#0b1629",
     accent: "#3b82f6",
-    fonts: {
-      heading: FONT_STACKS.montserrat,
-      body: FONT_STACKS.inter,
-      accent: FONT_STACKS.openSans,
-    },
+    font: FONT_STACKS.montserrat,
   },
 ];

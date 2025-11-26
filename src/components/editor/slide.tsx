@@ -203,8 +203,7 @@ const Slide: React.FC<SlideProps> = ({
                   height: `${SLIDE_HEIGHT}px`,
                   position: "relative",
                   fontFamily:
-                    theme?.fonts?.body ??
-                    "var(--font-poppins), Poppins, sans-serif",
+                    theme?.font ?? "var(--font-poppins), Poppins, sans-serif",
                   ...(slide.backgroundImage
                     ? {
                         backgroundImage: `url(${slide.backgroundImage})`,

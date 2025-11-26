@@ -58,10 +58,10 @@ export const useQuoteCreation = () => {
         quoteFontSize: 30,
         attributionFontSize: 18,
         quoteFontFamily:
-          globalTheme?.fonts?.heading ??
+          globalTheme?.font ??
           "var(--font-playfair), 'Playfair Display', serif",
         attributionFontFamily:
-          globalTheme?.fonts?.accent ??
+          globalTheme?.font ??
           "var(--font-great-vibes), 'Great Vibes', cursive",
       };
 
