@@ -34,6 +34,7 @@ export type SlideWidgetUpdate = Partial<
     text: string;
     fontSize: number;
     fontWeight: number;
+    fontFamily: string;
     color: string;
     align: "left" | "center" | "right";
     fill: string;

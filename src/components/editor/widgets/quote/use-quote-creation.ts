@@ -57,6 +57,12 @@ export const useQuoteCreation = () => {
         backgroundType: "glass", // Default to glassmorphism
         quoteFontSize: 30,
         attributionFontSize: 18,
+        quoteFontFamily:
+          globalTheme?.fonts?.heading ??
+          "var(--font-playfair), 'Playfair Display', serif",
+        attributionFontFamily:
+          globalTheme?.fonts?.accent ??
+          "var(--font-great-vibes), 'Great Vibes', cursive",
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));

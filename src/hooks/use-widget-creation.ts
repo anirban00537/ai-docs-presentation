@@ -46,6 +46,18 @@ export const useWidgetCreation = () => {
         preset.id === "heading" ? 140 : preset.id === "subheading" ? 240 : 340;
       const id = `text-${nanoid(8)}`;
 
+      const themeFonts = globalTheme?.fonts;
+      const getThemeFontForPreset = () => {
+        if (!themeFonts) return null;
+        switch (preset.id) {
+          case "heading":
+          case "subheading":
+            return themeFonts.heading;
+          default:
+            return themeFonts.body;
+        }
+      };
+
       const newWidget: TextWidget = {
         id,
         type: "text",
@@ -56,6 +68,7 @@ export const useWidgetCreation = () => {
         height: config.height,
         fontSize: config.fontSize,
         fontWeight: config.fontWeight,
+        fontFamily: getThemeFontForPreset() ?? config.fontFamily,
         // Seed with current theme text color so new text matches theme
         color: globalTheme?.text ?? "#0f172a",
         align: config.align,

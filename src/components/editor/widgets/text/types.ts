@@ -5,6 +5,7 @@ export type TextWidget = WidgetCommon & {
   text: string;
   fontSize: number;
   fontWeight: number;
+  fontFamily?: string;
   color: string;
   align: "left" | "center" | "right";
   lineHeight: number;

@@ -57,6 +57,15 @@ export const useNumberCardCreation = () => {
         numberFontSize: 56,
         titleFontSize: 24,
         descriptionFontSize: 18,
+        numberFontFamily:
+          globalTheme?.fonts?.heading ??
+          "var(--font-montserrat), Montserrat, sans-serif",
+        titleFontFamily:
+          globalTheme?.fonts?.heading ??
+          "var(--font-montserrat), Montserrat, sans-serif",
+        descriptionFontFamily:
+          globalTheme?.fonts?.body ??
+          "var(--font-inter), Inter, sans-serif",
         textAlign: "left",
         backgroundType: "glass", // Default to glassmorphism
       };

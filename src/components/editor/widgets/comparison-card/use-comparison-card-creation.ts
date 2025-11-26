@@ -72,12 +72,24 @@ export const useComparisonCardCreation = () => {
         rightAccentColor: preset.rightAccentColor ?? "#f97316",
         leftTextColor: globalTheme?.text ?? "#0f172a",
         rightTextColor: globalTheme?.text ?? "#0f172a",
-        leftLabelFontFamily: "var(--font-poppins)",
-        rightLabelFontFamily: "var(--font-poppins)",
-        leftTitleFontFamily: "var(--font-poppins)",
-        rightTitleFontFamily: "var(--font-poppins)",
-        leftItemFontFamily: "var(--font-poppins)",
-        rightItemFontFamily: "var(--font-poppins)",
+        leftLabelFontFamily:
+          globalTheme?.fonts?.accent ??
+          "var(--font-great-vibes), 'Great Vibes', cursive",
+        rightLabelFontFamily:
+          globalTheme?.fonts?.accent ??
+          "var(--font-great-vibes), 'Great Vibes', cursive",
+        leftTitleFontFamily:
+          globalTheme?.fonts?.heading ??
+          "var(--font-montserrat), Montserrat, sans-serif",
+        rightTitleFontFamily:
+          globalTheme?.fonts?.heading ??
+          "var(--font-montserrat), Montserrat, sans-serif",
+        leftItemFontFamily:
+          globalTheme?.fonts?.body ??
+          "var(--font-inter), Inter, sans-serif",
+        rightItemFontFamily:
+          globalTheme?.fonts?.body ??
+          "var(--font-inter), Inter, sans-serif",
         leftLabelFontSize: 13,
         rightLabelFontSize: 13,
         leftTitleFontSize: 30,

@@ -14,6 +14,7 @@ export const TEXT_PRESET_CONFIG: Record<
     height: number;
     fontSize: number;
     fontWeight: number;
+    fontFamily: string;
     align: "left" | "center" | "right";
     lineHeight: number;
   }
@@ -23,6 +24,7 @@ export const TEXT_PRESET_CONFIG: Record<
     height: 276,
     fontSize: 144,
     fontWeight: 600,
+    fontFamily: "var(--font-abril-fatface), 'Abril Fatface', serif",
     align: "left",
     lineHeight: 1,
   },
@@ -31,6 +33,7 @@ export const TEXT_PRESET_CONFIG: Record<
     height: 210,
     fontSize: 72,
     fontWeight: 500,
+    fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
     align: "left",
     lineHeight: 1.05,
   },
@@ -39,6 +42,7 @@ export const TEXT_PRESET_CONFIG: Record<
     height: 360,
     fontSize: 36,
     fontWeight: 400,
+    fontFamily: "var(--font-inter), Inter, sans-serif",
     align: "left",
     lineHeight: 1.4,
   },

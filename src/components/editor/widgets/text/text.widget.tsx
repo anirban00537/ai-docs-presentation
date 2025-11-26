@@ -222,6 +222,9 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
               style={{
                 fontSize: widget.fontSize,
                 fontWeight: widget.fontWeight,
+                fontFamily:
+                  widget.fontFamily ??
+                  "var(--font-poppins), Poppins, sans-serif",
                 color: widget.color || "#0f172a",
                 textAlign: widget.align,
                 lineHeight: widget.lineHeight ?? 1.3,
@@ -258,6 +261,9 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
               style={{
                 fontSize: widget.fontSize,
                 fontWeight: widget.fontWeight,
+                fontFamily:
+                  widget.fontFamily ??
+                  "var(--font-poppins), Poppins, sans-serif",
                 color: widget.color || "#0f172a",
                 textAlign: widget.align,
                 lineHeight: widget.lineHeight ?? 1.3,

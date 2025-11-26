@@ -57,6 +57,12 @@ export const useIconCardCreation = () => {
         iconSize: 60,
         titleFontSize: 24,
         descriptionFontSize: 18,
+        titleFontFamily:
+          globalTheme?.fonts?.heading ??
+          "var(--font-montserrat), Montserrat, sans-serif",
+        descriptionFontFamily:
+          globalTheme?.fonts?.body ??
+          "var(--font-inter), Inter, sans-serif",
         textAlign: "left",
         backgroundType: "glass", // Default to glassmorphism
       };
