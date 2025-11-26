@@ -295,7 +295,7 @@ export const LeftSidebar = () => {
           {createPortal(
             <DragOverlay dropAnimation={dropAnimation}>
               {activeDragSlide ? (
-                <div className="w-[280px] opacity-90 cursor-grabbing">
+                <div className="w-[220px] opacity-90 cursor-grabbing">
                   <div
                     className={cn(
                       "relative flex-1 aspect-video rounded-xl overflow-hidden shadow-2xl ring-2 ring-primary scale-105 bg-background"
