@@ -1,6 +1,7 @@
 import { FONT_STACKS } from "@/lib/fonts";
 
 export type WidgetBackgroundType = "solid" | "glass" | "transparent";
+export type ThemeTone = "dark" | "light";
 
 export type SlideTheme = {
   id: string;
@@ -13,6 +14,7 @@ export type SlideTheme = {
   accent: string;
   font: string;
   cardBackgroundType: WidgetBackgroundType;
+  tone: ThemeTone;
 };
 
 export const SLIDE_THEMES: SlideTheme[] = [
@@ -26,6 +28,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#3b82f6",
     font: FONT_STACKS.montserrat,
     cardBackgroundType: "glass",
+    tone: "dark",
   },
   {
     id: "midnight",
@@ -37,6 +40,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#06b6d4",
     font: FONT_STACKS.ubuntu,
     cardBackgroundType: "glass",
+    tone: "dark",
   },
   {
     id: "lumen",
@@ -48,6 +52,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#f472b6",
     font: FONT_STACKS.playfair,
     cardBackgroundType: "glass",
+    tone: "dark",
   },
   {
     id: "forest",
@@ -59,6 +64,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#22c55e",
     font: FONT_STACKS.lora,
     cardBackgroundType: "solid",
+    tone: "dark",
   },
   {
     id: "abyss",
@@ -70,6 +76,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#38bdf8",
     font: FONT_STACKS.merriweather,
     cardBackgroundType: "glass",
+    tone: "dark",
   },
   {
     id: "ember",
@@ -81,6 +88,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#fb923c",
     font: FONT_STACKS.abrilFatface,
     cardBackgroundType: "glass",
+    tone: "dark",
   },
   {
     id: "graphite",
@@ -92,6 +100,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#8b96ac",
     font: FONT_STACKS.montserrat,
     cardBackgroundType: "glass",
+    tone: "dark",
   },
   {
     id: "modern-light",
@@ -103,6 +112,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#2563eb",
     font: FONT_STACKS.poppins,
     cardBackgroundType: "solid",
+    tone: "light",
   },
   {
     id: "sunset",
@@ -114,6 +124,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#f97316",
     font: FONT_STACKS.playfair,
     cardBackgroundType: "solid",
+    tone: "light",
   },
   {
     id: "lagoon",
@@ -125,6 +136,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#0ea5e9",
     font: FONT_STACKS.raleway,
     cardBackgroundType: "solid",
+    tone: "light",
   },
   {
     id: "lavender",
@@ -136,6 +148,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#8b5cf6",
     font: FONT_STACKS.poppins,
     cardBackgroundType: "solid",
+    tone: "light",
   },
   {
     id: "honey",
@@ -147,6 +160,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#fbbf24",
     font: FONT_STACKS.playfair,
     cardBackgroundType: "solid",
+    tone: "light",
   },
   {
     id: "rose",
@@ -158,6 +172,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#fb7185",
     font: FONT_STACKS.lora,
     cardBackgroundType: "solid",
+    tone: "light",
   },
   {
     id: "mint",
@@ -169,6 +184,7 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#10b981",
     font: FONT_STACKS.ubuntu,
     cardBackgroundType: "solid",
+    tone: "light",
   },
   {
     id: "skyline",
@@ -180,5 +196,6 @@ export const SLIDE_THEMES: SlideTheme[] = [
     accent: "#3b82f6",
     font: FONT_STACKS.montserrat,
     cardBackgroundType: "solid",
+    tone: "light",
   },
 ];

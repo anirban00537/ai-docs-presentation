@@ -24,6 +24,7 @@ export type GlobalTheme = {
   accent: string;
   font: string;
   cardBackgroundType: WidgetBackgroundType;
+  tone: import("@/lib/slide-themes").ThemeTone;
 };
 
 type SlidesState = {
@@ -56,6 +57,7 @@ const initialState: SlidesState = {
     accent: defaultTheme.accent,
     font: defaultTheme.font,
     cardBackgroundType: defaultTheme.cardBackgroundType,
+    tone: defaultTheme.tone,
   },
 };
 
@@ -203,6 +205,7 @@ const slidesSlice = createSlice({
         accent: theme.accent,
         font: theme.font,
         cardBackgroundType: theme.cardBackgroundType,
+        tone: theme.tone,
       };
 
       // Apply theme to all slides and widgets
