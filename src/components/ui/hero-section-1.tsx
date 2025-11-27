@@ -8,6 +8,7 @@ import { Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const transitionVariants: { item: Variants } = {
   item: {
@@ -337,19 +338,8 @@ const HeroHeader = () => {
                 aria-label="home"
                 className="flex items-center space-x-2"
               >
-                <h1 className="text-2xl font-bold">
-                  Boost<span className="text-primary">Fury</span>
-                </h1>
+                <Image src="/logo.svg" alt="logo" width={200} height={200} />
               </Link>
-
-              <button
-                onClick={() => setMenuState(!menuState)}
-                aria-label={menuState === true ? "Close Menu" : "Open Menu"}
-                className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden"
-              >
-                <Menu className="in-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
-                <X className="group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
-              </button>
             </div>
 
             <div className="absolute inset-0 m-auto hidden size-fit lg:block">
