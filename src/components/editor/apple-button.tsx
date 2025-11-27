@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback } from "react";
+import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -37,63 +38,76 @@ export interface AppleButtonProps
   asChild?: boolean;
 }
 
-export const AppleButton = React.forwardRef<HTMLButtonElement, AppleButtonProps>(
-  ({ className, variant, size, children, ...props }, ref) => {
-    const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
-    const [isPressed, setIsPressed] = useState(false);
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const internalRef = ref || buttonRef;
+export const AppleButton = React.forwardRef<
+  HTMLButtonElement,
+  AppleButtonProps
+>(({ className, variant, size, asChild = false, children, ...props }, ref) => {
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+  const [isPressed, setIsPressed] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement | HTMLElement>(null);
+  const internalRef = ref || buttonRef;
 
-    const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-      if (!buttonRef.current) return;
-      const rect = buttonRef.current.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      setMousePosition({ x, y });
-    }, []);
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setMousePosition({ x, y });
+  }, []);
 
-    const handleMouseLeave = useCallback(() => {
-      // Reset to center when mouse leaves
-      setMousePosition({ x: 50, y: 50 });
-    }, []);
+  const handleMouseLeave = useCallback(() => {
+    // Reset to center when mouse leaves
+    setMousePosition({ x: 50, y: 50 });
+  }, []);
 
-    const handleMouseDown = useCallback(() => {
-      setIsPressed(true);
-    }, []);
+  const handleMouseDown = useCallback(() => {
+    setIsPressed(true);
+  }, []);
 
-    const handleMouseUp = useCallback(() => {
-      setIsPressed(false);
-    }, []);
+  const handleMouseUp = useCallback(() => {
+    setIsPressed(false);
+  }, []);
 
-    const handleTouchStart = useCallback(() => {
-      setIsPressed(true);
-    }, []);
+  const handleTouchStart = useCallback(() => {
+    setIsPressed(true);
+  }, []);
 
-    const handleTouchEnd = useCallback(() => {
-      setIsPressed(false);
-    }, []);
+  const handleTouchEnd = useCallback(() => {
+    setIsPressed(false);
+  }, []);
 
-    // Combine refs
-    const setRefs = useCallback(
-      (node: HTMLButtonElement | null) => {
-        if (typeof internalRef === "function") {
-          internalRef(node);
-        } else if (internalRef) {
-          (internalRef as React.MutableRefObject<HTMLButtonElement | null>).current = node;
-        }
-        buttonRef.current = node;
-      },
-      [internalRef]
-    );
+  // Combine refs
+  const setRefs = useCallback(
+    (node: HTMLButtonElement | HTMLElement | null) => {
+      if (typeof internalRef === "function") {
+        internalRef(node as HTMLButtonElement);
+      } else if (internalRef) {
+        (
+          internalRef as React.MutableRefObject<HTMLButtonElement | null>
+        ).current = node as HTMLButtonElement;
+      }
+      buttonRef.current = node;
+    },
+    [internalRef]
+  );
 
-    const hasGlow = variant === "primary" || variant === "secondary" || variant === "tertiary";
+  const hasGlow =
+    variant === "primary" || variant === "secondary" || variant === "tertiary";
 
+  if (asChild) {
+    // When asChild is true, we need to clone the child and add our elements to it
+    const child = React.Children.only(children) as React.ReactElement<
+      React.HTMLAttributes<HTMLElement>
+    >;
+    const childProps = child.props as React.HTMLAttributes<HTMLElement>;
     return (
-      <button
+      <Slot
         ref={setRefs}
         className={cn(
           appleButtonVariants({ variant, size }),
-          isPressed && "translate-y-[2px] shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.2)] transition-transform duration-75 ease-out",
+          isPressed &&
+            "translate-y-[2px] shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.2)] transition-transform duration-75 ease-out",
+          "relative",
           className
         )}
         onMouseMove={handleMouseMove}
@@ -104,23 +118,63 @@ export const AppleButton = React.forwardRef<HTMLButtonElement, AppleButtonProps>
         onTouchEnd={handleTouchEnd}
         {...props}
       >
-        {hasGlow && (
-          <span
-            className="absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none z-0"
-            style={{
-              background: `radial-gradient(circle 120px at ${mousePosition.x}% ${mousePosition.y}%, rgba(255,255,255,0.35) 0%, transparent 70%)`,
-              opacity: isPressed ? 0 : 0.8,
-              transition: "opacity 300ms ease-out, background 100ms ease-out",
-            }}
-          />
-        )}
-        <span className="relative z-10 inline-flex items-center justify-center gap-2.5">
-          {children}
-        </span>
-      </button>
+        {React.cloneElement(child, {
+          ...childProps,
+          children: (
+            <>
+              {hasGlow && (
+                <span
+                  className="absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none z-0"
+                  style={{
+                    background: `radial-gradient(circle 120px at ${mousePosition.x}% ${mousePosition.y}%, rgba(255,255,255,0.35) 0%, transparent 70%)`,
+                    opacity: isPressed ? 0 : 0.8,
+                    transition:
+                      "opacity 300ms ease-out, background 100ms ease-out",
+                  }}
+                />
+              )}
+              <span className="relative z-10 inline-flex items-center justify-center gap-2.5">
+                {childProps.children}
+              </span>
+            </>
+          ),
+        })}
+      </Slot>
     );
   }
-);
+
+  return (
+    <button
+      ref={setRefs}
+      className={cn(
+        appleButtonVariants({ variant, size }),
+        isPressed &&
+          "translate-y-[2px] shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.2)] transition-transform duration-75 ease-out",
+        className
+      )}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      {...props}
+    >
+      {hasGlow && (
+        <span
+          className="absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none z-0"
+          style={{
+            background: `radial-gradient(circle 120px at ${mousePosition.x}% ${mousePosition.y}%, rgba(255,255,255,0.35) 0%, transparent 70%)`,
+            opacity: isPressed ? 0 : 0.8,
+            transition: "opacity 300ms ease-out, background 100ms ease-out",
+          }}
+        />
+      )}
+      <span className="relative z-10 inline-flex items-center justify-center gap-2.5">
+        {children}
+      </span>
+    </button>
+  );
+});
 
 AppleButton.displayName = "AppleButton";
-

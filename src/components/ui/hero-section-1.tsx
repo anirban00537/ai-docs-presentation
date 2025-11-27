@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronRight, Menu, X } from "lucide-react";
 import { Variants } from "framer-motion";
 
-import { Button } from "@/components/ui/button";
+import { AppleButton } from "@/components/editor/apple-button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -144,17 +144,18 @@ export function HeroSection() {
                     key={1}
                     className="bg-foreground/10 rounded-[14px] border p-0.5"
                   >
-                    <Button
+                    <AppleButton
                       asChild
                       size="lg"
+                      variant="primary"
                       className="rounded-xl px-5 text-base"
                     >
                       <Link href="/editor">
                         <span className="text-nowrap">Create Presentation</span>
                       </Link>
-                    </Button>
+                    </AppleButton>
                   </div>
-                  <Button
+                  <AppleButton
                     key={2}
                     asChild
                     size="lg"
@@ -166,7 +167,7 @@ export function HeroSection() {
                         Explore Research Tools
                       </span>
                     </Link>
-                  </Button>
+                  </AppleButton>
                 </AnimatedGroup>
               </div>
             </div>
@@ -378,34 +379,36 @@ const HeroHeader = () => {
                 </ul>
               </div>
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                <Button
+                <AppleButton
                   asChild
-                  variant="outline"
+                  variant="tertiary"
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
                   <Link href="#">
                     <span>Login</span>
                   </Link>
-                </Button>
-                <Button
+                </AppleButton>
+                <AppleButton
                   asChild
+                  variant="primary"
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
                   <Link href="#">
                     <span>Sign Up</span>
                   </Link>
-                </Button>
-                <Button
+                </AppleButton>
+                <AppleButton
                   asChild
+                  variant="primary"
                   size="sm"
                   className={cn(isScrolled ? "lg:inline-flex" : "hidden")}
                 >
                   <Link href="#">
                     <span>Start Researching</span>
                   </Link>
-                </Button>
+                </AppleButton>
               </div>
             </div>
           </div>
