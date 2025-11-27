@@ -109,7 +109,8 @@ export const metadata: Metadata = {
     default: "Butterfast - AI Presentation Application",
     template: "%s | Butterfast",
   },
-  description: "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application. Design, customize, and share professional presentations in minutes.",
+  description:
+    "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application. Design, customize, and share professional presentations in minutes.",
   keywords: [
     "AI presentation",
     "presentation builder",
@@ -124,19 +125,23 @@ export const metadata: Metadata = {
   creator: "Butterfast",
   publisher: "Butterfast",
   applicationName: "Butterfast",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  ),
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "/",
     siteName: "Butterfast",
     title: "Butterfast - AI Presentation Application",
-    description: "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application.",
+    description:
+      "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Butterfast - AI Presentation Application",
-    description: "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application.",
+    description:
+      "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application.",
     creator: "@butterfast",
   },
   robots: {
