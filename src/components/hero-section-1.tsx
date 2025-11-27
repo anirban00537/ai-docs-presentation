@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Variants } from "framer-motion";
 
 import { AppleButton } from "@/components/editor/apple-button";
@@ -34,132 +34,109 @@ export function HeroSection() {
   return (
     <>
       <HeroHeader />
-      <main className="overflow-hidden">
-        <section className="">
-          <div className="relative pt-24 md:pt-36">
-            <div className="mx-auto max-w-7xl px-6">
-              <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
-                <AnimatedGroup variants={transitionVariants}>
-                  <Link
-                    href="#link"
-                    className="hover:bg-background dark:hover:border-t-border bg-muted/80 backdrop-blur-sm group mx-auto flex w-fit items-center gap-4 rounded-full border border-primary/20 p-1.5 pl-5 shadow-lg shadow-primary/5 transition-all duration-300 dark:border-t-white/5 dark:shadow-zinc-950"
-                  >
-                    <span className="text-foreground text-sm font-medium tracking-wide">
-                      Create Smooth, Butter-Like Presentations with AI
-                    </span>
-                    <span className="dark:border-background block h-4 w-0.5 border-l bg-primary/30 dark:bg-zinc-700" />
-
-                    <div className="bg-background group-hover:bg-muted size-6 overflow-hidden rounded-full duration-500">
-                      <div className="flex w-12 -translate-x-1/2 duration-500 ease-in-out group-hover:translate-x-0">
-                        <span className="flex size-6">
-                          <ArrowRight className="m-auto size-3" />
-                        </span>
-                        <span className="flex size-6">
-                          <ArrowRight className="m-auto size-3" />
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                  <h1 className="mt-10 max-w-5xl mx-auto text-balance text-5xl font-bold leading-tight tracking-tight text-foreground md:text-6xl lg:mt-14 xl:text-7xl">
-                    Presentations as Smooth
-                    <br />
-                    as Butter
+      <main className="overflow-hidden bg-linear-to-b from-[#FFF8E0] via-white to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-background">
+        <section className="relative">
+          <div className="relative pt-32 md:pt-40 lg:pt-48">
+            <div className="mx-auto flex max-w-7xl flex-col gap-16 px-6 pb-20 md:gap-20 md:pb-32 lg:flex-row lg:items-center lg:gap-24">
+              {/* Left column */}
+              <AnimatedGroup
+                variants={{
+                  container: {
+                    visible: {
+                      transition: { staggerChildren: 0.08, delayChildren: 0.2 },
+                    },
+                  },
+                  ...transitionVariants,
+                }}
+                className="max-w-2xl space-y-10 lg:max-w-2xl"
+              >
+                <div className="space-y-8">
+                  <h1 className="text-balance text-5xl font-semibold tracking-tight text-zinc-950 sm:text-6xl md:text-7xl lg:text-8xl dark:text-zinc-50">
+                    Presentations that feel
+                    <br className="hidden sm:block" />
+                    as smooth as butter.
                   </h1>
-                  <p className="mx-auto mt-6 max-w-4xl text-balance text-lg leading-relaxed text-muted-foreground md:text-xl md:leading-relaxed">
+                  <p className="text-balance text-lg leading-relaxed text-zinc-600 sm:text-xl md:text-2xl md:leading-relaxed dark:text-zinc-400">
                     Create stunning, buttery-smooth presentations effortlessly
                     with AI. Design, customize, and share professional slides
-                    that flow seamlessly and captivate your audience.
+                    that flow seamlessly.
                   </p>
-                </AnimatedGroup>
+                </div>
 
-                <AnimatedGroup
-                  variants={{
-                    container: {
-                      visible: {
-                        transition: {
-                          staggerChildren: 0.05,
-                          delayChildren: 0.75,
-                        },
-                      },
-                    },
-                    ...transitionVariants,
-                  }}
-                  className="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row"
-                >
-                  <div
-                    key={1}
-                    className="bg-foreground/10 rounded-[14px] border p-0.5"
-                  >
-                    <AppleButton
-                      asChild
-                      size="lg"
-                      variant="primary"
-                      className="rounded-xl px-5 text-base"
-                    >
-                      <Link href="/editor">
-                        <span className="text-nowrap">Create Presentation</span>
-                      </Link>
-                    </AppleButton>
-                  </div>
+                <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
                   <AppleButton
-                    key={2}
                     asChild
                     size="lg"
-                    variant="ghost"
-                    className="h-10.5 rounded-xl px-5"
+                    variant="primary"
+                    className="rounded-xl px-8 text-base"
                   >
-                    <Link href="#link">
-                      <span className="text-nowrap">
-                        Explore Research Tools
+                    <Link href="/editor">
+                      <span className="inline-flex items-center gap-2">
+                        Create Presentation
+                        <ArrowRight className="h-4 w-4" />
                       </span>
                     </Link>
                   </AppleButton>
-                </AnimatedGroup>
-              </div>
+
+                  <AppleButton
+                    asChild
+                    size="lg"
+                    variant="ghost"
+                    className="h-12 rounded-xl px-8 text-base"
+                  >
+                    <Link href="#link">
+                      <span>Explore Research Tools</span>
+                    </Link>
+                  </AppleButton>
+                </div>
+              </AnimatedGroup>
+
+              {/* Right column – empty demo canvas */}
+              <AnimatedGroup variants={transitionVariants} className="flex-1">
+                <div className="relative">
+                  <div className="relative flex h-[400px] items-center justify-center rounded-3xl border border-white/80 bg-white/50 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/50 md:h-[480px] lg:h-[520px]">
+                    <div className="pointer-events-none absolute inset-12 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800" />
+                  </div>
+                </div>
+              </AnimatedGroup>
             </div>
           </div>
-          <section className="bg-background/50 pb-16 pt-16 md:pb-32">
+
+          {/* Logos strip */}
+          <section className="pb-20 pt-8 md:pb-32 md:pt-12">
             <div className="mx-auto max-w-6xl px-6">
-              <p className="text-center text-sm font-medium text-muted-foreground mb-8">
-                Trusted by leading companies
+              <p className="mb-8 text-center text-xs font-medium tracking-wider text-zinc-500 dark:text-zinc-500">
+                TRUSTED BY LEADING COMPANIES
               </p>
-              <div className="mx-auto grid max-w-4xl grid-cols-4 gap-8 sm:grid-cols-4 md:gap-12">
-                <div className="flex items-center justify-center">
-                  <img
-                    className="h-6 w-auto opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 dark:invert dark:opacity-40 dark:hover:opacity-70"
-                    src="/nvidia.svg"
-                    alt="Nvidia Logo"
-                    height="24"
-                    width="auto"
-                  />
-                </div>
-                <div className="flex items-center justify-center">
-                  <img
-                    className="h-6 w-auto opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 dark:invert dark:opacity-40 dark:hover:opacity-70"
-                    src="https://html.tailus.io/blocks/customers/github.svg"
-                    alt="GitHub Logo"
-                    height="24"
-                    width="auto"
-                  />
-                </div>
-                <div className="flex items-center justify-center">
-                  <img
-                    className="h-6 w-auto opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 dark:invert dark:opacity-40 dark:hover:opacity-70"
-                    src="https://html.tailus.io/blocks/customers/openai.svg"
-                    alt="OpenAI Logo"
-                    height="24"
-                    width="auto"
-                  />
-                </div>
-                <div className="flex items-center justify-center">
-                  <img
-                    className="h-6 w-auto opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 dark:invert dark:opacity-40 dark:hover:opacity-70"
-                    src="https://html.tailus.io/blocks/customers/nike.svg"
-                    alt="Nike Logo"
-                    height="24"
-                    width="auto"
-                  />
-                </div>
+              <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-12 gap-y-8 opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 dark:opacity-50 dark:hover:opacity-80">
+                <img
+                  className="h-5 w-auto dark:invert"
+                  src="/nvidia.svg"
+                  alt="Nvidia Logo"
+                  height="20"
+                  width="auto"
+                />
+                <img
+                  className="h-5 w-auto dark:invert"
+                  src="https://html.tailus.io/blocks/customers/github.svg"
+                  alt="GitHub Logo"
+                  height="20"
+                  width="auto"
+                />
+                <img
+                  className="h-5 w-auto dark:invert"
+                  src="https://html.tailus.io/blocks/customers/openai.svg"
+                  alt="OpenAI Logo"
+                  height="20"
+                  width="auto"
+                />
+                <img
+                  className="h-5 w-auto dark:invert"
+                  src="https://html.tailus.io/blocks/customers/nike.svg"
+                  alt="Nike Logo"
+                  height="20"
+                  width="auto"
+                />
               </div>
             </div>
           </section>
