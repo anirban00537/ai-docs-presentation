@@ -170,10 +170,10 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
     [debouncedUpdateQuote, debouncedUpdateAttribution, scheduleActiveFieldReset]
   );
 
-  // Widget-local colors and fonts with sensible defaults
-  const backgroundColor = widget.backgroundColor ?? "#ffffff";
-  const quoteColor = widget.quoteColor ?? globalTheme?.accent ?? "#0f172a";
-  const attributionColor = widget.attributionColor ?? "#64748b";
+  // Widget-local colors and fonts - use global theme when undefined
+  const backgroundColor = widget.backgroundColor ?? undefined;
+  const quoteColor = widget.quoteColor ?? globalTheme?.text ?? "#0f172a";
+  const attributionColor = widget.attributionColor ?? globalTheme?.text ?? "#64748b";
   const iconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a"; // Used for quote marks
   const quoteFontFamily = widget.quoteFontFamily ?? "var(--font-poppins)";
   const attributionFontFamily =
@@ -454,10 +454,10 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
     );
   };
 
-  const currentBgColor = widget.backgroundColor ?? "#ffffff";
+  const currentBgColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentQuoteColor =
     widget.quoteColor ?? globalTheme?.accent ?? "#0f172a";
-  const currentAttributionColor = widget.attributionColor ?? "#64748b";
+  const currentAttributionColor = widget.attributionColor ?? globalTheme?.text ?? "#64748b";
   const currentIconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a";
   const currentBackgroundType = widget.backgroundType ?? "solid";
 

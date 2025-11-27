@@ -63,8 +63,8 @@ export const useWidgetCreation = () => {
         fontSize: config.fontSize,
         fontWeight: config.fontWeight,
         fontFamily: themeFont ?? config.fontFamily,
-        // Seed with current theme text color so new text matches theme
-        color: globalTheme?.text ?? "#0f172a",
+        // Don't set color - will use global theme by default
+        color: undefined,
         align: config.align,
         lineHeight: config.lineHeight,
       };

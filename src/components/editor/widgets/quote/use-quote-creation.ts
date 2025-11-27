@@ -49,10 +49,10 @@ export const useQuoteCreation = () => {
         y: originY,
         width,
         height,
-        // Seed with current theme colors so quote matches active theme
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        quoteColor: globalTheme?.accent ?? "#0f172a",
-        attributionColor: globalTheme?.text ?? "#64748b",
+        // Don't set colors - will use global theme by default
+        backgroundColor: undefined,
+        quoteColor: undefined,
+        attributionColor: undefined,
         textAlign: "center", // Center by default for better look with quotes
         backgroundType: globalTheme?.cardBackgroundType ?? "glass",
         quoteFontSize: 30,

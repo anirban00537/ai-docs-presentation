@@ -49,11 +49,11 @@ export const useNumberCardCreation = () => {
         y: originY,
         width,
         height,
-        // Seed with current theme colors so card matches active theme
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        numberColor: globalTheme?.accent ?? "#0f172a",
-        titleColor: globalTheme?.text ?? "#0f172a",
-        descriptionColor: globalTheme?.text ?? "#475569",
+        // Don't set colors - will use global theme by default
+        backgroundColor: undefined,
+        numberColor: undefined,
+        titleColor: undefined,
+        descriptionColor: undefined,
         numberFontSize: 56,
         titleFontSize: 24,
         descriptionFontSize: 18,

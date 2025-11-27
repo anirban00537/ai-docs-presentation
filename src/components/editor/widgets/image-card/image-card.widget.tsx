@@ -9,6 +9,7 @@ import { TOOLBAR_SELECTOR, IMAGE_STYLE_OPTIONS } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
@@ -50,6 +51,7 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
@@ -132,9 +134,9 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
     [debouncedUpdateDescription, debouncedUpdateTitle]
   );
 
-  const backgroundColor = widget.backgroundColor ?? "#ffffff";
-  const titleColor = widget.titleColor ?? "#0f172a";
-  const descriptionColor = widget.descriptionColor ?? "#475569";
+  const backgroundColor = widget.backgroundColor ?? undefined;
+  const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
+  const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? "var(--font-poppins)";
@@ -463,6 +465,7 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
   const imageStyleButtonRef = React.useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -561,15 +564,15 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
   };
 
   const currentAlign = widget.textAlign ?? "left";
-  const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
+  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
   const currentImageStyle = widget.imageStyle ?? "hero";
   const currentTextColor =
     activeField === "title"
-      ? widget.titleColor ?? "#0f172a"
+      ? widget.titleColor ?? globalTheme?.text ?? "#0f172a"
       : activeField === "description"
-      ? widget.descriptionColor ?? "#475569"
-      : widget.titleColor ?? "#0f172a";
+      ? widget.descriptionColor ?? globalTheme?.text ?? "#475569"
+      : widget.titleColor ?? globalTheme?.text ?? "#0f172a";
   const currentFontFamily =
     activeField === "title"
       ? widget.titleFontFamily ?? "var(--font-poppins)"

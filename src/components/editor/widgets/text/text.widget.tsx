@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   updateWidget as updateWidgetAction,
   selectActiveSlideId,
+  selectGlobalTheme,
 } from "@/store/slices/slidesSlice";
 import {
   startWidgetEditing as startWidgetEditingAction,
@@ -56,6 +57,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement>(null);
 
   const contentRef = React.useRef<HTMLDivElement | HTMLTextAreaElement | null>(
@@ -225,7 +227,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
                 fontFamily:
                   widget.fontFamily ??
                   "var(--font-poppins), Poppins, sans-serif",
-                color: widget.color || "#0f172a",
+                color: widget.color ?? globalTheme?.text ?? "#0f172a",
                 textAlign: widget.align,
                 lineHeight: widget.lineHeight ?? 1.3,
                 wordWrap: "break-word",
@@ -264,7 +266,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
                 fontFamily:
                   widget.fontFamily ??
                   "var(--font-poppins), Poppins, sans-serif",
-                color: widget.color || "#0f172a",
+                color: widget.color ?? globalTheme?.text ?? "#0f172a",
                 textAlign: widget.align,
                 lineHeight: widget.lineHeight ?? 1.3,
                 wordWrap: "break-word",
@@ -323,6 +325,7 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const isBold = widget.fontWeight >= 600;
 
@@ -372,7 +375,7 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
     }
   };
 
-  const currentColor = widget.color || "#0f172a";
+  const currentColor = widget.color ?? globalTheme?.text ?? "#0f172a";
 
   // Bold toggle custom control
   const boldToggleControl = (

@@ -49,12 +49,12 @@ export const useLabelCardCreation = () => {
         y: originY,
         width,
         height,
-        // Seed with current theme colors so card matches active theme
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        labelColor: globalTheme?.accent ?? "#0f172a",
-        labelTextColor: "#ffffff",
-        titleColor: globalTheme?.text ?? "#0f172a",
-        descriptionColor: globalTheme?.text ?? "#475569",
+        // Don't set colors - will use global theme by default
+        backgroundColor: undefined,
+        labelColor: undefined,
+        labelTextColor: "#ffffff", // Keep this as it's a fixed contrast color
+        titleColor: undefined,
+        descriptionColor: undefined,
         labelFontSize: 13,
         titleFontSize: 40,
         descriptionFontSize: 20,

@@ -10,6 +10,7 @@ import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import {
@@ -58,6 +59,7 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
 
@@ -276,15 +278,18 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
     additionalSelectors: comparisonPointerSelectors,
   });
 
-  const backgroundColor = widget.backgroundColor ?? "rgba(15,23,42,0.05)";
+  const backgroundColor = widget.backgroundColor ?? undefined;
   const backgroundType = widget.backgroundType ?? "glass";
   const dividerColor = widget.dividerColor ?? "rgba(15,23,42,0.12)";
   const textAlign = widget.textAlign ?? "left";
 
-  const leftAccentColor = widget.leftAccentColor ?? "#2563eb";
-  const rightAccentColor = widget.rightAccentColor ?? "#f97316";
-  const leftTextColor = widget.leftTextColor ?? "#0f172a";
-  const rightTextColor = widget.rightTextColor ?? "#0f172a";
+  const leftAccentColor =
+    widget.leftAccentColor ?? globalTheme?.accent ?? "#2563eb";
+  const rightAccentColor =
+    widget.rightAccentColor ?? globalTheme?.accent ?? "#f97316";
+  const leftTextColor = widget.leftTextColor ?? globalTheme?.text ?? "#0f172a";
+  const rightTextColor =
+    widget.rightTextColor ?? globalTheme?.text ?? "#0f172a";
 
   const leftTitleFontFamily =
     widget.leftTitleFontFamily ?? "var(--font-poppins)";
@@ -665,6 +670,7 @@ const ComparisonCardEditingToolbar: React.FC<
 > = ({ widget, isEditing, widgetRef, viewport, containerRef, activeField }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const isLeftTextField =
     activeField === "leftTitle" || activeField === "leftItem";
@@ -780,7 +786,10 @@ const ComparisonCardEditingToolbar: React.FC<
     {
       type: "color-picker",
       config: {
-        color: widget.backgroundColor ?? "rgba(15,23,42,0.05)",
+        color:
+          widget.backgroundColor ??
+          globalTheme?.surface ??
+          "rgba(15,23,42,0.05)",
         onChange: (color: string) => handleUpdate({ backgroundColor: color }),
         label: "Surface",
       },
@@ -798,7 +807,7 @@ const ComparisonCardEditingToolbar: React.FC<
     {
       type: "color-picker",
       config: {
-        color: widget.leftAccentColor ?? "#2563eb",
+        color: widget.leftAccentColor ?? globalTheme?.accent ?? "#2563eb",
         onChange: (color: string) => handleUpdate({ leftAccentColor: color }),
         label: "Plan A accent",
       },
@@ -806,7 +815,7 @@ const ComparisonCardEditingToolbar: React.FC<
     {
       type: "color-picker",
       config: {
-        color: widget.rightAccentColor ?? "#f97316",
+        color: widget.rightAccentColor ?? globalTheme?.accent ?? "#f97316",
         onChange: (color: string) => handleUpdate({ rightAccentColor: color }),
         label: "Plan B accent",
       },
@@ -815,7 +824,7 @@ const ComparisonCardEditingToolbar: React.FC<
       type: "color-picker",
       showWhen: () => isLeftTextField,
       config: {
-        color: widget.leftTextColor ?? "#0f172a",
+        color: widget.leftTextColor ?? globalTheme?.text ?? "#0f172a",
         onChange: (color: string) => handleUpdate({ leftTextColor: color }),
         label: "Text color",
       },
@@ -824,7 +833,7 @@ const ComparisonCardEditingToolbar: React.FC<
       type: "color-picker",
       showWhen: () => isRightTextField,
       config: {
-        color: widget.rightTextColor ?? "#0f172a",
+        color: widget.rightTextColor ?? globalTheme?.text ?? "#0f172a",
         onChange: (color: string) => handleUpdate({ rightTextColor: color }),
         label: "Text color",
       },

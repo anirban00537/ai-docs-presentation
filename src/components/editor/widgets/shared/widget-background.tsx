@@ -9,7 +9,7 @@ import type { ThemeTone } from "@/lib/slide-themes";
 
 interface WidgetBackgroundProps {
   backgroundType: BackgroundType;
-  backgroundColor: string;
+  backgroundColor?: string;
   className?: string;
   children: React.ReactNode;
 }
@@ -30,15 +30,19 @@ export const WidgetBackground: React.FC<WidgetBackgroundProps> = ({
   className,
   children,
 }) => {
-  const themeTone = useAppSelector(selectGlobalTheme)?.tone ?? "dark";
+  const globalTheme = useAppSelector(selectGlobalTheme);
+  const themeTone = globalTheme?.tone ?? "dark";
   const isGlassBackground = backgroundType === "glass";
   const isTransparentBackground = backgroundType === "transparent";
 
+  // Use widget color if set, otherwise use global theme surface color
+  const effectiveColor = backgroundColor ?? globalTheme?.surface ?? "#ffffff";
+
   const resolvedBackgroundColor = isGlassBackground
-    ? getGlassBackgroundColor(backgroundColor, themeTone)
+    ? getGlassBackgroundColor(effectiveColor, themeTone)
     : isTransparentBackground
     ? "transparent"
-    : backgroundColor;
+    : effectiveColor;
 
   return (
     <div

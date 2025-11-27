@@ -49,11 +49,11 @@ export const useListCardCreation = () => {
         y: originY,
         width,
         height,
-        // Seed with current theme colors so card matches active theme
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        itemColor: globalTheme?.text ?? "#0f172a",
-        bulletColor: globalTheme?.accent ?? "#0f172a",
-        titleColor: globalTheme?.text ?? "#0f172a",
+        // Don't set colors - will use global theme by default
+        backgroundColor: undefined,
+        itemColor: undefined,
+        bulletColor: undefined,
+        titleColor: undefined,
         titleFontSize: 34,
         itemFontSize: 22,
         titleFontFamily:

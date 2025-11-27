@@ -16,6 +16,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
@@ -65,6 +66,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
@@ -212,10 +214,11 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   );
 
   // Widget-local colors and fonts with sensible defaults
-  const backgroundColor = widget.backgroundColor ?? "#ffffff";
-  const iconColor = widget.iconColor ?? "#0f172a";
-  const titleColor = widget.titleColor ?? "#0f172a";
-  const descriptionColor = widget.descriptionColor ?? "#475569";
+  // Use widget colors if set, otherwise use global theme colors
+  const backgroundColor = widget.backgroundColor ?? undefined;
+  const iconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a";
+  const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
+  const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
   const iconSize = widget.iconSize ?? 48;
   const titleFontSize = widget.titleFontSize ?? 24;
   const descriptionFontSize = widget.descriptionFontSize ?? 18;
@@ -392,6 +395,7 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
   const iconSizeButtonRef = React.useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -492,16 +496,16 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
   };
 
   const currentAlign = widget.textAlign ?? "left";
-  const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
+  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
-  const currentIconColor = widget.iconColor ?? "#0f172a";
+  const currentIconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a";
 
   const currentTextColor =
     activeField === "title"
-      ? widget.titleColor ?? "#0f172a"
+      ? widget.titleColor ?? globalTheme?.text ?? "#0f172a"
       : activeField === "description"
-      ? widget.descriptionColor ?? "#475569"
-      : "#0f172a";
+      ? widget.descriptionColor ?? globalTheme?.text ?? "#475569"
+      : globalTheme?.text ?? "#0f172a";
 
   const currentFontFamily =
     activeField === "title"

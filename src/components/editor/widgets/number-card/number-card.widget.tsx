@@ -8,6 +8,7 @@ import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
@@ -48,6 +49,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localNumber, setLocalNumber] = React.useState(widget.number || "01");
@@ -142,11 +144,11 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
     [debouncedUpdateNumber, debouncedUpdateTitle, debouncedUpdateDescription]
   );
 
-  // Widget-local colors and fonts with sensible defaults
-  const backgroundColor = widget.backgroundColor ?? "#ffffff";
-  const numberColor = widget.numberColor ?? "#0f172a";
-  const titleColor = widget.titleColor ?? "#0f172a";
-  const descriptionColor = widget.descriptionColor ?? "#475569";
+  // Widget-local colors and fonts - use global theme when undefined
+  const backgroundColor = widget.backgroundColor ?? undefined;
+  const numberColor = widget.numberColor ?? globalTheme?.accent ?? "#0f172a";
+  const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
+  const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
   const numberFontFamily = widget.numberFontFamily ?? "var(--font-poppins)";
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
   const descriptionFontFamily =
@@ -299,6 +301,7 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -393,17 +396,17 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
   };
 
   const currentAlign = widget.textAlign ?? "left";
-  const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
+  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
 
   const currentTextColor =
     activeField === "number"
-      ? widget.numberColor ?? "#0f172a"
+      ? widget.numberColor ?? globalTheme?.accent ?? "#0f172a"
       : activeField === "title"
-      ? widget.titleColor ?? "#0f172a"
+      ? widget.titleColor ?? globalTheme?.text ?? "#0f172a"
       : activeField === "description"
-      ? widget.descriptionColor ?? "#475569"
-      : "#0f172a";
+      ? widget.descriptionColor ?? globalTheme?.text ?? "#475569"
+      : globalTheme?.text ?? "#0f172a";
 
   const currentFontFamily =
     activeField === "number"

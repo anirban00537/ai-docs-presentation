@@ -10,6 +10,7 @@ import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
@@ -50,6 +51,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
 
@@ -213,11 +215,12 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
     [handleAddItem, handleRemoveItem, isSelected, localItems]
   );
 
-  // Widget-local colors and fonts with sensible defaults
-  const backgroundColor = widget.backgroundColor ?? "#ffffff";
-  const titleColor = widget.titleColor ?? "#0f172a";
-  const itemColor = widget.itemColor ?? "#0f172a";
-  const bulletColor = widget.bulletColor ?? widget.itemColor ?? "#0f172a";
+  // Widget-local colors and fonts - use global theme when undefined
+  const backgroundColor = widget.backgroundColor ?? undefined;
+  const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
+  const itemColor = widget.itemColor ?? globalTheme?.text ?? "#0f172a";
+  const bulletColor =
+    widget.bulletColor ?? globalTheme?.accent ?? itemColor ?? "#0f172a";
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
   const itemFontFamily = widget.itemFontFamily ?? "var(--font-poppins)";
   const titleFontSize = widget.titleFontSize ?? 34;
@@ -435,6 +438,7 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -534,16 +538,21 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
   };
 
   const currentAlign = widget.textAlign ?? "left";
-  const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
+  const currentBackgroundColor =
+    widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "glass";
   const currentTextColor =
     activeField === "title"
-      ? widget.titleColor ?? "#0f172a"
+      ? widget.titleColor ?? globalTheme?.text ?? "#0f172a"
       : activeField === "item"
-      ? widget.itemColor ?? "#0f172a"
-      : "#0f172a";
+      ? widget.itemColor ?? globalTheme?.text ?? "#0f172a"
+      : globalTheme?.text ?? "#0f172a";
   const currentBulletColor =
-    widget.bulletColor ?? widget.itemColor ?? "#0f172a";
+    widget.bulletColor ??
+    globalTheme?.accent ??
+    widget.itemColor ??
+    globalTheme?.text ??
+    "#0f172a";
   const currentFontFamily =
     activeField === "title"
       ? widget.titleFontFamily ?? "var(--font-poppins)"

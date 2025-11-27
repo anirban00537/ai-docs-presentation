@@ -8,6 +8,7 @@ import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
@@ -48,6 +49,7 @@ const TitleCardWidgetNodeBase: React.FC<TitleCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localEyebrow, setLocalEyebrow] = React.useState(
@@ -143,13 +145,13 @@ const TitleCardWidgetNodeBase: React.FC<TitleCardWidgetNodeProps> = ({
     [debouncedUpdateEyebrow, debouncedUpdateTitle, debouncedUpdateSubtitle]
   );
 
-  const backgroundColor = widget.backgroundColor ?? "#ffffff";
+  const backgroundColor = widget.backgroundColor ?? undefined;
   const backgroundType = widget.backgroundType ?? "solid";
   const textAlign = widget.textAlign ?? "center";
 
-  const eyebrowColor = widget.eyebrowColor ?? "#2563eb";
-  const titleColor = widget.titleColor ?? "#0f172a";
-  const subtitleColor = widget.subtitleColor ?? "#475569";
+  const eyebrowColor = widget.eyebrowColor ?? globalTheme?.accent ?? "#2563eb";
+  const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
+  const subtitleColor = widget.subtitleColor ?? globalTheme?.text ?? "#475569";
 
   const eyebrowFontFamily = widget.eyebrowFontFamily ?? "var(--font-poppins)";
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
@@ -305,6 +307,7 @@ const TitleCardEditingToolbar: React.FC<TitleCardEditingToolbarProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -392,18 +395,18 @@ const TitleCardEditingToolbar: React.FC<TitleCardEditingToolbarProps> = ({
     );
   };
 
-  const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
+  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
   const currentAlign = widget.textAlign ?? "center";
 
   const currentTextColor =
     activeField === "eyebrow"
-      ? widget.eyebrowColor ?? "#2563eb"
+      ? widget.eyebrowColor ?? globalTheme?.accent ?? "#2563eb"
       : activeField === "title"
-      ? widget.titleColor ?? "#0f172a"
+      ? widget.titleColor ?? globalTheme?.text ?? "#0f172a"
       : activeField === "subtitle"
-      ? widget.subtitleColor ?? "#475569"
-      : "#0f172a";
+      ? widget.subtitleColor ?? globalTheme?.text ?? "#475569"
+      : globalTheme?.text ?? "#0f172a";
 
   const currentFontFamily =
     activeField === "eyebrow"

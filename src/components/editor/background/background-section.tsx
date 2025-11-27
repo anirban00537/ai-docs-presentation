@@ -2,6 +2,8 @@
 
 import React from "react";
 import { ColorPicker } from "./color-picker";
+import { useAppSelector } from "@/store/hooks";
+import { selectGlobalTheme } from "@/store/slices/slidesSlice";
 
 const PRESET_COLORS = [
   "#0f172a",
@@ -59,14 +61,17 @@ export function BackgroundSection({
   backgroundColor,
   onBackgroundColorChange,
 }: BackgroundSectionProps) {
+  const globalTheme = useAppSelector(selectGlobalTheme);
+
   // Normalize backgroundColor to array (handle backward compatibility with string values)
+  // If no backgroundColor is set, use global theme background colors
   const colors = Array.isArray(backgroundColor)
     ? backgroundColor.length > 0
       ? backgroundColor
-      : ["#ffffff"]
+      : globalTheme?.background ?? ["#ffffff"]
     : backgroundColor
     ? [backgroundColor]
-    : ["#ffffff"];
+    : globalTheme?.background ?? ["#ffffff"];
 
   const generateRandomColor = () => {
     // Generate a random hex color
@@ -131,7 +136,9 @@ export function BackgroundSection({
         </h3>
         <div className="grid grid-cols-7 gap-2.5 px-1">
           {PRESET_GRADIENTS.map((gradient, index) => {
-            const gradientString = `linear-gradient(to right, ${gradient.join(", ")})`;
+            const gradientString = `linear-gradient(to right, ${gradient.join(
+              ", "
+            )})`;
             const isActive =
               colors.length === gradient.length &&
               colors.every((c, i) => c === gradient[i]);

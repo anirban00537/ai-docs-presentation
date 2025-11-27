@@ -52,10 +52,11 @@ export const useTitleCardCreation = () => {
         y: originY,
         width,
         height,
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        eyebrowColor: globalTheme?.accent ?? "#2563eb",
-        titleColor: globalTheme?.text ?? "#0f172a",
-        subtitleColor: globalTheme?.text ?? "#475569",
+        // Don't set colors - will use global theme by default
+        backgroundColor: undefined,
+        eyebrowColor: undefined,
+        titleColor: undefined,
+        subtitleColor: undefined,
         eyebrowFontFamily:
           globalTheme?.font ?? "var(--font-poppins), Poppins, sans-serif",
         titleFontFamily:

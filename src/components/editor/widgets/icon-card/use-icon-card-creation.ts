@@ -49,11 +49,11 @@ export const useIconCardCreation = () => {
         y: originY,
         width,
         height,
-        // Seed with current theme colors so card matches active theme
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        iconColor: globalTheme?.accent ?? "#0f172a",
-        titleColor: globalTheme?.text ?? "#0f172a",
-        descriptionColor: globalTheme?.text ?? "#475569",
+        // Don't set colors - will use global theme by default
+        backgroundColor: undefined,
+        iconColor: undefined,
+        titleColor: undefined,
+        descriptionColor: undefined,
         iconSize: 60,
         titleFontSize: 24,
         descriptionFontSize: 18,

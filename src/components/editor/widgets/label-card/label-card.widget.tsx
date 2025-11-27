@@ -12,6 +12,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
@@ -52,6 +53,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localLabel, setLocalLabel] = React.useState(widget.label || "Label");
@@ -148,12 +150,12 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
   );
 
 
-  // Widget-local colors and fonts with sensible defaults
-  const backgroundColor = widget.backgroundColor ?? "#ffffff";
-  const labelColor = widget.labelColor ?? "#0f172a";
+  // Widget-local colors and fonts - use global theme when undefined
+  const backgroundColor = widget.backgroundColor ?? undefined;
+  const labelColor = widget.labelColor ?? globalTheme?.accent ?? "#0f172a";
   const labelTextColor = widget.labelTextColor ?? "#ffffff";
-  const titleColor = widget.titleColor ?? "#0f172a";
-  const descriptionColor = widget.descriptionColor ?? "#475569";
+  const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
+  const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
   const labelFontFamily = widget.labelFontFamily ?? "var(--font-poppins)";
   const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
   const descriptionFontFamily =
@@ -323,6 +325,7 @@ const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -434,18 +437,18 @@ const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
   };
 
   const currentAlign = widget.textAlign ?? "left";
-  const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
+  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
-  const currentLabelColor = widget.labelColor ?? "#0f172a";
+  const currentLabelColor = widget.labelColor ?? globalTheme?.accent ?? "#0f172a";
 
   const currentTextColor =
     activeField === "label"
       ? widget.labelTextColor ?? "#ffffff"
       : activeField === "title"
-      ? widget.titleColor ?? "#0f172a"
+      ? widget.titleColor ?? globalTheme?.text ?? "#0f172a"
       : activeField === "description"
-      ? widget.descriptionColor ?? "#475569"
-      : "#0f172a";
+      ? widget.descriptionColor ?? globalTheme?.text ?? "#475569"
+      : globalTheme?.text ?? "#0f172a";
 
   const currentFontFamily =
     activeField === "label"

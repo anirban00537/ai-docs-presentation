@@ -8,6 +8,7 @@ import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
+  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
@@ -56,6 +57,7 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
   }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localPlanName, setLocalPlanName] = React.useState(
@@ -262,17 +264,17 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
     [isSelected, localFeatures, debouncedUpdateFeatures]
   );
 
-  const backgroundColor = widget.backgroundColor ?? "#ffffff";
+  const backgroundColor = widget.backgroundColor ?? undefined;
   const backgroundType = widget.backgroundType ?? "solid";
   const textAlign = widget.textAlign ?? "center";
 
-  const planNameColor = widget.planNameColor ?? "#0f172a";
-  const priceColor = widget.priceColor ?? "#0f172a";
-  const periodColor = widget.periodColor ?? "#64748b";
-  const badgeColor = widget.badgeColor ?? "#2563eb";
+  const planNameColor = widget.planNameColor ?? globalTheme?.text ?? "#0f172a";
+  const priceColor = widget.priceColor ?? globalTheme?.text ?? "#0f172a";
+  const periodColor = widget.periodColor ?? globalTheme?.text ?? "#64748b";
+  const badgeColor = widget.badgeColor ?? globalTheme?.accent ?? "#2563eb";
   const badgeTextColor = widget.badgeTextColor ?? "#ffffff";
-  const featureColor = widget.featureColor ?? "#0f172a";
-  const buttonColor = widget.buttonColor ?? "#2563eb";
+  const featureColor = widget.featureColor ?? globalTheme?.text ?? "#0f172a";
+  const buttonColor = widget.buttonColor ?? globalTheme?.accent ?? "#2563eb";
   const buttonTextColor = widget.buttonTextColor ?? "#ffffff";
 
   const planNameFontFamily = widget.planNameFontFamily ?? "var(--font-poppins)";
@@ -686,6 +688,7 @@ const PricingCardEditingToolbar: React.FC<PricingCardEditingToolbarProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -807,24 +810,24 @@ const PricingCardEditingToolbar: React.FC<PricingCardEditingToolbarProps> = ({
     }
   };
 
-  const currentBackgroundColor = widget.backgroundColor ?? "#ffffff";
+  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
   const currentAlign = widget.textAlign ?? "center";
 
   const currentColor =
     activeField === "planName"
-      ? widget.planNameColor ?? "#0f172a"
+      ? widget.planNameColor ?? globalTheme?.text ?? "#0f172a"
       : activeField === "price"
-      ? widget.priceColor ?? "#0f172a"
+      ? widget.priceColor ?? globalTheme?.text ?? "#0f172a"
       : activeField === "period"
-      ? widget.periodColor ?? "#64748b"
+      ? widget.periodColor ?? globalTheme?.text ?? "#64748b"
       : activeField === "badge"
-      ? widget.badgeColor ?? "#2563eb"
+      ? widget.badgeColor ?? globalTheme?.accent ?? "#2563eb"
       : activeField === "buttonText"
       ? widget.buttonTextColor ?? "#ffffff"
       : activeField === "feature"
-      ? widget.featureColor ?? "#0f172a"
-      : "#0f172a";
+      ? widget.featureColor ?? globalTheme?.text ?? "#0f172a"
+      : globalTheme?.text ?? "#0f172a";
 
   const currentFontFamily =
     activeField === "planName"

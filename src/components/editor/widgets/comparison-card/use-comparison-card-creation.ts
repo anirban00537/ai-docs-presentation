@@ -47,9 +47,10 @@ export const useComparisonCardCreation = () => {
         y: originY,
         width,
         height,
-        backgroundColor: globalTheme?.surface ?? "rgba(15,23,42,0.05)",
+        // Don't set colors - will use global theme by default
+        backgroundColor: undefined,
         backgroundType: globalTheme?.cardBackgroundType ?? "glass",
-        dividerColor: "rgba(15,23,42,0.12)",
+        dividerColor: "rgba(15,23,42,0.12)", // Keep divider color as it's structural
         textAlign: "left",
         leftLabel: preset.leftLabel ?? "Plan A",
         rightLabel: preset.rightLabel ?? "Plan B",
@@ -63,11 +64,10 @@ export const useComparisonCardCreation = () => {
           preset.rightItems && preset.rightItems.length > 0
             ? preset.rightItems
             : ["Limited projects", "Standard support", "Basic analytics"],
-        leftAccentColor:
-          preset.leftAccentColor ?? globalTheme?.accent ?? "#2563eb",
-        rightAccentColor: preset.rightAccentColor ?? "#f97316",
-        leftTextColor: globalTheme?.text ?? "#0f172a",
-        rightTextColor: globalTheme?.text ?? "#0f172a",
+        leftAccentColor: preset.leftAccentColor ?? undefined,
+        rightAccentColor: preset.rightAccentColor ?? undefined,
+        leftTextColor: undefined,
+        rightTextColor: undefined,
         leftLabelFontFamily:
           globalTheme?.font ??
           "var(--font-great-vibes), 'Great Vibes', cursive",

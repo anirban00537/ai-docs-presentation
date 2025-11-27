@@ -51,9 +51,10 @@ export const useImageCardCreation = () => {
         y: originY,
         width,
         height,
-        backgroundColor: globalTheme?.surface ?? "#ffffff",
-        titleColor: globalTheme?.text ?? "#0f172a",
-        descriptionColor: globalTheme?.text ?? "#475569",
+        // Don't set colors - will use global theme by default
+        backgroundColor: undefined,
+        titleColor: undefined,
+        descriptionColor: undefined,
         titleFontSize: 26,
         descriptionFontSize: 18,
         titleFontFamily:
