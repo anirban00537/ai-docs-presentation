@@ -5,14 +5,8 @@ import Image from "next/image";
 import {
   IconDashboard,
   IconFileText,
-  IconPlus,
   IconTemplate,
-  IconClock,
   IconShare3,
-  IconChartBar,
-  IconTrash,
-  IconHelp,
-  IconSearch,
   IconSettings,
 } from "@tabler/icons-react";
 
@@ -41,34 +35,14 @@ const navMainData = [
     icon: IconFileText,
   },
   {
-    title: "Create Presentation",
-    url: "/editor",
-    icon: IconPlus,
-  },
-  {
     title: "Templates",
     url: "#",
     icon: IconTemplate,
   },
   {
-    title: "Recent",
-    url: "#",
-    icon: IconClock,
-  },
-  {
     title: "Shared with Me",
     url: "#",
     icon: IconShare3,
-  },
-  {
-    title: "Analytics",
-    url: "#",
-    icon: IconChartBar,
-  },
-  {
-    title: "Trash",
-    url: "#",
-    icon: IconTrash,
   },
 ];
 
@@ -77,16 +51,6 @@ const navSecondaryData = [
     title: "Settings",
     url: "#",
     icon: IconSettings,
-  },
-  {
-    title: "Get Help",
-    url: "#",
-    icon: IconHelp,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: IconSearch,
   },
 ];
 
