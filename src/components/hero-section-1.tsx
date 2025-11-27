@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Variants } from "framer-motion";
+import { Variants, motion } from "framer-motion";
 
 import { AppleButton } from "@/components/editor/apple-button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
@@ -28,12 +28,128 @@ const transitionVariants: { item: Variants } = {
   },
 };
 
+function AnimatedMeshGradient() {
+  const gradientBlobs = [
+    {
+      gradient:
+        "radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, rgba(251, 146, 60, 0.2) 50%, rgba(253, 186, 116, 0.3) 100%)",
+      darkGradient:
+        "radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, rgba(251, 146, 60, 0.1) 50%, rgba(253, 186, 116, 0.15) 100%)",
+      size: "w-[600px] h-[600px]",
+      x: ["-10%", "10%"],
+      y: ["-10%", "20%"],
+      duration: 20,
+    },
+    {
+      gradient:
+        "radial-gradient(circle, rgba(96, 165, 250, 0.3) 0%, rgba(196, 181, 253, 0.2) 50%, rgba(251, 113, 133, 0.3) 100%)",
+      darkGradient:
+        "radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, rgba(196, 181, 253, 0.1) 50%, rgba(251, 113, 133, 0.15) 100%)",
+      size: "w-[500px] h-[500px]",
+      x: ["80%", "70%"],
+      y: ["10%", "30%"],
+      duration: 25,
+    },
+    {
+      gradient:
+        "radial-gradient(circle, rgba(74, 222, 128, 0.25) 0%, rgba(110, 231, 183, 0.15) 50%, rgba(94, 234, 212, 0.25) 100%)",
+      darkGradient:
+        "radial-gradient(circle, rgba(74, 222, 128, 0.12) 0%, rgba(110, 231, 183, 0.08) 50%, rgba(94, 234, 212, 0.12) 100%)",
+      size: "w-[700px] h-[700px]",
+      x: ["50%", "40%"],
+      y: ["60%", "50%"],
+      duration: 30,
+    },
+    {
+      gradient:
+        "radial-gradient(circle, rgba(244, 114, 182, 0.3) 0%, rgba(251, 113, 133, 0.2) 50%, rgba(248, 113, 113, 0.3) 100%)",
+      darkGradient:
+        "radial-gradient(circle, rgba(244, 114, 182, 0.15) 0%, rgba(251, 113, 133, 0.1) 50%, rgba(248, 113, 113, 0.15) 100%)",
+      size: "w-[550px] h-[550px]",
+      x: ["20%", "30%"],
+      y: ["70%", "60%"],
+      duration: 22,
+    },
+    {
+      gradient:
+        "radial-gradient(circle, rgba(167, 139, 250, 0.25) 0%, rgba(129, 140, 248, 0.15) 50%, rgba(96, 165, 250, 0.25) 100%)",
+      darkGradient:
+        "radial-gradient(circle, rgba(167, 139, 250, 0.12) 0%, rgba(129, 140, 248, 0.08) 50%, rgba(96, 165, 250, 0.12) 100%)",
+      size: "w-[650px] h-[650px]",
+      x: ["70%", "60%"],
+      y: ["-5%", "15%"],
+      duration: 28,
+    },
+    {
+      gradient:
+        "radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, rgba(251, 146, 60, 0.15) 50%, rgba(253, 186, 116, 0.2) 100%)",
+      darkGradient:
+        "radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, rgba(251, 146, 60, 0.08) 50%, rgba(253, 186, 116, 0.1) 100%)",
+      size: "w-[800px] h-[800px]",
+      x: ["30%", "35%"],
+      y: ["40%", "45%"],
+      duration: 35,
+    },
+  ];
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {gradientBlobs.map((blob, index) => (
+        <motion.div
+          key={index}
+          className={`absolute ${blob.size} rounded-full blur-3xl`}
+          style={{
+            background: blob.gradient,
+            x: "-50%",
+            y: "-50%",
+          }}
+          animate={{
+            left: blob.x,
+            top: blob.y,
+          }}
+          transition={{
+            duration: blob.duration,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+      {/* Dark mode gradients */}
+      <div className="dark:block hidden pointer-events-none absolute inset-0 overflow-hidden">
+        {gradientBlobs.map((blob, index) => (
+          <motion.div
+            key={`dark-${index}`}
+            className={`absolute ${blob.size} rounded-full blur-3xl`}
+            style={{
+              background: blob.darkGradient,
+              x: "-50%",
+              y: "-50%",
+            }}
+            animate={{
+              left: blob.x,
+              top: blob.y,
+            }}
+            transition={{
+              duration: blob.duration,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function HeroSection() {
   return (
     <>
       <Navbar />
-      <main className="overflow-hidden bg-linear-to-b from-[#FFF8E0] via-white to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-background">
-        <section className="relative">
+      <main className="relative overflow-hidden bg-white dark:bg-zinc-950">
+        <AnimatedMeshGradient />
+        <section className="relative z-10">
           <div className="relative">
             <div className="mx-auto flex max-w-7xl flex-col items-center gap-16 px-6 pb-20 pt-32 md:gap-20 md:pb-32 md:pt-40 lg:pt-48">
               {/* Center column */}
