@@ -1,13 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Variants } from "framer-motion";
+import { Variants, motion } from "framer-motion";
 import Image from "next/image";
 
 import { AppleButton } from "@/components/editor/apple-button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { Navbar } from "@/components/navbar";
+
+const HERO_IMAGES = ["/demo.png", "/demo.png", "/demo.png"];
 
 const transitionVariants: { item: Variants } = {
   item: {
@@ -30,13 +33,22 @@ const transitionVariants: { item: Variants } = {
 };
 
 export function HeroSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <Navbar />
       <main className="overflow-hidden bg-linear-to-b from-[#FFF8E0] via-white to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-background">
         <section className="relative">
-          <div className="relative pt-32 md:pt-40 lg:pt-48">
-            <div className="mx-auto flex max-w-7xl flex-col gap-16 px-6 pb-20 md:gap-20 md:pb-32 lg:flex-row lg:items-start lg:gap-12 lg:pt-8">
+          <div className="relative ">
+            <div className="mx-auto flex max-w-7xl flex-col gap-16 px-6 pb-20 md:gap-20 md:pb-32 lg:flex-row lg:items-center lg:gap-20 lg:pt-8">
               {/* Left column */}
               <AnimatedGroup
                 variants={{
@@ -47,15 +59,15 @@ export function HeroSection() {
                   },
                   ...transitionVariants,
                 }}
-                className="max-w-2xl space-y-10 lg:max-w-2xl"
+                className="max-w-2xl shrink-0 space-y-10 lg:w-1/3 lg:max-w-xl"
               >
                 <div className="space-y-8">
-                  <h1 className="text-balance text-5xl font-semibold tracking-tight text-zinc-950 sm:text-6xl md:text-7xl lg:text-8xl dark:text-zinc-50">
+                  <h1 className="text-balance text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl md:text-6xl lg:text-7xl dark:text-zinc-50">
                     Presentations that feel
                     <br className="hidden sm:block" />
                     as smooth as butter.
                   </h1>
-                  <p className="text-balance text-lg leading-relaxed text-zinc-600 sm:text-xl md:text-2xl md:leading-relaxed dark:text-zinc-400">
+                  <p className="text-balance text-base leading-relaxed text-zinc-600 sm:text-lg md:text-xl md:leading-relaxed dark:text-zinc-400">
                     Create stunning, buttery-smooth presentations effortlessly
                     with AI. Design, customize, and share professional slides
                     that flow seamlessly.
@@ -95,58 +107,56 @@ export function HeroSection() {
                 variants={transitionVariants}
                 className="flex-1 lg:min-w-0"
               >
-                <div className="relative flex h-[500px] w-full flex-col items-center justify-center gap-6 overflow-hidden py-4">
-                  {/* Top slide - half visible */}
-                  <div className="relative aspect-[16/6] w-full max-w-xl origin-bottom scale-90 rounded-xl border border-zinc-200/50 bg-white opacity-40 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-                    <div className="absolute inset-0 overflow-hidden rounded-xl">
-                      <Image
-                        src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=2000&q=80"
-                        alt="Slide 1"
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 600px"
-                      />
-                    </div>
-                  </div>
+                <div className="relative flex min-h-[800px] w-full flex-col items-center justify-center gap-6 overflow-visible py-4">
+                  <div className="relative flex w-full flex-col items-center justify-center gap-4">
+                    {[-1, 0, 1].map((offset) => {
+                      // Calculate the index of the image to show at this position
+                      // offset -1 = Top (Previous Image)
+                      // offset 0 = Center (Current Image)
+                      // offset 1 = Bottom (Next Image)
+                      const imageIndex =
+                        (activeIndex + offset + HERO_IMAGES.length) %
+                        HERO_IMAGES.length;
 
-                  {/* Center slide - full visible */}
-                  <div className="relative z-10 flex aspect-[16/6] w-full max-w-xl flex-col rounded-2xl border border-white/80 bg-white/90 shadow-2xl shadow-yellow-200/30 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/90 dark:shadow-zinc-900/50">
-                    {/* Top bar */}
-                    <div className="flex items-center justify-between border-b border-zinc-200/50 bg-zinc-50/50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/50">
-                      <div className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full bg-red-400" />
-                        <span className="h-2 w-2 rounded-full bg-yellow-400" />
-                        <span className="h-2 w-2 rounded-full bg-green-400" />
-                      </div>
-                      <div className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                        Q1 2025 Growth Report
-                      </div>
-                      <div className="w-10" />
-                    </div>
+                      // Determine styles based on offset
+                      const isCenter = offset === 0;
+                      const isTop = offset === -1;
+                      const isBottom = offset === 1;
 
-                    <div className="relative grow overflow-hidden rounded-b-2xl bg-zinc-50 dark:bg-zinc-900">
-                      <Image
-                        src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=2000&q=80"
-                        alt="Main slide"
-                        fill
-                        className="object-cover"
-                        priority
-                        sizes="(max-width: 768px) 100vw, 600px"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Bottom slide - half visible */}
-                  <div className="relative aspect-[16/6] w-full max-w-xl origin-top scale-90 rounded-xl border border-zinc-200/50 bg-white opacity-40 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-                    <div className="absolute inset-0 overflow-hidden rounded-xl">
-                      <Image
-                        src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=2000&q=80"
-                        alt="Slide 3"
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 600px"
-                      />
-                    </div>
+                      return (
+                        <motion.div
+                          key={`${offset}-${imageIndex}`} // Key ensures content updates
+                          layout
+                          initial={false}
+                          animate={{
+                            scale: isCenter ? 1 : 0.9,
+                            opacity: isCenter ? 1 : 0.4,
+                            y: 0,
+                            zIndex: isCenter ? 10 : 0,
+                          }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 200,
+                            damping: 20,
+                          }}
+                          className={`relative aspect-16/6 w-full max-w-2xl overflow-hidden rounded-2xl border bg-white shadow-2xl dark:bg-zinc-900 ${
+                            isCenter
+                              ? "border-white/80 shadow-yellow-200/30 dark:border-zinc-800 dark:shadow-zinc-900/50"
+                              : "border-zinc-200/50 dark:border-zinc-800"
+                          } ${isTop ? "origin-bottom" : ""} ${
+                            isBottom ? "origin-top" : ""
+                          }`}
+                        >
+                          <Image
+                            src={HERO_IMAGES[imageIndex]}
+                            alt={`Slide ${imageIndex + 1}`}
+                            fill
+                            className="h-full w-full object-cover"
+                            priority={isCenter}
+                          />
+                        </motion.div>
+                      );
+                    })}
                   </div>
 
                   {/* Decorative glow */}
