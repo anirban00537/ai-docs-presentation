@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import {
   IconDashboard,
   IconFileText,
@@ -11,7 +12,6 @@ import {
   IconChartBar,
   IconTrash,
   IconHelp,
-  IconInnerShadowTop,
   IconSearch,
   IconSettings,
 } from "@tabler/icons-react";
@@ -101,8 +101,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
               <a href="#">
-                <IconInnerShadowTop className="size-5!" />
-                <span className="text-base font-semibold">Boostfury</span>
+                <Image
+                  src="/logo.svg"
+                  alt="Butterfast"
+                  width={150}
+                  height={150}
+                />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
