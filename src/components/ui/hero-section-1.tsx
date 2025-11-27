@@ -47,8 +47,13 @@ export function HeroSection() {
             height={4095}
           />
         </div>
-        <section>
+        <section className="relative">
           <div className="relative pt-24 md:pt-36">
+            {/* Butter gradient background */}
+            <div
+              aria-hidden
+              className="absolute inset-0 -z-15 size-full [background:radial-gradient(ellipse_at_top,oklch(0.92_0.12_90)_0%,oklch(0.96_0.06_90)_50%,oklch(0.99_0.02_90)_80%,transparent_100%)]"
+            />
             <AnimatedGroup
               variants={{
                 container: {
@@ -86,7 +91,7 @@ export function HeroSection() {
             </AnimatedGroup>
             <div
               aria-hidden
-              className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--background)_75%)]"
+              className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,oklch(0.99_0.02_90)_75%)]"
             />
             <div className="mx-auto max-w-7xl px-6">
               <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
