@@ -1,0 +1,201 @@
+"use client";
+
+import Link from "next/link";
+import { Check, ArrowRight } from "lucide-react";
+import { Variants } from "framer-motion";
+
+import { AppleButton } from "@/components/editor/apple-button";
+import { AnimatedGroup } from "@/components/ui/animated-group";
+
+const transitionVariants: { item: Variants } = {
+  item: {
+    hidden: {
+      opacity: 0,
+      filter: "blur(12px)",
+      y: 12,
+    },
+    visible: {
+      opacity: 1,
+      filter: "blur(0px)",
+      y: 0,
+      transition: {
+        type: "spring" as const,
+        bounce: 0.3,
+        duration: 1.5,
+      },
+    },
+  },
+};
+
+const plans = [
+  {
+    name: "Free",
+    price: "$0",
+    period: "forever",
+    description: "Perfect for trying out Butterfast",
+    features: [
+      "Up to 5 presentations",
+      "Basic templates",
+      "AI-powered generation",
+      "Standard export formats",
+      "Community support",
+    ],
+    cta: "Get Started",
+    href: "/editor",
+    popular: false,
+  },
+  {
+    name: "Pro",
+    price: "$19",
+    period: "per month",
+    description: "For professionals and teams",
+    features: [
+      "Unlimited presentations",
+      "Premium templates",
+      "Advanced AI features",
+      "All export formats",
+      "Priority support",
+      "Team collaboration",
+      "Custom branding",
+      "Analytics & insights",
+    ],
+    cta: "Start Free Trial",
+    href: "#pricing",
+    popular: true,
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    period: "",
+    description: "For large organizations",
+    features: [
+      "Everything in Pro",
+      "Dedicated account manager",
+      "Custom integrations",
+      "SLA guarantee",
+      "Advanced security",
+      "On-premise deployment",
+      "Training & onboarding",
+      "Custom contracts",
+    ],
+    cta: "Contact Sales",
+    href: "#contact",
+    popular: false,
+  },
+];
+
+export function PricingSection() {
+  return (
+    <section className="relative py-20 md:py-32" id="pricing">
+      <div className="absolute inset-0 bg-linear-to-b from-white via-[#FFF8E0]/40 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
+        <AnimatedGroup
+          variants={{
+            container: {
+              visible: {
+                transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+              },
+            },
+            ...transitionVariants,
+          }}
+          className="text-center"
+        >
+          <h2 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl md:text-5xl dark:text-zinc-50">
+            Simple, transparent pricing
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
+            Choose the plan that works best for you. All plans include our core
+            features with no hidden fees.
+          </p>
+        </AnimatedGroup>
+
+        <div className="mt-16 grid gap-8 lg:grid-cols-3">
+          {plans.map((plan, index) => (
+            <AnimatedGroup
+              key={index}
+              variants={transitionVariants}
+              className="group relative"
+            >
+              <div
+                className={`relative rounded-2xl border p-8 shadow-lg backdrop-blur-xl transition-all duration-300 ${
+                  plan.popular
+                    ? "border-yellow-400/50 bg-white/80 shadow-yellow-200/30 dark:border-yellow-500/50 dark:bg-zinc-900/80 dark:shadow-yellow-900/20 scale-105 lg:scale-110"
+                    : "border-white/80 bg-white/60 shadow-yellow-100/20 hover:shadow-xl hover:shadow-yellow-200/30 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-yellow-900/10 dark:hover:shadow-yellow-900/20"
+                }`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                    <span className="rounded-full bg-linear-to-r from-yellow-400 to-amber-400 px-4 py-1 text-sm font-semibold text-zinc-950 dark:text-zinc-900">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+
+                <div className="text-center">
+                  <h3 className="text-2xl font-semibold text-zinc-950 dark:text-zinc-50">
+                    {plan.name}
+                  </h3>
+                  <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                    {plan.description}
+                  </p>
+                  <div className="mt-6 flex items-baseline justify-center">
+                    <span className="text-5xl font-bold text-zinc-950 dark:text-zinc-50">
+                      {plan.price}
+                    </span>
+                    {plan.period && (
+                      <span className="ml-2 text-zinc-600 dark:text-zinc-400">
+                        /{plan.period}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <ul className="mt-8 space-y-4">
+                  {plan.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-start gap-3">
+                      <div className="mt-0.5 shrink-0 rounded-full bg-yellow-100/50 p-1 dark:bg-yellow-900/20">
+                        <Check className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                      </div>
+                      <span className="text-zinc-700 dark:text-zinc-300">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-8">
+                  <AppleButton
+                    asChild
+                    size="lg"
+                    variant={plan.popular ? "primary" : "ghost"}
+                    className={`w-full rounded-xl ${
+                      plan.popular
+                        ? "px-8"
+                        : "border border-zinc-200 dark:border-zinc-800"
+                    }`}
+                  >
+                    <Link href={plan.href}>
+                      <span className="inline-flex items-center justify-center gap-2">
+                        {plan.cta}
+                        {plan.popular && (
+                          <ArrowRight className="h-4 w-4" />
+                        )}
+                      </span>
+                    </Link>
+                  </AppleButton>
+                </div>
+              </div>
+            </AnimatedGroup>
+          ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            All plans include a 14-day free trial. No credit card required.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
