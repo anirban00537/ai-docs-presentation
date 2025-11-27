@@ -32,9 +32,9 @@ function AnimatedMeshGradient() {
   const gradientBlobs = [
     {
       gradient:
-        "radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, rgba(251, 146, 60, 0.2) 50%, rgba(253, 186, 116, 0.3) 100%)",
+        "radial-gradient(circle, rgba(255, 215, 0, 0.35) 0%, rgba(255, 223, 0, 0.25) 50%, rgba(255, 241, 118, 0.35) 100%)",
       darkGradient:
-        "radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, rgba(251, 146, 60, 0.1) 50%, rgba(253, 186, 116, 0.15) 100%)",
+        "radial-gradient(circle, rgba(255, 215, 0, 0.18) 0%, rgba(255, 223, 0, 0.12) 50%, rgba(255, 241, 118, 0.18) 100%)",
       size: "w-[600px] h-[600px]",
       x: ["-10%", "10%"],
       y: ["-10%", "20%"],
@@ -42,9 +42,9 @@ function AnimatedMeshGradient() {
     },
     {
       gradient:
-        "radial-gradient(circle, rgba(96, 165, 250, 0.3) 0%, rgba(196, 181, 253, 0.2) 50%, rgba(251, 113, 133, 0.3) 100%)",
+        "radial-gradient(circle, rgba(255, 193, 7, 0.35) 0%, rgba(255, 235, 59, 0.25) 50%, rgba(255, 248, 220, 0.35) 100%)",
       darkGradient:
-        "radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, rgba(196, 181, 253, 0.1) 50%, rgba(251, 113, 133, 0.15) 100%)",
+        "radial-gradient(circle, rgba(255, 193, 7, 0.18) 0%, rgba(255, 235, 59, 0.12) 50%, rgba(255, 248, 220, 0.18) 100%)",
       size: "w-[500px] h-[500px]",
       x: ["80%", "70%"],
       y: ["10%", "30%"],
@@ -52,9 +52,9 @@ function AnimatedMeshGradient() {
     },
     {
       gradient:
-        "radial-gradient(circle, rgba(74, 222, 128, 0.25) 0%, rgba(110, 231, 183, 0.15) 50%, rgba(94, 234, 212, 0.25) 100%)",
+        "radial-gradient(circle, rgba(255, 250, 205, 0.3) 0%, rgba(255, 253, 208, 0.2) 50%, rgba(255, 238, 88, 0.3) 100%)",
       darkGradient:
-        "radial-gradient(circle, rgba(74, 222, 128, 0.12) 0%, rgba(110, 231, 183, 0.08) 50%, rgba(94, 234, 212, 0.12) 100%)",
+        "radial-gradient(circle, rgba(255, 250, 205, 0.15) 0%, rgba(255, 253, 208, 0.1) 50%, rgba(255, 238, 88, 0.15) 100%)",
       size: "w-[700px] h-[700px]",
       x: ["50%", "40%"],
       y: ["60%", "50%"],
@@ -62,9 +62,9 @@ function AnimatedMeshGradient() {
     },
     {
       gradient:
-        "radial-gradient(circle, rgba(244, 114, 182, 0.3) 0%, rgba(251, 113, 133, 0.2) 50%, rgba(248, 113, 113, 0.3) 100%)",
+        "radial-gradient(circle, rgba(255, 223, 0, 0.35) 0%, rgba(255, 215, 0, 0.25) 50%, rgba(255, 241, 118, 0.35) 100%)",
       darkGradient:
-        "radial-gradient(circle, rgba(244, 114, 182, 0.15) 0%, rgba(251, 113, 133, 0.1) 50%, rgba(248, 113, 113, 0.15) 100%)",
+        "radial-gradient(circle, rgba(255, 223, 0, 0.18) 0%, rgba(255, 215, 0, 0.12) 50%, rgba(255, 241, 118, 0.18) 100%)",
       size: "w-[550px] h-[550px]",
       x: ["20%", "30%"],
       y: ["70%", "60%"],
@@ -72,9 +72,9 @@ function AnimatedMeshGradient() {
     },
     {
       gradient:
-        "radial-gradient(circle, rgba(167, 139, 250, 0.25) 0%, rgba(129, 140, 248, 0.15) 50%, rgba(96, 165, 250, 0.25) 100%)",
+        "radial-gradient(circle, rgba(255, 235, 59, 0.3) 0%, rgba(255, 248, 220, 0.2) 50%, rgba(255, 193, 7, 0.3) 100%)",
       darkGradient:
-        "radial-gradient(circle, rgba(167, 139, 250, 0.12) 0%, rgba(129, 140, 248, 0.08) 50%, rgba(96, 165, 250, 0.12) 100%)",
+        "radial-gradient(circle, rgba(255, 235, 59, 0.15) 0%, rgba(255, 248, 220, 0.1) 50%, rgba(255, 193, 7, 0.15) 100%)",
       size: "w-[650px] h-[650px]",
       x: ["70%", "60%"],
       y: ["-5%", "15%"],
@@ -82,9 +82,9 @@ function AnimatedMeshGradient() {
     },
     {
       gradient:
-        "radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, rgba(251, 146, 60, 0.15) 50%, rgba(253, 186, 116, 0.2) 100%)",
+        "radial-gradient(circle, rgba(255, 241, 118, 0.3) 0%, rgba(255, 250, 205, 0.2) 50%, rgba(255, 223, 0, 0.3) 100%)",
       darkGradient:
-        "radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, rgba(251, 146, 60, 0.08) 50%, rgba(253, 186, 116, 0.1) 100%)",
+        "radial-gradient(circle, rgba(255, 241, 118, 0.15) 0%, rgba(255, 250, 205, 0.1) 50%, rgba(255, 223, 0, 0.15) 100%)",
       size: "w-[800px] h-[800px]",
       x: ["30%", "35%"],
       y: ["40%", "45%"],
