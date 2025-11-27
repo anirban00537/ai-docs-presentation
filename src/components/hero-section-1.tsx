@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Variants, motion } from "framer-motion";
-import Image from "next/image";
+import { Variants } from "framer-motion";
 
 import { AppleButton } from "@/components/editor/apple-button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { Navbar } from "@/components/navbar";
-
-const HERO_IMAGES = ["/demo.png", "/demo.png", "/demo.png"];
 
 const transitionVariants: { item: Variants } = {
   item: {
@@ -33,23 +29,14 @@ const transitionVariants: { item: Variants } = {
 };
 
 export function HeroSection() {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <>
       <Navbar />
       <main className="overflow-hidden bg-linear-to-b from-[#FFF8E0] via-white to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-background">
         <section className="relative">
-          <div className="relative ">
-            <div className="mx-auto flex max-w-7xl flex-col gap-16 px-6 pb-20 md:gap-20 md:pb-32 lg:flex-row lg:items-center lg:gap-20 lg:pt-8">
-              {/* Left column */}
+          <div className="relative">
+            <div className="mx-auto flex max-w-7xl flex-col items-center gap-16 px-6 pb-20 pt-32 md:gap-20 md:pb-32 md:pt-40 lg:pt-48">
+              {/* Center column */}
               <AnimatedGroup
                 variants={{
                   container: {
@@ -59,7 +46,7 @@ export function HeroSection() {
                   },
                   ...transitionVariants,
                 }}
-                className="max-w-2xl shrink-0 space-y-10 lg:w-1/3 lg:max-w-xl"
+                className="flex w-full max-w-4xl flex-col items-center space-y-10 text-center"
               >
                 <div className="space-y-8">
                   <h1 className="text-balance text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl md:text-6xl lg:text-7xl dark:text-zinc-50">
@@ -74,7 +61,7 @@ export function HeroSection() {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+                <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-center">
                   <AppleButton
                     asChild
                     size="lg"
@@ -102,66 +89,25 @@ export function HeroSection() {
                 </div>
               </AnimatedGroup>
 
-              {/* Right column – slide previews */}
+              {/* Video section at bottom */}
               <AnimatedGroup
                 variants={transitionVariants}
-                className="flex-1 lg:min-w-0"
+                className="w-full max-w-5xl"
               >
-                <div className="relative flex min-h-[800px] w-full flex-col items-center justify-center gap-6 overflow-visible py-4">
-                  <div className="relative flex w-full flex-col items-center justify-center gap-4">
-                    {[-1, 0, 1].map((offset) => {
-                      // Calculate the index of the image to show at this position
-                      // offset -1 = Top (Previous Image)
-                      // offset 0 = Center (Current Image)
-                      // offset 1 = Bottom (Next Image)
-                      const imageIndex =
-                        (activeIndex + offset + HERO_IMAGES.length) %
-                        HERO_IMAGES.length;
-
-                      // Determine styles based on offset
-                      const isCenter = offset === 0;
-                      const isTop = offset === -1;
-                      const isBottom = offset === 1;
-
-                      return (
-                        <motion.div
-                          key={`${offset}-${imageIndex}`} // Key ensures content updates
-                          layout
-                          initial={false}
-                          animate={{
-                            scale: isCenter ? 1 : 0.9,
-                            opacity: isCenter ? 1 : 0.4,
-                            y: 0,
-                            zIndex: isCenter ? 10 : 0,
-                          }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 200,
-                            damping: 20,
-                          }}
-                          className={`relative aspect-16/6 w-full max-w-2xl overflow-hidden rounded-2xl border bg-white shadow-2xl dark:bg-zinc-900 ${
-                            isCenter
-                              ? "border-white/80 shadow-yellow-200/30 dark:border-zinc-800 dark:shadow-zinc-900/50"
-                              : "border-zinc-200/50 dark:border-zinc-800"
-                          } ${isTop ? "origin-bottom" : ""} ${
-                            isBottom ? "origin-top" : ""
-                          }`}
-                        >
-                          <Image
-                            src={HERO_IMAGES[imageIndex]}
-                            alt={`Slide ${imageIndex + 1}`}
-                            fill
-                            className="h-full w-full object-cover"
-                            priority={isCenter}
-                          />
-                        </motion.div>
-                      );
-                    })}
+                <div className="relative w-full overflow-hidden rounded-2xl border border-white/80 bg-white/90 shadow-2xl shadow-yellow-200/30 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/90 dark:shadow-zinc-900/50">
+                  <div className="relative aspect-video w-full">
+                    <iframe
+                      src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&playlist=dQw4w9WgXcQ&controls=0&modestbranding=1&rel=0"
+                      title="Demo Video"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="absolute inset-0 h-full w-full"
+                    />
                   </div>
-
-                  {/* Decorative glow */}
-                  <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-3/4 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-linear-to-br from-yellow-200/40 via-amber-100/30 to-orange-100/40 blur-3xl dark:from-yellow-500/20 dark:via-amber-500/15 dark:to-orange-500/20" />
                 </div>
+
+                {/* Decorative glow */}
+                <div className="pointer-events-none absolute -inset-4 -z-10 rounded-2xl bg-linear-to-br from-yellow-200/40 via-amber-100/30 to-orange-100/40 blur-3xl dark:from-yellow-500/20 dark:via-amber-500/15 dark:to-orange-500/20" />
               </AnimatedGroup>
             </div>
           </div>
