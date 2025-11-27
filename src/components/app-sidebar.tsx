@@ -8,11 +8,13 @@ import {
   IconTemplate,
   IconShare3,
   IconSettings,
+  IconSparkles,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
+import { AppleButton } from "@/components/editor/apple-button";
 import {
   Sidebar,
   SidebarContent,
@@ -78,6 +80,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMainData} />
+
         <NavSecondary items={navSecondaryData} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
