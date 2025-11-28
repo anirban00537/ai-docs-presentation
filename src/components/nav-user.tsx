@@ -24,17 +24,47 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
+import { selectUser } from "@/store/slices/userSlice";
+import { useSignOut } from "@/hooks/use-auth";
+
+const getInitials = (name?: string, email?: string) => {
+  if (name) {
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) {
+      return parts[0]?.charAt(0)?.toUpperCase() ?? "U";
+    }
+    return (
+      (parts[0]?.charAt(0) ?? "") + (parts[parts.length - 1]?.charAt(0) ?? "")
+    ).toUpperCase();
+  }
+  if (email) {
+    return email.charAt(0).toUpperCase();
+  }
+  return "U";
+};
+
+const formatName = (user: any) => {
+  if (user?.first_name || user?.last_name) {
+    return [user?.first_name, user?.last_name].filter(Boolean).join(" ");
+  }
+  if (user?.user_name) return user.user_name;
+  if (user?.email) return user.email.split("@")[0];
+  return "User";
+};
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const router = useRouter();
+  const user = useAppSelector(selectUser);
+  const signOutMutation = useSignOut();
+
+  const primaryName = formatName(user);
+  const primaryEmail = user?.email ?? "user@example.com";
+  const userInitials = getInitials(primaryName, primaryEmail);
 
   const handleSignOut = () => {
-    router.push("/login");
+    signOutMutation.mutate();
   };
-
-  const userInitials = "U";
 
   return (
     <SidebarMenu>
@@ -46,14 +76,21 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
+                {user?.photo ? (
+                  <AvatarImage
+                    src={user.photo}
+                    alt={primaryName}
+                    className="rounded-lg object-cover"
+                  />
+                ) : null}
                 <AvatarFallback className="rounded-lg">
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">User</span>
+                <span className="truncate font-medium">{primaryName}</span>
                 <span className="text-muted-foreground truncate text-xs">
-                  user@example.com
+                  {primaryEmail}
                 </span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />
@@ -68,14 +105,21 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
+                  {user?.photo ? (
+                    <AvatarImage
+                      src={user.photo}
+                      alt={primaryName}
+                      className="rounded-lg object-cover"
+                    />
+                  ) : null}
                   <AvatarFallback className="rounded-lg">
                     {userInitials}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">User</span>
+                  <span className="truncate font-medium">{primaryName}</span>
                   <span className="text-muted-foreground truncate text-xs">
-                    user@example.com
+                    {primaryEmail}
                   </span>
                 </div>
               </div>

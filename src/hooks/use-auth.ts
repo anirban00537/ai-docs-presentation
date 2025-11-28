@@ -20,17 +20,28 @@ export const useAuth = () => {
       return response;
     },
     onSuccess: (response: any) => {
-      // Store tokens if provided in response
-      if (response.data?.token) {
-        Cookie.set("token", response.data.token, { expires: 7 });
-      }
-      if (response.data?.refreshToken) {
-        Cookie.set("refreshToken", response.data.refreshToken, { expires: 30 });
-      }
+      // Check if response is successful
+      if (response.success && response.data) {
+        // Store accessToken as "token" in cookie
+        if (response.data.accessToken) {
+          Cookie.set("token", response.data.accessToken, { expires: 7 });
+        }
+        
+        // Store refreshToken in cookie
+        if (response.data.refreshToken) {
+          Cookie.set("refreshToken", response.data.refreshToken, { expires: 30 });
+        }
 
-      // Fetch user profile and update Redux
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
-      router.push("/dashboard");
+        // Store user data in Redux
+        if (response.data.user) {
+          dispatch(setUser(response.data.user));
+        }
+
+        // Redirect to dashboard
+        router.push("/dashboard");
+      } else {
+        console.error("Login response missing data:", response);
+      }
     },
     onError: (error: unknown) => {
       console.error("Google sign in error:", error);
