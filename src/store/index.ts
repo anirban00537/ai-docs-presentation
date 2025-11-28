@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import editorUiReducer from "@/store/slices/editorUiSlice";
 import slidesReducer from "@/store/slices/slidesSlice";
+import userReducer from "@/store/slices/userSlice";
 import {
   persistStore,
   persistReducer,
@@ -16,6 +17,7 @@ import storage from "redux-persist/lib/storage";
 const rootReducer = combineReducers({
   slides: slidesReducer,
   editorUi: editorUiReducer,
+  user: userReducer,
 });
 
 const persistConfig = {

@@ -2,11 +2,11 @@ import axios from "axios";
 import Cookie from "js-cookie";
 
 const request = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
-    apisecretkeycheck: process.env.API_SECRET_KEY,
+    apisecretkeycheck: process.env.NEXT_PUBLIC_API_SECRET_KEY,
   },
 });
 

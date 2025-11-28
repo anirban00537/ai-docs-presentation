@@ -1,14 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useGoogleSignIn } from "@/hooks/use-auth";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const { googleLogin, isLoading } = useGoogleSignIn();
 
-  const handleSignIn = () => {
-    // Authentication removed - redirect to dashboard
-    router.push("/dashboard");
+  const handleGoogleSignIn = () => {
+    googleLogin();
   };
 
   return (
@@ -24,12 +23,13 @@ export default function LoginPage() {
         </div>
         <div className="mt-8">
           <Button
-            onClick={handleSignIn}
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
             className="w-full"
             size="lg"
             variant="default"
           >
-            Continue to Dashboard
+            {isLoading ? "Signing in..." : "Sign in with Google"}
           </Button>
         </div>
       </div>

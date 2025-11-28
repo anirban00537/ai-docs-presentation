@@ -1,7 +1,9 @@
-export default async function ProtectedLayout({
+import { AuthCheckProvider } from "@/components/providers/auth-check.provider";
+
+export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <AuthCheckProvider>{children}</AuthCheckProvider>;
 }
