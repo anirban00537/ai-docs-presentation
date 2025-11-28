@@ -1,14 +1,15 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useGoogleLogin } from "@react-oauth/google";
+import { CredentialResponse } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser, clearUser } from "@/store/slices/userSlice";
 import { googleSignIn, profile, signOut } from "@/services/auth";
 import Cookie from "js-cookie";
+import { useCallback } from "react";
 
-export const useGoogleSignIn = () => {
+export const useAuth = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -36,32 +37,25 @@ export const useGoogleSignIn = () => {
     },
   });
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse: any) => {
+  const handleGoogleLogin = useCallback(
+    async (credentialResponse: CredentialResponse) => {
       try {
-        // The library returns access_token by default
-        // For Google Sign-In with backend, we typically need id_token
-        // Try to get id_token from response, or use access_token
-        const idToken = (tokenResponse as any).id_token || tokenResponse.access_token;
-        
-        if (idToken) {
-          signInMutation.mutate(idToken);
-        } else {
-          throw new Error("No token available from Google");
+        if (!credentialResponse.credential) {
+          throw new Error("No credential received from Google");
         }
+
+        // credentialResponse.credential is the id_token
+        signInMutation.mutate(credentialResponse.credential);
       } catch (error: unknown) {
-        console.error("Google sign in error:", error);
-        signInMutation.reset();
+        console.error("Google login error:", error);
+        throw error;
       }
     },
-    onError: (error: unknown) => {
-      console.error("Google OAuth error:", error);
-      signInMutation.reset();
-    },
-  });
+    [signInMutation]
+  );
 
   return {
-    googleLogin,
+    handleGoogleLogin,
     isLoading: signInMutation.isPending,
     error: signInMutation.error,
   };

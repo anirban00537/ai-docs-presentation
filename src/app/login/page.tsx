@@ -1,14 +1,20 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useGoogleSignIn } from "@/hooks/use-auth";
+import { useCallback } from "react";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function LoginPage() {
-  const { googleLogin, isLoading } = useGoogleSignIn();
+  const { handleGoogleLogin } = useAuth();
 
-  const handleGoogleSignIn = () => {
-    googleLogin();
-  };
+  const onLoginSuccess = useCallback(
+    (credentialResponse: CredentialResponse) => {
+      handleGoogleLogin(credentialResponse).catch((error) => {
+        console.error("Login failed:", error);
+      });
+    },
+    [handleGoogleLogin]
+  );
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -21,16 +27,17 @@ export default function LoginPage() {
             Sign in to your account to continue
           </p>
         </div>
-        <div className="mt-8">
-          <Button
-            onClick={handleGoogleSignIn}
-            disabled={isLoading}
-            className="w-full"
-            size="lg"
-            variant="default"
-          >
-            {isLoading ? "Signing in..." : "Sign in with Google"}
-          </Button>
+        <div className="mt-8 flex justify-center">
+          <GoogleLogin
+            onSuccess={onLoginSuccess}
+            onError={() => console.error("Google Login Failed")}
+            shape="rectangular"
+            width={280}
+            theme="filled_blue"
+            text="signin_with"
+            size="large"
+            useOneTap
+          />
         </div>
       </div>
     </div>
