@@ -4,7 +4,7 @@ import {
   createPresentation,
   updatePresentation,
   deletePresentation,
-  addSlide,
+  createSlide,
   updateSlide,
   deleteSlide,
   reorderSlides,
@@ -84,7 +84,7 @@ export const useDeletePresentation = () => {
   });
 };
 
-// Add slide mutation
+// Create slide mutation
 export const useAddSlide = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -94,7 +94,7 @@ export const useAddSlide = () => {
     }: {
       presentationId: string;
       payload: CreateSlidePayload;
-    }) => addSlide(presentationId, payload),
+    }) => createSlide(presentationId, payload),
     onSuccess: (data, variables) => {
       // Invalidate specific presentation to refetch with new slide
       queryClient.invalidateQueries({
@@ -109,17 +109,19 @@ export const useUpdateSlide = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
+      presentationId,
       slideId,
       payload,
     }: {
+      presentationId: string;
       slideId: string;
       payload: UpdateSlidePayload;
-    }) => updateSlide(slideId, payload),
-    onSuccess: () => {
-      // We need to invalidate the presentation that contains this slide
-      // Since we don't have presentationId here, we invalidate all presentations
-      // In a real app, you might want to pass presentationId or use a different approach
-      queryClient.invalidateQueries({ queryKey: presentationKeys.all });
+    }) => updateSlide(presentationId, slideId, payload),
+    onSuccess: (data, variables) => {
+      // Invalidate specific presentation
+      queryClient.invalidateQueries({
+        queryKey: presentationKeys.detail(variables.presentationId),
+      });
     },
   });
 };
@@ -128,9 +130,18 @@ export const useUpdateSlide = () => {
 export const useDeleteSlide = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (slideId: string) => deleteSlide(slideId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: presentationKeys.all });
+    mutationFn: ({
+      presentationId,
+      slideId,
+    }: {
+      presentationId: string;
+      slideId: string;
+    }) => deleteSlide(presentationId, slideId),
+    onSuccess: (data, variables) => {
+      // Invalidate specific presentation
+      queryClient.invalidateQueries({
+        queryKey: presentationKeys.detail(variables.presentationId),
+      });
     },
   });
 };

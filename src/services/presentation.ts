@@ -73,14 +73,14 @@ export interface PresentationData {
 export const createPresentation = async (
   payload: CreatePresentationPayload
 ): Promise<ApiResponse<PresentationData>> => {
-  const response = await request.post("/presentation", payload);
+  const response = await request.post("/presentation/create", payload);
   return response.data;
 };
 
 export const getPresentation = async (
   id: string
 ): Promise<ApiResponse<PresentationData>> => {
-  const response = await request.get(`/presentation/${id}`);
+  const response = await request.get(`/presentation/${id}/get`);
   return response.data;
 };
 
@@ -88,43 +88,47 @@ export const updatePresentation = async (
   id: string,
   payload: UpdatePresentationPayload
 ): Promise<ApiResponse<PresentationData>> => {
-  const response = await request.patch(`/presentation/${id}`, payload);
+  const response = await request.patch(`/presentation/${id}/update`, payload);
   return response.data;
 };
 
 export const deletePresentation = async (
   id: string
 ): Promise<ApiResponse<void>> => {
-  const response = await request.delete(`/presentation/${id}`);
+  const response = await request.delete(`/presentation/${id}/delete`);
   return response.data;
 };
 
-export const addSlide = async (
+export const createSlide = async (
   presentationId: string,
   payload: CreateSlidePayload
 ): Promise<ApiResponse<PresentationSlide>> => {
   const response = await request.post(
-    `/presentation/${presentationId}/slides`,
+    `/presentation/${presentationId}/slides/create`,
     payload
   );
   return response.data;
 };
 
 export const updateSlide = async (
+  presentationId: string,
   slideId: string,
   payload: UpdateSlidePayload
 ): Promise<ApiResponse<PresentationSlide>> => {
   const response = await request.patch(
-    `/presentation/slides/${slideId}`,
+    `/presentation/${presentationId}/slides/${slideId}/update`,
     payload
   );
   return response.data;
 };
 
 export const deleteSlide = async (
+  presentationId: string,
   slideId: string
 ): Promise<ApiResponse<void>> => {
-  const response = await request.delete(`/presentation/slides/${slideId}`);
+  const response = await request.delete(
+    `/presentation/${presentationId}/slides/${slideId}/delete`
+  );
   return response.data;
 };
 

@@ -204,13 +204,18 @@ export const LeftSidebar = () => {
     dispatch(removeSlide(slideId));
 
     // Send delete request to API (fire and forget - don't wait for response)
-    deleteSlideMutation.mutate(slideId, {
-      onError: (error) => {
-        console.error("Failed to delete slide in API:", error);
-        // Optionally: You could revert the Redux deletion here if needed
-        // But since user said don't wait, we'll just log the error
-      },
-    });
+    if (presentationId) {
+      deleteSlideMutation.mutate(
+        { presentationId, slideId },
+        {
+          onError: (error) => {
+            console.error("Failed to delete slide in API:", error);
+            // Optionally: You could revert the Redux deletion here if needed
+            // But since user said don't wait, we'll just log the error
+          },
+        }
+      );
+    }
   };
 
   const handleAddSlide = async () => {

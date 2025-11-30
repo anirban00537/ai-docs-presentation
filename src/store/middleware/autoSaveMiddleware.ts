@@ -127,7 +127,9 @@ function createAutoSaveMiddleware() {
                 };
 
                 // Now update the existing slide with the new database ID
-                await updateSlideService(newId, { data: slideData });
+                await updateSlideService(presentationId, newId, {
+                  data: slideData,
+                });
                 pendingSlideSaves.delete(newId);
               } catch (error) {
                 console.error(`Failed to save slide ${newId}:`, error);
@@ -212,7 +214,9 @@ function createAutoSaveMiddleware() {
             }
 
             // Update existing slide
-            await updateSlideService(activeSlide.id, { data: slideData });
+            await updateSlideService(presentationId, activeSlide.id, {
+              data: slideData,
+            });
             pendingSlideSaves.delete(activeSlideId);
           } catch (error) {
             console.error(`Failed to save slide ${activeSlideId}:`, error);
