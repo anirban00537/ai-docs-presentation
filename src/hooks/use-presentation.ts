@@ -86,7 +86,6 @@ export const useDeletePresentation = () => {
 
 // Create slide mutation
 export const useAddSlide = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       presentationId,
@@ -95,12 +94,8 @@ export const useAddSlide = () => {
       presentationId: string;
       payload: CreateSlidePayload;
     }) => createSlide(presentationId, payload),
-    onSuccess: (data, variables) => {
-      // Invalidate specific presentation to refetch with new slide
-      queryClient.invalidateQueries({
-        queryKey: presentationKeys.detail(variables.presentationId),
-      });
-    },
+    // No query invalidation needed - Redux is the source of truth
+    // The slide is already in Redux and ID is updated via updateSlideId
   });
 };
 
