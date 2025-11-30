@@ -56,10 +56,9 @@ export const useListCardCreation = () => {
         titleColor: undefined,
         titleFontSize: 34,
         itemFontSize: 22,
-        titleFontFamily:
-          globalTheme?.font ?? "var(--font-montserrat), Montserrat, sans-serif",
-        itemFontFamily:
-          globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        // Don't set font families - will use global theme by default
+        titleFontFamily: undefined,
+        itemFontFamily: undefined,
         textAlign: "left",
         backgroundType: globalTheme?.cardBackgroundType ?? "glass",
       };

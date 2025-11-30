@@ -222,9 +222,9 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const iconSize = widget.iconSize ?? 48;
   const titleFontSize = widget.titleFontSize ?? 24;
   const descriptionFontSize = widget.descriptionFontSize ?? 18;
-  const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
+  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const descriptionFontFamily =
-    widget.descriptionFontFamily ?? "var(--font-poppins)";
+    widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "left";
   const backgroundType = widget.backgroundType ?? "solid";
 
@@ -509,10 +509,10 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
 
   const currentFontFamily =
     activeField === "title"
-      ? widget.titleFontFamily ?? "var(--font-poppins)"
+      ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "description"
-      ? widget.descriptionFontFamily ?? "var(--font-poppins)"
-      : "var(--font-poppins)";
+      ? widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =
     activeField === "title"

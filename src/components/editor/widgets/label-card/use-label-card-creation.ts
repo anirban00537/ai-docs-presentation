@@ -58,14 +58,10 @@ export const useLabelCardCreation = () => {
         labelFontSize: 13,
         titleFontSize: 40,
         descriptionFontSize: 20,
-        labelFontFamily:
-          globalTheme?.font ??
-          "var(--font-great-vibes), 'Great Vibes', cursive",
-        titleFontFamily:
-          globalTheme?.font ??
-          "var(--font-playfair), 'Playfair Display', serif",
-        descriptionFontFamily:
-          globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        // Don't set font families - will use global theme by default
+        labelFontFamily: undefined,
+        titleFontFamily: undefined,
+        descriptionFontFamily: undefined,
         textAlign: "left",
         backgroundType: globalTheme?.cardBackgroundType ?? "glass",
       };

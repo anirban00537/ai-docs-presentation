@@ -156,10 +156,10 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
   const labelTextColor = widget.labelTextColor ?? "#ffffff";
   const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
   const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
-  const labelFontFamily = widget.labelFontFamily ?? "var(--font-poppins)";
-  const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
+  const labelFontFamily = widget.labelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const descriptionFontFamily =
-    widget.descriptionFontFamily ?? "var(--font-poppins)";
+    widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const labelFontSize = widget.labelFontSize ?? 13;
   const titleFontSize = widget.titleFontSize ?? 40;
   const descriptionFontSize = widget.descriptionFontSize ?? 20;
@@ -452,12 +452,12 @@ const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
 
   const currentFontFamily =
     activeField === "label"
-      ? widget.labelFontFamily ?? "var(--font-poppins)"
+      ? widget.labelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "title"
-      ? widget.titleFontFamily ?? "var(--font-poppins)"
+      ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "description"
-      ? widget.descriptionFontFamily ?? "var(--font-poppins)"
-      : "var(--font-poppins)";
+      ? widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =
     activeField === "label"

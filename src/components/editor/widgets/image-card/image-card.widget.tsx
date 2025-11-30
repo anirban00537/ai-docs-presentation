@@ -137,9 +137,9 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
   const backgroundColor = widget.backgroundColor ?? undefined;
   const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
   const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
-  const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
+  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const descriptionFontFamily =
-    widget.descriptionFontFamily ?? "var(--font-poppins)";
+    widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const titleFontSize = widget.titleFontSize ?? 26;
   const descriptionFontSize = widget.descriptionFontSize ?? 18;
   const textAlign = widget.textAlign ?? "left";
@@ -575,8 +575,8 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
       : widget.titleColor ?? globalTheme?.text ?? "#0f172a";
   const currentFontFamily =
     activeField === "title"
-      ? widget.titleFontFamily ?? "var(--font-poppins)"
-      : widget.descriptionFontFamily ?? "var(--font-poppins)";
+      ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      : widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const currentFontSize =
     activeField === "title"
       ? widget.titleFontSize ?? 26

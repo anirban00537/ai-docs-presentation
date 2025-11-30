@@ -57,12 +57,10 @@ export const useNumberCardCreation = () => {
         numberFontSize: 56,
         titleFontSize: 24,
         descriptionFontSize: 18,
-        numberFontFamily:
-          globalTheme?.font ?? "var(--font-montserrat), Montserrat, sans-serif",
-        titleFontFamily:
-          globalTheme?.font ?? "var(--font-montserrat), Montserrat, sans-serif",
-        descriptionFontFamily:
-          globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        // Don't set font families - will use global theme by default
+        numberFontFamily: undefined,
+        titleFontFamily: undefined,
+        descriptionFontFamily: undefined,
         textAlign: "left",
         backgroundType: globalTheme?.cardBackgroundType ?? "glass",
       };

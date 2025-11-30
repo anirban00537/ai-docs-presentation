@@ -57,11 +57,9 @@ export const useImageCardCreation = () => {
         descriptionColor: undefined,
         titleFontSize: 26,
         descriptionFontSize: 18,
-        titleFontFamily:
-          globalTheme?.font ??
-          "var(--font-playfair), 'Playfair Display', serif",
-        descriptionFontFamily:
-          globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        // Don't set font families - will use global theme by default
+        titleFontFamily: undefined,
+        descriptionFontFamily: undefined,
         textAlign: "left",
         backgroundType: globalTheme?.cardBackgroundType ?? "glass",
       };

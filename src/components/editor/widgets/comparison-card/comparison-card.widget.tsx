@@ -292,16 +292,16 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
     widget.rightTextColor ?? globalTheme?.text ?? "#0f172a";
 
   const leftTitleFontFamily =
-    widget.leftTitleFontFamily ?? "var(--font-poppins)";
+    widget.leftTitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const rightTitleFontFamily =
-    widget.rightTitleFontFamily ?? "var(--font-poppins)";
+    widget.rightTitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const leftLabelFontFamily =
-    widget.leftLabelFontFamily ?? "var(--font-poppins)";
+    widget.leftLabelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const rightLabelFontFamily =
-    widget.rightLabelFontFamily ?? "var(--font-poppins)";
-  const leftItemFontFamily = widget.leftItemFontFamily ?? "var(--font-poppins)";
+    widget.rightLabelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const leftItemFontFamily = widget.leftItemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const rightItemFontFamily =
-    widget.rightItemFontFamily ?? "var(--font-poppins)";
+    widget.rightItemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
 
   const leftLabelFontSize = widget.leftLabelFontSize ?? 13;
   const rightLabelFontSize = widget.rightLabelFontSize ?? 13;
@@ -731,19 +731,19 @@ const ComparisonCardEditingToolbar: React.FC<
   const currentFontFamily = React.useMemo(() => {
     switch (activeField) {
       case "leftLabel":
-        return widget.leftLabelFontFamily ?? "var(--font-poppins)";
+        return widget.leftLabelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
       case "leftTitle":
-        return widget.leftTitleFontFamily ?? "var(--font-poppins)";
+        return widget.leftTitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
       case "leftItem":
-        return widget.leftItemFontFamily ?? "var(--font-poppins)";
+        return widget.leftItemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
       case "rightLabel":
-        return widget.rightLabelFontFamily ?? "var(--font-poppins)";
+        return widget.rightLabelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
       case "rightTitle":
-        return widget.rightTitleFontFamily ?? "var(--font-poppins)";
+        return widget.rightTitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
       case "rightItem":
-        return widget.rightItemFontFamily ?? "var(--font-poppins)";
+        return widget.rightItemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
       default:
-        return "var(--font-poppins)";
+        return globalTheme?.font ?? "var(--font-poppins)";
     }
   }, [
     activeField,
@@ -753,6 +753,7 @@ const ComparisonCardEditingToolbar: React.FC<
     widget.rightLabelFontFamily,
     widget.rightTitleFontFamily,
     widget.rightItemFontFamily,
+    globalTheme?.font,
   ]);
 
   const currentFontSize = React.useMemo(() => {

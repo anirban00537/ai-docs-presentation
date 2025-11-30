@@ -57,12 +57,10 @@ export const useTitleCardCreation = () => {
         eyebrowColor: undefined,
         titleColor: undefined,
         subtitleColor: undefined,
-        eyebrowFontFamily:
-          globalTheme?.font ?? "var(--font-poppins), Poppins, sans-serif",
-        titleFontFamily:
-          globalTheme?.font ?? "var(--font-poppins), Poppins, sans-serif",
-        subtitleFontFamily:
-          globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        // Don't set font families - will use global theme by default
+        eyebrowFontFamily: undefined,
+        titleFontFamily: undefined,
+        subtitleFontFamily: undefined,
         eyebrowFontSize: 18,
         titleFontSize: 72,
         subtitleFontSize: 28,

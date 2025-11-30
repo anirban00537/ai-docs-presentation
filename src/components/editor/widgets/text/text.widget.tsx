@@ -226,6 +226,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
                 fontWeight: widget.fontWeight,
                 fontFamily:
                   widget.fontFamily ??
+                  globalTheme?.font ??
                   "var(--font-poppins), Poppins, sans-serif",
                 color: widget.color ?? globalTheme?.text ?? "#0f172a",
                 textAlign: widget.align,
@@ -265,6 +266,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
                 fontWeight: widget.fontWeight,
                 fontFamily:
                   widget.fontFamily ??
+                  globalTheme?.font ??
                   "var(--font-poppins), Poppins, sans-serif",
                 color: widget.color ?? globalTheme?.text ?? "#0f172a",
                 textAlign: widget.align,

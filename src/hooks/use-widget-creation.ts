@@ -19,7 +19,6 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   addWidget,
   selectActiveSlideId,
-  selectGlobalTheme,
 } from "@/store/slices/slidesSlice";
 import {
   selectWidget as selectWidgetAction,
@@ -29,7 +28,6 @@ import {
 export const useWidgetCreation = () => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const ensureSlideId = useCallback(() => {
     if (!activeSlideId) {
@@ -51,7 +49,6 @@ export const useWidgetCreation = () => {
         preset.id === "heading" ? 140 : preset.id === "subheading" ? 240 : 340;
       const id = `text-${nanoid(8)}`;
 
-      const themeFont = globalTheme?.font;
       const newWidget: TextWidget = {
         id,
         type: "text",
@@ -62,7 +59,8 @@ export const useWidgetCreation = () => {
         height: config.height,
         fontSize: config.fontSize,
         fontWeight: config.fontWeight,
-        fontFamily: themeFont ?? config.fontFamily,
+        // Don't set font family - will use global theme by default
+        fontFamily: undefined,
         // Don't set color - will use global theme by default
         color: undefined,
         align: config.align,
@@ -73,7 +71,7 @@ export const useWidgetCreation = () => {
       dispatch(selectWidgetAction(newWidget.id));
       dispatch(startWidgetEditingAction(newWidget.id));
     },
-    [dispatch, ensureSlideId, globalTheme]
+    [dispatch, ensureSlideId]
   );
 
   const { handleAddFeatureCard } = useNumberCardCreation();

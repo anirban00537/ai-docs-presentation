@@ -277,12 +277,12 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
   const buttonColor = widget.buttonColor ?? globalTheme?.accent ?? "#2563eb";
   const buttonTextColor = widget.buttonTextColor ?? "#ffffff";
 
-  const planNameFontFamily = widget.planNameFontFamily ?? "var(--font-poppins)";
-  const priceFontFamily = widget.priceFontFamily ?? "var(--font-poppins)";
-  const periodFontFamily = widget.periodFontFamily ?? "var(--font-poppins)";
-  const badgeFontFamily = widget.badgeFontFamily ?? "var(--font-poppins)";
-  const featureFontFamily = widget.featureFontFamily ?? "var(--font-poppins)";
-  const buttonFontFamily = widget.buttonFontFamily ?? "var(--font-poppins)";
+  const planNameFontFamily = widget.planNameFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const priceFontFamily = widget.priceFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const periodFontFamily = widget.periodFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const badgeFontFamily = widget.badgeFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const featureFontFamily = widget.featureFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const buttonFontFamily = widget.buttonFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
 
   const planNameFontSize = widget.planNameFontSize ?? 28;
   const priceFontSize = widget.priceFontSize ?? 48;
@@ -831,18 +831,18 @@ const PricingCardEditingToolbar: React.FC<PricingCardEditingToolbarProps> = ({
 
   const currentFontFamily =
     activeField === "planName"
-      ? widget.planNameFontFamily ?? "var(--font-poppins)"
+      ? widget.planNameFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "price"
-      ? widget.priceFontFamily ?? "var(--font-poppins)"
+      ? widget.priceFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "period"
-      ? widget.periodFontFamily ?? "var(--font-poppins)"
+      ? widget.periodFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "badge"
-      ? widget.badgeFontFamily ?? "var(--font-poppins)"
+      ? widget.badgeFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "buttonText"
-      ? widget.buttonFontFamily ?? "var(--font-poppins)"
+      ? widget.buttonFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "feature"
-      ? widget.featureFontFamily ?? "var(--font-poppins)"
-      : "var(--font-poppins)";
+      ? widget.featureFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =
     activeField === "planName"

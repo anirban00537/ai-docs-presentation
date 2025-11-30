@@ -221,8 +221,8 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   const itemColor = widget.itemColor ?? globalTheme?.text ?? "#0f172a";
   const bulletColor =
     widget.bulletColor ?? globalTheme?.accent ?? itemColor ?? "#0f172a";
-  const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
-  const itemFontFamily = widget.itemFontFamily ?? "var(--font-poppins)";
+  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const itemFontFamily = widget.itemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const titleFontSize = widget.titleFontSize ?? 34;
   const itemFontSize = widget.itemFontSize ?? 22;
   const textAlign = widget.textAlign ?? "left";
@@ -555,10 +555,10 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
     "#0f172a";
   const currentFontFamily =
     activeField === "title"
-      ? widget.titleFontFamily ?? "var(--font-poppins)"
+      ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "item"
-      ? widget.itemFontFamily ?? "var(--font-poppins)"
-      : "var(--font-poppins)";
+      ? widget.itemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =
     activeField === "title"

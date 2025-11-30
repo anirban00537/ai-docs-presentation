@@ -57,12 +57,9 @@ export const useQuoteCreation = () => {
         backgroundType: globalTheme?.cardBackgroundType ?? "glass",
         quoteFontSize: 30,
         attributionFontSize: 18,
-        quoteFontFamily:
-          globalTheme?.font ??
-          "var(--font-playfair), 'Playfair Display', serif",
-        attributionFontFamily:
-          globalTheme?.font ??
-          "var(--font-great-vibes), 'Great Vibes', cursive",
+        // Don't set font families - will use global theme by default
+        quoteFontFamily: undefined,
+        attributionFontFamily: undefined,
       };
 
       dispatch(addWidget({ widget: newWidget, slideId }));

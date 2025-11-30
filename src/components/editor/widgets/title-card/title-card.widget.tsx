@@ -153,9 +153,9 @@ const TitleCardWidgetNodeBase: React.FC<TitleCardWidgetNodeProps> = ({
   const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
   const subtitleColor = widget.subtitleColor ?? globalTheme?.text ?? "#475569";
 
-  const eyebrowFontFamily = widget.eyebrowFontFamily ?? "var(--font-poppins)";
-  const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
-  const subtitleFontFamily = widget.subtitleFontFamily ?? "var(--font-poppins)";
+  const eyebrowFontFamily = widget.eyebrowFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const subtitleFontFamily = widget.subtitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
 
   const eyebrowFontSize = widget.eyebrowFontSize ?? 18;
   const titleFontSize = widget.titleFontSize ?? 72;
@@ -410,12 +410,12 @@ const TitleCardEditingToolbar: React.FC<TitleCardEditingToolbarProps> = ({
 
   const currentFontFamily =
     activeField === "eyebrow"
-      ? widget.eyebrowFontFamily ?? "var(--font-poppins)"
+      ? widget.eyebrowFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "title"
-      ? widget.titleFontFamily ?? "var(--font-poppins)"
+      ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "subtitle"
-      ? widget.subtitleFontFamily ?? "var(--font-poppins)"
-      : "var(--font-poppins)";
+      ? widget.subtitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =
     activeField === "eyebrow"

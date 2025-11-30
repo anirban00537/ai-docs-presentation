@@ -149,10 +149,10 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
   const numberColor = widget.numberColor ?? globalTheme?.accent ?? "#0f172a";
   const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
   const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
-  const numberFontFamily = widget.numberFontFamily ?? "var(--font-poppins)";
-  const titleFontFamily = widget.titleFontFamily ?? "var(--font-poppins)";
+  const numberFontFamily = widget.numberFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const descriptionFontFamily =
-    widget.descriptionFontFamily ?? "var(--font-poppins)";
+    widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const numberFontSize = widget.numberFontSize ?? 56;
   const titleFontSize = widget.titleFontSize ?? 24;
   const descriptionFontSize = widget.descriptionFontSize ?? 18;
@@ -410,12 +410,12 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
 
   const currentFontFamily =
     activeField === "number"
-      ? widget.numberFontFamily ?? "var(--font-poppins)"
+      ? widget.numberFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "title"
-      ? widget.titleFontFamily ?? "var(--font-poppins)"
+      ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "description"
-      ? widget.descriptionFontFamily ?? "var(--font-poppins)"
-      : "var(--font-poppins)";
+      ? widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =
     activeField === "number"

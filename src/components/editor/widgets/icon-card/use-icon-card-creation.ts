@@ -57,10 +57,9 @@ export const useIconCardCreation = () => {
         iconSize: 60,
         titleFontSize: 24,
         descriptionFontSize: 18,
-        titleFontFamily:
-          globalTheme?.font ?? "var(--font-montserrat), Montserrat, sans-serif",
-        descriptionFontFamily:
-          globalTheme?.font ?? "var(--font-inter), Inter, sans-serif",
+        // Don't set font families - will use global theme by default
+        titleFontFamily: undefined,
+        descriptionFontFamily: undefined,
         textAlign: "left",
         backgroundType: globalTheme?.cardBackgroundType ?? "glass",
       };

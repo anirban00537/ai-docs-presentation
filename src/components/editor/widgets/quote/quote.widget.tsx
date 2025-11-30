@@ -175,9 +175,9 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
   const quoteColor = widget.quoteColor ?? globalTheme?.text ?? "#0f172a";
   const attributionColor = widget.attributionColor ?? globalTheme?.text ?? "#64748b";
   const iconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a"; // Used for quote marks
-  const quoteFontFamily = widget.quoteFontFamily ?? "var(--font-poppins)";
+  const quoteFontFamily = widget.quoteFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const attributionFontFamily =
-    widget.attributionFontFamily ?? "var(--font-poppins)";
+    widget.attributionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "center";
   const backgroundType = widget.backgroundType ?? "solid";
   const quoteFontSize = widget.quoteFontSize ?? 24;
@@ -463,10 +463,10 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
 
   const currentFontFamily =
     activeField === "quote"
-      ? widget.quoteFontFamily ?? "var(--font-poppins)"
+      ? widget.quoteFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "attribution"
-      ? widget.attributionFontFamily ?? "var(--font-poppins)"
-      : "var(--font-poppins)";
+      ? widget.attributionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =
     activeField === "quote"
