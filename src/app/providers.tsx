@@ -2,10 +2,9 @@
 
 import React from "react";
 import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { persistor, store } from "@/store";
+import { store } from "@/store";
 import { queryClient } from "@/lib/query-client";
 import { UserLoaderProvider } from "@/components/providers/user-loader.provider";
 
@@ -18,16 +17,16 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
   if (!googleClientId) {
-    console.warn("NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set. Google authentication will not work.");
+    console.warn(
+      "NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set. Google authentication will not work."
+    );
   }
 
   const content = (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <UserLoaderProvider>
-          <div className="h-full">{children}</div>
-        </UserLoaderProvider>
-      </PersistGate>
+      <UserLoaderProvider>
+        <div className="h-full">{children}</div>
+      </UserLoaderProvider>
     </Provider>
   );
 

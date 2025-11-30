@@ -28,6 +28,7 @@ export type GlobalTheme = {
 };
 
 type SlidesState = {
+  presentationId: string | null;
   slides: SlideModel[];
   activeSlideId: string;
   globalTheme: GlobalTheme;
@@ -43,12 +44,12 @@ const createEmptySlide = (title: string): SlideModel => ({
   slideStyle: "Engineering Team Meeting",
 });
 
-const initialSlide = createEmptySlide("Slide 1");
 const defaultTheme = SLIDE_THEMES[0];
 
 const initialState: SlidesState = {
-  slides: [initialSlide],
-  activeSlideId: initialSlide.id,
+  presentationId: null,
+  slides: [],
+  activeSlideId: "",
   globalTheme: {
     id: defaultTheme.id,
     background: defaultTheme.background,
@@ -233,6 +234,43 @@ const slidesSlice = createSlice({
       // since they fallback to globalTheme when their own colors are undefined
       Object.assign(state.globalTheme, action.payload.updates);
     },
+    setPresentationId(
+      state,
+      action: PayloadAction<{ presentationId: string | null }>
+    ) {
+      state.presentationId = action.payload.presentationId;
+    },
+    loadPresentation(
+      state,
+      action: PayloadAction<{
+        presentationId: string;
+        slides: SlideModel[];
+        globalTheme: GlobalTheme;
+      }>
+    ) {
+      state.presentationId = action.payload.presentationId;
+      state.slides = action.payload.slides;
+      state.globalTheme = action.payload.globalTheme;
+      if (action.payload.slides.length > 0) {
+        state.activeSlideId = action.payload.slides[0].id;
+      } else {
+        state.activeSlideId = "";
+      }
+    },
+    updateSlideId(
+      state,
+      action: PayloadAction<{ oldId: string; newId: string }>
+    ) {
+      const slideIndex = state.slides.findIndex(
+        (slide) => slide.id === action.payload.oldId
+      );
+      if (slideIndex >= 0) {
+        state.slides[slideIndex].id = action.payload.newId;
+        if (state.activeSlideId === action.payload.oldId) {
+          state.activeSlideId = action.payload.newId;
+        }
+      }
+    },
   },
 });
 
@@ -249,6 +287,9 @@ export const {
   resetSlidesState,
   setSlideTheme,
   updateGlobalTheme,
+  setPresentationId,
+  loadPresentation,
+  updateSlideId,
 } = slidesSlice.actions;
 
 export const selectSlidesState = (state: RootState) => state.slides;
@@ -257,10 +298,12 @@ export const selectActiveSlideId = (state: RootState) =>
   state.slides.activeSlideId;
 export const selectActiveSlide = (state: RootState) =>
   state.slides.slides.find(
-    (slide) => slide.id === state.slides.activeSlideId
+    (slide: SlideModel) => slide.id === state.slides.activeSlideId
   ) ?? null;
 export const selectActiveSlideWidgets = (state: RootState) =>
   selectActiveSlide(state)?.widgets ?? [];
 export const selectGlobalTheme = (state: RootState) => state.slides.globalTheme;
+export const selectPresentationId = (state: RootState) =>
+  state.slides.presentationId;
 
 export default slidesSlice.reducer;
