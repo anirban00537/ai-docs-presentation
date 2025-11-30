@@ -20,7 +20,7 @@ export const TEXT_PRESET_CONFIG: Record<
   }
 > = {
   heading: {
-    width: 560,
+    width: 800,
     height: 276,
     fontSize: 144,
     fontWeight: 600,
@@ -29,7 +29,7 @@ export const TEXT_PRESET_CONFIG: Record<
     lineHeight: 1,
   },
   subheading: {
-    width: 400,
+    width: 600,
     height: 210,
     fontSize: 72,
     fontWeight: 500,
@@ -38,7 +38,7 @@ export const TEXT_PRESET_CONFIG: Record<
     lineHeight: 1.05,
   },
   body: {
-    width: 360,
+    width: 550,
     height: 360,
     fontSize: 36,
     fontWeight: 400,
