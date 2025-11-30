@@ -12,6 +12,7 @@ import {
   updateGlobalTheme,
   setSlideTheme,
   updateSlideId,
+  loadPresentation,
 } from "@/store/slices/slidesSlice";
 import type { SlideModel } from "@/store/slices/slidesSlice";
 import type { SlideWidget } from "@/components/editor/widgets/types";
@@ -30,6 +31,10 @@ type PendingSlideSave = {
 };
 
 const pendingSlideSaves = new Map<string, PendingSlideSave>();
+
+// Track slides that have been created in the database
+// This helps us distinguish between temporary IDs (nanoid) and database IDs (cuid)
+const createdSlideIds = new Set<string>();
 
 type PendingPresentationUpdate = {
   presentationId: string | null;
@@ -72,6 +77,75 @@ function createAutoSaveMiddleware() {
 
       // Don't save if no presentationId
       if (!presentationId) {
+        return result;
+      }
+
+      // Handle loadPresentation - initialize createdSlideIds with loaded slide IDs
+      if (action.type === loadPresentation.type) {
+        const { slides } = action.payload as { slides: SlideModel[] };
+        // Mark all loaded slides as created in database
+        slides.forEach((slide) => {
+          createdSlideIds.add(slide.id);
+        });
+        return result;
+      }
+
+      // Handle updateSlideId action - update pending saves when slide ID changes
+      if (action.type === updateSlideId.type) {
+        const { oldId, newId } = action.payload as {
+          oldId: string;
+          newId: string;
+        };
+        const pendingSave = pendingSlideSaves.get(oldId);
+
+        if (pendingSave) {
+          // Cancel the old pending save
+          clearTimeout(pendingSave.timeout);
+          pendingSlideSaves.delete(oldId);
+
+          // Get the current slide data from Redux state (which now has the new ID)
+          const currentState = store.getState();
+          const updatedSlide = currentState.slides.slides.find(
+            (slide) => slide.id === newId
+          );
+
+          if (updatedSlide) {
+            // Mark this slide as created in database
+            createdSlideIds.add(newId);
+
+            // Reschedule the save with the new ID and current data
+            const timeout = setTimeout(async () => {
+              try {
+                // Prepare slide data matching your SlideModel structure
+                const slideData: Partial<SlideModel> = {
+                  id: newId,
+                  title: updatedSlide.title,
+                  widgets: updatedSlide.widgets as SlideWidget[],
+                  backgroundColor: updatedSlide.backgroundColor,
+                  backgroundImage: updatedSlide.backgroundImage,
+                  showSlideNumber: updatedSlide.showSlideNumber,
+                  slideStyle: updatedSlide.slideStyle,
+                };
+
+                // Now update the existing slide with the new database ID
+                await updateSlideService(newId, { data: slideData });
+                pendingSlideSaves.delete(newId);
+              } catch (error) {
+                console.error(`Failed to save slide ${newId}:`, error);
+              }
+            }, SAVE_DELAY);
+
+            pendingSlideSaves.set(newId, {
+              slideId: newId,
+              data: updatedSlide,
+              timeout,
+            });
+          }
+        } else {
+          // Even if no pending save, mark the new ID as created
+          createdSlideIds.add(newId);
+        }
+
         return result;
       }
 
@@ -125,12 +199,14 @@ function createAutoSaveMiddleware() {
                   slideStyle: slide.slideStyle,
                 };
 
-                // Check if slide ID looks like a database ID (cuid format) or a temporary ID
-                // If it's a temporary ID (starts with "slide-" or is a nanoid), create a new slide
-                const isTemporaryId =
-                  slide.id.startsWith("slide-") || slide.id.length < 20;
+                // Check if slide ID has been created in database
+                // Database IDs (cuid) typically start with 'c' and are 25 characters
+                // Temporary IDs (nanoid) are 21 characters and not in createdSlideIds
+                const isDatabaseId =
+                  createdSlideIds.has(slide.id) ||
+                  (slide.id.startsWith("c") && slide.id.length === 25);
 
-                if (isTemporaryId) {
+                if (!isDatabaseId) {
                   // Create new slide in database
                   const response = await addSlideService(presentationId, {
                     data: slideData,
@@ -138,6 +214,9 @@ function createAutoSaveMiddleware() {
                   });
 
                   if (response.success && response.data) {
+                    // Mark as created
+                    createdSlideIds.add(response.data.id);
+
                     // Update the slide ID in Redux with the database ID
                     store.dispatch(
                       updateSlideId({
@@ -181,7 +260,8 @@ function createAutoSaveMiddleware() {
           }))
           .filter(
             (order: { slideId: string; order: number }) =>
-              !order.slideId.startsWith("slide-") && order.slideId.length >= 20
+              createdSlideIds.has(order.slideId) ||
+              (order.slideId.startsWith("c") && order.slideId.length === 25)
           );
 
         if (slideOrders.length > 0) {
