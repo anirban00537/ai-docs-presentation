@@ -70,10 +70,53 @@ export interface PresentationData {
   slides: PresentationSlide[];
 }
 
+export interface PresentationListItem {
+  id: string;
+  userId: string;
+  title: string;
+  description?: string | null;
+  thumbnail?: string | null;
+  globalTheme: GlobalTheme;
+  isPublic: boolean;
+  isTemplate: boolean;
+  tags: string[];
+  version: number;
+  parentId?: string | null;
+  forkedFrom?: string | null;
+  sharedWith: string[];
+  ownerId: string;
+  deletedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  lastViewedAt?: string | null;
+  slides: PresentationSlide[]; // First slide for preview
+  _count: {
+    slides: number;
+  };
+}
+
+export interface PresentationsListResponse {
+  list: PresentationListItem[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export const createPresentation = async (
   payload: CreatePresentationPayload
 ): Promise<ApiResponse<PresentationData>> => {
   const response = await request.post("/presentation/create", payload);
+  return response.data;
+};
+
+export const getPresentationsList = async (query?: {
+  page?: number;
+  limit?: number;
+}): Promise<ApiResponse<PresentationsListResponse>> => {
+  const response = await request.get("/presentation/list", { params: query });
   return response.data;
 };
 

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  getPresentationsList,
   getPresentation,
   createPresentation,
   updatePresentation,
@@ -17,7 +18,22 @@ import {
 // Query keys
 export const presentationKeys = {
   all: ["presentations"] as const,
+  lists: () => [...presentationKeys.all, "list"] as const,
+  list: (filters?: { page?: number; limit?: number }) =>
+    [...presentationKeys.lists(), filters] as const,
   detail: (id: string) => [...presentationKeys.all, id] as const,
+};
+
+// Get presentations list query
+export const usePresentationsList = (filters?: {
+  page?: number;
+  limit?: number;
+}) => {
+  return useQuery({
+    queryKey: presentationKeys.list(filters),
+    queryFn: () => getPresentationsList(filters),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
 };
 
 // Get presentation query
