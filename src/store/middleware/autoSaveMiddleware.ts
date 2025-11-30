@@ -15,14 +15,12 @@ import {
 } from "@/store/slices/slidesSlice";
 import type { SlideModel } from "@/store/slices/slidesSlice";
 import type { SlideWidget } from "@/components/editor/widgets/types";
-import { queryClient } from "@/lib/query-client";
 import {
   updateSlide as updateSlideService,
   updatePresentation,
   reorderSlides as reorderSlidesService,
   addSlide as addSlideService,
 } from "@/services/presentation";
-import { presentationKeys } from "@/hooks/use-presentation";
 
 // Track pending saves
 type PendingSlideSave = {
@@ -147,18 +145,10 @@ function createAutoSaveMiddleware() {
                         newId: response.data.id,
                       })
                     );
-                    // Invalidate presentation query to refetch with new slide
-                    queryClient.invalidateQueries({
-                      queryKey: presentationKeys.detail(presentationId),
-                    });
                   }
                 } else {
                   // Update existing slide
                   await updateSlideService(slide.id, { data: slideData });
-                  // Invalidate presentation query to refetch updated slide
-                  queryClient.invalidateQueries({
-                    queryKey: presentationKeys.detail(presentationId),
-                  });
                 }
 
                 pendingSlideSaves.delete(slide.id);
@@ -198,10 +188,6 @@ function createAutoSaveMiddleware() {
           pendingReorder.timeout = setTimeout(async () => {
             try {
               await reorderSlidesService(presentationId, slideOrders);
-              // Invalidate presentation query to refetch with new order
-              queryClient.invalidateQueries({
-                queryKey: presentationKeys.detail(presentationId),
-              });
               pendingReorder.presentationId = null;
               pendingReorder.slideOrders = [];
               pendingReorder.timeout = null;
@@ -230,10 +216,6 @@ function createAutoSaveMiddleware() {
           try {
             await updatePresentation(presentationId, {
               globalTheme: state.slides.globalTheme,
-            });
-            // Invalidate presentation query to refetch with updated theme
-            queryClient.invalidateQueries({
-              queryKey: presentationKeys.detail(presentationId),
             });
             pendingPresentationUpdate.presentationId = null;
             pendingPresentationUpdate.timeout = null;
