@@ -1,17 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import Slide from "@/components/editor/slide";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { store } from "@/store";
 import {
   selectSlides,
   selectActiveSlideId,
   selectGlobalTheme,
+  selectPresentationId,
   setActiveSlide,
   addSlide,
   removeSlide,
   reorderSlides,
+  updateSlideId,
   type SlideModel,
   type GlobalTheme,
 } from "@/store/slices/slidesSlice";
+import { useAddSlide } from "@/hooks/use-presentation";
 import { cn } from "@/lib/utils";
 import { Plus, Trash2 } from "lucide-react";
 import { AppleButton } from "@/components/editor/apple-button";
@@ -151,10 +155,12 @@ export const LeftSidebar = () => {
   const slides = useAppSelector(selectSlides);
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const globalTheme = useAppSelector(selectGlobalTheme);
+  const presentationId = useAppSelector(selectPresentationId);
   const dispatch = useAppDispatch();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { collapsed } = useEditorSidebar();
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
+  const addSlideMutation = useAddSlide();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -186,8 +192,68 @@ export const LeftSidebar = () => {
     dispatch(setActiveSlide(slideId));
   };
 
-  const handleAddSlide = () => {
-    dispatch(addSlide());
+  const handleAddSlide = async () => {
+    if (!presentationId) {
+      console.error("No presentation ID available");
+      return;
+    }
+
+    // Calculate insert index
+    const insertIndex = slides.findIndex((slide) => slide.id === activeSlideId);
+    const defaultTitle = `Slide ${slides.length + 1}`;
+    const targetIndex = insertIndex >= 0 ? insertIndex + 1 : slides.length;
+
+    // Add to Redux first (creates slide with temporary nanoid ID)
+    // The new slide becomes the active slide
+    dispatch(addSlide({ title: defaultTitle }));
+
+    // Get the new slide from Redux state (it's now the active slide)
+    // Use setTimeout to ensure Redux state has updated
+    setTimeout(async () => {
+      const currentState = store.getState();
+      const newSlideId = currentState.slides.activeSlideId;
+      const newSlide = currentState.slides.slides.find(
+        (slide) => slide.id === newSlideId
+      );
+
+      if (!newSlide) {
+        console.error("Failed to find newly created slide");
+        return;
+      }
+
+      // Create slide in API immediately
+      try {
+        const response = await addSlideMutation.mutateAsync({
+          presentationId,
+          payload: {
+            data: {
+              id: newSlide.id,
+              title: newSlide.title,
+              widgets: newSlide.widgets,
+              backgroundColor: newSlide.backgroundColor,
+              backgroundImage: newSlide.backgroundImage,
+              showSlideNumber: newSlide.showSlideNumber,
+              slideStyle: newSlide.slideStyle,
+            },
+            order: targetIndex,
+          },
+        });
+
+        if (response.success && response.data) {
+          // Update the slide ID in Redux with the database ID
+          dispatch(
+            updateSlideId({
+              oldId: newSlide.id,
+              newId: response.data.id,
+            })
+          );
+        }
+      } catch (error) {
+        console.error("Failed to create slide in API:", error);
+        // Optionally remove the slide from Redux if API call fails
+        // dispatch(removeSlide(newSlide.id));
+      }
+    }, 0);
   };
 
   const handleDragStart = (event: DragStartEvent) => {

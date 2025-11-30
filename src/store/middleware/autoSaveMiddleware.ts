@@ -20,7 +20,6 @@ import {
   updateSlide as updateSlideService,
   updatePresentation,
   reorderSlides as reorderSlidesService,
-  addSlide as addSlideService,
 } from "@/services/presentation";
 
 // Track pending saves
@@ -161,88 +160,70 @@ function createAutoSaveMiddleware() {
       ];
 
       if (slideActions.includes(action.type as string)) {
-        const slides = state.slides.slides;
+        const activeSlideId = state.slides.activeSlideId;
 
-        // Cancel existing pending saves
-        pendingSlideSaves.forEach((pending) => clearTimeout(pending.timeout));
-        pendingSlideSaves.clear();
+        // Only save the active slide, not all slides
+        if (!activeSlideId) {
+          return result;
+        }
 
-        // Schedule save for each slide
-        slides.forEach(
-          (
-            slide: {
-              id: string;
-              title: string;
-              widgets: unknown[];
-              backgroundColor?: string[];
-              backgroundImage?: string;
-              showSlideNumber?: boolean;
-              slideStyle?: string;
-            },
-            index: number
-          ) => {
-            const existing = pendingSlideSaves.get(slide.id);
-            if (existing) {
-              clearTimeout(existing.timeout);
+        const activeSlide = state.slides.slides.find(
+          (slide) => slide.id === activeSlideId
+        );
+
+        if (!activeSlide) {
+          return result;
+        }
+
+        // Cancel existing pending save for this slide only
+        const existing = pendingSlideSaves.get(activeSlideId);
+        if (existing) {
+          clearTimeout(existing.timeout);
+        }
+
+        // Schedule save for the active slide only
+        const timeout = setTimeout(async () => {
+          try {
+            // Prepare slide data matching your SlideModel structure
+            const slideData: Partial<SlideModel> = {
+              id: activeSlide.id,
+              title: activeSlide.title,
+              widgets: activeSlide.widgets as SlideWidget[],
+              backgroundColor: activeSlide.backgroundColor,
+              backgroundImage: activeSlide.backgroundImage,
+              showSlideNumber: activeSlide.showSlideNumber,
+              slideStyle: activeSlide.slideStyle,
+            };
+
+            // Check if slide ID has been created in database
+            // Database IDs (cuid) typically start with 'c' and are 25 characters
+            // Temporary IDs (nanoid) are 21 characters and not in createdSlideIds
+            const isDatabaseId =
+              createdSlideIds.has(activeSlide.id) ||
+              (activeSlide.id.startsWith("c") && activeSlide.id.length === 25);
+
+            if (!isDatabaseId) {
+              // This shouldn't happen if slide creation is handled in left-sidebar
+              // But keep as fallback - skip saving if slide doesn't exist in DB
+              console.warn(
+                `Attempting to save slide ${activeSlide.id} that doesn't exist in database. Skipping.`
+              );
+              return;
             }
 
-            const timeout = setTimeout(async () => {
-              try {
-                // Prepare slide data matching your SlideModel structure
-                const slideData: Partial<SlideModel> = {
-                  id: slide.id,
-                  title: slide.title,
-                  widgets: slide.widgets as SlideWidget[],
-                  backgroundColor: slide.backgroundColor,
-                  backgroundImage: slide.backgroundImage,
-                  showSlideNumber: slide.showSlideNumber,
-                  slideStyle: slide.slideStyle,
-                };
-
-                // Check if slide ID has been created in database
-                // Database IDs (cuid) typically start with 'c' and are 25 characters
-                // Temporary IDs (nanoid) are 21 characters and not in createdSlideIds
-                const isDatabaseId =
-                  createdSlideIds.has(slide.id) ||
-                  (slide.id.startsWith("c") && slide.id.length === 25);
-
-                if (!isDatabaseId) {
-                  // Create new slide in database
-                  const response = await addSlideService(presentationId, {
-                    data: slideData,
-                    order: index,
-                  });
-
-                  if (response.success && response.data) {
-                    // Mark as created
-                    createdSlideIds.add(response.data.id);
-
-                    // Update the slide ID in Redux with the database ID
-                    store.dispatch(
-                      updateSlideId({
-                        oldId: slide.id,
-                        newId: response.data.id,
-                      })
-                    );
-                  }
-                } else {
-                  // Update existing slide
-                  await updateSlideService(slide.id, { data: slideData });
-                }
-
-                pendingSlideSaves.delete(slide.id);
-              } catch (error) {
-                console.error(`Failed to save slide ${slide.id}:`, error);
-              }
-            }, SAVE_DELAY);
-
-            pendingSlideSaves.set(slide.id, {
-              slideId: slide.id,
-              data: slide,
-              timeout,
-            });
+            // Update existing slide
+            await updateSlideService(activeSlide.id, { data: slideData });
+            pendingSlideSaves.delete(activeSlideId);
+          } catch (error) {
+            console.error(`Failed to save slide ${activeSlideId}:`, error);
           }
-        );
+        }, SAVE_DELAY);
+
+        pendingSlideSaves.set(activeSlideId, {
+          slideId: activeSlideId,
+          data: activeSlide,
+          timeout,
+        });
       }
 
       // Handle slide reordering
