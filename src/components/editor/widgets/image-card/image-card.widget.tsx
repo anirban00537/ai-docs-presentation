@@ -21,6 +21,7 @@ import { WidgetToolbar } from "@/components/editor/widgets/shared/toolbar-contro
 import type { ToolbarControlConfig } from "@/components/editor/widgets/shared/toolbar-controls/types";
 import {
   WidgetContainer,
+  WidgetBackground,
   useWidgetPointerDown,
 } from "@/components/editor/widgets/shared";
 
@@ -136,42 +137,32 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
 
   const backgroundColor = widget.backgroundColor ?? undefined;
   const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
-  const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
-  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const descriptionColor =
+    widget.descriptionColor ?? globalTheme?.text ?? "#475569";
+  const titleFontFamily =
+    widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const titleFontSize = widget.titleFontSize ?? 26;
   const descriptionFontSize = widget.descriptionFontSize ?? 18;
   const textAlign = widget.textAlign ?? "left";
   const backgroundType = widget.backgroundType ?? "solid";
-  const isGlassBackground = backgroundType === "glass";
-  const isTransparentBackground = backgroundType === "transparent";
   const imageStyle = widget.imageStyle ?? "hero";
   const isHeroImage = imageStyle === "hero";
   const useGlassPanel = imageStyle === "backgroundGlass";
   const imagePreviewUrl = localImageUrl.trim();
 
   const heroImageHeight = Math.max(220, widget.height * 0.55);
-  const glassSurfaceGradient =
-    "linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%)";
-  const glassSurfaceShadow =
-    "inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.25)";
-  const heroSurfaceStyle = isGlassBackground
-    ? {
-        backgroundColor: `${backgroundColor}03`,
-        backgroundImage: glassSurfaceGradient,
-        boxShadow: glassSurfaceShadow,
-      }
-    : {
-        backgroundColor: isTransparentBackground
-          ? "transparent"
-          : backgroundColor,
-        boxShadow: "none",
-      };
   const heroTextPanelClasses = "flex flex-1 flex-col gap-3 px-8 pb-8 pt-6";
-  const heroTextPanelStyle = undefined;
   const glassOverlayClasses =
     "border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_40px_80px_-20px_rgba(15,23,42,0.5)] rounded-[12px]";
+
+  // Determine if we should use WidgetBackground (for hero/left/right/bottom styles)
+  const shouldUseWidgetBackground =
+    isHeroImage ||
+    imageStyle === "left" ||
+    imageStyle === "right" ||
+    imageStyle === "bottom";
 
   const toolbar = isSelected ? (
     <ImageCardToolbar
@@ -195,35 +186,12 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
       getResizePointerDown={getResizePointerDown}
       toolbar={toolbar}
     >
-      <div
-        className={cn(
-          "relative h-full w-full overflow-hidden rounded-[16px] transition-all duration-300 ease-out shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]",
-          (isHeroImage ||
-            imageStyle === "left" ||
-            imageStyle === "right" ||
-            imageStyle === "bottom") &&
-            isGlassBackground &&
-            "backdrop-blur-2xl",
-          (isHeroImage ||
-            imageStyle === "left" ||
-            imageStyle === "right" ||
-            imageStyle === "bottom") &&
-            isTransparentBackground &&
-            "bg-transparent shadow-none"
-        )}
-        style={
-          isHeroImage ||
-          imageStyle === "left" ||
-          imageStyle === "right" ||
-          imageStyle === "bottom"
-            ? heroSurfaceStyle
-            : undefined
-        }
-      >
-        {isHeroImage ||
-        imageStyle === "left" ||
-        imageStyle === "right" ||
-        imageStyle === "bottom" ? (
+      {shouldUseWidgetBackground ? (
+        <WidgetBackground
+          backgroundType={backgroundType}
+          backgroundColor={backgroundColor}
+          className="overflow-hidden p-0"
+        >
           <div
             className={cn(
               "flex h-full",
@@ -276,7 +244,6 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
                   "w-1/2 justify-center",
                 imageStyle === "bottom" && "justify-end pb-6 pt-8"
               )}
-              style={heroTextPanelStyle}
             >
               <ProseMirrorEditor
                 value={localTitle}
@@ -334,113 +301,113 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
               />
             </div>
           </div>
-        ) : (
-          <div className="relative flex h-full w-full flex-col justify-end">
-            <div className="absolute inset-0">
-              {imagePreviewUrl ? (
-                <img
-                  src={imagePreviewUrl}
-                  alt={widget.title || "Background image"}
-                  className="h-full w-full object-cover"
-                  draggable={false}
-                />
-              ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted/30 text-muted-foreground/80">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/70 text-foreground/70 shadow-inner">
-                    <ImageIcon className="h-5 w-5" />
-                  </div>
-                  <p className="text-xs font-semibold tracking-wide uppercase">
-                    Add an image
-                  </p>
-                  <p className="text-[11px] text-muted-foreground/80">
-                    Use the toolbar to paste a link
-                  </p>
+        </WidgetBackground>
+      ) : (
+        <div className="relative flex h-full w-full flex-col justify-end">
+          <div className="absolute inset-0">
+            {imagePreviewUrl ? (
+              <img
+                src={imagePreviewUrl}
+                alt={widget.title || "Background image"}
+                className="h-full w-full object-cover"
+                draggable={false}
+              />
+            ) : (
+              <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted/30 text-muted-foreground/80">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/70 text-foreground/70 shadow-inner">
+                  <ImageIcon className="h-5 w-5" />
                 </div>
-              )}
-              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
-            </div>
-
-            <div
-              className="relative z-10 flex flex-col gap-3 p-6"
-              style={{ textAlign }}
-            >
-              <div
-                className={cn(
-                  "flex flex-col gap-3 p-5",
-                  useGlassPanel
-                    ? glassOverlayClasses
-                    : "text-white drop-shadow-lg"
-                )}
-                style={
-                  useGlassPanel
-                    ? {
-                        backgroundImage:
-                          "linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 100%)",
-                      }
-                    : undefined
-                }
-              >
-                <ProseMirrorEditor
-                  value={localTitle}
-                  onChange={(value) => {
-                    if (!isSelected) return;
-                    setLocalTitle(value);
-                    debouncedUpdateTitle(value);
-                  }}
-                  onFocus={() => {
-                    if (!isSelected) return;
-                    handleFieldFocus("title");
-                  }}
-                  onBlur={() => handleFieldBlur("title")}
-                  placeholder="Add a headline"
-                  readOnly={!isSelected}
-                  className={cn(
-                    "w-full",
-                    isSelected ? "cursor-text" : "cursor-default"
-                  )}
-                  style={{
-                    fontSize: `${titleFontSize}px`,
-                    fontWeight: 600,
-                    color: useGlassPanel ? titleColor : "#f8fafc",
-                    fontFamily: titleFontFamily,
-                    lineHeight: 1.2,
-                    textAlign,
-                  }}
-                />
-
-                <ProseMirrorEditor
-                  value={localDescription}
-                  onChange={(value) => {
-                    if (!isSelected) return;
-                    setLocalDescription(value);
-                    debouncedUpdateDescription(value);
-                  }}
-                  onFocus={() => {
-                    if (!isSelected) return;
-                    handleFieldFocus("description");
-                  }}
-                  onBlur={() => handleFieldBlur("description")}
-                  placeholder="Write a supporting description."
-                  readOnly={!isSelected}
-                  className={cn(
-                    "w-full",
-                    isSelected ? "cursor-text" : "cursor-default"
-                  )}
-                  style={{
-                    fontSize: `${descriptionFontSize}px`,
-                    color: useGlassPanel
-                      ? descriptionColor
-                      : "rgba(248,250,252,0.9)",
-                    fontFamily: descriptionFontFamily,
-                    lineHeight: 1.5,
-                    textAlign,
-                  }}
-                />
+                <p className="text-xs font-semibold tracking-wide uppercase">
+                  Add an image
+                </p>
+                <p className="text-[11px] text-muted-foreground/80">
+                  Use the toolbar to paste a link
+                </p>
               </div>
+            )}
+            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
+          </div>
+
+          <div
+            className="relative z-10 flex flex-col gap-3 p-6"
+            style={{ textAlign }}
+          >
+            <div
+              className={cn(
+                "flex flex-col gap-3 p-5",
+                useGlassPanel
+                  ? glassOverlayClasses
+                  : "text-white drop-shadow-lg"
+              )}
+              style={
+                useGlassPanel
+                  ? {
+                      backgroundImage:
+                        "linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 100%)",
+                    }
+                  : undefined
+              }
+            >
+              <ProseMirrorEditor
+                value={localTitle}
+                onChange={(value) => {
+                  if (!isSelected) return;
+                  setLocalTitle(value);
+                  debouncedUpdateTitle(value);
+                }}
+                onFocus={() => {
+                  if (!isSelected) return;
+                  handleFieldFocus("title");
+                }}
+                onBlur={() => handleFieldBlur("title")}
+                placeholder="Add a headline"
+                readOnly={!isSelected}
+                className={cn(
+                  "w-full",
+                  isSelected ? "cursor-text" : "cursor-default"
+                )}
+                style={{
+                  fontSize: `${titleFontSize}px`,
+                  fontWeight: 600,
+                  color: useGlassPanel ? titleColor : "#f8fafc",
+                  fontFamily: titleFontFamily,
+                  lineHeight: 1.2,
+                  textAlign,
+                }}
+              />
+
+              <ProseMirrorEditor
+                value={localDescription}
+                onChange={(value) => {
+                  if (!isSelected) return;
+                  setLocalDescription(value);
+                  debouncedUpdateDescription(value);
+                }}
+                onFocus={() => {
+                  if (!isSelected) return;
+                  handleFieldFocus("description");
+                }}
+                onBlur={() => handleFieldBlur("description")}
+                placeholder="Write a supporting description."
+                readOnly={!isSelected}
+                className={cn(
+                  "w-full",
+                  isSelected ? "cursor-text" : "cursor-default"
+                )}
+                style={{
+                  fontSize: `${descriptionFontSize}px`,
+                  color: useGlassPanel
+                    ? descriptionColor
+                    : "rgba(248,250,252,0.9)",
+                  fontFamily: descriptionFontFamily,
+                  lineHeight: 1.5,
+                  textAlign,
+                }}
+              />
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </WidgetContainer>
   );
 };
@@ -564,7 +531,8 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
   };
 
   const currentAlign = widget.textAlign ?? "left";
-  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
+  const currentBackgroundColor =
+    widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
   const currentImageStyle = widget.imageStyle ?? "hero";
   const currentTextColor =
@@ -576,7 +544,9 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
   const currentFontFamily =
     activeField === "title"
       ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
-      : widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+      : widget.descriptionFontFamily ??
+        globalTheme?.font ??
+        "var(--font-poppins)";
   const currentFontSize =
     activeField === "title"
       ? widget.titleFontSize ?? 26
