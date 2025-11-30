@@ -15,7 +15,7 @@ import {
   type SlideModel,
   type GlobalTheme,
 } from "@/store/slices/slidesSlice";
-import { useAddSlide } from "@/hooks/use-presentation";
+import { useAddSlide, useDeleteSlide } from "@/hooks/use-presentation";
 import { cn } from "@/lib/utils";
 import { Plus, Trash2 } from "lucide-react";
 import { AppleButton } from "@/components/editor/apple-button";
@@ -161,6 +161,7 @@ export const LeftSidebar = () => {
   const { collapsed } = useEditorSidebar();
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const addSlideMutation = useAddSlide();
+  const deleteSlideMutation = useDeleteSlide();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -190,6 +191,26 @@ export const LeftSidebar = () => {
 
   const handleSlideClick = (slideId: string) => {
     dispatch(setActiveSlide(slideId));
+  };
+
+  const handleRemoveSlide = (slideId: string) => {
+    // Don't allow deleting if it's the last slide
+    if (slides.length <= 1) {
+      return;
+    }
+
+    // Delete from Redux first (optimistic update)
+    // The Redux slice will handle switching active slide if needed
+    dispatch(removeSlide(slideId));
+
+    // Send delete request to API (fire and forget - don't wait for response)
+    deleteSlideMutation.mutate(slideId, {
+      onError: (error) => {
+        console.error("Failed to delete slide in API:", error);
+        // Optionally: You could revert the Redux deletion here if needed
+        // But since user said don't wait, we'll just log the error
+      },
+    });
   };
 
   const handleAddSlide = async () => {
@@ -348,7 +369,7 @@ export const LeftSidebar = () => {
                     onClick={() => handleSlideClick(slide.id)}
                     onRemove={(e) => {
                       e.stopPropagation();
-                      dispatch(removeSlide(slide.id));
+                      handleRemoveSlide(slide.id);
                     }}
                     showDelete={slides.length > 1}
                     globalTheme={globalTheme}
