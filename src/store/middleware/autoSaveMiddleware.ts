@@ -13,6 +13,7 @@ import {
   setSlideTheme,
   updateSlideId,
   loadPresentation,
+  updatePresentationTitle,
 } from "@/store/slices/slidesSlice";
 import type { SlideModel } from "@/store/slices/slidesSlice";
 import type { SlideWidget } from "@/components/editor/widgets/types";
@@ -266,10 +267,11 @@ function createAutoSaveMiddleware() {
         }
       }
 
-      // Handle presentation-level changes (globalTheme)
+      // Handle presentation-level changes (globalTheme and title)
       const presentationActions: string[] = [
         updateGlobalTheme.type,
         setSlideTheme.type,
+        updatePresentationTitle.type,
       ];
 
       if (presentationActions.includes(action.type as string)) {
@@ -280,6 +282,7 @@ function createAutoSaveMiddleware() {
         pendingPresentationUpdate.timeout = setTimeout(async () => {
           try {
             await updatePresentation(presentationId, {
+              title: state.slides.presentationTitle,
               globalTheme: state.slides.globalTheme,
             });
             pendingPresentationUpdate.presentationId = null;

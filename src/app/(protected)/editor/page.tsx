@@ -86,6 +86,7 @@ const EditorWorkspace = () => {
       dispatch(
         loadPresentation({
           presentationId,
+          presentationTitle: presentation.title || "Untitled Presentation",
           slides,
           globalTheme,
         })

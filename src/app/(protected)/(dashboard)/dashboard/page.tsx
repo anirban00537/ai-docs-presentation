@@ -91,6 +91,7 @@ export default function DashboardPage() {
             dispatch(
               loadPresentation({
                 presentationId,
+                presentationTitle: presentation.title || "Untitled Presentation",
                 slides,
                 globalTheme,
               })
