@@ -181,83 +181,126 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   };
 
   return (
-    <div
-      ref={sidebarRef}
-      className="h-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-l border-border/30 dark:border-border/30 flex flex-col shrink-0 min-h-0 z-40 shadow-[0_12px_32px_-24px_rgba(15,23,42,0.35)] relative"
-      style={{ width: `${width}px` }}
-    >
-      {/* Resize handle */}
-      <div
-        className={cn(
-          "absolute left-0 top-0 bottom-0 w-[4px] cursor-ew-resize z-50 transition-colors",
-          "hover:bg-primary/40 active:bg-primary/60",
-          isResizing && "bg-primary/60"
-        )}
-        onPointerDown={handlePointerDown}
-        aria-label="Resize sidebar"
-        role="separator"
-        aria-orientation="vertical"
-        style={{
-          marginLeft: "-2px",
-        }}
-      />
-      <div className="flex items-center justify-between px-5 py-4 border-b border-border/30 dark:border-border/25 shrink-0 h-16">
-        <h2 className="text-sm font-semibold text-foreground/90 tracking-tight">
-          {getTitle()}
-        </h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-200 active:scale-95"
-          onClick={onClose}
-        >
-          <XIcon className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </Button>
+    <div className="h-full flex items-center shrink-0 z-40 relative">
+      {/* Icon buttons on the left */}
+      <div className="h-full flex items-center justify-center shrink-0">
+        <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm border border-border/40 dark:border-border/30 shadow-sm">
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-10 w-10 rounded-lg transition-all duration-200",
+              "text-muted-foreground hover:text-foreground",
+              "hover:bg-background dark:hover:bg-neutral-800/80",
+              "hover:shadow-sm active:scale-95",
+              !activeSlide && "opacity-40 cursor-not-allowed",
+              panel === "background" && "bg-primary/10 text-primary"
+            )}
+            disabled={!activeSlide}
+            onClick={() => onOpenPanel("background")}
+            title="Background Settings"
+          >
+            <Palette className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-10 w-10 rounded-lg transition-all duration-200",
+              "text-muted-foreground hover:text-foreground",
+              "hover:bg-background dark:hover:bg-neutral-800/80",
+              "hover:shadow-sm active:scale-95",
+              !activeSlide && "opacity-40 cursor-not-allowed",
+              panel === "theme" && "bg-primary/10 text-primary"
+            )}
+            disabled={!activeSlide}
+            onClick={() => onOpenPanel("theme")}
+            title="Theme Settings"
+          >
+            <LayoutTemplate className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
+
+      {/* Sidebar content */}
       <div
-        className="flex-1 overflow-y-auto px-5 py-5 min-h-0 overscroll-contain space-y-6 border-t border-border/30 dark:border-border/25 mt-1 pt-6"
-        style={{
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
+        ref={sidebarRef}
+        className="h-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-l border-border/30 dark:border-border/30 flex flex-col shrink-0 min-h-0 z-40 shadow-[0_12px_32px_-24px_rgba(15,23,42,0.35)] relative"
+        style={{ width: `${width}px` }}
       >
-        <style jsx>{`
-          div::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
-        {panel === "insert" && (
-          <InsertPanelContent
-            onAddText={handleAddText}
-            onAddFeatureCard={handleAddFeatureCard}
-            onAddIconCard={handleAddIconCard}
-            onAddImageCard={handleAddImageCard}
-            onAddLabelCard={handleAddLabelCard}
-            onAddListCard={handleAddListCard}
-            onAddQuote={handleAddQuote}
-            onAddComparisonCard={handleAddComparisonCard}
-            onAddTitleCard={handleAddTitleCard}
-            onAddPricingCard={handleAddPricingCard}
-            onClose={onClose}
-          />
-        )}
+        {/* Resize handle */}
+        <div
+          className={cn(
+            "absolute left-0 top-0 bottom-0 w-[4px] cursor-ew-resize z-50 transition-colors",
+            "hover:bg-primary/40 active:bg-primary/60",
+            isResizing && "bg-primary/60"
+          )}
+          onPointerDown={handlePointerDown}
+          aria-label="Resize sidebar"
+          role="separator"
+          aria-orientation="vertical"
+          style={{
+            marginLeft: "-2px",
+          }}
+        />
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border/30 dark:border-border/25 shrink-0 h-16">
+          <h2 className="text-sm font-semibold text-foreground/90 tracking-tight">
+            {getTitle()}
+          </h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-200 active:scale-95"
+            onClick={onClose}
+          >
+            <XIcon className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </Button>
+        </div>
+        <div
+          className="flex-1 overflow-y-auto px-5 py-5 min-h-0 overscroll-contain space-y-6 border-t border-border/30 dark:border-border/25 mt-1 pt-6"
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          {panel === "insert" && (
+            <InsertPanelContent
+              onAddText={handleAddText}
+              onAddFeatureCard={handleAddFeatureCard}
+              onAddIconCard={handleAddIconCard}
+              onAddImageCard={handleAddImageCard}
+              onAddLabelCard={handleAddLabelCard}
+              onAddListCard={handleAddListCard}
+              onAddQuote={handleAddQuote}
+              onAddComparisonCard={handleAddComparisonCard}
+              onAddTitleCard={handleAddTitleCard}
+              onAddPricingCard={handleAddPricingCard}
+              onClose={onClose}
+            />
+          )}
 
-        {panel === "background" && (
-          <BackgroundPanelContent
-            backgroundColor={backgroundColor}
-            onBackgroundColorChange={onBackgroundColorChange}
-          />
-        )}
+          {panel === "background" && (
+            <BackgroundPanelContent
+              backgroundColor={backgroundColor}
+              onBackgroundColorChange={onBackgroundColorChange}
+            />
+          )}
 
-        {panel === "theme" && (
-          <ThemePanelContent
-            activeThemeId={activeThemeId}
-            onSelectTheme={onSelectTheme}
-            globalTheme={globalTheme}
-            onThemeChange={onThemeChange}
-          />
-        )}
+          {panel === "theme" && (
+            <ThemePanelContent
+              activeThemeId={activeThemeId}
+              onSelectTheme={onSelectTheme}
+              globalTheme={globalTheme}
+              onThemeChange={onThemeChange}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
