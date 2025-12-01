@@ -172,8 +172,6 @@ const Editor = () => {
       <div className="flex h-full flex-1 flex-col overflow-hidden bg-background">
         <EditorHeader
           onOpenInsertPanel={() => togglePanel("insert")}
-          onOpenBackgroundPanel={() => togglePanel("background")}
-          onOpenThemePanel={() => togglePanel("theme")}
           onStartPresentation={handleStartPresentation}
         />
         <div className="flex flex-1 min-h-0 overflow-hidden h-full">
@@ -182,18 +180,17 @@ const Editor = () => {
               No slide selected
             </p>
           </div>
-          {activePanel && (
-            <RightSidebar
-              panel={activePanel}
-              onClose={() => setActivePanel(null)}
-              backgroundColor={undefined}
-              onBackgroundColorChange={handleBackgroundColorChange}
-              activeThemeId={globalTheme?.id}
-              onSelectTheme={handleThemeSelect}
-              globalTheme={globalTheme}
-              onThemeChange={handleThemeChange}
-            />
-          )}
+          <RightSidebar
+            panel={activePanel}
+            onClose={() => setActivePanel(null)}
+            onOpenPanel={togglePanel}
+            backgroundColor={undefined}
+            onBackgroundColorChange={handleBackgroundColorChange}
+            activeThemeId={globalTheme?.id}
+            onSelectTheme={handleThemeSelect}
+            globalTheme={globalTheme}
+            onThemeChange={handleThemeChange}
+          />
         </div>
       </div>
     );
@@ -203,8 +200,6 @@ const Editor = () => {
     <div className="relative flex h-full flex-1 flex-col overflow-hidden bg-background">
       <EditorHeader
         onOpenInsertPanel={() => togglePanel("insert")}
-        onOpenBackgroundPanel={() => togglePanel("background")}
-        onOpenThemePanel={() => togglePanel("theme")}
         onStartPresentation={handleStartPresentation}
       />
       <div className="flex flex-1 min-h-0 overflow-hidden h-full">
@@ -223,18 +218,17 @@ const Editor = () => {
             globalTheme={globalTheme}
           />
         </div>
-        {activePanel && (
-          <RightSidebar
-            panel={activePanel}
-            onClose={() => setActivePanel(null)}
-            backgroundColor={activeSlide?.backgroundColor}
-            onBackgroundColorChange={handleBackgroundColorChange}
-            activeThemeId={globalTheme?.id}
-            onSelectTheme={handleThemeSelect}
-            globalTheme={globalTheme}
-            onThemeChange={handleThemeChange}
-          />
-        )}
+        <RightSidebar
+          panel={activePanel}
+          onClose={() => setActivePanel(null)}
+          onOpenPanel={togglePanel}
+          backgroundColor={activeSlide?.backgroundColor}
+          onBackgroundColorChange={handleBackgroundColorChange}
+          activeThemeId={globalTheme?.id}
+          onSelectTheme={handleThemeSelect}
+          globalTheme={globalTheme}
+          onThemeChange={handleThemeChange}
+        />
       </div>
     </div>
   );

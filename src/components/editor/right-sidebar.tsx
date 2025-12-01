@@ -1,13 +1,15 @@
 "use client";
 
 import React from "react";
-import { XIcon } from "lucide-react";
+import { XIcon, Palette, LayoutTemplate } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InsertPanelContent } from "./right-sidebar/insert-panel-content";
 import { BackgroundPanelContent } from "./right-sidebar/background-panel-content";
 import { ThemePanelContent } from "./right-sidebar/theme-panel-content";
 import { useWidgetCreation } from "@/hooks/use-widget-creation";
 import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/store/hooks";
+import { selectActiveSlide } from "@/store/slices/slidesSlice";
 
 export type SidebarPanel = "insert" | "background" | "theme" | null;
 
@@ -19,6 +21,7 @@ const STORAGE_KEY = "right-sidebar-width";
 type RightSidebarProps = {
   panel: SidebarPanel;
   onClose: () => void;
+  onOpenPanel: (panel: SidebarPanel) => void;
   // Background panel props
   backgroundColor?: string[] | string;
   onBackgroundColorChange?: (colors: string[]) => void;
@@ -36,6 +39,7 @@ type RightSidebarProps = {
 export const RightSidebar: React.FC<RightSidebarProps> = ({
   panel,
   onClose,
+  onOpenPanel,
   backgroundColor,
   onBackgroundColorChange,
   activeThemeId,
@@ -43,6 +47,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   globalTheme,
   onThemeChange,
 }) => {
+  const activeSlide = useAppSelector(selectActiveSlide);
   const {
     handleAddText,
     handleAddFeatureCard,
@@ -120,7 +125,47 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
     }
   }, [isResizing, handlePointerMove, handlePointerUp]);
 
-  if (!panel) return null;
+  // When panel is null, show compact icon buttons
+  if (!panel) {
+    return (
+      <div className="h-full flex items-center justify-center shrink-0 z-40 relative">
+        <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm border border-border/40 dark:border-border/30 shadow-sm">
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-10 w-10 rounded-lg transition-all duration-200",
+              "text-muted-foreground hover:text-foreground",
+              "hover:bg-background dark:hover:bg-neutral-800/80",
+              "hover:shadow-sm active:scale-95",
+              !activeSlide && "opacity-40 cursor-not-allowed"
+            )}
+            disabled={!activeSlide}
+            onClick={() => onOpenPanel("background")}
+            title="Background Settings"
+          >
+            <Palette className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-10 w-10 rounded-lg transition-all duration-200",
+              "text-muted-foreground hover:text-foreground",
+              "hover:bg-background dark:hover:bg-neutral-800/80",
+              "hover:shadow-sm active:scale-95",
+              !activeSlide && "opacity-40 cursor-not-allowed"
+            )}
+            disabled={!activeSlide}
+            onClick={() => onOpenPanel("theme")}
+            title="Theme Settings"
+          >
+            <LayoutTemplate className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const getTitle = () => {
     switch (panel) {

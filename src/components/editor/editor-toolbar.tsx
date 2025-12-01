@@ -4,16 +4,9 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AppleButton } from "@/components/editor/apple-button";
-import {
-  Palette,
-  Plus,
-  LayoutTemplate,
-  ExternalLink,
-  Play,
-} from "lucide-react";
+import { Plus, ExternalLink, Play } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
-  selectActiveSlide,
   selectPresentationTitle,
   selectPresentationId,
   updatePresentationTitle,
@@ -24,18 +17,13 @@ import { useUpdatePresentationTitle } from "@/hooks/use-presentation";
 
 type EditorHeaderProps = {
   onOpenInsertPanel: () => void;
-  onOpenBackgroundPanel: () => void;
-  onOpenThemePanel: () => void;
   onStartPresentation: () => void;
 };
 
 export const EditorHeader: React.FC<EditorHeaderProps> = ({
   onOpenInsertPanel,
-  onOpenBackgroundPanel,
-  onOpenThemePanel,
   onStartPresentation,
 }) => {
-  const activeSlide = useAppSelector(selectActiveSlide);
   const presentationTitle = useAppSelector(selectPresentationTitle);
   const presentationId = useAppSelector(selectPresentationId);
   const dispatch = useAppDispatch();
@@ -118,43 +106,15 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
       </div>
 
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="flex items-center gap-0.5 p-1 rounded-xl">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-background dark:hover:bg-neutral-800/80 hover:shadow-sm transition-all duration-200 active:scale-[0.97]"
-            onClick={onOpenInsertPanel}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Insert
-          </Button>
-
-          <div className="h-5 w-px bg-border/60 mx-0.5" />
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-background dark:hover:bg-neutral-800/80 hover:shadow-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent active:scale-[0.97]"
-            disabled={!activeSlide}
-            onClick={onOpenBackgroundPanel}
-          >
-            <Palette className="mr-2 h-4 w-4" />
-            Background
-          </Button>
-
-          <div className="h-5 w-px bg-border/60 mx-0.5" />
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-background dark:hover:bg-neutral-800/80 hover:shadow-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent active:scale-[0.97]"
-            disabled={!activeSlide}
-            onClick={onOpenThemePanel}
-          >
-            <LayoutTemplate className="mr-2 h-4 w-4" />
-            Theme
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-background dark:hover:bg-neutral-800/80 hover:shadow-sm transition-all duration-200 active:scale-[0.97]"
+          onClick={onOpenInsertPanel}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Insert
+        </Button>
       </div>
 
       <div className="flex items-center gap-2.5">
