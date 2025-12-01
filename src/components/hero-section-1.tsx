@@ -181,22 +181,11 @@ export function HeroSection() {
                   variant="primary"
                   className="rounded-xl px-8 text-base"
                 >
-                  <Link href="/editor">
+                  <Link href="/dashboard">
                     <span className="inline-flex items-center gap-2">
                       Create Presentation
                       <ArrowRight className="h-4 w-4" />
                     </span>
-                  </Link>
-                </AppleButton>
-
-                <AppleButton
-                  asChild
-                  size="lg"
-                  variant="ghost"
-                  className="h-12 rounded-xl px-8 text-base"
-                >
-                  <Link href="#link">
-                    <span>Explore Research Tools</span>
                   </Link>
                 </AppleButton>
               </div>
