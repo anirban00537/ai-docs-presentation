@@ -7,9 +7,11 @@ import { cn } from "@/lib/utils";
 import {
   useSearchUnsplashPhotos,
   useRandomUnsplashPhotos,
+  useTrackUnsplashDownload,
 } from "@/hooks/use-images";
 import { useDebouncedCallback } from "use-debounce";
 import type { UnsplashPhoto } from "@/services/images";
+import { useImageCreation } from "@/components/editor/widgets/image";
 
 const categories = [
   {
@@ -44,10 +46,16 @@ const categories = [
   },
 ];
 
-export const MediaBrowser: React.FC = () => {
+type MediaBrowserProps = {
+  onImageAdded?: () => void;
+};
+
+export const MediaBrowser: React.FC<MediaBrowserProps> = ({ onImageAdded }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const { handleAddImage } = useImageCreation();
+  const trackDownloadMutation = useTrackUnsplashDownload();
 
   // Debounce search query
   const debouncedSearch = useDebouncedCallback((value: string) => {
@@ -113,6 +121,22 @@ export const MediaBrowser: React.FC = () => {
       setSearchQuery("");
       setDebouncedSearchQuery("");
     }
+  };
+
+  const handleImageClick = (photo: UnsplashPhoto) => {
+    // Use regular URL for the image
+    const imageUrl = photo.urls.regular;
+    handleAddImage(imageUrl);
+
+    // Track download if download location is available
+    if (photo.links.downloadLocation) {
+      trackDownloadMutation.mutate({
+        downloadLocation: photo.links.downloadLocation,
+      });
+    }
+
+    // Callback to close dropdown or notify parent
+    onImageAdded?.();
   };
 
   return (
@@ -197,7 +221,8 @@ export const MediaBrowser: React.FC = () => {
             {photos.map((photo) => (
               <div
                 key={photo.id}
-                className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer transform transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-xl hover:shadow-black/20"
+                onClick={() => handleImageClick(photo)}
+                className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer transform transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-xl hover:shadow-black/20 active:scale-[0.98]"
               >
                 <img
                   src={photo.urls.small}

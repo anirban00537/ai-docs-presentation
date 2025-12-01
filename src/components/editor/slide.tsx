@@ -5,6 +5,7 @@ import { TextWidgetNode } from "@/components/editor/widgets/text";
 import { NumberCardWidgetNode } from "@/components/editor/widgets/number-card";
 import { IconCardWidgetNode } from "@/components/editor/widgets/icon-card";
 import { ImageCardWidgetNode } from "@/components/editor/widgets/image-card";
+import { ImageWidgetNode } from "@/components/editor/widgets/image";
 import { LabelCardWidgetNode } from "@/components/editor/widgets/label-card";
 import { ListCardWidgetNode } from "@/components/editor/widgets/list-card";
 import { QuoteWidgetNode } from "@/components/editor/widgets/quote";
@@ -20,6 +21,7 @@ import type {
 import type { NumberCardWidget } from "@/components/editor/widgets/number-card/types";
 import type { IconCardWidget } from "@/components/editor/widgets/icon-card/types";
 import type { ImageCardWidget } from "@/components/editor/widgets/image-card/types";
+import type { ImageWidget } from "@/components/editor/widgets/image/types";
 import type { LabelCardWidget } from "@/components/editor/widgets/label-card/types";
 import type { ListWidget } from "@/components/editor/widgets/list-card";
 import type { QuoteWidget } from "@/components/editor/widgets/quote/types";
@@ -382,6 +384,31 @@ const Slide: React.FC<SlideProps> = ({
                         viewport={viewport}
                         containerRef={canvasContainerRef}
                         globalTheme={globalTheme}
+                      />
+                    );
+                  }
+
+                  if (effective.type === "image") {
+                    return (
+                      <ImageWidgetNode
+                        key={widget.id}
+                        widget={effective as ImageWidget}
+                        isSelected={isSelected}
+                        isEditing={isEditing}
+                        baseZIndex={baseZIndex}
+                        onPointerDown={(e) =>
+                          handleDragStart(
+                            widget,
+                            effective,
+                            isSelected,
+                            isEditing,
+                            e
+                          )
+                        }
+                        getResizePointerDown={(handle) => (e) =>
+                          handleResizeStart(widget, effective, handle, e)}
+                        viewport={viewport}
+                        containerRef={canvasContainerRef}
                       />
                     );
                   }

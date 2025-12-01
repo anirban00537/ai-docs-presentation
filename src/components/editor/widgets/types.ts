@@ -13,6 +13,7 @@ export type { TextWidget };
 export type { NumberCardWidget } from "./number-card/types";
 export type { IconCardWidget } from "./icon-card/types";
 export type { ImageCardWidget } from "./image-card/types";
+export type { ImageWidget } from "./image/types";
 
 export type { LabelCardWidget } from "./label-card/types";
 export type { ListWidget } from "./list-card/types";
@@ -26,6 +27,7 @@ export type SlideWidget =
   | import("./number-card/types").NumberCardWidget
   | import("./icon-card/types").IconCardWidget
   | import("./image-card/types").ImageCardWidget
+  | import("./image/types").ImageWidget
   | import("./label-card/types").LabelCardWidget
   | import("./title-card/types").TitleCardWidget
   | import("./list-card/types").ListWidget

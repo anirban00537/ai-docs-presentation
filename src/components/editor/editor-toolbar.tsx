@@ -38,6 +38,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [localTitle, setLocalTitle] = useState("");
+  const [isMediaDropdownOpen, setIsMediaDropdownOpen] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
   // Use local title when editing, otherwise use Redux title
@@ -121,7 +122,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           <Plus className="mr-2 h-4 w-4" />
           Insert
         </Button>
-        <DropdownMenu>
+        <DropdownMenu
+          open={isMediaDropdownOpen}
+          onOpenChange={setIsMediaDropdownOpen}
+        >
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
@@ -133,7 +137,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center" className="p-0" sideOffset={8}>
-            <MediaBrowser />
+            <MediaBrowser onImageAdded={() => setIsMediaDropdownOpen(false)} />
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
