@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Plus, MoreVertical, Trash2 } from "lucide-react";
+import { AppleButton } from "@/components/editor/apple-button";
+import { Plus, MoreVertical, Trash2, Sparkles } from "lucide-react";
 import { useAppDispatch } from "@/store/hooks";
 import { loadPresentation } from "@/store/slices/slidesSlice";
 import {
@@ -91,7 +91,8 @@ export default function DashboardPage() {
             dispatch(
               loadPresentation({
                 presentationId,
-                presentationTitle: presentation.title || "Untitled Presentation",
+                presentationTitle:
+                  presentation.title || "Untitled Presentation",
                 slides,
                 globalTheme,
               })
@@ -125,140 +126,163 @@ export default function DashboardPage() {
     : [];
 
   return (
-    <div className="flex h-full w-full flex-col p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">My Presentations</h1>
-          <p className="text-muted-foreground mt-1">
-            Create and manage your presentations
-          </p>
-        </div>
-        <Button
-          onClick={handleCreatePresentation}
-          disabled={createPresentationMutation.isPending}
-          size="lg"
-        >
-          <Plus className="mr-2 h-5 w-5" />
-          {createPresentationMutation.isPending
-            ? "Creating..."
-            : "New Presentation"}
-        </Button>
-      </div>
-
-      {isLoading ? (
-        <div className="flex h-full items-center justify-center">
-          <div className="text-muted-foreground">Loading presentations...</div>
-        </div>
-      ) : presentations.length === 0 ? (
-        <div className="flex h-full items-center justify-center">
-          <div className="flex max-w-2xl flex-col items-center gap-6 text-center">
-            <h2 className="text-2xl font-semibold">No presentations yet</h2>
-            <p className="text-muted-foreground">
-              Create your first presentation to get started
+    <div className="flex h-full w-full flex-col overflow-auto">
+      <div className="mx-auto w-full max-w-7xl px-6 py-12">
+        {/* Header */}
+        <div className="mb-10 flex items-center justify-between">
+          <div className="space-y-1">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground">
+              My Presentations
+            </h1>
+            <p className="text-base text-muted-foreground">
+              Create and manage your beautiful presentations
             </p>
-            <Button
-              onClick={handleCreatePresentation}
-              disabled={createPresentationMutation.isPending}
-              size="lg"
-            >
-              <Plus className="mr-2 h-5 w-5" />
-              Create New Presentation
-            </Button>
           </div>
+          <AppleButton
+            onClick={handleCreatePresentation}
+            disabled={createPresentationMutation.isPending}
+            variant="primary"
+            size="lg"
+            className="min-w-[160px]"
+          >
+            <Plus className="h-4 w-4" />
+            {createPresentationMutation.isPending
+              ? "Creating..."
+              : "New Presentation"}
+          </AppleButton>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {presentations.map((presentation) => {
-            const firstSlide = presentation.slides?.[0];
-            const slideData = firstSlide?.data || {};
-            const slideModel: SlideModel = {
-              id: firstSlide?.id || "",
-              title: slideData.title || presentation.title,
-              widgets: (slideData.widgets || []) as SlideWidget[],
-              backgroundColor: slideData.backgroundColor,
-              backgroundImage: slideData.backgroundImage,
-              showSlideNumber: slideData.showSlideNumber ?? false,
-              slideStyle: slideData.slideStyle,
-            };
 
-            return (
-              <div
-                key={presentation.id}
-                className="group relative cursor-pointer rounded-lg border border-border bg-card transition-all hover:border-primary hover:shadow-lg"
-                onClick={() => handleOpenPresentation(presentation.id)}
+        {isLoading ? (
+          <div className="flex min-h-[400px] items-center justify-center">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <p className="text-sm text-muted-foreground">
+                Loading presentations...
+              </p>
+            </div>
+          </div>
+        ) : presentations.length === 0 ? (
+          <div className="flex min-h-[500px] items-center justify-center">
+            <div className="flex max-w-md flex-col items-center gap-6 text-center">
+              <div className="rounded-full bg-primary/10 p-4">
+                <Sparkles className="h-8 w-8 text-primary" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  No presentations yet
+                </h2>
+                <p className="text-muted-foreground">
+                  Create your first presentation to get started with beautiful
+                  slides
+                </p>
+              </div>
+              <AppleButton
+                onClick={handleCreatePresentation}
+                disabled={createPresentationMutation.isPending}
+                variant="primary"
+                size="lg"
               >
-                {/* Presentation Preview */}
-                <div className="relative aspect-video overflow-hidden rounded-t-lg bg-background">
-                  {firstSlide ? (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Slide
-                        slide={slideModel}
-                        selectedId={null}
-                        editingId={null}
-                        liveOverrides={{}}
-                        onSelectWidget={() => {}}
-                        onSetLiveOverride={() => {}}
-                        onClearLiveOverride={() => {}}
-                        theme={presentation.globalTheme}
-                        scale={0.2}
-                        padding={0}
-                        showSnapLines={false}
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-muted-foreground">
-                      <div className="text-center">
-                        <p className="text-sm font-medium">No slides yet</p>
-                        <p className="text-xs">Click to start editing</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <Plus className="h-4 w-4" />
+                Create New Presentation
+              </AppleButton>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {presentations.map((presentation, index) => {
+              const firstSlide = presentation.slides?.[0];
+              const slideData = (firstSlide?.data as SlideModel) || {};
 
-                {/* Presentation Info */}
-                <div className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="truncate font-semibold text-sm">
-                        {presentation.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {presentation._count?.slides || 0} slide
-                        {(presentation._count?.slides || 0) !== 1 ? "s" : ""}
-                      </p>
+              return (
+                <div
+                  key={presentation.id}
+                  className="group relative cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-card/50 backdrop-blur-sm transition-all duration-300 ease-out hover:border-border hover:bg-card hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:-translate-y-1"
+                  onClick={() => handleOpenPresentation(presentation.id)}
+                >
+                  {/* Presentation Preview */}
+                  <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5">
+                    {firstSlide ? (
+                      <div className="absolute inset-0 flex items-center justify-center p-2">
+                        <div className="relative h-full w-full rounded-lg overflow-hidden shadow-lg">
+                          <Slide
+                            slide={slideData}
+                            selectedId={null}
+                            editingId={null}
+                            liveOverrides={{}}
+                            onSelectWidget={() => {}}
+                            onSetLiveOverride={() => {}}
+                            onClearLiveOverride={() => {}}
+                            theme={presentation.globalTheme}
+                            scale={0.2}
+                            padding={0}
+                            showSnapLines={false}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <div className="text-center space-y-2">
+                          <div className="mx-auto h-12 w-12 rounded-lg bg-muted/50 flex items-center justify-center">
+                            <Plus className="h-5 w-5 text-muted-foreground" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-foreground/80">
+                              No slides yet
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              Click to start editing
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Presentation Info */}
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0 space-y-1">
+                        <h3 className="truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                          {presentation.title}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {presentation._count?.slides || 0} slide
+                          {(presentation._count?.slides || 0) !== 1 ? "s" : ""}
+                        </p>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          asChild
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <AppleButton
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 opacity-0 transition-all duration-200 group-hover:opacity-100"
+                          >
+                            <MoreVertical className="h-3.5 w-3.5" />
+                          </AppleButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuItem
+                            onClick={(e) =>
+                              handleDeletePresentation(presentation.id, e)
+                            }
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        asChild
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={(e) =>
-                            handleDeletePresentation(presentation.id, e)
-                          }
-                          className="text-destructive"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

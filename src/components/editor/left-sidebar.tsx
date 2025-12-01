@@ -70,7 +70,7 @@ const SortableSlideItem = ({
     transition,
     isDragging,
   } = useSortable({ id: slide.id });
-
+  console.log(globalTheme, "globalTheme");
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
