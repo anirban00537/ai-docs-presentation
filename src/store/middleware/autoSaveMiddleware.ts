@@ -267,11 +267,11 @@ function createAutoSaveMiddleware() {
         }
       }
 
-      // Handle presentation-level changes (globalTheme and title)
+      // Handle presentation-level changes (globalTheme only)
+      // Note: updatePresentationTitle is handled directly in the toolbar component
       const presentationActions: string[] = [
         updateGlobalTheme.type,
         setSlideTheme.type,
-        updatePresentationTitle.type,
       ];
 
       if (presentationActions.includes(action.type as string)) {
@@ -282,7 +282,6 @@ function createAutoSaveMiddleware() {
         pendingPresentationUpdate.timeout = setTimeout(async () => {
           try {
             await updatePresentation(presentationId, {
-              title: state.slides.presentationTitle,
               globalTheme: state.slides.globalTheme,
             });
             pendingPresentationUpdate.presentationId = null;
