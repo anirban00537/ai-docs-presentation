@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AppleButton } from "@/components/editor/apple-button";
-import { Plus, ExternalLink, Play } from "lucide-react";
+import { Plus, ExternalLink, Play, Image } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectPresentationTitle,
@@ -14,6 +14,12 @@ import {
 import { EditorSidebarTrigger } from "@/components/editor/editor-sidebar-shell";
 import { useDebouncedCallback } from "use-debounce";
 import { useUpdatePresentationTitle } from "@/hooks/use-presentation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MediaBrowser } from "@/components/editor/media-browser";
 
 type EditorHeaderProps = {
   onOpenInsertPanel: () => void;
@@ -105,7 +111,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         </div>
       </div>
 
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
         <Button
           variant="ghost"
           size="sm"
@@ -115,6 +121,21 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           <Plus className="mr-2 h-4 w-4" />
           Insert
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-background dark:hover:bg-neutral-800/80 hover:shadow-sm transition-all duration-200 active:scale-[0.97]"
+            >
+              <Image className="mr-2 h-4 w-4" />
+              Media
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="center" className="p-0" sideOffset={8}>
+            <MediaBrowser />
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="flex items-center gap-2.5">
