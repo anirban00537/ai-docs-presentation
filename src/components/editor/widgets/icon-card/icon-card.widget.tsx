@@ -16,9 +16,9 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { Popover } from "@headlessui/react";
@@ -46,6 +46,7 @@ type IconCardWidgetNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 type ActiveField = "title" | "description" | null;
@@ -63,10 +64,10 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   getResizePointerDown,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
@@ -218,11 +219,13 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
   const backgroundColor = widget.backgroundColor ?? undefined;
   const iconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a";
   const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
-  const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
+  const descriptionColor =
+    widget.descriptionColor ?? globalTheme?.text ?? "#475569";
   const iconSize = widget.iconSize ?? 48;
   const titleFontSize = widget.titleFontSize ?? 24;
   const descriptionFontSize = widget.descriptionFontSize ?? 18;
-  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const titleFontFamily =
+    widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "left";
@@ -241,6 +244,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
       widgetRef={widgetRef}
       viewport={viewport}
       containerRef={containerRef}
+      globalTheme={globalTheme}
     />
   ) : null;
 
@@ -258,6 +262,7 @@ const IconCardWidgetNodeBase: React.FC<IconCardWidgetNodeProps> = ({
       <WidgetBackground
         backgroundType={backgroundType}
         backgroundColor={backgroundColor}
+        globalTheme={globalTheme}
       >
         <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
           {/* Icon */}
@@ -382,6 +387,7 @@ type IconCardEditingToolbarProps = {
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
@@ -391,11 +397,11 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
   widgetRef,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const iconSizeButtonRef = React.useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -496,7 +502,8 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
   };
 
   const currentAlign = widget.textAlign ?? "left";
-  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
+  const currentBackgroundColor =
+    widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
   const currentIconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a";
 
@@ -511,7 +518,9 @@ const IconCardEditingToolbar: React.FC<IconCardEditingToolbarProps> = ({
     activeField === "title"
       ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "description"
-      ? widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      ? widget.descriptionFontFamily ??
+        globalTheme?.font ??
+        "var(--font-poppins)"
       : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =

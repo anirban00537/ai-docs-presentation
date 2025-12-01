@@ -2,19 +2,15 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, Sparkles } from "lucide-react";
 import type { ResizeHandle } from "@/components/editor/widgets/types";
 import type { LabelCardWidget } from "./types";
-import {
-  TOOLBAR_SELECTOR,
-} from "./constants";
+import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
@@ -37,6 +33,7 @@ type LabelCardWidgetNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 type ActiveField = "label" | "title" | "description" | null;
@@ -50,10 +47,10 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
   getResizePointerDown,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localLabel, setLocalLabel] = React.useState(widget.label || "Label");
@@ -62,7 +59,6 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
     widget.description || ""
   );
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
-
 
   const debouncedUpdateLabel = useDebouncedCallback((value: string) => {
     dispatch(
@@ -149,15 +145,17 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
     [debouncedUpdateLabel, debouncedUpdateTitle, debouncedUpdateDescription]
   );
 
-
   // Widget-local colors and fonts - use global theme when undefined
   const backgroundColor = widget.backgroundColor ?? undefined;
   const labelColor = widget.labelColor ?? globalTheme?.accent ?? "#0f172a";
   const labelTextColor = widget.labelTextColor ?? "#ffffff";
   const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
-  const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
-  const labelFontFamily = widget.labelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const descriptionColor =
+    widget.descriptionColor ?? globalTheme?.text ?? "#475569";
+  const labelFontFamily =
+    widget.labelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const titleFontFamily =
+    widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const labelFontSize = widget.labelFontSize ?? 13;
@@ -174,6 +172,7 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
       widgetRef={widgetRef}
       viewport={viewport}
       containerRef={containerRef}
+      globalTheme={globalTheme}
     />
   ) : null;
 
@@ -191,114 +190,115 @@ const LabelCardWidgetNodeBase: React.FC<LabelCardWidgetNodeProps> = ({
       <WidgetBackground
         backgroundType={backgroundType}
         backgroundColor={backgroundColor}
+        globalTheme={globalTheme}
       >
-          <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
-            {/* Label field */}
+        <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
+          {/* Label field */}
+          <div
+            className="flex"
+            style={{
+              justifyContent:
+                textAlign === "center"
+                  ? "center"
+                  : textAlign === "right"
+                  ? "flex-end"
+                  : "flex-start",
+            }}
+          >
             <div
-              className="flex"
+              className="relative inline-flex items-center justify-center px-3 py-1 rounded-full shadow-sm"
               style={{
-                justifyContent:
-                  textAlign === "center"
-                    ? "center"
-                    : textAlign === "right"
-                    ? "flex-end"
-                    : "flex-start",
+                backgroundColor: labelColor,
               }}
             >
-              <div
-                className="relative inline-flex items-center justify-center px-3 py-1 rounded-full shadow-sm"
-                style={{
-                  backgroundColor: labelColor,
+              <ProseMirrorEditor
+                value={localLabel}
+                onChange={(value) => {
+                  if (!isSelected) return;
+                  setLocalLabel(value);
+                  debouncedUpdateLabel(value);
                 }}
-              >
-                <ProseMirrorEditor
-                  value={localLabel}
-                  onChange={(value) => {
-                    if (!isSelected) return;
-                    setLocalLabel(value);
-                    debouncedUpdateLabel(value);
-                  }}
-                  onFocus={() => {
-                    if (!isSelected) return;
-                    handleFieldFocus("label");
-                  }}
-                  onBlur={() => handleFieldBlur("label")}
-                  placeholder="Label"
-                  readOnly={!isSelected}
-                  className={cn(
-                    "w-auto min-w-[60px] text-center",
-                    isSelected ? "cursor-text" : "cursor-default"
-                  )}
-                  style={{
-                    color: labelTextColor,
-                    fontFamily: labelFontFamily,
-                    fontSize: `${labelFontSize}px`,
-                    lineHeight: 1.2,
-                  }}
-                />
-              </div>
+                onFocus={() => {
+                  if (!isSelected) return;
+                  handleFieldFocus("label");
+                }}
+                onBlur={() => handleFieldBlur("label")}
+                placeholder="Label"
+                readOnly={!isSelected}
+                className={cn(
+                  "w-auto min-w-[60px] text-center",
+                  isSelected ? "cursor-text" : "cursor-default"
+                )}
+                style={{
+                  color: labelTextColor,
+                  fontFamily: labelFontFamily,
+                  fontSize: `${labelFontSize}px`,
+                  lineHeight: 1.2,
+                }}
+              />
             </div>
-
-            {/* Title field */}
-            <ProseMirrorEditor
-              value={localTitle}
-              onChange={(value) => {
-                if (!isSelected) return;
-                setLocalTitle(value);
-                debouncedUpdateTitle(value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("title");
-              }}
-              onBlur={() => handleFieldBlur("title")}
-              placeholder="Card Title"
-              readOnly={!isSelected}
-              className={cn(
-                "w-full",
-                isSelected ? "cursor-text" : "cursor-default"
-              )}
-              style={{
-                fontSize: `${titleFontSize}px`,
-                fontWeight: 700,
-                color: titleColor,
-                fontFamily: titleFontFamily,
-                lineHeight: 1.2,
-                textAlign,
-              }}
-            />
-
-            {/* Description field */}
-            <ProseMirrorEditor
-              value={localDescription}
-              onChange={(value) => {
-                if (!isSelected) return;
-                setLocalDescription(value);
-                debouncedUpdateDescription(value);
-              }}
-              onFocus={() => {
-                if (!isSelected) return;
-                handleFieldFocus("description");
-              }}
-              onBlur={() => handleFieldBlur("description")}
-              placeholder="Description text goes here."
-              readOnly={!isSelected}
-              className={cn(
-                "w-full",
-                isSelected ? "cursor-text" : "cursor-default"
-              )}
-              style={{
-                fontSize: `${descriptionFontSize}px`,
-                color: descriptionColor,
-                fontFamily: descriptionFontFamily,
-                lineHeight: 1.5,
-                wordWrap: "break-word",
-                overflowWrap: "break-word",
-                minHeight: "3rem",
-                textAlign,
-              }}
-            />
           </div>
+
+          {/* Title field */}
+          <ProseMirrorEditor
+            value={localTitle}
+            onChange={(value) => {
+              if (!isSelected) return;
+              setLocalTitle(value);
+              debouncedUpdateTitle(value);
+            }}
+            onFocus={() => {
+              if (!isSelected) return;
+              handleFieldFocus("title");
+            }}
+            onBlur={() => handleFieldBlur("title")}
+            placeholder="Card Title"
+            readOnly={!isSelected}
+            className={cn(
+              "w-full",
+              isSelected ? "cursor-text" : "cursor-default"
+            )}
+            style={{
+              fontSize: `${titleFontSize}px`,
+              fontWeight: 700,
+              color: titleColor,
+              fontFamily: titleFontFamily,
+              lineHeight: 1.2,
+              textAlign,
+            }}
+          />
+
+          {/* Description field */}
+          <ProseMirrorEditor
+            value={localDescription}
+            onChange={(value) => {
+              if (!isSelected) return;
+              setLocalDescription(value);
+              debouncedUpdateDescription(value);
+            }}
+            onFocus={() => {
+              if (!isSelected) return;
+              handleFieldFocus("description");
+            }}
+            onBlur={() => handleFieldBlur("description")}
+            placeholder="Description text goes here."
+            readOnly={!isSelected}
+            className={cn(
+              "w-full",
+              isSelected ? "cursor-text" : "cursor-default"
+            )}
+            style={{
+              fontSize: `${descriptionFontSize}px`,
+              color: descriptionColor,
+              fontFamily: descriptionFontFamily,
+              lineHeight: 1.5,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              minHeight: "3rem",
+              textAlign,
+            }}
+          />
+        </div>
       </WidgetBackground>
     </WidgetContainer>
   );
@@ -313,6 +313,7 @@ type LabelCardEditingToolbarProps = {
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
@@ -322,10 +323,10 @@ const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
   widgetRef,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -337,9 +338,7 @@ const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
     );
   };
 
-  const handleSetBackgroundType = (
-    type: LabelCardWidget["backgroundType"]
-  ) => {
+  const handleSetBackgroundType = (type: LabelCardWidget["backgroundType"]) => {
     if (type === (widget.backgroundType ?? "solid")) return;
     dispatch(
       updateWidgetAction({
@@ -437,9 +436,11 @@ const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
   };
 
   const currentAlign = widget.textAlign ?? "left";
-  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
+  const currentBackgroundColor =
+    widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
-  const currentLabelColor = widget.labelColor ?? globalTheme?.accent ?? "#0f172a";
+  const currentLabelColor =
+    widget.labelColor ?? globalTheme?.accent ?? "#0f172a";
 
   const currentTextColor =
     activeField === "label"
@@ -456,7 +457,9 @@ const LabelCardEditingToolbar: React.FC<LabelCardEditingToolbarProps> = ({
       : activeField === "title"
       ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "description"
-      ? widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      ? widget.descriptionFontFamily ??
+        globalTheme?.font ??
+        "var(--font-poppins)"
       : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =

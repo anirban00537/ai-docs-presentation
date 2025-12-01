@@ -10,9 +10,9 @@ import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import {
   WidgetBackground,
   WidgetContainer,
@@ -45,6 +45,7 @@ type ComparisonCardWidgetNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
@@ -56,10 +57,10 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
   getResizePointerDown,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
 
@@ -299,7 +300,8 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
     widget.leftLabelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const rightLabelFontFamily =
     widget.rightLabelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const leftItemFontFamily = widget.leftItemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const leftItemFontFamily =
+    widget.leftItemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const rightItemFontFamily =
     widget.rightItemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
 
@@ -428,6 +430,7 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
       viewport={viewport}
       containerRef={containerRef}
       activeField={activeField}
+      globalTheme={globalTheme}
     />
   ) : null;
 
@@ -663,14 +666,22 @@ type ComparisonCardEditingToolbarProps = {
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
   activeField: ActiveField;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const ComparisonCardEditingToolbar: React.FC<
   ComparisonCardEditingToolbarProps
-> = ({ widget, isEditing, widgetRef, viewport, containerRef, activeField }) => {
+> = ({
+  widget,
+  isEditing,
+  widgetRef,
+  viewport,
+  containerRef,
+  activeField,
+  globalTheme,
+}) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const isLeftTextField =
     activeField === "leftTitle" || activeField === "leftItem";
@@ -731,17 +742,41 @@ const ComparisonCardEditingToolbar: React.FC<
   const currentFontFamily = React.useMemo(() => {
     switch (activeField) {
       case "leftLabel":
-        return widget.leftLabelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+        return (
+          widget.leftLabelFontFamily ??
+          globalTheme?.font ??
+          "var(--font-poppins)"
+        );
       case "leftTitle":
-        return widget.leftTitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+        return (
+          widget.leftTitleFontFamily ??
+          globalTheme?.font ??
+          "var(--font-poppins)"
+        );
       case "leftItem":
-        return widget.leftItemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+        return (
+          widget.leftItemFontFamily ??
+          globalTheme?.font ??
+          "var(--font-poppins)"
+        );
       case "rightLabel":
-        return widget.rightLabelFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+        return (
+          widget.rightLabelFontFamily ??
+          globalTheme?.font ??
+          "var(--font-poppins)"
+        );
       case "rightTitle":
-        return widget.rightTitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+        return (
+          widget.rightTitleFontFamily ??
+          globalTheme?.font ??
+          "var(--font-poppins)"
+        );
       case "rightItem":
-        return widget.rightItemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+        return (
+          widget.rightItemFontFamily ??
+          globalTheme?.font ??
+          "var(--font-poppins)"
+        );
       default:
         return globalTheme?.font ?? "var(--font-poppins)";
     }

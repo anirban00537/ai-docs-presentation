@@ -9,9 +9,9 @@ import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
@@ -38,6 +38,7 @@ type QuoteWidgetNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 type ActiveField = "quote" | "attribution" | null;
@@ -51,10 +52,10 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
   getResizePointerDown,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localQuote, setLocalQuote] = React.useState(widget.quote || "");
@@ -173,9 +174,11 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
   // Widget-local colors and fonts - use global theme when undefined
   const backgroundColor = widget.backgroundColor ?? undefined;
   const quoteColor = widget.quoteColor ?? globalTheme?.text ?? "#0f172a";
-  const attributionColor = widget.attributionColor ?? globalTheme?.text ?? "#64748b";
+  const attributionColor =
+    widget.attributionColor ?? globalTheme?.text ?? "#64748b";
   const iconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a"; // Used for quote marks
-  const quoteFontFamily = widget.quoteFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const quoteFontFamily =
+    widget.quoteFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const attributionFontFamily =
     widget.attributionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const textAlign = widget.textAlign ?? "center";
@@ -242,6 +245,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
       widgetRef={widgetRef}
       viewport={viewport}
       containerRef={containerRef}
+      globalTheme={globalTheme}
     />
   ) : null;
 
@@ -260,6 +264,7 @@ const QuoteWidgetNodeBase: React.FC<QuoteWidgetNodeProps> = ({
         backgroundType={backgroundType}
         backgroundColor={backgroundColor}
         className="overflow-hidden"
+        globalTheme={globalTheme}
       >
         <div
           ref={contentContainerRef}
@@ -324,6 +329,7 @@ type QuoteEditingToolbarProps = {
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
@@ -332,13 +338,13 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
   widgetRef,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const fontButtonRef = React.useRef<HTMLButtonElement>(null);
   const fontMenuRef = React.useRef<HTMLDivElement>(null);
   const [fontMenuOpen, setFontMenuOpen] = React.useState(false);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   // Close menu when clicking outside
   React.useEffect(() => {
@@ -454,10 +460,12 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
     );
   };
 
-  const currentBgColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
+  const currentBgColor =
+    widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentQuoteColor =
     widget.quoteColor ?? globalTheme?.accent ?? "#0f172a";
-  const currentAttributionColor = widget.attributionColor ?? globalTheme?.text ?? "#64748b";
+  const currentAttributionColor =
+    widget.attributionColor ?? globalTheme?.text ?? "#64748b";
   const currentIconColor = widget.iconColor ?? globalTheme?.accent ?? "#0f172a";
   const currentBackgroundType = widget.backgroundType ?? "solid";
 
@@ -465,7 +473,9 @@ const QuoteEditingToolbar: React.FC<QuoteEditingToolbarProps> = ({
     activeField === "quote"
       ? widget.quoteFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "attribution"
-      ? widget.attributionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      ? widget.attributionFontFamily ??
+        globalTheme?.font ??
+        "var(--font-poppins)"
       : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =

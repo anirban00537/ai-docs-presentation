@@ -1,12 +1,10 @@
-import { useAppSelector } from "@/store/hooks";
-import { selectGlobalTheme } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 
 /**
  * Hook to resolve widget colors with global theme fallback
+ * @param globalTheme - Global theme from props, not from Redux state
  */
-export const useWidgetColors = () => {
-  const globalTheme = useAppSelector(selectGlobalTheme);
-
+export const useWidgetColors = (globalTheme?: GlobalTheme) => {
   return {
     resolveColor: (
       color: string | undefined,

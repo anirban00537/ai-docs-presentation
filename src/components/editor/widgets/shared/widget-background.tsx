@@ -3,8 +3,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import type { BackgroundType } from "./toolbar-controls/types";
-import { useAppSelector } from "@/store/hooks";
-import { selectGlobalTheme } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import type { ThemeTone } from "@/lib/slide-themes";
 
 interface WidgetBackgroundProps {
@@ -12,6 +11,7 @@ interface WidgetBackgroundProps {
   backgroundColor?: string;
   className?: string;
   children: React.ReactNode;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 }
 
 const getGlassBackgroundColor = (color: string, tone: ThemeTone): string => {
@@ -29,8 +29,8 @@ export const WidgetBackground: React.FC<WidgetBackgroundProps> = ({
   backgroundColor,
   className,
   children,
+  globalTheme,
 }) => {
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const themeTone = globalTheme?.tone ?? "dark";
   const isGlassBackground = backgroundType === "glass";
   const isTransparentBackground = backgroundType === "transparent";

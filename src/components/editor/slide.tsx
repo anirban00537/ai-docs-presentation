@@ -49,7 +49,7 @@ type SlideProps = {
   onClearLiveOverride: (widgetId: string) => void;
   scale?: number; // Optional fixed scale for thumbnails/previews
   padding?: number; // Optional padding for responsive scaling
-  theme?: GlobalTheme;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from state
   showSnapLines?: boolean; // Whether to show snap lines (default: true for main editor, false for previews)
 };
 
@@ -63,7 +63,7 @@ const Slide: React.FC<SlideProps> = ({
   onClearLiveOverride,
   scale: fixedScale,
   padding,
-  theme,
+  globalTheme,
   showSnapLines = true,
 }) => {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -207,7 +207,8 @@ const Slide: React.FC<SlideProps> = ({
                   height: `${SLIDE_HEIGHT}px`,
                   position: "relative",
                   fontFamily:
-                    theme?.font ?? "var(--font-poppins), Poppins, sans-serif",
+                    globalTheme?.font ??
+                    "var(--font-poppins), Poppins, sans-serif",
                   ...(slide.backgroundImage
                     ? {
                         backgroundImage: `url(${slide.backgroundImage})`,
@@ -224,12 +225,17 @@ const Slide: React.FC<SlideProps> = ({
                           : [];
 
                         if (bgColors.length === 0) {
-                          if (theme && theme.background.length > 0) {
-                            if (theme.background.length === 1) {
-                              return { backgroundColor: theme.background[0] };
+                          if (
+                            globalTheme &&
+                            globalTheme.background.length > 0
+                          ) {
+                            if (globalTheme.background.length === 1) {
+                              return {
+                                backgroundColor: globalTheme.background[0],
+                              };
                             }
                             return {
-                              background: `linear-gradient(to right, ${theme.background.join(
+                              background: `linear-gradient(to right, ${globalTheme.background.join(
                                 ", "
                               )})`,
                             };
@@ -297,6 +303,7 @@ const Slide: React.FC<SlideProps> = ({
                         editingTextareaRef={editingTextareaRef}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }
@@ -322,6 +329,7 @@ const Slide: React.FC<SlideProps> = ({
                           handleResizeStart(widget, effective, handle, e)}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }
@@ -347,6 +355,7 @@ const Slide: React.FC<SlideProps> = ({
                           handleResizeStart(widget, effective, handle, e)}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }
@@ -372,6 +381,7 @@ const Slide: React.FC<SlideProps> = ({
                           handleResizeStart(widget, effective, handle, e)}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }
@@ -397,6 +407,7 @@ const Slide: React.FC<SlideProps> = ({
                           handleResizeStart(widget, effective, handle, e)}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }
@@ -422,6 +433,7 @@ const Slide: React.FC<SlideProps> = ({
                           handleResizeStart(widget, effective, handle, e)}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }
@@ -447,6 +459,7 @@ const Slide: React.FC<SlideProps> = ({
                           handleResizeStart(widget, effective, handle, e)}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }
@@ -472,6 +485,7 @@ const Slide: React.FC<SlideProps> = ({
                           handleResizeStart(widget, effective, handle, e)}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }
@@ -497,6 +511,7 @@ const Slide: React.FC<SlideProps> = ({
                           handleResizeStart(widget, effective, handle, e)}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }
@@ -522,6 +537,7 @@ const Slide: React.FC<SlideProps> = ({
                           handleResizeStart(widget, effective, handle, e)}
                         viewport={viewport}
                         containerRef={canvasContainerRef}
+                        globalTheme={globalTheme}
                       />
                     );
                   }

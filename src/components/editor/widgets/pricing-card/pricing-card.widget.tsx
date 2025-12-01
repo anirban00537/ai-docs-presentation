@@ -8,9 +8,9 @@ import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
@@ -34,6 +34,7 @@ type PricingCardWidgetNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 type ActiveField =
@@ -54,10 +55,10 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
   getResizePointerDown,
   viewport,
   containerRef,
-  }) => {
+  globalTheme,
+}) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localPlanName, setLocalPlanName] = React.useState(
@@ -73,7 +74,9 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
     widget.buttonText || "Get Started"
   );
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
-  const [activeFeatureIndex, setActiveFeatureIndex] = React.useState<number | null>(null);
+  const [activeFeatureIndex, setActiveFeatureIndex] = React.useState<
+    number | null
+  >(null);
 
   const debouncedUpdatePlanName = useDebouncedCallback((value: string) => {
     dispatch(
@@ -142,15 +145,21 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
   }, [widget.planName]);
 
   React.useEffect(() => {
-    setLocalPrice((prev) => (prev === widget.price ? prev : widget.price || "$0"));
+    setLocalPrice((prev) =>
+      prev === widget.price ? prev : widget.price || "$0"
+    );
   }, [widget.price]);
 
   React.useEffect(() => {
-    setLocalPeriod((prev) => (prev === widget.period ? prev : widget.period || "/mo"));
+    setLocalPeriod((prev) =>
+      prev === widget.period ? prev : widget.period || "/mo"
+    );
   }, [widget.period]);
 
   React.useEffect(() => {
-    setLocalBadge((prev) => (prev === widget.badge ? prev : widget.badge || ""));
+    setLocalBadge((prev) =>
+      prev === widget.badge ? prev : widget.badge || ""
+    );
   }, [widget.badge]);
 
   React.useEffect(() => {
@@ -277,12 +286,18 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
   const buttonColor = widget.buttonColor ?? globalTheme?.accent ?? "#2563eb";
   const buttonTextColor = widget.buttonTextColor ?? "#ffffff";
 
-  const planNameFontFamily = widget.planNameFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const priceFontFamily = widget.priceFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const periodFontFamily = widget.periodFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const badgeFontFamily = widget.badgeFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const featureFontFamily = widget.featureFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const buttonFontFamily = widget.buttonFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const planNameFontFamily =
+    widget.planNameFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const priceFontFamily =
+    widget.priceFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const periodFontFamily =
+    widget.periodFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const badgeFontFamily =
+    widget.badgeFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const featureFontFamily =
+    widget.featureFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const buttonFontFamily =
+    widget.buttonFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
 
   const planNameFontSize = widget.planNameFontSize ?? 28;
   const priceFontSize = widget.priceFontSize ?? 48;
@@ -300,6 +315,7 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
       widgetRef={widgetRef}
       viewport={viewport}
       containerRef={containerRef}
+      globalTheme={globalTheme}
     />
   ) : null;
 
@@ -317,6 +333,7 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
       <WidgetBackground
         backgroundType={backgroundType}
         backgroundColor={backgroundColor}
+        globalTheme={globalTheme}
       >
         <div
           className={cn(
@@ -533,12 +550,16 @@ const PricingCardWidgetNodeBase: React.FC<PricingCardWidgetNodeProps> = ({
                     }}
                     onKeyDown={(event) => {
                       // Enter to add new feature item (like list card)
-                      if (event.key === "Enter" && !event.shiftKey && isSelected) {
+                      if (
+                        event.key === "Enter" &&
+                        !event.shiftKey &&
+                        isSelected
+                      ) {
                         event.preventDefault();
                         handleAddFeature();
                         return;
                       }
-                      
+
                       if (
                         event.key === "Backspace" &&
                         feature === "" &&
@@ -675,6 +696,7 @@ type PricingCardEditingToolbarProps = {
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const PricingCardEditingToolbar: React.FC<PricingCardEditingToolbarProps> = ({
@@ -685,10 +707,10 @@ const PricingCardEditingToolbar: React.FC<PricingCardEditingToolbarProps> = ({
   widgetRef,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -700,7 +722,9 @@ const PricingCardEditingToolbar: React.FC<PricingCardEditingToolbarProps> = ({
     );
   };
 
-  const handleSetBackgroundType = (type: PricingCardWidget["backgroundType"]) => {
+  const handleSetBackgroundType = (
+    type: PricingCardWidget["backgroundType"]
+  ) => {
     if (type === (widget.backgroundType ?? "solid")) return;
     dispatch(
       updateWidgetAction({
@@ -810,7 +834,8 @@ const PricingCardEditingToolbar: React.FC<PricingCardEditingToolbarProps> = ({
     }
   };
 
-  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
+  const currentBackgroundColor =
+    widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
   const currentAlign = widget.textAlign ?? "center";
 
@@ -930,4 +955,3 @@ const PricingCardEditingToolbar: React.FC<PricingCardEditingToolbarProps> = ({
     />
   );
 };
-

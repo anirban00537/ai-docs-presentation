@@ -9,9 +9,9 @@ import { TOOLBAR_SELECTOR, IMAGE_STYLE_OPTIONS } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { Popover } from "@headlessui/react";
@@ -36,6 +36,7 @@ type ImageCardWidgetNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 type ActiveField = "title" | "description" | null;
@@ -49,10 +50,10 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
   getResizePointerDown,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localTitle, setLocalTitle] = React.useState(widget.title || "");
@@ -172,6 +173,7 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
       widgetRef={widgetRef}
       viewport={viewport}
       containerRef={containerRef}
+      globalTheme={globalTheme}
     />
   ) : null;
 
@@ -190,6 +192,7 @@ const ImageCardWidgetNodeBase: React.FC<ImageCardWidgetNodeProps> = ({
         <WidgetBackground
           backgroundType={backgroundType}
           backgroundColor={backgroundColor}
+          globalTheme={globalTheme}
           className="overflow-hidden p-0"
         >
           <div
@@ -419,6 +422,7 @@ type ImageCardToolbarProps = {
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
@@ -428,11 +432,11 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
   widgetRef,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const imageStyleButtonRef = React.useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(

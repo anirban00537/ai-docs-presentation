@@ -8,9 +8,9 @@ import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
@@ -33,6 +33,7 @@ type NumberCardWidgetNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 type ActiveField = "number" | "title" | "description" | null;
@@ -46,10 +47,10 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
   getResizePointerDown,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localNumber, setLocalNumber] = React.useState(widget.number || "01");
@@ -148,9 +149,12 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
   const backgroundColor = widget.backgroundColor ?? undefined;
   const numberColor = widget.numberColor ?? globalTheme?.accent ?? "#0f172a";
   const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
-  const descriptionColor = widget.descriptionColor ?? globalTheme?.text ?? "#475569";
-  const numberFontFamily = widget.numberFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const descriptionColor =
+    widget.descriptionColor ?? globalTheme?.text ?? "#475569";
+  const numberFontFamily =
+    widget.numberFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const titleFontFamily =
+    widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const descriptionFontFamily =
     widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const numberFontSize = widget.numberFontSize ?? 56;
@@ -167,6 +171,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
       widgetRef={widgetRef}
       viewport={viewport}
       containerRef={containerRef}
+      globalTheme={globalTheme}
     />
   ) : null;
 
@@ -184,6 +189,7 @@ const NumberCardWidgetNodeBase: React.FC<NumberCardWidgetNodeProps> = ({
       <WidgetBackground
         backgroundType={backgroundType}
         backgroundColor={backgroundColor}
+        globalTheme={globalTheme}
       >
         <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
           {/* Number field */}
@@ -289,6 +295,7 @@ type NumberCardEditingToolbarProps = {
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
@@ -298,10 +305,10 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
   widgetRef,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -396,7 +403,8 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
   };
 
   const currentAlign = widget.textAlign ?? "left";
-  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
+  const currentBackgroundColor =
+    widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
 
   const currentTextColor =
@@ -414,7 +422,9 @@ const NumberCardEditingToolbar: React.FC<NumberCardEditingToolbarProps> = ({
       : activeField === "title"
       ? widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
       : activeField === "description"
-      ? widget.descriptionFontFamily ?? globalTheme?.font ?? "var(--font-poppins)"
+      ? widget.descriptionFontFamily ??
+        globalTheme?.font ??
+        "var(--font-poppins)"
       : globalTheme?.font ?? "var(--font-poppins)";
 
   const currentFontSize =

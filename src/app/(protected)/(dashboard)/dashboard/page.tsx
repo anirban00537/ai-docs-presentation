@@ -212,7 +212,7 @@ export default function DashboardPage() {
                             onSelectWidget={() => {}}
                             onSetLiveOverride={() => {}}
                             onClearLiveOverride={() => {}}
-                            theme={presentation.globalTheme}
+                            globalTheme={presentation.globalTheme}
                             scale={0.2}
                             padding={0}
                             showSnapLines={false}

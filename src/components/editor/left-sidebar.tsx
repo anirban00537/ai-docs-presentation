@@ -135,7 +135,7 @@ const SortableSlideItem = ({
               onSelectWidget={() => {}}
               onSetLiveOverride={() => {}}
               onClearLiveOverride={() => {}}
-              theme={globalTheme}
+              globalTheme={globalTheme}
               padding={0}
               showSnapLines={false}
             />
@@ -403,7 +403,7 @@ export const LeftSidebar = () => {
                           onSelectWidget={() => {}}
                           onSetLiveOverride={() => {}}
                           onClearLiveOverride={() => {}}
-                          theme={globalTheme}
+                          globalTheme={globalTheme}
                           padding={0}
                           showSnapLines={false}
                         />

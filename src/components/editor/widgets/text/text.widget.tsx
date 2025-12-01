@@ -7,8 +7,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   updateWidget as updateWidgetAction,
   selectActiveSlideId,
-  selectGlobalTheme,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import {
   startWidgetEditing as startWidgetEditingAction,
   stopWidgetEditing as stopWidgetEditingAction,
@@ -42,6 +42,7 @@ type TextWidgetNodeProps = {
   editingTextareaRef: React.RefObject<HTMLTextAreaElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
@@ -54,10 +55,10 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
   editingTextareaRef,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement>(null);
 
   const contentRef = React.useRef<HTMLDivElement | HTMLTextAreaElement | null>(
@@ -214,6 +215,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
             widgetRef={widgetRef}
             viewport={viewport}
             containerRef={containerRef}
+            globalTheme={globalTheme}
           />
         )}
         {isEditing ? (
@@ -316,6 +318,7 @@ type TextEditingToolbarProps = {
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
@@ -324,10 +327,10 @@ const TextEditingToolbar: React.FC<TextEditingToolbarProps> = ({
   widgetRef,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const isBold = widget.fontWeight >= 600;
 

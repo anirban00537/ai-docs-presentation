@@ -8,9 +8,9 @@ import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
@@ -33,6 +33,7 @@ type TitleCardWidgetNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 type ActiveField = "eyebrow" | "title" | "subtitle" | null;
@@ -46,10 +47,10 @@ const TitleCardWidgetNodeBase: React.FC<TitleCardWidgetNodeProps> = ({
   getResizePointerDown,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
 
   const [localEyebrow, setLocalEyebrow] = React.useState(
@@ -153,9 +154,12 @@ const TitleCardWidgetNodeBase: React.FC<TitleCardWidgetNodeProps> = ({
   const titleColor = widget.titleColor ?? globalTheme?.text ?? "#0f172a";
   const subtitleColor = widget.subtitleColor ?? globalTheme?.text ?? "#475569";
 
-  const eyebrowFontFamily = widget.eyebrowFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const subtitleFontFamily = widget.subtitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const eyebrowFontFamily =
+    widget.eyebrowFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const titleFontFamily =
+    widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const subtitleFontFamily =
+    widget.subtitleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
 
   const eyebrowFontSize = widget.eyebrowFontSize ?? 18;
   const titleFontSize = widget.titleFontSize ?? 72;
@@ -169,6 +173,7 @@ const TitleCardWidgetNodeBase: React.FC<TitleCardWidgetNodeProps> = ({
       widgetRef={widgetRef}
       viewport={viewport}
       containerRef={containerRef}
+      globalTheme={globalTheme}
     />
   ) : null;
 
@@ -185,6 +190,7 @@ const TitleCardWidgetNodeBase: React.FC<TitleCardWidgetNodeProps> = ({
     >
       <WidgetBackground
         backgroundType={backgroundType}
+        globalTheme={globalTheme}
         backgroundColor={backgroundColor}
       >
         <div
@@ -295,6 +301,7 @@ type TitleCardEditingToolbarProps = {
   widgetRef: React.RefObject<HTMLElement | null>;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const TitleCardEditingToolbar: React.FC<TitleCardEditingToolbarProps> = ({
@@ -304,10 +311,10 @@ const TitleCardEditingToolbar: React.FC<TitleCardEditingToolbarProps> = ({
   widgetRef,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(
@@ -395,7 +402,8 @@ const TitleCardEditingToolbar: React.FC<TitleCardEditingToolbarProps> = ({
     );
   };
 
-  const currentBackgroundColor = widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
+  const currentBackgroundColor =
+    widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "solid";
   const currentAlign = widget.textAlign ?? "center";
 

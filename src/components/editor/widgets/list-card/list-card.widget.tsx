@@ -10,9 +10,9 @@ import { TOOLBAR_SELECTOR } from "./constants";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectActiveSlideId,
-  selectGlobalTheme,
   updateWidget as updateWidgetAction,
 } from "@/store/slices/slidesSlice";
+import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useDebouncedCallback } from "use-debounce";
 import type { Viewport } from "@/hooks/use-canvas-viewport";
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
@@ -37,6 +37,7 @@ type ListCardWidgetNodeProps = {
   ) => (event: React.PointerEvent<HTMLDivElement>) => void;
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
@@ -48,10 +49,10 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   getResizePointerDown,
   viewport,
   containerRef,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
   const widgetRef = React.useRef<HTMLDivElement | null>(null);
   const [activeField, setActiveField] = React.useState<ActiveField>(null);
 
@@ -221,8 +222,10 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
   const itemColor = widget.itemColor ?? globalTheme?.text ?? "#0f172a";
   const bulletColor =
     widget.bulletColor ?? globalTheme?.accent ?? itemColor ?? "#0f172a";
-  const titleFontFamily = widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
-  const itemFontFamily = widget.itemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const titleFontFamily =
+    widget.titleFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
+  const itemFontFamily =
+    widget.itemFontFamily ?? globalTheme?.font ?? "var(--font-poppins)";
   const titleFontSize = widget.titleFontSize ?? 34;
   const itemFontSize = widget.itemFontSize ?? 22;
   const textAlign = widget.textAlign ?? "left";
@@ -237,6 +240,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
       viewport={viewport}
       containerRef={containerRef}
       activeField={activeField}
+      globalTheme={globalTheme}
     />
   ) : null;
 
@@ -254,6 +258,7 @@ const ListCardWidgetNodeBase: React.FC<ListCardWidgetNodeProps> = ({
       <WidgetBackground
         backgroundType={backgroundType}
         backgroundColor={backgroundColor}
+        globalTheme={globalTheme}
       >
         <div className="flex h-full flex-col gap-4" style={{ textAlign }}>
           {/* Title field - Always visible */}
@@ -426,6 +431,7 @@ type ListCardEditingToolbarProps = {
   viewport: Viewport;
   containerRef: React.RefObject<HTMLElement | null>;
   activeField: ActiveField;
+  globalTheme?: GlobalTheme; // Use globalTheme from props, not from Redux state
 };
 
 const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
@@ -435,10 +441,10 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
   viewport,
   containerRef,
   activeField,
+  globalTheme,
 }) => {
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const globalTheme = useAppSelector(selectGlobalTheme);
 
   const handleSetBackgroundColor = (color: string) => {
     dispatch(

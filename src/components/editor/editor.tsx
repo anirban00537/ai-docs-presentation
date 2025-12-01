@@ -220,7 +220,7 @@ const Editor = () => {
             onSelectWidget={onSelectWidget}
             onSetLiveOverride={onSetLiveOverride}
             onClearLiveOverride={onClearLiveOverride}
-            theme={globalTheme}
+            globalTheme={globalTheme}
           />
         </div>
         {activePanel && (
