@@ -15,10 +15,12 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectActiveSlide,
   selectPresentationTitle,
+  selectPresentationId,
   updatePresentationTitle,
 } from "@/store/slices/slidesSlice";
 import { EditorSidebarTrigger } from "@/components/editor/editor-sidebar-shell";
 import { useDebouncedCallback } from "use-debounce";
+import { useUpdatePresentationTitle } from "@/hooks/use-presentation";
 
 type EditorHeaderProps = {
   onOpenInsertPanel: () => void;
@@ -35,10 +37,11 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
 }) => {
   const activeSlide = useAppSelector(selectActiveSlide);
   const presentationTitle = useAppSelector(selectPresentationTitle);
+  const presentationId = useAppSelector(selectPresentationId);
   const dispatch = useAppDispatch();
+  const updateTitleMutation = useUpdatePresentationTitle();
   const [isHovered, setIsHovered] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [titleActive, setTitleActive] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [localTitle, setLocalTitle] = useState("");
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -48,9 +51,18 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
     ? localTitle
     : presentationTitle || "Untitled Presentation";
 
-  // Debounced update to Redux (which triggers auto-save)
+  // Debounced update to Redux and API
   const debouncedUpdateTitle = useDebouncedCallback((value: string) => {
+    // Update Redux state immediately for UI responsiveness
     dispatch(updatePresentationTitle({ title: value }));
+
+    // Update API only if we have a presentationId and the title is not empty
+    if (presentationId && value.trim().length > 0) {
+      updateTitleMutation.mutate({
+        id: presentationId,
+        title: value.trim(),
+      });
+    }
   }, 500);
 
   useEffect(() => {
@@ -92,32 +104,15 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               debouncedUpdateTitle(newValue);
             }}
             onFocus={() => {
-              setTitleActive(true);
               setIsEditingTitle(true);
               setLocalTitle(presentationTitle || "Untitled Presentation");
             }}
             onBlur={() => {
-              setTitleActive(false);
               setIsEditingTitle(false);
               setLocalTitle("");
             }}
-            onMouseEnter={() => setTitleActive(true)}
-            onMouseLeave={() => {
-              if (document.activeElement !== titleInputRef.current) {
-                setTitleActive(false);
-              }
-            }}
-            className={cn(
-              "text-sm font-semibold text-foreground/85 transition-all duration-200 cursor-text tracking-tight focus:outline-none bg-transparent border-none p-0 min-w-0 max-w-[300px]",
-              titleActive && "text-foreground -translate-y-px tracking-[0.08em]"
-            )}
+            className="text-sm font-semibold text-foreground/85 cursor-text tracking-tight focus:outline-none bg-transparent border-none p-0 min-w-0 max-w-[300px]"
             placeholder="Untitled Presentation"
-          />
-          <span
-            className={cn(
-              "absolute -right-2 top-1/2 h-4 w-px bg-primary origin-bottom transition-all duration-200 opacity-0 -translate-y-1/2",
-              titleActive && "opacity-100 animate-pulse"
-            )}
           />
         </div>
       </div>

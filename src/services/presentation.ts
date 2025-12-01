@@ -135,6 +135,16 @@ export const updatePresentation = async (
   return response.data;
 };
 
+export const updatePresentationTitle = async (
+  id: string,
+  title: string
+): Promise<ApiResponse<PresentationData>> => {
+  const response = await request.patch(`/presentation/${id}/update-title`, {
+    title,
+  });
+  return response.data;
+};
+
 export const deletePresentation = async (
   id: string
 ): Promise<ApiResponse<void>> => {

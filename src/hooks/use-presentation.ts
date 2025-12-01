@@ -4,6 +4,7 @@ import {
   getPresentation,
   createPresentation,
   updatePresentation,
+  updatePresentationTitle,
   deletePresentation,
   createSlide,
   updateSlide,
@@ -85,6 +86,16 @@ export const useUpdatePresentation = () => {
       // Invalidate presentations list
       queryClient.invalidateQueries({ queryKey: presentationKeys.all });
     },
+  });
+};
+
+// Update presentation title mutation
+export const useUpdatePresentationTitle = () => {
+  return useMutation({
+    mutationFn: ({ id, title }: { id: string; title: string }) =>
+      updatePresentationTitle(id, title),
+    // No query invalidation needed - Redux is the source of truth
+    // The title is already updated in Redux before the API call
   });
 };
 
