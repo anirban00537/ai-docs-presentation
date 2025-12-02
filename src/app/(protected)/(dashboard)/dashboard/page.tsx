@@ -127,7 +127,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto">
-      <div className="mx-auto w-full max-w-7xl px-6 py-12">
+      <div className="mx-auto w-full max-w-[1500px] px-6 py-12">
         {/* Header */}
         <div className="mb-10 flex items-center justify-between">
           <div className="space-y-1">

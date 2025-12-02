@@ -1,6 +1,5 @@
 import React from "react";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -14,7 +13,6 @@ const layout = ({ children }: { children: React.ReactNode }) => {
     >
       <AppSidebar variant="inset" />
       <SidebarInset className="relative flex flex-col">
-        <SiteHeader />
         <div className="flex flex-1 flex-row overflow-hidden">
           <div className="flex-1 flex h-full items-center justify-center">
             {children}
