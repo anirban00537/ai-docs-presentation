@@ -31,20 +31,11 @@ const navMainData = [
     url: "/dashboard",
     icon: IconDashboard,
   },
-  {
-    title: "My Presentations",
-    url: "/dashboard",
-    icon: IconFileText,
-  },
+
   {
     title: "Templates",
-    url: "#",
+    url: "/templates",
     icon: IconTemplate,
-  },
-  {
-    title: "Shared with Me",
-    url: "#",
-    icon: IconShare3,
   },
 ];
 

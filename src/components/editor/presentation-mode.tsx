@@ -145,7 +145,7 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
             onSelectWidget={() => {}}
             onSetLiveOverride={() => {}}
             onClearLiveOverride={() => {}}
-            theme={globalTheme}
+            globalTheme={globalTheme}
             showSnapLines={false}
             padding={0}
           />
