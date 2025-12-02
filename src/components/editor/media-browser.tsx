@@ -1,17 +1,29 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Search,
+  Loader2,
+  AlertCircle,
+  Upload,
+  Image as ImageIcon,
+  Trash2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   useSearchUnsplashPhotos,
   useRandomUnsplashPhotos,
   useTrackUnsplashDownload,
+  useListMedia,
+  useUploadMedia,
+  useDeleteMedia,
 } from "@/hooks/use-images";
 import { useDebouncedCallback } from "use-debounce";
-import type { UnsplashPhoto } from "@/services/images";
+import type { UnsplashPhoto, MediaItem } from "@/services/images";
 import { useImageCreation } from "@/components/editor/widgets/image";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const categories = [
   {
@@ -61,11 +73,26 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
   onImageAdded,
   onImageClick,
 }) => {
+  const [activeTab, setActiveTab] = useState<"unsplash" | "your-media">(
+    "unsplash"
+  );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { handleAddImage } = useImageCreation();
   const trackDownloadMutation = useTrackUnsplashDownload();
+  const uploadMediaMutation = useUploadMedia();
+  const deleteMediaMutation = useDeleteMedia();
+
+  // Fetch user's media
+  const { data: mediaResponse, isLoading: isLoadingMedia } = useListMedia({
+    page: 1,
+    perPage: 50,
+    category: "all",
+  });
+
+  const userMedia = mediaResponse?.data?.list || [];
 
   // Debounce search query
   const debouncedSearch = useDebouncedCallback((value: string) => {
@@ -164,112 +191,321 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
     onImageAdded?.();
   };
 
+  const handleUserMediaClick = (media: MediaItem) => {
+    const imageUrl = media.url;
+
+    // If custom onImageClick is provided, use it
+    if (onImageClick) {
+      onImageClick(imageUrl);
+      onImageAdded?.();
+      return;
+    }
+
+    // Default behavior: add as widget
+    handleAddImage(imageUrl);
+    onImageAdded?.();
+  };
+
+  const handleDeleteMedia = async (
+    e: React.MouseEvent,
+    mediaId: string,
+    mediaName: string
+  ) => {
+    e.stopPropagation(); // Prevent triggering the click handler
+
+    if (confirm(`Are you sure you want to delete "${mediaName}"?`)) {
+      try {
+        await deleteMediaMutation.mutateAsync(mediaId);
+      } catch (error) {
+        console.error("Failed to delete media:", error);
+      }
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // Upload all selected files
+    const uploadPromises = Array.from(files).map(async (file) => {
+      // Validate file type
+      const validTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      if (!validTypes.includes(file.type)) {
+        console.warn(`Invalid file type: ${file.type}`);
+        return;
+      }
+
+      // Validate file size (50MB max)
+      const maxSize = 50 * 1024 * 1024;
+      if (file.size > maxSize) {
+        console.warn(`File too large: ${file.name}`);
+        return;
+      }
+
+      try {
+        await uploadMediaMutation.mutateAsync({
+          file,
+          name: file.name,
+        });
+      } catch (error) {
+        console.error(`Failed to upload ${file.name}:`, error);
+      }
+    });
+
+    await Promise.all(uploadPromises);
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col bg-background/95 backdrop-blur-xl rounded-lg overflow-hidden min-h-0">
-      {/* Search Bar */}
-      <div className="px-4 pt-4 pb-3">
-        <div className="relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 group-focus-within:text-muted-foreground transition-colors duration-200" />
-          <Input
-            type="text"
-            placeholder="Search Unsplash"
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-11 pr-4 h-11 bg-background/50 border-0 shadow-sm focus-visible:shadow-md focus-visible:ring-1 focus-visible:ring-primary/20 transition-all duration-200 rounded-xl"
-          />
-        </div>
+      {/* Tabs */}
+      <div className="px-4 pt-4 pb-3 border-b border-border/50">
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) =>
+            setActiveTab(value as "unsplash" | "your-media")
+          }
+        >
+          <TabsList className="w-full grid grid-cols-2">
+            <TabsTrigger value="unsplash">Unsplash</TabsTrigger>
+            <TabsTrigger value="your-media">Your Media</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
-      {/* Category Filters */}
-      <div className="px-4 pb-3">
-        <div className="flex items-center gap-2.5 overflow-x-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => handleCategoryClick(category.id)}
-              className={cn(
-                "relative shrink-0 h-9 px-4 text-xs font-semibold rounded-full whitespace-nowrap transition-all duration-300 ease-out",
-                "transform hover:scale-105 active:scale-95",
-                selectedCategory === category.id
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-105"
-                  : cn(
-                      category.color,
-                      "text-slate-700 dark:text-slate-300 shadow-sm hover:shadow-md hover:shadow-black/5 border border-white/20"
-                    )
-              )}
-            >
-              <span className="relative z-10">{category.label}</span>
-              {selectedCategory === category.id && (
-                <span className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+        multiple
+        onChange={handleFileChange}
+        className="hidden"
+      />
 
-      {/* Image Grid */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-        {activeQuery.isLoading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="flex flex-col items-center gap-3">
-              <Loader2 className="h-8 w-8 animate-spin text-primary/60" />
-              <p className="text-xs text-muted-foreground/60 font-medium">
-                Loading images...
-              </p>
+      {/* Unsplash Tab Content */}
+      {activeTab === "unsplash" && (
+        <>
+          {/* Search Bar */}
+          <div className="px-4 pt-4 pb-3">
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 group-focus-within:text-muted-foreground transition-colors duration-200" />
+              <Input
+                type="text"
+                placeholder="Search Unsplash"
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-11 pr-4 h-11 bg-background/50 border-0 shadow-sm focus-visible:shadow-md focus-visible:ring-1 focus-visible:ring-primary/20 transition-all duration-200 rounded-xl"
+              />
             </div>
           </div>
-        ) : activeQuery.isError ? (
-          <div className="flex flex-col items-center justify-center h-64 gap-3">
-            <div className="p-3 rounded-full bg-destructive/10">
-              <AlertCircle className="h-6 w-6 text-destructive/70" />
+
+          {/* Category Filters */}
+          <div className="px-4 pb-3">
+            <div className="flex items-center gap-2.5 overflow-x-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => handleCategoryClick(category.id)}
+                  className={cn(
+                    "relative shrink-0 h-9 px-4 text-xs font-semibold rounded-full whitespace-nowrap transition-all duration-300 ease-out",
+                    "transform hover:scale-105 active:scale-95",
+                    selectedCategory === category.id
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-105"
+                      : cn(
+                          category.color,
+                          "text-slate-700 dark:text-slate-300 shadow-sm hover:shadow-md hover:shadow-black/5 border border-white/20"
+                        )
+                  )}
+                >
+                  <span className="relative z-10">{category.label}</span>
+                  {selectedCategory === category.id && (
+                    <span className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
+                  )}
+                </button>
+              ))}
             </div>
-            <p className="text-sm text-muted-foreground/70 font-medium">
-              Failed to load images
-            </p>
-            <p className="text-xs text-muted-foreground/50">Please try again</p>
           </div>
-        ) : photos.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 gap-2">
-            <div className="p-3 rounded-full bg-muted/30">
-              <Search className="h-6 w-6 text-muted-foreground/50" />
-            </div>
-            <p className="text-sm text-muted-foreground/70 font-medium">
-              No images found
-            </p>
-            <p className="text-xs text-muted-foreground/50">
-              Try a different search term
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {photos.map((photo) => (
-              <div
-                key={photo.id}
-                onClick={() => handleImageClick(photo)}
-                className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer transform transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-xl hover:shadow-black/20 active:scale-[0.98]"
-              >
-                <img
-                  src={photo.urls.small}
-                  alt={
-                    photo.altDescription ||
-                    photo.description ||
-                    "Unsplash photo"
-                  }
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out">
-                  <p className="text-xs text-white font-semibold drop-shadow-lg">
-                    by {photo.user.name}
+
+          {/* Image Grid */}
+          <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+            {activeQuery.isLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary/60" />
+                  <p className="text-xs text-muted-foreground/60 font-medium">
+                    Loading images...
                   </p>
                 </div>
               </div>
-            ))}
+            ) : activeQuery.isError ? (
+              <div className="flex flex-col items-center justify-center h-64 gap-3">
+                <div className="p-3 rounded-full bg-destructive/10">
+                  <AlertCircle className="h-6 w-6 text-destructive/70" />
+                </div>
+                <p className="text-sm text-muted-foreground/70 font-medium">
+                  Failed to load images
+                </p>
+                <p className="text-xs text-muted-foreground/50">
+                  Please try again
+                </p>
+              </div>
+            ) : photos.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-64 gap-2">
+                <div className="p-3 rounded-full bg-muted/30">
+                  <Search className="h-6 w-6 text-muted-foreground/50" />
+                </div>
+                <p className="text-sm text-muted-foreground/70 font-medium">
+                  No images found
+                </p>
+                <p className="text-xs text-muted-foreground/50">
+                  Try a different search term
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {photos.map((photo) => (
+                  <div
+                    key={photo.id}
+                    onClick={() => handleImageClick(photo)}
+                    className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer transform transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-xl hover:shadow-black/20 active:scale-[0.98]"
+                  >
+                    <img
+                      src={photo.urls.small}
+                      alt={
+                        photo.altDescription ||
+                        photo.description ||
+                        "Unsplash photo"
+                      }
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out">
+                      <p className="text-xs text-white font-semibold drop-shadow-lg">
+                        by {photo.user.name}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
+
+      {/* Your Media Tab Content */}
+      {activeTab === "your-media" && (
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+          {/* Upload Button */}
+          <div className="px-4 pt-4 pb-3">
+            <Button
+              onClick={handleUploadClick}
+              disabled={uploadMediaMutation.isPending}
+              className="w-full h-10"
+              variant="outline"
+            >
+              {uploadMediaMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload Media
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Media Grid */}
+          <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+            {isLoadingMedia ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary/60" />
+                  <p className="text-xs text-muted-foreground/60 font-medium">
+                    Loading your media...
+                  </p>
+                </div>
+              </div>
+            ) : userMedia.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-64 gap-3">
+                <div className="p-3 rounded-full bg-muted/30">
+                  <ImageIcon className="h-6 w-6 text-muted-foreground/50" />
+                </div>
+                <p className="text-sm text-muted-foreground/70 font-medium">
+                  No media uploaded yet
+                </p>
+                <p className="text-xs text-muted-foreground/50">
+                  Click &quot;Upload Media&quot; to add images
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {userMedia.map((media) => (
+                  <div
+                    key={media.id}
+                    onClick={() => handleUserMediaClick(media)}
+                    className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer transform transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-xl hover:shadow-black/20 active:scale-[0.98]"
+                  >
+                    <img
+                      src={media.url}
+                      alt={media.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+
+                    {/* Delete Button */}
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="h-7 w-7 rounded-full p-0 bg-destructive/90 hover:bg-destructive backdrop-blur-sm"
+                        onClick={(e) =>
+                          handleDeleteMedia(e, media.id, media.name)
+                        }
+                        disabled={deleteMediaMutation.isPending}
+                      >
+                        {deleteMediaMutation.isPending ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-3.5 w-3.5" />
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Media Name */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out">
+                      <p className="text-xs text-white font-semibold drop-shadow-lg truncate">
+                        {media.name}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
