@@ -16,7 +16,7 @@ import {
   updatePresentationTitle,
 } from "@/store/slices/slidesSlice";
 import type { SlideModel } from "@/store/slices/slidesSlice";
-import type { SlideWidget } from "@/components/editor/widgets/types";
+import { extractSlideDataForApi } from "@/store/slices/slidesSlice";
 import {
   updateSlide as updateSlideService,
   updatePresentation,
@@ -116,17 +116,8 @@ function createAutoSaveMiddleware() {
             // Reschedule the save with the new ID and current data
             const timeout = setTimeout(async () => {
               try {
-                // Prepare slide data matching your SlideModel structure
-                const slideData: Partial<SlideModel> = {
-                  id: newId,
-                  title: updatedSlide.title,
-                  widgets: updatedSlide.widgets as SlideWidget[],
-                  backgroundColor: updatedSlide.backgroundColor,
-                  backgroundImage: updatedSlide.backgroundImage,
-                  backgroundBlur: updatedSlide.backgroundBlur,
-                  showSlideNumber: updatedSlide.showSlideNumber,
-                  slideStyle: updatedSlide.slideStyle,
-                };
+                // Prepare slide data - automatically includes all fields
+                const slideData = extractSlideDataForApi(updatedSlide);
 
                 // Now update the existing slide with the new database ID
                 await updateSlideService(presentationId, newId, {
@@ -188,17 +179,8 @@ function createAutoSaveMiddleware() {
         // Schedule save for the active slide only
         const timeout = setTimeout(async () => {
           try {
-            // Prepare slide data matching your SlideModel structure
-            const slideData: Partial<SlideModel> = {
-              id: activeSlide.id,
-              title: activeSlide.title,
-              widgets: activeSlide.widgets as SlideWidget[],
-              backgroundColor: activeSlide.backgroundColor,
-              backgroundImage: activeSlide.backgroundImage,
-              backgroundBlur: activeSlide.backgroundBlur,
-              showSlideNumber: activeSlide.showSlideNumber,
-              slideStyle: activeSlide.slideStyle,
-            };
+            // Prepare slide data - automatically includes all fields
+            const slideData = extractSlideDataForApi(activeSlide);
 
             // Check if slide ID has been created in database
             // Database IDs (cuid) typically start with 'c' and are 25 characters

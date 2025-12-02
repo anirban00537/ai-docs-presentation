@@ -14,7 +14,7 @@ import {
 } from "@/store/slices/slidesSlice";
 import { usePresentation } from "@/hooks/use-presentation";
 import type { SlideModel, GlobalTheme } from "@/store/slices/slidesSlice";
-import type { SlideWidget } from "@/components/editor/widgets/types";
+import { mapApiSlideToModel } from "@/store/slices/slidesSlice";
 import type { PresentationSlide } from "@/services/presentation";
 
 export default function Page() {
@@ -64,18 +64,11 @@ const EditorWorkspace = () => {
             (a.order ?? 0) - (b.order ?? 0)
         );
 
-        sortedSlides.forEach((slide: PresentationSlide) => {
-          const slideData = slide.data || {};
-          slides.push({
-            id: slide.id, // Use database slide ID
-            title: slideData.title || `Slide ${slides.length + 1}`,
-            widgets: (slideData.widgets || []) as SlideWidget[],
-            backgroundColor: slideData.backgroundColor,
-            backgroundImage: slideData.backgroundImage,
-            backgroundBlur: slideData.backgroundBlur,
-            showSlideNumber: slideData.showSlideNumber ?? false,
-            slideStyle: slideData.slideStyle,
-          });
+        sortedSlides.forEach((slide: PresentationSlide, index: number) => {
+          // Automatically map all fields from API data to SlideModel
+          // This ensures new fields are included without manual updates
+          const mappedSlide = mapApiSlideToModel(slide, `Slide ${index + 1}`);
+          slides.push(mappedSlide);
         });
       }
 

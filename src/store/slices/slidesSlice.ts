@@ -6,6 +6,64 @@ import type {
 import type { RootState } from "@/store";
 import { SLIDE_THEMES, type WidgetBackgroundType } from "@/lib/slide-themes";
 
+/**
+ * Extracts slide data for API persistence, excluding id and widgets
+ * This ensures all slide properties are automatically included without manual updates
+ */
+export const extractSlideDataForApi = (
+  slide: SlideModel
+): Omit<SlideModel, "id" | "widgets"> & { widgets: SlideWidget[] } => {
+  const { id, ...slideData } = slide;
+  return {
+    ...slideData,
+    widgets: (slide.widgets || []) as SlideWidget[],
+  };
+};
+
+/**
+ * Maps API slide data to SlideModel
+ * Automatically includes all fields from SlideModel without manual updates
+ * Uses type-safe property extraction to include all optional fields
+ */
+export const mapApiSlideToModel = (
+  slide: { id: string; data?: Partial<SlideModel> },
+  defaultTitle?: string
+): SlideModel => {
+  const slideData = slide.data || {};
+  const slideNumber = defaultTitle
+    ? parseInt(defaultTitle.replace("Slide ", "")) || 1
+    : 1;
+
+  // Create base model with required fields
+  const baseModel: SlideModel = {
+    id: slide.id,
+    title: slideData.title || defaultTitle || `Slide ${slideNumber}`,
+    widgets: (slideData.widgets || []) as SlideWidget[],
+  };
+
+  // Automatically include all optional fields from slideData
+  // This uses object spread to include all properties from slideData that match SlideModel
+  // New fields added to SlideModel will automatically be included here
+  const optionalFields: Partial<Omit<SlideModel, "id" | "title" | "widgets">> = {};
+  
+  // Copy all fields from slideData that are not id, title, or widgets
+  // This automatically picks up any new fields added to SlideModel
+  Object.keys(slideData).forEach((key) => {
+    if (key !== "id" && key !== "title" && key !== "widgets") {
+      const typedKey = key as keyof typeof optionalFields;
+      const value = slideData[typedKey as keyof SlideModel];
+      if (value !== undefined) {
+        (optionalFields as any)[typedKey] = value;
+      }
+    }
+  });
+
+  return {
+    ...baseModel,
+    ...optionalFields,
+  } as SlideModel;
+};
+
 export type SlideModel = {
   id: string;
   title: string;
