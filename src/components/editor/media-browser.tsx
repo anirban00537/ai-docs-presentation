@@ -17,32 +17,38 @@ const categories = [
   {
     id: "gradient",
     label: "Gradient",
-    color: "from-pink-500 via-purple-500 to-orange-500",
+    color: "bg-rose-200",
     searchQuery: "gradient",
   },
   {
     id: "data",
     label: "Data",
-    color: "from-green-900 to-black",
+    color: "bg-teal-200",
     searchQuery: "data visualization",
   },
   {
     id: "abstract",
     label: "Abstract",
-    color: "from-purple-600 to-blue-600",
+    color: "bg-violet-200",
     searchQuery: "abstract",
   },
   {
     id: "tech",
     label: "Tech",
-    color: "from-gray-900 to-black",
+    color: "bg-slate-200",
     searchQuery: "technology",
   },
   {
     id: "3d",
     label: "3D Shapes",
-    color: "from-blue-600 to-purple-600",
+    color: "bg-blue-200",
     searchQuery: "3d shapes",
+  },
+  {
+    id: "nature",
+    label: "Nature",
+    color: "bg-emerald-200",
+    searchQuery: "nature",
   },
 ];
 
@@ -168,9 +174,8 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ onImageAdded }) => {
                 selectedCategory === category.id
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-105"
                   : cn(
-                      "bg-gradient-to-br",
                       category.color,
-                      "text-white shadow-md hover:shadow-lg hover:shadow-black/10"
+                      "text-slate-700 dark:text-slate-300 shadow-sm hover:shadow-md hover:shadow-black/5 border border-white/20"
                     )
               )}
             >
