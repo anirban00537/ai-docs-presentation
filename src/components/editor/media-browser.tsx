@@ -271,9 +271,9 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-background/95 backdrop-blur-xl rounded-lg overflow-hidden min-h-0 shadow-lg border border-border/40">
+    <div className="w-full h-full flex flex-col bg-background/95 backdrop-blur-xl rounded-lg overflow-hidden min-h-0 shadow-lg ">
       {/* Tabs */}
-      <div className="px-4 pt-4 pb-3 border-b border-border/30">
+      <div className="  pb-3 border-b border-border/30">
         <Tabs
           value={activeTab}
           onValueChange={(value) =>

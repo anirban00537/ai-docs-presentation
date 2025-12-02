@@ -222,11 +222,7 @@ export function BackgroundSection({
 
       {showColorSection && (
         <>
-          <div
-            className={`space-y-3.5 ${
-              backgroundImage ? "opacity-50 pointer-events-none" : ""
-            }`}
-          >
+          <div className="space-y-3.5">
             <div className="flex items-center justify-between px-1">
               <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">
                 Background Colors
@@ -234,8 +230,7 @@ export function BackgroundSection({
               <button
                 type="button"
                 onClick={handleAddColor}
-                disabled={!!backgroundImage}
-                className="text-xs font-semibold text-primary hover:text-primary/90 transition-all duration-200 px-2.5 py-1 rounded-lg hover:bg-primary/10 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-xs font-semibold text-primary hover:text-primary/90 transition-all duration-200 px-2.5 py-1 rounded-lg hover:bg-primary/10 active:scale-95"
               >
                 + Add Color
               </button>
@@ -254,11 +249,7 @@ export function BackgroundSection({
             </div>
           </div>
 
-          <div
-            className={`space-y-3.5 ${
-              backgroundImage ? "opacity-50 pointer-events-none" : ""
-            }`}
-          >
+          <div className="space-y-3.5">
             <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
               Gradient Presets
             </h3>
@@ -274,11 +265,8 @@ export function BackgroundSection({
                   <button
                     key={index}
                     type="button"
-                    onClick={() =>
-                      !backgroundImage && onBackgroundColorChange([...gradient])
-                    }
-                    disabled={!!backgroundImage}
-                    className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 overflow-hidden active:scale-105 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    onClick={() => onBackgroundColorChange([...gradient])}
+                    className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 overflow-hidden active:scale-105"
                   >
                     <span
                       className="h-full w-full rounded-xl border border-border/40"
@@ -293,11 +281,7 @@ export function BackgroundSection({
             </div>
           </div>
 
-          <div
-            className={`space-y-3.5 ${
-              backgroundImage ? "opacity-50 pointer-events-none" : ""
-            }`}
-          >
+          <div className="space-y-3.5">
             <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
               Solid Colors
             </h3>
@@ -306,11 +290,8 @@ export function BackgroundSection({
                 <button
                   key={preset}
                   type="button"
-                  onClick={() =>
-                    !backgroundImage && onBackgroundColorChange([preset])
-                  }
-                  disabled={!!backgroundImage}
-                  className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 active:scale-105 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  onClick={() => onBackgroundColorChange([preset])}
+                  className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 active:scale-105"
                 >
                   <span
                     className="h-full w-full rounded-xl border border-border/40"

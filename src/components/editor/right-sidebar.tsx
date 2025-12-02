@@ -262,7 +262,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           </Button>
         </div>
         <div
-          className="flex-1 overflow-y-auto min-h-0 overscroll-contain space-y-6 0 px-2 py-2  mt-1 pt-6"
+          className="flex-1 overflow-y-auto min-h-0 overscroll-contain space-y-6 px-2"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",

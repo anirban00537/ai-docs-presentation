@@ -31,7 +31,7 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
   }, [backgroundImage]);
 
   return (
-    <div className="w-full h-full flex flex-col bg-background/95 backdrop-blur-xl rounded-lg overflow-hidden min-h-0 shadow-lg ">
+    <div className="w-full h-full flex flex-col bg-background/95 backdrop-blur-xl rounded-lg overflow-hidden min-h-0 ">
       {/* Tabs */}
       <div className="px-4 pt-4 pb-3 border-b border-border/30">
         <Tabs
@@ -58,7 +58,7 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
       </div>
 
       {/* Tab Content */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/30 transition-colors duration-300">
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/30 transition-colors duration-300">
         {activeTab === "colors" && (
           <div className="space-y-6">
             <BackgroundSection
