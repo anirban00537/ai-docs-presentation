@@ -64,6 +64,8 @@ interface BackgroundSectionProps {
   backgroundImage?: string | undefined;
   onBackgroundColorChange: (colors: string[]) => void;
   onBackgroundImageChange?: (imageUrl: string | undefined) => void;
+  showColorSection?: boolean;
+  showImageSection?: boolean;
 }
 
 export function BackgroundSection({
@@ -71,6 +73,8 @@ export function BackgroundSection({
   backgroundImage,
   onBackgroundColorChange,
   onBackgroundImageChange,
+  showColorSection = true,
+  showImageSection = true,
 }: BackgroundSectionProps) {
   const globalTheme = useAppSelector(selectGlobalTheme);
   const dispatch = useAppDispatch();
@@ -159,7 +163,7 @@ export function BackgroundSection({
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground shrink-0 h-7 px-2.5"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Back to Colors</span>
+            <span>Back</span>
           </Button>
         </div>
         <div className="flex-1 min-h-0 w-full">
@@ -176,6 +180,7 @@ export function BackgroundSection({
   return (
     <div className="space-y-7">
       {/* Background Image Section */}
+      {showImageSection && (
       <div className="space-y-3.5">
         <div className="flex items-center justify-between px-1">
           <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">
@@ -213,108 +218,113 @@ export function BackgroundSection({
           </div>
         )}
       </div>
+      )}
 
-      <div
-        className={`space-y-3.5 ${
-          backgroundImage ? "opacity-50 pointer-events-none" : ""
-        }`}
-      >
-        <div className="flex items-center justify-between px-1">
-          <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">
-            Background Colors
-          </h3>
-          <button
-            type="button"
-            onClick={handleAddColor}
-            disabled={!!backgroundImage}
-            className="text-xs font-semibold text-primary hover:text-primary/90 transition-all duration-200 px-2.5 py-1 rounded-lg hover:bg-primary/10 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+      {showColorSection && (
+        <>
+          <div
+            className={`space-y-3.5 ${
+              backgroundImage ? "opacity-50 pointer-events-none" : ""
+            }`}
           >
-            + Add Color
-          </button>
-        </div>
-        <div className="grid grid-cols-7 gap-2.5 px-1">
-          {colors.map((color, index) => (
-            <div key={index} className="relative group/picker">
-              <ColorPicker
-                color={color}
-                onChange={(newColor) => handleColorChange(index, newColor)}
-                onRemove={() => handleRemoveColor(index)}
-                showRemove={colors.length > 1}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div
-        className={`space-y-3.5 ${
-          backgroundImage ? "opacity-50 pointer-events-none" : ""
-        }`}
-      >
-        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
-          Gradient Presets
-        </h3>
-        <div className="grid grid-cols-7 gap-2.5 px-1">
-          {PRESET_GRADIENTS.map((gradient, index) => {
-            const gradientString = `linear-gradient(to right, ${gradient.join(
-              ", "
-            )})`;
-            const isActive =
-              colors.length === gradient.length &&
-              colors.every((c, i) => c === gradient[i]);
-            return (
+            <div className="flex items-center justify-between px-1">
+              <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">
+                Background Colors
+              </h3>
               <button
-                key={index}
                 type="button"
-                onClick={() =>
-                  !backgroundImage && onBackgroundColorChange([...gradient])
-                }
+                onClick={handleAddColor}
                 disabled={!!backgroundImage}
-                className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 overflow-hidden active:scale-105 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="text-xs font-semibold text-primary hover:text-primary/90 transition-all duration-200 px-2.5 py-1 rounded-lg hover:bg-primary/10 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span
-                  className="h-full w-full rounded-xl border border-border/40"
-                  style={{ background: gradientString }}
-                />
-                {isActive && (
-                  <span className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg" />
-                )}
+                + Add Color
               </button>
-            );
-          })}
-        </div>
-      </div>
+            </div>
+            <div className="grid grid-cols-7 gap-2.5 px-1">
+              {colors.map((color, index) => (
+                <div key={index} className="relative group/picker">
+                  <ColorPicker
+                    color={color}
+                    onChange={(newColor) => handleColorChange(index, newColor)}
+                    onRemove={() => handleRemoveColor(index)}
+                    showRemove={colors.length > 1}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
 
-      <div
-        className={`space-y-3.5 ${
-          backgroundImage ? "opacity-50 pointer-events-none" : ""
-        }`}
-      >
-        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
-          Solid Colors
-        </h3>
-        <div className="grid grid-cols-7 gap-2.5 px-1">
-          {PRESET_COLORS.map((preset) => (
-            <button
-              key={preset}
-              type="button"
-              onClick={() =>
-                !backgroundImage && onBackgroundColorChange([preset])
-              }
-              disabled={!!backgroundImage}
-              className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 active:scale-105 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              <span
-                className="h-full w-full rounded-xl border border-border/40"
-                style={{ backgroundColor: preset }}
-              />
-              {colors.length === 1 && colors[0] === preset && (
-                <span className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg" />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
+          <div
+            className={`space-y-3.5 ${
+              backgroundImage ? "opacity-50 pointer-events-none" : ""
+            }`}
+          >
+            <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+              Gradient Presets
+            </h3>
+            <div className="grid grid-cols-7 gap-2.5 px-1">
+              {PRESET_GRADIENTS.map((gradient, index) => {
+                const gradientString = `linear-gradient(to right, ${gradient.join(
+                  ", "
+                )})`;
+                const isActive =
+                  colors.length === gradient.length &&
+                  colors.every((c, i) => c === gradient[i]);
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() =>
+                      !backgroundImage && onBackgroundColorChange([...gradient])
+                    }
+                    disabled={!!backgroundImage}
+                    className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 overflow-hidden active:scale-105 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    <span
+                      className="h-full w-full rounded-xl border border-border/40"
+                      style={{ background: gradientString }}
+                    />
+                    {isActive && (
+                      <span className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div
+            className={`space-y-3.5 ${
+              backgroundImage ? "opacity-50 pointer-events-none" : ""
+            }`}
+          >
+            <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+              Solid Colors
+            </h3>
+            <div className="grid grid-cols-7 gap-2.5 px-1">
+              {PRESET_COLORS.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() =>
+                    !backgroundImage && onBackgroundColorChange([preset])
+                  }
+                  disabled={!!backgroundImage}
+                  className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 active:scale-105 disabled:cursor-not-allowed disabled:hover:scale-100"
+                >
+                  <span
+                    className="h-full w-full rounded-xl border border-border/40"
+                    style={{ backgroundColor: preset }}
+                  />
+                  {colors.length === 1 && colors[0] === preset && (
+                    <span className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
