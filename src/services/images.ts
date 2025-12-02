@@ -82,10 +82,26 @@ export interface TrackDownloadPayload {
 export const searchUnsplashPhotos = async (
   params: SearchPhotosParams
 ): Promise<ApiResponse<SearchPhotosResponse>> => {
-  const response = await request.get("/images/unsplash-search", {
-    params,
-  });
-  return response.data;
+  try {
+    const response = await request.get("/images/unsplash-search", {
+      params,
+    });
+    
+    // Check if the API response indicates an error
+    if (response.data && !response.data.success) {
+      throw new Error(response.data.message || "Failed to search photos");
+    }
+    
+    return response.data;
+  } catch (error: any) {
+    // Handle axios errors
+    if (error.response) {
+      const message = error.response.data?.message || error.response.data?.error || "Failed to search photos";
+      throw new Error(message);
+    }
+    // Handle network errors or other errors
+    throw new Error(error.message || "Failed to search photos. Please check your connection.");
+  }
 };
 
 /**
@@ -94,10 +110,26 @@ export const searchUnsplashPhotos = async (
 export const getRandomUnsplashPhotos = async (
   params?: GetRandomPhotosParams
 ): Promise<ApiResponse<UnsplashPhoto | UnsplashPhoto[]>> => {
-  const response = await request.get("/images/unsplash-random", {
-    params,
-  });
-  return response.data;
+  try {
+    const response = await request.get("/images/unsplash-random", {
+      params,
+    });
+    
+    // Check if the API response indicates an error
+    if (response.data && !response.data.success) {
+      throw new Error(response.data.message || "Failed to get random photos");
+    }
+    
+    return response.data;
+  } catch (error: any) {
+    // Handle axios errors
+    if (error.response) {
+      const message = error.response.data?.message || error.response.data?.error || "Failed to get random photos";
+      throw new Error(message);
+    }
+    // Handle network errors or other errors
+    throw new Error(error.message || "Failed to get random photos. Please check your connection.");
+  }
 };
 
 /**
@@ -106,8 +138,24 @@ export const getRandomUnsplashPhotos = async (
 export const getUnsplashPhoto = async (
   photoId: string
 ): Promise<ApiResponse<UnsplashPhoto>> => {
-  const response = await request.get(`/images/unsplash/${photoId}/get`);
-  return response.data;
+  try {
+    const response = await request.get(`/images/unsplash/${photoId}/get`);
+    
+    // Check if the API response indicates an error
+    if (response.data && !response.data.success) {
+      throw new Error(response.data.message || "Failed to get photo");
+    }
+    
+    return response.data;
+  } catch (error: any) {
+    // Handle axios errors
+    if (error.response) {
+      const message = error.response.data?.message || error.response.data?.error || "Failed to get photo";
+      throw new Error(message);
+    }
+    // Handle network errors or other errors
+    throw new Error(error.message || "Failed to get photo. Please check your connection.");
+  }
 };
 
 /**
@@ -116,7 +164,25 @@ export const getUnsplashPhoto = async (
 export const trackUnsplashDownload = async (
   payload: TrackDownloadPayload
 ): Promise<ApiResponse<void>> => {
-  const response = await request.post("/images/unsplash/track-download", payload);
-  return response.data;
+  try {
+    const response = await request.post("/images/unsplash/track-download", payload);
+    
+    // Check if the API response indicates an error
+    if (response.data && !response.data.success) {
+      throw new Error(response.data.message || "Failed to track download");
+    }
+    
+    return response.data;
+  } catch (error: any) {
+    // Handle axios errors
+    if (error.response) {
+      const message = error.response.data?.message || error.response.data?.error || "Failed to track download";
+      throw new Error(message);
+    }
+    // Handle network errors or other errors
+    // Silently fail for download tracking as it's not critical
+    console.warn("Failed to track download:", error.message);
+    throw error;
+  }
 };
 

@@ -29,9 +29,18 @@ export const useSearchUnsplashPhotos = (
 ) => {
   return useQuery({
     queryKey: imageKeys.search(params),
-    queryFn: () => searchUnsplashPhotos(params),
+    queryFn: async () => {
+      try {
+        return await searchUnsplashPhotos(params);
+      } catch (error: any) {
+        // Re-throw with a more user-friendly message
+        throw new Error(error.message || "Failed to search photos. Please try again.");
+      }
+    },
     enabled: enabled && !!params.query && params.query.trim().length > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1, // Retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
   });
 };
 
@@ -44,9 +53,18 @@ export const useRandomUnsplashPhotos = (
 ) => {
   return useQuery({
     queryKey: imageKeys.random(params),
-    queryFn: () => getRandomUnsplashPhotos(params),
+    queryFn: async () => {
+      try {
+        return await getRandomUnsplashPhotos(params);
+      } catch (error: any) {
+        // Re-throw with a more user-friendly message
+        throw new Error(error.message || "Failed to load photos. Please try again.");
+      }
+    },
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1, // Retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
   });
 };
 
@@ -56,14 +74,21 @@ export const useRandomUnsplashPhotos = (
 export const useUnsplashPhoto = (photoId: string | null) => {
   return useQuery({
     queryKey: photoId ? imageKeys.photo(photoId) : ["image", "null"],
-    queryFn: () => {
+    queryFn: async () => {
       if (!photoId) {
         throw new Error("Photo ID is required");
       }
-      return getUnsplashPhoto(photoId);
+      try {
+        return await getUnsplashPhoto(photoId);
+      } catch (error: any) {
+        // Re-throw with a more user-friendly message
+        throw new Error(error.message || "Failed to load photo. Please try again.");
+      }
     },
     enabled: !!photoId,
     staleTime: 10 * 60 * 1000, // 10 minutes
+    retry: 1, // Retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
   });
 };
 
@@ -72,8 +97,22 @@ export const useUnsplashPhoto = (photoId: string | null) => {
  */
 export const useTrackUnsplashDownload = () => {
   return useMutation({
-    mutationFn: (payload: TrackDownloadPayload) =>
-      trackUnsplashDownload(payload),
+    mutationFn: async (payload: TrackDownloadPayload) => {
+      try {
+        return await trackUnsplashDownload(payload);
+      } catch (error: any) {
+        // Silently fail for download tracking as it's not critical
+        // But log it for debugging
+        console.warn("Failed to track download:", error.message);
+        // Re-throw to let TanStack Query handle it
+        throw error;
+      }
+    },
+    retry: false, // Don't retry download tracking
+    onError: (error: any) => {
+      // Silently handle download tracking errors
+      console.warn("Download tracking failed:", error.message);
+    },
   });
 };
 
