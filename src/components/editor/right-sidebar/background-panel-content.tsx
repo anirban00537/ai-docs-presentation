@@ -8,15 +8,19 @@ import { Palette, Image as ImageIcon } from "lucide-react";
 type BackgroundPanelContentProps = {
   backgroundColor?: string[] | string;
   backgroundImage?: string;
+  backgroundBlur?: boolean;
   onBackgroundColorChange?: (colors: string[]) => void;
   onBackgroundImageChange?: (imageUrl: string | undefined) => void;
+  onBackgroundBlurChange?: (blur: boolean) => void;
 };
 
 export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
   backgroundColor,
   backgroundImage,
+  backgroundBlur,
   onBackgroundColorChange,
   onBackgroundImageChange,
+  onBackgroundBlurChange,
 }) => {
   const [activeTab, setActiveTab] = useState<"colors" | "image">(
     backgroundImage ? "image" : "colors"
@@ -64,8 +68,10 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
             <BackgroundSection
               backgroundColor={backgroundColor}
               backgroundImage={backgroundImage}
+              backgroundBlur={backgroundBlur}
               onBackgroundColorChange={onBackgroundColorChange || (() => {})}
               onBackgroundImageChange={onBackgroundImageChange}
+              onBackgroundBlurChange={onBackgroundBlurChange}
               showImageSection={false}
             />
           </div>
@@ -75,8 +81,10 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
             <BackgroundSection
               backgroundColor={backgroundColor}
               backgroundImage={backgroundImage}
+              backgroundBlur={backgroundBlur}
               onBackgroundColorChange={onBackgroundColorChange || (() => {})}
               onBackgroundImageChange={onBackgroundImageChange}
+              onBackgroundBlurChange={onBackgroundBlurChange}
               showColorSection={false}
             />
           </div>

@@ -25,8 +25,10 @@ type RightSidebarProps = {
   // Background panel props
   backgroundColor?: string[] | string;
   backgroundImage?: string;
+  backgroundBlur?: boolean;
   onBackgroundColorChange?: (colors: string[]) => void;
   onBackgroundImageChange?: (imageUrl: string | undefined) => void;
+  onBackgroundBlurChange?: (blur: boolean) => void;
   // Theme panel props
   activeThemeId?: string;
   onSelectTheme?: (themeId: string) => void;
@@ -44,8 +46,10 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   onOpenPanel,
   backgroundColor,
   backgroundImage,
+  backgroundBlur,
   onBackgroundColorChange,
   onBackgroundImageChange,
+  onBackgroundBlurChange,
   activeThemeId,
   onSelectTheme,
   globalTheme,
@@ -291,8 +295,10 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             <BackgroundPanelContent
               backgroundColor={backgroundColor}
               backgroundImage={backgroundImage}
+              backgroundBlur={backgroundBlur}
               onBackgroundColorChange={onBackgroundColorChange}
               onBackgroundImageChange={onBackgroundImageChange}
+              onBackgroundBlurChange={onBackgroundBlurChange}
             />
           )}
 

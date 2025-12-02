@@ -199,7 +199,10 @@ const Slide: React.FC<SlideProps> = ({
               <div
                 className={cn(
                   "slide editable theme-background",
-                  "relative overflow-hidden bg-white transition-[box-shadow,border] duration-300 ease-out"
+                  "relative overflow-hidden bg-white transition-[box-shadow,border] duration-300 ease-out",
+                  slide.backgroundImage &&
+                    slide.backgroundBlur &&
+                    "has-blurred-background"
                 )}
                 data-slide-index="0"
                 role="region"
@@ -213,10 +216,14 @@ const Slide: React.FC<SlideProps> = ({
                     "var(--font-poppins), Poppins, sans-serif",
                   ...(slide.backgroundImage
                     ? {
-                        backgroundImage: `url(${slide.backgroundImage})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        backgroundRepeat: "no-repeat",
+                        ...(slide.backgroundBlur
+                          ? {}
+                          : {
+                              backgroundImage: `url(${slide.backgroundImage})`,
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                              backgroundRepeat: "no-repeat",
+                            }),
                       }
                     : (() => {
                         // Normalize backgroundColor to array (handle backward compatibility with string values)
@@ -269,7 +276,21 @@ const Slide: React.FC<SlideProps> = ({
                   }
                 }}
               >
-                <div className="selection-helper slide-selection-helper"></div>
+                {slide.backgroundImage && slide.backgroundBlur && (
+                  <div
+                    className="absolute inset-0 z-0"
+                    style={{
+                      backgroundImage: `url(${slide.backgroundImage})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                      filter: "blur(8px)",
+                      transform: "scale(1.1)", // Scale up to prevent blur edges
+                    }}
+                    aria-hidden="true"
+                  />
+                )}
+                <div className="selection-helper slide-selection-helper relative z-10"></div>
 
                 {widgets.map((widget, index) => {
                   const isSelected = selectedId === widget.id;

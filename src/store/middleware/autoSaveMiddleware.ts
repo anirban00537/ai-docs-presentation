@@ -123,6 +123,7 @@ function createAutoSaveMiddleware() {
                   widgets: updatedSlide.widgets as SlideWidget[],
                   backgroundColor: updatedSlide.backgroundColor,
                   backgroundImage: updatedSlide.backgroundImage,
+                  backgroundBlur: updatedSlide.backgroundBlur,
                   showSlideNumber: updatedSlide.showSlideNumber,
                   slideStyle: updatedSlide.slideStyle,
                 };
@@ -194,6 +195,7 @@ function createAutoSaveMiddleware() {
               widgets: activeSlide.widgets as SlideWidget[],
               backgroundColor: activeSlide.backgroundColor,
               backgroundImage: activeSlide.backgroundImage,
+              backgroundBlur: activeSlide.backgroundBlur,
               showSlideNumber: activeSlide.showSlideNumber,
               slideStyle: activeSlide.slideStyle,
             };

@@ -72,6 +72,7 @@ const EditorWorkspace = () => {
             widgets: (slideData.widgets || []) as SlideWidget[],
             backgroundColor: slideData.backgroundColor,
             backgroundImage: slideData.backgroundImage,
+            backgroundBlur: slideData.backgroundBlur,
             showSlideNumber: slideData.showSlideNumber ?? false,
             slideStyle: slideData.slideStyle,
           });

@@ -11,6 +11,8 @@ import {
 import { MediaBrowser } from "@/components/editor/media-browser";
 import { Image, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const PRESET_COLORS = [
   "#0f172a",
@@ -62,8 +64,10 @@ const PRESET_GRADIENTS = [
 interface BackgroundSectionProps {
   backgroundColor: string[] | string | undefined;
   backgroundImage?: string | undefined;
+  backgroundBlur?: boolean;
   onBackgroundColorChange: (colors: string[]) => void;
   onBackgroundImageChange?: (imageUrl: string | undefined) => void;
+  onBackgroundBlurChange?: (blur: boolean) => void;
   showColorSection?: boolean;
   showImageSection?: boolean;
 }
@@ -71,8 +75,10 @@ interface BackgroundSectionProps {
 export function BackgroundSection({
   backgroundColor,
   backgroundImage,
+  backgroundBlur = false,
   onBackgroundColorChange,
   onBackgroundImageChange,
+  onBackgroundBlurChange,
   showColorSection = true,
   showImageSection = true,
 }: BackgroundSectionProps) {
@@ -151,6 +157,21 @@ export function BackgroundSection({
     }
   };
 
+  const handleBlurChange = (checked: boolean) => {
+    if (onBackgroundBlurChange) {
+      onBackgroundBlurChange(checked);
+    } else if (activeSlideId) {
+      dispatch(
+        updateSlide({
+          slideId: activeSlideId,
+          updates: {
+            backgroundBlur: checked,
+          },
+        })
+      );
+    }
+  };
+
   // Show image browser view
   if (showImageBrowser) {
     return (
@@ -209,13 +230,29 @@ export function BackgroundSection({
           </span>
         </button>
         {backgroundImage && (
-          <div className="relative aspect-video rounded-xl overflow-hidden border border-border/50">
-            <img
-              src={backgroundImage}
-              alt="Background"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <>
+            <div className="relative aspect-video rounded-xl overflow-hidden border border-border/50">
+              <img
+                src={backgroundImage}
+                alt="Background"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {/* Background Blur Toggle */}
+            <div className="flex items-center justify-between px-1 py-2 rounded-lg bg-background/50 border border-border/30">
+              <Label
+                htmlFor="background-blur"
+                className="text-sm font-medium text-foreground cursor-pointer"
+              >
+                Background Blur
+              </Label>
+              <Switch
+                id="background-blur"
+                checked={backgroundBlur}
+                onCheckedChange={handleBlurChange}
+              />
+            </div>
+          </>
         )}
       </div>
       )}

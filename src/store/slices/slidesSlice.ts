@@ -12,6 +12,7 @@ export type SlideModel = {
   widgets: SlideWidget[];
   backgroundColor?: string[];
   backgroundImage?: string;
+  backgroundBlur?: boolean;
   showSlideNumber?: boolean;
   slideStyle?: string;
 };
@@ -261,10 +262,7 @@ const slidesSlice = createSlice({
         state.activeSlideId = "";
       }
     },
-    updatePresentationTitle(
-      state,
-      action: PayloadAction<{ title: string }>
-    ) {
+    updatePresentationTitle(state, action: PayloadAction<{ title: string }>) {
       state.presentationTitle = action.payload.title;
     },
     updateSlideId(

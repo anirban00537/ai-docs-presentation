@@ -83,6 +83,21 @@ const Editor = () => {
     [activeSlide, dispatch]
   );
 
+  const handleBackgroundBlurChange = React.useCallback(
+    (blur: boolean) => {
+      if (!activeSlide) return;
+      dispatch(
+        updateSlide({
+          slideId: activeSlide.id,
+          updates: {
+            backgroundBlur: blur,
+          },
+        })
+      );
+    },
+    [activeSlide, dispatch]
+  );
+
   const handleThemeSelect = React.useCallback(
     (themeId: string) => {
       dispatch(
@@ -201,6 +216,7 @@ const Editor = () => {
             onOpenPanel={togglePanel}
             backgroundColor={undefined}
             onBackgroundColorChange={handleBackgroundColorChange}
+            onBackgroundBlurChange={handleBackgroundBlurChange}
             activeThemeId={globalTheme?.id}
             onSelectTheme={handleThemeSelect}
             globalTheme={globalTheme}
@@ -239,8 +255,10 @@ const Editor = () => {
           onOpenPanel={togglePanel}
           backgroundColor={activeSlide?.backgroundColor}
           backgroundImage={activeSlide?.backgroundImage}
+          backgroundBlur={activeSlide?.backgroundBlur}
           onBackgroundColorChange={handleBackgroundColorChange}
           onBackgroundImageChange={handleBackgroundImageChange}
+          onBackgroundBlurChange={handleBackgroundBlurChange}
           activeThemeId={globalTheme?.id}
           onSelectTheme={handleThemeSelect}
           globalTheme={globalTheme}
