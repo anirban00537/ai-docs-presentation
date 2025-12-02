@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { IconHome, type Icon } from "@tabler/icons-react";
+import { type Icon } from "@tabler/icons-react";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 import {
   SidebarGroup,
@@ -20,30 +22,52 @@ export function NavMain({
     icon?: Icon;
   }[];
 }) {
+  const pathname = usePathname();
+
   return (
     <SidebarGroup>
-      <SidebarGroupContent className="flex flex-col gap-2">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Home" asChild>
-              <Link href="/dashboard">
-                <IconHome />
-                <span>Home</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title} asChild>
-                <Link href={item.url}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+      <SidebarGroupContent>
+        <SidebarMenu className="space-y-1.5">
+          {items.map((item) => {
+            const isActive =
+              pathname === item.url || pathname.startsWith(item.url + "/");
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  asChild
+                  size="lg"
+                  isActive={isActive}
+                  className={cn(
+                    "group relative h-12 rounded-xl px-4 transition-all duration-200",
+                    "hover:bg-primary/10",
+                    "active:scale-[0.98]",
+                    isActive &&
+                      "!bg-primary/15 !text-primary-foreground font-semibold"
+                  )}
+                >
+                  <Link
+                    href={item.url}
+                    className="flex items-center gap-3 w-full"
+                  >
+                    {item.icon && (
+                      <item.icon
+                        className={cn(
+                          "h-5 w-5 transition-all duration-200",
+                          isActive
+                            ? "text-primary-foreground scale-110"
+                            : "text-muted-foreground group-hover:text-primary group-hover:scale-110"
+                        )}
+                      />
+                    )}
+                    <span className="text-base font-medium tracking-tight">
+                      {item.title}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
