@@ -9,6 +9,7 @@ import {
   IconShare3,
   IconSettings,
   IconSparkles,
+  IconPhoto,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -36,6 +37,11 @@ const navMainData = [
     title: "Templates",
     url: "/templates",
     icon: IconTemplate,
+  },
+  {
+    title: "Media",
+    url: "/media",
+    icon: IconPhoto,
   },
 ];
 
