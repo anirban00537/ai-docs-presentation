@@ -1,65 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   UploadModal,
   MediaGrid,
   MediaHeader,
   MediaSearch,
-  type MediaItem,
 } from "@/components/media";
-
-// Dummy media data for UI display (images only)
-const dummyMedia: MediaItem[] = [
-  {
-    id: "1",
-    name: "hero-image.jpg",
-    type: "image",
-    size: "2.4 MB",
-    uploadedAt: "2 hours ago",
-    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
-  },
-  {
-    id: "2",
-    name: "background.png",
-    type: "image",
-    size: "1.2 MB",
-    uploadedAt: "3 days ago",
-    url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=300&fit=crop",
-  },
-  {
-    id: "3",
-    name: "banner.jpg",
-    type: "image",
-    size: "4.1 MB",
-    uploadedAt: "2 weeks ago",
-    url: "https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=400&h=300&fit=crop",
-  },
-  {
-    id: "4",
-    name: "product-shot.jpg",
-    type: "image",
-    size: "3.5 MB",
-    uploadedAt: "1 week ago",
-    url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop",
-  },
-  {
-    id: "5",
-    name: "landscape.jpg",
-    type: "image",
-    size: "5.2 MB",
-    uploadedAt: "3 weeks ago",
-    url: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=400&h=300&fit=crop",
-  },
-  {
-    id: "6",
-    name: "portrait.jpg",
-    type: "image",
-    size: "2.8 MB",
-    uploadedAt: "1 month ago",
-    url: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop",
-  },
-];
+import { useListMedia } from "@/hooks/use-images";
 
 const categories = ["All", "Recent", "Favorites"];
 
@@ -68,14 +16,28 @@ export default function MediaPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [page] = useState(1);
 
-  const filteredMedia = dummyMedia.filter((item) => {
-    const matchesCategory = selectedCategory === "All";
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+  // Map category to API category
+  const apiCategory = useMemo(() => {
+    if (selectedCategory === "Favorites") return "favorites";
+    if (selectedCategory === "Recent") return "recent";
+    return "all";
+  }, [selectedCategory]);
+
+  // Fetch media from API
+  const {
+    data: mediaResponse,
+    isLoading,
+    error,
+  } = useListMedia({
+    page,
+    perPage: 20,
+    search: searchQuery || undefined,
+    category: apiCategory as "all" | "recent" | "favorites",
   });
+
+  const mediaItems = mediaResponse?.data?.list || [];
 
   return (
     <>
@@ -95,11 +57,35 @@ export default function MediaPage() {
             onCategoryChange={setSelectedCategory}
           />
 
-          <MediaGrid
-            items={filteredMedia}
-            viewMode={viewMode}
-            onUploadClick={() => setIsUploadModalOpen(true)}
-          />
+          {isLoading ? (
+            <div className="flex min-h-[500px] items-center justify-center">
+              <div className="flex flex-col items-center gap-3">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                <p className="text-sm text-muted-foreground">
+                  Loading media...
+                </p>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="flex min-h-[500px] items-center justify-center">
+              <div className="flex max-w-md flex-col items-center gap-6 text-center">
+                <div className="rounded-full bg-destructive/10 p-4">
+                  <p className="text-destructive text-sm font-medium">
+                    Failed to load media
+                  </p>
+                </div>
+                <p className="text-muted-foreground">
+                  {error instanceof Error ? error.message : "An error occurred"}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <MediaGrid
+              items={mediaItems}
+              viewMode={viewMode}
+              onUploadClick={() => setIsUploadModalOpen(true)}
+            />
+          )}
         </div>
       </div>
 

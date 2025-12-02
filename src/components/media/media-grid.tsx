@@ -2,19 +2,22 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { MediaCard, type MediaItem } from "./media-card";
+import { MediaCard } from "./media-card";
 import { EmptyState } from "./empty-state";
+import type { MediaItem } from "@/services/images";
 
 interface MediaGridProps {
   items: MediaItem[];
   viewMode: "grid" | "list";
   onUploadClick: () => void;
+  onDelete?: () => void;
 }
 
 export function MediaGrid({
   items,
   viewMode,
   onUploadClick,
+  onDelete,
 }: MediaGridProps) {
   if (items.length === 0) {
     return <EmptyState onUploadClick={onUploadClick} />;
@@ -29,7 +32,12 @@ export function MediaGrid({
       )}
     >
       {items.map((item) => (
-        <MediaCard key={item.id} item={item} viewMode={viewMode} />
+        <MediaCard
+          key={item.id}
+          item={item}
+          viewMode={viewMode}
+          onDelete={onDelete}
+        />
       ))}
     </div>
   );

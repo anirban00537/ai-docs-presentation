@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { Upload, X } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useUploadMedia } from "@/hooks/use-images";
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -12,8 +13,64 @@ interface UploadModalProps {
 
 export function UploadModal({ isOpen, onClose }: UploadModalProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadMediaMutation = useUploadMedia();
 
   if (!isOpen) return null;
+
+  const handleFileSelect = (file: File) => {
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      alert("Please select a valid image file (JPG, PNG, GIF, or WebP)");
+      return;
+    }
+
+    // Validate file size (50MB max)
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxSize) {
+      alert("File size must be less than 50MB");
+      return;
+    }
+
+    setSelectedFile(file);
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    try {
+      await uploadMediaMutation.mutateAsync({
+        file: selectedFile,
+        name: selectedFile.name,
+      });
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      onClose();
+    } catch (error: any) {
+      console.error("Upload failed:", error);
+      alert(error.message || "Failed to upload file. Please try again.");
+    }
+  };
 
   return (
     <div
@@ -62,35 +119,97 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
               setIsDragging(false);
             }}
             onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              setIsDragging(false);
-            }}
+            onDrop={handleDrop}
           >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+              onChange={handleFileInputChange}
+              className="hidden"
+            />
             <div className="flex flex-col items-center justify-center p-12 text-center">
-              <div className="mb-4 rounded-full bg-primary/10 p-4">
-                <Upload className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="mb-2 text-base font-semibold text-foreground">
-                Drop images here or click to upload
-              </h3>
-              <p className="mb-4 text-sm text-muted-foreground">
-                Support for JPG, PNG, GIF, and WebP formats
-              </p>
-              <Button size="sm" variant="outline">
-                <Upload className="mr-2 h-4 w-4" />
-                Select Files
-              </Button>
+              {selectedFile ? (
+                <>
+                  <div className="mb-4 rounded-lg bg-muted/50 p-4">
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt={selectedFile.name}
+                      className="h-32 w-32 object-cover rounded-lg"
+                    />
+                  </div>
+                  <h3 className="mb-2 text-base font-semibold text-foreground">
+                    {selectedFile.name}
+                  </h3>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedFile(null);
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = "";
+                      }
+                    }}
+                  >
+                    Change File
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="mb-4 rounded-full bg-primary/10 p-4">
+                    <Upload className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="mb-2 text-base font-semibold text-foreground">
+                    Drop images here or click to upload
+                  </h3>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    Support for JPG, PNG, GIF, and WebP formats (max 50MB)
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Select Files
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 border-t border-border/50 px-6 py-4">
-          <Button variant="ghost" onClick={onClose}>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setSelectedFile(null);
+              if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+              }
+              onClose();
+            }}
+            disabled={uploadMediaMutation.isPending}
+          >
             Cancel
           </Button>
-          <Button onClick={onClose}>Upload</Button>
+          <Button
+            onClick={handleUpload}
+            disabled={!selectedFile || uploadMediaMutation.isPending}
+          >
+            {uploadMediaMutation.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              "Upload"
+            )}
+          </Button>
         </div>
       </div>
     </div>

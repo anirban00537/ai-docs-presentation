@@ -1,12 +1,20 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   searchUnsplashPhotos,
   getRandomUnsplashPhotos,
   getUnsplashPhoto,
   trackUnsplashDownload,
+  uploadMedia,
+  listMedia,
+  getMedia,
+  updateMedia,
+  deleteMedia,
   type SearchPhotosParams,
   type GetRandomPhotosParams,
   type TrackDownloadPayload,
+  type UploadMediaParams,
+  type ListMediaParams,
+  type UpdateMediaParams,
 } from "@/services/images";
 
 // Query keys
@@ -18,6 +26,13 @@ export const imageKeys = {
   random: (params?: GetRandomPhotosParams) =>
     [...imageKeys.all, "random", params] as const,
   photo: (photoId: string) => [...imageKeys.all, "photo", photoId] as const,
+  media: {
+    all: ["media"] as const,
+    lists: () => [...imageKeys.media.all, "list"] as const,
+    list: (params?: ListMediaParams) =>
+      [...imageKeys.media.lists(), params] as const,
+    detail: (id: string) => [...imageKeys.media.all, "detail", id] as const,
+  },
 };
 
 /**
@@ -113,6 +128,118 @@ export const useTrackUnsplashDownload = () => {
       // Silently handle download tracking errors
       console.warn("Download tracking failed:", error.message);
     },
+  });
+};
+
+/**
+ * List user's media query
+ */
+export const useListMedia = (params?: ListMediaParams) => {
+  return useQuery({
+    queryKey: imageKeys.media.list(params),
+    queryFn: async () => {
+      try {
+        return await listMedia(params);
+      } catch (error: any) {
+        throw new Error(error.message || "Failed to load media. Please try again.");
+      }
+    },
+    staleTime: 30 * 1000, // 30 seconds
+    retry: 1,
+    retryDelay: 1000,
+  });
+};
+
+/**
+ * Get single media item query
+ */
+export const useMedia = (id: string | null) => {
+  return useQuery({
+    queryKey: id ? imageKeys.media.detail(id) : ["media", "null"],
+    queryFn: async () => {
+      if (!id) {
+        throw new Error("Media ID is required");
+      }
+      try {
+        return await getMedia(id);
+      } catch (error: any) {
+        throw new Error(error.message || "Failed to load media. Please try again.");
+      }
+    },
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+    retryDelay: 1000,
+  });
+};
+
+/**
+ * Upload media mutation
+ */
+export const useUploadMedia = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (params: UploadMediaParams) => {
+      try {
+        return await uploadMedia(params);
+      } catch (error: any) {
+        throw new Error(error.message || "Failed to upload media");
+      }
+    },
+    onSuccess: () => {
+      // Invalidate media list queries to refetch
+      queryClient.invalidateQueries({ queryKey: imageKeys.media.lists() });
+    },
+    retry: 1,
+    retryDelay: 1000,
+  });
+};
+
+/**
+ * Update media mutation
+ */
+export const useUpdateMedia = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, params }: { id: string; params: UpdateMediaParams }) => {
+      try {
+        return await updateMedia(id, params);
+      } catch (error: any) {
+        throw new Error(error.message || "Failed to update media");
+      }
+    },
+    onSuccess: (data, variables) => {
+      // Invalidate media list and detail queries
+      queryClient.invalidateQueries({ queryKey: imageKeys.media.lists() });
+      queryClient.invalidateQueries({ queryKey: imageKeys.media.detail(variables.id) });
+    },
+    retry: 1,
+    retryDelay: 1000,
+  });
+};
+
+/**
+ * Delete media mutation
+ */
+export const useDeleteMedia = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        return await deleteMedia(id);
+      } catch (error: any) {
+        throw new Error(error.message || "Failed to delete media");
+      }
+    },
+    onSuccess: () => {
+      // Invalidate media list queries to refetch
+      queryClient.invalidateQueries({ queryKey: imageKeys.media.lists() });
+    },
+    retry: 1,
+    retryDelay: 1000,
   });
 };
 
