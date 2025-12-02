@@ -54,9 +54,13 @@ const categories = [
 
 type MediaBrowserProps = {
   onImageAdded?: () => void;
+  onImageClick?: (imageUrl: string) => void;
 };
 
-export const MediaBrowser: React.FC<MediaBrowserProps> = ({ onImageAdded }) => {
+export const MediaBrowser: React.FC<MediaBrowserProps> = ({
+  onImageAdded,
+  onImageClick,
+}) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -132,6 +136,21 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ onImageAdded }) => {
   const handleImageClick = (photo: UnsplashPhoto) => {
     // Use regular URL for the image
     const imageUrl = photo.urls.regular;
+
+    // If custom onImageClick is provided, use it (for background images, etc.)
+    if (onImageClick) {
+      onImageClick(imageUrl);
+      // Track download if download location is available
+      if (photo.links.downloadLocation) {
+        trackDownloadMutation.mutate({
+          downloadLocation: photo.links.downloadLocation,
+        });
+      }
+      onImageAdded?.();
+      return;
+    }
+
+    // Default behavior: add as widget
     handleAddImage(imageUrl);
 
     // Track download if download location is available
@@ -146,9 +165,9 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ onImageAdded }) => {
   };
 
   return (
-    <div className="w-[600px] max-h-[500px] flex flex-col bg-background/95 backdrop-blur-xl rounded-lg overflow-hidden shadow-2xl">
+    <div className="w-full h-full flex flex-col bg-background/95 backdrop-blur-xl rounded-lg overflow-hidden min-h-0">
       {/* Search Bar */}
-      <div className="px-5 pt-5 pb-4">
+      <div className="px-4 pt-4 pb-3">
         <div className="relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 group-focus-within:text-muted-foreground transition-colors duration-200" />
           <Input
@@ -162,7 +181,7 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ onImageAdded }) => {
       </div>
 
       {/* Category Filters */}
-      <div className="px-5 pb-4">
+      <div className="px-4 pb-3">
         <div className="flex items-center gap-2.5 overflow-x-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {categories.map((category) => (
             <button
@@ -189,7 +208,7 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ onImageAdded }) => {
       </div>
 
       {/* Image Grid */}
-      <div className="flex-1 overflow-y-auto px-5 pb-5 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
         {activeQuery.isLoading ? (
           <div className="flex items-center justify-center h-64">
             <div className="flex flex-col items-center gap-3">

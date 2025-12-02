@@ -136,8 +136,10 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               Media
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className="p-0" sideOffset={8}>
-            <MediaBrowser onImageAdded={() => setIsMediaDropdownOpen(false)} />
+          <DropdownMenuContent align="center" className="p-0 w-[600px] max-h-[500px]" sideOffset={8}>
+            <div className="w-full h-full">
+              <MediaBrowser onImageAdded={() => setIsMediaDropdownOpen(false)} />
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

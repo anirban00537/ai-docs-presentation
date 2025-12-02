@@ -68,6 +68,21 @@ const Editor = () => {
     [activeSlide, dispatch]
   );
 
+  const handleBackgroundImageChange = React.useCallback(
+    (imageUrl: string | undefined) => {
+      if (!activeSlide) return;
+      dispatch(
+        updateSlide({
+          slideId: activeSlide.id,
+          updates: {
+            backgroundImage: imageUrl,
+          },
+        })
+      );
+    },
+    [activeSlide, dispatch]
+  );
+
   const handleThemeSelect = React.useCallback(
     (themeId: string) => {
       dispatch(
@@ -223,7 +238,9 @@ const Editor = () => {
           onClose={() => setActivePanel(null)}
           onOpenPanel={togglePanel}
           backgroundColor={activeSlide?.backgroundColor}
+          backgroundImage={activeSlide?.backgroundImage}
           onBackgroundColorChange={handleBackgroundColorChange}
+          onBackgroundImageChange={handleBackgroundImageChange}
           activeThemeId={globalTheme?.id}
           onSelectTheme={handleThemeSelect}
           globalTheme={globalTheme}

@@ -1,9 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { ColorPicker } from "./color-picker";
-import { useAppSelector } from "@/store/hooks";
-import { selectGlobalTheme } from "@/store/slices/slidesSlice";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import {
+  selectGlobalTheme,
+  selectActiveSlideId,
+  updateSlide,
+} from "@/store/slices/slidesSlice";
+import { MediaBrowser } from "@/components/editor/media-browser";
+import { Image, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const PRESET_COLORS = [
   "#0f172a",
@@ -54,14 +61,21 @@ const PRESET_GRADIENTS = [
 
 interface BackgroundSectionProps {
   backgroundColor: string[] | string | undefined;
+  backgroundImage?: string | undefined;
   onBackgroundColorChange: (colors: string[]) => void;
+  onBackgroundImageChange?: (imageUrl: string | undefined) => void;
 }
 
 export function BackgroundSection({
   backgroundColor,
+  backgroundImage,
   onBackgroundColorChange,
+  onBackgroundImageChange,
 }: BackgroundSectionProps) {
   const globalTheme = useAppSelector(selectGlobalTheme);
+  const dispatch = useAppDispatch();
+  const activeSlideId = useAppSelector(selectActiveSlideId);
+  const [showImageBrowser, setShowImageBrowser] = useState(false);
 
   // Normalize backgroundColor to array (handle backward compatibility with string values)
   // If no backgroundColor is set, use global theme background colors
@@ -101,8 +115,103 @@ export function BackgroundSection({
     onBackgroundColorChange(newColors);
   };
 
+  const handleImageSelect = (imageUrl: string) => {
+    if (onBackgroundImageChange) {
+      onBackgroundImageChange(imageUrl);
+    } else if (activeSlideId) {
+      // Fallback: directly update slide if callback not provided
+      dispatch(
+        updateSlide({
+          slideId: activeSlideId,
+          updates: {
+            backgroundImage: imageUrl,
+          },
+        })
+      );
+    }
+    setShowImageBrowser(false);
+  };
+
+  const handleRemoveBackgroundImage = () => {
+    if (onBackgroundImageChange) {
+      onBackgroundImageChange(undefined);
+    } else if (activeSlideId) {
+      dispatch(
+        updateSlide({
+          slideId: activeSlideId,
+          updates: {
+            backgroundImage: undefined,
+          },
+        })
+      );
+    }
+  };
+
+  // Show image browser view
+  if (showImageBrowser) {
+    return (
+      <div className="flex flex-col h-full min-h-0 relative">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowImageBrowser(false)}
+          className="absolute top-0 left-0 mb-2 z-10 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground shrink-0 h-7 px-2.5"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span>Back to Colors</span>
+        </Button>
+        <div className="flex-1 min-h-0 w-full">
+          <MediaBrowser
+            onImageClick={handleImageSelect}
+            onImageAdded={() => setShowImageBrowser(false)}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Show color view (default)
   return (
     <div className="space-y-7">
+      {/* Background Image Section */}
+      <div className="space-y-3.5">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">
+            Background Image
+          </h3>
+          {backgroundImage && (
+            <button
+              type="button"
+              onClick={handleRemoveBackgroundImage}
+              className="text-xs font-semibold text-destructive hover:text-destructive/90 transition-all duration-200 px-2.5 py-1 rounded-lg hover:bg-destructive/10 active:scale-95"
+            >
+              Remove
+            </button>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowImageBrowser(true)}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-border/50 hover:border-primary/50 bg-background/50 hover:bg-primary/5 transition-all duration-200 group"
+        >
+          <Image className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+          <span className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">
+            {backgroundImage
+              ? "Change Background Image"
+              : "Add Background Image"}
+          </span>
+        </button>
+        {backgroundImage && (
+          <div className="relative aspect-video rounded-xl overflow-hidden border border-border/50">
+            <img
+              src={backgroundImage}
+              alt="Background"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+      </div>
+
       <div className="space-y-3.5">
         <div className="flex items-center justify-between px-1">
           <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">

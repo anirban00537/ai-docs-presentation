@@ -5,12 +5,16 @@ import { BackgroundSection } from "@/components/editor/background/background-sec
 
 type BackgroundPanelContentProps = {
   backgroundColor?: string[] | string;
+  backgroundImage?: string;
   onBackgroundColorChange?: (colors: string[]) => void;
+  onBackgroundImageChange?: (imageUrl: string | undefined) => void;
 };
 
 export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
   backgroundColor,
+  backgroundImage,
   onBackgroundColorChange,
+  onBackgroundImageChange,
 }) => {
   return (
     <section className="space-y-6">
@@ -19,12 +23,14 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
           Canvas
         </h3>
         <p className="text-xs text-muted-foreground/70 leading-relaxed">
-          Adjust colors for the slide background.
+          Adjust colors and images for the slide background.
         </p>
       </div>
       <BackgroundSection
         backgroundColor={backgroundColor}
+        backgroundImage={backgroundImage}
         onBackgroundColorChange={onBackgroundColorChange || (() => {})}
+        onBackgroundImageChange={onBackgroundImageChange}
       />
     </section>
   );
