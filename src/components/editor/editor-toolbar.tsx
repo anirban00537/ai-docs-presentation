@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AppleButton } from "@/components/editor/apple-button";
-import { Plus, ExternalLink, Play, Image } from "lucide-react";
+import { Plus, ExternalLink, Play, Image, Type } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectPresentationTitle,
@@ -20,6 +20,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MediaBrowser } from "@/components/editor/media-browser";
+import { TextWidgetsBrowser } from "@/components/editor/text-widgets-browser";
+import { useWidgetCreation } from "@/hooks/use-widget-creation";
+import type { TextPreset } from "@/components/editor/types";
 
 type EditorHeaderProps = {
   onOpenInsertPanel: () => void;
@@ -39,7 +42,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [localTitle, setLocalTitle] = useState("");
   const [isMediaDropdownOpen, setIsMediaDropdownOpen] = useState(false);
+  const [isTextDropdownOpen, setIsTextDropdownOpen] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const { handleAddText } = useWidgetCreation();
 
   // Use local title when editing, otherwise use Redux title
   const displayTitle = isEditingTitle
@@ -73,6 +78,14 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
 
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
+
+  const handleTextClick = useCallback(
+    (preset: TextPreset) => {
+      handleAddText(preset);
+      setIsTextDropdownOpen(false);
+    },
+    [handleAddText]
+  );
 
   return (
     <header
@@ -123,6 +136,33 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
           Insert
         </Button>
         <DropdownMenu
+          open={isTextDropdownOpen}
+          onOpenChange={setIsTextDropdownOpen}
+        >
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-9 rounded-lg px-4 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-background dark:hover:bg-neutral-800/80 hover:shadow-sm transition-all duration-200 active:scale-[0.97]"
+            >
+              <Type className="mr-2 h-4 w-4" />
+              Text
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="center"
+            className="p-0 w-[400px] max-h-[400px]"
+            sideOffset={8}
+          >
+            <div className="w-full h-full">
+              <TextWidgetsBrowser
+                onTextClick={handleTextClick}
+                onTextAdded={() => setIsTextDropdownOpen(false)}
+              />
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu
           open={isMediaDropdownOpen}
           onOpenChange={setIsMediaDropdownOpen}
         >
@@ -136,9 +176,15 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               Media
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className="p-0 w-[600px] max-h-[500px]" sideOffset={8}>
+          <DropdownMenuContent
+            align="center"
+            className="p-0 w-[600px] max-h-[500px]"
+            sideOffset={8}
+          >
             <div className="w-full h-full">
-              <MediaBrowser onImageAdded={() => setIsMediaDropdownOpen(false)} />
+              <MediaBrowser
+                onImageAdded={() => setIsMediaDropdownOpen(false)}
+              />
             </div>
           </DropdownMenuContent>
         </DropdownMenu>

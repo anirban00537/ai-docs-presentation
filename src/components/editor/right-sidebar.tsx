@@ -275,7 +275,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           `}</style>
           {panel === "insert" && (
             <InsertPanelContent
-              onAddText={handleAddText}
               onAddFeatureCard={handleAddFeatureCard}
               onAddIconCard={handleAddIconCard}
               onAddImageCard={handleAddImageCard}
@@ -285,7 +284,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
               onAddComparisonCard={handleAddComparisonCard}
               onAddTitleCard={handleAddTitleCard}
               onAddPricingCard={handleAddPricingCard}
-              onClose={onClose}
             />
           )}
 

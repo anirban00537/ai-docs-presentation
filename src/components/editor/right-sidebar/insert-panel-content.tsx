@@ -2,9 +2,6 @@
 
 import React from "react";
 import {
-  Heading1,
-  Heading2,
-  Pilcrow,
   LayoutTemplate,
   Star,
   Tag,
@@ -17,7 +14,6 @@ import {
   DollarSign,
 } from "lucide-react";
 import type {
-  TextPreset,
   FeatureCardPreset,
   IconCardPreset,
   ImageCardPreset,
@@ -28,7 +24,6 @@ import type {
   TitleCardPreset,
   PricingCardPreset,
 } from "@/components/editor/types";
-import { cn } from "@/lib/utils";
 
 const featureCardPresets: FeatureCardPreset[] = [
   {
@@ -163,13 +158,17 @@ const pricingCardPresets: PricingCardPreset[] = [
     planName: "Professional",
     price: "$99",
     period: "/mo",
-    features: ["Unlimited projects", "100GB storage", "Priority support", "Advanced analytics"],
+    features: [
+      "Unlimited projects",
+      "100GB storage",
+      "Priority support",
+      "Advanced analytics",
+    ],
     buttonText: "Get Started",
   },
 ];
 
 type InsertPanelContentProps = {
-  onAddText: (preset: TextPreset) => void;
   onAddFeatureCard?: (preset: FeatureCardPreset) => void;
   onAddIconCard?: (preset: IconCardPreset) => void;
   onAddImageCard?: (preset: ImageCardPreset) => void;
@@ -179,40 +178,9 @@ type InsertPanelContentProps = {
   onAddComparisonCard?: (preset: ComparisonCardPreset) => void;
   onAddTitleCard?: (preset: TitleCardPreset) => void;
   onAddPricingCard?: (preset: PricingCardPreset) => void;
-  onClose: () => void;
 };
 
-interface InsertItemProps {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-  className?: string;
-}
-
-const InsertItem: React.FC<InsertItemProps> = ({
-  icon,
-  label,
-  onClick,
-  className,
-}) => (
-  <button
-    onClick={onClick}
-    className={cn(
-      "group flex flex-col items-center justify-center gap-2.5 rounded-xl border border-border/50 bg-background/60 dark:bg-background/40 p-3 transition-all duration-200 hover:border-primary/40 hover:bg-accent/80 hover:shadow-md active:scale-[0.96]",
-      className
-    )}
-  >
-    <div className="text-foreground/70 transition-all duration-200 group-hover:text-primary group-hover:scale-110">
-      {icon}
-    </div>
-    <span className="text-[10px] font-semibold text-muted-foreground transition-colors duration-200 group-hover:text-foreground tracking-tight">
-      {label}
-    </span>
-  </button>
-);
-
 export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
-  onAddText,
   onAddFeatureCard,
   onAddIconCard,
   onAddImageCard,
@@ -222,12 +190,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   onAddComparisonCard,
   onAddTitleCard,
   onAddPricingCard,
-  onClose,
 }) => {
-  const handleAddText = (preset: TextPreset) => {
-    onAddText(preset);
-  };
-
   const handleAddFeatureCard = (preset: FeatureCardPreset) => {
     onAddFeatureCard?.(preset);
   };
@@ -347,32 +310,6 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
 
   return (
     <div className="space-y-7 pb-6">
-      {/* Text Options */}
-      <div className="space-y-3">
-        <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
-          Typography
-        </h3>
-        <div className="grid grid-cols-3 gap-2.5">
-          <InsertItem
-            icon={<Heading1 className="h-5 w-5" />}
-            label="Heading"
-            onClick={() => handleAddText({ id: "heading", title: "Heading" })}
-          />
-          <InsertItem
-            icon={<Heading2 className="h-5 w-5" />}
-            label="Subhead"
-            onClick={() =>
-              handleAddText({ id: "subheading", title: "Subheading" })
-            }
-          />
-          <InsertItem
-            icon={<Pilcrow className="h-5 w-5" />}
-            label="Body"
-            onClick={() => handleAddText({ id: "body", title: "Body Text" })}
-          />
-        </div>
-      </div>
-
       {/* All Cards */}
       <div className="space-y-3">
         <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
