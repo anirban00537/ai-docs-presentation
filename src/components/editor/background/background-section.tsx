@@ -150,16 +150,18 @@ export function BackgroundSection({
   // Show image browser view
   if (showImageBrowser) {
     return (
-      <div className="flex flex-col h-full min-h-0 relative">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowImageBrowser(false)}
-          className="absolute top-0 left-0 mb-2 z-10 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground shrink-0 h-7 px-2.5"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Back to Colors</span>
-        </Button>
+      <div className="flex flex-col h-full min-h-0">
+        <div className="flex items-center justify-start mb-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowImageBrowser(false)}
+            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground shrink-0 h-7 px-2.5"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Back to Colors</span>
+          </Button>
+        </div>
         <div className="flex-1 min-h-0 w-full">
           <MediaBrowser
             onImageClick={handleImageSelect}
