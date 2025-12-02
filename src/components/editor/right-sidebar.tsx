@@ -185,7 +185,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   };
 
   return (
-    <div className="h-full flex items-center shrink-0 z-40 relative">
+    <div className="h-full flex items-center  shrink-0 z-40 relative">
       {/* Icon buttons on the left */}
       <div className="h-full flex items-center justify-center shrink-0">
         <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm border border-border/40 dark:border-border/30 shadow-sm">
@@ -262,7 +262,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           </Button>
         </div>
         <div
-          className="flex-1 overflow-y-auto min-h-0 overscroll-contain space-y-6 0  mt-1 pt-6"
+          className="flex-1 overflow-y-auto min-h-0 overscroll-contain space-y-6 0 px-2 py-2  mt-1 pt-6"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
