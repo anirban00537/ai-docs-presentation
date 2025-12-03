@@ -20,30 +20,8 @@ interface ThemeEditorProps {
 }
 
 export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
-  const generateRandomColor = () => {
-    const letters = "0123456789ABCDEF";
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  };
-
-  const handleBackgroundColorChange = (index: number, newColor: string) => {
-    const newColors = [...theme.background];
-    newColors[index] = newColor;
-    onThemeChange({ background: newColors });
-  };
-
-  const handleAddBackgroundColor = () => {
-    const randomColor = generateRandomColor();
-    onThemeChange({ background: [...theme.background, randomColor] });
-  };
-
-  const handleRemoveBackgroundColor = (index: number) => {
-    if (theme.background.length <= 1) return;
-    const newColors = theme.background.filter((_, i) => i !== index);
-    onThemeChange({ background: newColors });
+  const handleBackgroundColorChange = (newColor: string) => {
+    onThemeChange({ background: newColor });
   };
 
   const handleSurfaceChange = (newColor: string) => {
@@ -62,41 +40,26 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
     onThemeChange({ font: newFont });
   };
 
-  const handleCardBackgroundTypeChange = (
-    newType: WidgetBackgroundType
-  ) => {
+  const handleCardBackgroundTypeChange = (newType: WidgetBackgroundType) => {
     onThemeChange({ cardBackgroundType: newType });
   };
 
   return (
     <div className="space-y-7">
-      {/* Background Colors */}
+      {/* Background Color */}
       <div className="space-y-3.5">
-        <div className="flex items-center justify-between px-1">
-          <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">
-            Background Colors
-          </h3>
-          <button
-            type="button"
-            onClick={handleAddBackgroundColor}
-            className="text-xs font-semibold text-primary hover:text-primary/90 transition-all duration-200 px-2.5 py-1 rounded-lg hover:bg-primary/10 active:scale-95"
-          >
-            + Add Color
-          </button>
-        </div>
-        <div className="grid grid-cols-7 gap-2.5 px-1">
-          {theme.background.map((color, index) => (
-            <div key={index} className="relative group/picker">
-              <ColorPicker
-                color={color}
-                onChange={(newColor) =>
-                  handleBackgroundColorChange(index, newColor)
-                }
-                onRemove={() => handleRemoveBackgroundColor(index)}
-                showRemove={theme.background.length > 1}
-              />
-            </div>
-          ))}
+        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+          Background Color
+        </h3>
+        <div className="px-1">
+          <div className="relative group/picker inline-block">
+            <ColorPicker
+              color={theme.background}
+              onChange={handleBackgroundColorChange}
+              onRemove={() => {}}
+              showRemove={false}
+            />
+          </div>
         </div>
       </div>
 
@@ -160,8 +123,7 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
           <Select
             value={
               GOOGLE_FONT_OPTIONS.find(
-                (font) =>
-                  theme.font === font.style || theme.font === font.value
+                (font) => theme.font === font.style || theme.font === font.value
               )?.style || theme.font
             }
             onValueChange={handleFontChange}
@@ -195,30 +157,29 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
           Card Background Type
         </h3>
         <div className="grid grid-cols-3 gap-2 px-1">
-          {(
-            ["solid", "glass", "transparent"] as WidgetBackgroundType[]
-          ).map((type) => {
-            const isActive = theme.cardBackgroundType === type;
-            return (
-              <button
-                key={type}
-                type="button"
-                onClick={() => handleCardBackgroundTypeChange(type)}
-                className={cn(
-                  "w-full rounded-lg border p-3 text-center transition-all duration-200 outline-none capitalize text-sm font-medium",
-                  isActive
-                    ? "border-primary bg-primary/10 dark:bg-primary/5 shadow-md ring-2 ring-primary/30"
-                    : "border-border/50 bg-background/60 dark:bg-background/40 hover:bg-accent/50 hover:border-border hover:shadow-sm",
-                  "active:scale-[0.98]"
-                )}
-              >
-                {type}
-              </button>
-            );
-          })}
+          {(["solid", "glass", "transparent"] as WidgetBackgroundType[]).map(
+            (type) => {
+              const isActive = theme.cardBackgroundType === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => handleCardBackgroundTypeChange(type)}
+                  className={cn(
+                    "w-full rounded-lg border p-3 text-center transition-all duration-200 outline-none capitalize text-sm font-medium",
+                    isActive
+                      ? "border-primary bg-primary/10 dark:bg-primary/5 shadow-md ring-2 ring-primary/30"
+                      : "border-border/50 bg-background/60 dark:bg-background/40 hover:bg-accent/50 hover:border-border hover:shadow-sm",
+                    "active:scale-[0.98]"
+                  )}
+                >
+                  {type}
+                </button>
+              );
+            }
+          )}
         </div>
       </div>
     </div>
   );
 }
-

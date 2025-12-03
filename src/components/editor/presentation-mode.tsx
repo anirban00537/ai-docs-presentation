@@ -28,20 +28,12 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
   const isLastSlide = currentIndex === slides.length - 1;
 
   const meshBackground = useMemo(() => {
-    const backgroundStops =
-      globalTheme?.background && globalTheme.background.length > 0
-        ? globalTheme.background
-        : ["#0f172a", "#1e293b", "#111827"];
+    const backgroundColor = globalTheme?.background ?? "#0f172a";
     const surfaceColor = globalTheme?.surface ?? "rgba(15,23,42,0.92)";
     const accentColor = globalTheme?.accent ?? "#6366f1";
 
-    const baseGradient =
-      backgroundStops.length === 1
-        ? `linear-gradient(135deg, ${backgroundStops[0]}, ${backgroundStops[0]})`
-        : `linear-gradient(135deg, ${backgroundStops.join(", ")})`;
-
     return [
-      baseGradient,
+      backgroundColor,
       `radial-gradient(at 25% 25%, ${surfaceColor} 0%, transparent 55%)`,
       `radial-gradient(at 70% 65%, ${surfaceColor} 0%, transparent 60%)`,
       `radial-gradient(at 85% 20%, ${accentColor} 0%, transparent 45%)`,

@@ -6,10 +6,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Palette, Image as ImageIcon } from "lucide-react";
 
 type BackgroundPanelContentProps = {
-  backgroundColor?: string[] | string;
+  backgroundColor?: string;
   backgroundImage?: string;
   backgroundBlur?: boolean;
-  onBackgroundColorChange?: (colors: string[]) => void;
+  onBackgroundColorChange?: (color: string) => void;
   onBackgroundImageChange?: (imageUrl: string | undefined) => void;
   onBackgroundBlurChange?: (blur: boolean) => void;
 };

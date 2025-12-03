@@ -64,15 +64,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                     <span
                       key={`${theme.id}-background`}
                       className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50"
-                      style={
-                        theme.background.length === 1
-                          ? { backgroundColor: theme.background[0] }
-                          : {
-                              background: `linear-gradient(to right, ${theme.background.join(
-                                ", "
-                              )})`,
-                            }
-                      }
+                      style={{ backgroundColor: theme.background }}
                     />
                     {[theme.surface, theme.text, theme.accent].map(
                       (color, i) => (

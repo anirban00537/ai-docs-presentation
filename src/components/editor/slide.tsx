@@ -226,41 +226,16 @@ const Slide: React.FC<SlideProps> = ({
                             }),
                       }
                     : (() => {
-                        // Normalize backgroundColor to array (handle backward compatibility with string values)
-                        const bgColors = Array.isArray(slide.backgroundColor)
-                          ? slide.backgroundColor
-                          : slide.backgroundColor
-                          ? [slide.backgroundColor]
-                          : [];
-
-                        if (bgColors.length === 0) {
-                          if (
-                            globalTheme &&
-                            globalTheme.background.length > 0
-                          ) {
-                            if (globalTheme.background.length === 1) {
-                              return {
-                                backgroundColor: globalTheme.background[0],
-                              };
-                            }
-                            return {
-                              background: `linear-gradient(to right, ${globalTheme.background.join(
-                                ", "
-                              )})`,
-                            };
-                          }
-                          return { backgroundColor: "#ffffff" };
+                        // Use slide backgroundColor if set, otherwise fall back to global theme background
+                        if (slide.backgroundColor) {
+                          return { backgroundColor: slide.backgroundColor };
                         }
 
-                        if (bgColors.length === 1) {
-                          return { backgroundColor: bgColors[0] };
+                        if (globalTheme && globalTheme.background) {
+                          return { backgroundColor: globalTheme.background };
                         }
 
-                        return {
-                          background: `linear-gradient(to right, ${bgColors.join(
-                            ", "
-                          )})`,
-                        };
+                        return { backgroundColor: "#ffffff" };
                       })()),
                 }}
                 onPointerDown={(e) => {

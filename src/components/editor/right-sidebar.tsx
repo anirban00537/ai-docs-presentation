@@ -23,10 +23,10 @@ type RightSidebarProps = {
   onClose: () => void;
   onOpenPanel: (panel: SidebarPanel) => void;
   // Background panel props
-  backgroundColor?: string[] | string;
+  backgroundColor?: string;
   backgroundImage?: string;
   backgroundBlur?: boolean;
-  onBackgroundColorChange?: (colors: string[]) => void;
+  onBackgroundColorChange?: (color: string) => void;
   onBackgroundImageChange?: (imageUrl: string | undefined) => void;
   onBackgroundBlurChange?: (blur: boolean) => void;
   // Theme panel props

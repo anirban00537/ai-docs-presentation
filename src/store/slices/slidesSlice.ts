@@ -44,8 +44,9 @@ export const mapApiSlideToModel = (
   // Automatically include all optional fields from slideData
   // This uses object spread to include all properties from slideData that match SlideModel
   // New fields added to SlideModel will automatically be included here
-  const optionalFields: Partial<Omit<SlideModel, "id" | "title" | "widgets">> = {};
-  
+  const optionalFields: Partial<Omit<SlideModel, "id" | "title" | "widgets">> =
+    {};
+
   // Copy all fields from slideData that are not id, title, or widgets
   // This automatically picks up any new fields added to SlideModel
   Object.keys(slideData).forEach((key) => {
@@ -68,7 +69,7 @@ export type SlideModel = {
   id: string;
   title: string;
   widgets: SlideWidget[];
-  backgroundColor?: string[];
+  backgroundColor?: string;
   backgroundImage?: string;
   backgroundBlur?: boolean;
   showSlideNumber?: boolean;
@@ -77,7 +78,7 @@ export type SlideModel = {
 
 export type GlobalTheme = {
   id: string;
-  background: string[];
+  background: string;
   surface: string;
   text: string;
   accent: string;
@@ -157,10 +158,12 @@ const slidesSlice = createSlice({
       if (widgets) {
         newSlide.widgets = widgets;
       }
+      // Set background color from global theme
       const targetIndex =
         insertIndex >= 0 ? insertIndex + 1 : state.slides.length;
       state.slides.splice(targetIndex, 0, newSlide);
       state.activeSlideId = newSlide.id;
+      console.log(newSlide, " newSlide");
     },
     setActiveSlide(state, action: PayloadAction<string>) {
       const exists = state.slides.some((slide) => slide.id === action.payload);
