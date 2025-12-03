@@ -74,12 +74,12 @@ export const EditorSidebarShell: React.FC<ShellProps> = ({
           : "bg-white",
         // Medium height, centered vertically
         "h-[70vh]",
-        // Rounded corners on the right side
-        "rounded-r-2xl",
+        // Rounded corners on all sides
+        "rounded-2xl",
         // Enhanced borders and shadows - theme-aware
         isDarkTheme
-          ? "border-r border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/10"
-          : "border-r border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50",
+          ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/10"
+          : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50",
         collapsed
           ? "w-0 min-w-0 opacity-0 pointer-events-none translate-x-[-20px]"
           : "w-48 opacity-100 pointer-events-auto translate-x-0",
