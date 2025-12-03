@@ -7,6 +7,7 @@ import React, {
   useMemo,
   useRef,
 } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Slide from "@/components/editor/slide";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
@@ -35,6 +36,32 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
   const slideContainerRef = useRef<HTMLDivElement>(null);
   const previousIndexRef = useRef(initialSlideIndex);
 
+  // Animation variants for slide transitions
+  const slideVariants = {
+    enter: (direction: SlideDirection) => ({
+      x: direction === "next" ? "100%" : direction === "prev" ? "-100%" : 0,
+      opacity: 0,
+      scale: 0.95,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    exit: (direction: SlideDirection) => ({
+      x: direction === "next" ? "-100%" : direction === "prev" ? "100%" : 0,
+      opacity: 0,
+      scale: 0.95,
+    }),
+  };
+
+  const slideTransition = {
+    type: "spring" as const,
+    stiffness: 300,
+    damping: 30,
+    mass: 0.8,
+  };
+
   const currentSlide = slides[currentIndex];
   const isFirstSlide = currentIndex === 0;
   const isLastSlide = currentIndex === slides.length - 1;
@@ -54,49 +81,36 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
     if (!isLastSlide && !isTransitioning) {
       setIsTransitioning(true);
       setSlideDirection("next");
+      previousIndexRef.current = currentIndex;
+      setCurrentIndex((prev) => prev + 1);
       setTimeout(() => {
-        setCurrentIndex((prev) => {
-          previousIndexRef.current = prev;
-          return prev + 1;
-        });
-        setTimeout(() => {
-          setIsTransitioning(false);
-          setSlideDirection("none");
-        }, 50);
-      }, 10);
+        setIsTransitioning(false);
+      }, 600);
     }
-  }, [isLastSlide, isTransitioning]);
+  }, [isLastSlide, isTransitioning, currentIndex]);
 
   const goToPrevious = useCallback(() => {
     if (!isFirstSlide && !isTransitioning) {
       setIsTransitioning(true);
       setSlideDirection("prev");
+      previousIndexRef.current = currentIndex;
+      setCurrentIndex((prev) => prev - 1);
       setTimeout(() => {
-        setCurrentIndex((prev) => {
-          previousIndexRef.current = prev;
-          return prev - 1;
-        });
-        setTimeout(() => {
-          setIsTransitioning(false);
-          setSlideDirection("none");
-        }, 50);
-      }, 10);
+        setIsTransitioning(false);
+      }, 600);
     }
-  }, [isFirstSlide, isTransitioning]);
+  }, [isFirstSlide, isTransitioning, currentIndex]);
 
   const goToSlide = useCallback(
     (index: number) => {
       if (index !== currentIndex && !isTransitioning) {
         setIsTransitioning(true);
         setSlideDirection(index > currentIndex ? "next" : "prev");
+        previousIndexRef.current = currentIndex;
+        setCurrentIndex(index);
         setTimeout(() => {
-          previousIndexRef.current = currentIndex;
-          setCurrentIndex(index);
-          setTimeout(() => {
-            setIsTransitioning(false);
-            setSlideDirection("none");
-          }, 50);
-        }, 10);
+          setIsTransitioning(false);
+        }, 600);
       }
     },
     [currentIndex, isTransitioning]
@@ -148,14 +162,15 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
   const isDarkTheme = globalTheme?.tone === "dark";
 
   return (
-    <div
-      className={cn(
-        "fixed inset-0 z-[9999] overflow-hidden transition-opacity duration-500 ease-out",
-        isExiting ? "opacity-0" : "opacity-100"
-      )}
+    <motion.div
+      className="fixed inset-0 z-[9999] overflow-hidden"
       style={{
         backgroundColor: backgroundColor,
       }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isExiting ? 0 : 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
     >
       {/* Vertical Progress Bar - Left Side */}
       <div className="absolute left-0 top-0 bottom-0 w-1 z-50 flex flex-col items-center justify-center">
@@ -165,25 +180,30 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
             isDarkTheme ? "bg-white/10" : "bg-black/10"
           )}
         >
-          <div
-            className={cn(
-              "absolute bottom-0 left-0 right-0 transition-all duration-700 ease-out rounded-full"
-            )}
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 rounded-full"
             style={{
-              height: `${progressPercentage}%`,
               backgroundColor: primaryColor,
               boxShadow: isDarkTheme
                 ? `0 0 20px ${primaryColor}80`
                 : `0 0 10px ${primaryColor}40`,
             }}
+            initial={{ height: 0 }}
+            animate={{ height: `${progressPercentage}%` }}
+            transition={{
+              type: "spring",
+              stiffness: 200,
+              damping: 25,
+            }}
           />
-          <div
-            className={cn(
-              "absolute bottom-0 left-0 right-0 transition-all duration-700 ease-out",
-              "bg-white/20 blur-sm"
-            )}
-            style={{
-              height: `${progressPercentage}%`,
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 bg-white/20 blur-sm"
+            initial={{ height: 0 }}
+            animate={{ height: `${progressPercentage}%` }}
+            transition={{
+              type: "spring",
+              stiffness: 200,
+              damping: 25,
             }}
           />
         </div>
@@ -192,21 +212,18 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
       {/* Slide Indicators - Left Side */}
       <div className="absolute left-4 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-2">
         {slides.map((_, index) => (
-          <button
+          <motion.button
             key={index}
             onClick={() => goToSlide(index)}
-            className={cn(
-              "relative transition-all duration-300 ease-out group",
-              "focus:outline-none"
-            )}
+            className="relative focus:outline-none"
             disabled={isTransitioning}
             aria-label={`Go to slide ${index + 1}`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <div
-              className={cn(
-                "w-2 h-2 rounded-full transition-all duration-300 ease-out",
-                index === currentIndex ? "w-3 h-3 scale-125" : ""
-              )}
+            <motion.div
+              className="rounded-full"
               style={{
                 backgroundColor:
                   index === currentIndex
@@ -219,16 +236,37 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
                     ? `0 0 10px ${primaryColor}80`
                     : undefined,
               }}
+              animate={{
+                width: index === currentIndex ? 12 : 8,
+                height: index === currentIndex ? 12 : 8,
+                scale: index === currentIndex ? 1.25 : 1,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 20,
+              }}
             />
             {index === currentIndex && (
-              <div
-                className={cn(
-                  "absolute inset-0 rounded-full animate-ping",
-                  isDarkTheme ? "bg-white/40" : "bg-gray-900/40"
-                )}
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                style={{
+                  backgroundColor: isDarkTheme
+                    ? "rgba(255, 255, 255, 0.4)"
+                    : "rgba(0, 0, 0, 0.4)",
+                }}
+                animate={{
+                  scale: [1, 1.5, 1],
+                  opacity: [0.5, 0, 0.5],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               />
             )}
-          </button>
+          </motion.button>
         ))}
       </div>
 
@@ -272,38 +310,34 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
       <div className="relative flex h-full w-full items-center justify-center px-4 py-6 sm:px-8 sm:py-8 md:px-12 md:py-12 lg:px-16 lg:py-16">
         <div
           ref={slideContainerRef}
-          className={cn(
-            "relative w-full h-full max-w-[95vw] max-h-[95vh]",
-            "transition-all duration-700 ease-in-out"
-          )}
+          className="relative w-full h-full max-w-[95vw] max-h-[95vh]"
         >
-          {/* Current Slide with Smooth Transitions */}
-          <div
-            className={cn(
-              "absolute inset-0 transition-all duration-700 ease-in-out",
-              isTransitioning
-                ? slideDirection === "next"
-                  ? "-translate-x-full opacity-0 scale-95"
-                  : slideDirection === "prev"
-                  ? "translate-x-full opacity-0 scale-95"
-                  : "translate-x-0 opacity-100 scale-100"
-                : "translate-x-0 opacity-100 scale-100",
-              isExiting && "scale-95 opacity-0"
-            )}
-          >
-            <Slide
-              slide={currentSlide}
-              selectedId={null}
-              editingId={null}
-              liveOverrides={{}}
-              onSelectWidget={() => {}}
-              onSetLiveOverride={() => {}}
-              onClearLiveOverride={() => {}}
-              globalTheme={globalTheme}
-              showSnapLines={false}
-              padding={0}
-            />
-          </div>
+          {/* Current Slide with Smooth Framer Motion Transitions */}
+          <AnimatePresence mode="wait" custom={slideDirection}>
+            <motion.div
+              key={currentIndex}
+              custom={slideDirection}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={slideTransition}
+              className="absolute inset-0"
+            >
+              <Slide
+                slide={currentSlide}
+                selectedId={null}
+                editingId={null}
+                liveOverrides={{}}
+                onSelectWidget={() => {}}
+                onSetLiveOverride={() => {}}
+                onClearLiveOverride={() => {}}
+                globalTheme={globalTheme}
+                showSnapLines={false}
+                padding={0}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 
@@ -330,6 +364,6 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
         disabled={isLastSlide || isTransitioning}
         aria-label="Next slide"
       />
-    </div>
+    </motion.div>
   );
 };
