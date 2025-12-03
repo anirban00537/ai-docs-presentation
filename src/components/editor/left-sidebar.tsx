@@ -96,8 +96,8 @@ const SortableSlideItem = ({
           }
         }}
         className={cn(
-          "relative flex-1 aspect-video rounded-xl overflow-hidden transition-all duration-300 outline-none group/btn cursor-pointer",
-          "ring-1 shadow-md bg-background",
+          "relative flex-1 aspect-video rounded-md overflow-hidden transition-all duration-300 outline-none group/btn cursor-pointer",
+          "ring-1 shadow-md",
           isActive
             ? "ring-2 ring-primary shadow-lg shadow-primary/20 scale-[1.02]"
             : globalTheme?.tone === "dark"
@@ -148,7 +148,7 @@ const SortableSlideItem = ({
           <div
             className={cn(
               "absolute inset-0 group-hover/btn:bg-transparent transition-colors duration-300",
-              globalTheme?.tone === "dark" ? "bg-white/5" : "bg-background/5"
+              globalTheme?.tone === "dark" ? "bg-transparent" : "bg-background/5"
             )}
           />
         )}
