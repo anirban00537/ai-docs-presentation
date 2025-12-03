@@ -10,12 +10,15 @@ export default function EditorLayout({
   children: React.ReactNode;
 }) {
   const globalTheme = useAppSelector(selectGlobalTheme);
+  const isDarkTheme = globalTheme?.tone === "dark";
 
   return (
     <div
       className="fixed inset-0 w-full h-full overflow-hidden"
       style={{
-        backgroundColor: globalTheme?.surface || "var(--background)",
+        backgroundColor: isDarkTheme
+          ? "oklch(0.1 0.01 250)"
+          : globalTheme?.surface || "var(--background)",
       }}
     >
       {children}

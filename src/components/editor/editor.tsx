@@ -209,7 +209,7 @@ const Editor = () => {
           onOpenInsertPanel={() => togglePanel("insert")}
           onStartPresentation={handleStartPresentation}
         />
-        <div className="flex flex-1 min-h-0 overflow-hidden h-full pt-20">
+        <div className="flex flex-1 min-h-0 overflow-hidden h-full  py-10">
           <div className="flex flex-1 flex-col items-center justify-center min-h-0">
             <p className="text-muted-foreground/70 text-sm font-medium">
               No slide selected
@@ -243,7 +243,7 @@ const Editor = () => {
         onOpenInsertPanel={() => togglePanel("insert")}
         onStartPresentation={handleStartPresentation}
       />
-      <div className="flex flex-1 min-h-0 overflow-hidden h-full pt-20">
+      <div className="flex flex-1 min-h-0 overflow-hidden h-full  py-10">
         <div
           className="flex flex-1 flex-col gap-1 overflow-hidden px-1 pt-1 min-h-0"
           onWheel={handleWheel}

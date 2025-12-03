@@ -95,16 +95,14 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
     <header
       className={cn(
         "fixed top-4 left-1/2 -translate-x-1/2 pointer-events-auto overflow-hidden flex items-center justify-between px-5 h-14 z-50 transition-all duration-300",
-        // Solid background - theme-aware
-        isDarkTheme ? "bg-neutral-950" : "bg-white",
         // Rounded corners
         "rounded-2xl",
         // Width constraint
         "w-[calc(100%-2rem)] max-w-4xl",
-        // Enhanced borders and shadows - theme-aware
+        // Simple border and shadow - theme-aware
         isDarkTheme
-          ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/10"
-          : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50",
+          ? "border border-neutral-800 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
+          : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]",
         isHovered && isDarkTheme
           ? "shadow-[0_12px_40px_0_rgba(0,0,0,0.5)]"
           : isHovered
@@ -113,10 +111,12 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         isScrolled && "shadow-[0_10px_35px_-25px_rgba(0,0,0,0.8)]"
       )}
       style={{
-        // Subtle inner shadow for depth - theme-aware
+        // Use darker colors from globals.css - theme-aware
+        backgroundColor: isDarkTheme ? "oklch(0.1 0.01 250)" : "oklch(1 0 0)",
+        // Simple shadow without 3D effects
         boxShadow: isDarkTheme
-          ? "inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 2px 8px 0 rgba(0, 0, 0, 0.2)"
-          : "inset 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.12), 0 2px 8px 0 rgba(0, 0, 0, 0.08)",
+          ? "0 8px 32px 0 rgba(0, 0, 0, 0.4)"
+          : "0 8px 32px 0 rgba(0, 0, 0, 0.12)",
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
