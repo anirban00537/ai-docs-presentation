@@ -6,6 +6,7 @@ import Editor from "@/components/editor/editor";
 import { LeftSidebar } from "@/components/editor/left-sidebar";
 import { EditorSidebarProvider } from "@/components/editor/editor-sidebar-shell";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectIsPresentationMode } from "@/store/slices/editorUiSlice";
 import {
   selectPresentationId,
   loadPresentation,
@@ -29,6 +30,7 @@ const EditorWorkspace = () => {
   const presentationId = searchParams.get("presentationId");
   const dispatch = useAppDispatch();
   const currentPresentationId = useAppSelector(selectPresentationId);
+  const isPresentationMode = useAppSelector(selectIsPresentationMode);
 
   // Use TanStack Query to fetch presentation data
   const {
@@ -107,7 +109,7 @@ const EditorWorkspace = () => {
 
   return (
     <div className="relative h-full w-full">
-      <LeftSidebar />
+      {!isPresentationMode && <LeftSidebar />}
       <div className="flex h-full w-full overflow-hidden">
         <Editor />
       </div>

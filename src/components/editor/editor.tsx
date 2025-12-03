@@ -11,7 +11,6 @@ import {
   setSlideTheme,
   updateGlobalTheme,
   removeWidget,
-  setActiveSlide,
 } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
 import { EditorToolbarTitle } from "@/components/editor/editor-toolbar-title";
@@ -24,6 +23,10 @@ import {
 import { PresentationMode } from "@/components/editor/presentation-mode";
 import { useSlideIntersection } from "@/hooks/use-slide-intersection";
 import type { SlideModel, GlobalTheme } from "@/store/slices/slidesSlice";
+import {
+  selectIsPresentationMode,
+  setPresentationMode,
+} from "@/store/slices/editorUiSlice";
 
 // Slide wrapper component for intersection observer
 const SlideWrapper: React.FC<{
@@ -116,7 +119,7 @@ const Editor = () => {
   } = useWidgetInteractions();
 
   const [activePanel, setActivePanel] = React.useState<SidebarPanel>(null);
-  const [isPresentationMode, setIsPresentationMode] = React.useState(false);
+  const isPresentationMode = useAppSelector(selectIsPresentationMode);
 
   const togglePanel = React.useCallback((panel: SidebarPanel) => {
     setActivePanel((current) => (current === panel ? null : panel));
@@ -124,13 +127,13 @@ const Editor = () => {
 
   const handleStartPresentation = React.useCallback(() => {
     if (slides.length > 0) {
-      setIsPresentationMode(true);
+      dispatch(setPresentationMode(true));
     }
-  }, [slides.length]);
+  }, [slides.length, dispatch]);
 
   const handleExitPresentation = React.useCallback(() => {
-    setIsPresentationMode(false);
-  }, []);
+    dispatch(setPresentationMode(false));
+  }, [dispatch]);
 
   const handleBackgroundColorChange = React.useCallback(
     (color: string) => {

@@ -27,18 +27,9 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
   const isFirstSlide = currentIndex === 0;
   const isLastSlide = currentIndex === slides.length - 1;
 
-  const meshBackground = useMemo(() => {
-    const backgroundColor = globalTheme?.background ?? "#0f172a";
-    const surfaceColor = globalTheme?.surface ?? "rgba(15,23,42,0.92)";
-    const accentColor = globalTheme?.accent ?? "#6366f1";
-
-    return [
-      backgroundColor,
-      `radial-gradient(at 25% 25%, ${surfaceColor} 0%, transparent 55%)`,
-      `radial-gradient(at 70% 65%, ${surfaceColor} 0%, transparent 60%)`,
-      `radial-gradient(at 85% 20%, ${accentColor} 0%, transparent 45%)`,
-      `radial-gradient(at 15% 80%, ${accentColor}33 0%, transparent 50%)`,
-    ].join(", ");
+  const backgroundColor = useMemo(() => {
+    // Use surface color from globalTheme as the main background
+    return globalTheme?.surface ?? "#0f172a";
   }, [globalTheme]);
 
   const goToNext = useCallback(() => {
@@ -96,37 +87,57 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
     return null;
   }
 
+  const isDarkTheme = globalTheme?.tone === "dark";
+
   return (
     <div
       className={cn(
-        "fixed inset-0 z-9999 transition-opacity duration-200",
+        "fixed inset-0 z-[9999] transition-opacity duration-300 ease-out",
         isExiting ? "opacity-0" : "opacity-100"
       )}
       style={{
-        backgroundImage: meshBackground,
+        backgroundColor: backgroundColor,
       }}
     >
       {/* Exit Button */}
       <Button
         variant="ghost"
         size="icon"
-        className="absolute top-4 right-4 z-50 h-10 w-10 rounded-full bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm transition-all"
+        className={cn(
+          "absolute top-6 right-6 z-50 h-11 w-11 rounded-full transition-all duration-200",
+          "backdrop-blur-md border shadow-lg",
+          isDarkTheme
+            ? "bg-black/40 text-white hover:bg-black/60 border-white/20 hover:border-white/30"
+            : "bg-white/80 text-gray-900 hover:bg-white border-gray-200/50 hover:border-gray-300",
+          "hover:scale-105 active:scale-95"
+        )}
         onClick={handleExit}
+        aria-label="Exit presentation mode"
       >
         <X className="h-5 w-5" />
       </Button>
 
       {/* Slide Counter */}
-      <div className="absolute top-4 left-4 z-50 px-3 py-1.5 rounded-full bg-white/10 text-white text-sm font-medium backdrop-blur-sm">
-        {currentIndex + 1} / {slides.length}
+      <div
+        className={cn(
+          "absolute top-6 left-6 z-50 px-4 py-2 rounded-full text-sm font-semibold",
+          "backdrop-blur-md border shadow-lg transition-all duration-200",
+          isDarkTheme
+            ? "bg-black/40 text-white border-white/20"
+            : "bg-white/80 text-gray-900 border-gray-200/50"
+        )}
+      >
+        <span className="tabular-nums">
+          {currentIndex + 1} / {slides.length}
+        </span>
       </div>
 
       {/* Main Slide Area */}
-      <div className="relative flex h-full w-full items-center justify-center px-4 py-6 sm:px-10 sm:py-10 md:px-16 md:py-12">
+      <div className="relative flex h-full w-full items-center justify-center px-4 py-6 sm:px-8 sm:py-8 md:px-12 md:py-12 lg:px-16 lg:py-16">
         <div
           className={cn(
-            "w-full h-full transition-transform duration-300",
-            isExiting && "scale-95"
+            "w-full h-full max-w-[95vw] max-h-[95vh] transition-all duration-500 ease-out",
+            isExiting ? "scale-95 opacity-0" : "scale-100 opacity-100"
           )}
         >
           <Slide
@@ -145,29 +156,44 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
       </div>
 
       {/* Navigation Controls */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 px-4 py-3 rounded-full backdrop-blur-md border shadow-xl transition-all duration-200"
+        style={{
+          backgroundColor: isDarkTheme ? "rgba(0, 0, 0, 0.4)" : "rgba(255, 255, 255, 0.8)",
+          borderColor: isDarkTheme ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)",
+        }}
+      >
         <Button
           variant="ghost"
           size="icon"
           className={cn(
-            "h-12 w-12 rounded-full bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm transition-all",
-            isFirstSlide && "opacity-30 cursor-not-allowed"
+            "h-11 w-11 rounded-full transition-all duration-200",
+            "hover:scale-110 active:scale-95",
+            isFirstSlide && "opacity-30 cursor-not-allowed hover:scale-100",
+            isDarkTheme
+              ? "text-white hover:bg-white/20"
+              : "text-gray-900 hover:bg-gray-200/80"
           )}
           onClick={goToPrevious}
           disabled={isFirstSlide}
+          aria-label="Previous slide"
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2 px-2">
           {slides.map((_, index) => (
             <button
               key={index}
               className={cn(
-                "h-2 rounded-full transition-all duration-300",
+                "rounded-full transition-all duration-300 ease-out",
+                "hover:scale-110 active:scale-95",
                 index === currentIndex
-                  ? "w-8 bg-white"
-                  : "w-2 bg-white/40 hover:bg-white/60"
+                  ? isDarkTheme
+                    ? "w-8 h-2.5 bg-white shadow-lg"
+                    : "w-8 h-2.5 bg-gray-900 shadow-lg"
+                  : isDarkTheme
+                  ? "w-2 h-2 bg-white/40 hover:bg-white/60"
+                  : "w-2 h-2 bg-gray-400 hover:bg-gray-600"
               )}
               onClick={() => setCurrentIndex(index)}
               aria-label={`Go to slide ${index + 1}`}
@@ -179,11 +205,16 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
           variant="ghost"
           size="icon"
           className={cn(
-            "h-12 w-12 rounded-full bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm transition-all",
-            isLastSlide && "opacity-30 cursor-not-allowed"
+            "h-11 w-11 rounded-full transition-all duration-200",
+            "hover:scale-110 active:scale-95",
+            isLastSlide && "opacity-30 cursor-not-allowed hover:scale-100",
+            isDarkTheme
+              ? "text-white hover:bg-white/20"
+              : "text-gray-900 hover:bg-gray-200/80"
           )}
           onClick={goToNext}
           disabled={isLastSlide}
+          aria-label="Next slide"
         >
           <ChevronRight className="h-6 w-6" />
         </Button>
@@ -191,13 +222,21 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
 
       {/* Click areas for navigation */}
       <button
-        className="absolute left-0 top-0 bottom-0 w-1/3 cursor-w-resize focus:outline-none"
+        className={cn(
+          "absolute left-0 top-0 bottom-0 w-1/3 focus:outline-none transition-opacity duration-200",
+          "hover:bg-black/5 dark:hover:bg-white/5",
+          isFirstSlide && "cursor-default opacity-0"
+        )}
         onClick={goToPrevious}
         disabled={isFirstSlide}
         aria-label="Previous slide"
       />
       <button
-        className="absolute right-0 top-0 bottom-0 w-1/3 cursor-e-resize focus:outline-none"
+        className={cn(
+          "absolute right-0 top-0 bottom-0 w-1/3 focus:outline-none transition-opacity duration-200",
+          "hover:bg-black/5 dark:hover:bg-white/5",
+          isLastSlide && "cursor-default opacity-0"
+        )}
         onClick={goToNext}
         disabled={isLastSlide}
         aria-label="Next slide"
