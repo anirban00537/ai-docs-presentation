@@ -14,7 +14,9 @@ import {
   removeWidget,
 } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
-import { EditorHeader } from "@/components/editor/editor-toolbar";
+import { EditorToolbarTitle } from "@/components/editor/editor-toolbar-title";
+import { EditorToolbarCenter } from "@/components/editor/editor-toolbar-center";
+import { EditorToolbarActions } from "@/components/editor/editor-toolbar-actions";
 import {
   RightSidebar,
   type SidebarPanel,
@@ -205,10 +207,13 @@ const Editor = () => {
           backgroundColor: globalTheme?.surface || undefined,
         }}
       >
-        <EditorHeader
-          onOpenInsertPanel={() => togglePanel("insert")}
-          onStartPresentation={handleStartPresentation}
-        />
+        <div className="fixed top-4 left-4 right-4 flex items-center justify-between gap-4 z-50 pointer-events-none">
+          <EditorToolbarTitle />
+          <EditorToolbarCenter
+            onOpenInsertPanel={() => togglePanel("insert")}
+          />
+          <EditorToolbarActions onStartPresentation={handleStartPresentation} />
+        </div>
         <div className="flex flex-1 min-h-0 overflow-hidden h-full  py-10">
           <div className="flex flex-1 flex-col items-center justify-center min-h-0">
             <p className="text-muted-foreground/70 text-sm font-medium">
@@ -239,10 +244,11 @@ const Editor = () => {
         backgroundColor: globalTheme?.surface || undefined,
       }}
     >
-      <EditorHeader
-        onOpenInsertPanel={() => togglePanel("insert")}
-        onStartPresentation={handleStartPresentation}
-      />
+      <div className="fixed top-4 left-4 right-4 flex items-center justify-between gap-4 z-50 pointer-events-none">
+        <EditorToolbarTitle />
+        <EditorToolbarCenter onOpenInsertPanel={() => togglePanel("insert")} />
+        <EditorToolbarActions onStartPresentation={handleStartPresentation} />
+      </div>
       <div className="flex flex-1 min-h-0 overflow-hidden h-full  py-10">
         <div
           className="flex flex-1 flex-col gap-1 overflow-hidden px-1 pt-1 min-h-0"

@@ -3,8 +3,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { AppleButton } from "@/components/editor/apple-button";
-import { Plus, ExternalLink, Play, Image, Type, ArrowLeft } from "lucide-react";
+import { Plus, Image, Type, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
@@ -27,12 +26,10 @@ import { selectGlobalTheme } from "@/store/slices/slidesSlice";
 
 type EditorHeaderProps = {
   onOpenInsertPanel: () => void;
-  onStartPresentation: () => void;
 };
 
 export const EditorHeader: React.FC<EditorHeaderProps> = ({
   onOpenInsertPanel,
-  onStartPresentation,
 }) => {
   const router = useRouter();
   const presentationTitle = useAppSelector(selectPresentationTitle);
@@ -94,11 +91,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   return (
     <header
       className={cn(
-        "fixed top-4 left-1/2 -translate-x-1/2 pointer-events-auto overflow-hidden flex items-center justify-between px-5 h-14 z-50 transition-all duration-300",
+        "pointer-events-auto overflow-hidden flex items-center px-4 h-11 transition-all duration-300",
         // Rounded corners
         "rounded-2xl",
-        // Width constraint
-        "w-[calc(100%-2rem)] max-w-4xl",
         // Simple border and shadow - theme-aware
         isDarkTheme
           ? "border border-neutral-800 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
@@ -138,7 +133,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         </Button>
         <div
           className={cn(
-            "h-7 w-px",
+            "h-5 w-px",
             isDarkTheme ? "bg-white/20" : "bg-border/60"
           )}
         />
@@ -171,12 +166,12 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
         </div>
       </div>
 
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 z-10">
         <Button
           variant="ghost"
           size="sm"
           className={cn(
-            "h-9 rounded-lg px-4 text-xs font-semibold hover:shadow-sm transition-all duration-200 active:scale-[0.97]",
+            "h-8 rounded-lg px-3 text-xs font-semibold hover:shadow-sm transition-all duration-200 active:scale-[0.97]",
             isDarkTheme
               ? "text-white/80 hover:text-white hover:bg-white/10"
               : "text-muted-foreground hover:text-foreground hover:bg-background"
@@ -195,7 +190,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               variant="ghost"
               size="sm"
               className={cn(
-                "h-9 rounded-lg px-4 text-xs font-semibold hover:shadow-sm transition-all duration-200 active:scale-[0.97]",
+                "h-8 rounded-lg px-3 text-xs font-semibold hover:shadow-sm transition-all duration-200 active:scale-[0.97]",
                 isDarkTheme
                   ? "text-white/80 hover:text-white hover:bg-white/10"
                   : "text-muted-foreground hover:text-foreground hover:bg-background"
@@ -227,7 +222,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
               variant="ghost"
               size="sm"
               className={cn(
-                "h-9 rounded-lg px-4 text-xs font-semibold hover:shadow-sm transition-all duration-200 active:scale-[0.97]",
+                "h-8 rounded-lg px-3 text-xs font-semibold hover:shadow-sm transition-all duration-200 active:scale-[0.97]",
                 isDarkTheme
                   ? "text-white/80 hover:text-white hover:bg-white/10"
                   : "text-muted-foreground hover:text-foreground hover:bg-background"
@@ -249,31 +244,6 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
-
-      <div className="flex items-center gap-2.5">
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            "h-9 rounded-lg px-4 text-xs font-semibold transition-all duration-200 active:scale-[0.97]",
-            isDarkTheme
-              ? "text-white/80 hover:text-white hover:bg-white/10 border border-white/20"
-              : "text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border/60"
-          )}
-          onClick={onStartPresentation}
-        >
-          <Play className="mr-2 h-4 w-4 fill-current" />
-          Play
-        </Button>
-        <AppleButton
-          variant="primary"
-          size="lg"
-          className="text-xs font-semibold px-4"
-        >
-          <ExternalLink className="mr-2 h-4 w-4" />
-          Share
-        </AppleButton>
       </div>
     </header>
   );
