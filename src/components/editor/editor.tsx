@@ -218,11 +218,37 @@ const Editor = () => {
       setProgrammaticScroll(false);
     };
 
+    const handleRequestSlideScroll = (event: Event) => {
+      const customEvent = event as CustomEvent<{ slideId: string }>;
+      const { slideId } = customEvent.detail;
+      const container = scrollContainerRef.current;
+
+      if (container) {
+        const slideElement = container.querySelector(
+          `[data-slide-id="${slideId}"]`
+        ) as HTMLElement | null;
+
+        if (slideElement) {
+          setProgrammaticScroll(true);
+          slideElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+
+          // Reset programmatic scroll after animation
+          setTimeout(() => {
+            setProgrammaticScroll(false);
+          }, 500);
+        }
+      }
+    };
+
     window.addEventListener(
       "programmatic-scroll-start",
       handleProgrammaticStart
     );
     window.addEventListener("programmatic-scroll-end", handleProgrammaticEnd);
+    window.addEventListener("request-slide-scroll", handleRequestSlideScroll);
 
     return () => {
       window.removeEventListener(
@@ -232,6 +258,10 @@ const Editor = () => {
       window.removeEventListener(
         "programmatic-scroll-end",
         handleProgrammaticEnd
+      );
+      window.removeEventListener(
+        "request-slide-scroll",
+        handleRequestSlideScroll
       );
     };
   }, [setProgrammaticScroll]);
