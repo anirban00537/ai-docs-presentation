@@ -199,7 +199,7 @@ const Slide: React.FC<SlideProps> = ({
               <div
                 className={cn(
                   "slide editable theme-background",
-                  "relative overflow-hidden bg-white transition-[box-shadow,border] duration-300 ease-out",
+                  "relative overflow-hidden bg-white transition-[box-shadow,border] duration-300 ease-out rounded-2xl",
                   slide.backgroundImage &&
                     slide.backgroundBlur &&
                     "has-blurred-background"
@@ -253,7 +253,7 @@ const Slide: React.FC<SlideProps> = ({
               >
                 {slide.backgroundImage && slide.backgroundBlur && (
                   <div
-                    className="absolute inset-0 z-0"
+                    className="absolute inset-0 z-0 rounded-2xl"
                     style={{
                       backgroundImage: `url(${slide.backgroundImage})`,
                       backgroundSize: "cover",

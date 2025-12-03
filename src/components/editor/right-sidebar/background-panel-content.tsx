@@ -45,7 +45,7 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
       <div
         className={cn(
           "px-4 pt-4 pb-3 border-b",
-          isDarkTheme ? "border-white/10" : "border-border/30"
+          isDarkTheme ? "border-neutral-800" : "border-border"
         )}
       >
         <Tabs

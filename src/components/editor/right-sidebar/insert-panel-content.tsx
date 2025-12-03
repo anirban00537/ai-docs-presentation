@@ -333,8 +333,8 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
               className={cn(
                 "group flex flex-col items-center justify-center gap-2.5 rounded-xl border p-3 transition-all duration-200 hover:border-primary/40 hover:shadow-md active:scale-[0.96]",
                 isDarkTheme
-                  ? "border-white/10 bg-black/50 hover:bg-black/70"
-                  : "border-border/50 bg-background/60 hover:bg-accent/80"
+                  ? "border-neutral-800 bg-black/50 hover:bg-black/70"
+                  : "border-border bg-background/60 hover:bg-accent/80"
               )}
             >
               <div

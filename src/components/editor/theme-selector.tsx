@@ -34,7 +34,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
         <div
           className={cn(
             "px-4 pt-4 pb-3 border-b shrink-0",
-            isDarkTheme ? "border-white/10" : "border-border/30"
+            isDarkTheme ? "border-neutral-800" : "border-border"
           )}
         >
           <TabsList
@@ -91,7 +91,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                         isActive
                           ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/30 hover:shadow-lg"
                           : isDarkTheme
-                          ? "border-white/10 bg-black/50 hover:bg-black/70 hover:border-white/20 hover:shadow-sm"
+                          ? "border-neutral-800 bg-black/50 hover:bg-black/70 hover:border-neutral-700 hover:shadow-sm"
                           : "border-border/50 bg-background/60 hover:bg-accent/50 hover:border-border hover:shadow-sm",
                         "active:scale-[0.98]"
                       )}

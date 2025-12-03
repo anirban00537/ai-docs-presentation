@@ -144,19 +144,21 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
       <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50 flex items-center justify-center">
         <div
           className={cn(
-            "flex flex-col items-center gap-2 p-3 rounded-2xl shadow-sm",
-            // Solid background - theme-aware (darker for dark theme)
-            isDarkTheme ? "bg-black" : "bg-white",
-            // Enhanced borders and shadows - theme-aware
+            "flex flex-col items-center gap-2 p-3 rounded-2xl",
+            // Simple border and shadow - theme-aware
             isDarkTheme
-              ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/10"
-              : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50"
+              ? "border border-neutral-800 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
+              : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
           )}
           style={{
-            // Subtle inner shadow for depth - theme-aware
+            // Use darker colors from globals.css - theme-aware
+            backgroundColor: isDarkTheme
+              ? "oklch(0.1 0.01 250)"
+              : "oklch(1 0 0)",
+            // Simple shadow without 3D effects
             boxShadow: isDarkTheme
-              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 2px 8px 0 rgba(0, 0, 0, 0.2)"
-              : "inset 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.12), 0 2px 8px 0 rgba(0, 0, 0, 0.08)",
+              ? "0 8px 32px 0 rgba(0, 0, 0, 0.4)"
+              : "0 8px 32px 0 rgba(0, 0, 0, 0.12)",
           }}
         >
           <Button
@@ -217,19 +219,21 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
       <div className="flex items-center justify-center">
         <div
           className={cn(
-            "flex flex-col items-center gap-2 p-3 rounded-2xl shadow-sm",
-            // Solid background - theme-aware (darker for dark theme)
-            isDarkTheme ? "bg-black" : "bg-white",
-            // Enhanced borders and shadows - theme-aware
+            "flex flex-col items-center gap-2 p-3 rounded-2xl",
+            // Simple border and shadow - theme-aware
             isDarkTheme
-              ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/10"
-              : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50"
+              ? "border border-neutral-800 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
+              : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
           )}
           style={{
-            // Subtle inner shadow for depth - theme-aware
+            // Use darker colors from globals.css - theme-aware
+            backgroundColor: isDarkTheme
+              ? "oklch(0.1 0.01 250)"
+              : "oklch(1 0 0)",
+            // Simple shadow without 3D effects
             boxShadow: isDarkTheme
-              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 2px 8px 0 rgba(0, 0, 0, 0.2)"
-              : "inset 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.12), 0 2px 8px 0 rgba(0, 0, 0, 0.08)",
+              ? "0 8px 32px 0 rgba(0, 0, 0, 0.4)"
+              : "0 8px 32px 0 rgba(0, 0, 0, 0.12)",
           }}
         >
           <Button
@@ -278,19 +282,19 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           "flex flex-col min-h-0 relative rounded-l-2xl overflow-hidden",
           // Medium height, centered vertically
           "h-[70vh]",
-          // Solid background - theme-aware (darker for dark theme)
-          isDarkTheme ? "bg-black" : "bg-white",
-          // Enhanced borders and shadows - theme-aware
+          // Simple border and shadow - theme-aware
           isDarkTheme
-            ? "border-l border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/10"
-            : "border-l border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50"
+            ? "border-l border-neutral-800 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
+            : "border-l border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
         )}
         style={{
           width: `${width}px`,
-          // Subtle inner shadow for depth - theme-aware
+          // Use darker colors from globals.css - theme-aware
+          backgroundColor: isDarkTheme ? "oklch(0.1 0.01 250)" : "oklch(1 0 0)",
+          // Simple shadow without 3D effects
           boxShadow: isDarkTheme
-            ? "inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 2px 8px 0 rgba(0, 0, 0, 0.2)"
-            : "inset 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.12), 0 2px 8px 0 rgba(0, 0, 0, 0.08)",
+            ? "0 8px 32px 0 rgba(0, 0, 0, 0.4)"
+            : "0 8px 32px 0 rgba(0, 0, 0, 0.12)",
         }}
       >
         {/* Resize handle */}
@@ -312,8 +316,8 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           className={cn(
             "flex items-center justify-between px-5 py-4 shrink-0 h-16",
             isDarkTheme
-              ? "border-b border-white/10"
-              : "border-b border-border/30"
+              ? "border-b border-neutral-800"
+              : "border-b border-border"
           )}
         >
           <h2
