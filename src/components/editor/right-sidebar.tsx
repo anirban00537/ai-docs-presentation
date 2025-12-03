@@ -9,7 +9,10 @@ import { ThemePanelContent } from "./right-sidebar/theme-panel-content";
 import { useWidgetCreation } from "@/hooks/use-widget-creation";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
-import { selectActiveSlide } from "@/store/slices/slidesSlice";
+import {
+  selectActiveSlide,
+  selectGlobalTheme,
+} from "@/store/slices/slidesSlice";
 
 export type SidebarPanel = "insert" | "background" | "theme" | null;
 
@@ -56,8 +59,10 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   onThemeChange,
 }) => {
   const activeSlide = useAppSelector(selectActiveSlide);
+  const globalThemeState = useAppSelector(selectGlobalTheme);
+  const effectiveTheme = globalTheme || globalThemeState;
+  const isDarkTheme = effectiveTheme?.tone === "dark";
   const {
-    handleAddText,
     handleAddFeatureCard,
     handleAddIconCard,
     handleAddImageCard,
@@ -136,17 +141,34 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   // When panel is null, show compact icon buttons
   if (!panel) {
     return (
-      <div className="h-full flex items-center justify-center shrink-0 z-40 relative">
-        <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm  shadow-sm">
+      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50 flex items-center justify-center">
+        <div
+          className={cn(
+            "flex flex-col items-center gap-2 p-3 rounded-2xl shadow-sm",
+            // Solid background - theme-aware (darker for dark theme)
+            isDarkTheme ? "bg-black" : "bg-white",
+            // Enhanced borders and shadows - theme-aware
+            isDarkTheme
+              ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/10"
+              : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50"
+          )}
+          style={{
+            // Subtle inner shadow for depth - theme-aware
+            boxShadow: isDarkTheme
+              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 2px 8px 0 rgba(0, 0, 0, 0.2)"
+              : "inset 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.12), 0 2px 8px 0 rgba(0, 0, 0, 0.08)",
+          }}
+        >
           <Button
             variant="ghost"
             size="icon"
             className={cn(
               "h-10 w-10 rounded-lg transition-all duration-200",
-              "text-muted-foreground hover:text-foreground",
-              "hover:bg-background dark:hover:bg-neutral-800/80",
               "hover:shadow-sm active:scale-95",
-              !activeSlide && "opacity-40 cursor-not-allowed"
+              !activeSlide && "opacity-40 cursor-not-allowed",
+              isDarkTheme
+                ? "text-white/80 hover:text-white hover:bg-black/70"
+                : "text-muted-foreground hover:text-foreground hover:bg-background"
             )}
             disabled={!activeSlide}
             onClick={() => onOpenPanel("background")}
@@ -159,10 +181,11 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             size="icon"
             className={cn(
               "h-10 w-10 rounded-lg transition-all duration-200",
-              "text-muted-foreground hover:text-foreground",
-              "hover:bg-background dark:hover:bg-neutral-800/80",
               "hover:shadow-sm active:scale-95",
-              !activeSlide && "opacity-40 cursor-not-allowed"
+              !activeSlide && "opacity-40 cursor-not-allowed",
+              isDarkTheme
+                ? "text-white/80 hover:text-white hover:bg-black/70"
+                : "text-muted-foreground hover:text-foreground hover:bg-background"
             )}
             disabled={!activeSlide}
             onClick={() => onOpenPanel("theme")}
@@ -189,20 +212,37 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   };
 
   return (
-    <div className="h-full flex items-center  shrink-0 z-40 relative">
+    <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50 flex items-center gap-3">
       {/* Icon buttons on the left */}
-      <div className="h-full flex items-center justify-center shrink-0">
-        <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm border border-border/40 dark:border-border/30 shadow-sm">
+      <div className="flex items-center justify-center">
+        <div
+          className={cn(
+            "flex flex-col items-center gap-2 p-3 rounded-2xl shadow-sm",
+            // Solid background - theme-aware (darker for dark theme)
+            isDarkTheme ? "bg-black" : "bg-white",
+            // Enhanced borders and shadows - theme-aware
+            isDarkTheme
+              ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/10"
+              : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50"
+          )}
+          style={{
+            // Subtle inner shadow for depth - theme-aware
+            boxShadow: isDarkTheme
+              ? "inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 2px 8px 0 rgba(0, 0, 0, 0.2)"
+              : "inset 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.12), 0 2px 8px 0 rgba(0, 0, 0, 0.08)",
+          }}
+        >
           <Button
             variant="ghost"
             size="icon"
             className={cn(
               "h-10 w-10 rounded-lg transition-all duration-200",
-              "text-muted-foreground hover:text-foreground",
-              "hover:bg-background dark:hover:bg-neutral-800/80",
               "hover:shadow-sm active:scale-95",
               !activeSlide && "opacity-40 cursor-not-allowed",
-              panel === "background" && "bg-primary/10 text-primary"
+              panel === "background" && "bg-primary/10 text-primary",
+              isDarkTheme
+                ? "text-white/80 hover:text-white hover:bg-black/70"
+                : "text-muted-foreground hover:text-foreground hover:bg-background"
             )}
             disabled={!activeSlide}
             onClick={() => onOpenPanel("background")}
@@ -215,11 +255,12 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             size="icon"
             className={cn(
               "h-10 w-10 rounded-lg transition-all duration-200",
-              "text-muted-foreground hover:text-foreground",
-              "hover:bg-background dark:hover:bg-neutral-800/80",
               "hover:shadow-sm active:scale-95",
               !activeSlide && "opacity-40 cursor-not-allowed",
-              panel === "theme" && "bg-primary/10 text-primary"
+              panel === "theme" && "bg-primary/10 text-primary",
+              isDarkTheme
+                ? "text-white/80 hover:text-white hover:bg-black/70"
+                : "text-muted-foreground hover:text-foreground hover:bg-background"
             )}
             disabled={!activeSlide}
             onClick={() => onOpenPanel("theme")}
@@ -233,8 +274,24 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
       {/* Sidebar content */}
       <div
         ref={sidebarRef}
-        className="h-full bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-l border-border/30 dark:border-border/30 flex flex-col shrink-0 min-h-0 z-40 shadow-[0_12px_32px_-24px_rgba(15,23,42,0.35)] relative"
-        style={{ width: `${width}px` }}
+        className={cn(
+          "flex flex-col min-h-0 relative rounded-l-2xl overflow-hidden",
+          // Medium height, centered vertically
+          "h-[70vh]",
+          // Solid background - theme-aware (darker for dark theme)
+          isDarkTheme ? "bg-black" : "bg-white",
+          // Enhanced borders and shadows - theme-aware
+          isDarkTheme
+            ? "border-l border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/10"
+            : "border-l border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50"
+        )}
+        style={{
+          width: `${width}px`,
+          // Subtle inner shadow for depth - theme-aware
+          boxShadow: isDarkTheme
+            ? "inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 2px 8px 0 rgba(0, 0, 0, 0.2)"
+            : "inset 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.12), 0 2px 8px 0 rgba(0, 0, 0, 0.08)",
+        }}
       >
         {/* Resize handle */}
         <div
@@ -251,14 +308,31 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             marginLeft: "-2px",
           }}
         />
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border/30 dark:border-border/25 shrink-0 h-16">
-          <h2 className="text-sm font-semibold text-foreground/90 tracking-tight">
+        <div
+          className={cn(
+            "flex items-center justify-between px-5 py-4 shrink-0 h-16",
+            isDarkTheme
+              ? "border-b border-white/10"
+              : "border-b border-border/30"
+          )}
+        >
+          <h2
+            className={cn(
+              "text-sm font-semibold tracking-tight",
+              isDarkTheme ? "text-white/90" : "text-foreground/90"
+            )}
+          >
             {getTitle()}
           </h2>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-200 active:scale-95"
+            className={cn(
+              "h-8 w-8 rounded-lg hover:bg-accent/50 transition-all duration-200 active:scale-95",
+              isDarkTheme
+                ? "text-white/80 hover:text-white"
+                : "text-muted-foreground hover:text-foreground"
+            )}
             onClick={onClose}
           >
             <XIcon className="h-4 w-4" />

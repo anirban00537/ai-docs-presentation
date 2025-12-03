@@ -13,6 +13,7 @@ import { Image, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 const PRESET_COLORS = [
   "#0f172a",
@@ -63,6 +64,7 @@ export function BackgroundSection({
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const [showImageBrowser, setShowImageBrowser] = useState(false);
+  const isDarkTheme = globalTheme?.tone === "dark";
 
   // Use slide backgroundColor if set, otherwise fall back to global theme background
   const currentColor = backgroundColor ?? globalTheme?.background ?? "#ffffff";
@@ -127,7 +129,12 @@ export function BackgroundSection({
             variant="ghost"
             size="sm"
             onClick={() => setShowImageBrowser(false)}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground shrink-0 h-7 px-2.5"
+            className={cn(
+              "flex items-center gap-1.5 text-xs shrink-0 h-7 px-2.5",
+              isDarkTheme
+                ? "text-white/80 hover:text-white"
+                : "text-muted-foreground hover:text-foreground"
+            )}
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Back</span>
@@ -150,7 +157,12 @@ export function BackgroundSection({
       {showImageSection && (
       <div className="space-y-3.5">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">
+          <h3
+            className={cn(
+              "text-[10px] font-bold uppercase tracking-widest",
+              isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+            )}
+          >
             Background Image
           </h3>
           {backgroundImage && (
@@ -166,10 +178,29 @@ export function BackgroundSection({
         <button
           type="button"
           onClick={() => setShowImageBrowser(true)}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-border/50 hover:border-primary/50 bg-background/50 hover:bg-primary/5 transition-all duration-200 group"
+          className={cn(
+            "w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed transition-all duration-200 group",
+            isDarkTheme
+              ? "border-white/10 hover:border-primary/50 bg-black/50 hover:bg-primary/10"
+              : "border-border/50 hover:border-primary/50 bg-background/50 hover:bg-primary/5"
+          )}
         >
-          <Image className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-          <span className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">
+          <Image
+            className={cn(
+              "h-4 w-4 transition-colors",
+              isDarkTheme
+                ? "text-white/70 group-hover:text-primary"
+                : "text-muted-foreground group-hover:text-primary"
+            )}
+          />
+          <span
+            className={cn(
+              "text-sm font-medium transition-colors",
+              isDarkTheme
+                ? "text-white/80 group-hover:text-primary"
+                : "text-muted-foreground group-hover:text-primary"
+            )}
+          >
             {backgroundImage
               ? "Change Background Image"
               : "Add Background Image"}
@@ -185,10 +216,20 @@ export function BackgroundSection({
               />
             </div>
             {/* Background Blur Toggle */}
-            <div className="flex items-center justify-between px-1 py-2 rounded-lg bg-background/50 border border-border/30">
+            <div
+              className={cn(
+                "flex items-center justify-between px-1 py-2 rounded-lg border",
+                isDarkTheme
+                  ? "bg-black/50 border-white/10"
+                  : "bg-background/50 border-border/30"
+              )}
+            >
               <Label
                 htmlFor="background-blur"
-                className="text-sm font-medium text-foreground cursor-pointer"
+                className={cn(
+                  "text-sm font-medium cursor-pointer",
+                  isDarkTheme ? "text-white/90" : "text-foreground"
+                )}
               >
                 Background Blur
               </Label>
@@ -206,7 +247,12 @@ export function BackgroundSection({
       {showColorSection && (
         <>
           <div className="space-y-3.5">
-            <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+            <h3
+              className={cn(
+                "text-[10px] font-bold uppercase tracking-widest px-1",
+                isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+              )}
+            >
               Background Color
             </h3>
             <div className="px-1">
@@ -222,7 +268,12 @@ export function BackgroundSection({
           </div>
 
           <div className="space-y-3.5">
-            <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+            <h3
+              className={cn(
+                "text-[10px] font-bold uppercase tracking-widest px-1",
+                isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+              )}
+            >
               Color Presets
             </h3>
             <div className="grid grid-cols-7 gap-2.5 px-1">

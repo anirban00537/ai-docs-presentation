@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import Editor from "@/components/editor/editor";
 import { LeftSidebar } from "@/components/editor/left-sidebar";
 import { EditorSidebarProvider } from "@/components/editor/editor-sidebar-shell";
-import { cn } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectPresentationId,
@@ -107,13 +106,9 @@ const EditorWorkspace = () => {
   }
 
   return (
-    <div
-      className={cn(
-        "flex h-[calc(100vh-20px)] w-full transition-all duration-300"
-      )}
-    >
+    <div className="relative h-full w-full">
       <LeftSidebar />
-      <div className="flex flex-1 overflow-hidden rounded-2xl border border-border/60 bg-background">
+      <div className="flex h-full w-full overflow-hidden">
         <Editor />
       </div>
     </div>

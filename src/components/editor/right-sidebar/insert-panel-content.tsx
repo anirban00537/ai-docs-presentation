@@ -24,6 +24,9 @@ import type {
   TitleCardPreset,
   PricingCardPreset,
 } from "@/components/editor/types";
+import { useAppSelector } from "@/store/hooks";
+import { selectGlobalTheme } from "@/store/slices/slidesSlice";
+import { cn } from "@/lib/utils";
 
 const featureCardPresets: FeatureCardPreset[] = [
   {
@@ -191,6 +194,8 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
   onAddTitleCard,
   onAddPricingCard,
 }) => {
+  const globalTheme = useAppSelector(selectGlobalTheme);
+  const isDarkTheme = globalTheme?.tone === "dark";
   const handleAddFeatureCard = (preset: FeatureCardPreset) => {
     onAddFeatureCard?.(preset);
   };
@@ -312,7 +317,12 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
     <div className="space-y-7 pb-6">
       {/* All Cards */}
       <div className="space-y-3">
-        <h3 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
+        <h3
+          className={cn(
+            "px-1 text-[10px] font-bold uppercase tracking-widest",
+            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+          )}
+        >
           Cards
         </h3>
         <div className="grid grid-cols-2 gap-2.5">
@@ -320,16 +330,38 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
             <button
               key={`${card.type}-${card.preset.id}-${index}`}
               onClick={card.onClick}
-              className="group flex flex-col items-center justify-center gap-2.5 rounded-xl border border-border/50 bg-background/60 dark:bg-background/40 p-3 transition-all duration-200 hover:border-primary/40 hover:bg-accent/80 hover:shadow-md active:scale-[0.96]"
+              className={cn(
+                "group flex flex-col items-center justify-center gap-2.5 rounded-xl border p-3 transition-all duration-200 hover:border-primary/40 hover:shadow-md active:scale-[0.96]",
+                isDarkTheme
+                  ? "border-white/10 bg-black/50 hover:bg-black/70"
+                  : "border-border/50 bg-background/60 hover:bg-accent/80"
+              )}
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/80 dark:bg-muted/60 text-muted-foreground transition-all duration-200 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110">
+              <div
+                className={cn(
+                  "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110",
+                  isDarkTheme
+                    ? "bg-black/60 text-white/70"
+                    : "bg-muted/80 text-muted-foreground"
+                )}
+              >
                 {card.icon}
               </div>
               <div className="text-center space-y-0.5">
-                <div className="text-[10px] font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1 tracking-tight">
+                <div
+                  className={cn(
+                    "text-[10px] font-semibold group-hover:text-primary transition-colors line-clamp-1 tracking-tight",
+                    isDarkTheme ? "text-white/90" : "text-foreground"
+                  )}
+                >
                   {card.title}
                 </div>
-                <div className="text-[9px] text-muted-foreground/80 line-clamp-1">
+                <div
+                  className={cn(
+                    "text-[9px] line-clamp-1",
+                    isDarkTheme ? "text-white/60" : "text-muted-foreground/80"
+                  )}
+                >
                   {card.description}
                 </div>
               </div>

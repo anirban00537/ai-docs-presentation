@@ -100,6 +100,8 @@ const SortableSlideItem = ({
           "ring-1 shadow-md bg-background",
           isActive
             ? "ring-2 ring-primary shadow-lg shadow-primary/20 scale-[1.02]"
+            : globalTheme?.tone === "dark"
+            ? "ring-white/10 hover:ring-primary/60 hover:shadow-lg hover:scale-[1.01]"
             : "ring-border/50 hover:ring-primary/60 hover:shadow-lg hover:scale-[1.01]",
           "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         )}
@@ -143,7 +145,12 @@ const SortableSlideItem = ({
 
         {/* Active Overlay */}
         {!isActive && (
-          <div className="absolute inset-0 bg-background/5 group-hover/btn:bg-transparent transition-colors duration-300" />
+          <div
+            className={cn(
+              "absolute inset-0 group-hover/btn:bg-transparent transition-colors duration-300",
+              globalTheme?.tone === "dark" ? "bg-white/5" : "bg-background/5"
+            )}
+          />
         )}
       </div>
     </div>
@@ -314,11 +321,14 @@ export const LeftSidebar = () => {
     ? slides.find((s) => s.id === activeDragId)
     : null;
 
+  const isDarkTheme = globalTheme?.tone === "dark";
+
   return (
-    <EditorSidebarShell>
+    <EditorSidebarShell globalTheme={globalTheme}>
       <div
         className={cn(
-          "border-b border-border/50 p-4 pb-3 transition-all duration-200",
+          "border-b p-4 pb-3 transition-all duration-200",
+          isDarkTheme ? "border-white/10" : "border-white/20",
           collapsed && "px-2"
         )}
       >
