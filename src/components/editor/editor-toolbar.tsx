@@ -4,14 +4,14 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AppleButton } from "@/components/editor/apple-button";
-import { Plus, ExternalLink, Play, Image, Type } from "lucide-react";
+import { Plus, ExternalLink, Play, Image, Type, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectPresentationTitle,
   selectPresentationId,
   updatePresentationTitle,
 } from "@/store/slices/slidesSlice";
-import { EditorSidebarTrigger } from "@/components/editor/editor-sidebar-shell";
 import { useDebouncedCallback } from "use-debounce";
 import { useUpdatePresentationTitle } from "@/hooks/use-presentation";
 import {
@@ -33,6 +33,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
   onOpenInsertPanel,
   onStartPresentation,
 }) => {
+  const router = useRouter();
   const presentationTitle = useAppSelector(selectPresentationTitle);
   const presentationId = useAppSelector(selectPresentationId);
   const dispatch = useAppDispatch();
@@ -99,7 +100,15 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
     >
       <span className="pointer-events-none absolute inset-px rounded-[18px] border border-white/10 dark:border-white/5 opacity-80" />
       <div className="flex items-center gap-5">
-        <EditorSidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors h-8 w-8 hover:bg-accent/50 rounded-md" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-muted-foreground hover:text-foreground transition-colors h-8 w-8 hover:bg-accent/50 rounded-md"
+          onClick={() => router.push("/dashboard")}
+          aria-label="Back to dashboard"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
         <div className="h-7 w-px bg-border/60" />
         <div className="relative flex items-center min-w-0">
           <input
