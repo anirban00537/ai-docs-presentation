@@ -147,7 +147,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             "flex flex-col items-center gap-2 p-3 rounded-2xl",
             // Simple border and shadow - theme-aware
             isDarkTheme
-              ? "border border-neutral-800 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
+              ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
               : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
           )}
           style={{
@@ -222,7 +222,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             "flex flex-col items-center gap-2 p-3 rounded-2xl",
             // Simple border and shadow - theme-aware
             isDarkTheme
-              ? "border border-neutral-800 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
+              ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
               : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
           )}
           style={{
@@ -279,13 +279,13 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
       <div
         ref={sidebarRef}
         className={cn(
-          "flex flex-col min-h-0 relative rounded-l-2xl overflow-hidden",
+          "flex flex-col min-h-0 relative rounded-2xl overflow-hidden",
           // Medium height, centered vertically
           "h-[70vh]",
           // Simple border and shadow - theme-aware
           isDarkTheme
-            ? "border-l border-neutral-800 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
-            : "border-l border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
+            ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
+            : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
         )}
         style={{
           width: `${width}px`,
@@ -316,7 +316,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           className={cn(
             "flex items-center justify-between px-5 py-4 shrink-0 h-16",
             isDarkTheme
-              ? "border-b border-neutral-800"
+              ? "border-b border-white/10"
               : "border-b border-border"
           )}
         >
