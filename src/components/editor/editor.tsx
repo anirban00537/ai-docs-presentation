@@ -7,11 +7,11 @@ import {
   selectActiveSlide,
   selectSlides,
   selectGlobalTheme,
-  setActiveSlide,
   updateSlide,
   setSlideTheme,
   updateGlobalTheme,
   removeWidget,
+  setActiveSlide,
 } from "@/store/slices/slidesSlice";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
 import { EditorToolbarTitle } from "@/components/editor/editor-toolbar-title";
@@ -22,6 +22,83 @@ import {
   type SidebarPanel,
 } from "@/components/editor/right-sidebar";
 import { PresentationMode } from "@/components/editor/presentation-mode";
+import { useSlideIntersection } from "@/hooks/use-slide-intersection";
+import type { SlideModel, GlobalTheme } from "@/store/slices/slidesSlice";
+
+// Slide wrapper component for intersection observer
+const SlideWrapper: React.FC<{
+  slide: SlideModel;
+  isActive: boolean;
+  selectedId: string | null;
+  editingId: string | null;
+  liveOverrides: Record<string, any>;
+  onSelectWidget: (id: string | null) => void;
+  onSetLiveOverride: (id: string, updates: any) => void;
+  onClearLiveOverride: (id: string) => void;
+  globalTheme: GlobalTheme | null;
+  registerSlide: (slideId: string, element: HTMLDivElement | null) => void;
+}> = ({
+  slide,
+  isActive,
+  selectedId,
+  editingId,
+  liveOverrides,
+  onSelectWidget,
+  onSetLiveOverride,
+  onClearLiveOverride,
+  globalTheme,
+  registerSlide,
+}) => {
+  const slideRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (slideRef.current) {
+      registerSlide(slide.id, slideRef.current);
+    }
+    return () => {
+      registerSlide(slide.id, null);
+    };
+  }, [slide.id, registerSlide]);
+
+  // Calculate slide height based on viewport height (accounting for toolbar)
+  const [slideHeight, setSlideHeight] = React.useState(0);
+
+  React.useEffect(() => {
+    const updateHeight = () => {
+      // Viewport height minus toolbar (pt-20 = 5rem = 80px)
+      const height = window.innerHeight - 80;
+      setSlideHeight(height);
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
+  return (
+    <div
+      ref={slideRef}
+      data-slide-id={slide.id}
+      className="w-full flex justify-center items-center"
+      style={{
+        minHeight: slideHeight > 0 ? `${slideHeight}px` : "100vh",
+        height: slideHeight > 0 ? `${slideHeight}px` : "100vh",
+      }}
+    >
+      <Slide
+        slide={slide}
+        selectedId={isActive ? selectedId : null}
+        editingId={isActive ? editingId : null}
+        liveOverrides={isActive ? liveOverrides : {}}
+        onSelectWidget={isActive ? onSelectWidget : () => {}}
+        onSetLiveOverride={isActive ? onSetLiveOverride : () => {}}
+        onClearLiveOverride={isActive ? onClearLiveOverride : () => {}}
+        globalTheme={globalTheme || undefined}
+        showSnapLines={isActive}
+      />
+    </div>
+  );
+};
 
 const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
@@ -122,26 +199,42 @@ const Editor = () => {
     [dispatch]
   );
 
-  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
-    if (!activeSlide || slides.length === 0) return;
+  // Scroll container ref for intersection observer
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
-    // Only react to vertical scrolling
-    if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+  // Use intersection observer to detect visible slide
+  const { registerSlide, setProgrammaticScroll } = useSlideIntersection(
+    slides,
+    scrollContainerRef,
+    slides.length > 0 && !isPresentationMode
+  );
 
-    event.preventDefault();
+  // Listen for programmatic scroll events from sidebar
+  React.useEffect(() => {
+    const handleProgrammaticStart = () => {
+      setProgrammaticScroll(true);
+    };
+    const handleProgrammaticEnd = () => {
+      setProgrammaticScroll(false);
+    };
 
-    const currentIndex = slides.findIndex(
-      (slide) => slide.id === activeSlide.id
+    window.addEventListener(
+      "programmatic-scroll-start",
+      handleProgrammaticStart
     );
-    if (currentIndex === -1) return;
+    window.addEventListener("programmatic-scroll-end", handleProgrammaticEnd);
 
-    const direction = event.deltaY > 0 ? 1 : -1; // down = next, up = previous
-    const nextIndex = currentIndex + direction;
-
-    if (nextIndex < 0 || nextIndex >= slides.length) return;
-
-    dispatch(setActiveSlide(slides[nextIndex].id));
-  };
+    return () => {
+      window.removeEventListener(
+        "programmatic-scroll-start",
+        handleProgrammaticStart
+      );
+      window.removeEventListener(
+        "programmatic-scroll-end",
+        handleProgrammaticEnd
+      );
+    };
+  }, [setProgrammaticScroll]);
 
   React.useEffect(() => {
     if (!selectedId || !activeSlide) {
@@ -207,7 +300,7 @@ const Editor = () => {
           backgroundColor: globalTheme?.surface || undefined,
         }}
       >
-        <div className="fixed top-4 left-4 right-4 flex items-center justify-between gap-4 z-50 pointer-events-none">
+        <div className="fixed top-4 bg-transparent left-4 right-4 flex items-center justify-between gap-4 z-50 pointer-events-none">
           <EditorToolbarTitle />
           <EditorToolbarCenter
             onOpenInsertPanel={() => togglePanel("insert")}
@@ -237,6 +330,9 @@ const Editor = () => {
     );
   }
 
+  // Get the active slide for right sidebar (use first slide if none active)
+  const currentActiveSlide = activeSlide || slides[0];
+
   return (
     <div
       className="relative flex h-full flex-1 flex-col overflow-hidden"
@@ -244,34 +340,55 @@ const Editor = () => {
         backgroundColor: globalTheme?.surface || undefined,
       }}
     >
-      <div className="fixed top-4 left-4 right-4 flex items-center justify-between gap-4 z-50 pointer-events-none">
-        <EditorToolbarTitle />
-        <EditorToolbarCenter onOpenInsertPanel={() => togglePanel("insert")} />
-        <EditorToolbarActions onStartPresentation={handleStartPresentation} />
-      </div>
-      <div className="flex flex-1 min-h-0 overflow-hidden h-full  py-10">
-        <div
-          className="flex flex-1 flex-col gap-1 overflow-hidden px-1 pt-1 min-h-0"
-          onWheel={handleWheel}
-        >
-          <Slide
-            slide={activeSlide}
-            selectedId={selectedId}
-            editingId={editingId}
-            liveOverrides={liveOverrides}
-            onSelectWidget={onSelectWidget}
-            onSetLiveOverride={onSetLiveOverride}
-            onClearLiveOverride={onClearLiveOverride}
-            globalTheme={globalTheme}
+      <div className="flex flex-1 min-h-0 overflow-hidden h-full ">
+        <div className="fixed top-4 bg-transparent left-4 right-4 flex items-center justify-between gap-4 z-50 pointer-events-none">
+          <EditorToolbarTitle />
+          <EditorToolbarCenter
+            onOpenInsertPanel={() => togglePanel("insert")}
           />
+          <EditorToolbarActions onStartPresentation={handleStartPresentation} />
+        </div>
+        <div
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto min-h-0"
+        >
+          <div className="flex flex-col items-center gap-8 py-8">
+            {slides.length === 0 ? (
+              <div className="flex flex-1 flex-col items-center justify-center min-h-[60vh]">
+                <p className="text-muted-foreground/70 text-sm font-medium">
+                  No slides yet. Create your first slide to get started.
+                </p>
+              </div>
+            ) : (
+              slides.map((slide) => {
+                const isActive =
+                  slide.id === (activeSlide?.id || slides[0]?.id);
+                return (
+                  <SlideWrapper
+                    key={slide.id}
+                    slide={slide}
+                    isActive={isActive}
+                    selectedId={selectedId}
+                    editingId={editingId}
+                    liveOverrides={liveOverrides}
+                    onSelectWidget={onSelectWidget}
+                    onSetLiveOverride={onSetLiveOverride}
+                    onClearLiveOverride={onClearLiveOverride}
+                    globalTheme={globalTheme}
+                    registerSlide={registerSlide}
+                  />
+                );
+              })
+            )}
+          </div>
         </div>
         <RightSidebar
           panel={activePanel}
           onClose={() => setActivePanel(null)}
           onOpenPanel={togglePanel}
-          backgroundColor={activeSlide?.backgroundColor}
-          backgroundImage={activeSlide?.backgroundImage}
-          backgroundBlur={activeSlide?.backgroundBlur}
+          backgroundColor={currentActiveSlide?.backgroundColor}
+          backgroundImage={currentActiveSlide?.backgroundImage}
+          backgroundBlur={currentActiveSlide?.backgroundBlur}
           onBackgroundColorChange={handleBackgroundColorChange}
           onBackgroundImageChange={handleBackgroundImageChange}
           onBackgroundBlurChange={handleBackgroundBlurChange}

@@ -197,6 +197,29 @@ export const LeftSidebar = () => {
 
   const handleSlideClick = (slideId: string) => {
     dispatch(setActiveSlide(slideId));
+
+    // Scroll to the slide in the editor view
+    // Find the slide element in the editor by its data-slide-id attribute
+    const slideElement = document.querySelector(
+      `[data-slide-id="${slideId}"]`
+    ) as HTMLElement | null;
+
+    if (slideElement) {
+      // Mark as programmatic scroll to prevent intersection observer from interfering
+      const event = new CustomEvent("programmatic-scroll-start");
+      window.dispatchEvent(event);
+
+      slideElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      // Mark scroll as complete after animation
+      setTimeout(() => {
+        const endEvent = new CustomEvent("programmatic-scroll-end");
+        window.dispatchEvent(endEvent);
+      }, 500);
+    }
   };
 
   const handleRemoveSlide = (slideId: string) => {
