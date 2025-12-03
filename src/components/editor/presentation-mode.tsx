@@ -45,6 +45,11 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
     return globalTheme?.surface ?? "#0f172a";
   }, [globalTheme]);
 
+  const primaryColor = useMemo(() => {
+    // Use accent color from globalTheme as the primary color
+    return globalTheme?.accent ?? "#8b5cf6";
+  }, [globalTheme]);
+
   const goToNext = useCallback(() => {
     if (!isLastSlide && !isTransitioning) {
       setIsTransitioning(true);
@@ -162,12 +167,14 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
         >
           <div
             className={cn(
-              "absolute bottom-0 left-0 right-0 transition-all duration-700 ease-out rounded-full",
-              "bg-gradient-to-t from-blue-500 via-purple-500 to-pink-500",
-              isDarkTheme && "shadow-[0_0_20px_rgba(147,51,234,0.5)]"
+              "absolute bottom-0 left-0 right-0 transition-all duration-700 ease-out rounded-full"
             )}
             style={{
               height: `${progressPercentage}%`,
+              backgroundColor: primaryColor,
+              boxShadow: isDarkTheme
+                ? `0 0 20px ${primaryColor}80`
+                : `0 0 10px ${primaryColor}40`,
             }}
           />
           <div
@@ -198,14 +205,20 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
             <div
               className={cn(
                 "w-2 h-2 rounded-full transition-all duration-300 ease-out",
-                index === currentIndex
-                  ? isDarkTheme
-                    ? "w-3 h-3 bg-white shadow-lg shadow-purple-500/50 scale-125"
-                    : "w-3 h-3 bg-gray-900 shadow-lg scale-125"
-                  : isDarkTheme
-                  ? "bg-white/30 hover:bg-white/50 hover:scale-110"
-                  : "bg-gray-400/50 hover:bg-gray-600 hover:scale-110"
+                index === currentIndex ? "w-3 h-3 scale-125" : ""
               )}
+              style={{
+                backgroundColor:
+                  index === currentIndex
+                    ? primaryColor
+                    : isDarkTheme
+                    ? "rgba(255, 255, 255, 0.3)"
+                    : "rgba(0, 0, 0, 0.2)",
+                boxShadow:
+                  index === currentIndex
+                    ? `0 0 10px ${primaryColor}80`
+                    : undefined,
+              }}
             />
             {index === currentIndex && (
               <div
