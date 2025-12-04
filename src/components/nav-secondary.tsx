@@ -44,7 +44,7 @@ export function NavSecondary({
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-bold text-foreground tracking-tight">
                     Premium Features
-                  </p>
+                </p>
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-primary/20 text-[10px] font-semibold text-primary border border-primary/30">
                     PRO
                   </span>
