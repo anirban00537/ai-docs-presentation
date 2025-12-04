@@ -279,13 +279,13 @@ export const LeftSidebar = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { collapsed, toggle } = useEditorSidebar();
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
+  const [justClosed, setJustClosed] = useState(false);
   const addSlideMutation = useAddSlide();
   const deleteSlideMutation = useDeleteSlide();
 
-  // Show full sidebar if expanded OR if collapsed but hovered
-  const showFullSidebar = !collapsed || (collapsed && isHovered);
+  // Show full sidebar if not collapsed
+  const showFullSidebar = !collapsed;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -447,12 +447,27 @@ export const LeftSidebar = () => {
 
   const isDarkTheme = globalTheme?.tone === "dark";
 
+  const handleMouseEnter = () => {
+    // If collapsed and not just closed, expand permanently on hover
+    if (collapsed && !justClosed) {
+      toggle();
+    }
+  };
+
+  const handleClose = () => {
+    setJustClosed(true);
+    toggle();
+    // Reset the flag after a short delay to allow hover to work again
+    setTimeout(() => {
+      setJustClosed(false);
+    }, 300);
+  };
+
   return (
     <EditorSidebarShell
       globalTheme={globalTheme}
-      collapsed={collapsed && !isHovered}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      collapsed={collapsed}
+      onMouseEnter={handleMouseEnter}
     >
       {showFullSidebar ? (
         <>
@@ -519,7 +534,10 @@ export const LeftSidebar = () => {
               {/* Close button */}
               <button
                 type="button"
-                onClick={toggle}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClose();
+                }}
                 className={cn(
                   "h-7 w-7 flex items-center justify-center rounded-md transition-all duration-200",
                   "text-muted-foreground shadow-sm ring-1",
