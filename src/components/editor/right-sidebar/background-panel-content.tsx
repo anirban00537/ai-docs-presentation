@@ -61,21 +61,25 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
             <TabsTrigger
               value="colors"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
+                "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                "hover:scale-[1.02] active:scale-[0.98]",
                 isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
-              <Palette className="h-3.5 w-3.5" />
+              <Palette className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
               Colors
             </TabsTrigger>
             <TabsTrigger
               value="image"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
+                "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                "hover:scale-[1.02] active:scale-[0.98]",
                 isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
-              <ImageIcon className="h-3.5 w-3.5" />
+              <ImageIcon className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
               Image
             </TabsTrigger>
           </TabsList>
@@ -90,7 +94,10 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
         )}
       >
         {activeTab === "colors" && (
-          <div className="space-y-6">
+          <div
+            className="space-y-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
+            key="colors"
+          >
             <BackgroundSection
               backgroundColor={backgroundColor}
               backgroundImage={backgroundImage}
@@ -103,7 +110,10 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
           </div>
         )}
         {activeTab === "image" && (
-          <div className="space-y-6">
+          <div
+            className="space-y-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
+            key="image"
+          >
             <BackgroundSection
               backgroundColor={backgroundColor}
               backgroundImage={backgroundImage}

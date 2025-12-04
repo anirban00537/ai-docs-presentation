@@ -179,7 +179,9 @@ export function BackgroundSection({
             type="button"
             onClick={() => setShowImageBrowser(true)}
             className={cn(
-              "w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed transition-all duration-200 group",
+              "w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed",
+              "transition-all duration-300 ease-out group",
+              "hover:scale-[1.01] active:scale-[0.99]",
               isDarkTheme
                 ? "border-white/10 hover:border-primary/50 bg-white/5 hover:bg-primary/10"
                 : "border-border/50 hover:border-primary/50 bg-background/50 hover:bg-primary/5"
@@ -187,7 +189,8 @@ export function BackgroundSection({
           >
             <Image
               className={cn(
-                "h-4 w-4 transition-colors",
+                "h-4 w-4 transition-all duration-300 ease-out",
+                "group-hover:scale-110",
                 isDarkTheme
                   ? "text-white/70 group-hover:text-primary"
                   : "text-muted-foreground group-hover:text-primary"
@@ -195,7 +198,7 @@ export function BackgroundSection({
             />
             <span
               className={cn(
-                "text-sm font-medium transition-colors",
+                "text-sm font-medium transition-all duration-300 ease-out",
                 isDarkTheme
                   ? "text-white/80 group-hover:text-primary"
                   : "text-muted-foreground group-hover:text-primary"
@@ -211,19 +214,22 @@ export function BackgroundSection({
               <div
                 className={cn(
                   "relative aspect-video rounded-xl overflow-hidden border",
+                  "transition-all duration-300 ease-out",
+                  "animate-in fade-in-0 zoom-in-95",
                   isDarkTheme ? "border-white/10" : "border-border/50"
                 )}
               >
                 <img
                   src={backgroundImage}
                   alt="Background"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-105"
                 />
               </div>
               {/* Background Blur Toggle */}
               <div
                 className={cn(
                   "flex items-center justify-between px-1 py-2 rounded-lg border",
+                  "transition-all duration-300 ease-out",
                   isDarkTheme
                     ? "bg-white/5 border-white/10"
                     : "bg-background/50 border-border/30"
@@ -290,9 +296,12 @@ export function BackgroundSection({
                     type="button"
                     onClick={() => onBackgroundColorChange(preset)}
                     className={cn(
-                      "group relative flex aspect-square items-center justify-center rounded-xl border shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 active:scale-105",
+                      "group relative flex aspect-square items-center justify-center rounded-xl border shadow-sm",
+                      "transition-all duration-300 ease-out",
+                      "hover:scale-[1.05] hover:shadow-lg active:scale-[0.98]",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2",
                       isSelected
-                        ? "border-primary"
+                        ? "border-primary ring-2 ring-primary/30"
                         : isDarkTheme
                         ? "border-white/10"
                         : "border-white"
@@ -301,6 +310,7 @@ export function BackgroundSection({
                     <span
                       className={cn(
                         "h-full w-full rounded-xl border",
+                        "transition-all duration-300 ease-out",
                         isSelected
                           ? "border-primary"
                           : isDarkTheme

@@ -46,21 +46,25 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
             <TabsTrigger
               value="select"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
+                "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                "hover:scale-[1.02] active:scale-[0.98]",
                 isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
-              <LayoutTemplate className="h-3.5 w-3.5" />
+              <LayoutTemplate className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
               Select Theme
             </TabsTrigger>
             <TabsTrigger
               value="edit"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
+                "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                "hover:scale-[1.02] active:scale-[0.98]",
                 isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
-              <Palette className="h-3.5 w-3.5" />
+              <Palette className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
               Edit Theme
             </TabsTrigger>
           </TabsList>
@@ -76,7 +80,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
           <TabsContent value="select" className="mt-0 px-4">
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-1 gap-3">
-                {SLIDE_THEMES.map((theme) => {
+                {SLIDE_THEMES.map((theme, index) => {
                   const isActive = activeThemeId === theme.id;
                   return (
                     <button
@@ -84,19 +88,24 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                       type="button"
                       onClick={() => onSelectTheme(theme.id)}
                       className={cn(
-                        "group w-full rounded-xl border p-4 text-left transition-all duration-200 flex items-center justify-between gap-4 outline-none",
+                        "group w-full rounded-xl border p-4 text-left",
+                        "transition-all duration-300 ease-out flex items-center justify-between gap-4 outline-none",
+                        "hover:scale-[1.01] active:scale-[0.99]",
                         isActive
                           ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/30 hover:shadow-lg"
                           : isDarkTheme
                           ? "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-sm"
-                          : "border-border/50 bg-background/60 hover:bg-accent/50 hover:border-border hover:shadow-sm",
-                        "active:scale-[0.98]"
+                          : "border-border/50 bg-background/60 hover:bg-accent/50 hover:border-border hover:shadow-sm"
                       )}
+                      style={{
+                        animationDelay: `${index * 25}ms`,
+                        animation: "fadeInUp 0.4s ease-out both",
+                      }}
                     >
                       <div className="space-y-1.5 min-w-0 flex-1">
                         <div
                           className={cn(
-                            "font-semibold text-sm truncate transition-colors tracking-tight",
+                            "font-semibold text-sm truncate transition-colors duration-300 ease-out tracking-tight",
                             isActive
                               ? "text-primary"
                               : isDarkTheme
@@ -109,10 +118,11 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                         {theme.description && (
                           <div
                             className={cn(
-                              "text-xs line-clamp-1 transition-colors",
+                              "text-xs line-clamp-1 transition-all duration-300 ease-out",
+                              "group-hover:opacity-100",
                               isDarkTheme
-                                ? "text-white/60 group-hover:text-white/80"
-                                : "text-muted-foreground/80 group-hover:text-foreground/70"
+                                ? "text-white/60 opacity-80 group-hover:text-white/80"
+                                : "text-muted-foreground/80 opacity-80 group-hover:text-foreground/70"
                             )}
                           >
                             {theme.description}
@@ -122,15 +132,19 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                       <div className="flex items-center -space-x-1.5 shrink-0">
                         <span
                           key={`${theme.id}-background`}
-                          className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50"
+                          className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50 transition-transform duration-300 ease-out group-hover:scale-110"
                           style={{ backgroundColor: theme.background }}
                         />
                         {[theme.surface, theme.text, theme.accent].map(
                           (color, i) => (
                             <span
                               key={`${theme.id}-color-${i}`}
-                              className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50"
-                              style={{ backgroundColor: color, zIndex: 3 - i }}
+                              className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50 transition-transform duration-300 ease-out group-hover:scale-110"
+                              style={{
+                                backgroundColor: color,
+                                zIndex: 3 - i,
+                                transitionDelay: `${i * 30}ms`,
+                              }}
                             />
                           )
                         )}
@@ -142,7 +156,10 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="edit" className="mt-0 px-4">
+          <TabsContent
+            value="edit"
+            className="mt-0 px-4 animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
+          >
             <div className="py-4">
               {globalTheme && onThemeChange ? (
                 <ThemeEditor

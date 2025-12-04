@@ -302,13 +302,21 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
           >
             <TabsTrigger
               value="unsplash"
-              className="data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg"
+              className={cn(
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
+                "transition-all duration-300 ease-out rounded-lg",
+                "hover:scale-[1.02] active:scale-[0.98]"
+              )}
             >
               Unsplash
             </TabsTrigger>
             <TabsTrigger
               value="your-media"
-              className="data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg"
+              className={cn(
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
+                "transition-all duration-300 ease-out rounded-lg",
+                "hover:scale-[1.02] active:scale-[0.98]"
+              )}
             >
               Your Media
             </TabsTrigger>
@@ -356,8 +364,9 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
                   key={category.id}
                   onClick={() => handleCategoryClick(category.id)}
                   className={cn(
-                    "relative shrink-0 h-9 px-4 text-xs font-semibold rounded-full whitespace-nowrap transition-all duration-300 ease-out",
-                    "transform hover:scale-105 active:scale-[0.98]",
+                    "relative shrink-0 h-9 px-4 text-xs font-semibold rounded-full whitespace-nowrap",
+                    "transition-all duration-300 ease-out",
+                    "hover:scale-[1.03] active:scale-[0.98]",
                     selectedCategory === category.id
                       ? "bg-primary text-primary-foreground shadow-lg shadow-primary/40 scale-105 ring-2 ring-primary/30"
                       : cn(
@@ -419,11 +428,20 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
-                {photos.map((photo) => (
+                {photos.map((photo, index) => (
                   <div
                     key={photo.id}
                     onClick={() => handleImageClick(photo)}
-                    className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] hover:scale-[1.03] hover:shadow-2xl hover:shadow-black/30 active:scale-[0.98] border border-border/20 hover:border-primary/30"
+                    className={cn(
+                      "group relative aspect-video rounded-xl overflow-hidden cursor-pointer",
+                      "transform transition-all duration-300 ease-out",
+                      "hover:scale-[1.02] hover:shadow-2xl hover:shadow-black/30 active:scale-[0.98]",
+                      "border border-border/20 hover:border-primary/30"
+                    )}
+                    style={{
+                      animationDelay: `${index * 25}ms`,
+                      animation: "fadeInUp 0.4s ease-out both",
+                    }}
                   >
                     <img
                       src={photo.urls.small}
@@ -432,12 +450,12 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
                         photo.description ||
                         "Unsplash photo"
                       }
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out" />
-                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-500 ease-out" />
-                    <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out" />
+                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300 ease-out" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out">
                       <p className="text-xs text-white font-semibold drop-shadow-2xl">
                         by {photo.user.name}
                       </p>
@@ -505,27 +523,36 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
-                {userMedia.map((media) => (
+                {userMedia.map((media, index) => (
                   <div
                     key={media.id}
                     onClick={() => handleUserMediaClick(media)}
-                    className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] hover:scale-[1.03] hover:shadow-2xl hover:shadow-black/30 active:scale-[0.98] border border-border/20 hover:border-primary/30"
+                    className={cn(
+                      "group relative aspect-video rounded-xl overflow-hidden cursor-pointer",
+                      "transform transition-all duration-300 ease-out",
+                      "hover:scale-[1.02] hover:shadow-2xl hover:shadow-black/30 active:scale-[0.98]",
+                      "border border-border/20 hover:border-primary/30"
+                    )}
+                    style={{
+                      animationDelay: `${index * 25}ms`,
+                      animation: "fadeInUp 0.4s ease-out both",
+                    }}
                   >
                     <img
                       src={media.url}
                       alt={media.name}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out" />
-                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-500 ease-out" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out" />
+                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300 ease-out" />
 
                     {/* Delete Button */}
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out transform translate-y-[-4px] group-hover:translate-y-0">
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out transform translate-y-[-4px] group-hover:translate-y-0">
                       <Button
                         size="sm"
                         variant="destructive"
-                        className="h-8 w-8 rounded-full p-0 bg-destructive/95 hover:bg-destructive backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:scale-110"
+                        className="h-8 w-8 rounded-full p-0 bg-destructive/95 hover:bg-destructive backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:scale-[1.08] active:scale-[0.95]"
                         onClick={(e) =>
                           handleDeleteMedia(e, media.id, media.name)
                         }
@@ -540,7 +567,7 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
                     </div>
 
                     {/* Media Name */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out">
+                    <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out">
                       <p className="text-xs text-white font-semibold drop-shadow-2xl truncate">
                         {media.name}
                       </p>

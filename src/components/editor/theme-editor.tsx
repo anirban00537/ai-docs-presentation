@@ -50,7 +50,7 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
   };
 
   return (
-    <div className="space-y-7 ">
+    <div className="space-y-7 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
       {/* Background Color */}
       <div className="space-y-3.5">
         <h3
@@ -160,7 +160,8 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
           >
             <SelectTrigger
               className={cn(
-                "w-full",
+                "w-full transition-all duration-300 ease-out",
+                "hover:scale-[1.01] active:scale-[0.99]",
                 isDarkTheme
                   ? "border-white/10 bg-white/5 text-white/90 hover:bg-white/10"
                   : "border-border bg-background text-foreground"
@@ -219,7 +220,9 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
                   type="button"
                   onClick={() => handleCardBackgroundTypeChange(type)}
                   className={cn(
-                    "w-full rounded-lg border p-2.5 text-center transition-all duration-200 outline-none capitalize text-xs font-medium",
+                    "w-full rounded-lg border p-2.5 text-center",
+                    "transition-all duration-300 ease-out outline-none capitalize text-xs font-medium",
+                    "hover:scale-[1.02] active:scale-[0.98]",
                     isActive
                       ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/30"
                       : isDarkTheme
@@ -229,8 +232,7 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
                       ? "text-primary"
                       : isDarkTheme
                       ? "text-white/90"
-                      : "text-foreground",
-                    "active:scale-[0.98]"
+                      : "text-foreground"
                   )}
                 >
                   {type}

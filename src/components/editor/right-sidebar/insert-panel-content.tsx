@@ -331,17 +331,26 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
               key={`${card.type}-${card.preset.id}-${index}`}
               onClick={card.onClick}
               className={cn(
-                "group flex flex-col items-center justify-center gap-2.5 rounded-xl border p-3 transition-all duration-200 hover:border-primary/40 hover:shadow-md active:scale-[0.96]",
+                "group flex flex-col items-center justify-center gap-2.5 rounded-xl border p-3",
+                "transition-all duration-300 ease-out",
+                "hover:scale-[1.02] hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10",
+                "active:scale-[0.98]",
                 isDarkTheme
-                  ? "border-neutral-800 bg-black/50 hover:bg-black/70"
-                  : "border-border bg-background/60 hover:bg-accent/80"
+                  ? "border-white/10 bg-white/5 hover:bg-white/10"
+                  : "border-border/50 bg-background/60 hover:bg-accent/80"
               )}
+              style={{
+                animationDelay: `${index * 25}ms`,
+                animation: "fadeInUp 0.4s ease-out both",
+              }}
             >
               <div
                 className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200 group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110",
+                  "flex h-9 w-9 items-center justify-center rounded-lg",
+                  "transition-all duration-300 ease-out",
+                  "group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-[1.08]",
                   isDarkTheme
-                    ? "bg-black/60 text-white/70"
+                    ? "bg-white/5 text-white/70"
                     : "bg-muted/80 text-muted-foreground"
                 )}
               >
@@ -350,7 +359,8 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
               <div className="text-center space-y-0.5">
                 <div
                   className={cn(
-                    "text-[10px] font-semibold group-hover:text-primary transition-colors line-clamp-1 tracking-tight",
+                    "text-[10px] font-semibold group-hover:text-primary",
+                    "transition-colors duration-300 ease-out line-clamp-1 tracking-tight",
                     isDarkTheme ? "text-white/90" : "text-foreground"
                   )}
                 >
@@ -358,8 +368,11 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
                 </div>
                 <div
                   className={cn(
-                    "text-[9px] line-clamp-1",
-                    isDarkTheme ? "text-white/60" : "text-muted-foreground/80"
+                    "text-[9px] line-clamp-1 transition-opacity duration-300 ease-out",
+                    "group-hover:opacity-100",
+                    isDarkTheme
+                      ? "text-white/60 opacity-80"
+                      : "text-muted-foreground/80 opacity-80"
                   )}
                 >
                   {card.description}

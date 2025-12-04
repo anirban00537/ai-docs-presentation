@@ -165,8 +165,8 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             variant="ghost"
             size="icon"
             className={cn(
-              "h-10 w-10 rounded-lg transition-all duration-200",
-              "hover:shadow-sm active:scale-95",
+              "h-10 w-10 rounded-lg transition-all duration-300 ease-out",
+              "hover:scale-[1.02] hover:shadow-md active:scale-[0.98]",
               !activeSlide && "opacity-40 cursor-not-allowed",
               isDarkTheme
                 ? "text-white/80 hover:text-white hover:bg-black/70"
@@ -176,14 +176,14 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             onClick={() => onOpenPanel("background")}
             title="Background Settings"
           >
-            <Palette className="h-5 w-5" />
+            <Palette className="h-5 w-5 transition-transform duration-300 ease-out" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className={cn(
-              "h-10 w-10 rounded-lg transition-all duration-200",
-              "hover:shadow-sm active:scale-95",
+              "h-10 w-10 rounded-lg transition-all duration-300 ease-out",
+              "hover:scale-[1.02] hover:shadow-md active:scale-[0.98]",
               !activeSlide && "opacity-40 cursor-not-allowed",
               isDarkTheme
                 ? "text-white/80 hover:text-white hover:bg-black/70"
@@ -193,7 +193,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             onClick={() => onOpenPanel("theme")}
             title="Theme Settings"
           >
-            <LayoutTemplate className="h-5 w-5" />
+            <LayoutTemplate className="h-5 w-5 transition-transform duration-300 ease-out" />
           </Button>
         </div>
       </div>
@@ -240,8 +240,8 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             variant="ghost"
             size="icon"
             className={cn(
-              "h-10 w-10 rounded-lg transition-all duration-200",
-              "hover:shadow-sm active:scale-95",
+              "h-10 w-10 rounded-lg transition-all duration-300 ease-out",
+              "hover:scale-[1.02] hover:shadow-md active:scale-[0.98]",
               !activeSlide && "opacity-40 cursor-not-allowed",
               panel === "background" && "bg-primary/10 text-primary",
               isDarkTheme
@@ -252,14 +252,14 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             onClick={() => onOpenPanel("background")}
             title="Background Settings"
           >
-            <Palette className="h-5 w-5" />
+            <Palette className="h-5 w-5 transition-transform duration-300 ease-out" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className={cn(
-              "h-10 w-10 rounded-lg transition-all duration-200",
-              "hover:shadow-sm active:scale-95",
+              "h-10 w-10 rounded-lg transition-all duration-300 ease-out",
+              "hover:scale-[1.02] hover:shadow-md active:scale-[0.98]",
               !activeSlide && "opacity-40 cursor-not-allowed",
               panel === "theme" && "bg-primary/10 text-primary",
               isDarkTheme
@@ -270,7 +270,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             onClick={() => onOpenPanel("theme")}
             title="Theme Settings"
           >
-            <LayoutTemplate className="h-5 w-5" />
+            <LayoutTemplate className="h-5 w-5 transition-transform duration-300 ease-out" />
           </Button>
         </div>
       </div>
@@ -283,6 +283,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           // Medium height, centered vertically
           "h-[70vh]",
           // Simple border and shadow - theme-aware
+          "transition-all duration-300 ease-out",
           isDarkTheme
             ? "border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
             : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
@@ -330,14 +331,15 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             variant="ghost"
             size="icon"
             className={cn(
-              "h-8 w-8 rounded-lg hover:bg-accent/50 transition-all duration-200 active:scale-95",
+              "h-8 w-8 rounded-lg hover:bg-accent/50 transition-all duration-300 ease-out",
+              "hover:scale-[1.02] active:scale-[0.98]",
               isDarkTheme
                 ? "text-white/80 hover:text-white"
                 : "text-muted-foreground hover:text-foreground"
             )}
             onClick={onClose}
           >
-            <XIcon className="h-4 w-4" />
+            <XIcon className="h-4 w-4 transition-transform duration-300 ease-out" />
             <span className="sr-only">Close</span>
           </Button>
         </div>

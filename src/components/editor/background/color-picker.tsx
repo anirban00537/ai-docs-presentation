@@ -26,7 +26,7 @@ export function ColorPicker({
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const globalTheme = useAppSelector(selectGlobalTheme);
   const isDarkTheme = globalTheme?.tone === "dark";
-  
+
   return (
     <div className="relative overflow-visible group/picker">
       <Popover>
@@ -35,7 +35,10 @@ export function ColorPicker({
             <Popover.Button
               ref={buttonRef}
               className={cn(
-                "relative w-10 h-10 rounded-full cursor-pointer border-[3px] ring-1 shadow-sm hover:scale-110 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50",
+                "relative w-10 h-10 rounded-full cursor-pointer border-[3px] ring-1 shadow-sm",
+                "transition-all duration-300 ease-out",
+                "hover:scale-[1.08] active:scale-[0.95]",
+                "focus:outline-none focus:ring-2 focus:ring-primary/50",
                 isDarkTheme
                   ? "border-black ring-white/10"
                   : "border-background ring-border/30"
@@ -58,16 +61,22 @@ export function ColorPicker({
               <PopoverPanelPortal buttonRef={buttonRef}>
                 <div
                   className={cn(
-                    "flex flex-col gap-3 p-3 rounded-xl shadow-2xl border animate-in fade-in zoom-in-95 duration-200",
+                    "flex flex-col gap-3 p-3 rounded-xl shadow-2xl border",
+                    "animate-in fade-in zoom-in-95 duration-300 ease-out",
                     isDarkTheme
                       ? "bg-black border-white/10"
                       : "bg-popover border-border/50"
                   )}
                 >
-                  <HexColorPicker color={color} onChange={onChange} className="!w-full !h-40" />
+                  <HexColorPicker
+                    color={color}
+                    onChange={onChange}
+                    className="!w-full !h-40"
+                  />
                   <div
                     className={cn(
                       "flex items-center gap-2 p-1 rounded-md border",
+                      "transition-all duration-300 ease-out",
                       isDarkTheme
                         ? "bg-white/5 border-white/10"
                         : "bg-muted/50 border-border/50"
@@ -76,6 +85,8 @@ export function ColorPicker({
                     <div
                       className={cn(
                         "w-6 h-6 rounded-full border shadow-sm shrink-0",
+                        "transition-all duration-300 ease-out",
+                        "group-hover/picker:scale-110",
                         isDarkTheme ? "border-white/10" : "border-border/20"
                       )}
                       style={{ backgroundColor: color }}
