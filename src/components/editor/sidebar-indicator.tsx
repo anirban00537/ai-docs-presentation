@@ -16,44 +16,34 @@ export const SidebarIndicator: React.FC<SidebarIndicatorProps> = ({
   const accentColor = globalTheme?.accent || "#3b82f6"; // Default to blue-500 if undefined
   const isDark = globalTheme?.tone === "dark";
 
-  // New Design: "Timeline / Ruler"
-  // A continuous vertical line with ticks for each slide.
-  // The active slide is a distinct node on the timeline.
+  // New Design: "Sleek Wide Bars"
+  // Wider, shorter rectangles for a more modern, minimal look.
   
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center h-full w-full relative",
+        "flex flex-col items-center justify-center h-full w-full",
         className
       )}
     >
-      {/* Continuous vertical track - visible on all backgrounds */}
-      <div 
-        className={cn(
-          "absolute left-1/2 top-8 bottom-8 w-[2px] -translate-x-1/2 rounded-full",
-          isDark ? "bg-white/10" : "bg-black/10"
-        )} 
-      />
-
-      <div className="flex flex-col gap-3 items-center z-10">
+      <div className="flex flex-col gap-1.5 items-center w-full px-1">
         {slides.map((slide, index) => {
           const isActive = slide.id === activeSlideId;
           return (
             <div
               key={slide.id}
-              className="relative flex items-center justify-center w-4 h-4"
+              className="relative flex items-center justify-center w-full"
             >
               <div
                 className={cn(
-                  "transition-all duration-300 ease-out rounded-full",
+                  "transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) rounded-[1px]",
                   isActive 
-                    ? "w-3 h-3 shadow-lg ring-2 ring-offset-2 ring-offset-transparent" 
-                    : "w-1.5 h-1.5 hover:scale-150"
+                    ? "w-8 h-[4px] shadow-sm" // Active: Wide, thin bar
+                    : "w-4 h-[2px] bg-muted-foreground/30 hover:bg-muted-foreground/50 hover:w-6 hover:h-[3px]" // Inactive: Shorter, thinner bar
                 )}
                 style={{
-                  backgroundColor: isActive ? accentColor : (isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"),
-                  boxShadow: isActive ? `0 0 12px ${accentColor}` : undefined,
-                  borderColor: isActive ? accentColor : undefined,
+                  backgroundColor: isActive ? accentColor : undefined,
+                  boxShadow: isActive ? `0 0 10px ${accentColor}80` : undefined,
                 }}
               />
             </div>
