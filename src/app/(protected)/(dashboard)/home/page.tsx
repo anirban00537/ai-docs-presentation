@@ -24,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AppleButton } from "@/components/editor/apple-button";
 
 const PromptBox = React.forwardRef<
   HTMLTextAreaElement,
@@ -80,7 +81,7 @@ const PromptBox = React.forwardRef<
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-3xl border border-border/50 bg-gradient-to-br from-background via-background to-muted/20 p-3 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl dark:border-border/30 dark:from-background dark:via-background dark:to-muted/10",
+        "relative flex flex-col rounded-3xl border border-border/50 bg-gradient-to-br from-background via-background to-muted/20 p-3 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl dark:border-border/30 dark:from-background dark:via-background dark:to-muted/10 w-full min-w-0",
         "before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-primary/5 before:via-transparent before:to-transparent before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100",
         className
       )}
@@ -205,14 +206,16 @@ const PromptBox = React.forwardRef<
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <AppleButton
                   type="submit"
+                  variant="primary"
+                  size="default"
                   disabled={!hasValue}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20 transition-all duration-200 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md"
+                  className="h-9 w-9 p-0"
                 >
                   <Send className="h-5 w-5" />
                   <span className="sr-only">Create presentation</span>
-                </button>
+                </AppleButton>
               </TooltipTrigger>
               <TooltipContent side="top">
                 <p>Create presentation</p>
@@ -229,10 +232,10 @@ PromptBox.displayName = "PromptBox";
 
 export default function HomePage() {
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center px-4 py-12 md:py-20 overflow-auto">
-      <div className="w-full max-w-4xl mx-auto space-y-8 flex-shrink-0">
+    <div className="flex h-full w-full flex-col overflow-auto">
+      <div className="mx-auto w-full max-w-4xl px-6 py-12 md:py-20">
         {/* Premium Title Section */}
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-4 mb-8">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
             What Presentations do you want to create today?
           </h1>
@@ -243,15 +246,15 @@ export default function HomePage() {
         </div>
 
         {/* Premium Prompt Box */}
-        <div className="relative">
+        <div className="relative mb-8">
           {/* Glow effect behind the box */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 rounded-3xl blur-xl opacity-50 animate-pulse" />
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 rounded-3xl blur-xl opacity-50 animate-pulse pointer-events-none" />
 
           <PromptBox />
         </div>
 
         {/* Quick Suggestions */}
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <span className="text-sm text-muted-foreground">Try:</span>
           {[
             "Business pitch deck",
