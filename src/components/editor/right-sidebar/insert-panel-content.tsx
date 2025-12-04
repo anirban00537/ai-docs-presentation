@@ -317,7 +317,7 @@ export const InsertPanelContent: React.FC<InsertPanelContentProps> = ({
     <div className="space-y-7 py-4">
       {/* All Cards */}
       <div className="space-y-3">
-        <div className="mx-4 space-y-1">
+        <div className="mx-2 space-y-1">
           {allCards.map((card, index) => (
             <button
               key={`${card.type}-${card.preset.id}-${index}`}

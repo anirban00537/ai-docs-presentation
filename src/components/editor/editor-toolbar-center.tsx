@@ -87,7 +87,7 @@ export const EditorToolbarCenter: React.FC<EditorToolbarCenterProps> = () => {
           <DropdownMenuContent
             align="center"
             className={cn(
-              "p-0 w-[400px] max-h-[500px] border-0 shadow-none custom-scrollbar",
+              "p-0 w-[320px] max-h-[500px] border-0 shadow-none custom-scrollbar",
               isDarkTheme
                 ? "bg-black custom-scrollbar-dark"
                 : "bg-white custom-scrollbar-light"
