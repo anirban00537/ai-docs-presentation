@@ -43,7 +43,7 @@ export function NavMain({
                     "hover:bg-primary/10",
                     "active:scale-[0.98]",
                     isActive &&
-                      "!bg-primary/15 !text-primary-foreground font-semibold"
+                      "!bg-sidebar-accent !text-sidebar-accent-foreground font-semibold"
                   )}
                 >
                   <Link
