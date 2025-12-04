@@ -8,11 +8,17 @@ import {
   selectActiveSlide,
   selectSlides,
   selectGlobalTheme,
+  selectPresentationId,
   updateSlide,
   setSlideTheme,
   updateGlobalTheme,
   removeWidget,
+  addSlide,
+  updateSlideId,
 } from "@/store/slices/slidesSlice";
+import { useAddSlide } from "@/hooks/use-presentation";
+import { store } from "@/store";
+import { Plus } from "lucide-react";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
 import { EditorToolbarTitle } from "@/components/editor/editor-toolbar-title";
 import { EditorToolbarCenter } from "@/components/editor/editor-toolbar-center";
@@ -41,6 +47,7 @@ const SlideWrapper: React.FC<{
   onClearLiveOverride: (id: string) => void;
   globalTheme: GlobalTheme | null;
   registerSlide: (slideId: string, element: HTMLDivElement | null) => void;
+  onAddSlideAfter: (slideId: string) => void;
 }> = ({
   slide,
   isActive,
@@ -52,6 +59,7 @@ const SlideWrapper: React.FC<{
   onClearLiveOverride,
   globalTheme,
   registerSlide,
+  onAddSlideAfter,
 }) => {
   const slideRef = React.useRef<HTMLDivElement>(null);
 
@@ -79,11 +87,13 @@ const SlideWrapper: React.FC<{
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
 
+  const isDarkTheme = globalTheme?.tone === "dark";
+
   return (
     <div
       ref={slideRef}
       data-slide-id={slide.id}
-      className="w-full flex justify-center items-center"
+      className="group relative w-full flex flex-col justify-center items-center"
       style={{
         minHeight: slideHeight > 0 ? `${slideHeight}px` : "100vh",
         height: slideHeight > 0 ? `${slideHeight}px` : "100vh",
@@ -100,6 +110,35 @@ const SlideWrapper: React.FC<{
         globalTheme={globalTheme || undefined}
         showSnapLines={isActive}
       />
+      {/* Add Slide Button - appears on hover */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out pointer-events-none group-hover:pointer-events-auto z-10">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddSlideAfter(slide.id);
+          }}
+          className={cn(
+            "flex items-center justify-center gap-2 px-4 py-2 rounded-xl shadow-lg",
+            "transition-all duration-200 ease-out",
+            "hover:scale-105 active:scale-95",
+            isDarkTheme
+              ? "bg-oklch(0.1 0.01 250) border border-neutral-800 text-white/80 hover:text-white hover:bg-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
+              : "bg-oklch(1 0 0) border border-border text-muted-foreground hover:text-foreground hover:bg-background shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
+          )}
+          style={{
+            backgroundColor: isDarkTheme
+              ? "oklch(0.1 0.01 250)"
+              : "oklch(1 0 0)",
+            boxShadow: isDarkTheme
+              ? "0 8px 32px 0 rgba(0, 0, 0, 0.4)"
+              : "0 8px 32px 0 rgba(0, 0, 0, 0.12)",
+          }}
+        >
+          <Plus className="w-4 h-4" />
+          <span className="text-sm font-semibold">Add Slide</span>
+        </button>
+      </div>
     </div>
   );
 };
@@ -108,7 +147,9 @@ const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
   const slides = useAppSelector(selectSlides);
   const globalTheme = useAppSelector(selectGlobalTheme);
+  const presentationId = useAppSelector(selectPresentationId);
   const dispatch = useAppDispatch();
+  const addSlideMutation = useAddSlide();
 
   const {
     selectedId,
@@ -201,6 +242,72 @@ const Editor = () => {
       );
     },
     [dispatch]
+  );
+
+  const handleAddSlideAfter = React.useCallback(
+    async (afterSlideId: string) => {
+      if (!presentationId) {
+        console.error("No presentation ID available");
+        return;
+      }
+
+      // Calculate insert index
+      const insertIndex = slides.findIndex(
+        (slide) => slide.id === afterSlideId
+      );
+      const defaultTitle = `Slide ${slides.length + 1}`;
+      const targetIndex = insertIndex >= 0 ? insertIndex + 1 : slides.length;
+
+      // Add to Redux first (creates slide with temporary nanoid ID)
+      dispatch(addSlide({ title: defaultTitle }));
+
+      // Get the new slide from Redux state (it's now the active slide)
+      // Use setTimeout to ensure Redux state has updated
+      setTimeout(async () => {
+        const currentState = store.getState();
+        const newSlideId = currentState.slides.activeSlideId;
+        const newSlide = currentState.slides.slides.find(
+          (slide) => slide.id === newSlideId
+        );
+
+        if (!newSlide) {
+          console.error("Failed to find newly created slide");
+          return;
+        }
+
+        // Create slide in API immediately
+        try {
+          const response = await addSlideMutation.mutateAsync({
+            presentationId,
+            payload: {
+              data: {
+                id: newSlide.id,
+                title: newSlide.title,
+                widgets: newSlide.widgets,
+                backgroundColor: newSlide.backgroundColor,
+                backgroundImage: newSlide.backgroundImage,
+                showSlideNumber: newSlide.showSlideNumber,
+                slideStyle: newSlide.slideStyle,
+              },
+              order: targetIndex,
+            },
+          });
+
+          if (response.success && response.data) {
+            // Update the slide ID in Redux with the database ID
+            dispatch(
+              updateSlideId({
+                oldId: newSlide.id,
+                newId: response.data.id,
+              })
+            );
+          }
+        } catch (error) {
+          console.error("Failed to create slide in API:", error);
+        }
+      }, 0);
+    },
+    [presentationId, slides, dispatch, addSlideMutation]
   );
 
   // Scroll container ref for intersection observer
@@ -387,7 +494,7 @@ const Editor = () => {
               : "custom-scrollbar-light"
           )}
         >
-          <div className="flex flex-col items-center gap-8 py-8">
+          <div className="flex flex-col items-center gap-16 py-8">
             {slides.length === 0 ? (
               <div className="flex flex-1 flex-col items-center justify-center min-h-[60vh]">
                 <p className="text-muted-foreground/70 text-sm font-medium">
@@ -411,6 +518,7 @@ const Editor = () => {
                     onClearLiveOverride={onClearLiveOverride}
                     globalTheme={globalTheme}
                     registerSlide={registerSlide}
+                    onAddSlideAfter={handleAddSlideAfter}
                   />
                 );
               })
