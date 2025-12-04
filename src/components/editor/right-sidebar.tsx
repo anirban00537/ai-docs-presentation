@@ -5,7 +5,7 @@ import { XIcon, Palette, LayoutTemplate } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InsertPanelContent } from "./right-sidebar/insert-panel-content";
 import { BackgroundPanelContent } from "./right-sidebar/background-panel-content";
-import { ThemePanelContent } from "./right-sidebar/theme-panel-content";
+import { ThemeSelector } from "./theme-selector";
 import { useWidgetCreation } from "@/hooks/use-widget-creation";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
@@ -373,9 +373,9 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           )}
 
           {panel === "theme" && (
-            <ThemePanelContent
+            <ThemeSelector
               activeThemeId={activeThemeId}
-              onSelectTheme={onSelectTheme}
+              onSelectTheme={onSelectTheme || (() => {})}
               globalTheme={globalTheme}
               onThemeChange={onThemeChange}
             />
