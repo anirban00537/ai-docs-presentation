@@ -36,11 +36,11 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 
   const deleteThemeMutation = useDeleteTheme();
 
-  // Only use themes from API
-  const allThemes = useMemo(() => {
-    if (!themesData?.data?.list) return [];
+  // Group themes by type (user vs admin)
+  const { userThemes, adminThemes } = useMemo(() => {
+    if (!themesData?.data?.list) return { userThemes: [], adminThemes: [] };
 
-    return themesData.data.list.map((theme) => ({
+    const themes = themesData.data.list.map((theme) => ({
       id: theme.id,
       name: theme.name,
       description: theme.description || undefined,
@@ -54,6 +54,11 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
       isAdmin: theme.isAdmin,
       userId: theme.userId,
     }));
+
+    return {
+      userThemes: themes.filter((t) => !t.isAdmin),
+      adminThemes: themes.filter((t) => t.isAdmin),
+    };
   }, [themesData]);
 
   // Handle theme selection - update global theme with API theme data
@@ -102,6 +107,112 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
     } catch (error: any) {
       toast.error(error.message || "Failed to delete theme");
     }
+  };
+
+  // Render theme card component
+  const renderThemeCard = (
+    theme: (typeof userThemes)[0],
+    index: number,
+    isUserTheme: boolean
+  ) => {
+    const isActive = activeThemeId === theme.id;
+    const isDeleting = deleteThemeMutation.isPending;
+
+    return (
+      <div
+        key={theme.id}
+        className={cn(
+          "group relative w-full rounded-xl border p-4",
+          "transition-all duration-300 ease-out",
+          "hover:scale-[1.01]",
+          isActive
+            ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/30 hover:shadow-lg"
+            : isDarkTheme
+            ? "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-sm"
+            : "border-border/50 bg-background/60 hover:bg-accent/50 hover:border-border hover:shadow-sm"
+        )}
+        style={{
+          animationDelay: `${index * 25}ms`,
+          animation: "fadeInUp 0.4s ease-out both",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => handleThemeSelect(theme.id)}
+          className="w-full text-left flex items-center justify-between gap-4 outline-none"
+        >
+          <div className="space-y-1.5 min-w-0 flex-1">
+            <div
+              className={cn(
+                "font-semibold text-sm truncate transition-colors duration-300 ease-out tracking-tight",
+                isActive
+                  ? "text-primary"
+                  : isDarkTheme
+                  ? "text-white/90"
+                  : "text-foreground"
+              )}
+            >
+              {theme.name}
+            </div>
+            {theme.description && (
+              <div
+                className={cn(
+                  "text-xs line-clamp-1 transition-all duration-300 ease-out",
+                  "group-hover:opacity-100",
+                  isDarkTheme
+                    ? "text-white/60 opacity-80 group-hover:text-white/80"
+                    : "text-muted-foreground/80 opacity-80 group-hover:text-foreground/70"
+                )}
+              >
+                {theme.description}
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center -space-x-1.5">
+              <span
+                key={`${theme.id}-background`}
+                className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50 transition-transform duration-300 ease-out group-hover:scale-110"
+                style={{ backgroundColor: theme.background }}
+              />
+              {[theme.surface, theme.text, theme.accent].map((color, i) => (
+                <span
+                  key={`${theme.id}-color-${i}`}
+                  className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50 transition-transform duration-300 ease-out group-hover:scale-110"
+                  style={{
+                    backgroundColor: color,
+                    zIndex: 3 - i,
+                    transitionDelay: `${i * 30}ms`,
+                  }}
+                />
+              ))}
+            </div>
+            {isUserTheme && (
+              <button
+                type="button"
+                onClick={(e) => handleDeleteTheme(e, theme.id, theme.name)}
+                disabled={isDeleting}
+                className={cn(
+                  "opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out",
+                  "p-1.5 rounded-md",
+                  "hover:bg-destructive/10 hover:text-destructive",
+                  "active:scale-95",
+                  "disabled:opacity-50 disabled:cursor-not-allowed",
+                  isDeleting && "opacity-100"
+                )}
+                title="Delete theme"
+              >
+                {isDeleting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+              </button>
+            )}
+          </div>
+        </button>
+      </div>
+    );
   };
 
   return (
@@ -170,112 +281,58 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-3">
-                  {allThemes.map((theme, index) => {
-                    const isActive = activeThemeId === theme.id;
-                    const isUserTheme = !theme.isAdmin;
-                    const isDeleting = deleteThemeMutation.isPending;
-
-                    return (
+                <div className="space-y-6">
+                  {/* User Themes Section */}
+                  {userThemes.length > 0 && (
+                    <div className="space-y-3">
                       <div
-                        key={theme.id}
                         className={cn(
-                          "group relative w-full rounded-xl border p-4",
-                          "transition-all duration-300 ease-out",
-                          "hover:scale-[1.01]",
-                          isActive
-                            ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/30 hover:shadow-lg"
-                            : isDarkTheme
-                            ? "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-sm"
-                            : "border-border/50 bg-background/60 hover:bg-accent/50 hover:border-border hover:shadow-sm"
+                          "text-xs font-semibold uppercase tracking-wider px-1",
+                          isDarkTheme
+                            ? "text-white/70"
+                            : "text-muted-foreground"
                         )}
-                        style={{
-                          animationDelay: `${index * 25}ms`,
-                          animation: "fadeInUp 0.4s ease-out both",
-                        }}
                       >
-                        <button
-                          type="button"
-                          onClick={() => handleThemeSelect(theme.id)}
-                          className="w-full text-left flex items-center justify-between gap-4 outline-none"
-                        >
-                          <div className="space-y-1.5 min-w-0 flex-1">
-                            <div
-                              className={cn(
-                                "font-semibold text-sm truncate transition-colors duration-300 ease-out tracking-tight",
-                                isActive
-                                  ? "text-primary"
-                                  : isDarkTheme
-                                  ? "text-white/90"
-                                  : "text-foreground"
-                              )}
-                            >
-                              {theme.name}
-                            </div>
-                            {theme.description && (
-                              <div
-                                className={cn(
-                                  "text-xs line-clamp-1 transition-all duration-300 ease-out",
-                                  "group-hover:opacity-100",
-                                  isDarkTheme
-                                    ? "text-white/60 opacity-80 group-hover:text-white/80"
-                                    : "text-muted-foreground/80 opacity-80 group-hover:text-foreground/70"
-                                )}
-                              >
-                                {theme.description}
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <div className="flex items-center -space-x-1.5">
-                              <span
-                                key={`${theme.id}-background`}
-                                className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50 transition-transform duration-300 ease-out group-hover:scale-110"
-                                style={{ backgroundColor: theme.background }}
-                              />
-                              {[theme.surface, theme.text, theme.accent].map(
-                                (color, i) => (
-                                  <span
-                                    key={`${theme.id}-color-${i}`}
-                                    className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50 transition-transform duration-300 ease-out group-hover:scale-110"
-                                    style={{
-                                      backgroundColor: color,
-                                      zIndex: 3 - i,
-                                      transitionDelay: `${i * 30}ms`,
-                                    }}
-                                  />
-                                )
-                              )}
-                            </div>
-                            {isUserTheme && (
-                              <button
-                                type="button"
-                                onClick={(e) =>
-                                  handleDeleteTheme(e, theme.id, theme.name)
-                                }
-                                disabled={isDeleting}
-                                className={cn(
-                                  "opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out",
-                                  "p-1.5 rounded-md",
-                                  "hover:bg-destructive/10 hover:text-destructive",
-                                  "active:scale-95",
-                                  "disabled:opacity-50 disabled:cursor-not-allowed",
-                                  isDeleting && "opacity-100"
-                                )}
-                                title="Delete theme"
-                              >
-                                {isDeleting ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Trash2 className="h-4 w-4" />
-                                )}
-                              </button>
-                            )}
-                          </div>
-                        </button>
+                        Your Themes
                       </div>
-                    );
-                  })}
+                      <div className="grid grid-cols-1 gap-3">
+                        {userThemes.map((theme, index) => {
+                          return renderThemeCard(theme, index, true);
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Admin Themes Section */}
+                  {adminThemes.length > 0 && (
+                    <div className="space-y-3">
+                      <div
+                        className={cn(
+                          "text-xs font-semibold uppercase tracking-wider px-1",
+                          isDarkTheme
+                            ? "text-white/70"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        Butterfast Themes
+                      </div>
+                      <div className="grid grid-cols-1 gap-3">
+                        {adminThemes.map((theme, index) => {
+                          return renderThemeCard(theme, index, false);
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Empty State */}
+                  {userThemes.length === 0 && adminThemes.length === 0 && (
+                    <div className="flex flex-col items-center justify-center h-64 text-center">
+                      <LayoutTemplate className="h-12 w-12 text-muted-foreground/40 mb-4" />
+                      <p className="text-sm text-muted-foreground">
+                        No themes available
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
