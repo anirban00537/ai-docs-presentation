@@ -33,8 +33,8 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
       {/* Tabs */}
       <div
         className={cn(
-          "pb-3 border-b",
-          isDarkTheme ? "border-white/10" : "border-border/30"
+          "px-4 pt-4 pb-3 border-b",
+          isDarkTheme ? "border-white/10" : "border-border"
         )}
       >
         <Tabs
@@ -46,7 +46,7 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
           <TabsList
             className={cn(
               "w-full grid grid-cols-2 p-1 rounded-xl",
-              isDarkTheme ? "bg-white/5" : "bg-muted/30"
+              isDarkTheme ? "bg-white/5" : "bg-muted/50"
             )}
           >
             <TabsTrigger
@@ -54,7 +54,8 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
               className={cn(
                 "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
                 "transition-all duration-300 ease-out rounded-lg",
-                "hover:scale-[1.02] active:scale-[0.98]"
+                "hover:scale-[1.02] active:scale-[0.98]",
+                isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
               Unsplash
@@ -64,7 +65,8 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
               className={cn(
                 "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
                 "transition-all duration-300 ease-out rounded-lg",
-                "hover:scale-[1.02] active:scale-[0.98]"
+                "hover:scale-[1.02] active:scale-[0.98]",
+                isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
               Your Media
