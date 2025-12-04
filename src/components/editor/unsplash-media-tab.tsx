@@ -167,9 +167,9 @@ export const UnsplashMediaTab: React.FC<UnsplashMediaTabProps> = ({
   };
 
   return (
-    <>
+    <div className="flex flex-col h-full min-h-0 overflow-hidden">
       {/* Search Bar */}
-      <div className="px-4 pt-4 pb-3">
+      <div className="px-4 pt-4 pb-3 shrink-0">
         <div className="relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 group-focus-within:text-primary transition-colors duration-300 ease-out z-10" />
           <Input
@@ -188,7 +188,7 @@ export const UnsplashMediaTab: React.FC<UnsplashMediaTabProps> = ({
       </div>
 
       {/* Category Filters */}
-      <div className="px-4 pb-3">
+      <div className="px-4 pb-3 shrink-0">
         <div className="flex items-center gap-2.5 overflow-x-auto scroll-smooth">
           {categories.map((category) => (
             <button
@@ -218,7 +218,7 @@ export const UnsplashMediaTab: React.FC<UnsplashMediaTabProps> = ({
       {/* Image Grid */}
       <div
         className={cn(
-          "flex-1 overflow-y-auto px-4 pb-4 custom-scrollbar",
+          "flex-1 min-h-0 overflow-y-auto px-4 pb-4 custom-scrollbar",
           isDarkTheme ? "custom-scrollbar-dark" : "custom-scrollbar-light"
         )}
       >
@@ -292,6 +292,6 @@ export const UnsplashMediaTab: React.FC<UnsplashMediaTabProps> = ({
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
