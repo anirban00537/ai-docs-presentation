@@ -3,10 +3,8 @@
 import React from "react";
 import { XIcon, Palette, LayoutTemplate } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InsertPanelContent } from "./right-sidebar/insert-panel-content";
 import { BackgroundPanelContent } from "./right-sidebar/background-panel-content";
 import { ThemeSelector } from "./theme-selector";
-import { useWidgetCreation } from "@/hooks/use-widget-creation";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
 import {
@@ -14,7 +12,7 @@ import {
   selectGlobalTheme,
 } from "@/store/slices/slidesSlice";
 
-export type SidebarPanel = "insert" | "background" | "theme" | null;
+export type SidebarPanel = "background" | "theme" | null;
 
 const DEFAULT_WIDTH = 340;
 const MIN_WIDTH = 240;
@@ -62,17 +60,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   const globalThemeState = useAppSelector(selectGlobalTheme);
   const effectiveTheme = globalTheme || globalThemeState;
   const isDarkTheme = effectiveTheme?.tone === "dark";
-  const {
-    handleAddFeatureCard,
-    handleAddIconCard,
-    handleAddImageCard,
-    handleAddLabelCard,
-    handleAddListCard,
-    handleAddQuote,
-    handleAddComparisonCard,
-    handleAddTitleCard,
-    handleAddPricingCard,
-  } = useWidgetCreation();
 
   // Load width from localStorage or use default
   const [width, setWidth] = React.useState(() => {
@@ -202,8 +189,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
 
   const getTitle = () => {
     switch (panel) {
-      case "insert":
-        return "Insert Widget";
       case "background":
         return "Background Settings";
       case "theme":
@@ -349,20 +334,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             isDarkTheme ? "custom-scrollbar-dark" : "custom-scrollbar-light"
           )}
         >
-          {panel === "insert" && (
-            <InsertPanelContent
-              onAddFeatureCard={handleAddFeatureCard}
-              onAddIconCard={handleAddIconCard}
-              onAddImageCard={handleAddImageCard}
-              onAddLabelCard={handleAddLabelCard}
-              onAddListCard={handleAddListCard}
-              onAddQuote={handleAddQuote}
-              onAddComparisonCard={handleAddComparisonCard}
-              onAddTitleCard={handleAddTitleCard}
-              onAddPricingCard={handleAddPricingCard}
-            />
-          )}
-
           {panel === "background" && (
             <BackgroundPanelContent
               backgroundColor={backgroundColor}

@@ -336,9 +336,7 @@ const Editor = () => {
       >
         <div className="fixed top-4 bg-transparent left-4 right-4 flex items-center justify-between gap-4 z-50 pointer-events-none">
           <EditorToolbarTitle />
-          <EditorToolbarCenter
-            onOpenInsertPanel={() => togglePanel("insert")}
-          />
+          <EditorToolbarCenter />
           <EditorToolbarActions onStartPresentation={handleStartPresentation} />
         </div>
         <div className="flex flex-1 min-h-0 overflow-hidden h-full  py-10">
@@ -377,9 +375,7 @@ const Editor = () => {
       <div className="flex flex-1 min-h-0 overflow-hidden h-full ">
         <div className="fixed top-4 bg-transparent left-4 right-4 flex items-center justify-between gap-4 z-50 pointer-events-none">
           <EditorToolbarTitle />
-          <EditorToolbarCenter
-            onOpenInsertPanel={() => togglePanel("insert")}
-          />
+          <EditorToolbarCenter />
           <EditorToolbarActions onStartPresentation={handleStartPresentation} />
         </div>
         <div

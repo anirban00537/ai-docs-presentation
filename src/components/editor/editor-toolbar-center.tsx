@@ -10,24 +10,33 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MediaBrowser } from "@/components/editor/media-browser";
 import { TextWidgetsBrowser } from "@/components/editor/text-widgets-browser";
+import { InsertPanelContent } from "@/components/editor/right-sidebar/insert-panel-content";
 import { useWidgetCreation } from "@/hooks/use-widget-creation";
 import type { TextPreset } from "@/components/editor/types";
 import { selectGlobalTheme } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { cn } from "@/lib/utils";
 
-type EditorToolbarCenterProps = {
-  onOpenInsertPanel: () => void;
-};
+type EditorToolbarCenterProps = Record<string, never>;
 
-export const EditorToolbarCenter: React.FC<EditorToolbarCenterProps> = ({
-  onOpenInsertPanel,
-}) => {
+export const EditorToolbarCenter: React.FC<EditorToolbarCenterProps> = () => {
   const globalTheme = useAppSelector(selectGlobalTheme);
   const isDarkTheme = globalTheme?.tone === "dark";
+  const [isInsertDropdownOpen, setIsInsertDropdownOpen] = useState(false);
   const [isMediaDropdownOpen, setIsMediaDropdownOpen] = useState(false);
   const [isTextDropdownOpen, setIsTextDropdownOpen] = useState(false);
   const { handleAddText } = useWidgetCreation();
+  const {
+    handleAddFeatureCard,
+    handleAddIconCard,
+    handleAddImageCard,
+    handleAddLabelCard,
+    handleAddListCard,
+    handleAddQuote,
+    handleAddComparisonCard,
+    handleAddTitleCard,
+    handleAddPricingCard,
+  } = useWidgetCreation();
 
   const handleTextClick = useCallback(
     (preset: TextPreset) => {
@@ -56,20 +65,50 @@ export const EditorToolbarCenter: React.FC<EditorToolbarCenterProps> = ({
       }}
     >
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            "h-8 rounded-lg px-3 text-xs font-semibold hover:shadow-sm transition-all duration-200 active:scale-[0.97]",
-            isDarkTheme
-              ? "text-white/80 hover:text-white hover:bg-white/10"
-              : "text-muted-foreground hover:text-foreground hover:bg-background"
-          )}
-          onClick={onOpenInsertPanel}
+        <DropdownMenu
+          open={isInsertDropdownOpen}
+          onOpenChange={setIsInsertDropdownOpen}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Insert
-        </Button>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "h-8 rounded-lg px-3 text-xs font-semibold hover:shadow-sm transition-all duration-200 active:scale-[0.97]",
+                isDarkTheme
+                  ? "text-white/80 hover:text-white hover:bg-white/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-background"
+              )}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Insert
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="center"
+            className={cn(
+              "p-0 w-[400px] max-h-[500px] border-0 shadow-none custom-scrollbar",
+              isDarkTheme
+                ? "bg-black custom-scrollbar-dark"
+                : "bg-white custom-scrollbar-light"
+            )}
+            sideOffset={8}
+          >
+            <div className="w-full h-full">
+              <InsertPanelContent
+                onAddFeatureCard={handleAddFeatureCard}
+                onAddIconCard={handleAddIconCard}
+                onAddImageCard={handleAddImageCard}
+                onAddLabelCard={handleAddLabelCard}
+                onAddListCard={handleAddListCard}
+                onAddQuote={handleAddQuote}
+                onAddComparisonCard={handleAddComparisonCard}
+                onAddTitleCard={handleAddTitleCard}
+                onAddPricingCard={handleAddPricingCard}
+              />
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <DropdownMenu
           open={isTextDropdownOpen}
           onOpenChange={setIsTextDropdownOpen}
