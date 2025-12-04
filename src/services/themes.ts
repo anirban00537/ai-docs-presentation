@@ -7,11 +7,23 @@ export interface ApiResponse<T = unknown> {
   data: T;
 }
 
+export interface ThemeData {
+  background: string;
+  surface: string;
+  text: string;
+  accent: string;
+  font: string;
+  cardBackgroundType: "solid" | "glass" | "transparent";
+  tone: "dark" | "light";
+}
+
 export interface Theme {
   id: string;
   userId?: string | null;
   name: string;
   description?: string | null;
+  themeData?: ThemeData; // New JSON structure
+  // Backward compatibility fields (extracted from themeData by backend)
   background: string;
   surface: string;
   text: string;
@@ -28,26 +40,14 @@ export interface Theme {
 export interface CreateThemePayload {
   name: string;
   description?: string;
-  background: string;
-  surface: string;
-  text: string;
-  accent: string;
-  font: string;
-  cardBackgroundType: "solid" | "glass" | "transparent";
-  tone: "dark" | "light";
+  themeData: ThemeData;
   isAdmin?: boolean;
 }
 
 export interface UpdateThemePayload {
   name?: string;
   description?: string;
-  background?: string;
-  surface?: string;
-  text?: string;
-  accent?: string;
-  font?: string;
-  cardBackgroundType?: "solid" | "glass" | "transparent";
-  tone?: "dark" | "light";
+  themeData?: Partial<ThemeData>;
 }
 
 export interface ListThemesParams {

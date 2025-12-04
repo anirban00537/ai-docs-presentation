@@ -28,7 +28,7 @@ export function ColorPicker({
   const isDarkTheme = globalTheme?.tone === "dark";
 
   return (
-    <div className="relative overflow-visible group/picker">
+    <div className="relative overflow-visible group/picker pointer-events-auto">
       <Popover>
         {({ open }) => (
           <>
@@ -39,6 +39,7 @@ export function ColorPicker({
                 "transition-all duration-300 ease-out",
                 "hover:scale-[1.08] active:scale-[0.95]",
                 "focus:outline-none focus:ring-2 focus:ring-primary/50",
+                "pointer-events-auto z-10",
                 isDarkTheme
                   ? "border-black ring-white/10"
                   : "border-background ring-border/30"
@@ -63,6 +64,7 @@ export function ColorPicker({
                   className={cn(
                     "flex flex-col gap-3 p-3 rounded-xl shadow-2xl border",
                     "animate-in fade-in zoom-in-95 duration-300 ease-out",
+                    "min-w-[280px]",
                     isDarkTheme
                       ? "bg-black border-white/10"
                       : "bg-popover border-border/50"

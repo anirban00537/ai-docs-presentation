@@ -37,24 +37,44 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 
   const deleteThemeMutation = useDeleteTheme();
 
+  // Extract theme data from API response (use themeData if available, otherwise use individual fields)
+  const getThemeDataFromResponse = (theme: any) => {
+    if (theme?.themeData) {
+      return theme.themeData;
+    }
+    // Fallback to individual fields for backward compatibility
+    return {
+      background: theme?.background || "#ffffff",
+      surface: theme?.surface || "#f8f9fa",
+      text: theme?.text || "#000000",
+      accent: theme?.accent || "#3b82f6",
+      font: theme?.font || "var(--font-poppins), Poppins, sans-serif",
+      cardBackgroundType: theme?.cardBackgroundType || "solid",
+      tone: theme?.tone || "light",
+    };
+  };
+
   // Group themes by type (user vs admin)
   const { userThemes, adminThemes } = useMemo(() => {
     if (!themesData?.data?.list) return { userThemes: [], adminThemes: [] };
 
-    const themes = themesData.data.list.map((theme) => ({
-      id: theme.id,
-      name: theme.name,
-      description: theme.description || undefined,
-      background: theme.background,
-      surface: theme.surface,
-      text: theme.text,
-      accent: theme.accent,
-      font: theme.font,
-      cardBackgroundType: theme.cardBackgroundType,
-      tone: theme.tone,
-      isAdmin: theme.isAdmin,
-      userId: theme.userId,
-    }));
+    const themes = themesData.data.list.map((theme) => {
+      const themeData = getThemeDataFromResponse(theme);
+      return {
+        id: theme.id,
+        name: theme.name,
+        description: theme.description || undefined,
+        background: themeData.background,
+        surface: themeData.surface,
+        text: themeData.text,
+        accent: themeData.accent,
+        font: themeData.font,
+        cardBackgroundType: themeData.cardBackgroundType,
+        tone: themeData.tone,
+        isAdmin: theme.isAdmin,
+        userId: theme.userId,
+      };
+    });
 
     return {
       userThemes: themes.filter((t) => !t.isAdmin),
@@ -66,18 +86,19 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   const handleThemeSelect = (themeId: string) => {
     const selectedTheme = themesData?.data?.list?.find((t) => t.id === themeId);
     if (selectedTheme) {
+      const themeData = getThemeDataFromResponse(selectedTheme);
       // Update global theme with the selected theme's properties
       dispatch(
         setSlideTheme({
           theme: {
             id: selectedTheme.id,
-            background: selectedTheme.background,
-            surface: selectedTheme.surface,
-            text: selectedTheme.text,
-            accent: selectedTheme.accent,
-            font: selectedTheme.font,
-            cardBackgroundType: selectedTheme.cardBackgroundType,
-            tone: selectedTheme.tone,
+            background: themeData.background,
+            surface: themeData.surface,
+            text: themeData.text,
+            accent: themeData.accent,
+            font: themeData.font,
+            cardBackgroundType: themeData.cardBackgroundType,
+            tone: themeData.tone,
           },
         })
       );

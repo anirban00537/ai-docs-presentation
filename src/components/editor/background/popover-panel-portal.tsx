@@ -39,7 +39,7 @@ export function PopoverPanelPortal({
 
   return createPortal(
     <div
-      className="fixed z-[9999]"
+      className="fixed z-[10000] pointer-events-auto"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,

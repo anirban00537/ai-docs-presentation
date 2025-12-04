@@ -39,6 +39,23 @@ export function ThemeEditor({
   // Fetch theme data if editing
   const { data: themeData } = useTheme(themeId || null);
   const editingThemeData = themeData?.data;
+  
+  // Extract theme data from API response (use themeData if available, otherwise use individual fields)
+  const getThemeDataFromResponse = (theme: any) => {
+    if (theme?.themeData) {
+      return theme.themeData;
+    }
+    // Fallback to individual fields for backward compatibility
+    return {
+      background: theme?.background || '#ffffff',
+      surface: theme?.surface || '#f8f9fa',
+      text: theme?.text || '#000000',
+      accent: theme?.accent || '#3b82f6',
+      font: theme?.font || 'var(--font-poppins), Poppins, sans-serif',
+      cardBackgroundType: theme?.cardBackgroundType || 'solid',
+      tone: theme?.tone || 'light',
+    };
+  };
 
   // Determine if we're editing or creating
   const isEditMode = !!themeId;
@@ -47,14 +64,7 @@ export function ThemeEditor({
   const baseTheme = editingThemeData
     ? {
         id: editingThemeData.id,
-        background: editingThemeData.background,
-        surface: editingThemeData.surface,
-        text: editingThemeData.text,
-        accent: editingThemeData.accent,
-        font: editingThemeData.font,
-        cardBackgroundType:
-          editingThemeData.cardBackgroundType as WidgetBackgroundType,
-        tone: editingThemeData.tone as "dark" | "light",
+        ...getThemeDataFromResponse(editingThemeData),
       }
     : initialTheme ||
       globalTheme || {
@@ -88,15 +98,15 @@ export function ThemeEditor({
   // Update local editing theme state when theme data changes
   useEffect(() => {
     if (editingThemeData) {
+      const themeData = getThemeDataFromResponse(editingThemeData);
       setEditingTheme({
-        background: editingThemeData.background,
-        surface: editingThemeData.surface,
-        text: editingThemeData.text,
-        accent: editingThemeData.accent,
-        font: editingThemeData.font,
-        cardBackgroundType:
-          editingThemeData.cardBackgroundType as WidgetBackgroundType,
-        tone: editingThemeData.tone as "dark" | "light",
+        background: themeData.background,
+        surface: themeData.surface,
+        text: themeData.text,
+        accent: themeData.accent,
+        font: themeData.font,
+        cardBackgroundType: themeData.cardBackgroundType as WidgetBackgroundType,
+        tone: themeData.tone as "dark" | "light",
       });
       setThemeName(editingThemeData.name || "");
       setThemeDescription(editingThemeData.description || "");
@@ -144,6 +154,17 @@ export function ThemeEditor({
     }
 
     try {
+      // Prepare themeData object
+      const themeData = {
+        background: editingTheme.background,
+        surface: editingTheme.surface,
+        text: editingTheme.text,
+        accent: editingTheme.accent,
+        font: editingTheme.font,
+        cardBackgroundType: editingTheme.cardBackgroundType,
+        tone: editingTheme.tone,
+      };
+
       if (isEditMode && themeId) {
         // Update existing theme
         await updateThemeMutation.mutateAsync({
@@ -151,13 +172,7 @@ export function ThemeEditor({
           payload: {
             name: themeName.trim(),
             description: themeDescription.trim() || undefined,
-            background: editingTheme.background,
-            surface: editingTheme.surface,
-            text: editingTheme.text,
-            accent: editingTheme.accent,
-            font: editingTheme.font,
-            cardBackgroundType: editingTheme.cardBackgroundType,
-            tone: editingTheme.tone,
+            themeData: themeData,
           },
         });
       } else {
@@ -165,13 +180,7 @@ export function ThemeEditor({
         await createThemeMutation.mutateAsync({
           name: themeName.trim(),
           description: themeDescription.trim() || undefined,
-          background: editingTheme.background,
-          surface: editingTheme.surface,
-          text: editingTheme.text,
-          accent: editingTheme.accent,
-          font: editingTheme.font,
-          cardBackgroundType: editingTheme.cardBackgroundType,
-          tone: editingTheme.tone,
+          themeData: themeData,
           isAdmin: false, // User-created themes
         });
 
