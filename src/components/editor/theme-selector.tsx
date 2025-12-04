@@ -7,8 +7,9 @@ import { ThemeEditor } from "./theme-editor";
 import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { selectGlobalTheme, setSlideTheme } from "@/store/slices/slidesSlice";
-import { LayoutTemplate, Palette, Loader2 } from "lucide-react";
-import { useThemesList } from "@/hooks/use-themes";
+import { LayoutTemplate, Palette, Loader2, Trash2 } from "lucide-react";
+import { useThemesList, useDeleteTheme } from "@/hooks/use-themes";
+import { toast } from "sonner";
 
 type ThemeSelectorProps = {
   activeThemeId?: string;
@@ -32,6 +33,8 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
     includeUser: "true",
   });
 
+  const deleteThemeMutation = useDeleteTheme();
+
   // Only use themes from API
   const allThemes = useMemo(() => {
     if (!themesData?.data?.list) return [];
@@ -47,6 +50,8 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
       font: theme.font,
       cardBackgroundType: theme.cardBackgroundType,
       tone: theme.tone,
+      isAdmin: theme.isAdmin,
+      userId: theme.userId,
     }));
   }, [themesData]);
 
@@ -71,6 +76,30 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
       );
       // Also call the callback if provided
       onSelectTheme(themeId);
+    }
+  };
+
+  // Handle theme deletion
+  const handleDeleteTheme = async (
+    e: React.MouseEvent,
+    themeId: string,
+    themeName: string
+  ) => {
+    e.stopPropagation(); // Prevent theme selection when clicking delete
+
+    if (
+      !confirm(
+        `Are you sure you want to delete "${themeName}"? This action cannot be undone.`
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await deleteThemeMutation.mutateAsync(themeId);
+      toast.success("Theme deleted successfully");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete theme");
     }
   };
 
@@ -139,15 +168,16 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                 <div className="grid grid-cols-1 gap-3">
                   {allThemes.map((theme, index) => {
                     const isActive = activeThemeId === theme.id;
+                    const isUserTheme = !theme.isAdmin;
+                    const isDeleting = deleteThemeMutation.isPending;
+
                     return (
-                      <button
+                      <div
                         key={theme.id}
-                        type="button"
-                        onClick={() => handleThemeSelect(theme.id)}
                         className={cn(
-                          "group w-full rounded-xl border p-4 text-left",
-                          "transition-all duration-300 ease-out flex items-center justify-between gap-4 outline-none",
-                          "hover:scale-[1.01] active:scale-[0.99]",
+                          "group relative w-full rounded-xl border p-4",
+                          "transition-all duration-300 ease-out",
+                          "hover:scale-[1.01]",
                           isActive
                             ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/30 hover:shadow-lg"
                             : isDarkTheme
@@ -159,54 +189,86 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                           animation: "fadeInUp 0.4s ease-out both",
                         }}
                       >
-                        <div className="space-y-1.5 min-w-0 flex-1">
-                          <div
-                            className={cn(
-                              "font-semibold text-sm truncate transition-colors duration-300 ease-out tracking-tight",
-                              isActive
-                                ? "text-primary"
-                                : isDarkTheme
-                                ? "text-white/90"
-                                : "text-foreground"
-                            )}
-                          >
-                            {theme.name}
-                          </div>
-                          {theme.description && (
+                        <button
+                          type="button"
+                          onClick={() => handleThemeSelect(theme.id)}
+                          className="w-full text-left flex items-center justify-between gap-4 outline-none"
+                        >
+                          <div className="space-y-1.5 min-w-0 flex-1">
                             <div
                               className={cn(
-                                "text-xs line-clamp-1 transition-all duration-300 ease-out",
-                                "group-hover:opacity-100",
-                                isDarkTheme
-                                  ? "text-white/60 opacity-80 group-hover:text-white/80"
-                                  : "text-muted-foreground/80 opacity-80 group-hover:text-foreground/70"
+                                "font-semibold text-sm truncate transition-colors duration-300 ease-out tracking-tight",
+                                isActive
+                                  ? "text-primary"
+                                  : isDarkTheme
+                                  ? "text-white/90"
+                                  : "text-foreground"
                               )}
                             >
-                              {theme.description}
+                              {theme.name}
                             </div>
-                          )}
-                        </div>
-                        <div className="flex items-center -space-x-1.5 shrink-0">
-                          <span
-                            key={`${theme.id}-background`}
-                            className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50 transition-transform duration-300 ease-out group-hover:scale-110"
-                            style={{ backgroundColor: theme.background }}
-                          />
-                          {[theme.surface, theme.text, theme.accent].map(
-                            (color, i) => (
+                            {theme.description && (
+                              <div
+                                className={cn(
+                                  "text-xs line-clamp-1 transition-all duration-300 ease-out",
+                                  "group-hover:opacity-100",
+                                  isDarkTheme
+                                    ? "text-white/60 opacity-80 group-hover:text-white/80"
+                                    : "text-muted-foreground/80 opacity-80 group-hover:text-foreground/70"
+                                )}
+                              >
+                                {theme.description}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <div className="flex items-center -space-x-1.5">
                               <span
-                                key={`${theme.id}-color-${i}`}
+                                key={`${theme.id}-background`}
                                 className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50 transition-transform duration-300 ease-out group-hover:scale-110"
-                                style={{
-                                  backgroundColor: color,
-                                  zIndex: 3 - i,
-                                  transitionDelay: `${i * 30}ms`,
-                                }}
+                                style={{ backgroundColor: theme.background }}
                               />
-                            )
-                          )}
-                        </div>
-                      </button>
+                              {[theme.surface, theme.text, theme.accent].map(
+                                (color, i) => (
+                                  <span
+                                    key={`${theme.id}-color-${i}`}
+                                    className="h-6 w-6 rounded-full border-2 border-background dark:border-neutral-900 shadow-sm ring-1 ring-border/50 transition-transform duration-300 ease-out group-hover:scale-110"
+                                    style={{
+                                      backgroundColor: color,
+                                      zIndex: 3 - i,
+                                      transitionDelay: `${i * 30}ms`,
+                                    }}
+                                  />
+                                )
+                              )}
+                            </div>
+                            {isUserTheme && (
+                              <button
+                                type="button"
+                                onClick={(e) =>
+                                  handleDeleteTheme(e, theme.id, theme.name)
+                                }
+                                disabled={isDeleting}
+                                className={cn(
+                                  "opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out",
+                                  "p-1.5 rounded-md",
+                                  "hover:bg-destructive/10 hover:text-destructive",
+                                  "active:scale-95",
+                                  "disabled:opacity-50 disabled:cursor-not-allowed",
+                                  isDeleting && "opacity-100"
+                                )}
+                                title="Delete theme"
+                              >
+                                {isDeleting ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4" />
+                                )}
+                              </button>
+                            )}
+                          </div>
+                        </button>
+                      </div>
                     );
                   })}
                 </div>

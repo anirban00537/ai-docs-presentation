@@ -165,8 +165,9 @@ export const useDeleteTheme = () => {
       }
     },
     onSuccess: () => {
-      // Invalidate themes list queries to refetch
+      // Invalidate all themes list queries to refetch (including all params variations)
       queryClient.invalidateQueries({ queryKey: themeKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: themeKeys.admin.lists() });
     },
     retry: 1,
     retryDelay: 1000,
