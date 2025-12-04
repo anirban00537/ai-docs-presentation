@@ -2,11 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
-import {
-  Search,
-  Loader2,
-  AlertCircle,
-} from "lucide-react";
+import { Search, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   useSearchUnsplashPhotos,
@@ -193,7 +189,7 @@ export const UnsplashMediaTab: React.FC<UnsplashMediaTabProps> = ({
 
       {/* Category Filters */}
       <div className="px-4 pb-3">
-        <div className="flex items-center gap-2.5 overflow-x-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex items-center gap-2.5 overflow-x-auto scroll-smooth">
           {categories.map((category) => (
             <button
               key={category.id}
@@ -203,12 +199,10 @@ export const UnsplashMediaTab: React.FC<UnsplashMediaTabProps> = ({
                 "transition-all duration-300 ease-out",
                 "hover:scale-[1.03] active:scale-[0.98]",
                 selectedCategory === category.id
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/40 scale-105 ring-2 ring-primary/30"
+                  ? "bg-primary text-black shadow-lg shadow-primary/40 scale-105 ring-2 ring-primary/30"
                   : cn(
                       category.color,
-                      isDarkTheme
-                        ? "text-slate-300 shadow-sm hover:shadow-md hover:shadow-black/10 border border-white/30 hover:border-white/50 backdrop-blur-sm"
-                        : "text-slate-700 shadow-sm hover:shadow-md hover:shadow-black/10 border border-white/30 hover:border-white/50 backdrop-blur-sm"
+                      "text-black shadow-sm hover:shadow-md hover:shadow-black/10 border border-white/30 hover:border-white/50 backdrop-blur-sm"
                     )
               )}
             >
@@ -245,9 +239,7 @@ export const UnsplashMediaTab: React.FC<UnsplashMediaTabProps> = ({
             <p className="text-sm text-muted-foreground/70 font-medium">
               Failed to load images
             </p>
-            <p className="text-xs text-muted-foreground/50">
-              Please try again
-            </p>
+            <p className="text-xs text-muted-foreground/50">Please try again</p>
           </div>
         ) : photos.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 gap-2">
@@ -303,4 +295,3 @@ export const UnsplashMediaTab: React.FC<UnsplashMediaTabProps> = ({
     </>
   );
 };
-
