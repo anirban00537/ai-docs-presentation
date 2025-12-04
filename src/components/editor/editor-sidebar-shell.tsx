@@ -97,7 +97,7 @@ export const EditorSidebarShell: React.FC<ShellProps & {
             : "border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.12)] ring-1 ring-inset ring-border/50",
         isCollapsed
           ? "w-12 opacity-100 pointer-events-auto translate-x-0" // Indicator state
-          : "w-64 opacity-100 pointer-events-auto translate-x-0", // Expanded state
+          : "w-44 opacity-100 pointer-events-auto translate-x-0", // Expanded state
         className
       )}
       style={{
