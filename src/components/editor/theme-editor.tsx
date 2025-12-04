@@ -22,9 +22,13 @@ import { Loader2, Check, Save } from "lucide-react";
 
 interface ThemeEditorProps {
   theme?: GlobalTheme;
+  onSuccess?: () => void;
 }
 
-export function ThemeEditor({ theme: initialTheme }: ThemeEditorProps) {
+export function ThemeEditor({
+  theme: initialTheme,
+  onSuccess,
+}: ThemeEditorProps) {
   const globalTheme = useAppSelector(selectGlobalTheme);
   const isDarkTheme = globalTheme?.tone === "dark";
   const createThemeMutation = useCreateTheme();
@@ -116,13 +120,24 @@ export function ThemeEditor({ theme: initialTheme }: ThemeEditorProps) {
         isAdmin: false, // User-created themes
       });
 
+      // Clear fields immediately
+      setThemeName("");
+      setThemeDescription("");
+
       // Show success message
       setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        setThemeName("");
-        setThemeDescription("");
-      }, 2000);
+
+      // Call onSuccess callback to switch tabs after a brief delay
+      if (onSuccess) {
+        setTimeout(() => {
+          setShowSuccess(false);
+          onSuccess();
+        }, 800); // Brief delay to show success state before switching
+      } else {
+        setTimeout(() => {
+          setShowSuccess(false);
+        }, 2000);
+      }
     } catch (error) {
       // Error is handled by the mutation
       console.error("Failed to save theme:", error);

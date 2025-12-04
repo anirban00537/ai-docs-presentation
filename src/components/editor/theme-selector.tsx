@@ -26,6 +26,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   const effectiveTheme = globalTheme || globalThemeState;
   const isDarkTheme = effectiveTheme?.tone === "dark";
   const dispatch = useAppDispatch();
+  const [activeTab, setActiveTab] = React.useState("select");
 
   // Fetch themes from backend
   const { data: themesData, isLoading: isLoadingThemes } = useThemesList({
@@ -105,7 +106,11 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 
   return (
     <div className="w-full h-full flex flex-col rounded-lg overflow-hidden min-h-0">
-      <Tabs defaultValue="select" className="w-full h-full flex flex-col">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="w-full h-full flex flex-col"
+      >
         {/* Tabs */}
         <div
           className={cn(
@@ -281,7 +286,11 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
             className="mt-0 px-4 animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
           >
             <div className="py-4">
-              <ThemeEditor />
+              <ThemeEditor
+                onSuccess={() => {
+                  setActiveTab("select");
+                }}
+              />
             </div>
           </TabsContent>
         </div>
