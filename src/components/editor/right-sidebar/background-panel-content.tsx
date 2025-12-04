@@ -45,7 +45,7 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
       <div
         className={cn(
           "px-4 pt-4 pb-3 border-b",
-          isDarkTheme ? "border-neutral-800" : "border-border"
+          isDarkTheme ? "border-white/10" : "border-border"
         )}
       >
         <Tabs
@@ -55,14 +55,14 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
           <TabsList
             className={cn(
               "w-full grid grid-cols-2 p-1 rounded-xl",
-              isDarkTheme ? "bg-black/50" : "bg-muted/30"
+              isDarkTheme ? "bg-white/5" : "bg-muted/50"
             )}
           >
             <TabsTrigger
               value="colors"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
-                isDarkTheme && "text-white/80 data-[state=active]:text-white"
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
               <Palette className="h-3.5 w-3.5" />
@@ -71,8 +71,8 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
             <TabsTrigger
               value="image"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
-                isDarkTheme && "text-white/80 data-[state=active]:text-white"
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
               <ImageIcon className="h-3.5 w-3.5" />
@@ -83,7 +83,12 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
       </div>
 
       {/* Tab Content */}
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/30 transition-colors duration-300">
+      <div
+        className={cn(
+          "flex-1 overflow-y-auto custom-scrollbar",
+          isDarkTheme ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+        )}
+      >
         {activeTab === "colors" && (
           <div className="space-y-6">
             <BackgroundSection

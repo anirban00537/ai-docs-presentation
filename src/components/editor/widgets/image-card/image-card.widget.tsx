@@ -611,7 +611,6 @@ const ImageCardToolbar: React.FC<ImageCardToolbarProps> = ({
       customRender: () => imageStyleControl,
     },
     { type: "separator" },
-    // Background color picker
     {
       type: "color-picker",
       config: {

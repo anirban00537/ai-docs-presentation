@@ -315,9 +315,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
         <div
           className={cn(
             "flex items-center justify-between px-5 py-4 shrink-0 h-16",
-            isDarkTheme
-              ? "border-b border-white/10"
-              : "border-b border-border"
+            isDarkTheme ? "border-b border-white/10" : "border-b border-border"
           )}
         >
           <h2
@@ -344,17 +342,11 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           </Button>
         </div>
         <div
-          className="flex-1 overflow-y-auto min-h-0 overscroll-contain space-y-6 px-2"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
+          className={cn(
+            "flex-1 overflow-y-auto min-h-0 overscroll-contain space-y-6 px-2 custom-scrollbar",
+            isDarkTheme ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+          )}
         >
-          <style jsx>{`
-            div::-webkit-scrollbar {
-              display: none;
-            }
-          `}</style>
           {panel === "insert" && (
             <InsertPanelContent
               onAddFeatureCard={handleAddFeatureCard}

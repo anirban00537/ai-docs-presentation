@@ -34,20 +34,20 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
         <div
           className={cn(
             "px-4 pt-4 pb-3 border-b shrink-0",
-            isDarkTheme ? "border-neutral-800" : "border-border"
+            isDarkTheme ? "border-white/10" : "border-border"
           )}
         >
           <TabsList
             className={cn(
               "w-full grid grid-cols-2 p-1 rounded-xl",
-              isDarkTheme ? "bg-black/50" : "bg-muted/30"
+              isDarkTheme ? "bg-white/5" : "bg-muted/50"
             )}
           >
             <TabsTrigger
               value="select"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
-                isDarkTheme && "text-white/80 data-[state=active]:text-white"
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
               <LayoutTemplate className="h-3.5 w-3.5" />
@@ -56,8 +56,8 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
             <TabsTrigger
               value="edit"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
-                isDarkTheme && "text-white/80 data-[state=active]:text-white"
+                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
               <Palette className="h-3.5 w-3.5" />
@@ -69,13 +69,10 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
         {/* Tab Content */}
         <div
           className={cn(
-            "flex-1 overflow-y-auto scrollbar-thin scrollbar-track-transparent transition-colors duration-300 min-h-0",
-            isDarkTheme
-              ? "scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30"
-              : "scrollbar-thumb-primary/20 hover:scrollbar-thumb-primary/30"
+            "flex-1 overflow-y-auto custom-scrollbar min-h-0",
+            isDarkTheme ? "custom-scrollbar-dark" : "custom-scrollbar-light"
           )}
         >
-
           <TabsContent value="select" className="mt-0 px-4">
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-1 gap-3">
@@ -91,7 +88,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                         isActive
                           ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/30 hover:shadow-lg"
                           : isDarkTheme
-                          ? "border-neutral-800 bg-black/50 hover:bg-black/70 hover:border-neutral-700 hover:shadow-sm"
+                          ? "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-sm"
                           : "border-border/50 bg-background/60 hover:bg-accent/50 hover:border-border hover:shadow-sm",
                         "active:scale-[0.98]"
                       )}

@@ -24,6 +24,8 @@ import { useDebouncedCallback } from "use-debounce";
 import type { UnsplashPhoto, MediaItem } from "@/services/images";
 import { useImageCreation } from "@/components/editor/widgets/image";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAppSelector } from "@/store/hooks";
+import { selectGlobalTheme } from "@/store/slices/slidesSlice";
 
 const categories = [
   {
@@ -73,6 +75,8 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
   onImageAdded,
   onImageClick,
 }) => {
+  const globalTheme = useAppSelector(selectGlobalTheme);
+  const isDarkTheme = globalTheme?.tone === "dark";
   const [activeTab, setActiveTab] = useState<"unsplash" | "your-media">(
     "unsplash"
   );
@@ -271,25 +275,40 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-background/95 backdrop-blur-xl rounded-lg overflow-hidden min-h-0 shadow-lg ">
+    <div
+      className={cn(
+        "w-full h-full flex flex-col overflow-hidden min-h-0",
+        isDarkTheme ? "bg-black" : "bg-white"
+      )}
+    >
       {/* Tabs */}
-      <div className="  pb-3 border-b border-border/30">
+      <div
+        className={cn(
+          "pb-3 border-b",
+          isDarkTheme ? "border-white/10" : "border-border/30"
+        )}
+      >
         <Tabs
           value={activeTab}
           onValueChange={(value) =>
             setActiveTab(value as "unsplash" | "your-media")
           }
         >
-          <TabsList className="w-full grid grid-cols-2 bg-muted/30 p-1 rounded-xl">
+          <TabsList
+            className={cn(
+              "w-full grid grid-cols-2 p-1 rounded-xl",
+              isDarkTheme ? "bg-white/5" : "bg-muted/30"
+            )}
+          >
             <TabsTrigger
               value="unsplash"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg"
+              className="data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg"
             >
               Unsplash
             </TabsTrigger>
             <TabsTrigger
               value="your-media"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg"
+              className="data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md transition-all duration-300 ease-out rounded-lg"
             >
               Your Media
             </TabsTrigger>
@@ -319,7 +338,12 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
                 placeholder="Search Unsplash"
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-11 pr-4 h-11 bg-background/60 border border-border/40 shadow-sm focus-visible:shadow-lg focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all duration-300 ease-out rounded-xl hover:bg-background/80"
+                className={cn(
+                  "pl-11 pr-4 h-11 border shadow-sm focus-visible:shadow-lg focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all duration-300 ease-out rounded-xl",
+                  isDarkTheme
+                    ? "bg-black/50 border-white/10 hover:bg-black/70"
+                    : "bg-background/60 border-border/40 hover:bg-background/80"
+                )}
               />
             </div>
           </div>
@@ -338,7 +362,9 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
                       ? "bg-primary text-primary-foreground shadow-lg shadow-primary/40 scale-105 ring-2 ring-primary/30"
                       : cn(
                           category.color,
-                          "text-slate-700 dark:text-slate-300 shadow-sm hover:shadow-md hover:shadow-black/10 border border-white/30 hover:border-white/50 backdrop-blur-sm"
+                          isDarkTheme
+                            ? "text-slate-300 shadow-sm hover:shadow-md hover:shadow-black/10 border border-white/30 hover:border-white/50 backdrop-blur-sm"
+                            : "text-slate-700 shadow-sm hover:shadow-md hover:shadow-black/10 border border-white/30 hover:border-white/50 backdrop-blur-sm"
                         )
                   )}
                 >
@@ -352,7 +378,12 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
           </div>
 
           {/* Image Grid */}
-          <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/30 transition-colors duration-300">
+          <div
+            className={cn(
+              "flex-1 overflow-y-auto px-4 pb-4 custom-scrollbar",
+              isDarkTheme ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+            )}
+          >
             {activeQuery.isLoading ? (
               <div className="flex items-center justify-center h-64">
                 <div className="flex flex-col items-center gap-3">
@@ -445,7 +476,12 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({
           </div>
 
           {/* Media Grid */}
-          <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/30 transition-colors duration-300">
+          <div
+            className={cn(
+              "flex-1 overflow-y-auto px-4 pb-4 custom-scrollbar",
+              isDarkTheme ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+            )}
+          >
             {isLoadingMedia ? (
               <div className="flex items-center justify-center h-64">
                 <div className="flex flex-col items-center gap-3">

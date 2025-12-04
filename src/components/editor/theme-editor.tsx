@@ -45,7 +45,7 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
   };
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-7 ">
       {/* Background Color */}
       <div className="space-y-3.5">
         <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">

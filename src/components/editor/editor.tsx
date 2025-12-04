@@ -3,6 +3,7 @@
 import React from "react";
 import Slide from "@/components/editor/slide";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { cn } from "@/lib/utils";
 import {
   selectActiveSlide,
   selectSlides,
@@ -383,7 +384,12 @@ const Editor = () => {
         </div>
         <div
           ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto min-h-0"
+          className={cn(
+            "flex-1 overflow-y-auto min-h-0 custom-scrollbar",
+            globalTheme?.tone === "dark"
+              ? "custom-scrollbar-dark"
+              : "custom-scrollbar-light"
+          )}
         >
           <div className="flex flex-col items-center gap-8 py-8">
             {slides.length === 0 ? (

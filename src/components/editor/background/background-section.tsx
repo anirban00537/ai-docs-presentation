@@ -155,98 +155,103 @@ export function BackgroundSection({
     <div className="space-y-7">
       {/* Background Image Section */}
       {showImageSection && (
-      <div className="space-y-3.5">
-        <div className="flex items-center justify-between px-1">
-          <h3
-            className={cn(
-              "text-[10px] font-bold uppercase tracking-widest",
-              isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
-            )}
-          >
-            Background Image
-          </h3>
-          {backgroundImage && (
-            <button
-              type="button"
-              onClick={handleRemoveBackgroundImage}
-              className="text-xs font-semibold text-destructive hover:text-destructive/90 transition-all duration-200 px-2.5 py-1 rounded-lg hover:bg-destructive/10 active:scale-95"
-            >
-              Remove
-            </button>
-          )}
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowImageBrowser(true)}
-          className={cn(
-            "w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed transition-all duration-200 group",
-            isDarkTheme
-              ? "border-white/10 hover:border-primary/50 bg-black/50 hover:bg-primary/10"
-              : "border-border/50 hover:border-primary/50 bg-background/50 hover:bg-primary/5"
-          )}
-        >
-          <Image
-            className={cn(
-              "h-4 w-4 transition-colors",
-              isDarkTheme
-                ? "text-white/70 group-hover:text-primary"
-                : "text-muted-foreground group-hover:text-primary"
-            )}
-          />
-          <span
-            className={cn(
-              "text-sm font-medium transition-colors",
-              isDarkTheme
-                ? "text-white/80 group-hover:text-primary"
-                : "text-muted-foreground group-hover:text-primary"
-            )}
-          >
-            {backgroundImage
-              ? "Change Background Image"
-              : "Add Background Image"}
-          </span>
-        </button>
-        {backgroundImage && (
-          <>
-            <div className="relative aspect-video rounded-xl overflow-hidden border border-border/50">
-              <img
-                src={backgroundImage}
-                alt="Background"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {/* Background Blur Toggle */}
-            <div
+        <div className="space-y-3.5">
+          <div className="flex items-center justify-between px-1">
+            <h3
               className={cn(
-                "flex items-center justify-between px-1 py-2 rounded-lg border",
-                isDarkTheme
-                  ? "bg-black/50 border-white/10"
-                  : "bg-background/50 border-border/30"
+                "text-[10px] font-bold uppercase tracking-widest",
+                isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
               )}
             >
-              <Label
-                htmlFor="background-blur"
+              Background Image
+            </h3>
+            {backgroundImage && (
+              <button
+                type="button"
+                onClick={handleRemoveBackgroundImage}
+                className="text-xs font-semibold text-destructive hover:text-destructive/90 transition-all duration-200 px-2.5 py-1 rounded-lg hover:bg-destructive/10 active:scale-95"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowImageBrowser(true)}
+            className={cn(
+              "w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed transition-all duration-200 group",
+              isDarkTheme
+                ? "border-white/10 hover:border-primary/50 bg-white/5 hover:bg-primary/10"
+                : "border-border/50 hover:border-primary/50 bg-background/50 hover:bg-primary/5"
+            )}
+          >
+            <Image
+              className={cn(
+                "h-4 w-4 transition-colors",
+                isDarkTheme
+                  ? "text-white/70 group-hover:text-primary"
+                  : "text-muted-foreground group-hover:text-primary"
+              )}
+            />
+            <span
+              className={cn(
+                "text-sm font-medium transition-colors",
+                isDarkTheme
+                  ? "text-white/80 group-hover:text-primary"
+                  : "text-muted-foreground group-hover:text-primary"
+              )}
+            >
+              {backgroundImage
+                ? "Change Background Image"
+                : "Add Background Image"}
+            </span>
+          </button>
+          {backgroundImage && (
+            <>
+              <div
                 className={cn(
-                  "text-sm font-medium cursor-pointer",
-                  isDarkTheme ? "text-white/90" : "text-foreground"
+                  "relative aspect-video rounded-xl overflow-hidden border",
+                  isDarkTheme ? "border-white/10" : "border-border/50"
                 )}
               >
-                Background Blur
-              </Label>
-              <Switch
-                id="background-blur"
-                checked={backgroundBlur}
-                onCheckedChange={handleBlurChange}
-              />
-            </div>
-          </>
-        )}
-      </div>
+                <img
+                  src={backgroundImage}
+                  alt="Background"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Background Blur Toggle */}
+              <div
+                className={cn(
+                  "flex items-center justify-between px-1 py-2 rounded-lg border",
+                  isDarkTheme
+                    ? "bg-white/5 border-white/10"
+                    : "bg-background/50 border-border/30"
+                )}
+              >
+                <Label
+                  htmlFor="background-blur"
+                  className={cn(
+                    "text-sm font-medium cursor-pointer",
+                    isDarkTheme ? "text-white/90" : "text-foreground"
+                  )}
+                >
+                  Background Blur
+                </Label>
+                <Switch
+                  id="background-blur"
+                  checked={backgroundBlur}
+                  onCheckedChange={handleBlurChange}
+                />
+              </div>
+            </>
+          )}
+        </div>
       )}
 
       {showColorSection && (
         <>
-          <div className="space-y-3.5">
+          <div className="space-y-3.5 py-5">
             <h3
               className={cn(
                 "text-[10px] font-bold uppercase tracking-widest px-1",
@@ -277,22 +282,36 @@ export function BackgroundSection({
               Color Presets
             </h3>
             <div className="grid grid-cols-7 gap-2.5 px-1">
-              {PRESET_COLORS.map((preset) => (
-                <button
-                  key={preset}
-                  type="button"
-                  onClick={() => onBackgroundColorChange(preset)}
-                  className="group relative flex aspect-square items-center justify-center rounded-xl border border-border/50 shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 active:scale-105"
-                >
-                  <span
-                    className="h-full w-full rounded-xl border border-border/40"
-                    style={{ backgroundColor: preset }}
-                  />
-                  {currentColor === preset && (
-                    <span className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg" />
-                  )}
-                </button>
-              ))}
+              {PRESET_COLORS.map((preset) => {
+                const isSelected = currentColor === preset;
+                return (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => onBackgroundColorChange(preset)}
+                    className={cn(
+                      "group relative flex aspect-square items-center justify-center rounded-xl border shadow-sm hover:scale-110 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 active:scale-105",
+                      isSelected
+                        ? "border-primary"
+                        : isDarkTheme
+                        ? "border-white/10"
+                        : "border-white"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "h-full w-full rounded-xl border",
+                        isSelected
+                          ? "border-primary"
+                          : isDarkTheme
+                          ? "border-white/10"
+                          : "border-white/80"
+                      )}
+                      style={{ backgroundColor: preset }}
+                    />
+                  </button>
+                );
+              })}
             </div>
           </div>
         </>

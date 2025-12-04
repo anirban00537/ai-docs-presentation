@@ -91,7 +91,12 @@ export const EditorToolbarCenter: React.FC<EditorToolbarCenterProps> = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="center"
-            className="p-0 w-[400px] max-h-[400px]"
+            className={cn(
+              "p-0 w-[400px] max-h-[400px] border-0 shadow-none custom-scrollbar",
+              isDarkTheme
+                ? "bg-black custom-scrollbar-dark"
+                : "bg-white custom-scrollbar-light"
+            )}
             sideOffset={8}
           >
             <div className="w-full h-full">
@@ -123,7 +128,12 @@ export const EditorToolbarCenter: React.FC<EditorToolbarCenterProps> = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="center"
-            className="p-0 w-[600px] max-h-[500px]"
+            className={cn(
+              "p-0 w-[600px] max-h-[500px] border-0 shadow-none custom-scrollbar",
+              isDarkTheme
+                ? "bg-black custom-scrollbar-dark"
+                : "bg-white custom-scrollbar-light"
+            )}
             sideOffset={8}
           >
             <div className="w-full h-full">
@@ -137,4 +147,3 @@ export const EditorToolbarCenter: React.FC<EditorToolbarCenterProps> = ({
     </div>
   );
 };
-
