@@ -5,6 +5,8 @@ import { Popover } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { PopoverPanelPortal } from "@/components/editor/background/popover-panel-portal";
 import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/store/hooks";
+import { selectGlobalTheme } from "@/store/slices/slidesSlice";
 import { Input } from "@/components/ui/input";
 import { FONT_SIZE_OPTIONS } from "./constants";
 import type { FontSizeConfig } from "./types";
@@ -22,6 +24,8 @@ export const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
 }) => {
   const internalButtonRef = React.useRef<HTMLButtonElement>(null);
   const buttonRef = externalButtonRef || internalButtonRef;
+  const globalTheme = useAppSelector(selectGlobalTheme);
+  const isDarkTheme = globalTheme?.tone === "dark";
   const [customValue, setCustomValue] = React.useState<string>(
     config.value.toString()
   );
@@ -94,8 +98,12 @@ export const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
           <Popover.Button
             ref={buttonRef}
             className={cn(
-              "flex items-center gap-1 rounded-full bg-black/5 px-3 py-1.5 text-xs font-medium text-foreground/80 transition-all hover:bg-black/10",
-              open && "bg-black/10 text-foreground"
+              "flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-300 ease-out",
+              isDarkTheme
+                ? "bg-white/5 text-white/80 hover:bg-white/10"
+                : "bg-black/5 text-foreground/80 hover:bg-black/10",
+              open &&
+                (isDarkTheme ? "bg-white/10 text-white/90" : "bg-black/10 text-foreground")
             )}
           >
             {label && (
@@ -110,15 +118,27 @@ export const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
           </Popover.Button>
           {open && (
             <PopoverPanelPortal buttonRef={buttonRef}>
-              <div className="flex flex-col gap-1 p-2 bg-white/95 backdrop-blur-2xl rounded-xl shadow-2xl border border-white/20 min-w-[180px] animate-in fade-in zoom-in-95 duration-150">
+              <div
+                className={cn(
+                  "flex flex-col gap-1 p-2 backdrop-blur-2xl rounded-xl shadow-2xl border min-w-[180px]",
+                  "animate-in fade-in zoom-in-95 duration-300 ease-out",
+                  isDarkTheme
+                    ? "bg-black border-white/10"
+                    : "bg-white/95 border-white/20"
+                )}
+              >
                 {options.map((option) => (
                   <button
                     key={option.value}
                     type="button"
                     className={cn(
-                      "flex items-center justify-between rounded-lg px-3 py-2 text-xs transition-all",
+                      "flex items-center justify-between rounded-lg px-3 py-2 text-xs transition-all duration-300 ease-out",
                       option.value === config.value
-                        ? "bg-black/5 text-foreground font-semibold"
+                        ? isDarkTheme
+                          ? "bg-white/10 text-white/90 font-semibold"
+                          : "bg-black/5 text-foreground font-semibold"
+                        : isDarkTheme
+                        ? "text-white/70 hover:bg-white/5 hover:text-white/90"
                         : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
                     )}
                     onClick={() => config.onChange(option.value)}
@@ -129,9 +149,19 @@ export const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
                     </span>
                   </button>
                 ))}
-                <div className="border-t border-white/20 pt-2 mt-1">
+                <div
+                  className={cn(
+                    "border-t pt-2 mt-1",
+                    isDarkTheme ? "border-white/10" : "border-white/20"
+                  )}
+                >
                   <div className="px-1 mb-1.5">
-                    <label className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
+                    <label
+                      className={cn(
+                        "text-[10px] uppercase tracking-wide font-medium",
+                        isDarkTheme ? "text-white/70" : "text-muted-foreground"
+                      )}
+                    >
                       Custom Size
                     </label>
                   </div>
@@ -145,12 +175,22 @@ export const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
                       onChange={handleCustomInputChange}
                       onBlur={handleCustomInputBlur}
                       onKeyDown={handleCustomInputKeyDown}
-                      className="h-8 text-xs text-center font-mono border-white/30 focus-visible:ring-1 focus-visible:ring-primary/50"
+                      className={cn(
+                        "h-8 text-xs text-center font-mono focus-visible:ring-1 focus-visible:ring-primary/50",
+                        isDarkTheme
+                          ? "border-white/10 bg-white/5 text-white/90"
+                          : "border-white/30 text-foreground"
+                      )}
                       placeholder="Custom"
                       onClick={(e) => e.stopPropagation()}
                       onPointerDown={(e) => e.stopPropagation()}
                     />
-                    <span className="text-[10px] text-muted-foreground uppercase">
+                    <span
+                      className={cn(
+                        "text-[10px] uppercase",
+                        isDarkTheme ? "text-white/70" : "text-muted-foreground"
+                      )}
+                    >
                       px
                     </span>
                   </div>

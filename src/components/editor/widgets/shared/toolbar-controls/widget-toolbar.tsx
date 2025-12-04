@@ -8,6 +8,9 @@ import { FontFamilySelector } from "./font-family-selector";
 import { FontSizeSelector } from "./font-size-selector";
 import { AlignmentControls } from "./alignment-controls";
 import { ToolbarSeparator } from "./toolbar-separator";
+import { useAppSelector } from "@/store/hooks";
+import { selectGlobalTheme } from "@/store/slices/slidesSlice";
+import { cn } from "@/lib/utils";
 import type {
   WidgetToolbarProps,
   ToolbarControlConfig,
@@ -118,6 +121,9 @@ export const WidgetToolbar: React.FC<WidgetToolbarProps> = ({
     return null;
   };
 
+  const globalTheme = useAppSelector(selectGlobalTheme);
+  const isDarkTheme = globalTheme?.tone === "dark";
+
   return (
     <ToolbarPortal
       widgetRef={widgetRef}
@@ -130,7 +136,14 @@ export const WidgetToolbar: React.FC<WidgetToolbarProps> = ({
         {...(toolbarSelector
           ? { [toolbarSelector]: "true" }
           : { "data-widget-toolbar": "true" })}
-        className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-white/20 bg-white/80 px-3.5 py-1.5 shadow-[0_6px_30px_-14px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-all duration-300 hover:bg-white/90 hover:shadow-[0_10px_38px_-14px_rgba(0,0,0,0.3)]"
+        className={cn(
+          "pointer-events-auto flex items-center gap-3 rounded-2xl border px-3.5 py-1.5",
+          "backdrop-blur-xl transition-all duration-300",
+          "hover:shadow-[0_10px_38px_-14px_rgba(0,0,0,0.3)]",
+          isDarkTheme
+            ? "border-white/10 bg-black shadow-[0_6px_30px_-14px_rgba(0,0,0,0.5)] hover:bg-black/90"
+            : "border-white/20 bg-white/80 shadow-[0_6px_30px_-14px_rgba(0,0,0,0.25)] hover:bg-white/90"
+        )}
         onPointerDown={(event) => {
           event.stopPropagation();
         }}
