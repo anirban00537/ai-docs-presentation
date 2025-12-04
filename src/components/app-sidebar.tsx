@@ -10,6 +10,7 @@ import {
   IconSettings,
   IconSparkles,
   IconPhoto,
+  IconPresentation,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -28,9 +29,14 @@ import {
 
 const navMainData = [
   {
-    title: "Dashboard",
-    url: "/dashboard",
+    title: "Home",
+    url: "/home",
     icon: IconDashboard,
+  },
+  {
+    title: "My Presentations",
+    url: "/my-presentations",
+    icon: IconPresentation,
   },
 
   {

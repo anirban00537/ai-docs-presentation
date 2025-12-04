@@ -36,10 +36,10 @@ export function NavMain({
                 <SidebarMenuButton
                   tooltip={item.title}
                   asChild
-                  size="lg"
+                  size="default"
                   isActive={isActive}
                   className={cn(
-                    "group relative h-12 rounded-xl px-4 transition-all duration-200",
+                    "group relative h-9 rounded-lg px-3 transition-all duration-200",
                     "hover:bg-primary/10",
                     "active:scale-[0.98]",
                     isActive &&
@@ -48,19 +48,19 @@ export function NavMain({
                 >
                   <Link
                     href={item.url}
-                    className="flex items-center gap-3 w-full"
+                    className="flex items-center gap-2.5 w-full"
                   >
                     {item.icon && (
                       <item.icon
                         className={cn(
-                          "h-5 w-5 transition-all duration-200",
+                          "h-4 w-4 transition-all duration-200",
                           isActive
                             ? "text-primary-foreground scale-110"
                             : "text-muted-foreground group-hover:text-primary group-hover:scale-110"
                         )}
                       />
                     )}
-                    <span className="text-base font-medium tracking-tight">
+                    <span className="text-sm font-medium tracking-tight">
                       {item.title}
                     </span>
                   </Link>

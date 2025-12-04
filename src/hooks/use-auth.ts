@@ -38,7 +38,7 @@ export const useAuth = () => {
         }
 
         // Redirect to dashboard
-        router.push("/dashboard");
+        router.push("/my-presentations");
       } else {
         console.error("Login response missing data:", response);
       }

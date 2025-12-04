@@ -73,7 +73,7 @@ export function HeroSection() {
                   variant="primary"
                   className="rounded-xl px-8 text-base"
                 >
-                  <Link href="/dashboard">
+                  <Link href="/my-presentations">
                     <span className="inline-flex items-center gap-2">
                       Create Presentation
                       <ArrowRight className="h-4 w-4" />
