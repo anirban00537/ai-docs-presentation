@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { SidebarIndicator } from "@/components/editor/sidebar-indicator";
 import Slide from "@/components/editor/slide";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { store } from "@/store";
@@ -166,6 +167,7 @@ export const LeftSidebar = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { collapsed } = useEditorSidebar();
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
   const addSlideMutation = useAddSlide();
   const deleteSlideMutation = useDeleteSlide();
 
@@ -330,108 +332,119 @@ export const LeftSidebar = () => {
   const isDarkTheme = globalTheme?.tone === "dark";
 
   return (
-    <EditorSidebarShell globalTheme={globalTheme}>
-      <div
-        className={cn(
-          "border-b p-4 pb-3 transition-all duration-200",
-          isDarkTheme ? "border-white/10" : "border-white/20",
-          collapsed && "px-2"
-        )}
-      >
-        <AppleButton
-          onClick={handleAddSlide}
-          variant="primary"
-          size={collapsed ? "default" : "lg"}
-          className={cn("w-full justify-center", collapsed && "w-10 h-10 p-0")}
-        >
-          <Plus className="w-4 h-4" />
-          {!collapsed && (
-            <span className="font-semibold tracking-tight whitespace-nowrap">
-              New Slide
-            </span>
-          )}
-        </AppleButton>
-      </div>
-
-      <div
-        ref={scrollContainerRef}
-        className={cn(
-          "slides-scroll-container flex-1 overflow-y-auto py-3 px-4 space-y-3 transition-all duration-200",
-          collapsed && "px-2"
-        )}
-        style={{
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-      >
-        <style jsx>{`
-          .slides-scroll-container::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
-
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={slides.map((s) => s.id)}
-            strategy={verticalListSortingStrategy}
+    <EditorSidebarShell 
+      globalTheme={globalTheme} 
+      collapsed={!isHovered}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {!isHovered ? (
+        <SidebarIndicator />
+      ) : (
+        <>
+          <div
+            className={cn(
+              "border-b p-4 pb-3 transition-all duration-200",
+              isDarkTheme ? "border-white/10" : "border-white/20",
+              collapsed && "px-2"
+            )}
           >
-            <div className="space-y-3">
-              {slides.map((slide) => (
-                <div key={slide.id} data-slide-id={slide.id}>
-                  <SortableSlideItem
-                    slide={slide}
-                    isActive={slide.id === activeSlideId}
-                    onClick={() => handleSlideClick(slide.id)}
-                    onRemove={(e) => {
-                      e.stopPropagation();
-                      handleRemoveSlide(slide.id);
-                    }}
-                    showDelete={slides.length > 1}
-                    globalTheme={globalTheme}
-                  />
-                </div>
-              ))}
-            </div>
-          </SortableContext>
+            <AppleButton
+              onClick={handleAddSlide}
+              variant="primary"
+              size={collapsed ? "default" : "lg"}
+              className={cn("w-full justify-center", collapsed && "w-10 h-10 p-0")}
+            >
+              <Plus className="w-4 h-4" />
+              {!collapsed && (
+                <span className="font-semibold tracking-tight whitespace-nowrap">
+                  New Slide
+                </span>
+              )}
+            </AppleButton>
+          </div>
 
-          {createPortal(
-            <DragOverlay dropAnimation={dropAnimation}>
-              {activeDragSlide ? (
-                <div className="w-[220px] opacity-90 cursor-grabbing">
-                  <div
-                    className={cn(
-                      "relative flex-1 aspect-video rounded-xl overflow-hidden shadow-2xl ring-2 ring-primary scale-105 bg-background"
-                    )}
-                  >
-                    <div className="absolute inset-0 pointer-events-none">
-                      <div className="w-full h-full flex items-center justify-center overflow-hidden">
-                        <Slide
-                          slide={activeDragSlide}
-                          selectedId={null}
-                          editingId={null}
-                          liveOverrides={{}}
-                          onSelectWidget={() => {}}
-                          onSetLiveOverride={() => {}}
-                          onClearLiveOverride={() => {}}
-                          globalTheme={globalTheme}
-                          padding={0}
-                          showSnapLines={false}
-                        />
+          <div
+            ref={scrollContainerRef}
+            className={cn(
+              "slides-scroll-container flex-1 overflow-y-auto py-3 px-4 space-y-3 transition-all duration-200",
+              collapsed && "px-2"
+            )}
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            <style jsx>{`
+              .slides-scroll-container::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
+
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={slides.map((s) => s.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-3">
+                  {slides.map((slide) => (
+                    <div key={slide.id} data-slide-id={slide.id}>
+                      <SortableSlideItem
+                        slide={slide}
+                        isActive={slide.id === activeSlideId}
+                        onClick={() => handleSlideClick(slide.id)}
+                        onRemove={(e) => {
+                          e.stopPropagation();
+                          handleRemoveSlide(slide.id);
+                        }}
+                        showDelete={slides.length > 1}
+                        globalTheme={globalTheme}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </SortableContext>
+
+              {createPortal(
+                <DragOverlay dropAnimation={dropAnimation}>
+                  {activeDragSlide ? (
+                    <div className="w-[220px] opacity-90 cursor-grabbing">
+                      <div
+                        className={cn(
+                          "relative flex-1 aspect-video rounded-xl overflow-hidden shadow-2xl ring-2 ring-primary scale-105 bg-background"
+                        )}
+                      >
+                        <div className="absolute inset-0 pointer-events-none">
+                          <div className="w-full h-full flex items-center justify-center overflow-hidden">
+                            <Slide
+                              slide={activeDragSlide}
+                              selectedId={null}
+                              editingId={null}
+                              liveOverrides={{}}
+                              onSelectWidget={() => {}}
+                              onSetLiveOverride={() => {}}
+                              onClearLiveOverride={() => {}}
+                              globalTheme={globalTheme}
+                              padding={0}
+                              showSnapLines={false}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              ) : null}
-            </DragOverlay>,
-            document.body
-          )}
-        </DndContext>
-      </div>
+                  ) : null}
+                </DragOverlay>,
+                document.body
+              )}
+            </DndContext>
+          </div>
+        </>
+      )}
     </EditorSidebarShell>
   );
 };
