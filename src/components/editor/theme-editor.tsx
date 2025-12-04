@@ -13,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAppSelector } from "@/store/hooks";
+import { selectGlobalTheme } from "@/store/slices/slidesSlice";
 
 interface ThemeEditorProps {
   theme: GlobalTheme;
@@ -20,6 +22,9 @@ interface ThemeEditorProps {
 }
 
 export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
+  const globalTheme = useAppSelector(selectGlobalTheme);
+  const isDarkTheme = globalTheme?.tone === "dark";
+
   const handleBackgroundColorChange = (newColor: string) => {
     onThemeChange({ background: newColor });
   };
@@ -48,7 +53,12 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
     <div className="space-y-7 ">
       {/* Background Color */}
       <div className="space-y-3.5">
-        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+        <h3
+          className={cn(
+            "text-[10px] font-bold uppercase tracking-widest px-1",
+            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+          )}
+        >
           Background Color
         </h3>
         <div className="px-1">
@@ -65,7 +75,12 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
 
       {/* Surface Color */}
       <div className="space-y-3.5">
-        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+        <h3
+          className={cn(
+            "text-[10px] font-bold uppercase tracking-widest px-1",
+            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+          )}
+        >
           Surface Color
         </h3>
         <div className="px-1">
@@ -82,7 +97,12 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
 
       {/* Text Color */}
       <div className="space-y-3.5">
-        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+        <h3
+          className={cn(
+            "text-[10px] font-bold uppercase tracking-widest px-1",
+            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+          )}
+        >
           Text Color
         </h3>
         <div className="px-1">
@@ -99,7 +119,12 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
 
       {/* Accent Color */}
       <div className="space-y-3.5">
-        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+        <h3
+          className={cn(
+            "text-[10px] font-bold uppercase tracking-widest px-1",
+            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+          )}
+        >
           Accent Color
         </h3>
         <div className="px-1">
@@ -116,7 +141,12 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
 
       {/* Font Selection */}
       <div className="space-y-3.5">
-        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+        <h3
+          className={cn(
+            "text-[10px] font-bold uppercase tracking-widest px-1",
+            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+          )}
+        >
           Font Family
         </h3>
         <div className="px-1">
@@ -128,7 +158,14 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
             }
             onValueChange={handleFontChange}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger
+              className={cn(
+                "w-full",
+                isDarkTheme
+                  ? "border-white/10 bg-white/5 text-white/90 hover:bg-white/10"
+                  : "border-border bg-background text-foreground"
+              )}
+            >
               <SelectValue>
                 {GOOGLE_FONT_OPTIONS.find(
                   (font) =>
@@ -136,12 +173,23 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
                 )?.label || "Select font"}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent
+              className={cn(
+                isDarkTheme
+                  ? "bg-black border-white/10"
+                  : "bg-white border-border"
+              )}
+            >
               {GOOGLE_FONT_OPTIONS.map((font) => (
                 <SelectItem
                   key={font.value}
                   value={font.style}
                   style={{ fontFamily: font.style }}
+                  className={cn(
+                    isDarkTheme
+                      ? "text-white/90 hover:bg-white/10 focus:bg-white/10"
+                      : "text-foreground hover:bg-accent"
+                  )}
                 >
                   {font.label}
                 </SelectItem>
@@ -153,7 +201,12 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
 
       {/* Card Background Type */}
       <div className="space-y-3.5">
-        <h3 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-1">
+        <h3
+          className={cn(
+            "text-[10px] font-bold uppercase tracking-widest px-1",
+            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
+          )}
+        >
           Card Background Type
         </h3>
         <div className="grid grid-cols-3 gap-2 px-1">
@@ -166,10 +219,17 @@ export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
                   type="button"
                   onClick={() => handleCardBackgroundTypeChange(type)}
                   className={cn(
-                    "w-full rounded-lg border p-3 text-center transition-all duration-200 outline-none capitalize text-sm font-medium",
+                    "w-full rounded-lg border p-2.5 text-center transition-all duration-200 outline-none capitalize text-xs font-medium",
                     isActive
-                      ? "border-primary bg-primary/10 dark:bg-primary/5 shadow-md ring-2 ring-primary/30"
-                      : "border-border/50 bg-background/60 dark:bg-background/40 hover:bg-accent/50 hover:border-border hover:shadow-sm",
+                      ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/30"
+                      : isDarkTheme
+                      ? "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-sm"
+                      : "border-border/50 bg-background/60 hover:bg-accent/50 hover:border-border hover:shadow-sm",
+                    isActive
+                      ? "text-primary"
+                      : isDarkTheme
+                      ? "text-white/90"
+                      : "text-foreground",
                     "active:scale-[0.98]"
                   )}
                 >
