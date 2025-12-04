@@ -5,7 +5,8 @@ import { BackgroundSection } from "@/components/editor/background/background-sec
 import { UnsplashMediaTab } from "@/components/editor/unsplash-media-tab";
 import { UserMediaTab } from "@/components/editor/user-media-tab";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Palette } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Palette, Trash2 } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectGlobalTheme,
@@ -49,6 +50,36 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
           slideId: activeSlideId,
           updates: {
             backgroundImage: imageUrl,
+          },
+        })
+      );
+    }
+  };
+
+  const handleRemoveImage = () => {
+    if (onBackgroundImageChange) {
+      onBackgroundImageChange(undefined);
+    } else if (activeSlideId) {
+      dispatch(
+        updateSlide({
+          slideId: activeSlideId,
+          updates: {
+            backgroundImage: undefined,
+          },
+        })
+      );
+    }
+  };
+
+  const handleBlurChange = (checked: boolean) => {
+    if (onBackgroundBlurChange) {
+      onBackgroundBlurChange(checked);
+    } else if (activeSlideId) {
+      dispatch(
+        updateSlide({
+          slideId: activeSlideId,
+          updates: {
+            backgroundBlur: checked,
           },
         })
       );
@@ -114,6 +145,72 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
         </Tabs>
       </div>
 
+      {/* Compact Background Image Preview - shown in all tabs when image is set */}
+      {backgroundImage && (
+        <div
+          className={cn(
+            "mx-4 mt-3 mb-2 px-2.5 py-2 rounded-lg border",
+            "flex items-center gap-2.5 transition-all duration-300 ease-out",
+            isDarkTheme
+              ? "bg-white/5 border-white/10 hover:bg-white/8"
+              : "bg-background/50 border-border/30 hover:bg-background/70"
+          )}
+        >
+          {/* Small Image Thumbnail */}
+          <div
+            className={cn(
+              "relative w-10 h-10 rounded-md overflow-hidden border shrink-0",
+              "transition-all duration-300 ease-out",
+              isDarkTheme ? "border-white/10" : "border-border/50"
+            )}
+          >
+            <img
+              src={backgroundImage}
+              alt="Background"
+              className="w-full h-full object-cover"
+            />
+            {backgroundBlur && (
+              <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
+            )}
+          </div>
+
+          {/* Blur Toggle */}
+          <div className="flex items-center gap-2 flex-1">
+            <label
+              htmlFor="background-blur-toggle"
+              className={cn(
+                "text-xs font-medium cursor-pointer",
+                isDarkTheme ? "text-white/90" : "text-foreground"
+              )}
+            >
+              Blur
+            </label>
+            <Switch
+              id="background-blur-toggle"
+              checked={backgroundBlur}
+              onCheckedChange={handleBlurChange}
+              className="scale-75"
+            />
+          </div>
+
+          {/* Delete Button */}
+          <button
+            type="button"
+            onClick={handleRemoveImage}
+            className={cn(
+              "p-1.5 rounded-md transition-all duration-200 shrink-0",
+              "hover:bg-destructive/10 active:scale-95",
+              isDarkTheme
+                ? "text-white/60 hover:text-destructive"
+                : "text-muted-foreground hover:text-destructive"
+            )}
+            title="Remove background image"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Tab Content */}
       <div
         className={cn(
@@ -123,7 +220,7 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
       >
         {activeTab === "color" && (
           <div
-            className="flex-1 overflow-y-auto custom-scrollbar animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
+            className="flex-1 overflow-y-auto custom-scrollbar animate-in fade-in-0 slide-in-from-bottom-2 duration-300 px-4"
             key="color"
           >
             <BackgroundSection
@@ -153,27 +250,6 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
             <UserMediaTab
               isDarkTheme={isDarkTheme}
               onImageClick={handleImageSelect}
-            />
-          </div>
-        )}
-
-        {/* Background Image Preview and Controls - shown in all tabs when image is set */}
-        {backgroundImage && (
-          <div
-            className={cn(
-              "px-4 pb-4 pt-4 border-t shrink-0",
-              isDarkTheme ? "border-white/10" : "border-border"
-            )}
-          >
-            <BackgroundSection
-              backgroundColor={backgroundColor}
-              backgroundImage={backgroundImage}
-              backgroundBlur={backgroundBlur}
-              onBackgroundColorChange={onBackgroundColorChange || (() => {})}
-              onBackgroundImageChange={onBackgroundImageChange}
-              onBackgroundBlurChange={onBackgroundBlurChange}
-              showColorSection={false}
-              showImageSection={true}
             />
           </div>
         )}
