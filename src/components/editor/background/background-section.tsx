@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { ColorPicker } from "./color-picker";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
@@ -8,9 +8,6 @@ import {
   selectActiveSlideId,
   updateSlide,
 } from "@/store/slices/slidesSlice";
-import { MediaBrowser } from "@/components/editor/media-browser";
-import { Image, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -63,7 +60,6 @@ export function BackgroundSection({
   const globalTheme = useAppSelector(selectGlobalTheme);
   const dispatch = useAppDispatch();
   const activeSlideId = useAppSelector(selectActiveSlideId);
-  const [showImageBrowser, setShowImageBrowser] = useState(false);
   const isDarkTheme = globalTheme?.tone === "dark";
 
   // Use slide backgroundColor if set, otherwise fall back to global theme background
@@ -71,23 +67,6 @@ export function BackgroundSection({
 
   const handleColorChange = (newColor: string) => {
     onBackgroundColorChange(newColor);
-  };
-
-  const handleImageSelect = (imageUrl: string) => {
-    if (onBackgroundImageChange) {
-      onBackgroundImageChange(imageUrl);
-    } else if (activeSlideId) {
-      // Fallback: directly update slide if callback not provided
-      dispatch(
-        updateSlide({
-          slideId: activeSlideId,
-          updates: {
-            backgroundImage: imageUrl,
-          },
-        })
-      );
-    }
-    setShowImageBrowser(false);
   };
 
   const handleRemoveBackgroundImage = () => {
@@ -120,37 +99,6 @@ export function BackgroundSection({
     }
   };
 
-  // Show image browser view
-  if (showImageBrowser) {
-    return (
-      <div className="flex flex-col h-full min-h-0">
-        <div className="flex items-center justify-start mb-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowImageBrowser(false)}
-            className={cn(
-              "flex items-center gap-1.5 text-xs shrink-0 h-7 px-2.5",
-              isDarkTheme
-                ? "text-white/80 hover:text-white"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Back</span>
-          </Button>
-        </div>
-        <div className="flex-1 min-h-0 w-full">
-          <MediaBrowser
-            onImageClick={handleImageSelect}
-            onImageAdded={() => setShowImageBrowser(false)}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // Show color view (default)
   return (
     <div className="space-y-7">
       {/* Background Image Section */}
@@ -175,40 +123,7 @@ export function BackgroundSection({
               </button>
             )}
           </div>
-          <button
-            type="button"
-            onClick={() => setShowImageBrowser(true)}
-            className={cn(
-              "w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed",
-              "transition-all duration-300 ease-out group",
-              "hover:scale-[1.01] active:scale-[0.99]",
-              isDarkTheme
-                ? "border-white/10 hover:border-primary/50 bg-white/5 hover:bg-primary/10"
-                : "border-border/50 hover:border-primary/50 bg-background/50 hover:bg-primary/5"
-            )}
-          >
-            <Image
-              className={cn(
-                "h-4 w-4 transition-all duration-300 ease-out",
-                "group-hover:scale-110",
-                isDarkTheme
-                  ? "text-white/70 group-hover:text-primary"
-                  : "text-muted-foreground group-hover:text-primary"
-              )}
-            />
-            <span
-              className={cn(
-                "text-sm font-medium transition-all duration-300 ease-out",
-                isDarkTheme
-                  ? "text-white/80 group-hover:text-primary"
-                  : "text-muted-foreground group-hover:text-primary"
-              )}
-            >
-              {backgroundImage
-                ? "Change Background Image"
-                : "Add Background Image"}
-            </span>
-          </button>
+
           {backgroundImage && (
             <>
               <div
