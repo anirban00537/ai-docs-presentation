@@ -17,34 +17,56 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalTheme } from "@/store/slices/slidesSlice";
-import { useCreateTheme } from "@/hooks/use-themes";
+import { useCreateTheme, useUpdateTheme, useTheme } from "@/hooks/use-themes";
 import { Loader2, Check, Save } from "lucide-react";
 
 interface ThemeEditorProps {
   theme?: GlobalTheme;
+  themeId?: string; // For editing existing theme
   onSuccess?: () => void;
 }
 
 export function ThemeEditor({
   theme: initialTheme,
+  themeId,
   onSuccess,
 }: ThemeEditorProps) {
   const globalTheme = useAppSelector(selectGlobalTheme);
   const isDarkTheme = globalTheme?.tone === "dark";
   const createThemeMutation = useCreateTheme();
+  const updateThemeMutation = useUpdateTheme();
 
-  // Use initial theme or global theme as starting point, but manage changes locally
-  const baseTheme = initialTheme ||
-    globalTheme || {
-      id: "",
-      background: "#ffffff",
-      surface: "#f8f9fa",
-      text: "#000000",
-      accent: "#3b82f6",
-      font: "var(--font-poppins), Poppins, sans-serif",
-      cardBackgroundType: "solid" as WidgetBackgroundType,
-      tone: "light" as const,
-    };
+  // Fetch theme data if editing
+  const { data: themeData } = useTheme(themeId || null);
+  const editingThemeData = themeData?.data;
+
+  // Determine if we're editing or creating
+  const isEditMode = !!themeId;
+
+  // Use theme data from API if editing, otherwise use initial theme or global theme
+  const baseTheme = editingThemeData
+    ? {
+        id: editingThemeData.id,
+        background: editingThemeData.background,
+        surface: editingThemeData.surface,
+        text: editingThemeData.text,
+        accent: editingThemeData.accent,
+        font: editingThemeData.font,
+        cardBackgroundType:
+          editingThemeData.cardBackgroundType as WidgetBackgroundType,
+        tone: editingThemeData.tone as "dark" | "light",
+      }
+    : initialTheme ||
+      globalTheme || {
+        id: "",
+        background: "#ffffff",
+        surface: "#f8f9fa",
+        text: "#000000",
+        accent: "#3b82f6",
+        font: "var(--font-poppins), Poppins, sans-serif",
+        cardBackgroundType: "solid" as WidgetBackgroundType,
+        tone: "light" as const,
+      };
 
   // Local state for the theme being edited (doesn't affect global theme)
   const [editingTheme, setEditingTheme] = useState<Omit<GlobalTheme, "id">>({
@@ -57,13 +79,28 @@ export function ThemeEditor({
     tone: baseTheme.tone,
   });
 
-  const [themeName, setThemeName] = useState("");
-  const [themeDescription, setThemeDescription] = useState("");
+  const [themeName, setThemeName] = useState(editingThemeData?.name || "");
+  const [themeDescription, setThemeDescription] = useState(
+    editingThemeData?.description || ""
+  );
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Update local editing theme state when base theme ID changes (not on every render)
+  // Update local editing theme state when theme data changes
   useEffect(() => {
-    if (baseTheme) {
+    if (editingThemeData) {
+      setEditingTheme({
+        background: editingThemeData.background,
+        surface: editingThemeData.surface,
+        text: editingThemeData.text,
+        accent: editingThemeData.accent,
+        font: editingThemeData.font,
+        cardBackgroundType:
+          editingThemeData.cardBackgroundType as WidgetBackgroundType,
+        tone: editingThemeData.tone as "dark" | "light",
+      });
+      setThemeName(editingThemeData.name || "");
+      setThemeDescription(editingThemeData.description || "");
+    } else if (baseTheme) {
       setEditingTheme({
         background: baseTheme.background,
         surface: baseTheme.surface,
@@ -75,7 +112,7 @@ export function ThemeEditor({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseTheme.id]); // Only reset when theme ID changes
+  }, [editingThemeData?.id, baseTheme.id]); // Only reset when theme ID changes
 
   const handleBackgroundColorChange = (newColor: string) => {
     setEditingTheme((prev) => ({ ...prev, background: newColor }));
@@ -107,32 +144,51 @@ export function ThemeEditor({
     }
 
     try {
-      await createThemeMutation.mutateAsync({
-        name: themeName.trim(),
-        description: themeDescription.trim() || undefined,
-        background: editingTheme.background,
-        surface: editingTheme.surface,
-        text: editingTheme.text,
-        accent: editingTheme.accent,
-        font: editingTheme.font,
-        cardBackgroundType: editingTheme.cardBackgroundType,
-        tone: editingTheme.tone,
-        isAdmin: false, // User-created themes
-      });
+      if (isEditMode && themeId) {
+        // Update existing theme
+        await updateThemeMutation.mutateAsync({
+          id: themeId,
+          payload: {
+            name: themeName.trim(),
+            description: themeDescription.trim() || undefined,
+            background: editingTheme.background,
+            surface: editingTheme.surface,
+            text: editingTheme.text,
+            accent: editingTheme.accent,
+            font: editingTheme.font,
+            cardBackgroundType: editingTheme.cardBackgroundType,
+            tone: editingTheme.tone,
+          },
+        });
+      } else {
+        // Create new theme
+        await createThemeMutation.mutateAsync({
+          name: themeName.trim(),
+          description: themeDescription.trim() || undefined,
+          background: editingTheme.background,
+          surface: editingTheme.surface,
+          text: editingTheme.text,
+          accent: editingTheme.accent,
+          font: editingTheme.font,
+          cardBackgroundType: editingTheme.cardBackgroundType,
+          tone: editingTheme.tone,
+          isAdmin: false, // User-created themes
+        });
 
-      // Clear fields immediately
-      setThemeName("");
-      setThemeDescription("");
+        // Clear fields only when creating
+        setThemeName("");
+        setThemeDescription("");
+      }
 
       // Show success message
       setShowSuccess(true);
 
-      // Call onSuccess callback to switch tabs after a brief delay
+      // Call onSuccess callback after a brief delay
       if (onSuccess) {
         setTimeout(() => {
           setShowSuccess(false);
           onSuccess();
-        }, 800); // Brief delay to show success state before switching
+        }, 800); // Brief delay to show success state
       } else {
         setTimeout(() => {
           setShowSuccess(false);
@@ -140,15 +196,19 @@ export function ThemeEditor({
       }
     } catch (error) {
       // Error is handled by the mutation
-      console.error("Failed to save theme:", error);
+      console.error(
+        `Failed to ${isEditMode ? "update" : "save"} theme:`,
+        error
+      );
     }
   };
 
-  const isLoading = createThemeMutation.isPending;
+  const isLoading =
+    createThemeMutation.isPending || updateThemeMutation.isPending;
   const canSave = themeName.trim().length > 0 && !isLoading;
 
   return (
-    <div className="space-y-7 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+    <div className="space-y-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
       {/* Theme Name Input */}
       <div className="space-y-3.5">
         <h3
@@ -202,29 +262,8 @@ export function ThemeEditor({
           />
         </div>
       </div>
-      {/* Background Color */}
-      <div className="space-y-3.5">
-        <h3
-          className={cn(
-            "text-[10px] font-bold uppercase tracking-widest px-1",
-            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
-          )}
-        >
-          Background Color
-        </h3>
-        <div className="px-1">
-          <div className="relative group/picker inline-block">
-            <ColorPicker
-              color={editingTheme.background}
-              onChange={handleBackgroundColorChange}
-              onRemove={() => {}}
-              showRemove={false}
-            />
-          </div>
-        </div>
-      </div>
 
-      {/* Surface Color */}
+      {/* Colors Section - All in one row */}
       <div className="space-y-3.5">
         <h3
           className={cn(
@@ -232,60 +271,89 @@ export function ThemeEditor({
             isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
           )}
         >
-          Surface Color
+          Colors
         </h3>
         <div className="px-1">
-          <div className="relative group/picker inline-block">
-            <ColorPicker
-              color={editingTheme.surface}
-              onChange={handleSurfaceChange}
-              onRemove={() => {}}
-              showRemove={false}
-            />
-          </div>
-        </div>
-      </div>
+          <div className="grid grid-cols-4 gap-3">
+            {/* Background Color */}
+            <div className="space-y-2">
+              <label
+                className={cn(
+                  "text-[10px] font-medium uppercase tracking-wider block",
+                  isDarkTheme ? "text-white/60" : "text-muted-foreground/70"
+                )}
+              >
+                Background
+              </label>
+              <div className="relative group/picker inline-block">
+                <ColorPicker
+                  color={editingTheme.background}
+                  onChange={handleBackgroundColorChange}
+                  onRemove={() => {}}
+                  showRemove={false}
+                />
+              </div>
+            </div>
 
-      {/* Text Color */}
-      <div className="space-y-3.5">
-        <h3
-          className={cn(
-            "text-[10px] font-bold uppercase tracking-widest px-1",
-            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
-          )}
-        >
-          Text Color
-        </h3>
-        <div className="px-1">
-          <div className="relative group/picker inline-block">
-            <ColorPicker
-              color={editingTheme.text}
-              onChange={handleTextChange}
-              onRemove={() => {}}
-              showRemove={false}
-            />
-          </div>
-        </div>
-      </div>
+            {/* Surface Color */}
+            <div className="space-y-2">
+              <label
+                className={cn(
+                  "text-[10px] font-medium uppercase tracking-wider block",
+                  isDarkTheme ? "text-white/60" : "text-muted-foreground/70"
+                )}
+              >
+                Surface
+              </label>
+              <div className="relative group/picker inline-block">
+                <ColorPicker
+                  color={editingTheme.surface}
+                  onChange={handleSurfaceChange}
+                  onRemove={() => {}}
+                  showRemove={false}
+                />
+              </div>
+            </div>
 
-      {/* Accent Color */}
-      <div className="space-y-3.5">
-        <h3
-          className={cn(
-            "text-[10px] font-bold uppercase tracking-widest px-1",
-            isDarkTheme ? "text-white/70" : "text-muted-foreground/80"
-          )}
-        >
-          Accent Color
-        </h3>
-        <div className="px-1">
-          <div className="relative group/picker inline-block">
-            <ColorPicker
-              color={editingTheme.accent}
-              onChange={handleAccentChange}
-              onRemove={() => {}}
-              showRemove={false}
-            />
+            {/* Text Color */}
+            <div className="space-y-2">
+              <label
+                className={cn(
+                  "text-[10px] font-medium uppercase tracking-wider block",
+                  isDarkTheme ? "text-white/60" : "text-muted-foreground/70"
+                )}
+              >
+                Text
+              </label>
+              <div className="relative group/picker inline-block">
+                <ColorPicker
+                  color={editingTheme.text}
+                  onChange={handleTextChange}
+                  onRemove={() => {}}
+                  showRemove={false}
+                />
+              </div>
+            </div>
+
+            {/* Accent Color */}
+            <div className="space-y-2">
+              <label
+                className={cn(
+                  "text-[10px] font-medium uppercase tracking-wider block",
+                  isDarkTheme ? "text-white/60" : "text-muted-foreground/70"
+                )}
+              >
+                Accent
+              </label>
+              <div className="relative group/picker inline-block">
+                <ColorPicker
+                  color={editingTheme.accent}
+                  onChange={handleAccentChange}
+                  onRemove={() => {}}
+                  showRemove={false}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -421,7 +489,7 @@ export function ThemeEditor({
           ) : (
             <>
               <Save className="mr-2 h-4 w-4" />
-              Save Theme
+              {isEditMode ? "Update Theme" : "Save Theme"}
             </>
           )}
         </Button>

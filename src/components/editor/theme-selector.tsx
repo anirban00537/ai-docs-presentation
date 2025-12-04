@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ThemeEditor } from "./theme-editor";
+import { ThemeModal } from "./theme-modal";
 import type { GlobalTheme } from "@/store/slices/slidesSlice";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { selectGlobalTheme, setSlideTheme } from "@/store/slices/slidesSlice";
-import { LayoutTemplate, Palette, Loader2, Trash2 } from "lucide-react";
+import { LayoutTemplate, Loader2, Trash2, Plus, Pencil } from "lucide-react";
 import { useThemesList, useDeleteTheme } from "@/hooks/use-themes";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 type ThemeSelectorProps = {
   activeThemeId?: string;
@@ -26,7 +26,8 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   const effectiveTheme = globalTheme || globalThemeState;
   const isDarkTheme = effectiveTheme?.tone === "dark";
   const dispatch = useAppDispatch();
-  const [activeTab, setActiveTab] = React.useState("select");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingThemeId, setEditingThemeId] = useState<string | undefined>();
 
   // Fetch themes from backend
   const { data: themesData, isLoading: isLoadingThemes } = useThemesList({
@@ -109,6 +110,19 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
     }
   };
 
+  // Handle opening modal for creating new theme
+  const handleCreateTheme = () => {
+    setEditingThemeId(undefined);
+    setIsModalOpen(true);
+  };
+
+  // Handle opening modal for editing existing theme
+  const handleEditTheme = (e: React.MouseEvent, themeId: string) => {
+    e.stopPropagation(); // Prevent theme selection when clicking edit
+    setEditingThemeId(themeId);
+    setIsModalOpen(true);
+  };
+
   // Render theme card component
   const renderThemeCard = (
     theme: (typeof userThemes)[0],
@@ -188,26 +202,46 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
               ))}
             </div>
             {isUserTheme && (
-              <button
-                type="button"
-                onClick={(e) => handleDeleteTheme(e, theme.id, theme.name)}
-                disabled={isDeleting}
-                className={cn(
-                  "opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out",
-                  "p-1.5 rounded-md",
-                  "hover:bg-destructive/10 hover:text-destructive",
-                  "active:scale-95",
-                  "disabled:opacity-50 disabled:cursor-not-allowed",
-                  isDeleting && "opacity-100"
-                )}
-                title="Delete theme"
-              >
-                {isDeleting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Trash2 className="h-4 w-4" />
-                )}
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={(e) => handleEditTheme(e, theme.id)}
+                  className={cn(
+                    "p-1.5 rounded-md",
+                    "hover:bg-primary/10 hover:text-primary",
+                    "active:scale-95",
+                    "transition-all duration-200 ease-out",
+                    isDarkTheme
+                      ? "text-white/70 hover:text-primary"
+                      : "text-muted-foreground hover:text-primary"
+                  )}
+                  title="Edit theme"
+                >
+                  <Pencil className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => handleDeleteTheme(e, theme.id, theme.name)}
+                  disabled={isDeleting}
+                  className={cn(
+                    "p-1.5 rounded-md",
+                    "hover:bg-destructive/10 hover:text-destructive",
+                    "active:scale-95",
+                    "disabled:opacity-50 disabled:cursor-not-allowed",
+                    "transition-all duration-200 ease-out",
+                    isDarkTheme
+                      ? "text-white/70 hover:text-destructive"
+                      : "text-muted-foreground hover:text-destructive"
+                  )}
+                  title="Delete theme"
+                >
+                  {isDeleting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             )}
           </div>
         </button>
@@ -216,60 +250,54 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col rounded-lg overflow-hidden min-h-0">
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="w-full h-full flex flex-col"
-      >
-        {/* Tabs */}
+    <>
+      <div className="w-full h-full flex flex-col rounded-lg overflow-hidden min-h-0">
+        {/* Header with Add Theme Button */}
         <div
           className={cn(
-            "px-4 pt-4 pb-3 border-b shrink-0",
+            "px-4 pt-4 pb-3 border-b shrink-0 flex items-center justify-between",
             isDarkTheme ? "border-white/10" : "border-border"
           )}
         >
-          <TabsList
+          <div className="flex items-center gap-2">
+            <LayoutTemplate
+              className={cn(
+                "h-4 w-4",
+                isDarkTheme ? "text-white/90" : "text-foreground"
+              )}
+            />
+            <h3
+              className={cn(
+                "text-sm font-semibold",
+                isDarkTheme ? "text-white/90" : "text-foreground"
+              )}
+            >
+              Themes
+            </h3>
+          </div>
+          <Button
+            onClick={handleCreateTheme}
+            size="sm"
             className={cn(
-              "w-full grid grid-cols-2 p-1 rounded-xl",
-              isDarkTheme ? "bg-white/5" : "bg-muted/50"
+              "h-8 gap-2",
+              isDarkTheme
+                ? "bg-white/10 hover:bg-white/20 text-white"
+                : "bg-primary text-primary-foreground hover:bg-primary/90"
             )}
           >
-            <TabsTrigger
-              value="select"
-              className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
-                "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
-                "hover:scale-[1.02] active:scale-[0.98]",
-                isDarkTheme ? "text-white/80" : "text-muted-foreground"
-              )}
-            >
-              <LayoutTemplate className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
-              Select Theme
-            </TabsTrigger>
-            <TabsTrigger
-              value="add"
-              className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
-                "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
-                "hover:scale-[1.02] active:scale-[0.98]",
-                isDarkTheme ? "text-white/80" : "text-muted-foreground"
-              )}
-            >
-              <Palette className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
-              Add Theme
-            </TabsTrigger>
-          </TabsList>
+            <Plus className="h-3.5 w-3.5" />
+            Add Theme
+          </Button>
         </div>
 
-        {/* Tab Content */}
+        {/* Content */}
         <div
           className={cn(
             "flex-1 overflow-y-auto custom-scrollbar min-h-0",
             isDarkTheme ? "custom-scrollbar-dark" : "custom-scrollbar-light"
           )}
         >
-          <TabsContent value="select" className="mt-0 px-4">
+          <div className="px-4">
             <div className="space-y-4 py-4">
               {isLoadingThemes ? (
                 <div className="flex items-center justify-center h-64">
@@ -336,22 +364,16 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                 </div>
               )}
             </div>
-          </TabsContent>
-
-          <TabsContent
-            value="add"
-            className="mt-0 px-4 animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
-          >
-            <div className="py-4">
-              <ThemeEditor
-                onSuccess={() => {
-                  setActiveTab("select");
-                }}
-              />
-            </div>
-          </TabsContent>
+          </div>
         </div>
-      </Tabs>
-    </div>
+      </div>
+
+      {/* Theme Modal */}
+      <ThemeModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        themeId={editingThemeId}
+      />
+    </>
   );
 };
