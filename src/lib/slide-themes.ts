@@ -17,6 +17,9 @@ export type SlideTheme = {
   tone: ThemeTone;
 };
 
+// Note: Themes are now seeded in the database via prisma/seed.ts
+// This array is kept as a fallback for backward compatibility
+// In production, themes should be fetched from the backend API
 export const SLIDE_THEMES: SlideTheme[] = [
   {
     id: "nocturne",

@@ -269,10 +269,33 @@ const slidesSlice = createSlice({
     setSlideTheme(
       state,
       action: PayloadAction<{
-        themeId: string;
+        themeId?: string;
+        theme?: Omit<GlobalTheme, "id"> & { id: string };
       }>
     ) {
-      const theme = SLIDE_THEMES.find((t) => t.id === action.payload.themeId);
+      let theme: (Omit<GlobalTheme, "id"> & { id: string }) | undefined;
+
+      // If theme object is provided, use it directly (for API themes)
+      if (action.payload.theme) {
+        theme = action.payload.theme;
+      }
+      // Otherwise, try to find in SLIDE_THEMES (for backward compatibility)
+      else if (action.payload.themeId) {
+        const staticTheme = SLIDE_THEMES.find((t) => t.id === action.payload.themeId);
+        if (staticTheme) {
+          theme = {
+            id: staticTheme.id,
+            background: staticTheme.background,
+            surface: staticTheme.surface,
+            text: staticTheme.text,
+            accent: staticTheme.accent,
+            font: staticTheme.font,
+            cardBackgroundType: staticTheme.cardBackgroundType,
+            tone: staticTheme.tone,
+          };
+        }
+      }
+
       if (!theme) return;
 
       // Only update globalTheme - widgets and slides will automatically use new colors
