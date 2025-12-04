@@ -34,11 +34,6 @@ type RightSidebarProps = {
   activeThemeId?: string;
   onSelectTheme?: (themeId: string) => void;
   globalTheme?: import("@/store/slices/slidesSlice").GlobalTheme;
-  onThemeChange?: (
-    updates: Partial<
-      Omit<import("@/store/slices/slidesSlice").GlobalTheme, "id">
-    >
-  ) => void;
 };
 
 export const RightSidebar: React.FC<RightSidebarProps> = ({
@@ -54,7 +49,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   activeThemeId,
   onSelectTheme,
   globalTheme,
-  onThemeChange,
 }) => {
   const activeSlide = useAppSelector(selectActiveSlide);
   const globalThemeState = useAppSelector(selectGlobalTheme);
@@ -350,7 +344,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
               activeThemeId={activeThemeId}
               onSelectTheme={onSelectTheme || (() => {})}
               globalTheme={globalTheme}
-              onThemeChange={onThemeChange}
             />
           )}
         </div>

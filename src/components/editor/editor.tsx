@@ -538,7 +538,6 @@ const Editor = () => {
           activeThemeId={globalTheme?.id}
           onSelectTheme={handleThemeSelect}
           globalTheme={globalTheme}
-          onThemeChange={handleThemeChange}
         />
       </div>
     </div>
