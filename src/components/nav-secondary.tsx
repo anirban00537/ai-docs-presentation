@@ -59,7 +59,7 @@ export function NavSecondary({
               size="sm"
               className="w-full text-xs font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all duration-200"
             >
-              <p className="text-white text-xs font-semibold">Upgrade Now</p>
+              <p className="text-black text-xs font-semibold">Upgrade Now</p>
             </AppleButton>
           </div>
         </div>
