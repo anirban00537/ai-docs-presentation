@@ -178,9 +178,9 @@ export default function HomePage() {
             }}
           />
 
-          {/* Animated glow effect */}
+          {/* Animated glow effect - horizontal */}
           <motion.div
-            className="absolute -inset-2 bg-gradient-to-r from-primary/40 via-primary/20 to-primary/40 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+            className="absolute -inset-3 bg-gradient-to-r from-primary/50 via-primary/30 to-primary/50 rounded-3xl blur-3xl opacity-60 group-hover:opacity-80 transition-opacity duration-700"
             animate={{
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
             }}
@@ -188,6 +188,65 @@ export default function HomePage() {
               duration: 5,
               repeat: Infinity,
               ease: "linear",
+            }}
+          />
+
+          {/* Animated glow effect - vertical */}
+          <motion.div
+            className="absolute -inset-3 bg-gradient-to-b from-primary/40 via-primary/25 to-primary/40 rounded-3xl blur-3xl opacity-50"
+            animate={{
+              backgroundPosition: ["50% 0%", "50% 100%", "50% 0%"],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "linear",
+              delay: 1,
+            }}
+          />
+
+          {/* Diagonal gradient layer 1 */}
+          <motion.div
+            className="absolute -inset-4 bg-gradient-to-br from-primary/35 via-primary/15 to-transparent rounded-3xl blur-2xl opacity-40"
+            animate={{
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+
+          {/* Diagonal gradient layer 2 */}
+          <motion.div
+            className="absolute -inset-4 bg-gradient-to-tl from-primary/35 via-primary/15 to-transparent rounded-3xl blur-2xl opacity-40"
+            animate={{
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2,
+            }}
+          />
+
+          {/* Radial gradient layer */}
+          <motion.div
+            className="absolute -inset-3 rounded-3xl blur-2xl opacity-45"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 50%, hsl(var(--primary)) / 0.3, transparent 70%)",
+            }}
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.35, 0.55, 0.35],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
             }}
           />
 
@@ -227,35 +286,81 @@ export default function HomePage() {
 
             {/* Main box with 3D styling */}
             <div
-              className="relative flex items-center backdrop-blur-2xl rounded-3xl overflow-hidden bg-background/95 border-2 border-white/20"
+              className="relative flex items-center backdrop-blur-2xl rounded-3xl overflow-hidden bg-background/95"
               style={{
                 transform: "translateZ(0)",
+                border: "1px solid hsl(var(--primary) / 0.4)",
                 boxShadow: `
-                  0 0 0 1px rgba(255, 255, 255, 0.2),
+                  0 0 0 1px hsl(var(--primary) / 0.3),
                   0 8px 32px rgba(255, 245, 200, 0.4),
                   0 16px 64px rgba(255, 250, 220, 0.3),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                  inset 0 1px 0 hsl(var(--primary) / 0.2),
                   inset 0 -1px 0 rgba(255, 245, 200, 0.25),
                   0 32px 80px -20px rgba(255, 245, 200, 0.5),
                   0 4px 16px rgba(255, 245, 200, 0.3)
                 `,
               }}
             >
-              {/* Inner glow */}
+              {/* Inner glow - radial */}
               <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                className="absolute inset-0 opacity-60 pointer-events-none"
                 style={{
                   background:
-                    "radial-gradient(circle at 50% 0%, hsl(var(--primary)) / 0.15, transparent 70%)",
+                    "radial-gradient(circle at 50% 50%, hsl(var(--primary)) / 0.2, transparent 70%)",
+                }}
+              />
+
+              {/* Inner glow - top gradient */}
+              <div
+                className="absolute inset-0 opacity-40 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(180deg, hsl(var(--primary)) / 0.15 0%, transparent 50%)",
+                }}
+              />
+
+              {/* Inner glow - side gradients */}
+              <div
+                className="absolute inset-0 opacity-30 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(90deg, hsl(var(--primary)) / 0.1 0%, transparent 30%, transparent 70%, hsl(var(--primary)) / 0.1 100%)",
+                }}
+              />
+
+              {/* Top border highlight */}
+              <div
+                className="absolute top-0 left-0 right-0 h-px opacity-70 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.8) 20%, hsl(var(--primary) / 1) 50%, hsl(var(--primary) / 0.8) 80%, transparent 100%)",
+                }}
+              />
+
+              {/* Right border highlight */}
+              <div
+                className="absolute right-0 top-0 bottom-0 w-px opacity-50 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(180deg, transparent 0%, hsl(var(--primary) / 0.5) 30%, hsl(var(--primary) / 0.7) 50%, hsl(var(--primary) / 0.5) 70%, transparent 100%)",
+                }}
+              />
+
+              {/* Bottom border highlight */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-px opacity-40 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.4) 30%, hsl(var(--primary) / 0.6) 50%, hsl(var(--primary) / 0.4) 70%, transparent 100%)",
                 }}
               />
 
               {/* Left border highlight */}
               <div
-                className="absolute left-0 top-0 bottom-0 w-[2px] opacity-50 pointer-events-none"
+                className="absolute left-0 top-0 bottom-0 w-px opacity-60 pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%)",
+                    "linear-gradient(180deg, hsl(var(--primary) / 0.7) 0%, hsl(var(--primary) / 0.8) 30%, hsl(var(--primary) / 0.6) 50%, hsl(var(--primary) / 0.4) 70%, transparent 100%)",
                 }}
               />
 

@@ -30,12 +30,22 @@ const transitionVariants: { item: Variants } = {
 export function HeroSection() {
   return (
     <section
-      className="relative overflow-hidden bg-cover bg-center bg-no-repeat"
+      className="relative overflow-hidden bg-cover bg-center bg-no-repeat "
       style={{
         backgroundImage:
-          "url('https://images.unsplash.com/photo-1571456653714-a8db063a3e91?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+          "url('https://images.unsplash.com/photo-1645811791051-6031cd3e2ef3?q=80&w=538&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
+      {/* Blur overlay */}
+      <div
+        className="absolute inset-0 z-0 backdrop-blur-sm"
+        style={{
+          backgroundColor: "rgba(255, 245, 200, 0.3)",
+        }}
+      />
       <div className="relative z-10">
         <div className="relative">
           <div className="mx-auto flex max-w-7xl flex-col items-center gap-16 px-6 pb-20 pt-32 md:gap-20 md:pb-32 md:pt-40 lg:pt-48">
