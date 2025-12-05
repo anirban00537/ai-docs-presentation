@@ -67,12 +67,15 @@ export default function HomePage() {
         backgroundColor: "hsl(var(--background))",
         backgroundImage: `
           radial-gradient(circle at 20% 30%, hsl(var(--primary)) / 0.4 0%, transparent 40%),
-          radial-gradient(circle at 80% 20%, hsl(var(--primary)) / 0.35 0%, transparent 45%),
-          radial-gradient(circle at 70% 80%, hsl(var(--primary)) / 0.3 0%, transparent 50%),
-          radial-gradient(circle at 30% 70%, hsl(var(--primary)) / 0.25 0%, transparent 45%),
-          radial-gradient(circle at 50% 50%, hsl(var(--primary)) / 0.15 0%, transparent 60%),
-          radial-gradient(circle at 10% 60%, hsl(var(--primary)) / 0.2 0%, transparent 40%),
-          radial-gradient(circle at 90% 50%, hsl(var(--primary)) / 0.2 0%, transparent 40%)
+          radial-gradient(circle at 80% 20%, hsl(var(--secondary)) / 0.35 0%, transparent 45%),
+          radial-gradient(circle at 70% 80%, hsl(var(--accent)) / 0.3 0%, transparent 50%),
+          radial-gradient(circle at 30% 70%, hsl(var(--chart-1)) / 0.3 0%, transparent 45%),
+          radial-gradient(circle at 50% 50%, hsl(var(--chart-2)) / 0.25 0%, transparent 60%),
+          radial-gradient(circle at 10% 60%, hsl(var(--chart-3)) / 0.25 0%, transparent 40%),
+          radial-gradient(circle at 90% 50%, hsl(var(--chart-4)) / 0.25 0%, transparent 40%),
+          radial-gradient(circle at 40% 20%, hsl(var(--chart-5)) / 0.2 0%, transparent 40%),
+          radial-gradient(circle at 60% 90%, hsl(var(--primary)) / 0.2 0%, transparent 45%),
+          radial-gradient(circle at 15% 80%, hsl(var(--secondary)) / 0.2 0%, transparent 40%)
         `,
       }}
     >
@@ -162,7 +165,7 @@ export default function HomePage() {
       >
         <motion.h1
           variants={itemVariants}
-          className="text-lg md:text-5xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent pb-2"
+          className="text-lg md:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent pb-2"
         >
           What presentation do you want to create?
         </motion.h1>
