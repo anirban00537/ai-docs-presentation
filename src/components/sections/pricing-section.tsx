@@ -175,10 +175,10 @@ export function PricingSection() {
                     }`}
                   >
                     <Link href={plan.href}>
-                      <span className="inline-flex items-center justify-center gap-2 text-black">
+                      <span className="inline-flex items-center justify-center gap-2 text-white">
                         {plan.cta}
                         {plan.popular && (
-                          <ArrowRight className="h-4 w-4 text-black" />
+                          <ArrowRight className="h-4 w-4 text-white" />
                         )}
                       </span>
                     </Link>

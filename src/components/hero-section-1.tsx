@@ -55,12 +55,30 @@ export function HeroSection() {
               className="flex w-full max-w-4xl flex-col items-center space-y-10 text-center"
             >
               <div className="space-y-8">
-                <h1 className="text-balance text-4xl font-semibold tracking-tight text-black sm:text-5xl md:text-6xl lg:text-7xl">
+                <h1
+                  className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #ffffff 0%, #e0e0e0 30%, #d0d0d0 60%, #ffffff 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
                   Presentations that feel
                   <br className="hidden sm:block" />
                   as smooth as butter.
                 </h1>
-                <p className="text-balance text-base leading-relaxed text-black sm:text-lg md:text-xl md:leading-relaxed">
+                <p
+                  className="text-balance text-base leading-relaxed sm:text-lg md:text-xl md:leading-relaxed"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #ffffff 0%, #e8e8e8 50%, #d8d8d8 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
                   Create stunning, buttery-smooth presentations effortlessly
                   with AI. Design, customize, and share professional slides that
                   flow seamlessly.
@@ -75,9 +93,9 @@ export function HeroSection() {
                   className="rounded-xl px-8 text-base"
                 >
                   <Link href="/home">
-                    <span className="inline-flex items-center gap-2 text-black">
+                    <span className="inline-flex items-center gap-2 text-white">
                       Create Presentation
-                      <ArrowRight className="h-4 w-4 text-black" />
+                      <ArrowRight className="h-4 w-4 text-white" />
                     </span>
                   </Link>
                 </AppleButton>
@@ -107,7 +125,16 @@ export function HeroSection() {
         {/* Logos strip */}
         <section className="pb-20 pt-8 md:pb-32 md:pt-12">
           <div className="mx-auto max-w-6xl px-6">
-            <p className="mb-8 text-center text-xs font-medium tracking-wider text-black">
+            <p
+              className="mb-8 text-center text-xs font-medium tracking-wider"
+              style={{
+                background:
+                  "linear-gradient(180deg, #ffffff 0%, #e8e8e8 50%, #d8d8d8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
               TRUSTED BY LEADING COMPANIES
             </p>
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-12 gap-y-8 opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 dark:opacity-50 dark:hover:opacity-80">
