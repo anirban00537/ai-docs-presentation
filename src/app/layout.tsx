@@ -28,6 +28,8 @@ const poppins = Poppins({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
 });
 
 const roboto = Roboto({
@@ -165,7 +167,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${poppins.variable} ${inter.variable} ${roboto.variable} ${openSans.variable} ${montserrat.variable} ${lato.variable} ${playfair.variable} ${merriweather.variable} ${raleway.variable} ${ubuntu.variable} ${greatVibes.variable} ${dancingScript.variable} ${caveat.variable} ${abrilFatface.variable} ${lora.variable} antialiased h-full`}
+        className={`${inter.variable} ${poppins.variable} ${roboto.variable} ${openSans.variable} ${montserrat.variable} ${lato.variable} ${playfair.variable} ${merriweather.variable} ${raleway.variable} ${ubuntu.variable} ${greatVibes.variable} ${dancingScript.variable} ${caveat.variable} ${abrilFatface.variable} ${lora.variable} font-sans antialiased h-full`}
       >
         <Providers>{children}</Providers>
       </body>
