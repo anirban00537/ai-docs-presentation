@@ -61,7 +61,29 @@ export default function HomePage() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-full w-full px-4 overflow-hidden">
+    <div
+      className="relative flex flex-col items-center justify-center h-full w-full px-4 overflow-hidden"
+      style={{
+        backgroundColor: "hsl(var(--background))",
+        backgroundImage: `
+          radial-gradient(circle at 20% 30%, hsl(var(--primary)) / 0.4 0%, transparent 40%),
+          radial-gradient(circle at 80% 20%, hsl(var(--primary)) / 0.35 0%, transparent 45%),
+          radial-gradient(circle at 70% 80%, hsl(var(--primary)) / 0.3 0%, transparent 50%),
+          radial-gradient(circle at 30% 70%, hsl(var(--primary)) / 0.25 0%, transparent 45%),
+          radial-gradient(circle at 50% 50%, hsl(var(--primary)) / 0.15 0%, transparent 60%),
+          radial-gradient(circle at 10% 60%, hsl(var(--primary)) / 0.2 0%, transparent 40%),
+          radial-gradient(circle at 90% 50%, hsl(var(--primary)) / 0.2 0%, transparent 40%)
+        `,
+      }}
+    >
+      {/* Mesh gradient overlay - gradient from light white top to white bottom */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.4) 60%, rgba(255, 255, 255, 0.9) 85%, rgba(255, 255, 255, 1) 100%)",
+        }}
+      />
       {/* Corner gradients - multiple layers for more intensity */}
       {/* Top-left corner */}
       <motion.div
