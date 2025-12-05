@@ -30,20 +30,18 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full px-4 overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center h-full w-full px-4 overflow-hidden">
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="w-full max-w-3xl space-y-8 text-center"
+        className="relative z-10 w-full max-w-3xl space-y-8 text-center"
       >
         <motion.h1
           variants={itemVariants}
-          className="text-4xl md:text-6xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent pb-2"
+          className="text-lg md:text-5xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent pb-2"
         >
-          What presentation do you
-          <br />
-          want to create?
+          What presentation do you want to create?
         </motion.h1>
 
         <motion.div variants={itemVariants} className="relative group z-10">
@@ -58,10 +56,10 @@ export default function HomePage() {
               ease: "linear",
             }}
           />
-          <div className="relative flex items-center bg-background/60 backdrop-blur-2xl border border-border/40 rounded-2xl shadow-2xl overflow-hidden ring-1 ring-white/5 transition-all duration-300 focus-within:ring-primary/30 focus-within:border-primary/30 focus-within:shadow-primary/10 group-hover:shadow-2xl group-hover:shadow-primary/5">
+          <div className="relative flex items-center bg-white backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden ring-1 ring-black/5 transition-all duration-300 focus-within:ring-primary/30 focus-within:border-primary/30 focus-within:shadow-primary/10 group-hover:shadow-2xl group-hover:shadow-primary/5">
             <textarea
               placeholder="Describe your presentation idea... (e.g., 'A pitch deck for a new AI startup')"
-              className="w-full min-h-[100px] p-6 bg-transparent border-none outline-none resize-none text-lg placeholder:text-muted-foreground/40"
+              className="w-full min-h-[100px] p-6 bg-transparent border-none outline-none resize-none text-lg text-zinc-800 placeholder:text-zinc-400"
             />
             <div className="pr-4 pt-2 self-start md:self-center md:pt-0">
               <motion.button
