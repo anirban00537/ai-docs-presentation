@@ -33,11 +33,9 @@ export function HeroSection() {
       className="relative overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage:
-          "url('https://images.unsplash.com/photo-1644426358809-951ac2cdb9df?q=80&w=1225&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+          "url('https://images.unsplash.com/photo-1619252584172-a83a949b6efd?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
       }}
     >
-      {/* Overlay for text readability */}
-      <div className="absolute inset-0 bg-white/60 dark:bg-zinc-950/70" />
       <div className="relative z-10">
         <div className="relative">
           <div className="mx-auto flex max-w-7xl flex-col items-center gap-16 px-6 pb-20 pt-32 md:gap-20 md:pb-32 md:pt-40 lg:pt-48">
