@@ -125,7 +125,7 @@ export function PricingSection() {
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="rounded-full bg-primary px-4 py-1 text-sm font-semibold text-primary-foreground dark:text-primary-foreground">
+                    <span className="rounded-full bg-primary px-4 py-1 text-sm font-semibold text-white">
                       Most Popular
                     </span>
                   </div>
@@ -175,9 +175,15 @@ export function PricingSection() {
                     }`}
                   >
                     <Link href={plan.href}>
-                      <span className="inline-flex items-center justify-center gap-2">
+                      <span
+                        className={`inline-flex items-center justify-center gap-2 ${
+                          plan.popular ? "text-white" : ""
+                        }`}
+                      >
                         {plan.cta}
-                        {plan.popular && <ArrowRight className="h-4 w-4" />}
+                        {plan.popular && (
+                          <ArrowRight className="h-4 w-4 text-white" />
+                        )}
                       </span>
                     </Link>
                   </AppleButton>
