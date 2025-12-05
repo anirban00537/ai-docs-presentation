@@ -55,7 +55,7 @@ const features = [
 export function FeaturesSection() {
   return (
     <section className="relative py-20 md:py-32">
-      <div className="absolute inset-0 bg-linear-to-b from-white via-[#FFF8E0]/30 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
+      <div className="absolute inset-0 bg-linear-to-b from-white via-primary/10 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <AnimatedGroup
           variants={{
@@ -88,9 +88,9 @@ export function FeaturesSection() {
                 variants={transitionVariants}
                 className="group relative"
               >
-                <div className="relative rounded-2xl border border-white/80 bg-white/60 p-8 shadow-lg shadow-yellow-100/20 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:shadow-yellow-200/30 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-yellow-900/10 dark:hover:shadow-yellow-900/20">
-                  <div className="mb-4 inline-flex rounded-xl bg-yellow-100/50 p-3 dark:bg-yellow-900/20">
-                    <Icon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                <div className="relative rounded-2xl border border-white/80 bg-white/60 p-8 shadow-lg shadow-primary/20 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-primary/10 dark:hover:shadow-primary/20">
+                  <div className="mb-4 inline-flex rounded-xl bg-primary/20 p-3 dark:bg-primary/20">
+                    <Icon className="h-6 w-6 text-primary dark:text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">
                     {feature.title}

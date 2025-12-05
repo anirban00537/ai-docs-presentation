@@ -55,7 +55,7 @@ const steps = [
 export function HowItWorksSection() {
   return (
     <section className="relative py-20 md:py-32">
-      <div className="absolute inset-0 bg-linear-to-b from-white via-[#FFF8E0]/40 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
+      <div className="absolute inset-0 bg-linear-to-b from-white via-primary/10 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <AnimatedGroup
           variants={{
@@ -84,9 +84,9 @@ export function HowItWorksSection() {
               variants={transitionVariants}
               className="group"
             >
-              <div className="flex flex-col items-center gap-8 rounded-2xl border border-white/80 bg-white/60 p-8 shadow-lg shadow-yellow-100/20 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:shadow-yellow-200/30 md:flex-row md:gap-12 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-yellow-900/10 dark:hover:shadow-yellow-900/20">
-                <div className="flex shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-yellow-400/20 via-amber-300/20 to-orange-300/20 p-6 dark:from-yellow-500/10 dark:via-amber-500/10 dark:to-orange-500/10">
-                  <span className="text-4xl font-bold text-yellow-600 dark:text-yellow-400">
+              <div className="flex flex-col items-center gap-8 rounded-2xl border border-white/80 bg-white/60 p-8 shadow-lg shadow-primary/20 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 md:flex-row md:gap-12 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-primary/10 dark:hover:shadow-primary/20">
+                <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/20 p-6 dark:bg-primary/20">
+                  <span className="text-4xl font-bold text-primary dark:text-primary">
                     {step.number}
                   </span>
                 </div>
@@ -100,7 +100,7 @@ export function HowItWorksSection() {
                 </div>
                 {index < steps.length - 1 && (
                   <div className="hidden shrink-0 md:block">
-                    <ArrowRight className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                    <ArrowRight className="h-6 w-6 text-primary dark:text-primary" />
                   </div>
                 )}
               </div>
@@ -111,4 +111,3 @@ export function HowItWorksSection() {
     </section>
   );
 }
-

@@ -30,7 +30,7 @@ const transitionVariants: { item: Variants } = {
 export function CTASection() {
   return (
     <section className="relative py-20 md:py-32">
-      <div className="absolute inset-0 bg-linear-to-b from-white via-[#FFF8E0]/50 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
+      <div className="absolute inset-0 bg-linear-to-b from-white via-primary/10 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
         <AnimatedGroup
           variants={{
@@ -81,4 +81,3 @@ export function CTASection() {
     </section>
   );
 }
-

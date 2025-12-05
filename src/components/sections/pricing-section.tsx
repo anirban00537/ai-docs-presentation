@@ -87,7 +87,7 @@ const plans = [
 export function PricingSection() {
   return (
     <section className="relative py-20 md:py-32" id="pricing">
-      <div className="absolute inset-0 bg-linear-to-b from-white via-[#FFF8E0]/40 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
+      <div className="absolute inset-0 bg-linear-to-b from-white via-primary/10 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <AnimatedGroup
           variants={{
@@ -119,13 +119,13 @@ export function PricingSection() {
               <div
                 className={`relative rounded-2xl border p-8 shadow-lg backdrop-blur-xl transition-all duration-300 ${
                   plan.popular
-                    ? "border-yellow-400/50 bg-white/80 shadow-yellow-200/30 dark:border-yellow-500/50 dark:bg-zinc-900/80 dark:shadow-yellow-900/20 scale-105 lg:scale-110"
-                    : "border-white/80 bg-white/60 shadow-yellow-100/20 hover:shadow-xl hover:shadow-yellow-200/30 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-yellow-900/10 dark:hover:shadow-yellow-900/20"
+                    ? "border-primary/50 bg-white/80 shadow-primary/30 dark:border-primary/50 dark:bg-zinc-900/80 dark:shadow-primary/20 scale-105 lg:scale-110"
+                    : "border-white/80 bg-white/60 shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-primary/10 dark:hover:shadow-primary/20"
                 }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="rounded-full bg-linear-to-r from-yellow-400 to-amber-400 px-4 py-1 text-sm font-semibold text-zinc-950 dark:text-zinc-900">
+                    <span className="rounded-full bg-primary px-4 py-1 text-sm font-semibold text-primary-foreground dark:text-primary-foreground">
                       Most Popular
                     </span>
                   </div>
@@ -153,8 +153,8 @@ export function PricingSection() {
                 <ul className="mt-8 space-y-4">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start gap-3">
-                      <div className="mt-0.5 shrink-0 rounded-full bg-yellow-100/50 p-1 dark:bg-yellow-900/20">
-                        <Check className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                      <div className="mt-0.5 shrink-0 rounded-full bg-primary/20 p-1 dark:bg-primary/20">
+                        <Check className="h-4 w-4 text-primary dark:text-primary" />
                       </div>
                       <span className="text-zinc-700 dark:text-zinc-300">
                         {feature}
@@ -177,9 +177,7 @@ export function PricingSection() {
                     <Link href={plan.href}>
                       <span className="inline-flex items-center justify-center gap-2">
                         {plan.cta}
-                        {plan.popular && (
-                          <ArrowRight className="h-4 w-4" />
-                        )}
+                        {plan.popular && <ArrowRight className="h-4 w-4" />}
                       </span>
                     </Link>
                   </AppleButton>
@@ -198,4 +196,3 @@ export function PricingSection() {
     </section>
   );
 }
-
