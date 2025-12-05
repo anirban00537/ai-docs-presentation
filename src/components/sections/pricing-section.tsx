@@ -175,14 +175,10 @@ export function PricingSection() {
                     }`}
                   >
                     <Link href={plan.href}>
-                      <span
-                        className={`inline-flex items-center justify-center gap-2 ${
-                          plan.popular ? "text-white" : ""
-                        }`}
-                      >
+                      <span className="inline-flex items-center justify-center gap-2 text-black">
                         {plan.cta}
                         {plan.popular && (
-                          <ArrowRight className="h-4 w-4 text-white" />
+                          <ArrowRight className="h-4 w-4 text-black" />
                         )}
                       </span>
                     </Link>

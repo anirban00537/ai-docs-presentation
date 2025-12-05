@@ -29,16 +29,7 @@ const transitionVariants: { item: Variants } = {
 
 export function HeroSection() {
   return (
-    <section
-      className="relative overflow-hidden bg-cover bg-center bg-no-repeat "
-      style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1618397746666-63405ce5d015?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    <section className="relative overflow-hidden bg-cover bg-center bg-no-repeat ">
       <div className="relative z-10">
         <div className="relative">
           <div className="mx-auto flex max-w-7xl flex-col items-center gap-16 px-6 pb-20 pt-32 md:gap-20 md:pb-32 md:pt-40 lg:pt-48">
@@ -55,12 +46,12 @@ export function HeroSection() {
               className="flex w-full max-w-4xl flex-col items-center space-y-10 text-center"
             >
               <div className="space-y-8">
-                <h1 className="text-balance text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                <h1 className="text-balance text-4xl font-semibold tracking-tight text-black sm:text-5xl md:text-6xl lg:text-7xl">
                   Presentations that feel
                   <br className="hidden sm:block" />
                   as smooth as butter.
                 </h1>
-                <p className="text-balance text-base leading-relaxed text-white sm:text-lg md:text-xl md:leading-relaxed">
+                <p className="text-balance text-base leading-relaxed text-black sm:text-lg md:text-xl md:leading-relaxed">
                   Create stunning, buttery-smooth presentations effortlessly
                   with AI. Design, customize, and share professional slides that
                   flow seamlessly.
@@ -75,9 +66,9 @@ export function HeroSection() {
                   className="rounded-xl px-8 text-base"
                 >
                   <Link href="/home">
-                    <span className="inline-flex items-center gap-2 text-white">
+                    <span className="inline-flex items-center gap-2 text-black">
                       Create Presentation
-                      <ArrowRight className="h-4 w-4 text-white" />
+                      <ArrowRight className="h-4 w-4 text-black" />
                     </span>
                   </Link>
                 </AppleButton>
@@ -107,7 +98,7 @@ export function HeroSection() {
         {/* Logos strip */}
         <section className="pb-20 pt-8 md:pb-32 md:pt-12">
           <div className="mx-auto max-w-6xl px-6">
-            <p className="mb-8 text-center text-xs font-medium tracking-wider text-white">
+            <p className="mb-8 text-center text-xs font-medium tracking-wider text-black">
               TRUSTED BY LEADING COMPANIES
             </p>
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-12 gap-y-8 opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 dark:opacity-50 dark:hover:opacity-80">

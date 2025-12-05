@@ -59,9 +59,9 @@ export function CTASection() {
               className="rounded-xl px-8 text-base"
             >
               <Link href="/editor">
-                <span className="inline-flex items-center gap-2 text-white">
+                <span className="inline-flex items-center gap-2 text-black">
                   Get Started Free
-                  <ArrowRight className="h-4 w-4 text-white" />
+                  <ArrowRight className="h-4 w-4 text-black" />
                 </span>
               </Link>
             </AppleButton>

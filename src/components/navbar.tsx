@@ -88,7 +88,7 @@ export function Navbar() {
                   className={cn(isScrolled && "lg:hidden")}
                 >
                   <Link href="#">
-                    <span className="text-white">Login</span>
+                    <span className="text-black">Login</span>
                   </Link>
                 </AppleButton>
                 <AppleButton
@@ -98,7 +98,7 @@ export function Navbar() {
                   className={cn(isScrolled && "lg:hidden")}
                 >
                   <Link href="#">
-                    <span className="text-white">Sign Up</span>
+                    <span className="text-black">Sign Up</span>
                   </Link>
                 </AppleButton>
                 <AppleButton
@@ -108,7 +108,7 @@ export function Navbar() {
                   className={cn(isScrolled ? "lg:inline-flex" : "hidden")}
                 >
                   <Link href="#">
-                    <span className="text-white">Start Researching</span>
+                    <span className="text-black">Start Researching</span>
                   </Link>
                 </AppleButton>
               </div>

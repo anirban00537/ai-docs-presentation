@@ -401,14 +401,14 @@ export default function HomePage() {
                 <AppleButton
                   variant="primary"
                   size="sm"
-                  className="p-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed group/btn relative"
+                  className="p-3 rounded-xl bg-primary text-black hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed group/btn relative"
                   style={{
                     boxShadow:
                       "0 4px 12px rgba(255, 245, 200, 0.4), 0 2px 8px rgba(255, 250, 220, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
                   }}
                 >
                   <Send
-                    className="w-5 h-5 relative"
+                    className="w-5 h-5 relative text-black"
                     style={{ transform: "translateZ(20px)" }}
                   />
                 </AppleButton>

@@ -11,13 +11,13 @@ const appleButtonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-primary text-primary-foreground relative overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.12),0_1px_2px_0_rgba(0,0,0,0.24)] before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.15),0_2px_4px_0_rgba(0,0,0,0.2)] hover:bg-primary/95 hover:-translate-y-[1px] active:scale-[0.98]",
+          "bg-primary text-black relative overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.12),0_1px_2px_0_rgba(0,0,0,0.24)] before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.15),0_2px_4px_0_rgba(0,0,0,0.2)] hover:bg-primary/95 hover:-translate-y-[1px] active:scale-[0.98]",
         secondary:
-          "bg-secondary/80 text-secondary-foreground relative overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.12),0_1px_2px_0_rgba(0,0,0,0.24)] before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none hover:bg-secondary/90 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.15),0_2px_4px_0_rgba(0,0,0,0.2)] hover:-translate-y-[1px] active:scale-[0.98]",
+          "bg-secondary/80 text-black relative overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.12),0_1px_2px_0_rgba(0,0,0,0.24)] before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none hover:bg-secondary/90 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.15),0_2px_4px_0_rgba(0,0,0,0.2)] hover:-translate-y-[1px] active:scale-[0.98]",
         tertiary:
-          "bg-background/60 text-foreground border border-border/60 relative overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.12),0_1px_2px_0_rgba(0,0,0,0.24)] before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/30 before:to-transparent before:pointer-events-none hover:bg-background/80 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.15),0_2px_4px_0_rgba(0,0,0,0.2)] hover:border-border hover:-translate-y-[1px] active:scale-[0.98]",
+          "bg-background/60 text-black border border-border/60 relative overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.12),0_1px_2px_0_rgba(0,0,0,0.24)] before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/30 before:to-transparent before:pointer-events-none hover:bg-background/80 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.15),0_2px_4px_0_rgba(0,0,0,0.2)] hover:border-border hover:-translate-y-[1px] active:scale-[0.98]",
         ghost:
-          "bg-transparent text-foreground hover:bg-accent/50 active:scale-[0.97]",
+          "bg-transparent text-black hover:bg-accent/50 active:scale-[0.97]",
       },
       size: {
         default: "h-8 px-3.5 py-1.5",
