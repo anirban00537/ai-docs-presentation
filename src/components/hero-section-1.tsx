@@ -33,7 +33,7 @@ export function HeroSection() {
       className="relative overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage:
-          "url('https://images.unsplash.com/photo-1640177155742-835de7b2a9a0?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+          "url('https://images.unsplash.com/photo-1571456653714-a8db063a3e91?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
       }}
     >
       <div className="relative z-10">
@@ -71,7 +71,7 @@ export function HeroSection() {
                   variant="primary"
                   className="rounded-xl px-8 text-base"
                 >
-                  <Link href="/my-presentations">
+                  <Link href="/home">
                     <span className="inline-flex items-center gap-2">
                       Create Presentation
                       <ArrowRight className="h-4 w-4" />
