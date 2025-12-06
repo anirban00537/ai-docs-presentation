@@ -33,7 +33,7 @@ export function HeroSection() {
       className="relative overflow-hidden bg-cover bg-center bg-no-repeat "
       style={{
         backgroundImage:
-          "url('https://images.unsplash.com/photo-1645811791231-279658fb46dc?q=80&w=538&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+          "url('https://images.unsplash.com/photo-1668853853439-923e013afff1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -59,7 +59,7 @@ export function HeroSection() {
                   className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
                   style={{
                     background:
-                      "linear-gradient(180deg, #ffffff 0%, #e0e0e0 30%, #d0d0d0 60%, #ffffff 100%)",
+                      "linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 30%, #3a3a3a 60%, #1f1f1f 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -73,7 +73,7 @@ export function HeroSection() {
                   className="text-balance text-base leading-relaxed sm:text-lg md:text-xl md:leading-relaxed"
                   style={{
                     background:
-                      "linear-gradient(180deg, #ffffff 0%, #e8e8e8 50%, #d8d8d8 100%)",
+                      "linear-gradient(180deg, #2a2a2a 0%, #3a3a3a 50%, #4a4a4a 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -129,7 +129,7 @@ export function HeroSection() {
               className="mb-8 text-center text-xs font-medium tracking-wider"
               style={{
                 background:
-                  "linear-gradient(180deg, #ffffff 0%, #e8e8e8 50%, #d8d8d8 100%)",
+                  "linear-gradient(180deg, #2a2a2a 0%, #3a3a3a 50%, #4a4a4a 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
