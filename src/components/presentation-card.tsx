@@ -29,14 +29,77 @@ export function PresentationCard({
 
   return (
     <div
-      className="group relative cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-card/50 backdrop-blur-sm transition-all duration-300 ease-out hover:border-border hover:bg-card hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:-translate-y-1"
+      className="group relative cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-br from-card via-card to-card/95 border border-border/30 transition-all duration-500 ease-out"
+      style={{
+        transformStyle: "preserve-3d",
+        perspective: "1000px",
+        boxShadow: `
+          0 2px 8px rgba(0, 0, 0, 0.04),
+          0 8px 24px rgba(0, 0, 0, 0.06),
+          0 16px 48px rgba(0, 0, 0, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.05)
+        `,
+      }}
       onClick={() => onOpen(presentation.id)}
+      onMouseMove={(e) => {
+        const card = e.currentTarget;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = (y - centerY) / 20;
+        const rotateY = (centerX - x) / 20;
+
+        card.style.transform = `
+          translateY(-8px) 
+          rotateX(${rotateX}deg) 
+          rotateY(${rotateY}deg) 
+          scale(1.02)
+        `;
+        card.style.boxShadow = `
+          0 8px 16px rgba(0, 0, 0, 0.08),
+          0 16px 32px rgba(0, 0, 0, 0.06),
+          0 32px 64px rgba(0, 0, 0, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+        `;
+      }}
+      onMouseLeave={(e) => {
+        const card = e.currentTarget;
+        card.style.transform = "translateY(0) rotateX(0) rotateY(0) scale(1)";
+        card.style.boxShadow = `
+          0 2px 8px rgba(0, 0, 0, 0.04),
+          0 8px 24px rgba(0, 0, 0, 0.06),
+          0 16px 48px rgba(0, 0, 0, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.05)
+        `;
+      }}
     >
+      {/* Shine effect overlay */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%)",
+        }}
+      />
+
+      {/* Bottom shadow for depth */}
+      <div
+        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-4/5 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"
+        style={{
+          background:
+            "radial-gradient(ellipse, rgba(0, 0, 0, 0.2) 0%, transparent 70%)",
+        }}
+      />
       {/* Presentation Preview */}
-      <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5">
+      <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 rounded-t-2xl">
         {firstSlide ? (
-          <div className="absolute inset-0 flex items-center justify-center p-2">
-            <div className="relative h-full w-full rounded-lg overflow-hidden shadow-lg">
+          <div className="flex h-full items-center justify-center">
+            <div className="relative h-full w-full rounded-lg overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]">
               <Slide
                 slide={slideData}
                 selectedId={null}
@@ -46,7 +109,7 @@ export function PresentationCard({
                 onSetLiveOverride={() => {}}
                 onClearLiveOverride={() => {}}
                 globalTheme={presentation.globalTheme}
-                scale={0.2}
+                scale={0.12}
                 padding={0}
                 showSnapLines={false}
               />
@@ -54,15 +117,15 @@ export function PresentationCard({
           </div>
         ) : (
           <div className="flex h-full items-center justify-center">
-            <div className="text-center space-y-2">
-              <div className="mx-auto h-12 w-12 rounded-lg bg-muted/50 flex items-center justify-center">
-                <Plus className="h-5 w-5 text-muted-foreground" />
+            <div className="text-center space-y-1.5">
+              <div className="mx-auto h-10 w-10 rounded-lg bg-muted/50 flex items-center justify-center">
+                <Plus className="h-4 w-4 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm font-medium text-foreground/80">
+                <p className="text-xs font-medium text-foreground/80">
                   No slides yet
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="text-[10px] text-muted-foreground mt-0.5">
                   Click to start editing
                 </p>
               </div>
@@ -72,28 +135,25 @@ export function PresentationCard({
       </div>
 
       {/* Presentation Info */}
-      <div className="p-4">
-        <div className="flex items-start justify-between gap-3">
+      <div className="relative p-3 bg-gradient-to-b from-transparent to-card/50">
+        <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0 space-y-1">
-            <h3 className="truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+            <h3 className="truncate text-xs font-semibold text-foreground transition-all duration-300 group-hover:text-primary group-hover:translate-x-0.5">
               {presentation.title}
             </h3>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground/80 font-medium">
               {presentation._count?.slides || 0} slide
               {(presentation._count?.slides || 0) !== 1 ? "s" : ""}
             </p>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger
-              asChild
-              onClick={(e) => e.stopPropagation()}
-            >
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
               <AppleButton
                 variant="ghost"
                 size="sm"
-                className="h-7 w-7 opacity-0 transition-all duration-200 group-hover:opacity-100"
+                className="h-6 w-6 opacity-0 transition-all duration-200 group-hover:opacity-100"
               >
-                <MoreVertical className="h-3.5 w-3.5" />
+                <MoreVertical className="h-3 w-3" />
               </AppleButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
@@ -111,4 +171,3 @@ export function PresentationCard({
     </div>
   );
 }
-
