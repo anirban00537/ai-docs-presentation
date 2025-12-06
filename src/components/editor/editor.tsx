@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Slide from "@/components/editor/slide";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { cn } from "@/lib/utils";
 import {
@@ -11,14 +10,12 @@ import {
   selectPresentationId,
   updateSlide,
   setSlideTheme,
-  updateGlobalTheme,
   removeWidget,
   addSlide,
   updateSlideId,
 } from "@/store/slices/slidesSlice";
 import { useAddSlide } from "@/hooks/use-presentation";
 import { store } from "@/store";
-import { Plus } from "lucide-react";
 import { useWidgetInteractions } from "@/hooks/use-widget-interactions";
 import { EditorToolbarTitle } from "@/components/editor/editor-toolbar-title";
 import { EditorToolbarCenter } from "@/components/editor/editor-toolbar-center";
@@ -29,119 +26,13 @@ import {
 } from "@/components/editor/right-sidebar";
 import { PresentationMode } from "@/components/editor/presentation-mode";
 import { useSlideIntersection } from "@/hooks/use-slide-intersection";
-import type { SlideModel, GlobalTheme } from "@/store/slices/slidesSlice";
 import {
   selectIsPresentationMode,
   setPresentationMode,
 } from "@/store/slices/editorUiSlice";
-
-// Slide wrapper component for intersection observer
-const SlideWrapper: React.FC<{
-  slide: SlideModel;
-  isActive: boolean;
-  selectedId: string | null;
-  editingId: string | null;
-  liveOverrides: Record<string, any>;
-  onSelectWidget: (id: string | null) => void;
-  onSetLiveOverride: (id: string, updates: any) => void;
-  onClearLiveOverride: (id: string) => void;
-  globalTheme: GlobalTheme | null;
-  registerSlide: (slideId: string, element: HTMLDivElement | null) => void;
-  onAddSlideAfter: (slideId: string) => void;
-}> = ({
-  slide,
-  isActive,
-  selectedId,
-  editingId,
-  liveOverrides,
-  onSelectWidget,
-  onSetLiveOverride,
-  onClearLiveOverride,
-  globalTheme,
-  registerSlide,
-  onAddSlideAfter,
-}) => {
-  const slideRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (slideRef.current) {
-      registerSlide(slide.id, slideRef.current);
-    }
-    return () => {
-      registerSlide(slide.id, null);
-    };
-  }, [slide.id, registerSlide]);
-
-  // Calculate slide height based on viewport height (accounting for toolbar)
-  const [slideHeight, setSlideHeight] = React.useState(0);
-
-  React.useEffect(() => {
-    const updateHeight = () => {
-      // Viewport height minus toolbar (pt-20 = 5rem = 80px)
-      const height = window.innerHeight - 80;
-      setSlideHeight(height);
-    };
-
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
-  }, []);
-
-  const isDarkTheme = globalTheme?.tone === "dark";
-
-  return (
-    <div
-      ref={slideRef}
-      data-slide-id={slide.id}
-      className="group relative w-full flex flex-col justify-center items-center"
-      style={{
-        minHeight: slideHeight > 0 ? `${slideHeight}px` : "100vh",
-        height: slideHeight > 0 ? `${slideHeight}px` : "100vh",
-      }}
-    >
-      <Slide
-        slide={slide}
-        selectedId={isActive ? selectedId : null}
-        editingId={isActive ? editingId : null}
-        liveOverrides={isActive ? liveOverrides : {}}
-        onSelectWidget={isActive ? onSelectWidget : () => {}}
-        onSetLiveOverride={isActive ? onSetLiveOverride : () => {}}
-        onClearLiveOverride={isActive ? onClearLiveOverride : () => {}}
-        globalTheme={globalTheme || undefined}
-        showSnapLines={isActive}
-      />
-      {/* Add Slide Button - appears on hover */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out pointer-events-none group-hover:pointer-events-auto z-10">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onAddSlideAfter(slide.id);
-          }}
-          className={cn(
-            "flex items-center justify-center gap-2 px-4 py-2 rounded-xl shadow-lg",
-            "transition-all duration-200 ease-out",
-            "hover:scale-105 active:scale-95",
-            isDarkTheme
-              ? "bg-oklch(0.1 0.01 250) border border-neutral-800 text-white/80 hover:text-white hover:bg-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
-              : "bg-oklch(1 0 0) border border-border text-muted-foreground hover:text-foreground hover:bg-background shadow-[0_8px_32px_0_rgba(0,0,0,0.12)]"
-          )}
-          style={{
-            backgroundColor: isDarkTheme
-              ? "oklch(0.1 0.01 250)"
-              : "oklch(1 0 0)",
-            boxShadow: isDarkTheme
-              ? "0 8px 32px 0 rgba(0, 0, 0, 0.4)"
-              : "0 8px 32px 0 rgba(0, 0, 0, 0.12)",
-          }}
-        >
-          <Plus className="w-4 h-4" />
-          <span className="text-sm font-semibold">Add Slide</span>
-        </button>
-      </div>
-    </div>
-  );
-};
+import { SlideWrapper } from "@/components/editor/slide-wrapper";
+import { useCreateLayout } from "@/hooks/use-layouts";
+import { toast } from "sonner";
 
 const Editor = () => {
   const activeSlide = useAppSelector(selectActiveSlide);
@@ -150,6 +41,7 @@ const Editor = () => {
   const presentationId = useAppSelector(selectPresentationId);
   const dispatch = useAppDispatch();
   const addSlideMutation = useAddSlide();
+  const createLayoutMutation = useCreateLayout();
 
   const {
     selectedId,
@@ -233,15 +125,40 @@ const Editor = () => {
     [dispatch]
   );
 
-  const handleThemeChange = React.useCallback(
-    (updates: Partial<Omit<typeof globalTheme, "id">>) => {
-      dispatch(
-        updateGlobalTheme({
-          updates,
-        })
-      );
+  const handleAddAsLayout = React.useCallback(
+    async (slideId: string) => {
+      const slide = slides.find((s) => s.id === slideId);
+      if (!slide) {
+        toast.error("Slide not found");
+        return;
+      }
+
+      try {
+        const response = await createLayoutMutation.mutateAsync({
+          name: slide.title || "Untitled Layout",
+          description: `Layout based on ${slide.title || "slide"}`,
+          data: {
+            title: slide.title,
+            widgets: slide.widgets,
+            backgroundColor: slide.backgroundColor,
+            backgroundImage: slide.backgroundImage,
+            backgroundBlur: slide.backgroundBlur,
+            showSlideNumber: slide.showSlideNumber,
+            slideStyle: slide.slideStyle,
+          },
+          type: "user",
+          tags: [],
+        });
+
+        if (response.success) {
+          toast.success("Layout saved successfully");
+        }
+      } catch (error: any) {
+        toast.error(error.message || "Failed to save layout");
+        console.error("Failed to create layout:", error);
+      }
     },
-    [dispatch]
+    [slides, createLayoutMutation]
   );
 
   const handleAddSlideAfter = React.useCallback(
@@ -462,7 +379,6 @@ const Editor = () => {
             activeThemeId={globalTheme?.id}
             onSelectTheme={handleThemeSelect}
             globalTheme={globalTheme}
-            onThemeChange={handleThemeChange}
           />
         </div>
       </div>
@@ -519,6 +435,8 @@ const Editor = () => {
                     globalTheme={globalTheme}
                     registerSlide={registerSlide}
                     onAddSlideAfter={handleAddSlideAfter}
+                    onAddAsLayout={handleAddAsLayout}
+                    isSavingLayout={createLayoutMutation.isPending}
                   />
                 );
               })

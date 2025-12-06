@@ -6,9 +6,7 @@ import {
   IconDashboard,
   IconFileText,
   IconTemplate,
-  IconShare3,
   IconSettings,
-  IconSparkles,
   IconPhoto,
   IconPresentation,
 } from "@tabler/icons-react";
@@ -16,7 +14,6 @@ import {
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
-import { AppleButton } from "@/components/editor/apple-button";
 import {
   Sidebar,
   SidebarContent,
@@ -38,7 +35,11 @@ const navMainData = [
     url: "/my-presentations",
     icon: IconPresentation,
   },
-
+  {
+    title: "My Layouts",
+    url: "/my-layouts",
+    icon: IconFileText,
+  },
   {
     title: "Templates",
     url: "/templates",
