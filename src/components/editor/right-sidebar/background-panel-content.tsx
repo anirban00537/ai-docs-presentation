@@ -6,7 +6,7 @@ import { UnsplashMediaTab } from "@/components/editor/unsplash-media-tab";
 import { UserMediaTab } from "@/components/editor/user-media-tab";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { Palette, Trash2 } from "lucide-react";
+import { Palette, Trash2, RotateCcw } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectGlobalTheme,
@@ -86,6 +86,31 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
     }
   };
 
+  const handleReset = () => {
+    if (activeSlideId) {
+      dispatch(
+        updateSlide({
+          slideId: activeSlideId,
+          updates: {
+            backgroundColor: undefined,
+            backgroundImage: undefined,
+            backgroundBlur: undefined,
+          },
+        })
+      );
+    }
+    // Also call callbacks if provided
+    if (onBackgroundColorChange) {
+      onBackgroundColorChange("");
+    }
+    if (onBackgroundImageChange) {
+      onBackgroundImageChange(undefined);
+    }
+    if (onBackgroundBlurChange) {
+      onBackgroundBlurChange(false);
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col rounded-lg overflow-hidden min-h-0">
       {/* Tabs */}
@@ -95,54 +120,74 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
           isDarkTheme ? "border-white/10" : "border-border"
         )}
       >
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) =>
-            setActiveTab(value as "color" | "unsplash" | "your-media")
-          }
-        >
-          <TabsList
-            className={cn(
-              "w-full grid grid-cols-3 p-1 rounded-xl",
-              isDarkTheme ? "bg-white/5" : "bg-muted/50"
-            )}
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) =>
+              setActiveTab(value as "color" | "unsplash" | "your-media")
+            }
+            className="flex-1"
           >
-            <TabsTrigger
-              value="color"
+            <TabsList
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
-                "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
-                "hover:scale-[1.02] active:scale-[0.98]",
-                isDarkTheme ? "text-white/80" : "text-muted-foreground"
+                "w-full grid grid-cols-3 p-1 rounded-xl",
+                isDarkTheme ? "bg-white/5" : "bg-muted/50"
               )}
             >
-              <Palette className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
-              Color
-            </TabsTrigger>
-            <TabsTrigger
-              value="unsplash"
+              <TabsTrigger
+                value="color"
+                className={cn(
+                  "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
+                  "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                  "hover:scale-[1.02] active:scale-[0.98]",
+                  isDarkTheme ? "text-white/80" : "text-muted-foreground"
+                )}
+              >
+                <Palette className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
+                Color
+              </TabsTrigger>
+              <TabsTrigger
+                value="unsplash"
+                className={cn(
+                  "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
+                  "transition-all duration-300 ease-out rounded-lg",
+                  "hover:scale-[1.02] active:scale-[0.98]",
+                  isDarkTheme ? "text-white/80" : "text-muted-foreground"
+                )}
+              >
+                Unsplash
+              </TabsTrigger>
+              <TabsTrigger
+                value="your-media"
+                className={cn(
+                  "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
+                  "transition-all duration-300 ease-out rounded-lg",
+                  "hover:scale-[1.02] active:scale-[0.98]",
+                  isDarkTheme ? "text-white/80" : "text-muted-foreground"
+                )}
+              >
+                Your Media
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          {(backgroundColor || backgroundImage || backgroundBlur) && (
+            <button
+              type="button"
+              onClick={handleReset}
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
-                "transition-all duration-300 ease-out rounded-lg",
-                "hover:scale-[1.02] active:scale-[0.98]",
-                isDarkTheme ? "text-white/80" : "text-muted-foreground"
+                "p-2 rounded-lg transition-all duration-200 shrink-0",
+                "hover:bg-destructive/10 active:scale-95",
+                "border",
+                isDarkTheme
+                  ? "border-white/10 text-white/70 hover:text-destructive hover:border-destructive/30"
+                  : "border-border/50 text-muted-foreground hover:text-destructive hover:border-destructive/30"
               )}
+              title="Reset background"
             >
-              Unsplash
-            </TabsTrigger>
-            <TabsTrigger
-              value="your-media"
-              className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
-                "transition-all duration-300 ease-out rounded-lg",
-                "hover:scale-[1.02] active:scale-[0.98]",
-                isDarkTheme ? "text-white/80" : "text-muted-foreground"
-              )}
-            >
-              Your Media
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+              <RotateCcw className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Compact Background Image Preview - shown in all tabs when image is set */}
