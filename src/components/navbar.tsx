@@ -88,7 +88,7 @@ export function Navbar() {
                   className={cn(isScrolled && "lg:hidden")}
                 >
                   <Link href="#">
-                    <span className="text-white">Login</span>
+                    <span className="text-black">Login</span>
                   </Link>
                 </AppleButton>
                 <AppleButton

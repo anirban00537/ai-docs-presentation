@@ -72,7 +72,7 @@ export function CTASection() {
               className="h-12 rounded-xl px-8 text-base"
             >
               <Link href="#link">
-                <span>Watch Demo</span>
+                <span className="text-black">Watch Demo</span>
               </Link>
             </AppleButton>
           </div>
