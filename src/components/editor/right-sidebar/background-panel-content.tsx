@@ -110,7 +110,7 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
             <TabsTrigger
               value="color"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
+                "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
                 "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
                 "hover:scale-[1.02] active:scale-[0.98]",
                 isDarkTheme ? "text-white/80" : "text-muted-foreground"
@@ -122,7 +122,7 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
             <TabsTrigger
               value="unsplash"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
+                "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
                 "transition-all duration-300 ease-out rounded-lg",
                 "hover:scale-[1.02] active:scale-[0.98]",
                 isDarkTheme ? "text-white/80" : "text-muted-foreground"
@@ -133,7 +133,7 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
             <TabsTrigger
               value="your-media"
               className={cn(
-                "data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-md",
+                "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
                 "transition-all duration-300 ease-out rounded-lg",
                 "hover:scale-[1.02] active:scale-[0.98]",
                 isDarkTheme ? "text-white/80" : "text-muted-foreground"

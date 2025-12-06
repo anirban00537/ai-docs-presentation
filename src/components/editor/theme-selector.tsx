@@ -9,7 +9,7 @@ import { selectGlobalTheme, setSlideTheme } from "@/store/slices/slidesSlice";
 import { LayoutTemplate, Loader2, Trash2, Plus, Pencil } from "lucide-react";
 import { useThemesList, useDeleteTheme } from "@/hooks/use-themes";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { AppleButton } from "@/components/editor/apple-button";
 
 type ThemeSelectorProps = {
   activeThemeId?: string;
@@ -296,19 +296,19 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
               Themes
             </h3>
           </div>
-          <Button
+          <AppleButton
             onClick={handleCreateTheme}
             size="sm"
             className={cn(
-              "h-8 gap-2",
+              "h-8 gap-2 text-white",
               isDarkTheme
-                ? "bg-white/10 hover:bg-white/20 text-white"
-                : "bg-primary text-primary-foreground hover:bg-primary/90"
+                ? "bg-white/10 hover:bg-white/20 "
+                : "bg-primary  hover:bg-primary/90"
             )}
           >
             <Plus className="h-3.5 w-3.5" />
             Add Theme
-          </Button>
+          </AppleButton>
         </div>
 
         {/* Content */}
