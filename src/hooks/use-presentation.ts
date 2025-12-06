@@ -3,6 +3,7 @@ import {
   getPresentationsList,
   getPresentation,
   createPresentation,
+  createPresentationFromPrompt,
   updatePresentation,
   updatePresentationTitle,
   deletePresentation,
@@ -11,6 +12,7 @@ import {
   deleteSlide,
   reorderSlides,
   type CreatePresentationPayload,
+  type CreateFromPromptPayload,
   type UpdatePresentationPayload,
   type CreateSlidePayload,
   type UpdateSlidePayload,
@@ -60,6 +62,19 @@ export const useCreatePresentation = () => {
   return useMutation({
     mutationFn: (payload: CreatePresentationPayload) =>
       createPresentation(payload),
+    onSuccess: () => {
+      // Invalidate presentations list
+      queryClient.invalidateQueries({ queryKey: presentationKeys.all });
+    },
+  });
+};
+
+// Create presentation from prompt mutation
+export const useCreatePresentationFromPrompt = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateFromPromptPayload) =>
+      createPresentationFromPrompt(payload),
     onSuccess: () => {
       // Invalidate presentations list
       queryClient.invalidateQueries({ queryKey: presentationKeys.all });

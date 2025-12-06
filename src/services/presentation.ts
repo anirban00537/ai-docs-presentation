@@ -105,10 +105,21 @@ export interface PresentationsListResponse {
   };
 }
 
+export interface CreateFromPromptPayload {
+  prompt: string;
+}
+
 export const createPresentation = async (
   payload: CreatePresentationPayload
 ): Promise<ApiResponse<PresentationData>> => {
   const response = await request.post("/presentation/create", payload);
+  return response.data;
+};
+
+export const createPresentationFromPrompt = async (
+  payload: CreateFromPromptPayload
+): Promise<ApiResponse<PresentationData>> => {
+  const response = await request.post("/presentation/create-from-prompt", payload);
   return response.data;
 };
 

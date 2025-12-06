@@ -1,11 +1,19 @@
 "use client";
 
 import * as React from "react";
-import { Send } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { AppleButton } from "@/components/editor/apple-button";
+import { useCreatePresentationFromPrompt } from "@/hooks/use-presentation";
+import { toast } from "sonner";
 
 export function PromptBox() {
+  const router = useRouter();
+  const [prompt, setPrompt] = React.useState("");
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const createFromPromptMutation = useCreatePresentationFromPrompt();
+
   // 3D mouse tracking
   const ref = React.useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
@@ -35,6 +43,37 @@ export function PromptBox() {
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
+  };
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    
+    if (!prompt.trim()) {
+      toast.error("Please enter a prompt");
+      return;
+    }
+
+    try {
+      const response = await createFromPromptMutation.mutateAsync({
+        prompt: prompt.trim(),
+      });
+
+      if (response.success && response.data) {
+        toast.success("Presentation created successfully!");
+        router.push(`/editor?presentationId=${response.data.id}`);
+      }
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Failed to create presentation"
+      );
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleSubmit();
+    }
   };
 
   return (
@@ -393,30 +432,46 @@ export function PromptBox() {
             }}
           />
 
-          <textarea
-            placeholder="Describe your presentation idea... (e.g., 'A pitch deck for a new AI startup')"
-            className="relative w-full min-h-[100px] p-6 bg-transparent border-none outline-none resize-none text-lg text-foreground placeholder:text-muted-foreground z-10"
-            style={{ transform: "translateZ(10px)" }}
-          />
-          <div
-            className="pr-4 pt-2 self-start md:self-center md:pt-0 z-10"
-            style={{ transform: "translateZ(10px)" }}
-          >
-            <AppleButton
-              variant="primary"
-              size="sm"
-              className="p-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed group/btn relative"
-              style={{
-                boxShadow:
-                  "0 4px 12px rgba(255, 245, 200, 0.4), 0 2px 8px rgba(255, 250, 220, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
-              }}
+          <form onSubmit={handleSubmit} className="flex items-center w-full">
+            <textarea
+              ref={textareaRef}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Describe your presentation idea... (e.g., 'A pitch deck for a new AI startup')"
+              className="relative w-full min-h-[100px] p-6 bg-transparent border-none outline-none resize-none text-lg text-foreground placeholder:text-muted-foreground z-10"
+              style={{ transform: "translateZ(10px)" }}
+              disabled={createFromPromptMutation.isPending}
+            />
+            <div
+              className="pr-4 pt-2 self-start md:self-center md:pt-0 z-10"
+              style={{ transform: "translateZ(10px)" }}
             >
-              <Send
-                className="w-5 h-5 relative text-white"
-                style={{ transform: "translateZ(20px)" }}
-              />
-            </AppleButton>
-          </div>
+              <AppleButton
+                type="submit"
+                variant="primary"
+                size="sm"
+                disabled={!prompt.trim() || createFromPromptMutation.isPending}
+                className="p-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed group/btn relative"
+                style={{
+                  boxShadow:
+                    "0 4px 12px rgba(255, 245, 200, 0.4), 0 2px 8px rgba(255, 250, 220, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+                }}
+              >
+                {createFromPromptMutation.isPending ? (
+                  <Loader2
+                    className="w-5 h-5 relative text-white animate-spin"
+                    style={{ transform: "translateZ(20px)" }}
+                  />
+                ) : (
+                  <Send
+                    className="w-5 h-5 relative text-white"
+                    style={{ transform: "translateZ(20px)" }}
+                  />
+                )}
+              </AppleButton>
+            </div>
+          </form>
         </div>
       </motion.div>
     </div>
