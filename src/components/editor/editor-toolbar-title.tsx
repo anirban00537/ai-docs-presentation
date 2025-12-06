@@ -74,7 +74,7 @@ export const EditorToolbarTitle: React.FC = () => {
               ? "text-white/80 hover:text-white"
               : "text-muted-foreground hover:text-foreground"
           )}
-          onClick={() => router.push("/my-presentations")}
+          onClick={() => router.push("/home")}
           aria-label="Back to dashboard"
         >
           <ArrowLeft className="h-4 w-4" />

@@ -39,7 +39,7 @@ export const AuthCheckProvider: React.FC<AuthCheckProviderProps> = ({
 
     // If authenticated and on login page, redirect to dashboard
     if (isAuthenticated && pathname === "/login") {
-      router.push("/my-presentations");
+      router.push("/home");
       return;
     }
   }, [token, isAuthenticated, isError, pathname, router]);
