@@ -36,8 +36,27 @@ interface Row {
   blocks: Block[];
 }
 
+// --- Default Yoopta content structure ---
+const createDefaultContent = () => {
+  const blockId = nanoid();
+  return {
+    [blockId]: {
+      id: blockId,
+      type: "Paragraph",
+      value: [
+        {
+          id: nanoid(),
+          type: "paragraph",
+          children: [{ text: "" }],
+        },
+      ],
+      meta: { order: 0, depth: 0 },
+    },
+  };
+};
+
 // --- Initial Data ---
-const createBlock = (): Block => ({ id: nanoid(), content: undefined });
+const createBlock = (): Block => ({ id: nanoid(), content: createDefaultContent() });
 const createRow = (blocks?: Block[]): Row => ({
   id: nanoid(),
   blocks: blocks || [createBlock()],
@@ -104,6 +123,8 @@ const DraggableBlock = ({
 
         {/* Editor */}
         <YooptaEditorWrapper
+          key={block.id}
+          blockId={block.id}
           value={block.content}
           onChange={(val) => onUpdate(block.id, val)}
           placeholder="Type '/' for commands..."
@@ -447,18 +468,81 @@ const GammaPage = () => {
         </DndContext>
       </div>
 
-      {/* JSON Preview (for debugging) */}
+      {/* JSON Control Panel */}
       <div className="max-w-[1200px] mx-auto mt-8 bg-gray-900 rounded-xl p-6">
-        <h3 className="text-white font-medium mb-3">Layout Structure</h3>
-        <pre className="text-green-400 text-xs overflow-auto max-h-[200px]">
-          {JSON.stringify(
-            rows.map((r) => ({
-              id: r.id.slice(0, 6),
-              blocks: r.blocks.map((b) => b.id.slice(0, 6)),
-            })),
-            null,
-            2
-          )}
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-white font-medium">Layout JSON</h3>
+          <div className="flex gap-2">
+            {/* Export Button */}
+            <button
+              onClick={() => {
+                const dataStr = JSON.stringify(rows, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'layout.json';
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1.5"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              Export JSON
+            </button>
+            {/* Import Button */}
+            <label className="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1.5 cursor-pointer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              Import JSON
+              <input
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      try {
+                        const data = JSON.parse(event.target?.result as string);
+                        if (Array.isArray(data)) {
+                          setRows(data);
+                        }
+                      } catch (err) {
+                        console.error('Invalid JSON file');
+                      }
+                    };
+                    reader.readAsText(file);
+                  }
+                  e.target.value = '';
+                }}
+              />
+            </label>
+            {/* Copy Button */}
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(JSON.stringify(rows, null, 2));
+              }}
+              className="px-3 py-1.5 bg-gray-700 text-white text-xs font-medium rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-1.5"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+              Copy
+            </button>
+          </div>
+        </div>
+        <pre className="text-green-400 text-xs overflow-auto max-h-[300px] bg-gray-950 rounded-lg p-4">
+          {JSON.stringify(rows, null, 2)}
         </pre>
       </div>
     </div>

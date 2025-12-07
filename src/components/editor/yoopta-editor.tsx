@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect, useRef } from "react";
+import React, { useMemo, useEffect, useRef, useCallback } from "react";
 import YooptaEditor, { createYooptaEditor } from "@yoopta/editor";
 import Paragraph from "@yoopta/paragraph";
 import Blockquote from "@yoopta/blockquote";
@@ -56,6 +56,7 @@ type YooptaEditorWrapperProps = {
   className?: string;
   placeholder?: string;
   style?: React.CSSProperties;
+  blockId?: string; // Unique identifier for this editor instance
 };
 
 export const YooptaEditorWrapper: React.FC<YooptaEditorWrapperProps> = ({
@@ -65,30 +66,34 @@ export const YooptaEditorWrapper: React.FC<YooptaEditorWrapperProps> = ({
   className,
   placeholder = "Type '/' for commands",
   style,
+  blockId,
 }) => {
+  // Create a stable editor instance per blockId
   const editor = useMemo(() => createYooptaEditor(), []);
+  const onChangeRef = useRef(onChange);
   
-  // We need to handle the "value" prop carefully. 
-  // Yoopta manages its own state. "value" is usually initialData.
-  // If we want controlled component behavior, we need to sync, but strict controlled mode 
-  // in rich text editors is hard. 
-  // For this use case (Gamma-like), we often just want to save the content.
+  // Keep onChange ref up to date
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
   
-  // Also, we need to convert old "string" or "html" content to Yoopta format if possible,
-  // or just reset if it's incompatible. 
-  // For now, if value is a string (from previous steps), we might initialize with empty or a default paragraph.
-
+  // Get initial value - only used on mount
   const initialValue = useMemo(() => {
-     if (typeof value === 'object' && value !== null) {
-         return value;
-     }
-     // Fallback for string/empty
-     return undefined; // Let Yoopta use its default empty state
+    if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) {
+      return value;
+    }
+    return undefined;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally empty - only use initial value on mount
+
+  // Handle editor changes
+  const handleChange = useCallback((newValue: any) => {
+    onChangeRef.current(newValue);
   }, []);
 
   return (
     <div 
-        className={cn("yoopta-editor-container w-full break-words whitespace-pre-wrap", className)}
+        className={cn("yoopta-editor-container w-full break-words whitespace-pre-wrap min-h-[40px]", className)}
         style={style}
     >
       <YooptaEditor
@@ -101,10 +106,7 @@ export const YooptaEditorWrapper: React.FC<YooptaEditorWrapperProps> = ({
         value={initialValue}
         width="100%"
         style={{ width: '100%' }}
-        onChange={(val: any) => {
-            // val is the new editor state
-            onChange(val);
-        }}
+        onChange={handleChange}
         className="w-full"
       />
     </div>
