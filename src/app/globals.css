@@ -302,3 +302,11 @@
 .yoopta-editor {
   padding-bottom: 0 !important;
 }
+
+/* Hide Yoopta's built-in block actions (plus icon and drag handle) */
+.yoopta-block-actions,
+.yoopta-block-action-buttons,
+.yoopta-block-actions-plus,
+.yoopta-block-actions-drag {
+  display: none !important;
+}
