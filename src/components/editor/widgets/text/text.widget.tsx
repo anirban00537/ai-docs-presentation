@@ -233,8 +233,10 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
                 color: widget.color ?? globalTheme?.text ?? "#0f172a",
                 textAlign: widget.align,
                 lineHeight: widget.lineHeight ?? 1.3,
+                whiteSpace: "pre-wrap",
                 wordWrap: "break-word",
                 overflowWrap: "break-word",
+                wordBreak: "break-word",
                 // Ensure textarea grows with content
                 height: "100%",
                 overflow: "hidden",
@@ -275,6 +277,7 @@ const TextWidgetNodeBase: React.FC<TextWidgetNodeProps> = ({
                 lineHeight: widget.lineHeight ?? 1.3,
                 wordWrap: "break-word",
                 overflowWrap: "break-word",
+                wordBreak: "break-word",
               }}
               onDoubleClick={(event) => {
                 const target = event.target as HTMLElement | null;
