@@ -235,6 +235,19 @@ const slidesSlice = createSlice({
       const blockIndex = sourceRow.blocks.findIndex(b => b.id === blockId);
       if (blockIndex === -1) return;
 
+      // Same row reordering
+      if (sourceRowId === targetRowId && targetBlockId) {
+        const targetIndex = sourceRow.blocks.findIndex(b => b.id === targetBlockId);
+        if (targetIndex === -1 || blockIndex === targetIndex) return;
+        
+        // Remove from old position and insert at new position
+        const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
+        const newTargetIndex = targetIndex > blockIndex ? targetIndex : targetIndex;
+        sourceRow.blocks.splice(newTargetIndex, 0, movedBlock);
+        return;
+      }
+
+      // Different row - move block
       const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
 
       if (targetBlockId) {
@@ -250,6 +263,29 @@ const slidesSlice = createSlice({
       if (slide.rows.length === 0) {
         slide.rows.push(createRow());
       }
+    },
+    reorderBlocksInRow: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        rowId: string;
+        oldIndex: number;
+        newIndex: number;
+      }>
+    ) => {
+      const { slideId, rowId, oldIndex, newIndex } = action.payload;
+      const slide = state.slides.find(s => s.id === slideId);
+      if (!slide) return;
+
+      const row = slide.rows.find(r => r.id === rowId);
+      if (!row) return;
+
+      if (oldIndex < 0 || oldIndex >= row.blocks.length) return;
+      if (newIndex < 0 || newIndex >= row.blocks.length) return;
+      if (oldIndex === newIndex) return;
+
+      const [movedBlock] = row.blocks.splice(oldIndex, 1);
+      row.blocks.splice(newIndex, 0, movedBlock);
     },
   },
 });
@@ -268,6 +304,7 @@ export const {
   addRowWithColumns,
   setSlideRows,
   moveBlock,
+  reorderBlocksInRow,
 } = slidesSlice.actions;
 
 // --- Selectors ---

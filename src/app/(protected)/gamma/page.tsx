@@ -33,6 +33,7 @@ import {
   addBlockToRow,
   deleteRow,
   moveBlock,
+  reorderBlocksInRow,
   Block,
   Row,
   Slide,
@@ -507,21 +508,24 @@ const GammaPage = () => {
 
     if (!sourceSlideId || !sourceBlockId) return;
 
-    // Find source row
+    // Find source row and block index
     let sourceRowId: string | null = null;
+    let sourceBlockIndex: number = -1;
     const sourceSlide = slides.find((s) => s.id === sourceSlideId);
     if (sourceSlide) {
       for (const row of sourceSlide.rows) {
-        if (row.blocks.find((b) => b.id === sourceBlockId)) {
+        const blockIdx = row.blocks.findIndex((b) => b.id === sourceBlockId);
+        if (blockIdx !== -1) {
           sourceRowId = row.id;
+          sourceBlockIndex = blockIdx;
           break;
         }
       }
     }
 
-    if (!sourceRowId) return;
+    if (!sourceRowId || sourceBlockIndex === -1) return;
 
-    // Case 1: Dropped on a row
+    // Case 1: Dropped on a row (different row)
     if (overData?.type === "row") {
       const targetRowId = overData.rowId as string;
       const targetSlideId = overData.slideId as string;
@@ -546,19 +550,37 @@ const GammaPage = () => {
 
       if (sourceBlockId === targetBlockId) return;
 
+      // Find target row and block index
       let targetRowId: string | null = null;
+      let targetBlockIndex: number = -1;
       const targetSlide = slides.find((s) => s.id === targetSlideId);
       if (targetSlide) {
         for (const row of targetSlide.rows) {
-          if (row.blocks.find((b) => b.id === targetBlockId)) {
+          const blockIdx = row.blocks.findIndex((b) => b.id === targetBlockId);
+          if (blockIdx !== -1) {
             targetRowId = row.id;
+            targetBlockIndex = blockIdx;
             break;
           }
         }
       }
 
-      if (!targetRowId) return;
+      if (!targetRowId || targetBlockIndex === -1) return;
 
+      // Same row reordering - use index-based approach
+      if (sourceRowId === targetRowId && sourceSlideId === targetSlideId) {
+        dispatch(
+          reorderBlocksInRow({
+            slideId: sourceSlideId,
+            rowId: sourceRowId,
+            oldIndex: sourceBlockIndex,
+            newIndex: targetBlockIndex,
+          })
+        );
+        return;
+      }
+
+      // Different row - move block
       dispatch(
         moveBlock({
           slideId: sourceSlideId,

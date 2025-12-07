@@ -310,3 +310,6 @@
 .yoopta-block-actions-drag {
   display: none !important;
 }
+.yoopta-heading-one {
+    margin-top: 0 !important;
+}
