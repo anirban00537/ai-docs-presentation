@@ -88,7 +88,7 @@ export const YooptaEditorWrapper: React.FC<YooptaEditorWrapperProps> = ({
 
   return (
     <div 
-        className={cn("yoopta-editor-container w-full", className)}
+        className={cn("yoopta-editor-container w-full break-words whitespace-pre-wrap", className)}
         style={style}
     >
       <YooptaEditor
@@ -99,6 +99,8 @@ export const YooptaEditorWrapper: React.FC<YooptaEditorWrapperProps> = ({
         placeholder={placeholder}
         readOnly={readOnly}
         value={initialValue}
+        width="100%"
+        style={{ width: '100%' }}
         onChange={(val: any) => {
             // val is the new editor state
             onChange(val);

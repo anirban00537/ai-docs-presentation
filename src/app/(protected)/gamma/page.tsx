@@ -27,18 +27,18 @@ import { CSS } from "@dnd-kit/utilities";
 import { nanoid } from "nanoid";
 
 // --- Types ---
-export type BlockType = "text" | "image" | "video";
+export type BlockType = "block"; // Simplified from "text" | "image" | "video"
 
 export interface Block {
   id: string;
   type: BlockType;
-  content: any; // Changed from string to any to support Yoopta JSON
+  content: any; // Checked: Yoopta JSON
 }
 
 export interface Column {
   id: string;
   blocks: Block[];
-  width?: number; // Flex grow/shrink factor or percentage
+  width?: number;
 }
 
 export interface Row {
@@ -46,6 +46,7 @@ export interface Row {
   columns: Column[];
 }
 
+// --- Initial Data ---
 // --- Initial Data ---
 // --- Initial Data ---
 const initialData: Row[] = [
@@ -58,8 +59,8 @@ const initialData: Row[] = [
         blocks: [
           {
             id: nanoid(),
-            type: "text",
-            content: undefined, // Let Yoopta handle initial empty state
+            type: "block",
+            content: undefined,
           },
         ],
       },
@@ -70,7 +71,13 @@ const initialData: Row[] = [
 // --- Components ---
 import { YooptaEditorWrapper } from "@/components/editor/yoopta-editor";
 
-const SortableBlock = ({ block, onUpdate }: { block: Block; onUpdate: (id: string, content: any) => void }) => {
+const SortableBlock = ({
+  block,
+  onUpdate,
+}: {
+  block: Block;
+  onUpdate: (id: string, content: any) => void;
+}) => {
   const {
     attributes,
     listeners,
@@ -92,18 +99,18 @@ const SortableBlock = ({ block, onUpdate }: { block: Block; onUpdate: (id: strin
       style={style}
       className="group relative border border-transparent rounded-sm item-block min-h-[24px] hover:bg-gray-50/50 transition-colors"
     >
-        {/* Drag Handle - Visible on Hover - Minimal */}
-        <div 
-            {...attributes} 
-            {...listeners}
-            className="absolute -left-3 top-0 bottom-0 w-3 cursor-grab flex items-start pt-[6px] justify-center opacity-0 group-hover:opacity-100 z-10 text-gray-300 hover:text-gray-500 transition-all"
-        >
-            ⋮
-        </div>
+      {/* Drag Handle - Visible on Hover - Minimal */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute -left-3 top-0 bottom-0 w-3 cursor-grab flex items-start pt-[6px] justify-center opacity-0 group-hover:opacity-100 z-10 text-gray-300 hover:text-gray-500 transition-all"
+      >
+        ⋮
+      </div>
 
-      <YooptaEditorWrapper 
-        value={block.content} 
-        onChange={(val) => onUpdate(block.id, val)} 
+      <YooptaEditorWrapper
+        value={block.content}
+        onChange={(val) => onUpdate(block.id, val)}
         placeholder="Type '/' for commands..."
         className="min-h-[20px] px-1 py-1"
       />
@@ -118,7 +125,7 @@ const ResizeHandle = ({ onResize }: { onResize: (delta: number) => void }) => {
     e.preventDefault();
     e.stopPropagation();
     setIsResizing(true);
-    
+
     const startX = e.clientX;
     const handlePointerMove = (moveEvent: PointerEvent) => {
       onResize(moveEvent.clientX - startX);
@@ -145,13 +152,11 @@ const ResizeHandle = ({ onResize }: { onResize: (delta: number) => void }) => {
 const SortableColumn = ({
   column,
   onResize,
-  onAddBlock,
   onUpdateBlock,
   isLast,
 }: {
   column: Column;
   onResize?: (delta: number) => void;
-  onAddBlock?: (colId: string) => void;
   onUpdateBlock: (id: string, content: string) => void;
   isLast?: boolean;
 }) => {
@@ -166,7 +171,7 @@ const SortableColumn = ({
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? undefined : "flex 0.1s ease-out", 
+    transition: isDragging ? undefined : "flex 0.1s ease-out",
     flex: column.width || 1,
     opacity: isDragging ? 0.5 : 1,
   };
@@ -175,7 +180,9 @@ const SortableColumn = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative flex flex-col p-0 min-h-[50px] group/col transition-all border border-transparent hover:border-dashed hover:border-gray-300 ${isDragging ? "bg-gray-50/50" : ""}`}
+      className={`relative flex flex-col p-0 min-h-[50px] min-w-0 group/col transition-all border border-transparent hover:border-dashed hover:border-gray-300 ${
+        isDragging ? "bg-gray-50/50" : ""
+      }`}
     >
       {/* Column Drag Handle - Top Pill on Hover */}
       <div
@@ -190,34 +197,30 @@ const SortableColumn = ({
       >
         <div className="flex flex-col min-h-[40px] pt-3 pb-2">
           {column.blocks.map((block) => (
-            <SortableBlock key={block.id} block={block} onUpdate={onUpdateBlock} />
+            <SortableBlock
+              key={block.id}
+              block={block}
+              onUpdate={onUpdateBlock}
+            />
           ))}
         </div>
       </SortableContext>
-      
-      {onAddBlock && (
-         <div className="absolute bottom-0 left-0 right-0 h-2 flex items-center justify-center opacity-0 group-hover/col:opacity-100 z-20 translate-y-1/2">
-            <button 
-               onClick={() => onAddBlock(column.id)}
-               className="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] hover:bg-blue-600 shadow-sm transition-transform hover:scale-110"
-               title="Add Block"
-            >
-              +
-            </button>
-         </div>
-      )}
-      
+
       {!isLast && onResize && <ResizeHandle onResize={onResize} />}
     </div>
   );
 };
 
-const SortableRow = ({ row, onResizeColumn, onAddBlock, onAddColumn, onUpdateBlock }: { 
-    row: Row; 
-    onResizeColumn: (colId: string, delta: number) => void; 
-    onAddBlock: (colId: string) => void;
-    onAddColumn: (rowId: string) => void;
-    onUpdateBlock: (id: string, content: string) => void;
+const SortableRow = ({
+  row,
+  onResizeColumn,
+  onAddColumn,
+  onUpdateBlock,
+}: {
+  row: Row;
+  onResizeColumn: (colId: string, delta: number) => void;
+  onAddColumn: (rowId: string) => void;
+  onUpdateBlock: (id: string, content: string) => void;
 }) => {
   const {
     attributes,
@@ -239,7 +242,7 @@ const SortableRow = ({ row, onResizeColumn, onAddBlock, onAddColumn, onUpdateBlo
       ref={setNodeRef}
       style={style}
       className={`group relative flex gap-4 p-1 pl-6 transition-all min-h-[50px] border border-transparent hover:border-gray-100 ${
-          isDragging ? "bg-gray-50" : ""
+        isDragging ? "bg-gray-50" : ""
       }`}
     >
       {/* Row Drag Handle - Minimal strip on left */}
@@ -261,7 +264,6 @@ const SortableRow = ({ row, onResizeColumn, onAddBlock, onAddColumn, onUpdateBlo
             column={column}
             isLast={index === row.columns.length - 1}
             onResize={(delta) => onResizeColumn(column.id, delta)}
-            onAddBlock={onAddBlock}
             onUpdateBlock={onUpdateBlock}
           />
         ))}
@@ -269,13 +271,13 @@ const SortableRow = ({ row, onResizeColumn, onAddBlock, onAddColumn, onUpdateBlo
 
       {/* Add Column Button - On Right Border */}
       <div className="absolute right-0 top-0 bottom-0 w-0 group-hover:w-4 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 translate-x-1/2">
-         <button 
-            onClick={() => onAddColumn(row.id)}
-            className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 shadow-sm text-xs transition-transform hover:scale-110"
-            title="Add Column"
-         >
-            +
-         </button>
+        <button
+          onClick={() => onAddColumn(row.id)}
+          className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 shadow-sm text-xs transition-transform hover:scale-110"
+          title="Add Column"
+        >
+          +
+        </button>
       </div>
     </div>
   );
@@ -314,108 +316,96 @@ const Page = () => {
     }
     return null;
   };
-  
+
   const handleResizeColumn = (rowId: string, colId: string, delta: number) => {
-     setLayout(prev => {
-        // Correct immutable update
-        return prev.map(row => {
-            if (row.id !== rowId) return row;
-            
-            const colIndex = row.columns.findIndex(c => c.id === colId);
-            if (colIndex === -1 || colIndex === row.columns.length - 1) return row;
-            
-            const newColumns = [...row.columns];
-            const col = { ...newColumns[colIndex] };
-            const nextCol = { ...newColumns[colIndex + 1] };
-            
-            const sensitivity = 0.005; 
-            const flexDelta = delta * sensitivity;
-            
-            const newColWidth = Math.max(0.2, (col.width || 1) + flexDelta);
-            const newNextColWidth = Math.max(0.2, (nextCol.width || 1) - flexDelta);
-            
-            if ((col.width || 1) + flexDelta > 0.2 && (nextCol.width || 1) - flexDelta > 0.2) {
-                 col.width = newColWidth;
-                 nextCol.width = newNextColWidth;
-                 
-                 newColumns[colIndex] = col;
-                 newColumns[colIndex + 1] = nextCol;
-                 
-                 return { ...row, columns: newColumns };
-            }
-            
-            return row;
-        });
-     });
+    setLayout((prev) => {
+      // Correct immutable update
+      return prev.map((row) => {
+        if (row.id !== rowId) return row;
+
+        const colIndex = row.columns.findIndex((c) => c.id === colId);
+        if (colIndex === -1 || colIndex === row.columns.length - 1) return row;
+
+        const newColumns = [...row.columns];
+        const col = { ...newColumns[colIndex] };
+        const nextCol = { ...newColumns[colIndex + 1] };
+
+        const sensitivity = 0.005;
+        const flexDelta = delta * sensitivity;
+
+        const newColWidth = Math.max(0.2, (col.width || 1) + flexDelta);
+        const newNextColWidth = Math.max(0.2, (nextCol.width || 1) - flexDelta);
+
+        if (
+          (col.width || 1) + flexDelta > 0.2 &&
+          (nextCol.width || 1) - flexDelta > 0.2
+        ) {
+          col.width = newColWidth;
+          nextCol.width = newNextColWidth;
+
+          newColumns[colIndex] = col;
+          newColumns[colIndex + 1] = nextCol;
+
+          return { ...row, columns: newColumns };
+        }
+
+        return row;
+      });
+    });
   };
 
-  const handleAddBlock = (colId: string) => {
-      setLayout(prev => {
-          return prev.map(row => {
-             const col = row.columns.find(c => c.id === colId);
-             if (!col) return row;
-             
-             return {
-                 ...row,
-                 columns: row.columns.map(c => {
-                     if (c.id !== colId) return c;
-                     return {
-                         ...c,
-                         blocks: [...c.blocks, {
-                             id: nanoid(),
-                             type: 'text' as BlockType,
-                             content: ''
-                         }]
-                     };
-                 })
-             };
-          });
-      });
-  };
-  
   const handleAddColumn = (rowId: string) => {
-      setLayout(prev => {
-          return prev.map(row => {
-              if (row.id !== rowId) return row;
-              if (row.columns.length >= 3) return row; // Max 3 columns
-              
-              return {
-                  ...row,
-                  columns: [...row.columns, {
-                      id: nanoid(),
-                      width: 1,
-                      blocks: [{ id: nanoid(), type: 'text' as BlockType, content: '' }]
-                  }]
-              };
-          });
+    setLayout((prev) => {
+      return prev.map((row) => {
+        if (row.id !== rowId) return row;
+        if (row.columns.length >= 3) return row; // Max 3 columns
+
+        return {
+          ...row,
+          columns: [
+            ...row.columns,
+            {
+              id: nanoid(),
+              width: 1,
+              blocks: [
+                { id: nanoid(), type: "block" as BlockType, content: "" },
+              ],
+            },
+          ],
+        };
       });
+    });
   };
 
   const handleUpdateBlock = (id: string, content: any) => {
-      setLayout(prev => {
-          return prev.map(row => ({
-              ...row,
-              columns: row.columns.map(col => ({
-                  ...col,
-                  blocks: col.blocks.map(block => {
-                      if (block.id !== id) return block;
-                      return { ...block, content };
-                  })
-              }))
-          }));
-      });
+    setLayout((prev) => {
+      return prev.map((row) => ({
+        ...row,
+        columns: row.columns.map((col) => ({
+          ...col,
+          blocks: col.blocks.map((block) => {
+            if (block.id !== id) return block;
+            return { ...block, content };
+          }),
+        })),
+      }));
+    });
   };
-  
+
   const handleAddRow = () => {
-      setLayout(prev => [
-          ...prev, 
+    setLayout((prev) => [
+      ...prev,
+      {
+        id: nanoid(),
+        columns: [
           {
-              id: nanoid(),
-              columns: [
-                  { id: nanoid(), width: 1, blocks: [{ id: nanoid(), type: 'text' as BlockType, content: '' }]}
-              ]
-          }
-      ]);
+            id: nanoid(),
+            width: 1,
+            blocks: [{ id: nanoid(), type: "block" as BlockType, content: "" }],
+          },
+        ],
+      },
+    ]);
   };
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -430,7 +420,10 @@ const Page = () => {
     const activeType = active.data.current?.type;
     const overType = over.data.current?.type;
 
-    if (activeType === "block" && (overType === "block" || overType === "column")) {
+    if (
+      activeType === "block" &&
+      (overType === "block" || overType === "column")
+    ) {
       // Find source and dest columns
       const activeContainerId = findContainer(String(active.id), layout);
       const overContainerId =
@@ -458,14 +451,14 @@ const Page = () => {
         if (!activeRow || !overRow) return prev;
 
         // Need deep clone to avoid mutation issues in strict mode
-        // Though for dragOver visual feedback, we often accept some mutation for perf, 
+        // Though for dragOver visual feedback, we often accept some mutation for perf,
         // let's do it cleaner to be safe.
-        const newLayout = prev.map(r => ({
-            ...r,
-            columns: r.columns.map(c => ({
-                ...c,
-                blocks: [...c.blocks]
-            }))
+        const newLayout = prev.map((r) => ({
+          ...r,
+          columns: r.columns.map((c) => ({
+            ...c,
+            blocks: [...c.blocks],
+          })),
         }));
 
         const srcRowIdx = newLayout.findIndex((r) => r.id === activeRow.id);
@@ -477,19 +470,19 @@ const Page = () => {
         const dstCol = newLayout[dstRowIdx].columns.find(
           (c) => c.id === overContainerId
         )!;
-        
-        const activeIndex = srcCol.blocks.findIndex(b => b.id === active.id);
+
+        const activeIndex = srcCol.blocks.findIndex((b) => b.id === active.id);
         if (activeIndex === -1) return prev; // Should not trigger
 
         const [movedBlock] = srcCol.blocks.splice(activeIndex, 1);
-        
+
         const overIndex =
           overType === "column"
             ? dstCol.blocks.length // Add to end if over column
             : dstCol.blocks.findIndex((b) => b.id === over.id);
 
         let newIndex;
-         if (overType === "block") {
+        if (overType === "block") {
           const isBelowOverItem =
             over &&
             active.rect.current.translated &&
@@ -543,16 +536,16 @@ const Page = () => {
       if (activeRowId && activeRowId === overRowId) {
         setLayout((prev) => {
           // deep clone Row specifically or map
-          return prev.map(row => {
-              if (row.id !== activeRowId) return row;
-              
-              const oldIndex = row.columns.findIndex(c => c.id === active.id);
-              const newIndex = row.columns.findIndex(c => c.id === over.id);
-              
-              return {
-                  ...row,
-                  columns: arrayMove(row.columns, oldIndex, newIndex)
-              };
+          return prev.map((row) => {
+            if (row.id !== activeRowId) return row;
+
+            const oldIndex = row.columns.findIndex((c) => c.id === active.id);
+            const newIndex = row.columns.findIndex((c) => c.id === over.id);
+
+            return {
+              ...row,
+              columns: arrayMove(row.columns, oldIndex, newIndex),
+            };
           });
         });
       }
@@ -566,44 +559,33 @@ const Page = () => {
 
       if (activeContainerId && activeContainerId === overContainerId) {
         setLayout((prev) => {
-           return prev.map(row => {
-               const col = row.columns.find(c => c.id === activeContainerId);
-               if (!col) return row;
-               
-               return {
-                   ...row,
-                   columns: row.columns.map(c => {
-                       if (c.id !== activeContainerId) return c;
-                       
-                       const oldIndex = c.blocks.findIndex(b => b.id === active.id);
-                       const newIndex = c.blocks.findIndex(b => b.id === over.id);
-                       
-                       return {
-                           ...c,
-                           blocks: arrayMove(c.blocks, oldIndex, newIndex)
-                       }
-                   })
-               }
-           });
+          return prev.map((row) => {
+            const col = row.columns.find((c) => c.id === activeContainerId);
+            if (!col) return row;
+
+            return {
+              ...row,
+              columns: row.columns.map((c) => {
+                if (c.id !== activeContainerId) return c;
+
+                const oldIndex = c.blocks.findIndex((b) => b.id === active.id);
+                const newIndex = c.blocks.findIndex((b) => b.id === over.id);
+
+                return {
+                  ...c,
+                  blocks: arrayMove(c.blocks, oldIndex, newIndex),
+                };
+              }),
+            };
+          });
         });
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-white p-12 font-sans text-gray-900 overflow-y-auto">
-      <div className="max-w-5xl mx-auto pb-40">
-        <header className="mb-12 border-b pb-8">
-          <h1 className="text-4xl font-bold mb-4 tracking-tight">
-            Gamma Layout Engine
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl">
-            A flexible, fluid grid system. Drag the handle on the left to
-            reorder rows. Drag column headers to reorder columns. Drag blocks to
-            move content.
-          </p>
-        </header>
-
+    <div className="min-h-screen bg-gray-100 p-8 font-sans text-gray-900 overflow-y-auto">
+      <div className="w-full max-w-[1200px] mx-auto bg-white shadow-2xl border border-gray-200 rounded-xl px-16 py-12 min-h-[600px]">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -617,44 +599,47 @@ const Page = () => {
               strategy={verticalListSortingStrategy}
             >
               {layout.map((row) => (
-                <SortableRow 
-                    key={row.id} 
-                    row={row} 
-                    onResizeColumn={(colId, delta) => handleResizeColumn(row.id, colId, delta)}
-                    onAddBlock={handleAddBlock}
-                    onAddColumn={handleAddColumn}
-                    onUpdateBlock={handleUpdateBlock}
+                <SortableRow
+                  key={row.id}
+                  row={row}
+                  onResizeColumn={(colId, delta) =>
+                    handleResizeColumn(row.id, colId, delta)
+                  }
+                  onAddColumn={handleAddColumn}
+                  onUpdateBlock={handleUpdateBlock}
                 />
               ))}
             </SortableContext>
-            
+
             <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-dashed border-gray-200">
-                 <button 
-                  onClick={handleAddRow}
-                  className="flex-1 py-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all font-medium"
-                >
-                  + Add New Row
-                </button>
+              <button
+                onClick={handleAddRow}
+                className="flex-1 py-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all font-medium"
+              >
+                + Add New Row
+              </button>
             </div>
 
             {/* JSON Data Editor */}
             <div className="mt-12 border-t pt-8">
-               <h3 className="text-xl font-bold mb-4">Layout Data (JSON)</h3>
-               <p className="text-sm text-gray-500 mb-2">Edit this JSON to update the layout instantly.</p>
-               <textarea 
-                  className="w-full h-[300px] p-4 font-mono text-xs bg-gray-900 text-green-400 rounded-xl"
-                  value={JSON.stringify(layout, null, 2)}
-                  onChange={(e) => {
-                      try {
-                          const parsed = JSON.parse(e.target.value);
-                          if(Array.isArray(parsed)) {
-                              setLayout(parsed);
-                          }
-                      } catch(e) {
-                          // Ignore parse errors while typing
-                      }
-                  }}
-               />
+              <h3 className="text-xl font-bold mb-4">Layout Data (JSON)</h3>
+              <p className="text-sm text-gray-500 mb-2">
+                Edit this JSON to update the layout instantly.
+              </p>
+              <textarea
+                className="w-full h-[300px] p-4 font-mono text-xs bg-gray-900 text-green-400 rounded-xl"
+                value={JSON.stringify(layout, null, 2)}
+                onChange={(e) => {
+                  try {
+                    const parsed = JSON.parse(e.target.value);
+                    if (Array.isArray(parsed)) {
+                      setLayout(parsed);
+                    }
+                  } catch (e) {
+                    // Ignore parse errors while typing
+                  }
+                }}
+              />
             </div>
           </div>
 
