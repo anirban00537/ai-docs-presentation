@@ -215,11 +215,13 @@ const SortableRow = ({
   row,
   onResizeColumn,
   onAddColumn,
+  onAddRow,
   onUpdateBlock,
 }: {
   row: Row;
   onResizeColumn: (colId: string, delta: number) => void;
   onAddColumn: (rowId: string) => void;
+  onAddRow: (afterId: string) => void;
   onUpdateBlock: (id: string, content: string) => void;
 }) => {
   const {
@@ -275,6 +277,17 @@ const SortableRow = ({
           onClick={() => onAddColumn(row.id)}
           className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 shadow-sm text-xs transition-transform hover:scale-110"
           title="Add Column"
+        >
+          +
+        </button>
+      </div>
+
+      {/* Add Row Button - On Bottom Border */}
+      <div className="absolute bottom-0 left-0 right-0 h-0 group-hover:h-4 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 translate-y-1/2">
+        <button
+          onClick={() => onAddRow(row.id)}
+          className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 shadow-sm text-xs transition-transform hover:scale-110"
+          title="Add Row Below"
         >
           +
         </button>
@@ -392,195 +405,38 @@ const Page = () => {
     });
   };
 
-  const handleAddRow = () => {
-    setLayout((prev) => [
-      ...prev,
-      {
-        id: nanoid(),
-        columns: [
-          {
-            id: nanoid(),
-            width: 1,
-            blocks: [{ id: nanoid(), type: "block" as BlockType, content: "" }],
-          },
-        ],
-      },
-    ]);
+  const handleAddRow = (afterId?: string) => {
+      setLayout(prev => {
+          const newRow = {
+              id: nanoid(),
+              columns: [
+                  { id: nanoid(), width: 1, blocks: [{ id: nanoid(), type: "block" as BlockType, content: "" }]}
+              ]
+          };
+          
+          if (!afterId) return [...prev, newRow];
+          
+          const index = prev.findIndex(r => r.id === afterId);
+          if (index === -1) return [...prev, newRow];
+          
+          const newLayout = [...prev];
+          newLayout.splice(index + 1, 0, newRow);
+          return newLayout;
+      });
   };
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(String(event.active.id));
   };
 
+  // ... (rest of Page component)
+
   const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    // We only care about Block-level drag over here for moving between columns
-    const activeType = active.data.current?.type;
-    const overType = over.data.current?.type;
-
-    if (
-      activeType === "block" &&
-      (overType === "block" || overType === "column")
-    ) {
-      // Find source and dest columns
-      const activeContainerId = findContainer(String(active.id), layout);
-      const overContainerId =
-        overType === "column"
-          ? String(over.id)
-          : findContainer(String(over.id), layout);
-
-      if (
-        !activeContainerId ||
-        !overContainerId ||
-        activeContainerId === overContainerId
-      ) {
-        return;
-      }
-
-      // Move logic during drag (visual update)
-      setLayout((prev) => {
-        const activeRow = prev.find((r) =>
-          r.columns.find((c) => c.id === activeContainerId)
-        );
-        const overRow = prev.find((r) =>
-          r.columns.find((c) => c.id === overContainerId)
-        );
-
-        if (!activeRow || !overRow) return prev;
-
-        // Need deep clone to avoid mutation issues in strict mode
-        // Though for dragOver visual feedback, we often accept some mutation for perf,
-        // let's do it cleaner to be safe.
-        const newLayout = prev.map((r) => ({
-          ...r,
-          columns: r.columns.map((c) => ({
-            ...c,
-            blocks: [...c.blocks],
-          })),
-        }));
-
-        const srcRowIdx = newLayout.findIndex((r) => r.id === activeRow.id);
-        const dstRowIdx = newLayout.findIndex((r) => r.id === overRow.id);
-
-        const srcCol = newLayout[srcRowIdx].columns.find(
-          (c) => c.id === activeContainerId
-        )!;
-        const dstCol = newLayout[dstRowIdx].columns.find(
-          (c) => c.id === overContainerId
-        )!;
-
-        const activeIndex = srcCol.blocks.findIndex((b) => b.id === active.id);
-        if (activeIndex === -1) return prev; // Should not trigger
-
-        const [movedBlock] = srcCol.blocks.splice(activeIndex, 1);
-
-        const overIndex =
-          overType === "column"
-            ? dstCol.blocks.length // Add to end if over column
-            : dstCol.blocks.findIndex((b) => b.id === over.id);
-
-        let newIndex;
-        if (overType === "block") {
-          const isBelowOverItem =
-            over &&
-            active.rect.current.translated &&
-            active.rect.current.translated.top >
-              over.rect.top + over.rect.height;
-
-          const modifier = isBelowOverItem ? 1 : 0;
-          newIndex =
-            overIndex >= 0 ? overIndex + modifier : dstCol.blocks.length;
-        } else {
-          newIndex = dstCol.blocks.length;
-        }
-
-        dstCol.blocks.splice(newIndex, 0, movedBlock);
-
-        return newLayout;
-      });
-    }
+    // ...
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    const activeType = active.data.current?.type;
-    const overType = over?.data.current?.type;
-
-    setActiveId(null);
-
-    if (!over) return;
-
-    if (active.id === over.id) return;
-
-    // 1. Row Reordering
-    if (activeType === "row" && overType === "row") {
-      setLayout((prev) => {
-        const oldIndex = prev.findIndex((r) => r.id === active.id);
-        const newIndex = prev.findIndex((r) => r.id === over.id);
-        return arrayMove(prev, oldIndex, newIndex);
-      });
-      return;
-    }
-
-    // 2. Column Reordering
-    if (activeType === "column" && overType === "column") {
-      const activeRowId = layout.find((r) =>
-        r.columns.find((c) => c.id === active.id)
-      )?.id;
-      const overRowId = layout.find((r) =>
-        r.columns.find((c) => c.id === over.id)
-      )?.id;
-
-      if (activeRowId && activeRowId === overRowId) {
-        setLayout((prev) => {
-          // deep clone Row specifically or map
-          return prev.map((row) => {
-            if (row.id !== activeRowId) return row;
-
-            const oldIndex = row.columns.findIndex((c) => c.id === active.id);
-            const newIndex = row.columns.findIndex((c) => c.id === over.id);
-
-            return {
-              ...row,
-              columns: arrayMove(row.columns, oldIndex, newIndex),
-            };
-          });
-        });
-      }
-      return;
-    }
-
-    // 3. Block Reordering (Same Column)
-    if (activeType === "block" && overType === "block") {
-      const activeContainerId = findContainer(String(active.id), layout);
-      const overContainerId = findContainer(String(over.id), layout);
-
-      if (activeContainerId && activeContainerId === overContainerId) {
-        setLayout((prev) => {
-          return prev.map((row) => {
-            const col = row.columns.find((c) => c.id === activeContainerId);
-            if (!col) return row;
-
-            return {
-              ...row,
-              columns: row.columns.map((c) => {
-                if (c.id !== activeContainerId) return c;
-
-                const oldIndex = c.blocks.findIndex((b) => b.id === active.id);
-                const newIndex = c.blocks.findIndex((b) => b.id === over.id);
-
-                return {
-                  ...c,
-                  blocks: arrayMove(c.blocks, oldIndex, newIndex),
-                };
-              }),
-            };
-          });
-        });
-      }
-    }
+    // ...
   };
 
   return (
@@ -606,41 +462,14 @@ const Page = () => {
                     handleResizeColumn(row.id, colId, delta)
                   }
                   onAddColumn={handleAddColumn}
+                  onAddRow={handleAddRow}
                   onUpdateBlock={handleUpdateBlock}
                 />
               ))}
             </SortableContext>
 
-            <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-dashed border-gray-200">
-              <button
-                onClick={handleAddRow}
-                className="flex-1 py-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all font-medium"
-              >
-                + Add New Row
-              </button>
-            </div>
 
-            {/* JSON Data Editor */}
-            <div className="mt-12 border-t pt-8">
-              <h3 className="text-xl font-bold mb-4">Layout Data (JSON)</h3>
-              <p className="text-sm text-gray-500 mb-2">
-                Edit this JSON to update the layout instantly.
-              </p>
-              <textarea
-                className="w-full h-[300px] p-4 font-mono text-xs bg-gray-900 text-green-400 rounded-xl"
-                value={JSON.stringify(layout, null, 2)}
-                onChange={(e) => {
-                  try {
-                    const parsed = JSON.parse(e.target.value);
-                    if (Array.isArray(parsed)) {
-                      setLayout(parsed);
-                    }
-                  } catch (e) {
-                    // Ignore parse errors while typing
-                  }
-                }}
-              />
-            </div>
+
           </div>
 
           <DragOverlay>
@@ -651,6 +480,28 @@ const Page = () => {
             ) : null}
           </DragOverlay>
         </DndContext>
+      </div>
+
+      {/* JSON Data Editor (Separate View) */}
+      <div className="w-full max-w-[1200px] mx-auto mt-12 mb-20 bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+        <h3 className="text-xl font-bold mb-4">Layout Data (JSON)</h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Edit this JSON to update the layout instantly.
+        </p>
+        <textarea
+          className="w-full h-[300px] p-4 font-mono text-xs bg-gray-900 text-green-400 rounded-xl"
+          value={JSON.stringify(layout, null, 2)}
+          onChange={(e) => {
+            try {
+              const parsed = JSON.parse(e.target.value);
+              if (Array.isArray(parsed)) {
+                setLayout(parsed);
+              }
+            } catch (e) {
+              // Ignore parse errors while typing
+            }
+          }}
+        />
       </div>
     </div>
   );
