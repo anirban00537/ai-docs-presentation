@@ -29,11 +29,11 @@ const createDefaultContent = () => {
   return {
     [blockId]: {
       id: blockId,
-      type: "Paragraph",
+      type: "HeadingOne",
       value: [
         {
           id: nanoid(),
-          type: "paragraph",
+          type: "heading-one",
           children: [{ text: "" }],
         },
       ],
