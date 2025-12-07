@@ -71,7 +71,6 @@ const DraggableBlock = ({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.4 : 1,
-    flex: 1,
     minWidth: 0,
   };
 
@@ -79,11 +78,11 @@ const DraggableBlock = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative flex-1 min-w-0"
+      className="group relative min-w-0 flex-1"
     >
       {/* Block Container */}
       <div
-        className={`relative min-h-[60px] p-2 rounded-lg transition-all ${
+        className={`relative p-1 rounded-lg transition-all ${
           isDragging ? "bg-blue-50 ring-2 ring-blue-300" : "hover:bg-gray-50/50"
         }`}
       >
@@ -108,7 +107,7 @@ const DraggableBlock = ({
           value={block.content}
           onChange={(val) => onUpdate(block.id, val)}
           placeholder="Type '/' for commands..."
-          className="min-h-[40px]"
+          className=""
         />
       </div>
 
@@ -150,7 +149,7 @@ const DroppableRow = ({
       {/* Row Container */}
       <div
         ref={setNodeRef}
-        className={`flex gap-4 p-3 rounded-lg transition-all min-h-[80px] ${
+        className={`flex gap-4 p-2 rounded-lg transition-all items-start ${
           isOver
             ? "bg-green-50 ring-2 ring-dashed ring-green-400"
             : "hover:bg-gray-50/30"
@@ -403,7 +402,7 @@ const GammaPage = () => {
       </div>
 
       {/* Editor Canvas */}
-      <div className="max-w-[1200px] mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+      <div className="max-w-[1200px] mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 px-6 py-4">
         <DndContext
           sensors={sensors}
           collisionDetection={customCollisionDetection}
