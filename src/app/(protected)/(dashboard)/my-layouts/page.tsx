@@ -1,39 +1,35 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { AppleButton } from "@/components/editor/apple-button";
-import { LayoutTemplate, Sparkles } from "lucide-react";
-import {
-  useLayoutsList,
-  useDeleteLayout,
-} from "@/hooks/use-layouts";
+import { LayoutTemplate } from "lucide-react";
+import { useLayoutsList, useDeleteLayout } from "@/hooks/use-layouts";
 import { LayoutCard } from "@/components/layout-card";
 
 export default function MyLayoutsPage() {
   const router = useRouter();
   const deleteLayoutMutation = useDeleteLayout();
-  const { data: layoutsResponse, isLoading, error } = useLayoutsList({
-    includeAdmin: "true",
-    includeUser: "true",
-  });
+  const { data: layoutsResponse, isLoading, error } = useLayoutsList();
+  console.log(layoutsResponse, "layoutsResponse");
 
   const handleUseLayout = (layoutId: string) => {
     // Navigate to editor with layoutId to apply the layout
     router.push(`/editor?layoutId=${layoutId}`);
   };
 
-  const handleDeleteLayout = (
-    layoutId: string,
-    e: React.MouseEvent
-  ) => {
+  const handleDeleteLayout = (layoutId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     deleteLayoutMutation.mutate(layoutId);
   };
 
-  const layouts = layoutsResponse?.success
-    ? layoutsResponse.data?.list || []
-    : [];
+  // Handle both response formats: data as array or data.list
+  const layouts = useMemo(() => {
+    return layoutsResponse?.success
+      ? Array.isArray(layoutsResponse.data)
+        ? layoutsResponse.data
+        : layoutsResponse.data?.list || []
+      : [];
+  }, [layoutsResponse]);
 
   // Debug: Log the response to see what we're getting
   React.useEffect(() => {
@@ -62,7 +58,8 @@ export default function MyLayoutsPage() {
           <div className="flex min-h-[400px] items-center justify-center">
             <div className="flex flex-col items-center gap-3">
               <p className="text-sm text-destructive">
-                Error loading layouts: {error instanceof Error ? error.message : "Unknown error"}
+                Error loading layouts:{" "}
+                {error instanceof Error ? error.message : "Unknown error"}
               </p>
             </div>
           </div>
@@ -107,4 +104,3 @@ export default function MyLayoutsPage() {
     </div>
   );
 }
-

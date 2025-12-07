@@ -28,17 +28,10 @@ export const layoutKeys = {
 };
 
 // Get layouts list query
-export const useLayoutsList = (filters?: {
-  type?: string;
-  includeAdmin?: string;
-  includeUser?: string;
-  page?: number;
-  limit?: number;
-  tags?: string[];
-}) => {
+export const useLayoutsList = () => {
   return useQuery({
-    queryKey: layoutKeys.list(filters),
-    queryFn: () => getLayoutsList(filters),
+    queryKey: layoutKeys.list(),
+    queryFn: () => getLayoutsList(),
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };

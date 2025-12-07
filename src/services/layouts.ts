@@ -60,15 +60,10 @@ export const createLayout = async (
 };
 
 // Get layouts list
-export const getLayoutsList = async (filters?: {
-  type?: string;
-  includeAdmin?: string;
-  includeUser?: string;
-  page?: number;
-  limit?: number;
-  tags?: string[];
-}): Promise<ApiResponse<LayoutsListResponse>> => {
-  const response = await request.get("/layouts/list", { params: filters });
+export const getLayoutsList = async (): Promise<
+  ApiResponse<LayoutsListResponse>
+> => {
+  const response = await request.get("/layouts/list");
   return response.data;
 };
 
