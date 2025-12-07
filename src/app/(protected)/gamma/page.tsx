@@ -245,6 +245,7 @@ const DroppableRow = ({
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   rowCount: number;
 }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { setNodeRef, isOver } = useDroppable({
     id: `row-drop-${slideId}-${row.id}`,
     data: { type: "row", rowId: row.id, slideId },
@@ -254,10 +255,52 @@ const DroppableRow = ({
   const canAddColumn = row.blocks.length < MAX_COLUMNS;
 
   return (
-    <div className="group/row relative">
+    <div className="group/row relative flex">
+      {/* Row Menu Handle - Left Side */}
+      <div className="relative flex items-center">
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="w-5 h-full flex items-center justify-center text-gray-400 opacity-0 group-hover/row:opacity-100 hover:text-gray-600 transition-all"
+          title="Row options"
+        >
+          <svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor">
+            <circle cx="2" cy="2" r="1.5" />
+            <circle cx="2" cy="8" r="1.5" />
+            <circle cx="2" cy="14" r="1.5" />
+          </svg>
+        </button>
+
+        {/* Dropdown Menu */}
+        {isMenuOpen && (
+          <>
+            {/* Backdrop to close menu */}
+            <div 
+              className="fixed inset-0 z-30" 
+              onClick={() => setIsMenuOpen(false)}
+            />
+            <div className="absolute left-6 top-0 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-40 min-w-[120px]">
+              <button
+                onClick={() => {
+                  onDeleteRow(row.id);
+                  setIsMenuOpen(false);
+                }}
+                disabled={rowCount <= 1}
+                className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                </svg>
+                Delete
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Row Content */}
       <div
         ref={setNodeRef}
-        className={`flex p-2 transition-all items-stretch border ${
+        className={`flex-1 flex p-2 transition-all items-stretch border ${
           isOver 
             ? "bg-green-50 ring-1 ring-dashed ring-green-400 border-green-400" 
             : "border-transparent hover:border-gray-300"
@@ -281,17 +324,6 @@ const DroppableRow = ({
           ))}
         </SortableContext>
       </div>
-
-      {/* Delete Row Button */}
-      {rowCount > 1 && (
-        <button
-          onClick={() => onDeleteRow(row.id)}
-          className="absolute -right-2 top-2 w-5 h-5 rounded-full bg-red-500 text-white opacity-0 group-hover/row:opacity-100 hover:bg-red-600 transition-all z-20 flex items-center justify-center text-xs"
-          title="Delete row"
-        >
-          ×
-        </button>
-      )}
     </div>
   );
 };
