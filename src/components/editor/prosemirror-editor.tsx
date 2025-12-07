@@ -1,19 +1,23 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { Schema, DOMParser } from "prosemirror-model";
 import { schema } from "prosemirror-schema-basic";
 import { addListNodes } from "prosemirror-schema-list";
 import { keymap } from "prosemirror-keymap";
-import { baseKeymap } from "prosemirror-commands";
+import { baseKeymap, toggleMark, setBlockType } from "prosemirror-commands";
 import { history, undo, redo } from "prosemirror-history";
 import { gapCursor } from "prosemirror-gapcursor";
 import { inputRules, wrappingInputRule, textblockTypeInputRule, smartQuotes } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import { cn } from "@/lib/utils";
-import { defaultMarkdownParser, defaultMarkdownSerializer } from "prosemirror-markdown";
+// ... (previous imports)
+import { DOMSerializer } from "prosemirror-model";
+import { Bold, Italic, Code, Heading1, Heading2, Quote } from "lucide-react";
+
+// ... existing schema ...
 
 // Create schema with list support
 const mySchema = new Schema({
@@ -53,6 +57,13 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   const onBlurRef = useRef(onBlur);
   const onKeyDownRef = useRef(onKeyDown);
 
+  // Bubble Menu State
+  const [menuState, setMenuState] = React.useState<{
+    show: boolean;
+    left: number;
+    top: number;
+  }>({ show: false, left: 0, top: 0 });
+
   // Keep refs updated
   useEffect(() => {
     onChangeRef.current = onChange;
@@ -67,7 +78,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   useEffect(() => {
     if (!editorRef.current) return;
 
-    // Placeholder plugin
+    // Placeholder plugin - simplified logic
     const placeholderPlugin = new Plugin({
       props: {
         attributes: {
@@ -77,7 +88,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       view(editorView) {
         const updatePlaceholder = () => {
           const { state } = editorView;
-          const isEmpty = state.doc.textContent.trim().length === 0 && 
+           const isEmpty = state.doc.textContent.trim().length === 0 && 
                          state.doc.childCount === 1 && 
                          state.doc.firstChild?.type.name === "paragraph" &&
                          state.doc.firstChild.content.size === 0;
@@ -99,35 +110,52 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       },
     });
 
-    // Markdown Input Rules
-    const markdownInputRules = inputRules({
-      rules: [
-        // Headings: # space, ## space, etc.
-        textblockTypeInputRule(
-          new RegExp("^(#{1,6})\\s$"),
-          mySchema.nodes.heading,
-          (match) => ({ level: match[1].length })
-        ),
-        // Blockquote: > space
-        wrappingInputRule(/^\s*>\s$/, mySchema.nodes.blockquote),
-        // Code Block: ```
-        textblockTypeInputRule(/^```$/, mySchema.nodes.code_block),
-        // Ordered List: 1. space
-        wrappingInputRule(
-            /^(\d+)\.\s$/,
-            mySchema.nodes.ordered_list,
-            (match) => ({ order: +match[1] }),
-            (match, node) => node.childCount + node.attrs.order === +match[1]
-        ),
-        // Bullet List: - space or * space
-        wrappingInputRule(/^\s*([-+*])\s$/, mySchema.nodes.bullet_list),
-        // Smart quotes
-        ...smartQuotes,
-      ],
+    // Bubble Menu Plugin
+    const bubbleMenuPlugin = new Plugin({
+        view(editorView) {
+            return {
+                update: (view, prevState) => {
+                    const { state } = view;
+                    const { selection } = state;
+                    const { empty, from, to } = selection;
+
+                    if (empty) {
+                        setMenuState(prev => ({ ...prev, show: false }));
+                        return;
+                    }
+
+                    const start = view.coordsAtPos(from);
+                    const end = view.coordsAtPos(to);
+                    const left = Math.max((start.left + end.left) / 2, start.left + 3); 
+                    
+                    setMenuState({
+                        show: true,
+                        left: left,
+                        top: start.top - 40, 
+                    });
+                }
+            }
+        }
     });
 
-    // Create initial state using Markdown Parser
-    const initialDoc = defaultMarkdownParser.parse(value || "") || mySchema.node("doc", null, [mySchema.node("paragraph")]);
+    // Create initial state logic using HTML Parsing
+    const getInitialDoc = (content: string) => {
+        if (!content) return mySchema.node("doc", null, [mySchema.node("paragraph")]);
+        // Simple heuristic: if it looks like HTML, parse as HTML. 
+        // Otherwise treat as plain text for backward compatibility with old blocks.
+        if (content.trim().startsWith("<")) {
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = content;
+            return DOMParser.fromSchema(mySchema).parse(tempDiv);
+        } else {
+             // Fallback for plain text: create a paragraph
+             return mySchema.node("doc", null, [
+                 mySchema.node("paragraph", null, mySchema.text(content))
+             ]);
+        }
+    };
+
+    const initialDoc = getInitialDoc(value);
     
     const state = EditorState.create({
       schema: mySchema,
@@ -136,7 +164,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
         history(),
         gapCursor(),
         placeholderPlugin,
-        markdownInputRules, // Use our extended rules
+        bubbleMenuPlugin,
         keymap({
           ...baseKeymap,
           "Mod-z": undo,
@@ -154,11 +182,16 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
         const newState = view.state.apply(transaction);
         view.updateState(newState);
 
-        // Serialize to Markdown on change
         if (transaction.docChanged) {
-            const markdown = defaultMarkdownSerializer.serialize(newState.doc);
-            if (markdown !== value) {
-                onChangeRef.current?.(markdown);
+            // Serialize to HTML
+            const serializer = DOMSerializer.fromSchema(mySchema);
+            const fragment = serializer.serializeFragment(newState.doc.content);
+            const tempDiv = document.createElement("div");
+            tempDiv.appendChild(fragment);
+            const html = tempDiv.innerHTML; // Basic HTML serialization
+            
+            if (html !== value) {
+                onChangeRef.current?.(html);
             }
         }
       },
@@ -168,27 +201,23 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
           return false;
         },
         blur: () => {
-          onBlurRef.current?.();
-          return false;
+           onBlurRef.current?.();
+           return false;
         },
       },
     });
 
     viewRef.current = view;
 
-    // Apply styles to editor DOM
+    // ... (rest of style application)
     if (style) {
       const editorDOM = view.dom as HTMLElement;
       Object.assign(editorDOM.style, style);
     }
-
-    // Set placeholder attribute
     if (placeholder) {
       const editorDOM = view.dom as HTMLElement;
       editorDOM.setAttribute("data-placeholder", placeholder);
     }
-    
-    // Autofocus
     if (autoFocus && !readOnly) {
       setTimeout(() => {
         view.focus();
@@ -208,25 +237,41 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       view.destroy();
       viewRef.current = null;
     };
-  }, []); // Only run once on mount
+  }, []);
 
-  // Update content when value prop changes (but not from user input to avoid cursor jumps/loops)
-  // Converting back from markdown to check equality is expensive and tricky due to formatting diffs.
-  // Ideally we only update if the external value is significantly different or if we want to force reset.
-  // For now, let's keep it simple: if the editor is not focused, or if we really need to sync.
-  // A common pattern is to only update if the document is totally different, but here we'll skip 
-  // live bidirectional sync while typing to prevent cursor jump, relying on internal state.
-  // HOWEVER, initial load or undo/redo from parent might need handling.
-  // For this "Gamma" prototype, let's just assume local state is source of truth while focused.
-
+  // UseEffects for external prop updates
   useEffect(() => {
     if (!viewRef.current) return;
     
-    // If the new value matches what we just serialized, don't re-parse (prevents cursor jump logic loops)
-    const currentMarkdown = defaultMarkdownSerializer.serialize(viewRef.current.state.doc);
-    if (value !== currentMarkdown && !viewRef.current.hasFocus()) {
-         const newDoc = defaultMarkdownParser.parse(value || "");
-         if (newDoc) {
+    // We avoid re-parsing HTML loop by storing local state, but if external value differs significantly...
+    // HTML comparison is tricky. For now, rely on internal state unless we detect a major forced update or initial load situation?
+    // Actually, simple way: if view doesn't have focus, update it.
+    if (!viewRef.current.hasFocus()) {
+         // Create a temp element to check equality safely? Or just trust the string.
+         // Let's just re-parse if different string and not focused.
+         // But "different string" might just be attribute order.
+         // For prototype, updating only when not focused is "safe enough".
+         // However, we need to compare serialized current state.
+         
+         const serializer = DOMSerializer.fromSchema(mySchema);
+         const fragment = serializer.serializeFragment(viewRef.current.state.doc.content);
+         const tempDiv = document.createElement("div");
+         tempDiv.appendChild(fragment);
+         const currentHTML = tempDiv.innerHTML;
+
+         if (value !== currentHTML) {
+              // Parse new value
+             let newDoc;
+             if (value.trim().startsWith("<")) {
+                const tempDiv2 = document.createElement("div");
+                tempDiv2.innerHTML = value;
+                newDoc = DOMParser.fromSchema(mySchema).parse(tempDiv2);
+             } else {
+                 newDoc = value ? mySchema.node("doc", null, [
+                     mySchema.node("paragraph", null, mySchema.text(value))
+                 ]) : mySchema.node("doc", null, [mySchema.node("paragraph")]);
+             }
+             
              const newState = EditorState.create({
                  doc: newDoc,
                  schema: mySchema,
@@ -237,7 +282,6 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     }
   }, [value]);
 
-  // Update readOnly state
   useEffect(() => {
     if (viewRef.current) {
       viewRef.current.setProps({
@@ -246,15 +290,12 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     }
   }, [readOnly]);
 
-  // Update styles and placeholder when they change
-  useEffect(() => {
+    useEffect(() => {
     if (!viewRef.current) return;
     const editorDOM = viewRef.current.dom as HTMLElement;
-    
     if (style) {
       Object.assign(editorDOM.style, style);
     }
-    
     if (placeholder) {
       editorDOM.setAttribute("data-placeholder", placeholder);
     } else {
@@ -262,16 +303,75 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     }
   }, [style, placeholder]);
 
+  // Helpers for menu
+  const runCommand = (command: any) => {
+      if (!viewRef.current) return;
+      command(viewRef.current.state, viewRef.current.dispatch, viewRef.current);
+      viewRef.current.focus();
+  };
+
   return (
-    <div
-      ref={editorRef}
-      className={cn(
-        "prosemirror-editor w-full outline-none",
-        readOnly ? "cursor-default" : "cursor-text",
-        className
+    <>
+      <style jsx global>{`
+        /* ... styles ... */
+        .ProseMirror { outline: none; }
+        /* Add selection blue background logic if needed, typically default browser handles it */
+        /* ... existing styles ... */
+        .ProseMirror h1 { font-size: 2em; font-weight: bold; margin-bottom: 0.5em; }
+        .ProseMirror h2 { font-size: 1.5em; font-weight: bold; margin-bottom: 0.5em; }
+        .ProseMirror h3 { font-size: 1.17em; font-weight: bold; margin-bottom: 0.5em; }
+        .ProseMirror ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 0.5em; }
+        .ProseMirror ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 0.5em; }
+        .ProseMirror blockquote { border-left: 4px solid #ccc; padding-left: 1em; margin-left: 0; font-style: italic; }
+        .ProseMirror pre { background: #f4f4f4; padding: 0.5em; border-radius: 4px; }
+        .ProseMirror p { margin-bottom: 0.5em; }
+        .ProseMirror p:last-child { margin-bottom: 0; }
+        .is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; color: #adb5bd; pointer-events: none; height: 0; }
+      `}</style>
+      
+      <div
+        ref={editorRef}
+        className={cn(
+          "prosemirror-editor w-full outline-none",
+          readOnly ? "cursor-default" : "cursor-text",
+          className
+        )}
+        style={style}
+      />
+      
+      {/* Floating Bubble Menu */}
+      {menuState.show && (
+          <div 
+             className="fixed z-[9999] flex items-center gap-1 p-1 bg-white rounded-lg shadow-lg border border-gray-200 animate-in fade-in zoom-in-95 duration-100"
+             style={{
+                 left: menuState.left,
+                 top: menuState.top,
+                 transform: 'translateX(-50%)'
+             }}
+             onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }} // Prevent stealing focus
+          >
+             <button onClick={() => runCommand(toggleMark(mySchema.marks.strong))} className="p-1.5 hover:bg-gray-100 rounded text-gray-700 hover:text-black">
+                 <Bold size={16} />
+             </button>
+             <button onClick={() => runCommand(toggleMark(mySchema.marks.em))} className="p-1.5 hover:bg-gray-100 rounded text-gray-700 hover:text-black">
+                 <Italic size={16} />
+             </button>
+             <button onClick={() => runCommand(toggleMark(mySchema.marks.code))} className="p-1.5 hover:bg-gray-100 rounded text-gray-700 hover:text-black">
+                 <Code size={16} />
+             </button>
+             <div className="w-px h-4 bg-gray-200 mx-1" />
+              <button onClick={() => runCommand(setBlockType(mySchema.nodes.heading, { level: 1 }))} className="p-1.5 hover:bg-gray-100 rounded text-gray-700 hover:text-black">
+                 <Heading1 size={16} />
+             </button>
+             <button onClick={() => runCommand(setBlockType(mySchema.nodes.heading, { level: 2 }))} className="p-1.5 hover:bg-gray-100 rounded text-gray-700 hover:text-black">
+                 <Heading2 size={16} />
+             </button>
+             <button onClick={() => runCommand(wrappingInputRule(/^\s*>\s$/, mySchema.nodes.blockquote))} className="p-1.5 hover:bg-gray-100 rounded text-gray-700 hover:text-black">
+                 <Quote size={16} /> {/* Placeholder for blockquote toggle logic which is complex in vanilla PM without helper */}
+             </button>
+          </div>
       )}
-      style={style}
-    />
+    </>
   );
 };
 

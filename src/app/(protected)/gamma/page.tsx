@@ -73,22 +73,22 @@ const SortableBlock = ({ block, onUpdate }: { block: Block; onUpdate: (id: strin
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative p-2 pl-8 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-blue-400 item-block min-h-[40px]"
+      className="group relative border border-transparent rounded-sm item-block min-h-[24px] hover:bg-gray-50/50 transition-colors"
     >
-        {/* Drag Handle - Visible on Hover */}
+        {/* Drag Handle - Visible on Hover - Minimal */}
         <div 
             {...attributes} 
             {...listeners}
-            className="absolute left-0 top-0 bottom-0 w-7 cursor-grab flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-gray-50 rounded-l-lg z-10 text-gray-300 hover:text-gray-500 transition-all"
+            className="absolute -left-3 top-0 bottom-0 w-3 cursor-grab flex items-start pt-[6px] justify-center opacity-0 group-hover:opacity-100 z-10 text-gray-300 hover:text-gray-500 transition-all"
         >
-            ⋮⋮
+            ⋮
         </div>
 
       <ProseMirrorEditor 
         value={block.content} 
         onChange={(val) => onUpdate(block.id, val)} 
-        placeholder="Type something..."
-        className="min-h-[20px]"
+        placeholder="Type..."
+        className="min-h-[20px] px-1 py-1"
       />
     </div>
   );
@@ -103,18 +103,14 @@ const ResizeHandle = ({ onResize }: { onResize: (delta: number) => void }) => {
     setIsResizing(true);
     
     const startX = e.clientX;
-    
     const handlePointerMove = (moveEvent: PointerEvent) => {
-      const delta = moveEvent.clientX - startX;
-      onResize(delta);
+      onResize(moveEvent.clientX - startX);
     };
-
     const handlePointerUp = () => {
       setIsResizing(false);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerup", handlePointerUp);
     };
-
     window.addEventListener("pointermove", handlePointerMove);
     window.addEventListener("pointerup", handlePointerUp);
   };
@@ -153,7 +149,7 @@ const SortableColumn = ({
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? undefined : "flex 0.1s ease-out", // Smooth resize, instant drag
+    transition: isDragging ? undefined : "flex 0.1s ease-out", 
     flex: column.width || 1,
     opacity: isDragging ? 0.5 : 1,
   };
@@ -162,24 +158,20 @@ const SortableColumn = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative flex flex-col gap-2 p-2 rounded-lg border border-transparent hover:border-dashed hover:border-gray-300 hover:bg-gray-50/50 min-h-[100px] group/col transition-all ${
-        isDragging ? "border-dashed border-gray-300 bg-gray-50/50" : ""
-      }`}
+      className={`relative flex flex-col p-0 min-h-[50px] group/col transition-all border border-transparent hover:border-dashed hover:border-gray-300 ${isDragging ? "bg-gray-50/50" : ""}`}
     >
+      {/* Column Drag Handle - Top Pill on Hover */}
       <div
-        className="text-xs font-mono text-gray-300 opacity-0 group-hover/col:opacity-100 mb-2 cursor-grab flex justify-between items-center transition-opacity"
+        className="h-1.5 w-8 cursor-grab opacity-0 group-hover/col:opacity-100 bg-gray-200 hover:bg-gray-400 absolute top-0 left-1/2 -translate-x-1/2 z-10 rounded-b-sm transition-all"
         {...attributes}
         {...listeners}
-      >
-        <span>COL</span>
-        <div className="w-4 h-4 rounded hover:bg-gray-200" />
-      </div>
+      />
 
       <SortableContext
         items={column.blocks.map((b) => b.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="flex flex-col gap-2 min-h-[50px]">
+        <div className="flex flex-col min-h-[40px] pt-3 pb-2">
           {column.blocks.map((block) => (
             <SortableBlock key={block.id} block={block} onUpdate={onUpdateBlock} />
           ))}
@@ -187,12 +179,15 @@ const SortableColumn = ({
       </SortableContext>
       
       {onAddBlock && (
-        <button 
-           onClick={() => onAddBlock(column.id)}
-           className="mt-2 text-xs text-gray-400 hover:text-blue-500 py-1 px-2 rounded hover:bg-blue-50 w-full text-center border border-transparent hover:border-blue-200 transition-all opacity-0 group-hover/col:opacity-100"
-        >
-          + Add Block
-        </button>
+         <div className="absolute bottom-0 left-0 right-0 h-2 flex items-center justify-center opacity-0 group-hover/col:opacity-100 z-20 translate-y-1/2">
+            <button 
+               onClick={() => onAddBlock(column.id)}
+               className="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] hover:bg-blue-600 shadow-sm transition-transform hover:scale-110"
+               title="Add Block"
+            >
+              +
+            </button>
+         </div>
       )}
       
       {!isLast && onResize && <ResizeHandle onResize={onResize} />}
@@ -226,17 +221,17 @@ const SortableRow = ({ row, onResizeColumn, onAddBlock, onAddColumn, onUpdateBlo
     <div
       ref={setNodeRef}
       style={style}
-      className={`group relative flex gap-4 p-2 pl-8 rounded-xl transition-all min-h-[120px] border border-transparent hover:border-gray-200 hover:bg-white hover:shadow-sm ${
-          isDragging ? "bg-gray-50 border-gray-200" : ""
+      className={`group relative flex gap-4 p-1 pl-6 transition-all min-h-[50px] border border-transparent hover:border-gray-100 ${
+          isDragging ? "bg-gray-50" : ""
       }`}
     >
-      {/* Row Drag Handle */}
+      {/* Row Drag Handle - Minimal strip on left */}
       <div
         {...attributes}
         {...listeners}
-        className="absolute left-0 top-1/2 -translate-y-1/2 w-6 h-12 flex items-center justify-center cursor-grab opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute left-0 top-0 bottom-0 w-4 cursor-grab flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-gray-50 transition-all z-10"
       >
-        <div className="w-1.5 h-6 bg-gray-200 hover:bg-gray-400 rounded-full transition-colors" />
+        <div className="w-1 h-4 bg-gray-300 rounded-full" />
       </div>
 
       <SortableContext
@@ -255,11 +250,11 @@ const SortableRow = ({ row, onResizeColumn, onAddBlock, onAddColumn, onUpdateBlo
         ))}
       </SortableContext>
 
-      {/* Add Column Button */}
-      <div className="flex items-center justify-center w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* Add Column Button - On Right Border */}
+      <div className="absolute right-0 top-0 bottom-0 w-0 group-hover:w-4 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-20 translate-x-1/2">
          <button 
             onClick={() => onAddColumn(row.id)}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 hover:bg-blue-100 text-gray-400 hover:text-blue-500 transition-colors"
+            className="w-5 h-5 flex items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 shadow-sm text-xs transition-transform hover:scale-110"
             title="Add Column"
          >
             +
