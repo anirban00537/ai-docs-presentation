@@ -10,9 +10,10 @@ import { keymap } from "prosemirror-keymap";
 import { baseKeymap } from "prosemirror-commands";
 import { history, undo, redo } from "prosemirror-history";
 import { gapCursor } from "prosemirror-gapcursor";
-import { inputRules, wrappingInputRule, textblockTypeInputRule } from "prosemirror-inputrules";
+import { inputRules, wrappingInputRule, textblockTypeInputRule, smartQuotes } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import { cn } from "@/lib/utils";
+import { defaultMarkdownParser, defaultMarkdownSerializer } from "prosemirror-markdown";
 
 // Create schema with list support
 const mySchema = new Schema({
@@ -76,7 +77,11 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       view(editorView) {
         const updatePlaceholder = () => {
           const { state } = editorView;
-          const isEmpty = state.doc.textContent.trim().length === 0;
+          const isEmpty = state.doc.textContent.trim().length === 0 && 
+                         state.doc.childCount === 1 && 
+                         state.doc.firstChild?.type.name === "paragraph" &&
+                         state.doc.firstChild.content.size === 0;
+
           const editorDOM = editorView.dom as HTMLElement;
           if (isEmpty && placeholder) {
             editorDOM.classList.add("is-editor-empty");
@@ -94,24 +99,49 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       },
     });
 
-    // Create initial state
+    // Markdown Input Rules
+    const markdownInputRules = inputRules({
+      rules: [
+        // Headings: # space, ## space, etc.
+        textblockTypeInputRule(
+          new RegExp("^(#{1,6})\\s$"),
+          mySchema.nodes.heading,
+          (match) => ({ level: match[1].length })
+        ),
+        // Blockquote: > space
+        wrappingInputRule(/^\s*>\s$/, mySchema.nodes.blockquote),
+        // Code Block: ```
+        textblockTypeInputRule(/^```$/, mySchema.nodes.code_block),
+        // Ordered List: 1. space
+        wrappingInputRule(
+            /^(\d+)\.\s$/,
+            mySchema.nodes.ordered_list,
+            (match) => ({ order: +match[1] }),
+            (match, node) => node.childCount + node.attrs.order === +match[1]
+        ),
+        // Bullet List: - space or * space
+        wrappingInputRule(/^\s*([-+*])\s$/, mySchema.nodes.bullet_list),
+        // Smart quotes
+        ...smartQuotes,
+      ],
+    });
+
+    // Create initial state using Markdown Parser
+    const initialDoc = defaultMarkdownParser.parse(value || "") || mySchema.node("doc", null, [mySchema.node("paragraph")]);
+    
     const state = EditorState.create({
       schema: mySchema,
+      doc: initialDoc,
       plugins: [
         history(),
         gapCursor(),
         placeholderPlugin,
+        markdownInputRules, // Use our extended rules
         keymap({
           ...baseKeymap,
           "Mod-z": undo,
           "Mod-y": redo,
           "Mod-Shift-z": redo,
-        }),
-        inputRules({
-          rules: [
-            wrappingInputRule(/^\s*>\s$/, mySchema.nodes.blockquote),
-            textblockTypeInputRule(/^```$/, mySchema.nodes.code_block),
-          ],
         }),
       ],
     });
@@ -124,10 +154,12 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
         const newState = view.state.apply(transaction);
         view.updateState(newState);
 
-        // Extract text content and call onChange
-        const textContent = newState.doc.textContent;
-        if (textContent !== value) {
-          onChangeRef.current?.(textContent);
+        // Serialize to Markdown on change
+        if (transaction.docChanged) {
+            const markdown = defaultMarkdownSerializer.serialize(newState.doc);
+            if (markdown !== value) {
+                onChangeRef.current?.(markdown);
+            }
         }
       },
       handleDOMEvents: {
@@ -155,21 +187,8 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       const editorDOM = view.dom as HTMLElement;
       editorDOM.setAttribute("data-placeholder", placeholder);
     }
-
-    // Set initial content
-    if (value) {
-      const doc = mySchema.node("doc", null, [
-        mySchema.node("paragraph", null, mySchema.text(value)),
-      ]);
-      const newState = EditorState.create({
-        doc,
-        schema: mySchema,
-        plugins: view.state.plugins,
-      });
-      view.updateState(newState);
-    }
-
-    // Auto focus if requested
+    
+    // Autofocus
     if (autoFocus && !readOnly) {
       setTimeout(() => {
         view.focus();
@@ -191,22 +210,30 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     };
   }, []); // Only run once on mount
 
-  // Update content when value prop changes (but not from user input)
+  // Update content when value prop changes (but not from user input to avoid cursor jumps/loops)
+  // Converting back from markdown to check equality is expensive and tricky due to formatting diffs.
+  // Ideally we only update if the external value is significantly different or if we want to force reset.
+  // For now, let's keep it simple: if the editor is not focused, or if we really need to sync.
+  // A common pattern is to only update if the document is totally different, but here we'll skip 
+  // live bidirectional sync while typing to prevent cursor jump, relying on internal state.
+  // HOWEVER, initial load or undo/redo from parent might need handling.
+  // For this "Gamma" prototype, let's just assume local state is source of truth while focused.
+
   useEffect(() => {
     if (!viewRef.current) return;
-    const currentText = viewRef.current.state.doc.textContent;
-    if (currentText !== value) {
-      const doc = value
-        ? mySchema.node("doc", null, [
-            mySchema.node("paragraph", null, mySchema.text(value)),
-          ])
-        : mySchema.node("doc", null, [mySchema.node("paragraph")]);
-      const newState = EditorState.create({
-        doc,
-        schema: mySchema,
-        plugins: viewRef.current.state.plugins,
-      });
-      viewRef.current.updateState(newState);
+    
+    // If the new value matches what we just serialized, don't re-parse (prevents cursor jump logic loops)
+    const currentMarkdown = defaultMarkdownSerializer.serialize(viewRef.current.state.doc);
+    if (value !== currentMarkdown && !viewRef.current.hasFocus()) {
+         const newDoc = defaultMarkdownParser.parse(value || "");
+         if (newDoc) {
+             const newState = EditorState.create({
+                 doc: newDoc,
+                 schema: mySchema,
+                 plugins: viewRef.current.state.plugins
+             });
+             viewRef.current.updateState(newState);
+         }
     }
   }, [value]);
 

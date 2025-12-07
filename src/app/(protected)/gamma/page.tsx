@@ -51,8 +51,9 @@ export interface Row {
 const initialData: Row[] = [];
 
 // --- Components ---
+import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
 
-const SortableBlock = ({ block }: { block: Block }) => {
+const SortableBlock = ({ block, onUpdate }: { block: Block; onUpdate: (id: string, content: string) => void }) => {
   const {
     attributes,
     listeners,
@@ -72,11 +73,23 @@ const SortableBlock = ({ block }: { block: Block }) => {
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-blue-400 cursor-grab active:cursor-grabbing group item-block"
+      className="group relative p-2 pl-8 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-blue-400 item-block min-h-[40px]"
     >
-      <div className="text-sm text-gray-800">{block.content}</div>
+        {/* Drag Handle - Visible on Hover */}
+        <div 
+            {...attributes} 
+            {...listeners}
+            className="absolute left-0 top-0 bottom-0 w-7 cursor-grab flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-gray-50 rounded-l-lg z-10 text-gray-300 hover:text-gray-500 transition-all"
+        >
+            ⋮⋮
+        </div>
+
+      <ProseMirrorEditor 
+        value={block.content} 
+        onChange={(val) => onUpdate(block.id, val)} 
+        placeholder="Type something..."
+        className="min-h-[20px]"
+      />
     </div>
   );
 };
@@ -120,11 +133,13 @@ const SortableColumn = ({
   column,
   onResize,
   onAddBlock,
+  onUpdateBlock,
   isLast,
 }: {
   column: Column;
   onResize?: (delta: number) => void;
   onAddBlock?: (colId: string) => void;
+  onUpdateBlock: (id: string, content: string) => void;
   isLast?: boolean;
 }) => {
   const {
@@ -166,7 +181,7 @@ const SortableColumn = ({
       >
         <div className="flex flex-col gap-2 min-h-[50px]">
           {column.blocks.map((block) => (
-            <SortableBlock key={block.id} block={block} />
+            <SortableBlock key={block.id} block={block} onUpdate={onUpdateBlock} />
           ))}
         </div>
       </SortableContext>
@@ -185,11 +200,12 @@ const SortableColumn = ({
   );
 };
 
-const SortableRow = ({ row, onResizeColumn, onAddBlock, onAddColumn }: { 
+const SortableRow = ({ row, onResizeColumn, onAddBlock, onAddColumn, onUpdateBlock }: { 
     row: Row; 
     onResizeColumn: (colId: string, delta: number) => void; 
     onAddBlock: (colId: string) => void;
     onAddColumn: (rowId: string) => void;
+    onUpdateBlock: (id: string, content: string) => void;
 }) => {
   const {
     attributes,
@@ -234,6 +250,7 @@ const SortableRow = ({ row, onResizeColumn, onAddBlock, onAddColumn }: {
             isLast={index === row.columns.length - 1}
             onResize={(delta) => onResizeColumn(column.id, delta)}
             onAddBlock={onAddBlock}
+            onUpdateBlock={onUpdateBlock}
           />
         ))}
       </SortableContext>
@@ -359,6 +376,21 @@ const Page = () => {
                   }]
               };
           });
+      });
+  };
+
+  const handleUpdateBlock = (id: string, content: string) => {
+      setLayout(prev => {
+          return prev.map(row => ({
+              ...row,
+              columns: row.columns.map(col => ({
+                  ...col,
+                  blocks: col.blocks.map(block => {
+                      if (block.id !== id) return block;
+                      return { ...block, content };
+                  })
+              }))
+          }));
       });
   };
   
@@ -579,6 +611,7 @@ const Page = () => {
                     onResizeColumn={(colId, delta) => handleResizeColumn(row.id, colId, delta)}
                     onAddBlock={handleAddBlock}
                     onAddColumn={handleAddColumn}
+                    onUpdateBlock={handleUpdateBlock}
                 />
               ))}
             </SortableContext>
