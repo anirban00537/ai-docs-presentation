@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef } from "react";
+import { nanoid } from "@reduxjs/toolkit";
 import { TextWidgetNode } from "@/components/editor/widgets/text";
 import { NumberCardWidgetNode } from "@/components/editor/widgets/number-card";
 import { IconCardWidgetNode } from "@/components/editor/widgets/icon-card";
@@ -29,6 +30,7 @@ import type { ComparisonCardWidget } from "@/components/editor/widgets/compariso
 import type { TitleCardWidget } from "@/components/editor/widgets/title-card/types";
 import type { PricingCardWidget } from "@/components/editor/widgets/pricing-card/types";
 import type { GlobalTheme, SlideModel } from "@/store/slices/slidesSlice";
+import { addWidget } from "@/store/slices/slidesSlice";
 import { cn } from "@/lib/utils";
 import {
   useCanvasViewport,
@@ -37,8 +39,13 @@ import {
 } from "@/hooks/use-canvas-viewport";
 import { usePointerSession } from "@/hooks/use-pointer-session";
 import { useCanvasInteractions } from "@/hooks/use-canvas-interactions";
-import { useAppSelector } from "@/store/hooks";
-import { selectSnapLines } from "@/store/slices/editorUiSlice";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { 
+  selectSnapLines,
+  setCopiedWidget,
+  selectCopiedWidget,
+  selectWidget as selectWidgetAction,
+} from "@/store/slices/editorUiSlice";
 import { SnapLines } from "@/components/editor/snap-lines";
 
 type SlideProps = {
@@ -68,12 +75,14 @@ const Slide: React.FC<SlideProps> = ({
   globalTheme,
   showSnapLines = true,
 }) => {
+  const dispatch = useAppDispatch();
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragLayerRef = useRef<HTMLDivElement>(null);
   const readLayerRef = useRef<HTMLDivElement>(null);
   const editingTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const snapLines = useAppSelector(selectSnapLines);
+  const copiedWidget = useAppSelector(selectCopiedWidget);
 
   // Use the canvas viewport hook for viewport calculation and coordinate transformation
   const { viewport, screenToSlide, invScale } = useCanvasViewport(
@@ -91,6 +100,67 @@ const Slide: React.FC<SlideProps> = ({
 
   // Use canvas interactions hook for background clicks
   const { handleCanvasPointerDown } = useCanvasInteractions();
+
+  const widgets = slide.widgets ?? [];
+
+  // Copy widget handler
+  const handleCopyWidget = useCallback(() => {
+    if (!selectedId || editingId) return; // Don't copy when editing text
+    
+    const widgetToCopy = widgets.find((w) => w.id === selectedId);
+    if (widgetToCopy) {
+      dispatch(setCopiedWidget(widgetToCopy));
+    }
+  }, [selectedId, editingId, widgets, dispatch]);
+
+  // Paste widget handler
+  const handlePasteWidget = useCallback(() => {
+    if (!copiedWidget || editingId) return; // Don't paste when editing text
+    
+    // Create a new widget with a new ID and offset position
+    const PASTE_OFFSET = 20;
+    const newWidget: SlideWidget = {
+      ...copiedWidget,
+      id: nanoid(),
+      x: copiedWidget.x + PASTE_OFFSET,
+      y: copiedWidget.y + PASTE_OFFSET,
+    };
+    
+    // Don't pass slideId - addWidget will use activeSlideId from Redux store
+    dispatch(addWidget({ widget: newWidget }));
+    dispatch(selectWidgetAction(newWidget.id));
+    onSelectWidget(newWidget.id);
+  }, [copiedWidget, editingId, dispatch, onSelectWidget]);
+
+  // Keyboard event handler for copy/paste
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if the target is an editable element
+      const target = event.target as HTMLElement;
+      const isEditableElement = 
+        target.tagName === "INPUT" || 
+        target.tagName === "TEXTAREA" || 
+        target.isContentEditable ||
+        target.closest(".ProseMirror") !== null;
+      
+      // If editing a text field, let the browser handle copy/paste
+      if (isEditableElement) return;
+      
+      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+      const modKey = isMac ? event.metaKey : event.ctrlKey;
+      
+      if (modKey && event.key.toLowerCase() === "c") {
+        event.preventDefault();
+        handleCopyWidget();
+      } else if (modKey && event.key.toLowerCase() === "v") {
+        event.preventDefault();
+        handlePasteWidget();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleCopyWidget, handlePasteWidget]);
 
   useEffect(() => {
     if (editingId && editingTextareaRef.current) {
@@ -133,8 +203,6 @@ const Slide: React.FC<SlideProps> = ({
     },
     [beginResize]
   );
-
-  const widgets = slide.widgets ?? [];
 
   return (
     <div

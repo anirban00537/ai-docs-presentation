@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type {
+  SlideWidget,
   SlideWidgetUpdate,
   ResizeHandle,
   SnapLine,
@@ -24,6 +25,7 @@ type EditorUiState = {
   activePointerId: number | null;
   snapLines: SnapLine[];
   isPresentationMode: boolean;
+  copiedWidget: SlideWidget | null;
 };
 
 const initialState: EditorUiState = {
@@ -34,6 +36,7 @@ const initialState: EditorUiState = {
   activePointerId: null,
   snapLines: [],
   isPresentationMode: false,
+  copiedWidget: null,
 };
 
 const editorUiSlice = createSlice({
@@ -98,6 +101,9 @@ const editorUiSlice = createSlice({
     setPresentationMode(state, action: PayloadAction<boolean>) {
       state.isPresentationMode = action.payload;
     },
+    setCopiedWidget(state, action: PayloadAction<SlideWidget | null>) {
+      state.copiedWidget = action.payload;
+    },
     resetEditorUi(state) {
       Object.assign(state, initialState);
     },
@@ -117,6 +123,7 @@ export const {
   setActivePointerId,
   setSnapLines,
   setPresentationMode,
+  setCopiedWidget,
   resetEditorUi,
 } = editorUiSlice.actions;
 
@@ -134,5 +141,7 @@ export const selectActivePointerId = (state: RootState) =>
 export const selectSnapLines = (state: RootState) => state.editorUi.snapLines;
 export const selectIsPresentationMode = (state: RootState) =>
   state.editorUi.isPresentationMode;
+export const selectCopiedWidget = (state: RootState) =>
+  state.editorUi.copiedWidget;
 
 export default editorUiSlice.reducer;
