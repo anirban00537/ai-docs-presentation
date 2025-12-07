@@ -16,6 +16,11 @@ type ComputeDragResult = {
   snapLines: SnapLine[];
 };
 
+type ComputeResizeResult = {
+  updates: SlideWidgetUpdate;
+  snapLines: SnapLine[];
+};
+
 export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
   const clamp = useCallback(
     (value: number, min: number, max: number) =>
@@ -59,6 +64,17 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
         { value: SLIDE_HEIGHT / 2, start: 0, end: SLIDE_WIDTH }, // Slide middle
         { value: SLIDE_HEIGHT, start: 0, end: SLIDE_WIDTH }, // Slide bottom
       ];
+
+      // Margin guides: common margins from slide edges
+      const MARGIN_GUIDES = [32, 64, 96];
+      MARGIN_GUIDES.forEach((margin) => {
+        // Vertical margins (from left and right)
+        vCandidates.push({ value: margin, start: 0, end: SLIDE_HEIGHT });
+        vCandidates.push({ value: SLIDE_WIDTH - margin, start: 0, end: SLIDE_HEIGHT });
+        // Horizontal margins (from top and bottom)
+        hCandidates.push({ value: margin, start: 0, end: SLIDE_WIDTH });
+        hCandidates.push({ value: SLIDE_HEIGHT - margin, start: 0, end: SLIDE_WIDTH });
+      });
 
       otherWidgets.forEach((w) => {
         // Vertical lines from other widgets (left, center, right)
@@ -185,11 +201,12 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
     (
       session: PointerSession,
       clientX: number,
-      clientY: number
-    ): SlideWidgetUpdate => {
+      clientY: number,
+      otherWidgets: SlideWidget[] = []
+    ): ComputeResizeResult => {
       const { startPointer, startRect, handle } = session;
       if (!handle) {
-        return startRect;
+        return { updates: startRect, snapLines: [] };
       }
 
       // Convert screen coordinates to slide coordinates
@@ -204,6 +221,7 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
       const includes = (direction: "left" | "right" | "top" | "bottom") =>
         handle.includes(direction);
 
+      // Calculate proposed dimensions first (without snapping)
       if (includes("left")) {
         const proposedX = startRect.x + dx;
         const maxX = startRect.x + startRect.width - MIN_WIDGET_SIZE;
@@ -242,11 +260,166 @@ export const useDragAndResize = (screenToSlide: ScreenToSlideTransform) => {
         );
       }
 
-      // Only enforce minimum size constraints, no boundary limits
+      // Snapping Logic for resize
+      const snapLines: SnapLine[] = [];
+      
+      // Margin guides: common margins from slide edges
+      const MARGIN_GUIDES = [32, 64, 96];
+
+      // Build snap candidates for the edges being resized
+      const vCandidates: { value: number; start: number; end: number }[] = [
+        { value: 0, start: 0, end: SLIDE_HEIGHT }, // Slide left edge
+        { value: SLIDE_WIDTH, start: 0, end: SLIDE_HEIGHT }, // Slide right edge
+        { value: SLIDE_WIDTH / 2, start: 0, end: SLIDE_HEIGHT }, // Slide horizontal center
+      ];
+      const hCandidates: { value: number; start: number; end: number }[] = [
+        { value: 0, start: 0, end: SLIDE_WIDTH }, // Slide top edge
+        { value: SLIDE_HEIGHT, start: 0, end: SLIDE_WIDTH }, // Slide bottom edge
+        { value: SLIDE_HEIGHT / 2, start: 0, end: SLIDE_WIDTH }, // Slide vertical center
+      ];
+
+      // Add margin guides
+      MARGIN_GUIDES.forEach((margin) => {
+        // Vertical margins (from left and right)
+        vCandidates.push({ value: margin, start: 0, end: SLIDE_HEIGHT });
+        vCandidates.push({ value: SLIDE_WIDTH - margin, start: 0, end: SLIDE_HEIGHT });
+        // Horizontal margins (from top and bottom)
+        hCandidates.push({ value: margin, start: 0, end: SLIDE_WIDTH });
+        hCandidates.push({ value: SLIDE_HEIGHT - margin, start: 0, end: SLIDE_WIDTH });
+      });
+
+      // Add other widgets' edges
+      otherWidgets.forEach((w) => {
+        vCandidates.push({ value: w.x, start: w.y, end: w.y + w.height }); // Left
+        vCandidates.push({ value: w.x + w.width, start: w.y, end: w.y + w.height }); // Right
+        vCandidates.push({ value: w.x + w.width / 2, start: w.y, end: w.y + w.height }); // Center
+        hCandidates.push({ value: w.y, start: w.x, end: w.x + w.width }); // Top
+        hCandidates.push({ value: w.y + w.height, start: w.x, end: w.x + w.width }); // Bottom
+        hCandidates.push({ value: w.y + w.height / 2, start: w.x, end: w.x + w.width }); // Middle
+      });
+
+      type SnapResult = {
+        candidateValue: number;
+        candidate: { value: number; start: number; end: number };
+      };
+
+      // Snap left edge
+      if (includes("left")) {
+        let bestDiff = SNAP_THRESHOLD + 1;
+        let bestSnap: SnapResult | null = null;
+        for (const candidate of vCandidates) {
+          const diff = Math.abs(x - candidate.value);
+          if (diff < bestDiff) {
+            bestDiff = diff;
+            bestSnap = { candidateValue: candidate.value, candidate };
+          }
+        }
+        if (bestSnap !== null && bestDiff <= SNAP_THRESHOLD) {
+          const originalRight = x + width;
+          x = bestSnap.candidateValue;
+          width = originalRight - x;
+          if (width >= MIN_WIDGET_SIZE) {
+            snapLines.push({
+              type: "vertical",
+              position: bestSnap.candidateValue,
+              start: Math.min(y, bestSnap.candidate.start),
+              end: Math.max(y + height, bestSnap.candidate.end),
+            });
+          } else {
+            // If width would be too small, revert
+            x = originalRight - MIN_WIDGET_SIZE;
+            width = MIN_WIDGET_SIZE;
+          }
+        }
+      }
+
+      // Snap right edge
+      if (includes("right")) {
+        const rightEdge = x + width;
+        let bestDiff = SNAP_THRESHOLD + 1;
+        let bestSnap: SnapResult | null = null;
+        for (const candidate of vCandidates) {
+          const diff = Math.abs(rightEdge - candidate.value);
+          if (diff < bestDiff) {
+            bestDiff = diff;
+            bestSnap = { candidateValue: candidate.value, candidate };
+          }
+        }
+        if (bestSnap !== null && bestDiff <= SNAP_THRESHOLD) {
+          const newWidth = bestSnap.candidateValue - x;
+          if (newWidth >= MIN_WIDGET_SIZE) {
+            width = newWidth;
+            snapLines.push({
+              type: "vertical",
+              position: bestSnap.candidateValue,
+              start: Math.min(y, bestSnap.candidate.start),
+              end: Math.max(y + height, bestSnap.candidate.end),
+            });
+          }
+        }
+      }
+
+      // Snap top edge
+      if (includes("top")) {
+        let bestDiff = SNAP_THRESHOLD + 1;
+        let bestSnap: SnapResult | null = null;
+        for (const candidate of hCandidates) {
+          const diff = Math.abs(y - candidate.value);
+          if (diff < bestDiff) {
+            bestDiff = diff;
+            bestSnap = { candidateValue: candidate.value, candidate };
+          }
+        }
+        if (bestSnap !== null && bestDiff <= SNAP_THRESHOLD) {
+          const originalBottom = y + height;
+          y = bestSnap.candidateValue;
+          height = originalBottom - y;
+          if (height >= MIN_WIDGET_SIZE) {
+            snapLines.push({
+              type: "horizontal",
+              position: bestSnap.candidateValue,
+              start: Math.min(x, bestSnap.candidate.start),
+              end: Math.max(x + width, bestSnap.candidate.end),
+            });
+          } else {
+            // If height would be too small, revert
+            y = originalBottom - MIN_WIDGET_SIZE;
+            height = MIN_WIDGET_SIZE;
+          }
+        }
+      }
+
+      // Snap bottom edge
+      if (includes("bottom")) {
+        const bottomEdge = y + height;
+        let bestDiff = SNAP_THRESHOLD + 1;
+        let bestSnap: SnapResult | null = null;
+        for (const candidate of hCandidates) {
+          const diff = Math.abs(bottomEdge - candidate.value);
+          if (diff < bestDiff) {
+            bestDiff = diff;
+            bestSnap = { candidateValue: candidate.value, candidate };
+          }
+        }
+        if (bestSnap !== null && bestDiff <= SNAP_THRESHOLD) {
+          const newHeight = bestSnap.candidateValue - y;
+          if (newHeight >= MIN_WIDGET_SIZE) {
+            height = newHeight;
+            snapLines.push({
+              type: "horizontal",
+              position: bestSnap.candidateValue,
+              start: Math.min(x, bestSnap.candidate.start),
+              end: Math.max(x + width, bestSnap.candidate.end),
+            });
+          }
+        }
+      }
+
+      // Enforce minimum size constraints
       width = clamp(width, MIN_WIDGET_SIZE, Number.POSITIVE_INFINITY);
       height = clamp(height, MIN_WIDGET_SIZE, Number.POSITIVE_INFINITY);
 
-      return { x, y, width, height };
+      return { updates: { x, y, width, height }, snapLines };
     },
     [clamp, screenToSlide]
   );

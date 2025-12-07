@@ -123,8 +123,17 @@ export const usePointerSession = ({
         override = result.updates;
         dispatch(setSnapLines(result.snapLines));
       } else {
-        override = computeResize(session, event.clientX, event.clientY);
-        dispatch(setSnapLines([]));
+        const otherWidgets = activeSlideWidgets.filter(
+          (w) => w.id !== session.widgetId
+        );
+        const result = computeResize(
+          session,
+          event.clientX,
+          event.clientY,
+          otherWidgets
+        );
+        override = result.updates;
+        dispatch(setSnapLines(result.snapLines));
       }
 
       const action = session.type === "drag" ? "drag:move" : "resize:move";
