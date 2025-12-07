@@ -48,7 +48,24 @@ export interface Row {
 
 // --- Initial Data ---
 // --- Initial Data ---
-const initialData: Row[] = [];
+const initialData: Row[] = [
+  {
+    id: nanoid(),
+    columns: [
+      {
+        id: nanoid(),
+        width: 1,
+        blocks: [
+          {
+            id: nanoid(),
+            type: "text",
+            content: "",
+          },
+        ],
+      },
+    ],
+  },
+];
 
 // --- Components ---
 import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
@@ -347,7 +364,7 @@ const Page = () => {
                          blocks: [...c.blocks, {
                              id: nanoid(),
                              type: 'text' as BlockType,
-                             content: 'New Block'
+                             content: ''
                          }]
                      };
                  })
@@ -367,7 +384,7 @@ const Page = () => {
                   columns: [...row.columns, {
                       id: nanoid(),
                       width: 1,
-                      blocks: [{ id: nanoid(), type: 'text' as BlockType, content: 'New Column Content' }]
+                      blocks: [{ id: nanoid(), type: 'text' as BlockType, content: '' }]
                   }]
               };
           });
@@ -395,7 +412,7 @@ const Page = () => {
           {
               id: nanoid(),
               columns: [
-                  { id: nanoid(), width: 1, blocks: [{ id: nanoid(), type: 'text' as BlockType, content: 'New Row Content' }]}
+                  { id: nanoid(), width: 1, blocks: [{ id: nanoid(), type: 'text' as BlockType, content: '' }]}
               ]
           }
       ]);
