@@ -175,11 +175,11 @@ const DraggableBlock = ({
   return (
     <div ref={setNodeRef} style={style} className="group/block relative min-w-0 flex-1">
       <div
-        className={`relative p-2 rounded-lg transition-all border-2 ${
+        className={`relative p-2 h-full transition-all ${
           isDragging 
-            ? "bg-blue-50 border-blue-300" 
-            : "border-transparent group-hover/row:border-gray-300"
-        }`}
+            ? "bg-blue-50" 
+            : ""
+        } ${!isLastBlock ? "border-r-2 border-transparent group-hover/row:border-gray-300" : ""}`}
       >
         {/* Drag Handle */}
         <div
@@ -256,8 +256,10 @@ const DroppableRow = ({
     <div className="group/row relative">
       <div
         ref={setNodeRef}
-        className={`flex p-2 rounded-lg transition-all items-start ${
-          isOver ? "bg-green-50 ring-2 ring-dashed ring-green-400" : ""
+        className={`flex p-2 rounded-lg transition-all items-stretch border-2 ${
+          isOver 
+            ? "bg-green-50 ring-2 ring-dashed ring-green-400 border-green-400" 
+            : "border-transparent hover:border-gray-300"
         }`}
       >
         <SortableContext
