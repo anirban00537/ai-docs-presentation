@@ -180,7 +180,7 @@ const DraggableBlock = ({
           isDragging 
             ? "bg-blue-50" 
             : ""
-        } ${!isLastBlock ? "border-r-2 border-transparent group-hover/row:border-gray-300" : ""}`}
+        } ${!isLastBlock ? "border-r border-transparent group-hover/row:border-gray-300" : ""}`}
       >
         {/* Drag Handle */}
         <div
@@ -257,9 +257,9 @@ const DroppableRow = ({
     <div className="group/row relative">
       <div
         ref={setNodeRef}
-        className={`flex p-2 rounded-lg transition-all items-stretch border-2 ${
+        className={`flex p-2 transition-all items-stretch border ${
           isOver 
-            ? "bg-green-50 ring-2 ring-dashed ring-green-400 border-green-400" 
+            ? "bg-green-50 ring-1 ring-dashed ring-green-400 border-green-400" 
             : "border-transparent hover:border-gray-300"
         }`}
       >
