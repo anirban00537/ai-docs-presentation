@@ -403,7 +403,7 @@ const GammaPage = () => {
       </div>
 
       {/* Editor Canvas */}
-      <div className="max-w-[1200px] mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 p-8 min-h-[500px]">
+      <div className="max-w-[1200px] mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
         <DndContext
           sensors={sensors}
           collisionDetection={customCollisionDetection}
