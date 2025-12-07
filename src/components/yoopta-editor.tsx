@@ -127,6 +127,9 @@ export const YooptaEditorWrapper: React.FC<YooptaEditorWrapperProps> = ({
           style={{ width: '100%' }}
           onChange={handleChange}
           className="w-full"
+          data-gramm="false"
+          data-gramm_editor="false"
+          data-enable-grammarly="false"
           autoFocus={false}
         />
       </div>
