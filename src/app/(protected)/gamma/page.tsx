@@ -47,63 +47,8 @@ export interface Row {
 }
 
 // --- Initial Data ---
-const initialData: Row[] = [
-  {
-    id: "row-1",
-    columns: [
-      {
-        id: "col-1",
-        width: 1.5,
-        blocks: [
-          { id: "block-1", type: "text", content: "## Gamma-Like Layout Engine" },
-          { id: "block-2", type: "text", content: "This is a prototype of a fluid grid layout engine." },
-        ],
-      },
-      {
-        id: "col-2",
-        width: 1,
-        blocks: [
-          { id: "block-3", type: "text", content: "Try dragging blocks between columns!" },
-          { id: "block-img-1", type: "image", content: "🖼️ Placeholder Image" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "row-2",
-    columns: [
-      {
-        id: "col-3",
-        width: 1,
-        blocks: [
-          { id: "block-4", type: "text", content: "### Implementation Plan" },
-        ],
-      },
-    ],
-  },
-  {
-      id: "row-3",
-      columns: [
-          {
-              id: "col-4",
-              width: 1,
-              blocks: [
-                  { id: "block-5", type: "text", content: "1. Data Structure (Rows > Cols > Blocks) ✅" },
-                  { id: "block-6", type: "text", content: "2. Drag & Drop Reordering ✅" },
-                  { id: "block-7", type: "text", content: "3. Column Resizing ✅" },
-              ]
-          },
-          {
-              id: "col-5",
-              width: 1,
-              blocks: [
-                  { id: "block-8", type: "text", content: "4. Content Rendering" },
-                  { id: "block-9", type: "text", content: "5. Polish & Animations" },
-              ]
-          }
-      ]
-  }
-];
+// --- Initial Data ---
+const initialData: Row[] = [];
 
 // --- Components ---
 
@@ -403,6 +348,8 @@ const Page = () => {
       setLayout(prev => {
           return prev.map(row => {
               if (row.id !== rowId) return row;
+              if (row.columns.length >= 3) return row; // Max 3 columns
+              
               return {
                   ...row,
                   columns: [...row.columns, {
@@ -636,12 +583,34 @@ const Page = () => {
               ))}
             </SortableContext>
             
-            <button 
-                onClick={handleAddRow}
-                className="py-4 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50 transition-all font-medium"
-            >
-                + Add New Row
-            </button>
+            <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-dashed border-gray-200">
+                 <button 
+                  onClick={handleAddRow}
+                  className="flex-1 py-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all font-medium"
+                >
+                  + Add New Row
+                </button>
+            </div>
+
+            {/* JSON Data Editor */}
+            <div className="mt-12 border-t pt-8">
+               <h3 className="text-xl font-bold mb-4">Layout Data (JSON)</h3>
+               <p className="text-sm text-gray-500 mb-2">Edit this JSON to update the layout instantly.</p>
+               <textarea 
+                  className="w-full h-[300px] p-4 font-mono text-xs bg-gray-900 text-green-400 rounded-xl"
+                  value={JSON.stringify(layout, null, 2)}
+                  onChange={(e) => {
+                      try {
+                          const parsed = JSON.parse(e.target.value);
+                          if(Array.isArray(parsed)) {
+                              setLayout(parsed);
+                          }
+                      } catch(e) {
+                          // Ignore parse errors while typing
+                      }
+                  }}
+               />
+            </div>
           </div>
 
           <DragOverlay>
