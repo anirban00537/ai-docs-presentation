@@ -531,19 +531,6 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
     );
   };
 
-  const handleAlign = (align: "left" | "center" | "right") => {
-    if (align !== (widget.textAlign ?? "left")) {
-      dispatch(
-        updateWidgetAction({
-          slideId: activeSlideId,
-          widgetId: widget.id,
-          updates: { textAlign: align },
-        })
-      );
-    }
-  };
-
-  const currentAlign = widget.textAlign ?? "left";
   const currentBackgroundColor =
     widget.backgroundColor ?? globalTheme?.surface ?? "#ffffff";
   const currentBackgroundType = widget.backgroundType ?? "glass";
@@ -670,15 +657,6 @@ const ListCardEditingToolbar: React.FC<ListCardEditingToolbarProps> = ({
         color: currentBulletColor,
         onChange: handleSetBulletColor,
         label: "Bullet Color",
-      },
-    },
-    { type: "separator" },
-    // Alignment controls
-    {
-      type: "alignment",
-      config: {
-        value: currentAlign,
-        onChange: handleAlign,
       },
     },
   ];

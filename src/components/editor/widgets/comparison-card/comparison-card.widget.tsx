@@ -460,17 +460,30 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
 
     return (
       <div
-        className="flex-1 rounded-2xl border border-white/5 p-5"
+        className="flex-1 rounded-2xl p-6 relative overflow-hidden transition-all duration-300"
         style={{
           textAlign,
-          backgroundColor: "rgba(255, 255, 255, 0.02)",
+          background: `linear-gradient(135deg, ${accentColor}08 0%, ${accentColor}03 100%)`,
+          border: `1px solid ${accentColor}15`,
         }}
       >
-        <div className="flex flex-col h-full gap-5">
-          <div className="flex items-center justify-between">
+        {/* Subtle gradient accent line at top */}
+        <div
+          className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
+          style={{
+            background: `linear-gradient(90deg, ${accentColor} 0%, ${accentColor}60 100%)`,
+          }}
+        />
+        
+        <div className="flex flex-col h-full gap-4">
+          {/* Label badge */}
+          <div className="flex items-center">
             <span
-              className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white shadow-sm"
-              style={{ backgroundColor: accentColor }}
+              className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg"
+              style={{ 
+                background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%)`,
+                boxShadow: `0 4px 14px ${accentColor}40`,
+              }}
             >
               <ProseMirrorEditor
                 value={label}
@@ -499,7 +512,7 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
                 placeholder={isLeft ? "Plan A" : "Plan B"}
                 readOnly={!isSelected}
                 className={cn(
-                  "w-auto min-w-[60px] text-center text-white uppercase tracking-wide",
+                  "w-auto min-w-[50px] text-center text-white uppercase tracking-wider",
                   isSelected ? "cursor-text" : "cursor-default"
                 )}
                 style={{
@@ -516,52 +529,67 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
             </span>
           </div>
 
-          <ProseMirrorEditor
-            value={title}
-            onChange={(value) => handleTitleChange(side, value)}
-            onFocus={() => {
-              if (!isSelected) return;
-              handleFieldFocus(titleField);
-            }}
-            onBlur={() => {
-              if (side === "left") {
-                debouncedUpdateLeftTitle.flush();
-              } else {
-                debouncedUpdateRightTitle.flush();
-              }
-              scheduleActiveFieldReset();
-            }}
-            placeholder={isLeft ? "Plan A title" : "Plan B title"}
-            readOnly={!isSelected}
-            className={cn(
-              "w-full",
-              isSelected ? "cursor-text" : "cursor-default"
-            )}
-            style={{
-              fontSize: `${titleFontSize}px`,
-              fontWeight: 700,
-              color: textColor,
-              fontFamily: titleFontFamily,
-              lineHeight: 1.2,
-            }}
-          />
+          {/* Title */}
+          <div className="mt-1">
+            <ProseMirrorEditor
+              value={title}
+              onChange={(value) => handleTitleChange(side, value)}
+              onFocus={() => {
+                if (!isSelected) return;
+                handleFieldFocus(titleField);
+              }}
+              onBlur={() => {
+                if (side === "left") {
+                  debouncedUpdateLeftTitle.flush();
+                } else {
+                  debouncedUpdateRightTitle.flush();
+                }
+                scheduleActiveFieldReset();
+              }}
+              placeholder={isLeft ? "Plan A title" : "Plan B title"}
+              readOnly={!isSelected}
+              className={cn(
+                "w-full",
+                isSelected ? "cursor-text" : "cursor-default"
+              )}
+              style={{
+                fontSize: `${titleFontSize}px`,
+                fontWeight: 700,
+                color: textColor,
+                fontFamily: titleFontFamily,
+                lineHeight: 1.25,
+                letterSpacing: "-0.02em",
+              }}
+            />
+          </div>
 
-          <div className="flex flex-col gap-3 flex-1 min-h-0 overflow-y-auto">
-            {items.map((item, index) => (
-              <div
-                key={`${side}-item-${index}`}
-                {...{ [listItemAttr]: true }}
-                className="group/item flex items-start gap-3"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-current/10 text-current transition-all duration-200">
+          {/* Items list */}
+          <div className="flex flex-col gap-3 flex-1 min-h-0 mt-2" style={{ textAlign }}>
+            {items.map((item, index) => {
+              const isRightAligned = textAlign === "right";
+              const isCenterAligned = textAlign === "center";
+              
+              const numberBadge = (
+                <div 
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-200"
+                  style={{ 
+                    backgroundColor: `${accentColor}15`,
+                  }}
+                >
                   <span
-                    className="font-semibold"
-                    style={{ color: accentColor, fontSize: "0.8rem" }}
+                    className="font-bold text-sm"
+                    style={{ color: accentColor }}
                   >
                     {index + 1}
                   </span>
                 </div>
-                <div className="flex-1 flex items-center gap-3 min-w-0">
+              );
+              
+              const itemContent = (
+                <div 
+                  className="flex-1 flex items-center gap-2 min-w-0 pt-0.5"
+                  style={{ textAlign }}
+                >
                   <ProseMirrorEditor
                     value={item}
                     onChange={(value) => handleItemsChange(side, index, value)}
@@ -578,10 +606,10 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
                       scheduleActiveFieldReset();
                     }}
                     onKeyDown={(event) => handleItemKeyDown(side, index, event)}
-                    placeholder={`Detail ${index + 1}`}
+                    placeholder={`Feature ${index + 1}`}
                     readOnly={!isSelected}
                     className={cn(
-                      "w-full flex-1 text-base",
+                      "w-full flex-1",
                       isSelected ? "cursor-text" : "cursor-default"
                     )}
                     style={{
@@ -589,41 +617,75 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
                       color: textColor,
                       fontFamily: itemFontFamily,
                       lineHeight: 1.5,
+                      opacity: 0.9,
+                      textAlign,
                     }}
                   />
-                  {isSelected && items.length > 1 && (
-                    <button
-                      {...{ [removeDataAttr]: true }}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleRemoveItem(side, index);
-                      }}
-                      className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 p-1.5 rounded-md hover:bg-destructive/10 hover:text-destructive"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
                 </div>
-              </div>
-            ))}
-
-            {isSelected && (
-              <button
-                {...{ [addDataAttr]: true }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handleAddItem(side);
-                }}
-                className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-all duration-200 opacity-0 group-hover:opacity-100"
-              >
-                <div
-                  className="flex h-6 w-6 items-center justify-center rounded-full border border-dashed border-current/40"
-                  style={{ color: accentColor }}
+              );
+              
+              const removeButton = isSelected && items.length > 1 && (
+                <button
+                  {...{ [removeDataAttr]: true }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleRemoveItem(side, index);
+                  }}
+                  className="opacity-0 group-hover/item:opacity-100 transition-all duration-200 p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive shrink-0"
                 >
-                  <Plus className="h-3.5 w-3.5" />
+                  <X className="h-4 w-4" />
+                </button>
+              );
+              
+              return (
+                <div
+                  key={`${side}-item-${index}`}
+                  {...{ [listItemAttr]: true }}
+                  className={cn(
+                    "group/item flex items-center gap-3 p-2 -mx-2 rounded-xl transition-all duration-200 hover:bg-black/[0.02]",
+                    isRightAligned && "flex-row-reverse",
+                    isCenterAligned && "justify-center"
+                  )}
+                  style={{ textAlign }}
+                >
+                  {numberBadge}
+                  {itemContent}
+                  {removeButton}
                 </div>
-                <span>Add item</span>
-              </button>
+              );
+            })}
+
+            {/* Add item button - aligned with items */}
+            {isSelected && (
+              <div 
+                className={cn(
+                  "flex items-center gap-3 p-2 -mx-2",
+                  textAlign === "right" && "flex-row-reverse",
+                  textAlign === "center" && "justify-center"
+                )}
+                style={{ textAlign }}
+              >
+                <button
+                  {...{ [addDataAttr]: true }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleAddItem(side);
+                  }}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 border-dashed transition-all duration-200 hover:border-solid opacity-50 hover:opacity-100"
+                  style={{ 
+                    borderColor: accentColor,
+                    color: accentColor,
+                  }}
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+                <span 
+                  className="text-sm font-medium opacity-0 group-hover:opacity-60 transition-opacity duration-200"
+                  style={{ color: textColor }}
+                >
+                  Add item
+                </span>
+              </div>
             )}
           </div>
         </div>
@@ -646,12 +708,17 @@ const ComparisonCardWidgetNodeBase: React.FC<ComparisonCardWidgetNodeProps> = ({
         backgroundType={backgroundType}
         backgroundColor={backgroundColor}
       >
-        <div className="flex h-full w-full gap-6">
+        <div className="flex h-full w-full gap-4 p-2">
           {renderColumn("left")}
-          <div
-            className="w-px self-stretch rounded-full"
-            style={{ backgroundColor: dividerColor }}
-          />
+          {/* Vertical divider with gradient */}
+          <div className="flex flex-col items-center justify-center py-8">
+            <div
+              className="w-px flex-1 rounded-full"
+              style={{ 
+                background: `linear-gradient(180deg, transparent 0%, ${dividerColor} 20%, ${dividerColor} 80%, transparent 100%)`,
+              }}
+            />
+          </div>
           {renderColumn("right")}
         </div>
       </WidgetBackground>
