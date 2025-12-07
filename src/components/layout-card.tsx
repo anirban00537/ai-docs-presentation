@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Plus, MoreVertical, Trash2, LayoutTemplate } from "lucide-react";
+import { MoreVertical, Trash2, LayoutTemplate } from "lucide-react";
 import { AppleButton } from "@/components/editor/apple-button";
 import Slide from "@/components/editor/slide";
 import type { SlideModel } from "@/store/slices/slidesSlice";
@@ -170,29 +170,31 @@ export function LayoutCard({ layout, onUse, onDelete }: LayoutCardProps) {
               )}
             </div>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <AppleButton
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 opacity-0 transition-all duration-200 group-hover:opacity-100"
-              >
-                <MoreVertical className="h-3 w-3" />
-              </AppleButton>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                onClick={(e) => onDelete(layout.id, e)}
-                className="text-destructive focus:text-destructive"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <AppleButton
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 opacity-80 hover:opacity-100 hover:bg-destructive/10 transition-all duration-200"
+                  title="More options"
+                >
+                  <MoreVertical className="h-3.5 w-3.5" />
+                </AppleButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onClick={(e) => onDelete(layout.id, e)}
+                  className="text-destructive focus:text-destructive cursor-pointer"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

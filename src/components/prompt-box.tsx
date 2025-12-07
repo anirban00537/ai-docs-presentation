@@ -433,44 +433,44 @@ export function PromptBox() {
           />
 
           <form onSubmit={handleSubmit} className="flex items-center w-full">
-            <textarea
+          <textarea
               ref={textareaRef}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Describe your presentation idea... (e.g., 'A pitch deck for a new AI startup')"
-              className="relative w-full min-h-[100px] p-6 bg-transparent border-none outline-none resize-none text-lg text-foreground placeholder:text-muted-foreground z-10"
-              style={{ transform: "translateZ(10px)" }}
+            placeholder="Describe your presentation idea... (e.g., 'A pitch deck for a new AI startup')"
+            className="relative w-full min-h-[100px] p-6 bg-transparent border-none outline-none resize-none text-lg text-foreground placeholder:text-muted-foreground z-10"
+            style={{ transform: "translateZ(10px)" }}
               disabled={createFromPromptMutation.isPending}
-            />
-            <div
-              className="pr-4 pt-2 self-start md:self-center md:pt-0 z-10"
-              style={{ transform: "translateZ(10px)" }}
-            >
-              <AppleButton
+          />
+          <div
+            className="pr-4 pt-2 self-start md:self-center md:pt-0 z-10"
+            style={{ transform: "translateZ(10px)" }}
+          >
+            <AppleButton
                 type="submit"
-                variant="primary"
-                size="sm"
+              variant="primary"
+              size="sm"
                 disabled={!prompt.trim() || createFromPromptMutation.isPending}
-                className="p-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed group/btn relative"
-                style={{
-                  boxShadow:
-                    "0 4px 12px rgba(255, 245, 200, 0.4), 0 2px 8px rgba(255, 250, 220, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
-                }}
-              >
+              className="p-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed group/btn relative"
+              style={{
+                boxShadow:
+                  "0 4px 12px rgba(255, 245, 200, 0.4), 0 2px 8px rgba(255, 250, 220, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+              }}
+            >
                 {createFromPromptMutation.isPending ? (
                   <Loader2
                     className="w-5 h-5 relative text-white animate-spin"
                     style={{ transform: "translateZ(20px)" }}
                   />
                 ) : (
-                  <Send
-                    className="w-5 h-5 relative text-white"
-                    style={{ transform: "translateZ(20px)" }}
-                  />
+              <Send
+                className="w-5 h-5 relative text-white"
+                style={{ transform: "translateZ(20px)" }}
+              />
                 )}
-              </AppleButton>
-            </div>
+            </AppleButton>
+          </div>
           </form>
         </div>
       </motion.div>

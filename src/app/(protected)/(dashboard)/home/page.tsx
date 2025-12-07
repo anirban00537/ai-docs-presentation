@@ -85,43 +85,43 @@ export default function HomePage() {
       />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto py-12">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
           className="w-full max-w-3xl mx-auto space-y-8 text-center mb-16"
+      >
+        <motion.h1
+          variants={itemVariants}
+          className="text-lg md:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent pb-2"
         >
-          <motion.h1
-            variants={itemVariants}
-            className="text-lg md:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent pb-2"
-          >
-            What presentation do you want to create?
-          </motion.h1>
+          What presentation do you want to create?
+        </motion.h1>
 
-          <motion.div variants={itemVariants}>
-            <PromptBox />
-          </motion.div>
-
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground"
-          >
-            {["Pitch Deck", "Marketing Strategy", "Quarterly Review"].map(
-              (suggestion) => (
-                <motion.span
-                  key={suggestion}
-                  whileHover={{
-                    scale: 1.05,
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-4 py-2 rounded-full backdrop-blur-sm cursor-pointer transition-colors bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/60 text-muted-foreground hover:text-foreground"
-                >
-                  {suggestion}
-                </motion.span>
-              )
-            )}
-          </motion.div>
+        <motion.div variants={itemVariants}>
+          <PromptBox />
         </motion.div>
+
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground"
+        >
+          {["Pitch Deck", "Marketing Strategy", "Quarterly Review"].map(
+            (suggestion) => (
+              <motion.span
+                key={suggestion}
+                whileHover={{
+                  scale: 1.05,
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2 rounded-full backdrop-blur-sm cursor-pointer transition-colors bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/60 text-muted-foreground hover:text-foreground"
+              >
+                {suggestion}
+              </motion.span>
+            )
+          )}
+        </motion.div>
+      </motion.div>
 
         {/* Recent Presentations Section */}
         {presentations.length > 0 && (

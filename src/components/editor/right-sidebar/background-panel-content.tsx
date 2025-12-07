@@ -121,55 +121,55 @@ export const BackgroundPanelContent: React.FC<BackgroundPanelContentProps> = ({
         )}
       >
         <div className="flex items-center justify-between gap-2 mb-3">
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) =>
-              setActiveTab(value as "color" | "unsplash" | "your-media")
-            }
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) =>
+            setActiveTab(value as "color" | "unsplash" | "your-media")
+          }
             className="flex-1"
+        >
+          <TabsList
+            className={cn(
+              "w-full grid grid-cols-3 p-1 rounded-xl",
+              isDarkTheme ? "bg-white/5" : "bg-muted/50"
+            )}
           >
-            <TabsList
+            <TabsTrigger
+              value="color"
               className={cn(
-                "w-full grid grid-cols-3 p-1 rounded-xl",
-                isDarkTheme ? "bg-white/5" : "bg-muted/50"
+                  "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
+                "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
+                "hover:scale-[1.02] active:scale-[0.98]",
+                isDarkTheme ? "text-white/80" : "text-muted-foreground"
               )}
             >
-              <TabsTrigger
-                value="color"
-                className={cn(
+              <Palette className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
+              Color
+            </TabsTrigger>
+            <TabsTrigger
+              value="unsplash"
+              className={cn(
                   "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
-                  "transition-all duration-300 ease-out rounded-lg flex items-center gap-2",
-                  "hover:scale-[1.02] active:scale-[0.98]",
-                  isDarkTheme ? "text-white/80" : "text-muted-foreground"
-                )}
-              >
-                <Palette className="h-3.5 w-3.5 transition-transform duration-300 ease-out" />
-                Color
-              </TabsTrigger>
-              <TabsTrigger
-                value="unsplash"
-                className={cn(
+                "transition-all duration-300 ease-out rounded-lg",
+                "hover:scale-[1.02] active:scale-[0.98]",
+                isDarkTheme ? "text-white/80" : "text-muted-foreground"
+              )}
+            >
+              Unsplash
+            </TabsTrigger>
+            <TabsTrigger
+              value="your-media"
+              className={cn(
                   "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
-                  "transition-all duration-300 ease-out rounded-lg",
-                  "hover:scale-[1.02] active:scale-[0.98]",
-                  isDarkTheme ? "text-white/80" : "text-muted-foreground"
-                )}
-              >
-                Unsplash
-              </TabsTrigger>
-              <TabsTrigger
-                value="your-media"
-                className={cn(
-                  "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md",
-                  "transition-all duration-300 ease-out rounded-lg",
-                  "hover:scale-[1.02] active:scale-[0.98]",
-                  isDarkTheme ? "text-white/80" : "text-muted-foreground"
-                )}
-              >
-                Your Media
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+                "transition-all duration-300 ease-out rounded-lg",
+                "hover:scale-[1.02] active:scale-[0.98]",
+                isDarkTheme ? "text-white/80" : "text-muted-foreground"
+              )}
+            >
+              Your Media
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
           {(backgroundColor || backgroundImage || backgroundBlur) && (
             <button
               type="button"
