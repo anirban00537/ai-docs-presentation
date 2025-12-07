@@ -35,7 +35,7 @@ export const BackgroundTypeSelector: React.FC<BackgroundTypeSelectorProps> = ({
           <Popover.Button
             ref={buttonRef}
             className={cn(
-              "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-all duration-300 ease-out",
+              "flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-all duration-200 ease-out",
               isDarkTheme
                 ? "bg-white/5 text-white/80 hover:bg-white/10"
                 : "bg-black/5 text-muted-foreground/80 hover:bg-black/10",
@@ -52,8 +52,8 @@ export const BackgroundTypeSelector: React.FC<BackgroundTypeSelectorProps> = ({
             <PopoverPanelPortal buttonRef={buttonRef}>
               <div
                 className={cn(
-                  "flex flex-col gap-1.5 p-3 backdrop-blur-2xl rounded-xl shadow-2xl border min-w-[200px]",
-                  "animate-in fade-in zoom-in-95 duration-300 ease-out",
+                  "flex flex-col gap-1 p-2 backdrop-blur-2xl rounded-lg shadow-xl border min-w-[180px]",
+                  "animate-in fade-in zoom-in-95 duration-200 ease-out",
                   isDarkTheme
                     ? "bg-black border-white/10"
                     : "bg-white/95 border-white/20"
@@ -64,7 +64,7 @@ export const BackgroundTypeSelector: React.FC<BackgroundTypeSelectorProps> = ({
                     key={option.value}
                     type="button"
                     className={cn(
-                      "flex flex-col rounded-lg px-3 py-2 text-xs transition-all duration-300 ease-out text-left",
+                      "flex flex-col rounded-md px-2.5 py-1.5 text-xs transition-all duration-200 ease-out text-left",
                       option.value === config.value
                         ? isDarkTheme
                           ? "bg-white/10 text-white/90 font-semibold"

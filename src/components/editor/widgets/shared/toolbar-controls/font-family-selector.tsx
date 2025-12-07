@@ -66,8 +66,8 @@ export const FontFamilySelector: React.FC<FontFamilySelectorProps> = ({
         variant="ghost"
         size="sm"
         className={cn(
-          "flex items-center gap-2 rounded-full border border-transparent px-3 py-1.5 text-xs",
-          "transition-all duration-300 ease-out w-[110px] justify-between group",
+          "flex items-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-xs",
+          "transition-all duration-200 ease-out w-[100px] justify-between group",
           isDarkTheme
             ? "bg-white/5 hover:bg-white/10"
             : "bg-black/5 hover:bg-black/10"
@@ -95,8 +95,8 @@ export const FontFamilySelector: React.FC<FontFamilySelectorProps> = ({
         <div
           ref={menuRef}
           className={cn(
-            "absolute left-0 top-full mt-2 z-50 min-w-[200px] max-h-[300px] overflow-y-auto rounded-xl border backdrop-blur-xl p-1.5",
-            "animate-in fade-in zoom-in-95 duration-300 ease-out",
+            "absolute left-0 top-full mt-1.5 z-50 min-w-[180px] max-h-[280px] overflow-y-auto rounded-lg border backdrop-blur-xl p-1",
+            "animate-in fade-in zoom-in-95 duration-200 ease-out",
             "custom-scrollbar",
             isDarkTheme
               ? "bg-black border-white/10 custom-scrollbar-dark shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]"
@@ -109,7 +109,7 @@ export const FontFamilySelector: React.FC<FontFamilySelectorProps> = ({
                 key={font.value}
                 type="button"
                 className={cn(
-                  "flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-all duration-300 ease-out",
+                  "flex items-center justify-between px-2.5 py-1.5 text-sm rounded-md transition-all duration-200 ease-out",
                   config.value === font.value
                     ? isDarkTheme
                       ? "bg-white/10 text-white/90 font-medium"

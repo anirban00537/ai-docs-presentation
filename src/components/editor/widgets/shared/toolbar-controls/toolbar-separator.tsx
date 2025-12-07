@@ -14,7 +14,7 @@ export const ToolbarSeparator: React.FC<{ className?: string }> = ({
   return (
     <div
       className={cn(
-        "h-5 w-px rounded-full",
+        "h-4 w-px rounded-full",
         isDarkTheme ? "bg-white/10" : "bg-black/10",
         className
       )}

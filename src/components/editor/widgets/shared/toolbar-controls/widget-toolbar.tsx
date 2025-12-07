@@ -137,9 +137,9 @@ export const WidgetToolbar: React.FC<WidgetToolbarProps> = ({
           ? { [toolbarSelector]: "true" }
           : { "data-widget-toolbar": "true" })}
         className={cn(
-          "pointer-events-auto flex items-center gap-3 rounded-2xl border px-3.5 py-1.5",
-          "backdrop-blur-xl transition-all duration-300",
-          "hover:shadow-[0_10px_38px_-14px_rgba(0,0,0,0.3)]",
+          "pointer-events-auto flex items-center gap-1.5 rounded-xl border px-2.5 py-1",
+          "backdrop-blur-xl transition-all duration-200",
+          "hover:shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)]",
           isDarkTheme
             ? "border-white/10 bg-black shadow-[0_6px_30px_-14px_rgba(0,0,0,0.5)] hover:bg-black/90"
             : "border-white/20 bg-white/80 shadow-[0_6px_30px_-14px_rgba(0,0,0,0.25)] hover:bg-white/90"

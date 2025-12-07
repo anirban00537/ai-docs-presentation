@@ -21,7 +21,7 @@ export const AlignmentControls: React.FC<AlignmentControlsProps> = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-1 rounded-full p-1",
+        "flex items-center gap-0.5 rounded-md p-0.5",
         isDarkTheme ? "bg-white/5" : "bg-black/5"
       )}
     >
@@ -31,8 +31,8 @@ export const AlignmentControls: React.FC<AlignmentControlsProps> = ({
           variant="ghost"
           size="icon-sm"
           className={cn(
-            "w-7 h-7 rounded-full transition-all duration-300 ease-out",
-            "hover:scale-[1.05] active:scale-[0.95]",
+            "w-6 h-6 rounded-md transition-all duration-200 ease-out",
+            "hover:scale-[1.03] active:scale-[0.97]",
             config.value === value
               ? isDarkTheme
                 ? "bg-white/10 text-white/90 shadow-sm ring-1 ring-white/10"

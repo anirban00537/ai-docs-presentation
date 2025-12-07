@@ -32,16 +32,16 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
           <Popover.Button
             ref={buttonRef}
             className={cn(
-              "relative w-6 h-6 rounded-full cursor-pointer ring-1 shadow-[0_2px_4px_rgba(0,0,0,0.1)]",
-              "transition-all duration-300 ease-out hover:scale-[1.08] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)]",
-              "focus:outline-none active:scale-[0.95]",
+              "relative w-5 h-5 rounded-md cursor-pointer ring-1 shadow-[0_1px_3px_rgba(0,0,0,0.08)]",
+              "transition-all duration-200 ease-out hover:scale-[1.05] hover:shadow-[0_2px_8px_rgba(0,0,0,0.12)]",
+              "focus:outline-none active:scale-[0.97]",
               isDarkTheme ? "ring-white/10" : "ring-black/5"
             )}
             style={{ backgroundColor: config.color }}
           >
             <div
               className={cn(
-                "absolute inset-0 rounded-full ring-1 ring-inset",
+                "absolute inset-0 rounded-md ring-1 ring-inset",
                 isDarkTheme ? "ring-white/10" : "ring-black/5"
               )}
             />
@@ -63,8 +63,8 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             <PopoverPanelPortal buttonRef={buttonRef}>
               <div
                 className={cn(
-                  "flex flex-col gap-3 p-3 backdrop-blur-2xl rounded-2xl shadow-2xl border",
-                  "animate-in fade-in zoom-in-95 duration-300 ease-out min-w-[240px]",
+                  "flex flex-col gap-2.5 p-2.5 backdrop-blur-2xl rounded-xl shadow-xl border",
+                  "animate-in fade-in zoom-in-95 duration-200 ease-out min-w-[220px]",
                   isDarkTheme
                     ? "bg-black border-white/10"
                     : "bg-white/95 border-white/20"
