@@ -30,6 +30,7 @@ import {
   deleteSlide,
   updateBlockContent,
   addRowWithColumns,
+  addBlockToRow,
   deleteRow,
   moveBlock,
   Block,
@@ -138,11 +139,15 @@ const SlideDropZone = ({
 const DraggableBlock = ({
   block,
   slideId,
+  rowId,
   onUpdate,
+  onAddColumn,
 }: {
   block: Block;
   slideId: string;
+  rowId: string;
   onUpdate: (blockId: string, content: any) => void;
+  onAddColumn: (rowId: string, afterBlockId: string) => void;
 }) => {
   const {
     attributes,
@@ -166,8 +171,10 @@ const DraggableBlock = ({
   return (
     <div ref={setNodeRef} style={style} className="group relative min-w-0 flex-1">
       <div
-        className={`relative p-1 rounded-lg transition-all ${
-          isDragging ? "bg-blue-50 ring-2 ring-blue-300" : "hover:bg-gray-50/50"
+        className={`relative p-2 rounded-lg transition-all border-2 ${
+          isDragging 
+            ? "bg-blue-50 border-blue-300" 
+            : "border-transparent hover:border-gray-300 hover:bg-gray-50/30"
         }`}
       >
         {/* Drag Handle */}
@@ -185,6 +192,21 @@ const DraggableBlock = ({
             <circle cx="4.5" cy="12.5" r="1.5" />
           </svg>
         </div>
+
+        {/* Add Column Button - Right Side */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddColumn(rowId, block.id);
+          }}
+          className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 text-white opacity-0 group-hover:opacity-100 hover:bg-blue-600 hover:scale-110 transition-all z-20 flex items-center justify-center shadow-md"
+          title="Add column"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="6" y1="2" x2="6" y2="10" />
+            <line x1="2" y1="6" x2="10" y2="6" />
+          </svg>
+        </button>
 
         {/* Editor */}
         <YooptaEditorWrapper
@@ -206,12 +228,14 @@ const DroppableRow = ({
   slideId,
   onUpdateBlock,
   onDeleteRow,
+  onAddColumn,
   rowCount,
 }: {
   row: Row;
   slideId: string;
   onUpdateBlock: (blockId: string, content: any) => void;
   onDeleteRow: (rowId: string) => void;
+  onAddColumn: (rowId: string, afterBlockId: string) => void;
   rowCount: number;
 }) => {
   const { setNodeRef, isOver } = useDroppable({
@@ -236,7 +260,9 @@ const DroppableRow = ({
               key={block.id}
               block={block}
               slideId={slideId}
+              rowId={row.id}
               onUpdate={onUpdateBlock}
+              onAddColumn={onAddColumn}
             />
           ))}
         </SortableContext>
@@ -263,6 +289,7 @@ const SlideCard = ({
   totalSlides,
   onUpdateBlock,
   onDeleteRow,
+  onAddColumn,
   onDeleteSlide,
   isLayoutDragging,
   activeLayoutSlideId,
@@ -272,6 +299,7 @@ const SlideCard = ({
   totalSlides: number;
   onUpdateBlock: (slideId: string, blockId: string, content: any) => void;
   onDeleteRow: (slideId: string, rowId: string) => void;
+  onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
   onDeleteSlide: (slideId: string) => void;
   isLayoutDragging: boolean;
   activeLayoutSlideId: string | null;
@@ -292,6 +320,7 @@ const SlideCard = ({
             slideId={slide.id}
             onUpdateBlock={(blockId, content) => onUpdateBlock(slide.id, blockId, content)}
             onDeleteRow={(rowId) => onDeleteRow(slide.id, rowId)}
+            onAddColumn={(rowId, afterBlockId) => onAddColumn(slide.id, rowId, afterBlockId)}
             rowCount={slide.rows.length}
           />
         ))}
@@ -410,6 +439,10 @@ const GammaPage = () => {
 
   const handleDeleteSlide = (slideId: string) => {
     dispatch(deleteSlide(slideId));
+  };
+
+  const handleAddColumn = (slideId: string, rowId: string, afterBlockId: string) => {
+    dispatch(addBlockToRow({ slideId, rowId, afterBlockId }));
   };
 
   // --- Drag and Drop ---
@@ -581,6 +614,7 @@ const GammaPage = () => {
                 totalSlides={slides.length}
                 onUpdateBlock={handleUpdateBlock}
                 onDeleteRow={handleDeleteRow}
+                onAddColumn={handleAddColumn}
                 onDeleteSlide={handleDeleteSlide}
                 isLayoutDragging={isLayoutDragging}
                 activeLayoutSlideId={null}
