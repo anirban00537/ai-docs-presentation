@@ -18,61 +18,36 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   horizontalListSortingStrategy,
-  verticalListSortingStrategy,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { nanoid } from "nanoid";
 import { YooptaEditorWrapper } from "@/components/yoopta-editor";
-
-// --- Types ---
-interface Block {
-  id: string;
-  content: any;
-}
-
-interface Row {
-  id: string;
-  blocks: Block[];
-}
-
-// --- Default Yoopta content structure ---
-const createDefaultContent = () => {
-  const blockId = nanoid();
-  return {
-    [blockId]: {
-      id: blockId,
-      type: "Paragraph",
-      value: [
-        {
-          id: nanoid(),
-          type: "paragraph",
-          children: [{ text: "" }],
-        },
-      ],
-      meta: { order: 0, depth: 0 },
-    },
-  };
-};
-
-// --- Initial Data ---
-const createBlock = (): Block => ({ id: nanoid(), content: createDefaultContent() });
-const createRow = (blocks?: Block[]): Row => ({
-  id: nanoid(),
-  blocks: blocks || [createBlock()],
-});
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  selectSlides,
+  addSlide,
+  deleteSlide,
+  updateBlockContent,
+  addBlockToRow,
+  addRowToSlide,
+  deleteRow,
+  moveBlock,
+  Block,
+  Row,
+  Slide,
+} from "@/store/slices/slidesSlice";
 
 // --- Draggable Block Component ---
 const DraggableBlock = ({
   block,
+  slideId,
   onUpdate,
   onAddRight,
-  isOnly,
 }: {
   block: Block;
-  onUpdate: (id: string, content: any) => void;
+  slideId: string;
+  onUpdate: (blockId: string, content: any) => void;
   onAddRight: () => void;
-  isOnly: boolean;
 }) => {
   const {
     attributes,
@@ -82,8 +57,8 @@ const DraggableBlock = ({
     transition,
     isDragging,
   } = useSortable({
-    id: block.id,
-    data: { type: "block", block },
+    id: `${slideId}-${block.id}`,
+    data: { type: "block", block, slideId },
   });
 
   const style = {
@@ -94,12 +69,7 @@ const DraggableBlock = ({
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="group relative min-w-0 flex-1"
-    >
-      {/* Block Container */}
+    <div ref={setNodeRef} style={style} className="group relative min-w-0 flex-1">
       <div
         className={`relative p-1 rounded-lg transition-all ${
           isDragging ? "bg-blue-50 ring-2 ring-blue-300" : "hover:bg-gray-50/50"
@@ -132,7 +102,7 @@ const DraggableBlock = ({
         />
       </div>
 
-      {/* Add Column Button (Right) */}
+      {/* Add Column Button */}
       <button
         onClick={onAddRight}
         className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 text-white opacity-0 group-hover:opacity-100 hover:bg-blue-600 hover:scale-110 transition-all z-20 flex items-center justify-center text-sm font-medium shadow-md"
@@ -147,6 +117,7 @@ const DraggableBlock = ({
 // --- Droppable Row Component ---
 const DroppableRow = ({
   row,
+  slideId,
   onUpdateBlock,
   onAddBlockRight,
   onAddRowBelow,
@@ -154,45 +125,43 @@ const DroppableRow = ({
   rowCount,
 }: {
   row: Row;
-  onUpdateBlock: (id: string, content: any) => void;
+  slideId: string;
+  onUpdateBlock: (blockId: string, content: any) => void;
   onAddBlockRight: (rowId: string, afterBlockId: string) => void;
   onAddRowBelow: (rowId: string) => void;
   onDeleteRow: (rowId: string) => void;
   rowCount: number;
 }) => {
   const { setNodeRef, isOver } = useDroppable({
-    id: `row-drop-${row.id}`,
-    data: { type: "row", rowId: row.id },
+    id: `row-drop-${slideId}-${row.id}`,
+    data: { type: "row", rowId: row.id, slideId },
   });
 
   return (
     <div className="group/row relative">
-      {/* Row Container */}
       <div
         ref={setNodeRef}
         className={`flex gap-4 p-2 rounded-lg transition-all items-start ${
-          isOver
-            ? "bg-green-50 ring-2 ring-dashed ring-green-400"
-            : "hover:bg-gray-50/30"
+          isOver ? "bg-green-50 ring-2 ring-dashed ring-green-400" : "hover:bg-gray-50/30"
         }`}
       >
         <SortableContext
-          items={row.blocks.map((b) => b.id)}
+          items={row.blocks.map((b) => `${slideId}-${b.id}`)}
           strategy={horizontalListSortingStrategy}
         >
-          {row.blocks.map((block, index) => (
+          {row.blocks.map((block) => (
             <DraggableBlock
               key={block.id}
               block={block}
+              slideId={slideId}
               onUpdate={onUpdateBlock}
               onAddRight={() => onAddBlockRight(row.id, block.id)}
-              isOnly={row.blocks.length === 1}
             />
           ))}
         </SortableContext>
       </div>
 
-      {/* Add Row Button (Bottom) */}
+      {/* Add Row Button */}
       <button
         onClick={() => onAddRowBelow(row.id)}
         className="absolute -bottom-3 left-1/2 -translate-x-1/2 h-6 px-3 rounded-full bg-blue-500 text-white opacity-0 group-hover/row:opacity-100 hover:bg-blue-600 hover:scale-105 transition-all z-20 flex items-center justify-center text-xs font-medium shadow-md gap-1"
@@ -202,7 +171,7 @@ const DroppableRow = ({
         <span>Row</span>
       </button>
 
-      {/* Delete Row Button (only if more than one row and row is empty or hovered) */}
+      {/* Delete Row Button */}
       {rowCount > 1 && (
         <button
           onClick={() => onDeleteRow(row.id)}
@@ -216,9 +185,52 @@ const DroppableRow = ({
   );
 };
 
+// --- Single Slide Component ---
+const SlideCard = ({
+  slide,
+  index,
+  totalSlides,
+  onUpdateBlock,
+  onAddBlockRight,
+  onAddRowBelow,
+  onDeleteRow,
+  onDeleteSlide,
+}: {
+  slide: Slide;
+  index: number;
+  totalSlides: number;
+  onUpdateBlock: (slideId: string, blockId: string, content: any) => void;
+  onAddBlockRight: (slideId: string, rowId: string, afterBlockId: string) => void;
+  onAddRowBelow: (slideId: string, afterRowId: string) => void;
+  onDeleteRow: (slideId: string, rowId: string) => void;
+  onDeleteSlide: (slideId: string) => void;
+}) => {
+  return (
+    <div className="bg-white rounded-2xl shadow-xl border border-gray-200 px-6 py-4">
+
+      {/* Slide Content */}
+      <div className="flex flex-col gap-6">
+        {slide.rows.map((row) => (
+          <DroppableRow
+            key={row.id}
+            row={row}
+            slideId={slide.id}
+            onUpdateBlock={(blockId, content) => onUpdateBlock(slide.id, blockId, content)}
+            onAddBlockRight={(rowId, afterBlockId) => onAddBlockRight(slide.id, rowId, afterBlockId)}
+            onAddRowBelow={(afterRowId) => onAddRowBelow(slide.id, afterRowId)}
+            onDeleteRow={(rowId) => onDeleteRow(slide.id, rowId)}
+            rowCount={slide.rows.length}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // --- Main Page Component ---
 const GammaPage = () => {
-  const [rows, setRows] = useState<Row[]>([createRow()]);
+  const dispatch = useAppDispatch();
+  const slides = useAppSelector(selectSlides);
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
 
   const sensors = useSensors(
@@ -227,45 +239,27 @@ const GammaPage = () => {
   );
 
   // --- Handlers ---
-
-  const handleUpdateBlock = (blockId: string, content: any) => {
-    setRows((prev) =>
-      prev.map((row) => ({
-        ...row,
-        blocks: row.blocks.map((block) =>
-          block.id === blockId ? { ...block, content } : block
-        ),
-      }))
-    );
+  const handleUpdateBlock = (slideId: string, blockId: string, content: any) => {
+    dispatch(updateBlockContent({ slideId, blockId, content }));
   };
 
-  const handleAddBlockRight = (rowId: string, afterBlockId: string) => {
-    setRows((prev) =>
-      prev.map((row) => {
-        if (row.id !== rowId) return row;
-        const index = row.blocks.findIndex((b) => b.id === afterBlockId);
-        const newBlocks = [...row.blocks];
-        newBlocks.splice(index + 1, 0, createBlock());
-        return { ...row, blocks: newBlocks };
-      })
-    );
+  const handleAddBlockRight = (slideId: string, rowId: string, afterBlockId: string) => {
+    dispatch(addBlockToRow({ slideId, rowId, afterBlockId }));
   };
 
-  const handleAddRowBelow = (afterRowId: string) => {
-    setRows((prev) => {
-      const index = prev.findIndex((r) => r.id === afterRowId);
-      const newRows = [...prev];
-      newRows.splice(index + 1, 0, createRow());
-      return newRows;
-    });
+  const handleAddRowBelow = (slideId: string, afterRowId: string) => {
+    dispatch(addRowToSlide({ slideId, afterRowId }));
   };
 
-  const handleDeleteRow = (rowId: string) => {
-    setRows((prev) => prev.filter((r) => r.id !== rowId));
+  const handleDeleteRow = (slideId: string, rowId: string) => {
+    dispatch(deleteRow({ slideId, rowId }));
+  };
+
+  const handleDeleteSlide = (slideId: string) => {
+    dispatch(deleteSlide(slideId));
   };
 
   // --- Drag and Drop ---
-
   const handleDragStart = (event: DragStartEvent) => {
     const block = event.active.data.current?.block as Block;
     if (block) {
@@ -279,130 +273,80 @@ const GammaPage = () => {
 
     if (!over) return;
 
-    const activeBlockId = String(active.id);
+    const activeData = active.data.current;
     const overData = over.data.current;
+    const sourceSlideId = activeData?.slideId as string;
+    const sourceBlockId = activeData?.block?.id as string;
 
-    // Find the source row and block
+    if (!sourceSlideId || !sourceBlockId) return;
+
+    // Find source row
     let sourceRowId: string | null = null;
-    let sourceBlock: Block | null = null;
-
-    for (const row of rows) {
-      const block = row.blocks.find((b) => b.id === activeBlockId);
-      if (block) {
-        sourceRowId = row.id;
-        sourceBlock = block;
-        break;
+    const sourceSlide = slides.find((s) => s.id === sourceSlideId);
+    if (sourceSlide) {
+      for (const row of sourceSlide.rows) {
+        if (row.blocks.find((b) => b.id === sourceBlockId)) {
+          sourceRowId = row.id;
+          break;
+        }
       }
     }
 
-    if (!sourceRowId || !sourceBlock) return;
+    if (!sourceRowId) return;
 
-    // Case 1: Dropped on a row (different from source) - Add as new column
+    // Case 1: Dropped on a row
     if (overData?.type === "row") {
-      const targetRowId = overData.rowId;
-      if (targetRowId === sourceRowId) return; // Same row, no action
+      const targetRowId = overData.rowId as string;
+      const targetSlideId = overData.slideId as string;
 
-      setRows((prev) => {
-        // Remove from source
-        const newRows = prev.map((row) => {
-          if (row.id === sourceRowId) {
-            return {
-              ...row,
-              blocks: row.blocks.filter((b) => b.id !== activeBlockId),
-            };
-          }
-          return row;
-        });
+      if (targetRowId === sourceRowId && targetSlideId === sourceSlideId) return;
 
-        // Add to target row as new column
-        return newRows
-          .map((row) => {
-            if (row.id === targetRowId) {
-              return {
-                ...row,
-                blocks: [...row.blocks, sourceBlock!],
-              };
-            }
-            return row;
-          })
-          .filter((row) => row.blocks.length > 0); // Remove empty rows
-      });
+      dispatch(
+        moveBlock({
+          slideId: sourceSlideId,
+          sourceRowId,
+          targetRowId,
+          blockId: sourceBlockId,
+        })
+      );
       return;
     }
 
-    // Case 2: Dropped on another block - Reorder within/across rows
+    // Case 2: Dropped on another block
     if (overData?.type === "block") {
-      const targetBlockId = String(over.id);
-      if (activeBlockId === targetBlockId) return;
+      const targetBlockId = overData.block?.id as string;
+      const targetSlideId = overData.slideId as string;
 
-      // Find target row
+      if (sourceBlockId === targetBlockId) return;
+
       let targetRowId: string | null = null;
-      let targetIndex: number = -1;
-
-      for (const row of rows) {
-        const idx = row.blocks.findIndex((b) => b.id === targetBlockId);
-        if (idx !== -1) {
-          targetRowId = row.id;
-          targetIndex = idx;
-          break;
+      const targetSlide = slides.find((s) => s.id === targetSlideId);
+      if (targetSlide) {
+        for (const row of targetSlide.rows) {
+          if (row.blocks.find((b) => b.id === targetBlockId)) {
+            targetRowId = row.id;
+            break;
+          }
         }
       }
 
       if (!targetRowId) return;
 
-      // Same row - just reorder
-      if (sourceRowId === targetRowId) {
-        setRows((prev) =>
-          prev.map((row) => {
-            if (row.id !== sourceRowId) return row;
-            const blocks = [...row.blocks];
-            const oldIndex = blocks.findIndex((b) => b.id === activeBlockId);
-            const newIndex = blocks.findIndex((b) => b.id === targetBlockId);
-            const [removed] = blocks.splice(oldIndex, 1);
-            blocks.splice(newIndex, 0, removed);
-            return { ...row, blocks };
-          })
-        );
-      } else {
-        // Different row - move block
-        setRows((prev) => {
-          // Remove from source
-          let movedBlock: Block | null = null;
-          const newRows = prev.map((row) => {
-            if (row.id === sourceRowId) {
-              movedBlock = row.blocks.find((b) => b.id === activeBlockId)!;
-              return {
-                ...row,
-                blocks: row.blocks.filter((b) => b.id !== activeBlockId),
-              };
-            }
-            return row;
-          });
-
-          // Add to target row at specific position
-          return newRows
-            .map((row) => {
-              if (row.id === targetRowId && movedBlock) {
-                const blocks = [...row.blocks];
-                const insertIndex = blocks.findIndex(
-                  (b) => b.id === targetBlockId
-                );
-                blocks.splice(insertIndex, 0, movedBlock);
-                return { ...row, blocks };
-              }
-              return row;
-            })
-            .filter((row) => row.blocks.length > 0);
-        });
-      }
+      dispatch(
+        moveBlock({
+          slideId: sourceSlideId,
+          sourceRowId,
+          targetRowId,
+          blockId: sourceBlockId,
+          targetBlockId,
+        })
+      );
     }
   };
 
-  // Custom collision detection that prefers blocks over rows
   const customCollisionDetection = (args: any) => {
     const pointerCollisions = pointerWithin(args);
     if (pointerCollisions.length > 0) {
-      // Prefer block collisions over row collisions
       const blockCollision = pointerCollisions.find(
         (c: any) => c.data?.droppableContainer?.data?.current?.type === "block"
       );
@@ -413,33 +357,44 @@ const GammaPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
-      {/* Header */}
-      <div className="max-w-[1200px] mx-auto mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Flexible Layout Editor</h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Drag blocks between rows • Click + to add columns or rows
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-y-auto">
+      <div className="max-w-[1200px] mx-auto p-8">
+        {/* Header */}
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Flexible Layout Editor</h1>
+            <p className="text-gray-500 text-sm mt-1">
+              Drag blocks between rows • Click + to add columns or rows
+            </p>
+          </div>
+          <button
+            onClick={() => dispatch(addSlide({}))}
+            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 shadow-md"
+          >
+            <span>+</span>
+            <span>Add Slide</span>
+          </button>
+        </div>
 
-      {/* Editor Canvas */}
-      <div className="max-w-[1200px] mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 px-6 py-4">
+        {/* All Slides */}
         <DndContext
           sensors={sensors}
           collisionDetection={customCollisionDetection}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex flex-col gap-6">
-            {rows.map((row) => (
-              <DroppableRow
-                key={row.id}
-                row={row}
+          <div className="flex flex-col gap-8">
+            {slides.map((slide, index) => (
+              <SlideCard
+                key={slide.id}
+                slide={slide}
+                index={index}
+                totalSlides={slides.length}
                 onUpdateBlock={handleUpdateBlock}
                 onAddBlockRight={handleAddBlockRight}
                 onAddRowBelow={handleAddRowBelow}
                 onDeleteRow={handleDeleteRow}
-                rowCount={rows.length}
+                onDeleteSlide={handleDeleteSlide}
               />
             ))}
           </div>
@@ -449,14 +404,7 @@ const GammaPage = () => {
             {activeBlock && (
               <div className="bg-white border-2 border-blue-400 rounded-lg p-4 shadow-2xl opacity-90 max-w-[300px]">
                 <div className="flex items-center gap-2 text-blue-600">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <line x1="9" y1="3" x2="9" y2="21" />
                   </svg>
@@ -466,84 +414,6 @@ const GammaPage = () => {
             )}
           </DragOverlay>
         </DndContext>
-      </div>
-
-      {/* JSON Control Panel */}
-      <div className="max-w-[1200px] mx-auto mt-8 bg-gray-900 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-white font-medium">Layout JSON</h3>
-          <div className="flex gap-2">
-            {/* Export Button */}
-            <button
-              onClick={() => {
-                const dataStr = JSON.stringify(rows, null, 2);
-                const blob = new Blob([dataStr], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'layout.json';
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-              className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1.5"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              Export JSON
-            </button>
-            {/* Import Button */}
-            <label className="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1.5 cursor-pointer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
-              Import JSON
-              <input
-                type="file"
-                accept=".json"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                      try {
-                        const data = JSON.parse(event.target?.result as string);
-                        if (Array.isArray(data)) {
-                          setRows(data);
-                        }
-                      } catch (err) {
-                        console.error('Invalid JSON file');
-                      }
-                    };
-                    reader.readAsText(file);
-                  }
-                  e.target.value = '';
-                }}
-              />
-            </label>
-            {/* Copy Button */}
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(JSON.stringify(rows, null, 2));
-              }}
-              className="px-3 py-1.5 bg-gray-700 text-white text-xs font-medium rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-1.5"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-              </svg>
-              Copy
-            </button>
-          </div>
-        </div>
-        <pre className="text-green-400 text-xs overflow-auto max-h-[300px] bg-gray-950 rounded-lg p-4">
-          {JSON.stringify(rows, null, 2)}
-        </pre>
       </div>
     </div>
   );
