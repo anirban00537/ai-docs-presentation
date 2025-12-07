@@ -4,7 +4,7 @@ import * as React from "react";
 import { Send, Loader2 } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { AppleButton } from "@/components/editor/apple-button";
+import { AppleButton } from "@/components/apple-button";
 import { useCreatePresentationFromPrompt } from "@/hooks/use-presentation";
 import { toast } from "sonner";
 

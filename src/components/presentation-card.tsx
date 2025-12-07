@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Plus, MoreVertical, Trash2 } from "lucide-react";
-import { AppleButton } from "@/components/editor/apple-button";
+import { AppleButton } from "@/components/apple-button";
 import Slide from "@/components/editor/slide";
 import type { SlideModel } from "@/store/slices/slidesSlice";
 import type { PresentationListItem } from "@/services/presentation";

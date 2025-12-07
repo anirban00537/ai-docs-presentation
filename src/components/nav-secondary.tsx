@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { AppleButton } from "./editor/apple-button";
+import { AppleButton } from "./apple-button";
 
 export function NavSecondary({
   items,

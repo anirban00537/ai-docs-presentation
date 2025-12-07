@@ -23,7 +23,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { nanoid } from "nanoid";
-import { YooptaEditorWrapper } from "@/components/editor/yoopta-editor";
+import { YooptaEditorWrapper } from "@/components/yoopta-editor";
 
 // --- Types ---
 interface Block {

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { MoreVertical, Trash2, LayoutTemplate } from "lucide-react";
-import { AppleButton } from "@/components/editor/apple-button";
+import { AppleButton } from "@/components/apple-button";
 import Slide from "@/components/editor/slide";
 import type { SlideModel } from "@/store/slices/slidesSlice";
 import type { LayoutListItem } from "@/services/layouts";

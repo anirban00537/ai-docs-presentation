@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { AppleButton } from "@/components/editor/apple-button";
+import { AppleButton } from "@/components/apple-button";
 import { cn } from "@/lib/utils";
 
 const menuItems = [

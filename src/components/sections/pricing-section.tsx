@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Check, ArrowRight } from "lucide-react";
 import { Variants } from "framer-motion";
 
-import { AppleButton } from "@/components/editor/apple-button";
+import { AppleButton } from "@/components/apple-button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 
 const transitionVariants: { item: Variants } = {
