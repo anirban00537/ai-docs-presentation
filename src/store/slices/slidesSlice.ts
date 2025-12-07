@@ -42,9 +42,34 @@ const createDefaultContent = () => {
   };
 };
 
+// Paragraph content for multi-column layouts
+const createParagraphContent = () => {
+  const blockId = nanoid();
+  return {
+    [blockId]: {
+      id: blockId,
+      type: "Paragraph",
+      value: [
+        {
+          id: nanoid(),
+          type: "paragraph",
+          children: [{ text: "" }],
+        },
+      ],
+      meta: { order: 0, depth: 0 },
+    },
+  };
+};
+
 export const createBlock = (): Block => ({
   id: nanoid(),
   content: createDefaultContent(),
+});
+
+// Block with paragraph content (for columns)
+export const createParagraphBlock = (): Block => ({
+  id: nanoid(),
+  content: createParagraphContent(),
 });
 
 export const createRow = (blocks?: Block[]): Row => ({
@@ -176,7 +201,7 @@ const slidesSlice = createSlice({
       if (!slide) return;
       const blocks: Block[] = [];
       for (let i = 0; i < columnCount; i++) {
-        blocks.push(createBlock());
+        blocks.push(createParagraphBlock());
       }
       slide.rows.push(createRow(blocks));
     },
