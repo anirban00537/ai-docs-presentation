@@ -32,7 +32,7 @@ export type BlockType = "text" | "image" | "video";
 export interface Block {
   id: string;
   type: BlockType;
-  content: string;
+  content: any; // Changed from string to any to support Yoopta JSON
 }
 
 export interface Column {
@@ -59,7 +59,7 @@ const initialData: Row[] = [
           {
             id: nanoid(),
             type: "text",
-            content: "",
+            content: undefined, // Let Yoopta handle initial empty state
           },
         ],
       },
@@ -68,9 +68,9 @@ const initialData: Row[] = [
 ];
 
 // --- Components ---
-import { ProseMirrorEditor } from "@/components/editor/prosemirror-editor";
+import { YooptaEditorWrapper } from "@/components/editor/yoopta-editor";
 
-const SortableBlock = ({ block, onUpdate }: { block: Block; onUpdate: (id: string, content: string) => void }) => {
+const SortableBlock = ({ block, onUpdate }: { block: Block; onUpdate: (id: string, content: any) => void }) => {
   const {
     attributes,
     listeners,
@@ -101,10 +101,10 @@ const SortableBlock = ({ block, onUpdate }: { block: Block; onUpdate: (id: strin
             ⋮
         </div>
 
-      <ProseMirrorEditor 
+      <YooptaEditorWrapper 
         value={block.content} 
         onChange={(val) => onUpdate(block.id, val)} 
-        placeholder="Type..."
+        placeholder="Type '/' for commands..."
         className="min-h-[20px] px-1 py-1"
       />
     </div>
@@ -391,7 +391,7 @@ const Page = () => {
       });
   };
 
-  const handleUpdateBlock = (id: string, content: string) => {
+  const handleUpdateBlock = (id: string, content: any) => {
       setLayout(prev => {
           return prev.map(row => ({
               ...row,
