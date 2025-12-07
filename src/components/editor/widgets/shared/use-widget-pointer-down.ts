@@ -3,7 +3,7 @@ import type { PointerEvent } from "react";
 
 interface UseWidgetPointerDownOptions {
   onPointerDown: (event: PointerEvent<HTMLDivElement>) => void;
-  toolbarSelector: string;
+  toolbarSelector?: string;
   additionalSelectors?: string[];
 }
 
@@ -21,8 +21,8 @@ export const useWidgetPointerDown = ({
     (event: PointerEvent<HTMLDivElement>) => {
       const target = event.target as HTMLElement;
 
-      // Don't start drag if clicking toolbar controls
-      if (target.closest(toolbarSelector)) {
+      // Don't start drag if clicking toolbar controls (only if selector defined)
+      if (toolbarSelector && target.closest(toolbarSelector)) {
         return;
       }
 

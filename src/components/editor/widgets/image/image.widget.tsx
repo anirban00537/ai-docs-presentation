@@ -36,7 +36,7 @@ const ImageWidgetNodeBase: React.FC<ImageWidgetNodeProps> = ({
 
   const handlePointerDown = useWidgetPointerDown({
     onPointerDown,
-    toolbarSelector: undefined, // No toolbar for this widget
+    // No toolbar for this widget
   });
 
   return (
