@@ -957,14 +957,6 @@ const ComparisonCardEditingToolbar: React.FC<
         onChange: handleFontSizeChange,
       },
     },
-    {
-      type: "alignment",
-      config: {
-        value: widget.textAlign ?? "left",
-        onChange: (align: NonNullable<ComparisonCardWidget["textAlign"]>) =>
-          handleUpdate({ textAlign: align }),
-      },
-    },
   ];
 
   return (
