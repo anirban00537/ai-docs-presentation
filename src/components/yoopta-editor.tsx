@@ -92,23 +92,44 @@ export const YooptaEditorWrapper: React.FC<YooptaEditorWrapperProps> = ({
   }, []);
 
   return (
-    <div 
-        className={cn("yoopta-editor-container w-full break-words whitespace-pre-wrap min-h-[40px]", className)}
-        style={style}
-    >
-      <YooptaEditor
-        editor={editor}
-        plugins={plugins}
-        marks={marks}
-        tools={TOOLS}
-        placeholder={placeholder}
-        readOnly={readOnly}
-        value={initialValue}
-        width="100%"
-        style={{ width: '100%' }}
-        onChange={handleChange}
-        className="w-full"
-      />
-    </div>
+    <>
+      {/* CSS to hide Grammarly and other extension elements */}
+      <style>{`
+        .yoopta-editor-container grammarly-extension,
+        .yoopta-editor-container grammarly-popups,
+        .yoopta-editor-container [data-grammarly-shadow-root],
+        .yoopta-editor-container .gr-top-layer,
+        .yoopta-editor-container grammarly-desktop-integration {
+          display: none !important;
+          visibility: hidden !important;
+        }
+        .yoopta-editor-container [contenteditable] {
+          -webkit-user-modify: read-write-plaintext-only;
+        }
+      `}</style>
+      <div 
+          className={cn("yoopta-editor-container w-full break-words whitespace-pre-wrap min-h-[40px]", className)}
+          style={style}
+          data-gramm="false"
+          data-gramm_editor="false"
+          data-enable-grammarly="false"
+          suppressContentEditableWarning
+      >
+        <YooptaEditor
+          editor={editor}
+          plugins={plugins}
+          marks={marks}
+          tools={TOOLS}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          value={initialValue}
+          width="100%"
+          style={{ width: '100%' }}
+          onChange={handleChange}
+          className="w-full"
+          autoFocus={false}
+        />
+      </div>
+    </>
   );
 };
