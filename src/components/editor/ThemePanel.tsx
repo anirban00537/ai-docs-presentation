@@ -1,6 +1,11 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { selectTheme, setTheme, Theme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import {
+  selectTheme,
+  setTheme,
+  Theme,
+  DEFAULT_THEME,
+} from "@/store/slices/slidesSlice";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, Check } from "lucide-react";
@@ -22,7 +27,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#272525",
       cardBackground: "#FFFFFF",
       pageBackground: "#F9FAFB",
-      fontFamily: "Inter, system-ui, sans-serif",
+      fontFamily: "Inter",
     },
   },
   {
@@ -33,7 +38,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#1A365D",
       cardBackground: "#FFFFFF",
       pageBackground: "#E6F2FF",
-      fontFamily: "Inter, system-ui, sans-serif",
+      fontFamily: "Roboto",
     },
   },
   {
@@ -44,7 +49,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#065F46",
       cardBackground: "#FFFFFF",
       pageBackground: "#ECFDF5",
-      fontFamily: "Inter, system-ui, sans-serif",
+      fontFamily: "Montserrat",
     },
   },
   {
@@ -55,7 +60,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#9A3412",
       cardBackground: "#FFFFFF",
       pageBackground: "#FFF7ED",
-      fontFamily: "Inter, system-ui, sans-serif",
+      fontFamily: "Lato",
     },
   },
   {
@@ -66,7 +71,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#5B21B6",
       cardBackground: "#FFFFFF",
       pageBackground: "#F5F3FF",
-      fontFamily: "Inter, system-ui, sans-serif",
+      fontFamily: "Poppins",
     },
   },
   {
@@ -77,7 +82,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#9F1239",
       cardBackground: "#FFFFFF",
       pageBackground: "#FFF1F2",
-      fontFamily: "Inter, system-ui, sans-serif",
+      fontFamily: "Raleway",
     },
   },
   {
@@ -88,7 +93,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#E5E7EB",
       cardBackground: "#1F2937",
       pageBackground: "#111827",
-      fontFamily: "Inter, system-ui, sans-serif",
+      fontFamily: "Ubuntu",
     },
   },
   {
@@ -99,7 +104,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#4B5563",
       cardBackground: "#FFFFFF",
       pageBackground: "#FAFAFA",
-      fontFamily: "Inter, system-ui, sans-serif",
+      fontFamily: "Open Sans",
     },
   },
 ];
@@ -110,29 +115,33 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
 
   // Animation variants
   const panelVariants = {
-    hidden: { 
-      opacity: 0, 
-      x: -20, 
+    hidden: {
+      opacity: 0,
+      x: -20,
       scale: 0.95,
-      transition: { duration: 0.2, ease: "easeInOut" as const }
+      transition: { duration: 0.2, ease: "easeInOut" as const },
     },
-    visible: { 
-      opacity: 1, 
-      x: 0, 
+    visible: {
+      opacity: 1,
+      x: 0,
       scale: 1,
-      transition: { duration: 0.3, ease: "easeOut" as const, staggerChildren: 0.05 }
+      transition: {
+        duration: 0.3,
+        ease: "easeOut" as const,
+        staggerChildren: 0.05,
+      },
     },
-    exit: { 
-      opacity: 0, 
-      x: -20, 
-      scale: 0.95, 
-      transition: { duration: 0.2, ease: "easeInOut" as const }
-    }
+    exit: {
+      opacity: 0,
+      x: -20,
+      scale: 0.95,
+      transition: { duration: 0.2, ease: "easeInOut" as const },
+    },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
+    visible: { opacity: 1, y: 0 },
   };
 
   if (!isOpen) return null;
@@ -162,20 +171,20 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
           variants={panelVariants}
           className="absolute right-full top-1/2 -translate-y-1/2 mr-4 z-50 origin-right"
         >
-          <Card 
+          <Card
             className="w-80 overflow-hidden border shadow-2xl backdrop-blur-3xl rounded-3xl"
             style={{
               backgroundColor: `${currentTheme.cardBackground}aa`, // 66% opacity for glass effect
               borderColor: `${currentTheme.bodyColor}20`,
             }}
           >
-            <CardHeader 
+            <CardHeader
               className="flex flex-row items-center justify-between p-4 pb-2 space-y-0 border-b"
               style={{
                 borderColor: `${currentTheme.bodyColor}10`,
               }}
             >
-              <CardTitle 
+              <CardTitle
                 className="text-sm font-semibold"
                 style={{ color: currentTheme.headingColor }}
               >
@@ -186,7 +195,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                 size="icon"
                 onClick={onClose}
                 className="h-6 w-6 rounded-full transition-colors"
-                style={{ 
+                style={{
                   color: currentTheme.bodyColor,
                 }}
                 aria-label="Close"
@@ -206,24 +215,34 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                           "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group relative",
                           !isActive && "hover:bg-black/5 dark:hover:bg-white/5"
                         )}
-                        style={isActive ? {
-                          backgroundColor: `${currentTheme.primary}15`, // 10% opacity
-                        } : undefined}
+                        style={
+                          isActive
+                            ? {
+                                backgroundColor: `${currentTheme.primary}15`, // 10% opacity
+                              }
+                            : undefined
+                        }
                       >
                         {/* Theme Name & Status */}
                         <div className="flex items-center gap-3">
-                          <div 
+                          <div
                             className={cn(
                               "w-2 h-2 rounded-full transition-all duration-300",
                               isActive ? "scale-125" : "bg-transparent"
-                            )} 
-                            style={isActive ? { backgroundColor: currentTheme.primary } : undefined}
+                            )}
+                            style={
+                              isActive
+                                ? { backgroundColor: currentTheme.primary }
+                                : undefined
+                            }
                           />
-                          <span 
+                          <span
                             className="text-sm font-medium transition-colors"
-                            style={{ 
-                              color: isActive ? currentTheme.headingColor : currentTheme.bodyColor,
-                              opacity: isActive ? 1 : 0.8
+                            style={{
+                              color: isActive
+                                ? currentTheme.headingColor
+                                : currentTheme.bodyColor,
+                              opacity: isActive ? 1 : 0.8,
                             }}
                           >
                             {palette.name}
@@ -233,42 +252,51 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                         {/* Theme Preview Mini-UI */}
                         <div className="flex items-center gap-1.5">
                           {/* Page Background Circle */}
-                          <div 
+                          <div
                             className="w-5 h-5 rounded-full border shadow-sm flex items-center justify-center overflow-hidden"
-                            style={{ 
+                            style={{
                               backgroundColor: palette.theme.pageBackground,
-                              borderColor: `${currentTheme.bodyColor}20`
+                              borderColor: `${currentTheme.bodyColor}20`,
                             }}
                             title="Page Background"
                           >
-                            <div 
+                            <div
                               className="w-2 h-2 rounded-full opacity-80"
-                              style={{ backgroundColor: palette.theme.bodyColor }}
+                              style={{
+                                backgroundColor: palette.theme.bodyColor,
+                              }}
                             />
                           </div>
-                          
+
                           {/* Primary Color Badge */}
-                          <div 
+                          <div
                             className="w-5 h-5 rounded-full border shadow-sm"
-                            style={{ 
+                            style={{
                               backgroundColor: palette.theme.primary,
-                              borderColor: `${currentTheme.bodyColor}20` 
+                              borderColor: `${currentTheme.bodyColor}20`,
                             }}
                             title="Primary Color"
                           />
 
                           {/* Checkmark for Active State */}
-                           <div className="w-5 flex items-center justify-center">
+                          <div className="w-5 flex items-center justify-center">
                             {isActive && (
-                                <motion.div
-                                  initial={{ scale: 0, opacity: 0 }}
-                                  animate={{ scale: 1, opacity: 1 }}
-                                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                >
-                                  <Check className="w-4 h-4" style={{ color: currentTheme.primary }} />
-                                </motion.div>
+                              <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{
+                                  type: "spring",
+                                  stiffness: 300,
+                                  damping: 20,
+                                }}
+                              >
+                                <Check
+                                  className="w-4 h-4"
+                                  style={{ color: currentTheme.primary }}
+                                />
+                              </motion.div>
                             )}
-                           </div>
+                          </div>
                         </div>
                       </button>
                     </motion.div>

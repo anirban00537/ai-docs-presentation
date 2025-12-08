@@ -36,6 +36,26 @@ const migrate = async (state: any): Promise<any> => {
   if (state?.slides && !state.slides.theme) {
     state.slides.theme = DEFAULT_THEME;
   }
+  // Migrate old fontFamily format to new format
+  if (state?.slides?.theme?.fontFamily) {
+    const fontFamily = state.slides.theme.fontFamily;
+    // If it's the old format with commas, extract just the font name
+    if (fontFamily.includes(",")) {
+      const fontName = fontFamily.split(",")[0].trim();
+      // Map common font names
+      const fontMap: Record<string, string> = {
+        "Inter": "Inter",
+        "Roboto": "Roboto",
+        "Open Sans": "Open Sans",
+        "Lato": "Lato",
+        "Montserrat": "Montserrat",
+        "Poppins": "Poppins",
+        "Playfair Display": "Playfair Display",
+        "Merriweather": "Merriweather",
+      };
+      state.slides.theme.fontFamily = fontMap[fontName] || "Inter";
+    }
+  }
   return Promise.resolve(state);
 };
 

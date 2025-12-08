@@ -5,6 +5,7 @@ import { SlideDropZone } from "./SlideDropZone";
 import type { Slide } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { getFontFamily } from "@/lib/fonts";
 
 interface SlideCardProps {
   slide: Slide;
@@ -45,7 +46,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       className="group/slide relative rounded-2xl shadow-xl px-6 py-4"
       style={{
         backgroundColor: theme.cardBackground,
-        fontFamily: theme.fontFamily,
+        fontFamily: getFontFamily(theme.fontFamily || "Inter"),
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

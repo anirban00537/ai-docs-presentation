@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { DraggableBlock } from "./DraggableBlock";
 import type { Row } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { getFontFamily } from "@/lib/fonts";
 
 interface DroppableRowProps {
   row: Row;
@@ -53,8 +57,8 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
         {isMenuOpen && (
           <>
             {/* Backdrop to close menu */}
-            <div 
-              className="fixed inset-0 z-30" 
+            <div
+              className="fixed inset-0 z-30"
               onClick={() => setIsMenuOpen(false)}
             />
             <div className="absolute left-6 top-0 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-40 min-w-[120px]">
@@ -66,7 +70,14 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
                 disabled={rowCount <= 1}
                 className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
                 </svg>
                 Delete
@@ -80,12 +91,13 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
       <div
         ref={setNodeRef}
         className={`flex-1 flex transition-all items-start border ${
-          isOver 
-            ? "bg-green-50 ring-1 ring-dashed ring-green-400 border-green-400" 
+          isOver
+            ? "bg-green-50 ring-1 ring-dashed ring-green-400 border-green-400"
             : "border-transparent hover:border-opacity-30"
         }`}
         style={{
           borderColor: isOver ? undefined : "transparent",
+          fontFamily: getFontFamily(theme.fontFamily || "Inter"),
         }}
         onMouseEnter={(e) => {
           if (!isOver) {
@@ -119,4 +131,3 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
     </div>
   );
 };
-

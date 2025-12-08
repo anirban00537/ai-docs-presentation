@@ -19,7 +19,7 @@ export interface Slide {
 }
 
 export interface Theme {
-primary: string;
+  primary: string;
   headingColor: string;
   bodyColor: string;
   cardBackground: string;
@@ -90,7 +90,7 @@ export const DEFAULT_THEME: Theme = {
   bodyColor: "#272525",
   cardBackground: "#FFFFFF",
   pageBackground: "#F9FAFB",
-  fontFamily: "Inter, system-ui, sans-serif",
+  fontFamily: "Inter",
 };
 const initialTheme: Theme = DEFAULT_THEME;
 

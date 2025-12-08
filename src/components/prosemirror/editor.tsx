@@ -28,6 +28,7 @@ import { PROSEMIRROR_STYLES } from "./styles";
 import { placeholderPlugin } from "./plugins/placeholder-plugin";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { getFontFamily } from "@/lib/fonts";
 
 // --- Main Editor Component ---
 type ProseMirrorEditorProps = {
@@ -478,11 +479,12 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
 
   // Generate dynamic styles based on theme
   const dynamicStyles = useMemo(() => {
+    const fontFamily = getFontFamily(theme.fontFamily || "Inter");
     return `
       ${PROSEMIRROR_STYLES}
       .ProseMirror {
         color: ${theme.bodyColor};
-        font-family: ${theme.fontFamily || "Inter, system-ui, sans-serif"};
+        font-family: ${fontFamily};
       }
       .ProseMirror h1,
       .ProseMirror h2,
