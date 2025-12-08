@@ -66,10 +66,12 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     visible: boolean;
     position: { top: number; left: number };
     activeMarks: Set<string>;
+    activeAlignment: string;
   }>({
     visible: false,
     position: { top: 0, left: 0 },
     activeMarks: new Set(),
+    activeAlignment: "left",
   });
 
   // Keep onChange ref updated
@@ -296,6 +298,11 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
                 newState.storedMarks || newState.selection.$from.marks();
               storedMarks.forEach((mark) => activeMarks.add(mark.type.name));
 
+              // Get active alignment
+              const { $from } = newState.selection;
+              const node = $from.parent;
+              const activeAlignment = node.attrs.textAlign || "left";
+
               setSelectionToolbar({
                 visible: true,
                 position: {
@@ -304,6 +311,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
                     coords.left - editorRect.left + (to - from > 10 ? 50 : 0),
                 },
                 activeMarks,
+                activeAlignment,
               });
             }
           } catch {
@@ -484,6 +492,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
         visible={selectionToolbar.visible}
         position={selectionToolbar.position}
         activeMarks={selectionToolbar.activeMarks}
+        activeAlignment={selectionToolbar.activeAlignment}
         view={viewRef.current}
       />
     </div>

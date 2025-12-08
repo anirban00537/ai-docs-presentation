@@ -8,6 +8,7 @@ interface SelectionToolbarProps {
   visible: boolean;
   position: { top: number; left: number };
   activeMarks: Set<string>;
+  activeAlignment?: string;
   view: EditorView | null;
 }
 
@@ -15,6 +16,7 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
   visible,
   position,
   activeMarks,
+  activeAlignment = "left",
   view,
 }) => {
   if (!visible || !view) return null;
@@ -134,6 +136,102 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
         >
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+        </svg>
+      </button>
+
+      {/* Separator */}
+      <div className="w-px h-5 bg-gray-600 mx-1" />
+
+      {/* Align Left */}
+      <button
+        onMouseDown={(e) => {
+          e.preventDefault();
+          const { state, dispatch } = view;
+          const { from, to } = state.selection;
+          let tr = state.tr;
+          state.doc.nodesBetween(from, to, (node, pos) => {
+             if (node.type.name === 'paragraph' || node.type.name.includes('heading')) {
+               tr = tr.setNodeMarkup(pos, undefined, { ...node.attrs, textAlign: 'left' });
+             }
+          });
+          if (tr.docChanged) dispatch(tr);
+          view.focus();
+        }}
+        className={cn(
+            "w-8 h-8 rounded flex items-center justify-center transition-colors",
+             activeAlignment === "left"
+            ? "bg-white/20 text-white"
+            : "text-gray-300 hover:bg-white/10 hover:text-white"
+        )}
+        title="Align Left"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="17" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="17" y1="18" x2="3" y2="18"></line>
+        </svg>
+      </button>
+
+      {/* Align Center */}
+      <button
+        onMouseDown={(e) => {
+          e.preventDefault();
+          const { state, dispatch } = view;
+          const { from, to } = state.selection;
+          let tr = state.tr;
+          state.doc.nodesBetween(from, to, (node, pos) => {
+             if (node.type.name === 'paragraph' || node.type.name.includes('heading')) {
+               tr = tr.setNodeMarkup(pos, undefined, { ...node.attrs, textAlign: 'center' });
+             }
+          });
+          if (tr.docChanged) dispatch(tr);
+          view.focus();
+        }}
+        className={cn(
+            "w-8 h-8 rounded flex items-center justify-center transition-colors",
+             activeAlignment === "center"
+            ? "bg-white/20 text-white"
+            : "text-gray-300 hover:bg-white/10 hover:text-white"
+        )}
+        title="Align Center"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="17" y1="10" x2="7" y2="10"></line>
+          <line x1="19" y1="14" x2="5" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+      </button>
+
+      {/* Align Right */}
+      <button
+        onMouseDown={(e) => {
+          e.preventDefault();
+          const { state, dispatch } = view;
+          const { from, to } = state.selection;
+          let tr = state.tr;
+          state.doc.nodesBetween(from, to, (node, pos) => {
+             if (node.type.name === 'paragraph' || node.type.name.includes('heading')) {
+               tr = tr.setNodeMarkup(pos, undefined, { ...node.attrs, textAlign: 'right' });
+             }
+          });
+          if (tr.docChanged) dispatch(tr);
+          view.focus();
+        }}
+        className={cn(
+            "w-8 h-8 rounded flex items-center justify-center transition-colors",
+             activeAlignment === "right"
+            ? "bg-white/20 text-white"
+            : "text-gray-300 hover:bg-white/10 hover:text-white"
+        )}
+        title="Align Right"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="21" y1="10" x2="7" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="7" y2="18"></line>
         </svg>
       </button>
     </div>
