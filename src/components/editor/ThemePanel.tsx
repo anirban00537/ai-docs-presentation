@@ -1,6 +1,8 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectTheme, setTheme, Theme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface ThemePanelProps {
   isOpen: boolean;
@@ -120,47 +122,45 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="absolute right-14 top-0 w-72 bg-white rounded-xl shadow-2xl border border-gray-200 p-4 z-50 max-h-[90vh] overflow-y-auto">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-gray-700"
+    <Card className="absolute right-full mr-4 top-1/2 -translate-y-1/2 w-72 shadow-lg z-50 max-h-[90vh] overflow-y-auto">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm">Themes</CardTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="h-6 w-6"
           >
-            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
-            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
-            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
-            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
-            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.434-.69-.434-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
-          </svg>
-          <h3 className="text-sm font-semibold text-gray-700">Themes</h3>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </Button>
         </div>
-        <button
-          onClick={onClose}
-          className="w-5 h-5 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          ×
-        </button>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-2 gap-3">
         {THEME_PALETTES.map((palette) => {
           const isActive = isThemeActive(palette.theme);
           return (
-            <button
+            <Button
               key={palette.name}
+              variant="ghost"
               onClick={() => handleThemeSelect(palette.theme)}
-              className={`relative p-3 rounded-lg border-2 transition-all hover:scale-105 ${
+              className={`relative p-3 h-auto rounded-lg border-2 transition-all hover:scale-105 ${
                 isActive
-                  ? "border-blue-500 shadow-md"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-primary shadow-md"
+                  : "border-border hover:border-primary/50"
               }`}
               style={{
                 backgroundColor: palette.theme.pageBackground,
@@ -168,7 +168,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
             >
               {/* Active indicator */}
               {isActive && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
                   <svg
                     width="12"
                     height="12"
@@ -210,11 +210,12 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
               <div className="text-xs font-medium text-center" style={{ color: palette.theme.headingColor }}>
                 {palette.name}
               </div>
-            </button>
+            </Button>
           );
         })}
-      </div>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

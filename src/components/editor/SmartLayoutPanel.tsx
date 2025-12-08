@@ -1,6 +1,8 @@
 import React from "react";
 import { DraggableLayoutOption } from "./DraggableLayoutOption";
 import { TwoColumnIcon, ThreeColumnIcon, FourColumnIcon } from "./icons/layout-icons";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface SmartLayoutPanelProps {
   isOpen: boolean;
@@ -14,20 +16,36 @@ export const SmartLayoutPanel: React.FC<SmartLayoutPanelProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute right-14 top-0 w-48 bg-white rounded-xl shadow-2xl border border-gray-200 p-4 z-50">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-700">Smart Layout</h3>
-        <button
-          onClick={onClose}
-          className="w-5 h-5 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          ×
-        </button>
-      </div>
-      <p className="text-xs text-gray-500 mb-4">
-        Drag a layout to add a new row
-      </p>
-      <div className="flex flex-col gap-3">
+    <Card className="absolute right-full mr-4 top-1/2 -translate-y-1/2 w-64 shadow-lg z-50">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm">Smart Layout</CardTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="h-6 w-6"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </Button>
+        </div>
+        <CardDescription className="text-xs">
+          Drag a layout to add a new row
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
         <DraggableLayoutOption
           id="layout-2-col"
           columnCount={2}
@@ -46,8 +64,8 @@ export const SmartLayoutPanel: React.FC<SmartLayoutPanelProps> = ({
           icon={<FourColumnIcon />}
           label="4 Columns"
         />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
