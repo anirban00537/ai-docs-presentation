@@ -25,7 +25,7 @@ import { SlashCommand, SLASH_COMMANDS } from "./commands";
 import { SlashMenu } from "./slash-menu";
 import { SelectionToolbar } from "./selection-toolbar";
 import { PROSEMIRROR_STYLES } from "./styles";
-import { placeholderPlugin } from "./placeholder-plugin";
+import { placeholderPlugin } from "./plugins/placeholder-plugin";
 
 // --- Main Editor Component ---
 type ProseMirrorEditorProps = {
