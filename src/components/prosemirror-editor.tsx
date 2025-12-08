@@ -21,7 +21,11 @@ import {
   textblockTypeInputRule,
   InputRule,
 } from "prosemirror-inputrules";
-import { splitListItem, liftListItem, sinkListItem } from "prosemirror-schema-list";
+import {
+  splitListItem,
+  liftListItem,
+  sinkListItem,
+} from "prosemirror-schema-list";
 import { cn } from "@/lib/utils";
 
 // --- Custom Schema ---
@@ -33,12 +37,18 @@ const createSchema = () => {
   );
 
   return new Schema({
-    nodes: nodes.update("doc", {
-      content: "block+",
-    }).update("code_block", {
-      ...basicSchema.spec.nodes.get("code_block"),
-      toDOM: () => ["pre", { class: "bg-gray-100 rounded-lg p-3 font-mono text-sm" }, ["code", 0]],
-    }),
+    nodes: nodes
+      .update("doc", {
+        content: "block+",
+      })
+      .update("code_block", {
+        ...basicSchema.spec.nodes.get("code_block"),
+        toDOM: () => [
+          "pre",
+          { class: "bg-gray-100 rounded-lg p-3 font-mono text-sm" },
+          ["code", 0],
+        ],
+      }),
     marks: basicSchema.spec.marks,
   });
 };
@@ -93,7 +103,14 @@ const SLASH_COMMANDS: SlashCommand[] = [
     label: "Bullet List",
     description: "Unordered list",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <circle cx="4" cy="6" r="2" fill="currentColor" />
         <line x1="9" y1="6" x2="21" y2="6" />
         <circle cx="4" cy="12" r="2" fill="currentColor" />
@@ -107,10 +124,21 @@ const SLASH_COMMANDS: SlashCommand[] = [
     label: "Numbered List",
     description: "Ordered list",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <text x="2" y="8" fontSize="8" fill="currentColor" stroke="none">1.</text>
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <text x="2" y="8" fontSize="8" fill="currentColor" stroke="none">
+          1.
+        </text>
         <line x1="9" y1="6" x2="21" y2="6" />
-        <text x="2" y="14" fontSize="8" fill="currentColor" stroke="none">2.</text>
+        <text x="2" y="14" fontSize="8" fill="currentColor" stroke="none">
+          2.
+        </text>
         <line x1="9" y1="12" x2="21" y2="12" />
       </svg>
     ),
@@ -132,7 +160,14 @@ const SLASH_COMMANDS: SlashCommand[] = [
     label: "Code Block",
     description: "Code snippet",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <polyline points="16,18 22,12 16,6" />
         <polyline points="8,6 2,12 8,18" />
       </svg>
@@ -146,9 +181,15 @@ const createInputRules = (schema: Schema) => {
   const rules: InputRule[] = [];
 
   // Heading rules
-  rules.push(textblockTypeInputRule(/^#\s$/, schema.nodes.heading, { level: 1 }));
-  rules.push(textblockTypeInputRule(/^##\s$/, schema.nodes.heading, { level: 2 }));
-  rules.push(textblockTypeInputRule(/^###\s$/, schema.nodes.heading, { level: 3 }));
+  rules.push(
+    textblockTypeInputRule(/^#\s$/, schema.nodes.heading, { level: 1 })
+  );
+  rules.push(
+    textblockTypeInputRule(/^##\s$/, schema.nodes.heading, { level: 2 })
+  );
+  rules.push(
+    textblockTypeInputRule(/^###\s$/, schema.nodes.heading, { level: 3 })
+  );
 
   // Blockquote rule
   rules.push(wrappingInputRule(/^>\s$/, schema.nodes.blockquote));
@@ -191,7 +232,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   const isInternalChangeRef = useRef(false); // Track if change is from editor itself
-  
+
   // Slash menu state
   const [menuState, setMenuState] = useState<{
     open: boolean;
@@ -224,17 +265,27 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       try {
         const newDoc = ProseMirrorNode.fromJSON(schema, value);
         const currentDoc = viewRef.current.state.doc;
-        
-        // Only update if content is different
+
+        // Only update if content is actually different
+        // Use eq() which compares document structure, not just references
         if (!currentDoc.eq(newDoc)) {
-          const newState = EditorState.create({
-            doc: newDoc,
-            plugins: viewRef.current.state.plugins,
-          });
-          viewRef.current.updateState(newState);
+          // Additional check: compare JSON to ensure content really changed
+          const currentJSON = currentDoc.toJSON();
+          const newJSON = newDoc.toJSON();
+          const contentChanged =
+            JSON.stringify(currentJSON) !== JSON.stringify(newJSON);
+
+          if (contentChanged) {
+            const newState = EditorState.create({
+              doc: newDoc,
+              plugins: viewRef.current.state.plugins,
+            });
+            viewRef.current.updateState(newState);
+          }
         }
-      } catch {
+      } catch (error) {
         // Invalid JSON, ignore
+        console.warn("ProseMirror sync error:", error);
       }
     }
   }, [value]);
@@ -249,16 +300,17 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       }
     }
     return schema.node("doc", null, [schema.node("paragraph")]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Get filtered commands
-  const filteredCommands = useMemo(() => 
-    SLASH_COMMANDS.filter(
-      (cmd) =>
-        cmd.label.toLowerCase().includes(menuState.query.toLowerCase()) ||
-        cmd.description.toLowerCase().includes(menuState.query.toLowerCase())
-    ),
+  const filteredCommands = useMemo(
+    () =>
+      SLASH_COMMANDS.filter(
+        (cmd) =>
+          cmd.label.toLowerCase().includes(menuState.query.toLowerCase()) ||
+          cmd.description.toLowerCase().includes(menuState.query.toLowerCase())
+      ),
     [menuState.query]
   );
 
@@ -268,38 +320,46 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     if (!view) return;
 
     console.log("Executing command:", command.label);
-    
+
     const { state, dispatch } = view;
     const { $from } = state.selection;
-    
+
     // First, delete the "/" and any query text
     const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
     const slashMatch = textBefore.match(/(^|\s)\/([^\s]*)$/);
-    
+
     let tr = state.tr;
-    
+
     if (slashMatch) {
       const slashAndQuery = "/" + (slashMatch[2] || "");
       const deleteFrom = $from.pos - slashAndQuery.length;
       const deleteTo = $from.pos;
       tr = tr.delete(deleteFrom, deleteTo);
     }
-    
+
     // Get the node type from schema
     const nodeType = schema.nodes[command.nodeType];
     if (!nodeType) {
       console.error("Unknown node type:", command.nodeType);
       return;
     }
-    
+
     // For list types, we need to wrap in list
-    if (command.nodeType === "bullet_list" || command.nodeType === "ordered_list") {
+    if (
+      command.nodeType === "bullet_list" ||
+      command.nodeType === "ordered_list"
+    ) {
       // Apply the delete first
       dispatch(tr);
-      
+
       // Close menu
-      setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
-      
+      setMenuState((prev) => ({
+        ...prev,
+        open: false,
+        query: "",
+        selectedIndex: 0,
+      }));
+
       // Create a list wrapper
       setTimeout(() => {
         if (viewRef.current) {
@@ -307,10 +367,13 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
           const { $from: newFrom } = v.state.selection;
           const start = newFrom.before(newFrom.depth);
           const end = newFrom.after(newFrom.depth);
-          
-          const listItem = schema.nodes.list_item.create(null, schema.nodes.paragraph.create());
+
+          const listItem = schema.nodes.list_item.create(
+            null,
+            schema.nodes.paragraph.create()
+          );
           const list = nodeType.create(null, listItem);
-          
+
           const newTr = v.state.tr.replaceWith(start, end, list);
           v.dispatch(newTr);
           v.focus();
@@ -318,22 +381,27 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       }, 0);
       return;
     }
-    
+
     // For blockquote
     if (command.nodeType === "blockquote") {
       dispatch(tr);
-      setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
-      
+      setMenuState((prev) => ({
+        ...prev,
+        open: false,
+        query: "",
+        selectedIndex: 0,
+      }));
+
       setTimeout(() => {
         if (viewRef.current) {
           const v = viewRef.current;
           const { $from: newFrom } = v.state.selection;
           const start = newFrom.before(newFrom.depth);
           const end = newFrom.after(newFrom.depth);
-          
+
           const paragraph = schema.nodes.paragraph.create();
           const blockquote = nodeType.create(null, paragraph);
-          
+
           const newTr = v.state.tr.replaceWith(start, end, blockquote);
           v.dispatch(newTr);
           v.focus();
@@ -341,18 +409,23 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       }, 0);
       return;
     }
-    
+
     // For simple block types (heading, paragraph, code_block)
     // Use setNodeMarkup to change the block type in place
     const pos = $from.before($from.depth);
     const mappedPos = tr.mapping.map(pos);
-    
+
     tr = tr.setNodeMarkup(mappedPos, nodeType, command.attrs);
     dispatch(tr);
-    
+
     // Close menu
-    setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
-    
+    setMenuState((prev) => ({
+      ...prev,
+      open: false,
+      query: "",
+      selectedIndex: 0,
+    }));
+
     view.focus();
   }, []);
 
@@ -386,28 +459,39 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       state,
       editable: () => !readOnly,
       dispatchTransaction(transaction: Transaction) {
-        console.log("dispatchTransaction called, docChanged:", transaction.docChanged);
-        
+        console.log(
+          "dispatchTransaction called, docChanged:",
+          transaction.docChanged
+        );
+
         const newState = view.state.apply(transaction);
         view.updateState(newState);
-        
+
         if (transaction.docChanged) {
           const json = newState.doc.toJSON();
           isInternalChangeRef.current = true; // Mark as internal change
           onChangeRef.current(json);
-          
+
           // Check for slash command trigger
           const { $from } = newState.selection;
-          const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
-          
-          console.log("textBefore:", textBefore, "parentOffset:", $from.parentOffset);
-          
+          const textBefore = $from.parent.textContent.slice(
+            0,
+            $from.parentOffset
+          );
+
+          console.log(
+            "textBefore:",
+            textBefore,
+            "parentOffset:",
+            $from.parentOffset
+          );
+
           const slashMatch = textBefore.match(/(^|\s)\/([^\s]*)$/);
           console.log("slashMatch:", slashMatch);
-          
+
           if (slashMatch) {
             const query = slashMatch[2] || "";
-            
+
             if (!isMenuOpen) {
               console.log("Opening menu, query:", query);
               // Opening menu for the first time
@@ -436,7 +520,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
               if (query !== currentQuery) {
                 currentQuery = query;
                 currentSelectedIndex = 0;
-                setMenuState(prev => ({ ...prev, query, selectedIndex: 0 }));
+                setMenuState((prev) => ({ ...prev, query, selectedIndex: 0 }));
               }
             }
           } else if (isMenuOpen) {
@@ -445,7 +529,12 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             isMenuOpen = false;
             currentQuery = "";
             currentSelectedIndex = 0;
-            setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
+            setMenuState((prev) => ({
+              ...prev,
+              open: false,
+              query: "",
+              selectedIndex: 0,
+            }));
           }
         }
       },
@@ -457,17 +546,26 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
               cmd.label.toLowerCase().includes(currentQuery.toLowerCase()) ||
               cmd.description.toLowerCase().includes(currentQuery.toLowerCase())
           );
-          
+
           if (event.key === "ArrowDown") {
             event.preventDefault();
-            currentSelectedIndex = Math.min(currentSelectedIndex + 1, filtered.length - 1);
-            setMenuState(prev => ({ ...prev, selectedIndex: currentSelectedIndex }));
+            currentSelectedIndex = Math.min(
+              currentSelectedIndex + 1,
+              filtered.length - 1
+            );
+            setMenuState((prev) => ({
+              ...prev,
+              selectedIndex: currentSelectedIndex,
+            }));
             return true;
           }
           if (event.key === "ArrowUp") {
             event.preventDefault();
             currentSelectedIndex = Math.max(currentSelectedIndex - 1, 0);
-            setMenuState(prev => ({ ...prev, selectedIndex: currentSelectedIndex }));
+            setMenuState((prev) => ({
+              ...prev,
+              selectedIndex: currentSelectedIndex,
+            }));
             return true;
           }
           if (event.key === "Enter") {
@@ -484,7 +582,12 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             isMenuOpen = false;
             currentQuery = "";
             currentSelectedIndex = 0;
-            setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
+            setMenuState((prev) => ({
+              ...prev,
+              open: false,
+              query: "",
+              selectedIndex: 0,
+            }));
             return true;
           }
         }
@@ -505,9 +608,12 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   }, [initialDoc, readOnly, placeholder, executeCommand]);
 
   // Handle menu item click
-  const handleMenuClick = useCallback((command: SlashCommand) => {
-    executeCommand(command);
-  }, [executeCommand]);
+  const handleMenuClick = useCallback(
+    (command: SlashCommand) => {
+      executeCommand(command);
+    },
+    [executeCommand]
+  );
 
   return (
     <div className={cn("relative", className)}>
@@ -585,8 +691,8 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
           pointer-events: none;
         }
       `}</style>
-      <div 
-        ref={editorRef} 
+      <div
+        ref={editorRef}
         className="w-full break-words whitespace-pre-wrap"
         data-gramm="false"
         data-gramm_editor="false"
@@ -595,7 +701,10 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       {menuState.open && filteredCommands.length > 0 && (
         <div
           className="absolute z-50 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 min-w-[220px] overflow-hidden"
-          style={{ top: menuState.position.top + 24, left: Math.max(0, menuState.position.left) }}
+          style={{
+            top: menuState.position.top + 24,
+            left: Math.max(0, menuState.position.left),
+          }}
         >
           <div className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wide">
             Blocks

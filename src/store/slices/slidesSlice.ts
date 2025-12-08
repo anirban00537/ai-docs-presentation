@@ -91,7 +91,9 @@ const slidesSlice = createSlice({
     addSlide: (state, action: PayloadAction<{ afterSlideId?: string }>) => {
       const newSlide = createSlide();
       if (action.payload.afterSlideId) {
-        const index = state.slides.findIndex(s => s.id === action.payload.afterSlideId);
+        const index = state.slides.findIndex(
+          (s) => s.id === action.payload.afterSlideId
+        );
         state.slides.splice(index + 1, 0, newSlide);
       } else {
         state.slides.push(newSlide);
@@ -100,37 +102,40 @@ const slidesSlice = createSlice({
     },
     deleteSlide: (state, action: PayloadAction<string>) => {
       if (state.slides.length <= 1) return;
-      const index = state.slides.findIndex(s => s.id === action.payload);
-      state.slides = state.slides.filter(s => s.id !== action.payload);
+      const index = state.slides.findIndex((s) => s.id === action.payload);
+      state.slides = state.slides.filter((s) => s.id !== action.payload);
       if (state.activeSlideId === action.payload) {
         state.activeSlideId = state.slides[Math.max(0, index - 1)]?.id || null;
       }
     },
     duplicateSlide: (state, action: PayloadAction<string>) => {
-      const slide = state.slides.find(s => s.id === action.payload);
+      const slide = state.slides.find((s) => s.id === action.payload);
       if (!slide) return;
       const duplicated: Slide = JSON.parse(JSON.stringify(slide));
       duplicated.id = nanoid();
-      duplicated.rows.forEach(row => {
+      duplicated.rows.forEach((row) => {
         row.id = nanoid();
-        row.blocks.forEach(block => {
+        row.blocks.forEach((block) => {
           block.id = nanoid();
         });
       });
-      const index = state.slides.findIndex(s => s.id === action.payload);
+      const index = state.slides.findIndex((s) => s.id === action.payload);
       state.slides.splice(index + 1, 0, duplicated);
       state.activeSlideId = duplicated.id;
     },
-    reorderSlides: (state, action: PayloadAction<{ slideId: string; newIndex: number }>) => {
+    reorderSlides: (
+      state,
+      action: PayloadAction<{ slideId: string; newIndex: number }>
+    ) => {
       const { slideId, newIndex } = action.payload;
-      const oldIndex = state.slides.findIndex(s => s.id === slideId);
+      const oldIndex = state.slides.findIndex((s) => s.id === slideId);
       if (oldIndex === -1) return;
       const [removed] = state.slides.splice(oldIndex, 1);
       state.slides.splice(newIndex, 0, removed);
     },
     setSlides: (state, action: PayloadAction<Slide[]>) => {
       state.slides = action.payload;
-      if (!state.slides.find(s => s.id === state.activeSlideId)) {
+      if (!state.slides.find((s) => s.id === state.activeSlideId)) {
         state.activeSlideId = state.slides[0]?.id || null;
       }
     },
@@ -141,10 +146,10 @@ const slidesSlice = createSlice({
       action: PayloadAction<{ slideId: string; blockId: string; content: any }>
     ) => {
       const { slideId, blockId, content } = action.payload;
-      const slide = state.slides.find(s => s.id === slideId);
+      const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
       for (const row of slide.rows) {
-        const block = row.blocks.find(b => b.id === blockId);
+        const block = row.blocks.find((b) => b.id === blockId);
         if (block) {
           block.content = content;
           break;
@@ -153,14 +158,18 @@ const slidesSlice = createSlice({
     },
     addBlockToRow: (
       state,
-      action: PayloadAction<{ slideId: string; rowId: string; afterBlockId: string }>
+      action: PayloadAction<{
+        slideId: string;
+        rowId: string;
+        afterBlockId: string;
+      }>
     ) => {
       const { slideId, rowId, afterBlockId } = action.payload;
-      const slide = state.slides.find(s => s.id === slideId);
+      const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
-      const row = slide.rows.find(r => r.id === rowId);
+      const row = slide.rows.find((r) => r.id === rowId);
       if (!row) return;
-      const index = row.blocks.findIndex(b => b.id === afterBlockId);
+      const index = row.blocks.findIndex((b) => b.id === afterBlockId);
       row.blocks.splice(index + 1, 0, createBlock());
     },
     addRowToSlide: (
@@ -168,9 +177,9 @@ const slidesSlice = createSlice({
       action: PayloadAction<{ slideId: string; afterRowId: string }>
     ) => {
       const { slideId, afterRowId } = action.payload;
-      const slide = state.slides.find(s => s.id === slideId);
+      const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
-      const index = slide.rows.findIndex(r => r.id === afterRowId);
+      const index = slide.rows.findIndex((r) => r.id === afterRowId);
       slide.rows.splice(index + 1, 0, createRow());
     },
     deleteRow: (
@@ -178,16 +187,16 @@ const slidesSlice = createSlice({
       action: PayloadAction<{ slideId: string; rowId: string }>
     ) => {
       const { slideId, rowId } = action.payload;
-      const slide = state.slides.find(s => s.id === slideId);
+      const slide = state.slides.find((s) => s.id === slideId);
       if (!slide || slide.rows.length <= 1) return;
-      slide.rows = slide.rows.filter(r => r.id !== rowId);
+      slide.rows = slide.rows.filter((r) => r.id !== rowId);
     },
     addRowWithColumns: (
       state,
       action: PayloadAction<{ slideId: string; columnCount: number }>
     ) => {
       const { slideId, columnCount } = action.payload;
-      const slide = state.slides.find(s => s.id === slideId);
+      const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
       const blocks: Block[] = [];
       for (let i = 0; i < columnCount; i++) {
@@ -200,7 +209,7 @@ const slidesSlice = createSlice({
       action: PayloadAction<{ slideId: string; columnCount?: number }>
     ) => {
       const { slideId, columnCount = 1 } = action.payload;
-      const slide = state.slides.find(s => s.id === slideId);
+      const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
       const blocks: Block[] = [];
       for (let i = 0; i < columnCount; i++) {
@@ -212,7 +221,7 @@ const slidesSlice = createSlice({
       state,
       action: PayloadAction<{ slideId: string; rows: Row[] }>
     ) => {
-      const slide = state.slides.find(s => s.id === action.payload.slideId);
+      const slide = state.slides.find((s) => s.id === action.payload.slideId);
       if (slide) {
         slide.rows = action.payload.rows;
       }
@@ -227,41 +236,57 @@ const slidesSlice = createSlice({
         targetBlockId?: string;
       }>
     ) => {
-      const { slideId, sourceRowId, targetRowId, blockId, targetBlockId } = action.payload;
-      const slide = state.slides.find(s => s.id === slideId);
+      const { slideId, sourceRowId, targetRowId, blockId, targetBlockId } =
+        action.payload;
+      const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
 
-      const sourceRow = slide.rows.find(r => r.id === sourceRowId);
-      const targetRow = slide.rows.find(r => r.id === targetRowId);
+      const sourceRow = slide.rows.find((r) => r.id === sourceRowId);
+      const targetRow = slide.rows.find((r) => r.id === targetRowId);
       if (!sourceRow || !targetRow) return;
 
-      const blockIndex = sourceRow.blocks.findIndex(b => b.id === blockId);
+      const blockIndex = sourceRow.blocks.findIndex((b) => b.id === blockId);
       if (blockIndex === -1) return;
 
       // Same row reordering
       if (sourceRowId === targetRowId && targetBlockId) {
-        const targetIndex = sourceRow.blocks.findIndex(b => b.id === targetBlockId);
+        const targetIndex = sourceRow.blocks.findIndex(
+          (b) => b.id === targetBlockId
+        );
         if (targetIndex === -1 || blockIndex === targetIndex) return;
-        
+
         // Remove from old position and insert at new position
         const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
-        const newTargetIndex = targetIndex > blockIndex ? targetIndex : targetIndex;
-        sourceRow.blocks.splice(newTargetIndex, 0, movedBlock);
+        // Adjust targetIndex if we removed from before the target position
+        const adjustedTargetIndex =
+          blockIndex < targetIndex ? targetIndex - 1 : targetIndex;
+        sourceRow.blocks.splice(adjustedTargetIndex, 0, movedBlock);
         return;
       }
 
       // Different row - move block
       const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
 
+      // Ensure we have a valid block
+      if (!movedBlock) return;
+
       if (targetBlockId) {
-        const targetIndex = targetRow.blocks.findIndex(b => b.id === targetBlockId);
-        targetRow.blocks.splice(targetIndex, 0, movedBlock);
+        const targetIndex = targetRow.blocks.findIndex(
+          (b) => b.id === targetBlockId
+        );
+        if (targetIndex === -1) {
+          // Target block not found, append to end
+          targetRow.blocks.push(movedBlock);
+        } else {
+          // Insert before target block
+          targetRow.blocks.splice(targetIndex, 0, movedBlock);
+        }
       } else {
         targetRow.blocks.push(movedBlock);
       }
 
       // Remove empty rows
-      slide.rows = slide.rows.filter(r => r.blocks.length > 0);
+      slide.rows = slide.rows.filter((r) => r.blocks.length > 0);
       // Ensure at least one row
       if (slide.rows.length === 0) {
         slide.rows.push(createRow());
@@ -277,20 +302,61 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, rowId, oldIndex, newIndex } = action.payload;
-      const slide = state.slides.find(s => s.id === slideId);
+      const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
 
-      const row = slide.rows.find(r => r.id === rowId);
+      const row = slide.rows.find((r) => r.id === rowId);
       if (!row) return;
 
       if (oldIndex < 0 || oldIndex >= row.blocks.length) return;
       if (newIndex < 0 || newIndex >= row.blocks.length) return;
       if (oldIndex === newIndex) return;
 
-      // Proper swap - swap the blocks at both positions
-      const temp = row.blocks[oldIndex];
-      row.blocks[oldIndex] = row.blocks[newIndex];
-      row.blocks[newIndex] = temp;
+      // Move block from oldIndex to newIndex (not swap)
+      // Get the block reference before removal to verify it exists
+      const blockToMove = row.blocks[oldIndex];
+
+      // Ensure we have a valid block with content
+      if (!blockToMove || !blockToMove.id) return;
+
+      // Store a reference to the original content to verify preservation
+      const originalContent = blockToMove.content;
+
+      // Remove the block from old position - splice preserves the entire block object reference
+      // This is crucial - we want to move the same object, not create a copy
+      const [movedBlock] = row.blocks.splice(oldIndex, 1);
+
+      // Verify the block was correctly removed and is the same block
+      if (!movedBlock || movedBlock.id !== blockToMove.id) {
+        // Safety: restore the block if something went wrong
+        row.blocks.splice(oldIndex, 0, blockToMove);
+        return;
+      }
+
+      // Verify content is preserved (should be same reference)
+      if (movedBlock.content !== originalContent) {
+        // If content reference changed (shouldn't happen), restore it
+        movedBlock.content = originalContent;
+      }
+
+      // Final safety check: ensure content is never null/undefined
+      if (!movedBlock.content) {
+        // If content was somehow lost, restore to default
+        movedBlock.content = createDefaultContent();
+      }
+
+      // Adjust newIndex if we removed from before the target position
+      // When oldIndex < newIndex, removing the element shifts all subsequent indices down by 1
+      const adjustedNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
+
+      // Ensure adjusted index is valid
+      const finalIndex = Math.max(
+        0,
+        Math.min(adjustedNewIndex, row.blocks.length)
+      );
+
+      // Insert at new position - this preserves the block's content
+      row.blocks.splice(finalIndex, 0, movedBlock);
     },
   },
 });
@@ -316,8 +382,9 @@ export const {
 // --- Selectors ---
 export const selectSlidesState = (state: RootState) => state.slides;
 export const selectSlides = (state: RootState) => state.slides.slides;
-export const selectActiveSlideId = (state: RootState) => state.slides.activeSlideId;
+export const selectActiveSlideId = (state: RootState) =>
+  state.slides.activeSlideId;
 export const selectActiveSlide = (state: RootState) =>
-  state.slides.slides.find(s => s.id === state.slides.activeSlideId) || null;
+  state.slides.slides.find((s) => s.id === state.slides.activeSlideId) || null;
 
 export default slidesSlice.reducer;
