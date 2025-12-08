@@ -42,7 +42,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   return (
     <div
-      className="group/slide relative rounded-2xl shadow-xl border border-gray-200 px-6 py-4"
+      className="group/slide relative rounded-2xl shadow-xl px-6 py-4"
       style={{
         backgroundColor: theme.cardBackground,
         fontFamily: theme.fontFamily,
