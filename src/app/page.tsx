@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/navbar";
 import IntroAnimation from "@/components/ui/scroll-morph-hero";
-import { FeaturesSection } from "@/components/sections/features-section";
 import { FeaturesSection as AnimatedFeaturesSection } from "@/components/ui/feature";
 import { HowItWorksSection } from "@/components/sections/how-it-works-section";
 import { PricingSection } from "@/components/sections/pricing-section";
@@ -16,7 +15,6 @@ export default function Home() {
         <div className="w-full h-[85vh] min-h-[600px]">
           <IntroAnimation />
         </div>
-        <FeaturesSection />
         <AnimatedFeaturesSection />
         <HowItWorksSection />
         <PricingSection />
