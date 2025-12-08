@@ -190,6 +190,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
+  const isInternalChangeRef = useRef(false); // Track if change is from editor itself
   
   // Slash menu state
   const [menuState, setMenuState] = useState<{
@@ -208,6 +209,35 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   useEffect(() => {
     onChangeRef.current = onChange;
   }, [onChange]);
+
+  // Sync external value changes to ProseMirror editor
+  useEffect(() => {
+    if (!viewRef.current) return;
+    if (isInternalChangeRef.current) {
+      // This change came from the editor itself, skip syncing
+      isInternalChangeRef.current = false;
+      return;
+    }
+
+    // External value change (e.g., from Redux after block swap)
+    if (value && typeof value === "object" && value.type === "doc") {
+      try {
+        const newDoc = ProseMirrorNode.fromJSON(schema, value);
+        const currentDoc = viewRef.current.state.doc;
+        
+        // Only update if content is different
+        if (!currentDoc.eq(newDoc)) {
+          const newState = EditorState.create({
+            doc: newDoc,
+            plugins: viewRef.current.state.plugins,
+          });
+          viewRef.current.updateState(newState);
+        }
+      } catch {
+        // Invalid JSON, ignore
+      }
+    }
+  }, [value]);
 
   // Parse initial value to ProseMirror doc
   const initialDoc = useMemo(() => {
@@ -363,6 +393,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
         
         if (transaction.docChanged) {
           const json = newState.doc.toJSON();
+          isInternalChangeRef.current = true; // Mark as internal change
           onChangeRef.current(json);
           
           // Check for slash command trigger

@@ -287,8 +287,10 @@ const slidesSlice = createSlice({
       if (newIndex < 0 || newIndex >= row.blocks.length) return;
       if (oldIndex === newIndex) return;
 
-      const [movedBlock] = row.blocks.splice(oldIndex, 1);
-      row.blocks.splice(newIndex, 0, movedBlock);
+      // Proper swap - swap the blocks at both positions
+      const temp = row.blocks[oldIndex];
+      row.blocks[oldIndex] = row.blocks[newIndex];
+      row.blocks[newIndex] = temp;
     },
   },
 });
