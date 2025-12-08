@@ -51,77 +51,42 @@ interface SlashCommand {
   label: string;
   description: string;
   icon: React.ReactNode;
-  action: (view: EditorView) => void;
+  nodeType: string;
+  attrs?: Record<string, any>;
 }
 
-// Helper to replace current block with a new block type
-const replaceBlock = (view: EditorView, nodeType: any, attrs?: any) => {
-  const { state, dispatch } = view;
-  const { $from } = state.selection;
-  
-  // Get the position of the current block node
-  const pos = $from.before($from.depth);
-  
-  // Delete the "/" from the content first
-  const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
-  const slashMatch = textBefore.match(/(^|\s)\/([^\s]*)$/);
-  
-  let tr = state.tr;
-  
-  if (slashMatch) {
-    const slashAndQuery = "/" + (slashMatch[2] || "");
-    const deleteLength = slashAndQuery.length;
-    const deleteFrom = $from.pos - deleteLength;
-    const deleteTo = $from.pos;
-    tr = tr.delete(deleteFrom, deleteTo);
-  }
-  
-  // Now change the node type using setNodeMarkup
-  // Need to recalculate position after delete
-  const mapping = tr.mapping;
-  const newPos = mapping.map(pos);
-  
-  tr = tr.setNodeMarkup(newPos, nodeType, attrs);
-  dispatch(tr);
-};
-
-// --- Slash Commands ---
-const getSlashCommands = (): SlashCommand[] => [
+// --- Slash Commands Definition ---
+const SLASH_COMMANDS: SlashCommand[] = [
   {
     id: "heading1",
     label: "Heading 1",
     description: "Large heading",
     icon: <span className="font-bold text-lg">H1</span>,
-    action: (view) => {
-      replaceBlock(view, schema.nodes.heading, { level: 1 });
-    },
+    nodeType: "heading",
+    attrs: { level: 1 },
   },
   {
     id: "heading2",
     label: "Heading 2",
     description: "Medium heading",
     icon: <span className="font-bold text-base">H2</span>,
-    action: (view) => {
-      replaceBlock(view, schema.nodes.heading, { level: 2 });
-    },
+    nodeType: "heading",
+    attrs: { level: 2 },
   },
   {
     id: "heading3",
     label: "Heading 3",
     description: "Small heading",
     icon: <span className="font-bold text-sm">H3</span>,
-    action: (view) => {
-      replaceBlock(view, schema.nodes.heading, { level: 3 });
-    },
+    nodeType: "heading",
+    attrs: { level: 3 },
   },
   {
     id: "paragraph",
     label: "Paragraph",
     description: "Plain text",
     icon: <span className="text-gray-500">¶</span>,
-    action: (view) => {
-      replaceBlock(view, schema.nodes.paragraph);
-    },
+    nodeType: "paragraph",
   },
   {
     id: "bullet_list",
@@ -133,24 +98,9 @@ const getSlashCommands = (): SlashCommand[] => [
         <line x1="9" y1="6" x2="21" y2="6" />
         <circle cx="4" cy="12" r="2" fill="currentColor" />
         <line x1="9" y1="12" x2="21" y2="12" />
-        <circle cx="4" cy="18" r="2" fill="currentColor" />
-        <line x1="9" y1="18" x2="21" y2="18" />
       </svg>
     ),
-    action: (view) => {
-      const { state, dispatch } = view;
-      const { $from } = state.selection;
-      const start = $from.start();
-      const end = $from.end();
-      const content = $from.parent.content;
-      
-      // Create a list item with the content
-      const listItem = schema.nodes.list_item.create(null, schema.nodes.paragraph.create(null, content));
-      const bulletList = schema.nodes.bullet_list.create(null, listItem);
-      
-      const tr = state.tr.replaceWith(start - 1, end + 1, bulletList);
-      dispatch(tr);
-    },
+    nodeType: "bullet_list",
   },
   {
     id: "ordered_list",
@@ -162,23 +112,9 @@ const getSlashCommands = (): SlashCommand[] => [
         <line x1="9" y1="6" x2="21" y2="6" />
         <text x="2" y="14" fontSize="8" fill="currentColor" stroke="none">2.</text>
         <line x1="9" y1="12" x2="21" y2="12" />
-        <text x="2" y="20" fontSize="8" fill="currentColor" stroke="none">3.</text>
-        <line x1="9" y1="18" x2="21" y2="18" />
       </svg>
     ),
-    action: (view) => {
-      const { state, dispatch } = view;
-      const { $from } = state.selection;
-      const start = $from.start();
-      const end = $from.end();
-      const content = $from.parent.content;
-      
-      const listItem = schema.nodes.list_item.create(null, schema.nodes.paragraph.create(null, content));
-      const orderedList = schema.nodes.ordered_list.create(null, listItem);
-      
-      const tr = state.tr.replaceWith(start - 1, end + 1, orderedList);
-      dispatch(tr);
-    },
+    nodeType: "ordered_list",
   },
   {
     id: "blockquote",
@@ -189,20 +125,7 @@ const getSlashCommands = (): SlashCommand[] => [
         <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
       </svg>
     ),
-    action: (view) => {
-      const { state, dispatch } = view;
-      const { $from } = state.selection;
-      const start = $from.start();
-      const end = $from.end();
-      const content = $from.parent.content;
-      
-      // Wrap content in paragraph, then in blockquote
-      const paragraph = schema.nodes.paragraph.create(null, content);
-      const blockquote = schema.nodes.blockquote.create(null, paragraph);
-      
-      const tr = state.tr.replaceWith(start - 1, end + 1, blockquote);
-      dispatch(tr);
-    },
+    nodeType: "blockquote",
   },
   {
     id: "code_block",
@@ -214,9 +137,7 @@ const getSlashCommands = (): SlashCommand[] => [
         <polyline points="8,6 2,12 8,18" />
       </svg>
     ),
-    action: (view) => {
-      replaceBlock(view, schema.nodes.code_block);
-    },
+    nodeType: "code_block",
   },
 ];
 
@@ -249,59 +170,6 @@ const createInputRules = (schema: Schema) => {
   return inputRules({ rules });
 };
 
-// --- Slash Command Menu Component ---
-interface SlashMenuProps {
-  commands: SlashCommand[];
-  selectedIndex: number;
-  query: string;
-  position: { top: number; left: number };
-  onSelect: (command: SlashCommand) => void;
-}
-
-const SlashMenu: React.FC<SlashMenuProps> = ({ commands, selectedIndex, query, position, onSelect }) => {
-  const filteredCommands = commands.filter(
-    (cmd) =>
-      cmd.label.toLowerCase().includes(query.toLowerCase()) ||
-      cmd.description.toLowerCase().includes(query.toLowerCase())
-  );
-
-  if (filteredCommands.length === 0) return null;
-
-  return (
-    <div
-      className="absolute z-50 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 min-w-[220px] overflow-hidden"
-      style={{ top: position.top + 24, left: Math.max(0, position.left) }}
-    >
-      <div className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wide">
-        Blocks
-      </div>
-      {filteredCommands.map((cmd, index) => (
-        <button
-          key={cmd.id}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            onSelect(cmd);
-          }}
-          className={cn(
-            "w-full px-3 py-2 flex items-center gap-3 text-left transition-colors",
-            index === selectedIndex
-              ? "bg-blue-50 text-blue-700"
-              : "hover:bg-gray-50 text-gray-700"
-          )}
-        >
-          <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600">
-            {cmd.icon}
-          </div>
-          <div>
-            <div className="font-medium text-sm">{cmd.label}</div>
-            <div className="text-xs text-gray-400">{cmd.description}</div>
-          </div>
-        </button>
-      ))}
-    </div>
-  );
-};
-
 // --- Main Editor Component ---
 type ProseMirrorEditorProps = {
   value: any;
@@ -323,30 +191,18 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   
-  // Slash menu state - using refs to avoid re-render issues in callbacks
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [menuQuery, setMenuQuery] = useState("");
-  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  
-  const menuOpenRef = useRef(menuOpen);
-  const menuQueryRef = useRef(menuQuery);
-  const selectedIndexRef = useRef(selectedIndex);
-  
-  useEffect(() => { menuOpenRef.current = menuOpen; }, [menuOpen]);
-  useEffect(() => { menuQueryRef.current = menuQuery; }, [menuQuery]);
-  useEffect(() => { selectedIndexRef.current = selectedIndex; }, [selectedIndex]);
-
-  const commands = useMemo(() => getSlashCommands(), []);
-  
-  const filteredCommands = useMemo(() => 
-    commands.filter(
-      (cmd) =>
-        cmd.label.toLowerCase().includes(menuQuery.toLowerCase()) ||
-        cmd.description.toLowerCase().includes(menuQuery.toLowerCase())
-    ),
-    [commands, menuQuery]
-  );
+  // Slash menu state
+  const [menuState, setMenuState] = useState<{
+    open: boolean;
+    query: string;
+    position: { top: number; left: number };
+    selectedIndex: number;
+  }>({
+    open: false,
+    query: "",
+    position: { top: 0, left: 0 },
+    selectedIndex: 0,
+  });
 
   // Keep onChange ref updated
   useEffect(() => {
@@ -366,40 +222,107 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Get filtered commands
+  const filteredCommands = useMemo(() => 
+    SLASH_COMMANDS.filter(
+      (cmd) =>
+        cmd.label.toLowerCase().includes(menuState.query.toLowerCase()) ||
+        cmd.description.toLowerCase().includes(menuState.query.toLowerCase())
+    ),
+    [menuState.query]
+  );
+
   // Execute a slash command
   const executeCommand = useCallback((command: SlashCommand) => {
     const view = viewRef.current;
     if (!view) return;
 
-    // Close menu first
-    setMenuOpen(false);
-    setMenuQuery("");
-    setSelectedIndex(0);
+    console.log("Executing command:", command.label);
     
-    // Get the current selection and block info
-    const { $from } = view.state.selection;
-    const blockStart = $from.start() - 1; // Position before the block
-    const blockEnd = $from.end() + 1;    // Position after the block
+    const { state, dispatch } = view;
+    const { $from } = state.selection;
     
-    // Get current text content (will be empty string for empty paragraphs)
+    // First, delete the "/" and any query text
     const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
     const slashMatch = textBefore.match(/(^|\s)\/([^\s]*)$/);
     
-    // Calculate remaining text after removing slash and query
-    let remainingContent: any = null;
+    let tr = state.tr;
+    
     if (slashMatch) {
       const slashAndQuery = "/" + (slashMatch[2] || "");
-      const textAfterSlash = $from.parent.textContent.slice($from.parentOffset);
-      const textBeforeSlash = textBefore.slice(0, textBefore.length - slashAndQuery.length);
-      const fullRemainingText = textBeforeSlash + textAfterSlash;
-      
-      if (fullRemainingText.length > 0) {
-        remainingContent = view.state.schema.text(fullRemainingText);
-      }
+      const deleteFrom = $from.pos - slashAndQuery.length;
+      const deleteTo = $from.pos;
+      tr = tr.delete(deleteFrom, deleteTo);
     }
     
-    // Execute the action directly
-    command.action(view);
+    // Get the node type from schema
+    const nodeType = schema.nodes[command.nodeType];
+    if (!nodeType) {
+      console.error("Unknown node type:", command.nodeType);
+      return;
+    }
+    
+    // For list types, we need to wrap in list
+    if (command.nodeType === "bullet_list" || command.nodeType === "ordered_list") {
+      // Apply the delete first
+      dispatch(tr);
+      
+      // Close menu
+      setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
+      
+      // Create a list wrapper
+      setTimeout(() => {
+        if (viewRef.current) {
+          const v = viewRef.current;
+          const { $from: newFrom } = v.state.selection;
+          const start = newFrom.before(newFrom.depth);
+          const end = newFrom.after(newFrom.depth);
+          
+          const listItem = schema.nodes.list_item.create(null, schema.nodes.paragraph.create());
+          const list = nodeType.create(null, listItem);
+          
+          const newTr = v.state.tr.replaceWith(start, end, list);
+          v.dispatch(newTr);
+          v.focus();
+        }
+      }, 0);
+      return;
+    }
+    
+    // For blockquote
+    if (command.nodeType === "blockquote") {
+      dispatch(tr);
+      setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
+      
+      setTimeout(() => {
+        if (viewRef.current) {
+          const v = viewRef.current;
+          const { $from: newFrom } = v.state.selection;
+          const start = newFrom.before(newFrom.depth);
+          const end = newFrom.after(newFrom.depth);
+          
+          const paragraph = schema.nodes.paragraph.create();
+          const blockquote = nodeType.create(null, paragraph);
+          
+          const newTr = v.state.tr.replaceWith(start, end, blockquote);
+          v.dispatch(newTr);
+          v.focus();
+        }
+      }, 0);
+      return;
+    }
+    
+    // For simple block types (heading, paragraph, code_block)
+    // Use setNodeMarkup to change the block type in place
+    const pos = $from.before($from.depth);
+    const mappedPos = tr.mapping.map(pos);
+    
+    tr = tr.setNodeMarkup(mappedPos, nodeType, command.attrs);
+    dispatch(tr);
+    
+    // Close menu
+    setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
+    
     view.focus();
   }, []);
 
@@ -424,10 +347,17 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       plugins,
     });
 
+    // We need to track menu state in a ref for the handleKeyDown
+    let isMenuOpen = false;
+    let currentQuery = "";
+    let currentSelectedIndex = 0;
+
     const view = new EditorView(editorRef.current, {
       state,
       editable: () => !readOnly,
       dispatchTransaction(transaction: Transaction) {
+        console.log("dispatchTransaction called, docChanged:", transaction.docChanged);
+        
         const newState = view.state.apply(transaction);
         view.updateState(newState);
         
@@ -439,92 +369,92 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
           const { $from } = newState.selection;
           const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
           
-          // Check if we have a slash trigger pattern
+          console.log("textBefore:", textBefore, "parentOffset:", $from.parentOffset);
+          
           const slashMatch = textBefore.match(/(^|\s)\/([^\s]*)$/);
+          console.log("slashMatch:", slashMatch);
           
           if (slashMatch) {
             const query = slashMatch[2] || "";
             
-            if (!menuOpenRef.current) {
+            if (!isMenuOpen) {
+              console.log("Opening menu, query:", query);
               // Opening menu for the first time
               try {
                 const coords = view.coordsAtPos($from.pos);
                 const editorRect = editorRef.current?.getBoundingClientRect();
                 if (editorRect) {
-                  setMenuPosition({
-                    top: coords.bottom - editorRect.top,
-                    left: coords.left - editorRect.left,
+                  isMenuOpen = true;
+                  currentQuery = query;
+                  currentSelectedIndex = 0;
+                  setMenuState({
+                    open: true,
+                    query,
+                    position: {
+                      top: coords.bottom - editorRect.top,
+                      left: coords.left - editorRect.left,
+                    },
+                    selectedIndex: 0,
                   });
                 }
               } catch {
-                // coords might fail if position is invalid
+                console.error("Failed to get coords");
               }
-              setMenuQuery(query);
-              setSelectedIndex(0);
-              setMenuOpen(true);
             } else {
               // Menu already open, update query
-              if (query !== menuQueryRef.current) {
-                setMenuQuery(query);
-                setSelectedIndex(0);
+              if (query !== currentQuery) {
+                currentQuery = query;
+                currentSelectedIndex = 0;
+                setMenuState(prev => ({ ...prev, query, selectedIndex: 0 }));
               }
             }
-          } else if (menuOpenRef.current) {
+          } else if (isMenuOpen) {
+            console.log("Closing menu - no slash found");
             // No slash pattern found, close menu
-            setMenuOpen(false);
-            setMenuQuery("");
-            setSelectedIndex(0);
+            isMenuOpen = false;
+            currentQuery = "";
+            currentSelectedIndex = 0;
+            setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
           }
         }
       },
       handleKeyDown: (view, event) => {
         // Handle slash menu keyboard navigation
-        if (menuOpenRef.current) {
-          const currentCommands = getSlashCommands();
-          const query = menuQueryRef.current;
-          const filtered = currentCommands.filter(
+        if (isMenuOpen) {
+          const filtered = SLASH_COMMANDS.filter(
             (cmd) =>
-              cmd.label.toLowerCase().includes(query.toLowerCase()) ||
-              cmd.description.toLowerCase().includes(query.toLowerCase())
+              cmd.label.toLowerCase().includes(currentQuery.toLowerCase()) ||
+              cmd.description.toLowerCase().includes(currentQuery.toLowerCase())
           );
           
           if (event.key === "ArrowDown") {
             event.preventDefault();
-            setSelectedIndex(i => Math.min(i + 1, filtered.length - 1));
+            currentSelectedIndex = Math.min(currentSelectedIndex + 1, filtered.length - 1);
+            setMenuState(prev => ({ ...prev, selectedIndex: currentSelectedIndex }));
             return true;
           }
           if (event.key === "ArrowUp") {
             event.preventDefault();
-            setSelectedIndex(i => Math.max(i - 1, 0));
+            currentSelectedIndex = Math.max(currentSelectedIndex - 1, 0);
+            setMenuState(prev => ({ ...prev, selectedIndex: currentSelectedIndex }));
             return true;
           }
           if (event.key === "Enter") {
             event.preventDefault();
-            const cmd = filtered[selectedIndexRef.current];
+            const cmd = filtered[currentSelectedIndex];
             if (cmd) {
+              isMenuOpen = false;
               executeCommand(cmd);
             }
             return true;
           }
           if (event.key === "Escape") {
             event.preventDefault();
-            setMenuOpen(false);
-            setMenuQuery("");
-            setSelectedIndex(0);
+            isMenuOpen = false;
+            currentQuery = "";
+            currentSelectedIndex = 0;
+            setMenuState(prev => ({ ...prev, open: false, query: "", selectedIndex: 0 }));
             return true;
-          }
-          if (event.key === "Backspace") {
-            // Check if we're about to delete the slash
-            const { $from } = view.state.selection;
-            const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
-            if (textBefore === "/") {
-              // Will delete the slash, close menu after allowing the deletion
-              setTimeout(() => {
-                setMenuOpen(false);
-                setMenuQuery("");
-                setSelectedIndex(0);
-              }, 0);
-            }
           }
         }
         return false;
@@ -542,6 +472,11 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       viewRef.current = null;
     };
   }, [initialDoc, readOnly, placeholder, executeCommand]);
+
+  // Handle menu item click
+  const handleMenuClick = useCallback((command: SlashCommand) => {
+    executeCommand(command);
+  }, [executeCommand]);
 
   return (
     <div className={cn("relative", className)}>
@@ -626,14 +561,38 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
         data-gramm_editor="false"
         data-enable-grammarly="false"
       />
-      {menuOpen && (
-        <SlashMenu
-          commands={commands}
-          selectedIndex={selectedIndex}
-          query={menuQuery}
-          position={menuPosition}
-          onSelect={executeCommand}
-        />
+      {menuState.open && filteredCommands.length > 0 && (
+        <div
+          className="absolute z-50 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 min-w-[220px] overflow-hidden"
+          style={{ top: menuState.position.top + 24, left: Math.max(0, menuState.position.left) }}
+        >
+          <div className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wide">
+            Blocks
+          </div>
+          {filteredCommands.map((cmd, index) => (
+            <button
+              key={cmd.id}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                handleMenuClick(cmd);
+              }}
+              className={cn(
+                "w-full px-3 py-2 flex items-center gap-3 text-left transition-colors",
+                index === menuState.selectedIndex
+                  ? "bg-blue-50 text-blue-700"
+                  : "hover:bg-gray-50 text-gray-700"
+              )}
+            >
+              <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600">
+                {cmd.icon}
+              </div>
+              <div>
+                <div className="font-medium text-sm">{cmd.label}</div>
+                <div className="text-xs text-gray-400">{cmd.description}</div>
+              </div>
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );
