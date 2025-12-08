@@ -100,7 +100,7 @@ function FlipCard({
 
 // --- Main Hero Component ---
 const TOTAL_IMAGES = 20;
-const MAX_SCROLL = 1200; // Virtual scroll range (reduced for faster animation)
+const MAX_SCROLL = 500; // Virtual scroll range (reduced for faster animation and easier scrolling)
 
 // Unsplash Images
 const IMAGES = [
@@ -176,9 +176,15 @@ export default function IntroAnimation() {
       const isAtMin = scrollRef.current <= 0;
 
       // Allow normal page scroll if:
-      // 1. At max scroll and scrolling down
+      // 1. At max scroll and scrolling down (with some buffer)
       // 2. At min scroll and scrolling up
-      if ((isAtMax && isScrollingDown) || (isAtMin && isScrollingUp)) {
+      // 3. Near max (within 30px) to allow easier transition
+      const nearMax = scrollRef.current >= MAX_SCROLL - 30;
+      if (
+        (isAtMax && isScrollingDown) ||
+        (nearMax && isScrollingDown) ||
+        (isAtMin && isScrollingUp)
+      ) {
         // Don't prevent default - allow normal page scroll
         return;
       }
@@ -186,8 +192,8 @@ export default function IntroAnimation() {
       // Otherwise, handle virtual scroll
       e.preventDefault();
 
-      // Increase scroll sensitivity (multiply by 2.5 for faster animation response)
-      const scrollMultiplier = 2.5;
+      // Increase scroll sensitivity (multiply by 3.5 for faster animation response)
+      const scrollMultiplier = 3.5;
       const newScroll = Math.min(
         Math.max(scrollRef.current + e.deltaY * scrollMultiplier, 0),
         MAX_SCROLL
@@ -211,16 +217,21 @@ export default function IntroAnimation() {
       const isScrollingUp = deltaY < 0;
       const isAtMax = scrollRef.current >= MAX_SCROLL;
       const isAtMin = scrollRef.current <= 0;
+      const nearMax = scrollRef.current >= MAX_SCROLL - 30;
 
-      // Allow normal page scroll if at limits
-      if ((isAtMax && isScrollingDown) || (isAtMin && isScrollingUp)) {
+      // Allow normal page scroll if at limits or near max
+      if (
+        (isAtMax && isScrollingDown) ||
+        (nearMax && isScrollingDown) ||
+        (isAtMin && isScrollingUp)
+      ) {
         return;
       }
 
       e.preventDefault();
 
-      // Increase scroll sensitivity for touch (multiply by 2.5 for faster animation response)
-      const scrollMultiplier = 2.5;
+      // Increase scroll sensitivity for touch (multiply by 3.5 for faster animation response)
+      const scrollMultiplier = 3.5;
       const newScroll = Math.min(
         Math.max(scrollRef.current + deltaY * scrollMultiplier, 0),
         MAX_SCROLL
@@ -246,13 +257,13 @@ export default function IntroAnimation() {
   }, [virtualScroll]);
 
   // 1. Morph Progress: 0 (Circle) -> 1 (Bottom Arc)
-  // Happens between scroll 0 and 300 (reduced for faster response)
-  const morphProgress = useTransform(virtualScroll, [0, 300], [0, 1]);
+  // Happens between scroll 0 and 200 (reduced for faster response)
+  const morphProgress = useTransform(virtualScroll, [0, 200], [0, 1]);
   const smoothMorph = useSpring(morphProgress, { stiffness: 60, damping: 25 });
 
-  // 2. Scroll Rotation (Shuffling): Starts after morph (e.g., > 300)
+  // 2. Scroll Rotation (Shuffling): Starts after morph (e.g., > 200)
   // Rotates the bottom arc as user continues scrolling
-  const scrollRotate = useTransform(virtualScroll, [300, 1200], [0, 360]);
+  const scrollRotate = useTransform(virtualScroll, [200, 500], [0, 360]);
   const smoothScrollRotate = useSpring(scrollRotate, {
     stiffness: 60,
     damping: 25,

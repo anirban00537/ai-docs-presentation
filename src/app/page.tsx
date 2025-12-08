@@ -13,7 +13,7 @@ export default function Home() {
     <>
       <Navbar />
       <main className="min-h-screen h-full w-full bg-white dark:bg-zinc-950">
-        <div className="w-full h-screen">
+        <div className="w-full h-[85vh] min-h-[600px]">
           <IntroAnimation />
         </div>
         <FeaturesSection />
