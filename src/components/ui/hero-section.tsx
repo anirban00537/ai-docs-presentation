@@ -6,6 +6,7 @@ import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import { AppleButton } from "@/components/apple-button";
 import { useRef } from "react";
+import Link from "next/link";
 
 export const blocksDesign = [
   {
@@ -157,13 +158,15 @@ function Others1() {
             customVariants={revealVariants}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
           >
-            <AppleButton
-              variant="primary"
-              size="lg"
-              className="w-full sm:w-auto px-8 py-6 text-base"
-            >
-              Get Started
-            </AppleButton>
+            <Link href="/login">
+              <AppleButton
+                variant="primary"
+                size="lg"
+                className="w-full sm:w-auto px-8 py-6 text-base"
+              >
+                Get Started
+              </AppleButton>
+            </Link>
             <AppleButton
               variant="tertiary"
               size="lg"
