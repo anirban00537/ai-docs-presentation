@@ -80,7 +80,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
               e.stopPropagation();
               onAddColumn(rowId, block.id);
             }}
-            className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 text-white opacity-0 group-hover/row:opacity-100 hover:bg-blue-600 hover:scale-110 transition-all z-20 flex items-center justify-center shadow-md"
+            className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-primary text-white opacity-0 group-hover/row:opacity-100 hover:bg-primary/90 hover:scale-110 transition-all z-20 flex items-center justify-center shadow-md"
             title="Add column"
           >
             <svg

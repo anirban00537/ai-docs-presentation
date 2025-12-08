@@ -46,7 +46,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       {/* Add Row at Top Button */}
       <button
         onClick={() => onAddRowAtTop(slide.id)}
-        className={`absolute left-1/2 -translate-x-1/2 -top-4 z-10 px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded-lg hover:bg-blue-600 transition-all flex items-center gap-1.5 shadow-md ${
+        className={`absolute left-1/2 -translate-x-1/2 -top-4 z-10 px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-md ${
           isHovered
             ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-2 pointer-events-none"
@@ -91,7 +91,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       {/* Add Row at Bottom Button */}
       <button
         onClick={() => onAddRowAtBottom(slide.id)}
-        className={`absolute left-1/2 -translate-x-1/2 -bottom-4 z-10 px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded-lg hover:bg-blue-600 transition-all flex items-center gap-1.5 shadow-md ${
+        className={`absolute left-1/2 -translate-x-1/2 -bottom-4 z-10 px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-md ${
           isHovered
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-2 pointer-events-none"
