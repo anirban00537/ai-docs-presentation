@@ -14,14 +14,14 @@ import { schema as basicSchema } from "prosemirror-schema-basic";
 import { addListNodes } from "prosemirror-schema-list";
 import { history, undo, redo } from "prosemirror-history";
 import { keymap } from "prosemirror-keymap";
-import { baseKeymap, setBlockType } from "prosemirror-commands";
+import { baseKeymap } from "prosemirror-commands";
 import {
   inputRules,
   wrappingInputRule,
   textblockTypeInputRule,
   InputRule,
 } from "prosemirror-inputrules";
-import { wrapInList, splitListItem, liftListItem, sinkListItem } from "prosemirror-schema-list";
+import { splitListItem, liftListItem, sinkListItem } from "prosemirror-schema-list";
 import { cn } from "@/lib/utils";
 
 // --- Custom Schema ---
@@ -54,6 +54,37 @@ interface SlashCommand {
   action: (view: EditorView) => void;
 }
 
+// Helper to replace current block with a new block type
+const replaceBlock = (view: EditorView, nodeType: any, attrs?: any) => {
+  const { state, dispatch } = view;
+  const { $from } = state.selection;
+  
+  // Get the position of the current block node
+  const pos = $from.before($from.depth);
+  
+  // Delete the "/" from the content first
+  const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
+  const slashMatch = textBefore.match(/(^|\s)\/([^\s]*)$/);
+  
+  let tr = state.tr;
+  
+  if (slashMatch) {
+    const slashAndQuery = "/" + (slashMatch[2] || "");
+    const deleteLength = slashAndQuery.length;
+    const deleteFrom = $from.pos - deleteLength;
+    const deleteTo = $from.pos;
+    tr = tr.delete(deleteFrom, deleteTo);
+  }
+  
+  // Now change the node type using setNodeMarkup
+  // Need to recalculate position after delete
+  const mapping = tr.mapping;
+  const newPos = mapping.map(pos);
+  
+  tr = tr.setNodeMarkup(newPos, nodeType, attrs);
+  dispatch(tr);
+};
+
 // --- Slash Commands ---
 const getSlashCommands = (): SlashCommand[] => [
   {
@@ -62,7 +93,7 @@ const getSlashCommands = (): SlashCommand[] => [
     description: "Large heading",
     icon: <span className="font-bold text-lg">H1</span>,
     action: (view) => {
-      setBlockType(schema.nodes.heading, { level: 1 })(view.state, view.dispatch);
+      replaceBlock(view, schema.nodes.heading, { level: 1 });
     },
   },
   {
@@ -71,7 +102,7 @@ const getSlashCommands = (): SlashCommand[] => [
     description: "Medium heading",
     icon: <span className="font-bold text-base">H2</span>,
     action: (view) => {
-      setBlockType(schema.nodes.heading, { level: 2 })(view.state, view.dispatch);
+      replaceBlock(view, schema.nodes.heading, { level: 2 });
     },
   },
   {
@@ -80,7 +111,7 @@ const getSlashCommands = (): SlashCommand[] => [
     description: "Small heading",
     icon: <span className="font-bold text-sm">H3</span>,
     action: (view) => {
-      setBlockType(schema.nodes.heading, { level: 3 })(view.state, view.dispatch);
+      replaceBlock(view, schema.nodes.heading, { level: 3 });
     },
   },
   {
@@ -89,7 +120,7 @@ const getSlashCommands = (): SlashCommand[] => [
     description: "Plain text",
     icon: <span className="text-gray-500">¶</span>,
     action: (view) => {
-      setBlockType(schema.nodes.paragraph)(view.state, view.dispatch);
+      replaceBlock(view, schema.nodes.paragraph);
     },
   },
   {
@@ -107,7 +138,18 @@ const getSlashCommands = (): SlashCommand[] => [
       </svg>
     ),
     action: (view) => {
-      wrapInList(schema.nodes.bullet_list)(view.state, view.dispatch);
+      const { state, dispatch } = view;
+      const { $from } = state.selection;
+      const start = $from.start();
+      const end = $from.end();
+      const content = $from.parent.content;
+      
+      // Create a list item with the content
+      const listItem = schema.nodes.list_item.create(null, schema.nodes.paragraph.create(null, content));
+      const bulletList = schema.nodes.bullet_list.create(null, listItem);
+      
+      const tr = state.tr.replaceWith(start - 1, end + 1, bulletList);
+      dispatch(tr);
     },
   },
   {
@@ -125,7 +167,17 @@ const getSlashCommands = (): SlashCommand[] => [
       </svg>
     ),
     action: (view) => {
-      wrapInList(schema.nodes.ordered_list)(view.state, view.dispatch);
+      const { state, dispatch } = view;
+      const { $from } = state.selection;
+      const start = $from.start();
+      const end = $from.end();
+      const content = $from.parent.content;
+      
+      const listItem = schema.nodes.list_item.create(null, schema.nodes.paragraph.create(null, content));
+      const orderedList = schema.nodes.ordered_list.create(null, listItem);
+      
+      const tr = state.tr.replaceWith(start - 1, end + 1, orderedList);
+      dispatch(tr);
     },
   },
   {
@@ -138,16 +190,18 @@ const getSlashCommands = (): SlashCommand[] => [
       </svg>
     ),
     action: (view) => {
-      const { $from, to } = view.state.selection;
-      const blockquote = schema.nodes.blockquote;
-      const paragraph = schema.nodes.paragraph;
+      const { state, dispatch } = view;
+      const { $from } = state.selection;
+      const start = $from.start();
+      const end = $from.end();
+      const content = $from.parent.content;
       
-      const tr = view.state.tr.replaceRangeWith(
-        $from.before(),
-        to,
-        blockquote.create(null, paragraph.create())
-      );
-      view.dispatch(tr);
+      // Wrap content in paragraph, then in blockquote
+      const paragraph = schema.nodes.paragraph.create(null, content);
+      const blockquote = schema.nodes.blockquote.create(null, paragraph);
+      
+      const tr = state.tr.replaceWith(start - 1, end + 1, blockquote);
+      dispatch(tr);
     },
   },
   {
@@ -161,7 +215,7 @@ const getSlashCommands = (): SlashCommand[] => [
       </svg>
     ),
     action: (view) => {
-      setBlockType(schema.nodes.code_block)(view.state, view.dispatch);
+      replaceBlock(view, schema.nodes.code_block);
     },
   },
 ];
@@ -317,37 +371,36 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     const view = viewRef.current;
     if (!view) return;
 
-    // Find and delete the "/" and query from the document
-    const { $from } = view.state.selection;
-    const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
-    const slashMatch = textBefore.match(/(^|\s)\/([^\s]*)$/);
-    
-    if (slashMatch) {
-      const slashAndQuery = "/" + (slashMatch[2] || "");
-      const deleteLength = slashAndQuery.length;
-      const deleteFrom = $from.pos - deleteLength;
-      const deleteTo = $from.pos;
-      
-      // Delete the slash+query
-      const tr = view.state.tr.delete(deleteFrom, deleteTo);
-      view.dispatch(tr);
-    }
-    
-    // Close menu
+    // Close menu first
     setMenuOpen(false);
     setMenuQuery("");
     setSelectedIndex(0);
     
-    // Execute command synchronously - view.state is now updated after dispatch
-    // Use a microtask to ensure React state updates are processed
-    Promise.resolve().then(() => {
-      if (viewRef.current) {
-        const v = viewRef.current;
-        v.focus();
-        // Now execute the command on the fresh state
-        command.action(v);
+    // Get the current selection and block info
+    const { $from } = view.state.selection;
+    const blockStart = $from.start() - 1; // Position before the block
+    const blockEnd = $from.end() + 1;    // Position after the block
+    
+    // Get current text content (will be empty string for empty paragraphs)
+    const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
+    const slashMatch = textBefore.match(/(^|\s)\/([^\s]*)$/);
+    
+    // Calculate remaining text after removing slash and query
+    let remainingContent: any = null;
+    if (slashMatch) {
+      const slashAndQuery = "/" + (slashMatch[2] || "");
+      const textAfterSlash = $from.parent.textContent.slice($from.parentOffset);
+      const textBeforeSlash = textBefore.slice(0, textBefore.length - slashAndQuery.length);
+      const fullRemainingText = textBeforeSlash + textAfterSlash;
+      
+      if (fullRemainingText.length > 0) {
+        remainingContent = view.state.schema.text(fullRemainingText);
       }
-    });
+    }
+    
+    // Execute the action directly
+    command.action(view);
+    view.focus();
   }, []);
 
   // Initialize editor
