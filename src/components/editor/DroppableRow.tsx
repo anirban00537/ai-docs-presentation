@@ -76,7 +76,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
       {/* Row Content */}
       <div
         ref={setNodeRef}
-        className={`flex-1 flex p-2 transition-all items-stretch border ${
+        className={`flex-1 flex transition-all items-start border ${
           isOver 
             ? "bg-green-50 ring-1 ring-dashed ring-green-400 border-green-400" 
             : "border-transparent hover:border-gray-300"
