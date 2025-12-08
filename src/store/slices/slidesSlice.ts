@@ -24,40 +24,30 @@ export interface SlidesState {
 }
 
 // --- Helpers ---
+// ProseMirror document format for heading
 const createDefaultContent = () => {
-  const blockId = nanoid();
   return {
-    [blockId]: {
-      id: blockId,
-      type: "HeadingOne",
-      value: [
-        {
-          id: nanoid(),
-          type: "heading-one",
-          children: [{ text: "" }],
-        },
-      ],
-      meta: { order: 0, depth: 0 },
-    },
+    type: "doc",
+    content: [
+      {
+        type: "heading",
+        attrs: { level: 1 },
+        content: [{ type: "text", text: "" }],
+      },
+    ],
   };
 };
 
-// Paragraph content for multi-column layouts
+// ProseMirror document format for paragraph
 const createParagraphContent = () => {
-  const blockId = nanoid();
   return {
-    [blockId]: {
-      id: blockId,
-      type: "Paragraph",
-      value: [
-        {
-          id: nanoid(),
-          type: "paragraph",
-          children: [{ text: "" }],
-        },
-      ],
-      meta: { order: 0, depth: 0 },
-    },
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        content: [],
+      },
+    ],
   };
 };
 

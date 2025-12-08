@@ -1,7 +1,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { YooptaEditorWrapper } from "@/components/yoopta-editor";
+import { ProseMirrorEditor } from "@/components/prosemirror-editor";
 import type { Block } from "@/store/slices/slidesSlice";
 
 interface DraggableBlockProps {
@@ -85,7 +85,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
         )}
 
         {/* Editor */}
-        <YooptaEditorWrapper
+        <ProseMirrorEditor
           key={block.id}
           blockId={block.id}
           value={block.content}
