@@ -160,9 +160,9 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
           animate="visible"
           exit="exit"
           variants={panelVariants}
-          className="absolute right-full top-0 mr-4 z-50 origin-top-right"
+          className="absolute right-full top-1/2 -translate-y-1/2 mr-4 z-50 origin-right"
         >
-          <Card className="w-80 overflow-hidden border border-white/20 shadow-2xl backdrop-blur-xl bg-white/80 dark:bg-black/80 dark:border-white/10 rounded-2xl">
+          <Card className="w-80 overflow-hidden border border-white/20 shadow-2xl backdrop-blur-3xl bg-white/40 dark:bg-black/40 dark:border-white/10 rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between p-4 pb-2 space-y-0 border-b border-black/5 dark:border-white/5">
               <CardTitle className="text-sm font-semibold text-gray-900 dark:text-white">
                 Themes
