@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 interface TimelineContentProps extends Omit<HTMLMotionProps<"div">, "as"> {
   as?: keyof JSX.IntrinsicElements;
   animationNum: number;
-  timelineRef: React.RefObject<HTMLElement>;
+  timelineRef: React.RefObject<HTMLElement | null>;
   customVariants?: Variants;
+  [key: string]: any;
 }
 
 export function TimelineContent({

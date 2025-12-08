@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 import { TimelineContent } from "@/components/ui/timeline-animation";
+import { AppleButton } from "@/components/apple-button";
 import { useRef } from "react";
 
 export const blocksDesign = [
@@ -68,7 +68,7 @@ export const blocksDesign = [
 ];
 
 function Others1() {
-  const timelineRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLElement>(null);
   const revealVariants = {
     visible: (i: number) => ({
       y: 0,
@@ -92,7 +92,6 @@ function Others1() {
         <article className="w-fit mx-auto 2xl:max-w-5xl xl:max-w-4xl max-w-2xl text-center space-y-6">
           <TimelineContent
             as="a"
-            href={"https://pro.ui-layouts.com/blocks"}
             animationNum={2}
             target="_blank"
             timelineRef={timelineRef}
@@ -100,11 +99,11 @@ function Others1() {
             className="flex w-fit mx-auto items-center gap-1 rounded-full bg-blue-600 border-4 border-blue-200 py-0.5 pl-0.5 pr-3 text-xs"
           >
             <div className="rounded-full bg-[#fcfdff] px-2 py-1 text-xs text-black">
-              Update
+              New
             </div>
             <p className="text-white sm:text-base text-xs inline-block">
-              ✨ Introducing
-              <span className="px-1 font-semibold">New Blocks</span>
+              ✨ AI Powered
+              <span className="px-1 font-semibold">Presentations</span>
             </p>
 
             <svg
@@ -130,15 +129,14 @@ function Others1() {
             customVariants={revealVariants}
             className="2xl:text-7xl text-black xl:text-6xl sm:text-5xl text-4xl leading-[100%]"
           >
-            Build Faster with{" "}
-            <span className="font-semibold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
-              Premium
+            Create Stunning{" "}
+            <span className="font-semibold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+              AI Powered
             </span>{" "}
-            Quality{" "}
-            <span className="font-semibold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-              Blocks
-            </span>{" "}
-            For Free.
+            Presentations{" "}
+            <span className="font-semibold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+              Instantly
+            </span>
           </TimelineContent>
 
           <TimelineContent
@@ -148,8 +146,31 @@ function Others1() {
             customVariants={revealVariants}
             className="lg:text-xl text-black sm:text-lg text-sm max-w-2xl mx-auto"
           >
-            Beautifully designed Sections that you can copy and paste into your
-            apps. Accessible. Customizable. Open Source.
+            Transform your ideas into professional presentations in seconds with
+            AI-powered design. Smart. Fast. Beautiful.
+          </TimelineContent>
+
+          <TimelineContent
+            as="div"
+            animationNum={5}
+            timelineRef={timelineRef}
+            customVariants={revealVariants}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+          >
+            <AppleButton
+              variant="primary"
+              size="lg"
+              className="w-full sm:w-auto px-8 py-6 text-base"
+            >
+              Get Started
+            </AppleButton>
+            <AppleButton
+              variant="tertiary"
+              size="lg"
+              className="w-full sm:w-auto px-8 py-6 text-black"
+            >
+              Learn More
+            </AppleButton>
           </TimelineContent>
         </article>
 
