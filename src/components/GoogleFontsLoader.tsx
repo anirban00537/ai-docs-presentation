@@ -21,6 +21,16 @@ const GOOGLE_FONTS_CDN: Record<string, string> = {
   Caveat: "Caveat:wght@400;500;600;700",
   "Abril Fatface": "Abril+Fatface",
   Lora: "Lora:wght@400;500;600;700",
+  "Space Grotesk": "Space+Grotesk:wght@300;400;500;600;700",
+  Outfit: "Outfit:wght@100;200;300;400;500;600;700;800;900",
+  "DM Sans": "DM+Sans:opsz,wght@9..40,100;9..40,200;9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900",
+  "Plus Jakarta Sans": "Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800",
+  Manrope: "Manrope:wght@200;300;400;500;600;700;800",
+  "Work Sans": "Work+Sans:wght@100;200;300;400;500;600;700;800;900",
+  Sora: "Sora:wght@100;200;300;400;500;600;700;800",
+  Geist: "Geist:wght@100;200;300;400;500;600;700;800;900",
+  "Clash Display": "Clash+Display:wght@200;300;400;500;600;700",
+  "JetBrains Mono": "JetBrains+Mono:wght@100;200;300;400;500;600;700;800",
 };
 
 export const GoogleFontsLoader: React.FC = () => {

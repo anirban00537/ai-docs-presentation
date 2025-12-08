@@ -15,6 +15,16 @@ export const GOOGLE_FONTS = {
   Caveat: "'Caveat', cursive",
   "Abril Fatface": "'Abril Fatface', serif",
   Lora: "'Lora', serif",
+  "Space Grotesk": "'Space Grotesk', system-ui, sans-serif",
+  Outfit: "'Outfit', system-ui, sans-serif",
+  "DM Sans": "'DM Sans', system-ui, sans-serif",
+  "Plus Jakarta Sans": "'Plus Jakarta Sans', system-ui, sans-serif",
+  Manrope: "'Manrope', system-ui, sans-serif",
+  "Work Sans": "'Work Sans', system-ui, sans-serif",
+  Sora: "'Sora', system-ui, sans-serif",
+  Geist: "'Geist', system-ui, sans-serif",
+  "Clash Display": "'Clash Display', system-ui, sans-serif",
+  "JetBrains Mono": "'JetBrains Mono', monospace",
 } as const;
 
 export type FontName = keyof typeof GOOGLE_FONTS;

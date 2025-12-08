@@ -27,7 +27,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#272525",
       cardBackground: "#FFFFFF",
       pageBackground: "#F9FAFB",
-      fontFamily: "Inter",
+      fontFamily: "Space Grotesk",
     },
   },
   {
@@ -38,7 +38,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#1A365D",
       cardBackground: "#FFFFFF",
       pageBackground: "#E6F2FF",
-      fontFamily: "Roboto",
+      fontFamily: "Outfit",
     },
   },
   {
@@ -49,7 +49,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#065F46",
       cardBackground: "#FFFFFF",
       pageBackground: "#ECFDF5",
-      fontFamily: "Montserrat",
+      fontFamily: "DM Sans",
     },
   },
   {
@@ -60,7 +60,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#9A3412",
       cardBackground: "#FFFFFF",
       pageBackground: "#FFF7ED",
-      fontFamily: "Lato",
+      fontFamily: "Plus Jakarta Sans",
     },
   },
   {
@@ -71,7 +71,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#5B21B6",
       cardBackground: "#FFFFFF",
       pageBackground: "#F5F3FF",
-      fontFamily: "Poppins",
+      fontFamily: "Manrope",
     },
   },
   {
@@ -82,7 +82,7 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       bodyColor: "#9F1239",
       cardBackground: "#FFFFFF",
       pageBackground: "#FFF1F2",
-      fontFamily: "Raleway",
+      fontFamily: "Work Sans",
     },
   },
   {
@@ -105,6 +105,94 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
       cardBackground: "#FFFFFF",
       pageBackground: "#FAFAFA",
       fontFamily: "Open Sans",
+    },
+  },
+  {
+    name: "Midnight",
+    theme: {
+      primary: "#6366F1",
+      headingColor: "#F8FAFC",
+      bodyColor: "#CBD5E1",
+      cardBackground: "#0F172A",
+      pageBackground: "#020617",
+      fontFamily: "Space Grotesk",
+    },
+  },
+  {
+    name: "Noir",
+    theme: {
+      primary: "#EC4899",
+      headingColor: "#FFFFFF",
+      bodyColor: "#D1D5DB",
+      cardBackground: "#18181B",
+      pageBackground: "#09090B",
+      fontFamily: "Outfit",
+    },
+  },
+  {
+    name: "Cyber",
+    theme: {
+      primary: "#10B981",
+      headingColor: "#F0FDF4",
+      bodyColor: "#A7F3D0",
+      cardBackground: "#064E3B",
+      pageBackground: "#022C22",
+      fontFamily: "DM Sans",
+    },
+  },
+  {
+    name: "Eclipse",
+    theme: {
+      primary: "#F59E0B",
+      headingColor: "#FFFBEB",
+      bodyColor: "#FDE68A",
+      cardBackground: "#78350F",
+      pageBackground: "#451A03",
+      fontFamily: "Plus Jakarta Sans",
+    },
+  },
+  {
+    name: "Obsidian",
+    theme: {
+      primary: "#8B5CF6",
+      headingColor: "#FAF5FF",
+      bodyColor: "#E9D5FF",
+      cardBackground: "#3B1F5C",
+      pageBackground: "#1A0B2E",
+      fontFamily: "Manrope",
+    },
+  },
+  {
+    name: "Twilight",
+    theme: {
+      primary: "#06B6D4",
+      headingColor: "#ECFEFF",
+      bodyColor: "#A5F3FC",
+      cardBackground: "#083344",
+      pageBackground: "#020617",
+      fontFamily: "Work Sans",
+    },
+  },
+  {
+    name: "Neon",
+    theme: {
+      primary: "#F472B6",
+      headingColor: "#FDF2F8",
+      bodyColor: "#FBCFE8",
+      cardBackground: "#831843",
+      pageBackground: "#500724",
+      fontFamily: "Sora",
+    },
+  },
+  {
+    name: "Carbon",
+    theme: {
+      primary: "#64748B",
+      headingColor: "#F1F5F9",
+      bodyColor: "#CBD5E1",
+      cardBackground: "#1E293B",
+      pageBackground: "#0F172A",
+      fontFamily: "Geist",
     },
   },
 ];

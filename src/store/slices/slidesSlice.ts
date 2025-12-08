@@ -90,7 +90,7 @@ export const DEFAULT_THEME: Theme = {
   bodyColor: "#272525",
   cardBackground: "#FFFFFF",
   pageBackground: "#F9FAFB",
-  fontFamily: "Inter",
+  fontFamily: "Space Grotesk",
 };
 const initialTheme: Theme = DEFAULT_THEME;
 
