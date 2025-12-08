@@ -1,7 +1,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ProseMirrorEditor } from "@/components/prosemirror-editor";
+import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block } from "@/store/slices/slidesSlice";
 
 interface DraggableBlockProps {
