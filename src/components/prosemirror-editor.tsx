@@ -660,14 +660,11 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   );
 
   return (
-    <div className={cn("relative h-full flex items-center", className)}>
+    <div className={cn("relative", className)}>
       <style>{`
         .ProseMirror {
           outline: none;
           min-height: 40px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
         }
         .ProseMirror:focus {
           outline: none;
@@ -689,9 +686,6 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
           font-weight: 600;
           line-height: 1.3;
           margin-bottom: 0.5rem;
-        }
-        .ProseMirror p {
-          margin: 0;
         }
         .ProseMirror ul, .ProseMirror ol {
           padding-left: 1.5rem;
@@ -743,7 +737,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       `}</style>
       <div
         ref={editorRef}
-        className="w-full break-words whitespace-pre-wrap h-full"
+        className="w-full break-words whitespace-pre-wrap"
         data-gramm="false"
         data-gramm_editor="false"
         data-enable-grammarly="false"

@@ -49,7 +49,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
       className="group/block relative min-w-0 flex-1"
     >
       <div
-        className={`relative p-2 h-full transition-all flex items-center ${
+        className={`relative p-2 h-full transition-all ${
           isDragging ? "bg-blue-50" : ""
         } ${
           !isLastBlock
