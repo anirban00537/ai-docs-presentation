@@ -488,14 +488,16 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             if (editorRect) {
               // Get active marks at selection
               const activeMarks = new Set<string>();
-              const storedMarks = newState.storedMarks || newState.selection.$from.marks();
+              const storedMarks =
+                newState.storedMarks || newState.selection.$from.marks();
               storedMarks.forEach((mark) => activeMarks.add(mark.type.name));
-              
+
               setSelectionToolbar({
                 visible: true,
                 position: {
                   top: coords.top - editorRect.top,
-                  left: coords.left - editorRect.left + (to - from > 10 ? 50 : 0),
+                  left:
+                    coords.left - editorRect.left + (to - from > 10 ? 50 : 0),
                 },
                 activeMarks,
               });
@@ -658,11 +660,14 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   );
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative h-full flex items-center", className)}>
       <style>{`
         .ProseMirror {
           outline: none;
           min-height: 40px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
         .ProseMirror:focus {
           outline: none;
@@ -684,6 +689,9 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
           font-weight: 600;
           line-height: 1.3;
           margin-bottom: 0.5rem;
+        }
+        .ProseMirror p {
+          margin: 0;
         }
         .ProseMirror ul, .ProseMirror ol {
           padding-left: 1.5rem;
@@ -735,7 +743,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       `}</style>
       <div
         ref={editorRef}
-        className="w-full break-words whitespace-pre-wrap"
+        className="w-full break-words whitespace-pre-wrap h-full"
         data-gramm="false"
         data-gramm_editor="false"
         data-enable-grammarly="false"
@@ -792,7 +800,10 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             onMouseDown={(e) => {
               e.preventDefault();
               if (viewRef.current) {
-                toggleMark(schema.marks.strong)(viewRef.current.state, viewRef.current.dispatch);
+                toggleMark(schema.marks.strong)(
+                  viewRef.current.state,
+                  viewRef.current.dispatch
+                );
                 viewRef.current.focus();
               }
             }}
@@ -805,8 +816,8 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             title="Bold (Cmd+B)"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>
-              <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>
+              <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
+              <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
             </svg>
           </button>
 
@@ -815,7 +826,10 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             onMouseDown={(e) => {
               e.preventDefault();
               if (viewRef.current) {
-                toggleMark(schema.marks.em)(viewRef.current.state, viewRef.current.dispatch);
+                toggleMark(schema.marks.em)(
+                  viewRef.current.state,
+                  viewRef.current.dispatch
+                );
                 viewRef.current.focus();
               }
             }}
@@ -827,10 +841,17 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             )}
             title="Italic (Cmd+I)"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="19" y1="4" x2="10" y2="4"/>
-              <line x1="14" y1="20" x2="5" y2="20"/>
-              <line x1="15" y1="4" x2="9" y2="20"/>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <line x1="19" y1="4" x2="10" y2="4" />
+              <line x1="14" y1="20" x2="5" y2="20" />
+              <line x1="15" y1="4" x2="9" y2="20" />
             </svg>
           </button>
 
@@ -842,7 +863,10 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             onMouseDown={(e) => {
               e.preventDefault();
               if (viewRef.current) {
-                toggleMark(schema.marks.code)(viewRef.current.state, viewRef.current.dispatch);
+                toggleMark(schema.marks.code)(
+                  viewRef.current.state,
+                  viewRef.current.dispatch
+                );
                 viewRef.current.focus();
               }
             }}
@@ -854,7 +878,14 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             )}
             title="Code"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <polyline points="16,18 22,12 16,6" />
               <polyline points="8,6 2,12 8,18" />
             </svg>
@@ -865,7 +896,10 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             onMouseDown={(e) => {
               e.preventDefault();
               if (viewRef.current) {
-                toggleMark(schema.marks.link, { href: "" })(viewRef.current.state, viewRef.current.dispatch);
+                toggleMark(schema.marks.link, { href: "" })(
+                  viewRef.current.state,
+                  viewRef.current.dispatch
+                );
                 viewRef.current.focus();
               }
             }}
@@ -877,7 +911,14 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             )}
             title="Link"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
             </svg>

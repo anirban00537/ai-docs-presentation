@@ -43,13 +43,19 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="group/block relative min-w-0 flex-1">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="group/block relative min-w-0 flex-1"
+    >
       <div
-        className={`relative p-2 h-full transition-all ${
-          isDragging 
-            ? "bg-blue-50" 
+        className={`relative p-2 h-full transition-all flex items-center ${
+          isDragging ? "bg-blue-50" : ""
+        } ${
+          !isLastBlock
+            ? "border-r border-transparent group-hover/row:border-gray-300"
             : ""
-        } ${!isLastBlock ? "border-r border-transparent group-hover/row:border-gray-300" : ""}`}
+        }`}
       >
         {/* Drag Handle */}
         <div
@@ -77,7 +83,14 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
             className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 text-white opacity-0 group-hover/row:opacity-100 hover:bg-blue-600 hover:scale-110 transition-all z-20 flex items-center justify-center shadow-md"
             title="Add column"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <line x1="6" y1="2" x2="6" y2="10" />
               <line x1="2" y1="6" x2="10" y2="6" />
             </svg>
@@ -97,4 +110,3 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
     </div>
   );
 };
-
