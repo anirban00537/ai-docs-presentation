@@ -118,6 +118,45 @@ export const createSchema = () => {
           { class: "bg-gray-100 rounded-lg p-3 font-mono text-sm" },
           ["code", 0],
         ],
+      })
+      .addToEnd("image", {
+        attrs: {
+          src: { default: "" },
+          alt: { default: "" },
+          title: { default: "" },
+        },
+        group: "block",
+        atom: true,
+        draggable: true,
+        parseDOM: [
+          {
+            tag: "figure.prosemirror-image",
+            getAttrs: (dom: HTMLElement) => {
+              const img = dom.querySelector("img");
+              return {
+                src: img?.getAttribute("src") || "",
+                alt: img?.getAttribute("alt") || "",
+                title: img?.getAttribute("title") || "",
+              };
+            },
+          },
+        ],
+        toDOM: (node) => {
+          const { src, alt, title } = node.attrs;
+          if (src) {
+            return [
+              "figure",
+              { class: "prosemirror-image" },
+              ["img", { src, alt, title }],
+            ];
+          }
+          // Placeholder when no src
+          return [
+            "figure",
+            { class: "prosemirror-image-placeholder" },
+            ["div", { class: "prosemirror-image-placeholder-content" }],
+          ];
+        },
       }),
     marks: basicSchema.spec.marks,
   });
