@@ -302,25 +302,68 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, rowId, oldIndex, newIndex } = action.payload;
+      console.log("📦 reorderBlocksInRow called:", {
+        slideId,
+        rowId,
+        oldIndex,
+        newIndex,
+      });
+
       const slide = state.slides.find((s) => s.id === slideId);
-      if (!slide) return;
+      if (!slide) {
+        console.log("❌ Slide not found");
+        return;
+      }
 
       const row = slide.rows.find((r) => r.id === rowId);
-      if (!row) return;
+      if (!row) {
+        console.log("❌ Row not found");
+        return;
+      }
 
-      if (oldIndex < 0 || oldIndex >= row.blocks.length) return;
-      if (newIndex < 0 || newIndex >= row.blocks.length) return;
-      if (oldIndex === newIndex) return;
+      console.log(
+        "Row blocks before reorder:",
+        row.blocks.map((b, i) => `${i}:${b.id}`)
+      );
+      console.log("Block lengths:", {
+        oldIndex,
+        newIndex,
+        arrayLength: row.blocks.length,
+      });
+
+      if (oldIndex < 0 || oldIndex >= row.blocks.length) {
+        console.log("❌ Invalid oldIndex");
+        return;
+      }
+      if (newIndex < 0 || newIndex >= row.blocks.length) {
+        console.log("❌ Invalid newIndex");
+        return;
+      }
+      if (oldIndex === newIndex) {
+        console.log("⚠️ Same index, no move needed");
+        return;
+      }
 
       // Move block from oldIndex to newIndex (not swap)
       // Get the block reference before removal to verify it exists
       const blockToMove = row.blocks[oldIndex];
+      console.log("Block to move:", {
+        id: blockToMove?.id,
+        hasContent: !!blockToMove?.content,
+      });
 
       // Ensure we have a valid block with content
-      if (!blockToMove || !blockToMove.id) return;
+      if (!blockToMove || !blockToMove.id) {
+        console.log("❌ Invalid block to move");
+        return;
+      }
 
       // Store a reference to the original content to verify preservation
       const originalContent = blockToMove.content;
+      console.log(
+        "Original content preserved:",
+        originalContent === blockToMove.content
+      );
 
       // Remove the block from old position - splice preserves the entire block object reference
       // This is crucial - we want to move the same object, not create a copy
@@ -345,18 +388,51 @@ const slidesSlice = createSlice({
         movedBlock.content = createDefaultContent();
       }
 
-      // Adjust newIndex if we removed from before the target position
-      // When oldIndex < newIndex, removing the element shifts all subsequent indices down by 1
-      const adjustedNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
+      // Adjust newIndex based on removal position
+      // When oldIndex < newIndex: after removing from oldIndex, all items after it shift left
+      //   So the target at newIndex is now at newIndex - 1
+      //   To insert before the target (which is the desired behavior), we insert at newIndex - 1
+      // When oldIndex > newIndex: removal doesn't affect positions before oldIndex
+      //   So we insert at newIndex directly
+      // When oldIndex === newIndex: should not happen (checked above), but handle gracefully
+      let adjustedNewIndex: number;
+      if (oldIndex < newIndex) {
+        // Target shifts left after removal, insert before it
+        adjustedNewIndex = newIndex - 1;
+        console.log(
+          "Left-to-right move: adjusted from",
+          newIndex,
+          "to",
+          adjustedNewIndex
+        );
+      } else {
+        // Target position unchanged, insert at target
+        adjustedNewIndex = newIndex;
+        console.log("Right-to-left move: using index", adjustedNewIndex);
+      }
 
-      // Ensure adjusted index is valid
+      // Ensure adjusted index is valid (within bounds of the array after removal)
       const finalIndex = Math.max(
         0,
         Math.min(adjustedNewIndex, row.blocks.length)
       );
 
+      console.log(
+        "Final insertion index:",
+        finalIndex,
+        "(array length after removal:",
+        row.blocks.length,
+        ")"
+      );
+
       // Insert at new position - this preserves the block's content
       row.blocks.splice(finalIndex, 0, movedBlock);
+
+      console.log(
+        "Row blocks after reorder:",
+        row.blocks.map((b, i) => `${i}:${b.id}`)
+      );
+      console.log("✅ Reorder complete");
     },
   },
 });

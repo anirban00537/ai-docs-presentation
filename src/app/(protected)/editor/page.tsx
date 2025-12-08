@@ -99,6 +99,9 @@ const GammaPage = () => {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    console.log("=== DRAG END ===");
+    console.log("Active:", active.id, active.data.current);
+    console.log("Over:", over?.id, over?.data.current);
 
     // Reset layout dragging state
     if (isLayoutDragging) {
@@ -131,7 +134,13 @@ const GammaPage = () => {
     const sourceSlideId = activeData?.slideId as string;
     const sourceBlockId = activeData?.block?.id as string;
 
-    if (!sourceSlideId || !sourceBlockId) return;
+    console.log("Source:", { sourceSlideId, sourceBlockId });
+    console.log("Over data type:", overData?.type);
+
+    if (!sourceSlideId || !sourceBlockId) {
+      console.log("❌ Missing source slide or block ID");
+      return;
+    }
 
     // Find source row and block index
     let sourceRowId: string | null = null;
@@ -148,7 +157,12 @@ const GammaPage = () => {
       }
     }
 
-    if (!sourceRowId || sourceBlockIndex === -1) return;
+    console.log("Source found:", { sourceRowId, sourceBlockIndex });
+
+    if (!sourceRowId || sourceBlockIndex === -1) {
+      console.log("❌ Could not find source row or block index");
+      return;
+    }
 
     // Case 1: Dropped on a row (different row)
     if (overData?.type === "row") {
@@ -193,8 +207,48 @@ const GammaPage = () => {
 
       if (!targetRowId || targetBlockIndex === -1) return;
 
-      // Same row reordering - use index-based approach
+      // Same row reordering - use sortable item indices for accurate positioning
       if (sourceRowId === targetRowId && sourceSlideId === targetSlideId) {
+        console.log("🔄 SAME ROW REORDERING");
+        console.log("Source block index:", sourceBlockIndex);
+        console.log("Target block index:", targetBlockIndex);
+        console.log(
+          "Row blocks before:",
+          sourceSlide?.rows
+            .find((r) => r.id === sourceRowId)
+            ?.blocks.map((b, i) => `${i}:${b.id}`)
+        );
+
+        // Verify sourceSlide exists (TypeScript guard)
+        if (!sourceSlide) {
+          console.log("❌ Source slide not found");
+          return;
+        }
+
+        // Get the source row to access the blocks array
+        const sourceRow = sourceSlide.rows.find((r) => r.id === sourceRowId);
+        if (!sourceRow) {
+          console.log("❌ Source row not found");
+          return;
+        }
+
+        console.log("Dispatching reorderBlocksInRow:", {
+          slideId: sourceSlideId,
+          rowId: sourceRowId,
+          oldIndex: sourceBlockIndex,
+          newIndex: targetBlockIndex,
+        });
+
+        // The sortable items array matches the blocks array order
+        // Sortable items are: row.blocks.map((b) => `${slideId}-${b.id}`)
+        // We need to find the correct insertion position based on sortable semantics
+
+        // When dragging within the same row using SortableContext,
+        // the targetBlockIndex is where we're dropping
+        // We want to move the source to that position (insert before target)
+
+        // The reorderBlocksInRow function will handle the index adjustment
+        // based on whether we're moving left-to-right or right-to-left
         dispatch(
           reorderBlocksInRow({
             slideId: sourceSlideId,
@@ -272,22 +326,26 @@ const GammaPage = () => {
           onDragEnd={handleDragEnd}
         >
           <div className="flex flex-col gap-8">
-            {slides.map((slide, index) => (
-              <SlideCard
-                key={slide.id}
-                slide={slide}
-                index={index}
-                totalSlides={slides.length}
-                onUpdateBlock={handleUpdateBlock}
-                onDeleteRow={handleDeleteRow}
-                onAddColumn={handleAddColumn}
-                onAddRowAtTop={handleAddRowAtTop}
-                onAddRowAtBottom={handleAddRowAtBottom}
-                onDeleteSlide={() => {}}
-                isLayoutDragging={isLayoutDragging}
-                activeLayoutSlideId={null}
-              />
-            ))}
+            {slides
+              .filter(
+                (slide) => slide && slide.rows && Array.isArray(slide.rows)
+              )
+              .map((slide, index) => (
+                <SlideCard
+                  key={slide.id}
+                  slide={slide}
+                  index={index}
+                  totalSlides={slides.length}
+                  onUpdateBlock={handleUpdateBlock}
+                  onDeleteRow={handleDeleteRow}
+                  onAddColumn={handleAddColumn}
+                  onAddRowAtTop={handleAddRowAtTop}
+                  onAddRowAtBottom={handleAddRowAtBottom}
+                  onDeleteSlide={() => {}}
+                  isLayoutDragging={isLayoutDragging}
+                  activeLayoutSlideId={null}
+                />
+              ))}
           </div>
 
           {/* Floating Sidebar */}
