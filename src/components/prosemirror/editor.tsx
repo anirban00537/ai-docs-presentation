@@ -26,6 +26,8 @@ import { SlashMenu } from "./slash-menu";
 import { SelectionToolbar } from "./selection-toolbar";
 import { PROSEMIRROR_STYLES } from "./styles";
 import { placeholderPlugin } from "./plugins/placeholder-plugin";
+import { useAppSelector } from "@/store/hooks";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
 // --- Main Editor Component ---
 type ProseMirrorEditorProps = {
@@ -48,6 +50,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   const isInternalChangeRef = useRef(false); // Track if change is from editor itself
+  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
 
   // Slash menu state
   const [menuState, setMenuState] = useState<{
@@ -473,12 +476,34 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     [executeCommand]
   );
 
+  // Generate dynamic styles based on theme
+  const dynamicStyles = useMemo(() => {
+    return `
+      ${PROSEMIRROR_STYLES}
+      .ProseMirror {
+        color: ${theme.bodyColor};
+        font-family: ${theme.fontFamily || "Inter, system-ui, sans-serif"};
+      }
+      .ProseMirror h1,
+      .ProseMirror h2,
+      .ProseMirror h3 {
+        color: ${theme.headingColor};
+      }
+      .ProseMirror p.is-empty::before,
+      .ProseMirror h1.is-empty::before,
+      .ProseMirror h2.is-empty::before,
+      .ProseMirror h3.is-empty::before {
+        color: ${theme.bodyColor}80;
+      }
+    `;
+  }, [theme]);
+
   return (
     <div className={cn("relative w-full", className)}>
-      <style>{PROSEMIRROR_STYLES}</style>
+      <style>{dynamicStyles}</style>
       <div
         ref={editorRef}
-        className="w-full break-words whitespace-pre-wrap"
+        className="w-full wrap-break-word whitespace-pre-wrap"
         data-gramm="false"
         data-gramm_editor="false"
         data-enable-grammarly="false"

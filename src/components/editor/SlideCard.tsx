@@ -3,6 +3,8 @@ import { useDroppable } from "@dnd-kit/core";
 import { DroppableRow } from "./DroppableRow";
 import { SlideDropZone } from "./SlideDropZone";
 import type { Slide } from "@/store/slices/slidesSlice";
+import { useAppSelector } from "@/store/hooks";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
 interface SlideCardProps {
   slide: Slide;
@@ -32,6 +34,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
   activeLayoutSlideId,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const { setNodeRef, isOver } = useDroppable({
     id: `slide-drop-${slide.id}`,
     data: { type: "slide-drop-zone", slideId: slide.id },
@@ -39,18 +42,31 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   return (
     <div
-      className="group/slide relative bg-white rounded-2xl shadow-xl border border-gray-200 px-6 py-4"
+      className="group/slide relative rounded-2xl shadow-xl border border-gray-200 px-6 py-4"
+      style={{
+        backgroundColor: theme.cardBackground,
+        fontFamily: theme.fontFamily,
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Add Row at Top Button */}
       <button
         onClick={() => onAddRowAtTop(slide.id)}
-        className={`absolute left-1/2 -translate-x-1/2 -top-4 z-10 px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-md ${
+        className={`absolute left-1/2 -translate-x-1/2 -top-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
           isHovered
             ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-2 pointer-events-none"
         }`}
+        style={{
+          backgroundColor: theme.primary,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.opacity = "0.9";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.opacity = isHovered ? "1" : "0";
+        }}
         title="Add row at top"
       >
         <svg
@@ -91,11 +107,20 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       {/* Add Row at Bottom Button */}
       <button
         onClick={() => onAddRowAtBottom(slide.id)}
-        className={`absolute left-1/2 -translate-x-1/2 -bottom-4 z-10 px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-md ${
+        className={`absolute left-1/2 -translate-x-1/2 -bottom-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
           isHovered
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-2 pointer-events-none"
         }`}
+        style={{
+          backgroundColor: theme.primary,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.opacity = "0.9";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.opacity = isHovered ? "1" : "0";
+        }}
         title="Add row at bottom"
       >
         <svg

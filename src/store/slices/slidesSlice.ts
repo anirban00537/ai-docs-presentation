@@ -18,9 +18,19 @@ export interface Slide {
   rows: Row[];
 }
 
+export interface Theme {
+  primary: string;
+  headingColor: string;
+  bodyColor: string;
+  cardBackground: string;
+  pageBackground: string;
+  fontFamily?: string;
+}
+
 export interface SlidesState {
   slides: Slide[];
   activeSlideId: string | null;
+  theme: Theme;
 }
 
 // --- Helpers ---
@@ -74,9 +84,20 @@ export const createSlide = (): Slide => ({
 
 // --- Initial State ---
 const initialSlide = createSlide();
+export const DEFAULT_THEME: Theme = {
+  primary: "#2B0AFF",
+  headingColor: "#000000",
+  bodyColor: "#272525",
+  cardBackground: "#FFFFFF",
+  pageBackground: "#F9FAFB",
+  fontFamily: "Inter, system-ui, sans-serif",
+};
+const initialTheme: Theme = DEFAULT_THEME;
+
 const initialState: SlidesState = {
   slides: [initialSlide],
   activeSlideId: initialSlide.id,
+  theme: initialTheme,
 };
 
 // --- Slice ---
@@ -292,6 +313,12 @@ const slidesSlice = createSlice({
         slide.rows.push(createRow());
       }
     },
+    setTheme: (state, action: PayloadAction<Partial<Theme>>) => {
+      state.theme = { ...state.theme, ...action.payload };
+    },
+    resetTheme: (state) => {
+      state.theme = initialTheme;
+    },
     reorderBlocksInRow: (
       state,
       action: PayloadAction<{
@@ -453,6 +480,8 @@ export const {
   setSlideRows,
   moveBlock,
   reorderBlocksInRow,
+  setTheme,
+  resetTheme,
 } = slidesSlice.actions;
 
 // --- Selectors ---
@@ -462,5 +491,6 @@ export const selectActiveSlideId = (state: RootState) =>
   state.slides.activeSlideId;
 export const selectActiveSlide = (state: RootState) =>
   state.slides.slides.find((s) => s.id === state.slides.activeSlideId) || null;
+export const selectTheme = (state: RootState) => state.slides.theme;
 
 export default slidesSlice.reducer;

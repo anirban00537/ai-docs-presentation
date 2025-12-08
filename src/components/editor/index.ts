@@ -5,6 +5,7 @@ export { DraggableBlock } from "./DraggableBlock";
 export { DroppableRow } from "./DroppableRow";
 export { SlideCard } from "./SlideCard";
 export { SmartLayoutPanel } from "./SmartLayoutPanel";
+export { ThemePanel } from "./ThemePanel";
 export { FloatingSidebar } from "./FloatingSidebar";
 
 // Export icons

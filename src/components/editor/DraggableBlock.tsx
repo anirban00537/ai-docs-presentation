@@ -3,6 +3,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block } from "@/store/slices/slidesSlice";
+import { useAppSelector } from "@/store/hooks";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
 interface DraggableBlockProps {
   block: Block;
@@ -23,6 +25,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   isLastBlock,
   canAddColumn,
 }) => {
+  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const {
     attributes,
     listeners,
@@ -80,7 +83,16 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
               e.stopPropagation();
               onAddColumn(rowId, block.id);
             }}
-            className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-primary text-white opacity-0 group-hover/row:opacity-100 hover:bg-primary/90 hover:scale-110 transition-all z-20 flex items-center justify-center shadow-md"
+            className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full text-white opacity-0 group-hover/row:opacity-100 hover:scale-110 transition-all z-20 flex items-center justify-center shadow-md"
+            style={{
+              backgroundColor: theme.primary,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = "0.9";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = "1";
+            }}
             title="Add column"
           >
             <svg

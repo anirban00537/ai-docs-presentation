@@ -10,7 +10,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import slidesReducer from "@/store/slices/slidesSlice";
+import slidesReducer, { DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import userReducer from "@/store/slices/userSlice";
 
 const rootReducer = combineReducers({
@@ -32,13 +32,17 @@ const migrate = async (state: any): Promise<any> => {
       return slide;
     });
   }
+  // Ensure theme exists
+  if (state?.slides && !state.slides.theme) {
+    state.slides.theme = DEFAULT_THEME;
+  }
   return Promise.resolve(state);
 };
 
 // Redux Persist configuration
 const persistConfig = {
   key: "root",
-  version: 1,
+  version: 2, // Increment version to trigger migration
   storage,
   migrate,
   // Optionally, you can whitelist or blacklist specific reducers

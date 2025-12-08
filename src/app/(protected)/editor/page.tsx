@@ -17,6 +17,8 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectSlides,
+  selectTheme,
+  DEFAULT_THEME,
   addSlide,
   updateBlockContent,
   addRowWithColumns,
@@ -38,6 +40,7 @@ import { AppleButton } from "@/components/apple-button";
 const GammaPage = () => {
   const dispatch = useAppDispatch();
   const slides = useAppSelector(selectSlides);
+  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
   const [isLayoutPanelOpen, setIsLayoutPanelOpen] = useState(false);
   const [isLayoutDragging, setIsLayoutDragging] = useState(false);
@@ -296,7 +299,13 @@ const GammaPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-y-auto">
+    <div
+      className="min-h-screen overflow-y-auto"
+      style={{
+        backgroundColor: theme.pageBackground,
+        fontFamily: theme.fontFamily,
+      }}
+    >
       <div className="max-w-[1200px] mx-auto p-8 pr-20">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
@@ -312,6 +321,9 @@ const GammaPage = () => {
             onClick={() => dispatch(addSlide({}))}
             variant="primary"
             size="default"
+            style={{
+              backgroundColor: theme.primary,
+            }}
           >
             <span>+</span>
             <span>Add Slide</span>
