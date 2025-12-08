@@ -32,6 +32,7 @@ import {
   FloatingSidebar,
   SmartLayoutIcon,
 } from "@/components/editor";
+import { AppleButton } from "@/components/apple-button";
 
 // --- Main Page Component ---
 const GammaPage = () => {
@@ -253,13 +254,14 @@ const GammaPage = () => {
               Drag blocks between rows • Use Smart Layout to add columns
             </p>
           </div>
-          <button
+          <AppleButton
             onClick={() => dispatch(addSlide({}))}
-            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 shadow-md"
+            variant="primary"
+            size="default"
           >
             <span>+</span>
             <span>Add Slide</span>
-          </button>
+          </AppleButton>
         </div>
 
         {/* All Slides */}
