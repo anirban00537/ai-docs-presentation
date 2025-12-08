@@ -7,7 +7,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { EditorState, Transaction, TextSelection } from "prosemirror-state";
+import { EditorState, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { Node as ProseMirrorNode } from "prosemirror-model";
 import { history, undo, redo } from "prosemirror-history";
@@ -30,7 +30,6 @@ import { ImageUrlModal } from "./plugins/image-plugin";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
-import { ImageIcon } from "lucide-react";
 
 // --- Main Editor Component ---
 type ProseMirrorEditorProps = {
@@ -536,35 +535,6 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
           }
         }
 
-        // Handle ArrowDown and Enter to add paragraph after last node (e.g., image)
-        if (event.key === "ArrowDown" || event.key === "Enter") {
-          const { state, dispatch } = view;
-          const { $from, $to } = state.selection;
-          const docSize = state.doc.content.size;
-          
-          // Check if we're at or near the end of the document
-          // For atom nodes like images, the selection might be right after them
-          const lastNode = state.doc.lastChild;
-          const isAtEnd = $to.pos >= docSize - 1;
-          const lastNodeIsAtom = lastNode && lastNode.type.spec.atom;
-          
-          // If at end and last node is an atom (like image), or cursor is after image
-          if (isAtEnd && lastNode && (lastNodeIsAtom || lastNode.type.name === "image")) {
-            event.preventDefault();
-            
-            // Create and append a new paragraph
-            const newParagraph = schema.nodes.paragraph.create();
-            const tr = state.tr.insert(docSize, newParagraph);
-            
-            // Move cursor to the new paragraph
-            const newPos = docSize + 1;
-            tr.setSelection(TextSelection.create(tr.doc, newPos));
-            
-            dispatch(tr);
-            return true;
-          }
-        }
-        
         return false;
       },
       attributes: {
@@ -585,11 +555,13 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
           if (src) {
             // Render image
             const figure = document.createElement("figure");
-            figure.className = "prosemirror-image relative cursor-pointer group rounded-lg overflow-hidden";
+            figure.className =
+              "prosemirror-image relative cursor-pointer group rounded-lg overflow-hidden";
             const img = document.createElement("img");
             img.src = src;
             img.alt = alt || "";
-            img.className = "w-full h-auto max-h-[500px] object-contain rounded-lg transition-all duration-200 group-hover:opacity-90";
+            img.className =
+              "w-full h-auto max-h-[500px] object-contain rounded-lg transition-all duration-200 group-hover:opacity-90";
             img.onerror = () => {
               figure.innerHTML = `
                 <div class="flex flex-col items-center justify-center gap-2 p-6 border border-red-200 rounded-xl bg-red-50/50">
@@ -599,18 +571,20 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
               `;
             };
             figure.appendChild(img);
-            
+
             // Hover overlay
             const overlay = document.createElement("div");
-            overlay.className = "absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors";
+            overlay.className =
+              "absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors";
             overlay.innerHTML = `<span class="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 bg-white/90 rounded-full text-sm font-medium text-gray-700 shadow-sm">Click to edit</span>`;
             figure.appendChild(overlay);
-            
+
             contentContainer.appendChild(figure);
           } else {
             // Render placeholder
             const placeholderEl = document.createElement("div");
-            placeholderEl.className = "flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50/50 hover:bg-gray-100/80 hover:border-gray-400 cursor-pointer transition-all duration-200";
+            placeholderEl.className =
+              "flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50/50 hover:bg-gray-100/80 hover:border-gray-400 cursor-pointer transition-all duration-200";
             placeholderEl.innerHTML = `
               <div class="p-4 rounded-full bg-gray-200/80">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
@@ -643,89 +617,10 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             }
           });
 
-          // Bottom click area for adding text after image
-          const bottomArea = document.createElement("div");
-          bottomArea.className = "w-full h-4 cursor-text";
-          
-          // Blinking cursor container (hidden by default)
-          const cursorContainer = document.createElement("div");
-          cursorContainer.className = "hidden w-full h-6 cursor-text outline-none relative";
-          cursorContainer.tabIndex = 0;
-          
-          // Blinking cursor line
-          const cursorLine = document.createElement("div");
-          cursorLine.className = "absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-[18px] image-bottom-cursor";
-          cursorLine.style.backgroundColor = theme.bodyColor;
-          cursorContainer.appendChild(cursorLine);
-
-          // Show cursor on bottom area click
-          bottomArea.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            cursorContainer.classList.remove("hidden");
-            cursorContainer.focus();
-          });
-
-          // Hide cursor on blur
-          cursorContainer.addEventListener("blur", () => {
-            cursorContainer.classList.add("hidden");
-          });
-
-          // Handle keydown to add text
-          cursorContainer.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") {
-              cursorContainer.classList.add("hidden");
-              return;
-            }
-
-            if (["Tab", "Shift", "Control", "Alt", "Meta", "CapsLock"].includes(e.key)) {
-              return;
-            }
-
-            // For any printable character or Enter, create a new paragraph
-            if (e.key.length === 1 || e.key === "Enter") {
-              e.preventDefault();
-              cursorContainer.classList.add("hidden");
-
-              const pos = typeof getPos === "function" ? getPos() : undefined;
-              if (pos !== undefined) {
-                const nodeSize = node.nodeSize;
-                const insertPos = pos + nodeSize;
-
-                // Create a new paragraph
-                let newParagraph;
-                if (e.key === "Enter") {
-                  newParagraph = schema.nodes.paragraph.create();
-                } else {
-                  newParagraph = schema.nodes.paragraph.create(null, schema.text(e.key));
-                }
-
-                // Insert paragraph after this image
-                const tr = view.state.tr.insert(insertPos, newParagraph);
-                
-                // Move cursor to the new paragraph
-                const newPos = e.key === "Enter" ? insertPos + 1 : insertPos + 1 + e.key.length;
-                tr.setSelection(TextSelection.create(tr.doc, newPos));
-                
-                view.dispatch(tr);
-                view.focus();
-              }
-            }
-          });
-
-          dom.appendChild(bottomArea);
-          dom.appendChild(cursorContainer);
-
           return {
             dom,
             ignoreMutation: () => true,
-            stopEvent: (event: Event) => {
-              // Don't stop keyboard events on the cursor container
-              if (event.target === cursorContainer && event instanceof KeyboardEvent) {
-                return false;
-              }
-              return true;
-            },
+            stopEvent: () => true,
           };
         },
       },
@@ -737,7 +632,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       view.destroy();
       viewRef.current = null;
     };
-  }, [initialDoc, readOnly, placeholder, executeCommand]);
+  }, [initialDoc, readOnly, placeholder, executeCommand, theme]);
 
   // Handle menu item click
   const handleMenuClick = useCallback(
@@ -808,6 +703,10 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       }
       .image-bottom-cursor {
         animation: image-cursor-blink 1s step-end infinite;
+      }
+      /* Image bottom area hover effect */
+      .prosemirror-image-wrapper .group:hover {
+        background-color: rgba(0, 0, 0, 0.02);
       }
     `;
   }, [theme]);
