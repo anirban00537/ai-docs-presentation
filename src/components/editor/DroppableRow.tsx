@@ -3,6 +3,8 @@ import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { DraggableBlock } from "./DraggableBlock";
 import type { Row } from "@/store/slices/slidesSlice";
+import { useAppSelector } from "@/store/hooks";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
 interface DroppableRowProps {
   row: Row;
@@ -22,6 +24,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   rowCount,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const { setNodeRef, isOver } = useDroppable({
     id: `row-drop-${slideId}-${row.id}`,
     data: { type: "row", rowId: row.id, slideId },
@@ -79,8 +82,21 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
         className={`flex-1 flex transition-all items-start border ${
           isOver 
             ? "bg-green-50 ring-1 ring-dashed ring-green-400 border-green-400" 
-            : "border-transparent hover:border-gray-300"
+            : "border-transparent hover:border-opacity-30"
         }`}
+        style={{
+          borderColor: isOver ? undefined : "transparent",
+        }}
+        onMouseEnter={(e) => {
+          if (!isOver) {
+            e.currentTarget.style.borderColor = theme.primary + "30";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isOver) {
+            e.currentTarget.style.borderColor = "transparent";
+          }
+        }}
       >
         <SortableContext
           items={row.blocks.map((b) => `${slideId}-${b.id}`)}

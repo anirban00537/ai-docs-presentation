@@ -56,9 +56,26 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
           isDragging ? "bg-blue-50" : ""
         } ${
           !isLastBlock
-            ? "border-r border-transparent group-hover/row:border-gray-300"
+            ? "border-r border-transparent group-hover/row:border-opacity-30"
             : ""
         }`}
+        style={
+          !isLastBlock
+            ? {
+                borderRightColor: "transparent",
+              }
+            : undefined
+        }
+        onMouseEnter={(e) => {
+          if (!isLastBlock) {
+            e.currentTarget.style.borderRightColor = theme.primary + "30";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isLastBlock) {
+            e.currentTarget.style.borderRightColor = "transparent";
+          }
+        }}
       >
         {/* Drag Handle */}
         <div
