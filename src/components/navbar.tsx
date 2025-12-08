@@ -34,9 +34,9 @@ export function Navbar() {
       >
         <div
           className={cn(
-            "mx-auto mt-2 max-w-[95rem] px-6 transition-all duration-300 lg:px-12",
+            "mt-2 px-6 transition-all duration-300 lg:px-12",
             isScrolled &&
-              "bg-white/10 dark:bg-black/10 max-w-[95rem] rounded-2xl backdrop-blur-xl lg:px-5 shadow-lg shadow-black/5"
+              "bg-white/10 dark:bg-black/10 rounded-2xl backdrop-blur-xl lg:px-5 shadow-lg shadow-black/5"
           )}
         >
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
@@ -56,7 +56,7 @@ export function Navbar() {
                   <li key={index}>
                     <Link
                       href={item.href}
-                      className="text-white hover:text-white/80 block duration-150"
+                      className="text-black dark:text-white hover:text-black/80 dark:hover:text-white/80 block duration-150"
                     >
                       <span>{item.name}</span>
                     </Link>

@@ -343,7 +343,7 @@ export default function IntroAnimation() {
       className="relative w-full h-full bg-[#FAFAFA] overflow-hidden"
     >
       {/* Container */}
-      <div className="flex h-full w-full flex-col md:flex-row items-center justify-between perspective-1000 px-4 sm:px-6 md:px-12 lg:px-16 py-8 md:py-0">
+      <div className="flex h-full w-full flex-col md:flex-row items-center justify-between perspective-1000 px-4 sm:px-6 md:px-12 lg:px-16 py-8 md:py-0 mt-16 md:mt-20">
         {/* Intro Text (Left Side) */}
         <div className="relative z-0 flex flex-col items-center md:items-start justify-center text-center md:text-left pointer-events-none w-full md:w-1/2 mb-6 md:mb-0">
           <motion.h1
