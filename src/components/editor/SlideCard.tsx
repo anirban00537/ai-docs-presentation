@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { DroppableRow } from "./DroppableRow";
 import { SlideDropZone } from "./SlideDropZone";
@@ -11,6 +11,8 @@ interface SlideCardProps {
   onUpdateBlock: (slideId: string, blockId: string, content: any) => void;
   onDeleteRow: (slideId: string, rowId: string) => void;
   onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
+  onAddRowAtTop: (slideId: string) => void;
+  onAddRowAtBottom: (slideId: string) => void;
   onDeleteSlide: (slideId: string) => void;
   isLayoutDragging: boolean;
   activeLayoutSlideId: string | null;
@@ -23,17 +25,39 @@ export const SlideCard: React.FC<SlideCardProps> = ({
   onUpdateBlock,
   onDeleteRow,
   onAddColumn,
+  onAddRowAtTop,
+  onAddRowAtBottom,
   onDeleteSlide,
   isLayoutDragging,
   activeLayoutSlideId,
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const { setNodeRef, isOver } = useDroppable({
     id: `slide-drop-${slide.id}`,
     data: { type: "slide-drop-zone", slideId: slide.id },
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-200 px-6 py-4">
+    <div
+      className="group/slide relative bg-white rounded-2xl shadow-xl border border-gray-200 px-6 py-4"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Add Row at Top Button */}
+      <button
+        onClick={() => onAddRowAtTop(slide.id)}
+        className={`absolute left-1/2 -translate-x-1/2 -top-4 z-10 px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded-lg hover:bg-blue-600 transition-all flex items-center gap-1.5 shadow-md ${
+          isHovered ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+        }`}
+        title="Add row at top"
+      >
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="6" y1="2" x2="6" y2="10" />
+          <line x1="2" y1="6" x2="10" y2="6" />
+        </svg>
+        <span>Add Row</span>
+      </button>
+
       {/* Slide Content */}
       <div className="flex flex-col gap-6">
         {slide.rows.map((row) => (
@@ -48,6 +72,21 @@ export const SlideCard: React.FC<SlideCardProps> = ({
           />
         ))}
       </div>
+
+      {/* Add Row at Bottom Button */}
+      <button
+        onClick={() => onAddRowAtBottom(slide.id)}
+        className={`absolute left-1/2 -translate-x-1/2 -bottom-4 z-10 px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded-lg hover:bg-blue-600 transition-all flex items-center gap-1.5 shadow-md ${
+          isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
+        }`}
+        title="Add row at bottom"
+      >
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="6" y1="2" x2="6" y2="10" />
+          <line x1="2" y1="6" x2="10" y2="6" />
+        </svg>
+        <span>Add Row</span>
+      </button>
 
       {/* Drop Zone for Layout */}
       {isLayoutDragging && (

@@ -205,6 +205,19 @@ const slidesSlice = createSlice({
       }
       slide.rows.push(createRow(blocks));
     },
+    addRowAtTop: (
+      state,
+      action: PayloadAction<{ slideId: string; columnCount?: number }>
+    ) => {
+      const { slideId, columnCount = 1 } = action.payload;
+      const slide = state.slides.find(s => s.id === slideId);
+      if (!slide) return;
+      const blocks: Block[] = [];
+      for (let i = 0; i < columnCount; i++) {
+        blocks.push(createParagraphBlock());
+      }
+      slide.rows.unshift(createRow(blocks));
+    },
     setSlideRows: (
       state,
       action: PayloadAction<{ slideId: string; rows: Row[] }>
@@ -302,6 +315,7 @@ export const {
   addRowToSlide,
   deleteRow,
   addRowWithColumns,
+  addRowAtTop,
   setSlideRows,
   moveBlock,
   reorderBlocksInRow,

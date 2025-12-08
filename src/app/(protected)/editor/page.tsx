@@ -20,6 +20,7 @@ import {
   addSlide,
   updateBlockContent,
   addRowWithColumns,
+  addRowAtTop,
   addBlockToRow,
   deleteRow,
   moveBlock,
@@ -67,6 +68,14 @@ const GammaPage = () => {
     afterBlockId: string
   ) => {
     dispatch(addBlockToRow({ slideId, rowId, afterBlockId }));
+  };
+
+  const handleAddRowAtTop = (slideId: string) => {
+    dispatch(addRowAtTop({ slideId, columnCount: 1 }));
+  };
+
+  const handleAddRowAtBottom = (slideId: string) => {
+    dispatch(addRowWithColumns({ slideId, columnCount: 1 }));
   };
 
   // --- Drag and Drop ---
@@ -270,6 +279,8 @@ const GammaPage = () => {
                 onUpdateBlock={handleUpdateBlock}
                 onDeleteRow={handleDeleteRow}
                 onAddColumn={handleAddColumn}
+                onAddRowAtTop={handleAddRowAtTop}
+                onAddRowAtBottom={handleAddRowAtBottom}
                 onDeleteSlide={() => {}}
                 isLayoutDragging={isLayoutDragging}
                 activeLayoutSlideId={null}
