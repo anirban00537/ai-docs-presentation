@@ -7,7 +7,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { EditorState, Transaction } from "prosemirror-state";
+import { EditorState, Transaction, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { Node as ProseMirrorNode } from "prosemirror-model";
 import { history, undo, redo } from "prosemirror-history";
@@ -245,7 +245,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       return;
     }
 
-    // For image - insert as atom node
+    // For image - insert as atom node with a paragraph after it
     if (command.nodeType === "image") {
       dispatch(tr);
       setMenuState((prev) => ({
@@ -264,8 +264,11 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
 
           // Create image node with empty src (placeholder state)
           const imageNode = nodeType.create({ src: "", alt: "", title: "" });
+          // Create an empty paragraph after the image for easy text continuation
+          const paragraphNode = schema.nodes.paragraph.create();
 
-          const newTr = v.state.tr.replaceWith(start, end, imageNode);
+          // Insert both the image and the paragraph
+          const newTr = v.state.tr.replaceWith(start, end, [imageNode, paragraphNode]);
           v.dispatch(newTr);
           v.focus();
         }
@@ -534,6 +537,36 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
             return true;
           }
         }
+
+        // Handle ArrowDown and Enter to add paragraph after last node (e.g., image)
+        if (event.key === "ArrowDown" || event.key === "Enter") {
+          const { state, dispatch } = view;
+          const { $from, $to } = state.selection;
+          const docSize = state.doc.content.size;
+          
+          // Check if we're at or near the end of the document
+          // For atom nodes like images, the selection might be right after them
+          const lastNode = state.doc.lastChild;
+          const isAtEnd = $to.pos >= docSize - 1;
+          const lastNodeIsAtom = lastNode && lastNode.type.spec.atom;
+          
+          // If at end and last node is an atom (like image), or cursor is after image
+          if (isAtEnd && lastNode && (lastNodeIsAtom || lastNode.type.name === "image")) {
+            event.preventDefault();
+            
+            // Create and append a new paragraph
+            const newParagraph = schema.nodes.paragraph.create();
+            const tr = state.tr.insert(docSize, newParagraph);
+            
+            // Move cursor to the new paragraph
+            const newPos = docSize + 1;
+            tr.setSelection(TextSelection.create(tr.doc, newPos));
+            
+            dispatch(tr);
+            return true;
+          }
+        }
+        
         return false;
       },
       attributes: {
