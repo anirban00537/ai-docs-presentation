@@ -92,6 +92,10 @@ export const createSchema = () => {
           tag: "h3",
           getAttrs: (node: HTMLElement) => ({ level: 3, textAlign: node.style.textAlign || "left" }),
         },
+        {
+          tag: "h4",
+          getAttrs: (node: HTMLElement) => ({ level: 4, textAlign: node.style.textAlign || "left" }),
+        },
         // ... standard heading parsing
       ],
       toDOM: (node) => {

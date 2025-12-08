@@ -8,21 +8,27 @@ export const PROSEMIRROR_STYLES = `
     outline: none;
   }
   .ProseMirror h1 {
-    font-size: 1.875rem;
+    font-size: 3rem;
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 0.5rem;
   }
   .ProseMirror h2 {
-    font-size: 1.5rem;
+    font-size: 2.25rem;
     font-weight: 600;
     line-height: 1.25;
     margin-bottom: 0.5rem;
   }
   .ProseMirror h3 {
-    font-size: 1.25rem;
+    font-size: 1.875rem;
     font-weight: 600;
     line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+  .ProseMirror h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.35;
     margin-bottom: 0.5rem;
   }
   .ProseMirror ul, .ProseMirror ol {
@@ -67,7 +73,8 @@ export const PROSEMIRROR_STYLES = `
   .ProseMirror p.is-empty::before,
   .ProseMirror h1.is-empty::before,
   .ProseMirror h2.is-empty::before,
-  .ProseMirror h3.is-empty::before {
+  .ProseMirror h3.is-empty::before,
+  .ProseMirror h4.is-empty::before {
     content: "Type '/' for commands";
     color: #9ca3af;
     pointer-events: none;
@@ -76,4 +83,3 @@ export const PROSEMIRROR_STYLES = `
   }
 
 `;
-

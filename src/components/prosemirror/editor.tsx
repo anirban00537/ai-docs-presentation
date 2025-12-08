@@ -233,7 +233,47 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     }
 
     // For simple block types (heading, paragraph, code_block)
-    // Use setNodeMarkup to change the block type in place
+    // Check if we're inside a list_item - if so, we need to replace it instead of using setNodeMarkup
+    const currentNode = $from.node($from.depth);
+    const isInListItem = currentNode.type.name === "list_item";
+
+    if (isInListItem) {
+      // We're inside a list item, need to replace it with the new block type
+      dispatch(tr);
+
+      setTimeout(() => {
+        if (viewRef.current) {
+          const v = viewRef.current;
+          const { $from: newFrom } = v.state.selection;
+          const start = newFrom.before(newFrom.depth);
+          const end = newFrom.after(newFrom.depth);
+
+          // Get the text content from the list item
+          const textContent = currentNode.textContent;
+
+          // Create the new node with the text content
+          const newNode = nodeType.create(
+            command.attrs || {},
+            textContent ? schema.text(textContent) : undefined
+          );
+
+          const newTr = v.state.tr.replaceWith(start, end, newNode);
+          v.dispatch(newTr);
+          v.focus();
+        }
+      }, 0);
+
+      // Close menu
+      setMenuState((prev) => ({
+        ...prev,
+        open: false,
+        query: "",
+        selectedIndex: 0,
+      }));
+      return;
+    }
+
+    // Use setNodeMarkup to change the block type in place (when not in list)
     const pos = $from.before($from.depth);
     const mappedPos = tr.mapping.map(pos);
 
@@ -488,13 +528,15 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       }
       .ProseMirror h1,
       .ProseMirror h2,
-      .ProseMirror h3 {
+      .ProseMirror h3,
+      .ProseMirror h4 {
         color: ${theme.headingColor};
       }
       .ProseMirror p.is-empty::before,
       .ProseMirror h1.is-empty::before,
       .ProseMirror h2.is-empty::before,
-      .ProseMirror h3.is-empty::before {
+      .ProseMirror h3.is-empty::before,
+      .ProseMirror h4.is-empty::before {
         color: ${theme.bodyColor}80;
       }
     `;

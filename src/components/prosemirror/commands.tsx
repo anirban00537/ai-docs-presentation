@@ -37,6 +37,14 @@ export const SLASH_COMMANDS: SlashCommand[] = [
     attrs: { level: 3 },
   },
   {
+    id: "heading4",
+    label: "Heading 4",
+    description: "Extra small heading",
+    icon: <span className="font-bold text-xs">H4</span>,
+    nodeType: "heading",
+    attrs: { level: 4 },
+  },
+  {
     id: "paragraph",
     label: "Paragraph",
     description: "Plain text",
