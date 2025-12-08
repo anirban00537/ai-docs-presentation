@@ -127,7 +127,7 @@ export const SLASH_COMMANDS: SlashCommand[] = [
     ),
     nodeType: "code_block",
   },
-  {
+{
     id: "image",
     label: "Image",
     description: "Insert an image",

@@ -82,39 +82,4 @@ export const PROSEMIRROR_STYLES = `
     height: 0;
   }
 
-  .prosemirror-image {
-    margin: 0.5rem 0;
-    display: block;
-  }
-
-  .prosemirror-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
-  }
-
-  .prosemirror-image-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    margin: 0.5rem 0;
-    border: 2px dashed #d1d5db;
-    border-radius: 0.75rem;
-    background: #f9fafb;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .prosemirror-image-placeholder:hover {
-    border-color: #9ca3af;
-    background: #f3f4f6;
-  }
-
-  .prosemirror-image-placeholder-content::before {
-    content: "🖼️ Click to add image";
-    color: #6b7280;
-    font-size: 0.875rem;
-  }
-
 `;

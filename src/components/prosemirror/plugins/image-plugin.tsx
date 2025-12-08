@@ -87,12 +87,12 @@ const ImageDisplay: React.FC<{
 };
 
 // URL input modal component
-interface ImageUrlModalProps {
+type ImageUrlModalProps = {
   open: boolean;
-  onClose: () => void;
+  initialUrl: string;
   onSubmit: (url: string) => void;
-  initialUrl?: string;
-}
+  onClose: () => void;
+};
 
 export const ImageUrlModal: React.FC<ImageUrlModalProps> = ({
   open,
