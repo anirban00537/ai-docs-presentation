@@ -25,6 +25,7 @@ import { SlashCommand, SLASH_COMMANDS } from "./commands";
 import { SlashMenu } from "./slash-menu";
 import { SelectionToolbar } from "./selection-toolbar";
 import { PROSEMIRROR_STYLES } from "./styles";
+import { placeholderPlugin } from "./placeholder-plugin";
 
 // --- Main Editor Component ---
 type ProseMirrorEditorProps = {
@@ -260,6 +261,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       }),
       keymap(baseKeymap),
       createInputRules(schema),
+      placeholderPlugin,
     ];
 
     const state = EditorState.create({

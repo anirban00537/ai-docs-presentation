@@ -64,13 +64,16 @@ export const PROSEMIRROR_STYLES = `
     background: none;
     padding: 0;
   }
-  .ProseMirror p:empty::before,
-  .ProseMirror h1:empty::before,
-  .ProseMirror h2:empty::before,
-  .ProseMirror h3:empty::before {
-    content: attr(data-placeholder);
+  .ProseMirror p.is-empty::before,
+  .ProseMirror h1.is-empty::before,
+  .ProseMirror h2.is-empty::before,
+  .ProseMirror h3.is-empty::before {
+    content: "Type '/' for commands";
     color: #9ca3af;
     pointer-events: none;
+    float: left;
+    height: 0;
   }
+
 `;
 
