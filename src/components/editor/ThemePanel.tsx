@@ -3,6 +3,9 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectTheme, setTheme, Theme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { X, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface ThemePanelProps {
   isOpen: boolean;
@@ -103,7 +106,34 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
 
 export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
-  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const currentTheme = useAppSelector(selectTheme) || DEFAULT_THEME;
+
+  // Animation variants
+  const panelVariants = {
+    hidden: { 
+      opacity: 0, 
+      x: -20, 
+      scale: 0.95,
+      transition: { duration: 0.2, ease: "easeInOut" as const }
+    },
+    visible: { 
+      opacity: 1, 
+      x: 0, 
+      scale: 1,
+      transition: { duration: 0.3, ease: "easeOut" as const, staggerChildren: 0.05 }
+    },
+    exit: { 
+      opacity: 0, 
+      x: -20, 
+      scale: 0.95, 
+      transition: { duration: 0.2, ease: "easeInOut" as const }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
+  };
 
   if (!isOpen) return null;
 
@@ -113,162 +143,112 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
 
   const isThemeActive = (paletteTheme: Theme) => {
     return (
-      paletteTheme.primary === theme.primary &&
-      paletteTheme.headingColor === theme.headingColor &&
-      paletteTheme.bodyColor === theme.bodyColor &&
-      paletteTheme.cardBackground === theme.cardBackground &&
-      paletteTheme.pageBackground === theme.pageBackground
+      paletteTheme.primary === currentTheme.primary &&
+      paletteTheme.headingColor === currentTheme.headingColor &&
+      paletteTheme.bodyColor === currentTheme.bodyColor &&
+      paletteTheme.cardBackground === currentTheme.cardBackground &&
+      paletteTheme.pageBackground === currentTheme.pageBackground
     );
   };
 
   return (
-    <Card 
-      className="absolute right-full mr-4 top-1/2 -translate-y-1/2 w-72 shadow-lg z-50 max-h-[90vh] overflow-y-auto border"
-      style={{
-        backgroundColor: theme.cardBackground,
-        borderColor: theme.primary + "20",
-        color: theme.bodyColor,
-      }}
-    >
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm" style={{ color: theme.headingColor }}>Themes</CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="h-6 w-6"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-3">
-        {THEME_PALETTES.map((palette) => {
-          const isActive = isThemeActive(palette.theme);
-          return (
-            <Button
-              key={palette.name}
-              variant="ghost"
-              onClick={() => handleThemeSelect(palette.theme)}
-              className={`relative p-3 h-auto rounded-lg border-2 transition-all hover:scale-105 ${
-                isActive
-                  ? "border-primary shadow-md"
-                  : "border-border hover:border-primary/50"
-              }`}
-              style={{
-                backgroundColor: palette.theme.bodyColor,
-              }}
-            >
-              {/* Active indicator */}
-              {isActive && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-              )}
+    <AnimatePresence mode="wait">
+      {isOpen && (
+        <motion.div
+          key="theme-panel"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={panelVariants}
+          className="absolute right-full top-0 mr-4 z-50 origin-top-right"
+        >
+          <Card className="w-80 overflow-hidden border border-white/20 shadow-2xl backdrop-blur-xl bg-white/80 dark:bg-black/80 dark:border-white/10 rounded-2xl">
+            <CardHeader className="flex flex-row items-center justify-between p-4 pb-2 space-y-0 border-b border-black/5 dark:border-white/5">
+              <CardTitle className="text-sm font-semibold text-gray-900 dark:text-white">
+                Themes
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="h-6 w-6 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+                aria-label="Close"
+              >
+                <X className="h-3.5 w-3.5" />
+              </Button>
+            </CardHeader>
+            <CardContent className="p-2 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+              <div className="flex flex-col gap-1">
+                {THEME_PALETTES.map((palette) => {
+                  const isActive = isThemeActive(palette.theme);
+                  return (
+                    <motion.div key={palette.name} variants={itemVariants}>
+                      <button
+                        onClick={() => handleThemeSelect(palette.theme)}
+                        className={cn(
+                          "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group relative",
+                          isActive 
+                            ? "bg-black/5 dark:bg-white/10 shadow-sm" 
+                            : "hover:bg-black/5 dark:hover:bg-white/5"
+                        )}
+                      >
+                        {/* Theme Name & Status */}
+                        <div className="flex items-center gap-3">
+                          <div className={cn(
+                            "w-2 h-2 rounded-full transition-all duration-300",
+                            isActive ? "bg-blue-500 scale-125" : "bg-transparent"
+                          )} />
+                          <span className={cn(
+                            "text-sm font-medium transition-colors",
+                            isActive ? "text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                          )}>
+                            {palette.name}
+                          </span>
+                        </div>
 
-              {/* Theme preview - All colors */}
-              <div className="space-y-1.5">
-                {/* Primary Color */}
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-4 h-4 rounded border"
-                    style={{ 
-                      backgroundColor: palette.theme.primary,
-                      borderColor: palette.theme.primary + "40"
-                    }}
-                  />
-                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
-                    Primary
-                  </div>
-                </div>
-                
-                {/* Heading Color */}
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-4 h-4 rounded border"
-                    style={{ 
-                      backgroundColor: palette.theme.headingColor,
-                      borderColor: palette.theme.headingColor + "40"
-                    }}
-                  />
-                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
-                    Heading
-                  </div>
-                </div>
-                
-                {/* Body Color */}
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-4 h-4 rounded border"
-                    style={{ 
-                      backgroundColor: palette.theme.bodyColor,
-                      borderColor: palette.theme.bodyColor + "40"
-                    }}
-                  />
-                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
-                    Body
-                  </div>
-                </div>
-                
-                {/* Card Background */}
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-4 h-4 rounded border"
-                    style={{ 
-                      backgroundColor: palette.theme.cardBackground,
-                      borderColor: palette.theme.bodyColor + "40"
-                    }}
-                  />
-                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
-                    Card
-                  </div>
-                </div>
-                
-                {/* Page Background */}
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-4 h-4 rounded border"
-                    style={{ 
-                      backgroundColor: palette.theme.pageBackground,
-                      borderColor: palette.theme.bodyColor + "40"
-                    }}
-                  />
-                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
-                    Page
-                  </div>
-                </div>
+                        {/* Theme Preview Mini-UI */}
+                        <div className="flex items-center gap-1.5">
+                          {/* Page Background Circle */}
+                          <div 
+                            className="w-5 h-5 rounded-full border border-black/10 dark:border-white/10 shadow-sm flex items-center justify-center overflow-hidden"
+                            style={{ backgroundColor: palette.theme.pageBackground }}
+                            title="Page Background"
+                          >
+                            <div 
+                              className="w-2 h-2 rounded-full opacity-80"
+                              style={{ backgroundColor: palette.theme.bodyColor }}
+                            />
+                          </div>
+                          
+                          {/* Primary Color Badge */}
+                          <div 
+                            className="w-5 h-5 rounded-full border border-black/10 dark:border-white/10 shadow-sm"
+                            style={{ backgroundColor: palette.theme.primary }}
+                            title="Primary Color"
+                          />
+
+                          {/* Checkmark for Active State */}
+                           <div className="w-5 flex items-center justify-center">
+                            {isActive && (
+                                <motion.div
+                                  initial={{ scale: 0, opacity: 0 }}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                >
+                                  <Check className="w-4 h-4 text-blue-500" />
+                                </motion.div>
+                            )}
+                           </div>
+                        </div>
+                      </button>
+                    </motion.div>
+                  );
+                })}
               </div>
-            </Button>
-          );
-        })}
-        </div>
-      </CardContent>
-    </Card>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
-
