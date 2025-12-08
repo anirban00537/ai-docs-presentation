@@ -5,6 +5,8 @@ import { SmartLayoutIcon } from "./icons/layout-icons";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card } from "@/components/ui/card";
+import { useAppSelector } from "@/store/hooks";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
 interface FloatingSidebarProps {
   isLayoutPanelOpen: boolean;
@@ -16,6 +18,7 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
   onToggleLayoutPanel,
 }) => {
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
+  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
 
   const handleToggleThemePanel = () => {
     setIsThemePanelOpen(!isThemePanelOpen);
@@ -33,7 +36,14 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
 
   return (
     <div className="fixed right-6 top-1/2 -translate-y-1/2 z-40">
-      <Card className="flex flex-col gap-2 p-2 shadow-lg relative">
+      <Card 
+        className="flex flex-col gap-2 p-2 shadow-lg relative border"
+        style={{
+          backgroundColor: theme.cardBackground,
+          borderColor: theme.primary + "20",
+          color: theme.bodyColor,
+        }}
+      >
         <SmartLayoutPanel isOpen={isLayoutPanelOpen} onClose={handleToggleLayoutPanel} />
         <ThemePanel isOpen={isThemePanelOpen} onClose={handleToggleThemePanel} />
           <Tooltip>
@@ -43,11 +53,29 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                 size="icon"
                 onClick={handleToggleLayoutPanel}
                 className="h-10 w-10"
+                style={
+                  isLayoutPanelOpen
+                    ? {
+                        backgroundColor: theme.primary,
+                        color: "white",
+                      }
+                    : undefined
+                }
               >
-                <SmartLayoutIcon className={isLayoutPanelOpen ? "text-primary-foreground" : undefined} />
+                <SmartLayoutIcon 
+                  className={isLayoutPanelOpen ? "text-white" : ""}
+                  style={isLayoutPanelOpen ? { color: "white" } : undefined}
+                />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="left">
+            <TooltipContent 
+              side="left"
+              style={{
+                backgroundColor: theme.cardBackground,
+                color: theme.bodyColor,
+                borderColor: theme.primary + "20",
+              }}
+            >
               <p>Smart Layout</p>
             </TooltipContent>
           </Tooltip>
@@ -58,6 +86,14 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                 size="icon"
                 onClick={handleToggleThemePanel}
                 className="h-10 w-10"
+                style={
+                  isThemePanelOpen
+                    ? {
+                        backgroundColor: theme.primary,
+                        color: "white",
+                      }
+                    : undefined
+                }
               >
                 <svg
                   width="20"
@@ -68,7 +104,8 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className={isThemePanelOpen ? "text-primary-foreground" : ""}
+                  className={isThemePanelOpen ? "text-white" : ""}
+                  style={isThemePanelOpen ? { color: "white" } : undefined}
                 >
                   <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
                   <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
@@ -78,7 +115,14 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
                 </svg>
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="left">
+            <TooltipContent 
+              side="left"
+              style={{
+                backgroundColor: theme.cardBackground,
+                color: theme.bodyColor,
+                borderColor: theme.primary + "20",
+              }}
+            >
               <p>Theme Settings</p>
             </TooltipContent>
           </Tooltip>

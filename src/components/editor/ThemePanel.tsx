@@ -122,10 +122,17 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Card className="absolute right-full mr-4 top-1/2 -translate-y-1/2 w-72 shadow-lg z-50 max-h-[90vh] overflow-y-auto">
+    <Card 
+      className="absolute right-full mr-4 top-1/2 -translate-y-1/2 w-72 shadow-lg z-50 max-h-[90vh] overflow-y-auto border"
+      style={{
+        backgroundColor: theme.cardBackground,
+        borderColor: theme.primary + "20",
+        color: theme.bodyColor,
+      }}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm">Themes</CardTitle>
+          <CardTitle className="text-sm" style={{ color: theme.headingColor }}>Themes</CardTitle>
           <Button
             variant="ghost"
             size="icon"
@@ -163,7 +170,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                   : "border-border hover:border-primary/50"
               }`}
               style={{
-                backgroundColor: palette.theme.pageBackground,
+                backgroundColor: palette.theme.bodyColor,
               }}
             >
               {/* Active indicator */}
@@ -184,31 +191,77 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                 </div>
               )}
 
-              {/* Theme preview */}
-              <div
-                className="rounded-md p-2 mb-2"
-                style={{
-                  backgroundColor: palette.theme.cardBackground,
-                  border: `1px solid ${palette.theme.primary}20`,
-                }}
-              >
-                <div
-                  className="h-2 rounded mb-1.5"
-                  style={{ backgroundColor: palette.theme.primary }}
-                />
-                <div
-                  className="h-1.5 rounded mb-1"
-                  style={{ backgroundColor: palette.theme.headingColor }}
-                />
-                <div
-                  className="h-1 rounded"
-                  style={{ backgroundColor: palette.theme.bodyColor }}
-                />
-              </div>
-
-              {/* Theme name */}
-              <div className="text-xs font-medium text-center" style={{ color: palette.theme.headingColor }}>
-                {palette.name}
+              {/* Theme preview - All colors */}
+              <div className="space-y-1.5">
+                {/* Primary Color */}
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded border"
+                    style={{ 
+                      backgroundColor: palette.theme.primary,
+                      borderColor: palette.theme.primary + "40"
+                    }}
+                  />
+                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
+                    Primary
+                  </div>
+                </div>
+                
+                {/* Heading Color */}
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded border"
+                    style={{ 
+                      backgroundColor: palette.theme.headingColor,
+                      borderColor: palette.theme.headingColor + "40"
+                    }}
+                  />
+                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
+                    Heading
+                  </div>
+                </div>
+                
+                {/* Body Color */}
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded border"
+                    style={{ 
+                      backgroundColor: palette.theme.bodyColor,
+                      borderColor: palette.theme.bodyColor + "40"
+                    }}
+                  />
+                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
+                    Body
+                  </div>
+                </div>
+                
+                {/* Card Background */}
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded border"
+                    style={{ 
+                      backgroundColor: palette.theme.cardBackground,
+                      borderColor: palette.theme.bodyColor + "40"
+                    }}
+                  />
+                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
+                    Card
+                  </div>
+                </div>
+                
+                {/* Page Background */}
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded border"
+                    style={{ 
+                      backgroundColor: palette.theme.pageBackground,
+                      borderColor: palette.theme.bodyColor + "40"
+                    }}
+                  />
+                  <div className="text-[10px] font-medium" style={{ color: palette.theme.headingColor }}>
+                    Page
+                  </div>
+                </div>
               </div>
             </Button>
           );

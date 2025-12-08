@@ -19,7 +19,7 @@ export interface Slide {
 }
 
 export interface Theme {
-  primary: string;
+primary: string;
   headingColor: string;
   bodyColor: string;
   cardBackground: string;

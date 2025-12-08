@@ -309,14 +309,6 @@ const GammaPage = () => {
       <div className="max-w-[1200px] mx-auto p-8 pr-20">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Flexible Layout Editor
-            </h1>
-            <p className="text-gray-500 text-sm mt-1">
-              Drag blocks between rows • Use Smart Layout to add columns
-            </p>
-          </div>
           <AppleButton
             onClick={() => dispatch(addSlide({}))}
             variant="primary"
