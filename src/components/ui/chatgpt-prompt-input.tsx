@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { savePrompt } from "@/services/presentation";
+import { useSavePrompt } from "@/hooks/use-outline";
 import { useRouter } from "next/navigation";
 
 // --- Utility Function & Radix Primitives ---
@@ -371,6 +371,7 @@ interface PromptBoxProps {
 export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
   ({ className, onError, ...props }, ref) => {
     const router = useRouter();
+    const savePromptMutation = useSavePrompt();
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [value, setValue] = React.useState("");
@@ -379,7 +380,6 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isImageDialogOpen, setIsImageDialogOpen] = React.useState(false);
     const [numberOfSlides, setNumberOfSlides] = React.useState<string>("5");
-    const [isLoading, setIsLoading] = React.useState(false);
 
     React.useImperativeHandle(ref, () => internalTextareaRef.current!, []);
 
@@ -434,29 +434,29 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
         return;
       }
 
-      setIsLoading(true);
-
-      try {
-        const response = await savePrompt({
+      savePromptMutation.mutate(
+        {
           prompt: value.trim(),
           numberOfSlides: slides,
-        });
-
-        if (response.success && response.data?.id) {
-          // Redirect to outline page
-          router.push(`/create/outline/${response.data.id}`);
-        } else {
-          onError?.(response.message || "Failed to save prompt");
-          setIsLoading(false);
+        },
+        {
+          onSuccess: (response) => {
+            if (response.success && response.data?.id) {
+              // Redirect to outline page
+              router.push(`/create/outline/${response.data.id}`);
+            } else {
+              onError?.(response.message || "Failed to save prompt");
+            }
+          },
+          onError: (err: any) => {
+            onError?.(
+              err?.response?.data?.message ||
+                err?.message ||
+                "An unexpected error occurred"
+            );
+          },
         }
-      } catch (err: any) {
-        onError?.(
-          err?.response?.data?.message ||
-            err?.message ||
-            "An unexpected error occurred"
-        );
-        setIsLoading(false);
-      }
+      );
     };
 
     const hasValue = value.trim().length > 0 || imagePreview;
@@ -642,10 +642,10 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                     <TooltipTrigger asChild>
                       <button
                         type="submit"
-                        disabled={!hasValue || isLoading}
+                        disabled={!hasValue || savePromptMutation.isPending}
                         className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none bg-black text-white hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/80 disabled:bg-black/40 dark:disabled:bg-[#515151]"
                       >
-                        {isLoading ? (
+                        {savePromptMutation.isPending ? (
                           <svg
                             className="h-4 w-4 animate-spin"
                             xmlns="http://www.w3.org/2000/svg"
@@ -673,7 +673,11 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="top" showArrow={true}>
-                      <p>{isLoading ? "Generating..." : "Send"}</p>
+                      <p>
+                        {savePromptMutation.isPending
+                          ? "Generating..."
+                          : "Send"}
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
