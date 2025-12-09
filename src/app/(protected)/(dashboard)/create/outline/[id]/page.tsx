@@ -92,13 +92,18 @@ export default function OutlinePage() {
       !hasStartedGeneration.current &&
       !generateStreamMutation.isPending
     ) {
-      // This is intentional - we want to trigger generation when status changes
-      startGeneration();
+      // Defer the call to avoid synchronous setState in effect
+      setTimeout(() => {
+        startGeneration();
+      }, 0);
     } else if (outline?.status === "completed" && outline.outlines) {
-      setOutlineData({
-        title: outline.title || "Untitled Presentation",
-        outlines: outline.outlines as any,
-      });
+      // Defer setState to avoid synchronous setState in effect
+      setTimeout(() => {
+        setOutlineData({
+          title: outline.title || "Untitled Presentation",
+          outlines: outline.outlines as any,
+        });
+      }, 0);
     }
   }, [
     outline?.status,
