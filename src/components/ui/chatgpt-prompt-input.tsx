@@ -12,8 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createPlanFromPrompt } from "@/services/presentation";
-import type { OutlineResponse } from "@/services/presentation";
+import { savePrompt } from "@/services/presentation";
+import { useRouter } from "next/navigation";
 
 // --- Utility Function & Radix Primitives ---
 const TooltipProvider = TooltipPrimitive.Provider;
@@ -362,16 +362,15 @@ const toolsList = [
 ];
 
 // --- The Final, Self-Contained PromptBox Component ---
-interface PromptBoxProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  onOutlineGenerated?: (
-    outline: OutlineResponse | null,
-    error: string | null
-  ) => void;
+interface PromptBoxProps {
+  className?: string;
+  name?: string;
+  onError?: (error: string) => void;
 }
 
 export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
-  ({ className, onOutlineGenerated, ...props }, ref) => {
+  ({ className, onError, ...props }, ref) => {
+    const router = useRouter();
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [value, setValue] = React.useState("");
@@ -395,7 +394,6 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setValue(e.target.value);
-      if (props.onChange) props.onChange(e);
     };
 
     const handlePlusClick = () => {
@@ -426,39 +424,37 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
       e.preventDefault();
 
       if (!value.trim()) {
-        onOutlineGenerated?.(null, "Please enter a prompt");
+        onError?.("Please enter a prompt");
         return;
       }
 
       const slides = parseInt(numberOfSlides);
       if (isNaN(slides) || slides < 1 || slides > 50) {
-        onOutlineGenerated?.(null, "Number of slides must be between 1 and 50");
+        onError?.("Number of slides must be between 1 and 50");
         return;
       }
 
       setIsLoading(true);
-      onOutlineGenerated?.(null, null); // Clear previous error
 
       try {
-        const response = await createPlanFromPrompt({
+        const response = await savePrompt({
           prompt: value.trim(),
           numberOfSlides: slides,
         });
 
-        if (response.success && response.data) {
-          onOutlineGenerated?.(response.data, null);
+        if (response.success && response.data?.id) {
+          // Redirect to outline page
+          router.push(`/create/outline/${response.data.id}`);
         } else {
-          onOutlineGenerated?.(
-            null,
-            response.message || "Failed to generate outline"
-          );
+          onError?.(response.message || "Failed to save prompt");
+          setIsLoading(false);
         }
       } catch (err: any) {
-        onOutlineGenerated?.(
-          null,
-          err?.response?.data?.message || err?.message || "An error occurred"
+        onError?.(
+          err?.response?.data?.message ||
+            err?.message ||
+            "An unexpected error occurred"
         );
-      } finally {
         setIsLoading(false);
       }
     };

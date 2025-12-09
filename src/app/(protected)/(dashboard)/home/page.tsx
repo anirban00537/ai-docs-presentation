@@ -2,33 +2,9 @@
 
 import React, { useState } from "react";
 import { PromptBox } from "@/components/ui/chatgpt-prompt-input";
-import { OutlineViewer } from "@/components/outline-viewer";
-import type { OutlineResponse } from "@/services/presentation";
 
 export default function HomePage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [outline, setOutline] = useState<OutlineResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const handleOutlineGenerated = (
-    generatedOutline: OutlineResponse | null,
-    errorMessage: string | null
-  ) => {
-    // If both are null, it means loading started
-    if (generatedOutline === null && errorMessage === null) {
-      setIsLoading(true);
-      setError(null);
-      setOutline(null);
-    } else if (errorMessage) {
-      setError(errorMessage);
-      setOutline(null);
-      setIsLoading(false);
-    } else if (generatedOutline) {
-      setOutline(generatedOutline);
-      setError(null);
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="flex w-full flex-col items-center justify-center py-8 px-4">
@@ -45,7 +21,7 @@ export default function HomePage() {
         <div className="w-full space-y-4">
           <PromptBox
             name="message"
-            onOutlineGenerated={handleOutlineGenerated}
+            onError={(errorMessage) => setError(errorMessage)}
           />
 
           {error && (
@@ -54,12 +30,6 @@ export default function HomePage() {
             </div>
           )}
         </div>
-
-        {outline && (
-          <div className="mt-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
-            <OutlineViewer outline={outline} isLoading={isLoading} />
-          </div>
-        )}
       </div>
     </div>
   );
