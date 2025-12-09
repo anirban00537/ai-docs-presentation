@@ -37,6 +37,7 @@ import {
   SlideCard,
   FloatingSidebar,
   SmartLayoutIcon,
+  SlidesSidebar,
 } from "@/components/editor";
 import { AppleButton } from "@/components/apple-button";
 import {
@@ -574,6 +575,18 @@ const GammaPage = () => {
           backgroundColor: theme.pageBackground,
         }}
       >
+        {/* Slides Sidebar */}
+        <SlidesSidebar
+          slides={slides.filter(
+            (slide) => slide && slide.rows && Array.isArray(slide.rows)
+          )}
+          onUpdateBlock={handleUpdateBlock}
+          onDeleteRow={handleDeleteRow}
+          onAddColumn={handleAddColumn}
+          onAddRowAtTop={handleAddRowAtTop}
+          onAddRowAtBottom={handleAddRowAtBottom}
+        />
+
         <div className="max-w-[1200px] mx-auto p-8 pr-20">
           {/* Header */}
           <div className="mb-8 flex items-center justify-between">
@@ -636,20 +649,21 @@ const GammaPage = () => {
                   (slide) => slide && slide.rows && Array.isArray(slide.rows)
                 )
                 .map((slide, index) => (
-                  <SlideCard
-                    key={slide.id}
-                    slide={slide}
-                    index={index}
-                    totalSlides={slides.length}
-                    onUpdateBlock={handleUpdateBlock}
-                    onDeleteRow={handleDeleteRow}
-                    onAddColumn={handleAddColumn}
-                    onAddRowAtTop={handleAddRowAtTop}
-                    onAddRowAtBottom={handleAddRowAtBottom}
-                    onDeleteSlide={() => {}}
-                    isLayoutDragging={isLayoutDragging}
-                    activeLayoutSlideId={null}
-                  />
+                  <div key={slide.id} data-slide-id={slide.id}>
+                    <SlideCard
+                      slide={slide}
+                      index={index}
+                      totalSlides={slides.length}
+                      onUpdateBlock={handleUpdateBlock}
+                      onDeleteRow={handleDeleteRow}
+                      onAddColumn={handleAddColumn}
+                      onAddRowAtTop={handleAddRowAtTop}
+                      onAddRowAtBottom={handleAddRowAtBottom}
+                      onDeleteSlide={() => {}}
+                      isLayoutDragging={isLayoutDragging}
+                      activeLayoutSlideId={null}
+                    />
+                  </div>
                 ))}
             </div>
 

@@ -7,6 +7,7 @@ export { SlideCard } from "./SlideCard";
 export { SmartLayoutPanel } from "./SmartLayoutPanel";
 export { ThemePanel } from "./ThemePanel";
 export { FloatingSidebar } from "./FloatingSidebar";
+export { SlidesSidebar } from "./SlidesSidebar";
 
 // Export icons
 export {
