@@ -42,12 +42,11 @@ import { AppleButton } from "@/components/apple-button";
 import {
   usePresentation,
   useCreatePresentation,
-  useUpdateSlide,
-  useAddSlide,
 } from "@/hooks/use-presentation";
 import { useGenerateAndCreateSlides, useOutline } from "@/hooks/use-outline";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
+import { setPresentationId } from "@/store/middleware/slidesApiMiddleware";
 
 // Utility functions to convert between Redux and API formats
 const convertApiSlideToRedux = (apiSlide: any): ReduxSlide => {
@@ -103,32 +102,33 @@ const GammaPage = () => {
   const { data: presentationResponse, isLoading: isLoadingPresentation } =
     usePresentation(presentationId);
   const createPresentationMutation = useCreatePresentation();
-  const updateSlideMutation = useUpdateSlide();
-  const addSlideMutation = useAddSlide();
   const generateAndCreateSlidesMutation = useGenerateAndCreateSlides();
+
+  // Set presentation ID in middleware for API calls
+  useEffect(() => {
+    setPresentationId(presentationId);
+    return () => {
+      setPresentationId(null);
+    };
+  }, [presentationId]);
 
   // Fetch outline if outlineId is present to get presentationId
   const { data: outlineResponse } = useOutline(outlineId);
 
-  // Save all slides to presentation
+  // Save all slides to presentation (using service directly for bulk operations)
   const saveAllSlidesToPresentation = React.useCallback(
     async (presId: string) => {
       if (!presId || slides.length === 0) return;
 
       try {
-        // Create/update all slides
+        const { createSlide } = await import("@/services/presentation");
+        // Create all slides
         for (let i = 0; i < slides.length; i++) {
           const slide = slides[i];
           const apiData = convertReduxSlideToApi(slide);
-
-          // Try to find if slide already exists (by checking if it has a backend ID pattern)
-          // For now, always create new slides
-          await addSlideMutation.mutateAsync({
-            presentationId: presId,
-            payload: {
-              ...apiData,
-              order: i,
-            },
+          await createSlide(presId, {
+            ...apiData,
+            order: i,
           });
         }
       } catch (error) {
@@ -136,7 +136,7 @@ const GammaPage = () => {
         toast.error("Failed to save slides to presentation");
       }
     },
-    [slides, addSlideMutation]
+    [slides]
   );
 
   // Reset loaded flag when presentationId changes
@@ -319,27 +319,8 @@ const GammaPage = () => {
     blockId: string,
     content: any
   ) => {
+    // Middleware will handle the API call
     dispatch(updateBlockContent({ slideId, blockId, content }));
-
-    // Save to backend if presentation exists
-    if (presentationId) {
-      const slide = slides.find((s) => s.id === slideId);
-      if (slide) {
-        const apiData = convertReduxSlideToApi(slide);
-        updateSlideMutation.mutate(
-          {
-            presentationId: presentationId as string,
-            slideId,
-            payload: apiData,
-          },
-          {
-            onError: (error) => {
-              console.error("Failed to update slide:", error);
-            },
-          }
-        );
-      }
-    }
   };
 
   const handleDeleteRow = (slideId: string, rowId: string) => {
@@ -359,58 +340,13 @@ const GammaPage = () => {
   };
 
   const handleAddRowAtBottom = (slideId: string) => {
+    // Middleware will handle the API call
     dispatch(addRowWithColumns({ slideId, columnCount: 1 }));
-
-    // Save to backend if presentation exists
-    if (presentationId) {
-      const slide = slides.find((s) => s.id === slideId);
-      if (slide) {
-        const apiData = convertReduxSlideToApi(slide);
-        updateSlideMutation.mutate(
-          {
-            presentationId: presentationId,
-            slideId,
-            payload: apiData,
-          },
-          {
-            onError: (error) => {
-              console.error("Failed to update slide:", error);
-            },
-          }
-        );
-      }
-    }
   };
 
   const handleAddSlide = () => {
+    // Middleware will handle the API call
     dispatch(addSlide({}));
-
-    // Save to backend if presentation exists
-    if (presentationId && slides.length > 0) {
-      const newSlide = slides[slides.length - 1];
-      const apiData = convertReduxSlideToApi(newSlide);
-      addSlideMutation.mutate(
-        {
-          presentationId: presentationId as string,
-          payload: {
-            ...apiData,
-            order: slides.length - 1,
-          },
-        },
-        {
-          onSuccess: (response) => {
-            if (response.success && response.data?.id) {
-              // Update the slide ID in Redux if needed
-              // (The slide ID from backend should match, but we can update if different)
-            }
-          },
-          onError: (error) => {
-            console.error("Failed to create slide:", error);
-            toast.error("Failed to save slide");
-          },
-        }
-      );
-    }
   };
 
   // --- Drag and Drop ---
@@ -680,12 +616,10 @@ const GammaPage = () => {
               style={{
                 backgroundColor: theme.primary,
               }}
-              disabled={addSlideMutation.isPending || isGeneratingSlides}
+              disabled={isGeneratingSlides}
             >
               <span>+</span>
-              <span>
-                {addSlideMutation.isPending ? "Adding..." : "Add Slide"}
-              </span>
+              <span>Add Slide</span>
             </AppleButton>
           </div>
 
