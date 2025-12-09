@@ -53,13 +53,8 @@ export const useSavePrompt = () => {
 export const useUpdateOutline = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      payload,
-    }: {
-      id: string;
-      payload: UpdateOutlineDto;
-    }) => updateOutline(id, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateOutlineDto }) =>
+      updateOutline(id, payload),
     onSuccess: (data, variables) => {
       // Invalidate specific outline
       queryClient.invalidateQueries({
@@ -81,4 +76,3 @@ export const useGenerateOutlineStream = () => {
     }) => generateOutlineStream(outlineId, onChunk),
   });
 };
-
