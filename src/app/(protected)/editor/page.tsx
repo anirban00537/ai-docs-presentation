@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import {
   DndContext,
@@ -28,7 +29,9 @@ import {
   deleteRow,
   moveBlock,
   reorderBlocksInRow,
+  setSlides,
   Block,
+  Slide as ReduxSlide,
 } from "@/store/slices/slidesSlice";
 import {
   SlideCard,
@@ -36,10 +39,41 @@ import {
   SmartLayoutIcon,
 } from "@/components/editor";
 import { AppleButton } from "@/components/apple-button";
+import {
+  usePresentation,
+  useCreatePresentation,
+  useUpdateSlide,
+  useAddSlide,
+} from "@/hooks/use-presentation";
+import { toast } from "sonner";
+
+// Utility functions to convert between Redux and API formats
+const convertApiSlideToRedux = (apiSlide: any): ReduxSlide => {
+  // API slide has: { id, data: { rows: [...] }, order }
+  // Redux slide has: { id, rows: [...] }
+  return {
+    id: apiSlide.id,
+    rows: apiSlide.data?.rows || [],
+  };
+};
+
+const convertReduxSlideToApi = (reduxSlide: ReduxSlide): any => {
+  // Redux slide has: { id, rows: [...] }
+  // API slide needs: { data: { rows: [...] } }
+  return {
+    data: {
+      rows: reduxSlide.rows,
+    },
+  };
+};
 
 // --- Main Page Component ---
 const GammaPage = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const presentationId = searchParams.get("id");
+
   const slides = useAppSelector(selectSlides);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
@@ -48,6 +82,109 @@ const GammaPage = () => {
   const [draggingLayoutColumnCount, setDraggingLayoutColumnCount] = useState<
     number | null
   >(null);
+  const hasLoadedPresentation = useRef(false);
+
+  // TanStack Query hooks - use presentationId from URL directly
+  const { data: presentationResponse, isLoading: isLoadingPresentation } =
+    usePresentation(presentationId);
+  const createPresentationMutation = useCreatePresentation();
+  const updateSlideMutation = useUpdateSlide();
+  const addSlideMutation = useAddSlide();
+
+  // Save all slides to presentation
+  const saveAllSlidesToPresentation = React.useCallback(
+    async (presId: string) => {
+      if (!presId || slides.length === 0) return;
+
+      try {
+        // Create/update all slides
+        for (let i = 0; i < slides.length; i++) {
+          const slide = slides[i];
+          const apiData = convertReduxSlideToApi(slide);
+
+          // Try to find if slide already exists (by checking if it has a backend ID pattern)
+          // For now, always create new slides
+          await addSlideMutation.mutateAsync({
+            presentationId: presId,
+            payload: {
+              ...apiData,
+              order: i,
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Failed to save slides:", error);
+        toast.error("Failed to save slides to presentation");
+      }
+    },
+    [slides, addSlideMutation]
+  );
+
+  // Reset loaded flag when presentationId changes
+  useEffect(() => {
+    hasLoadedPresentation.current = false;
+  }, [presentationId]);
+
+  // Convert API presentation slides to Redux format when loaded
+  useEffect(() => {
+    if (
+      presentationResponse?.success &&
+      presentationResponse.data?.slides &&
+      !hasLoadedPresentation.current
+    ) {
+      const apiSlides = presentationResponse.data.slides;
+      const reduxSlides = apiSlides
+        .sort((a: any, b: any) => a.order - b.order)
+        .map(convertApiSlideToRedux);
+
+      if (reduxSlides.length > 0) {
+        dispatch(setSlides(reduxSlides));
+        hasLoadedPresentation.current = true;
+      }
+    }
+  }, [presentationResponse, dispatch]);
+
+  // Create presentation if slides exist but no presentationId
+  useEffect(() => {
+    if (
+      !presentationId &&
+      slides.length > 0 &&
+      !createPresentationMutation.isPending &&
+      !hasLoadedPresentation.current
+    ) {
+      // Check if slides were just generated (they have rows with blocks)
+      const hasValidSlides = slides.some(
+        (slide) => slide.rows && slide.rows.length > 0
+      );
+
+      if (hasValidSlides) {
+        createPresentationMutation.mutate(
+          { title: "Untitled Presentation" },
+          {
+            onSuccess: (response) => {
+              if (response.success && response.data?.id) {
+                const newPresentationId = response.data.id;
+                // Update URL with new presentation ID
+                router.replace(`/editor?id=${newPresentationId}`);
+                // Save all slides to the new presentation
+                saveAllSlidesToPresentation(newPresentationId);
+              }
+            },
+            onError: (error) => {
+              console.error("Failed to create presentation:", error);
+              toast.error("Failed to create presentation");
+            },
+          }
+        );
+      }
+    }
+  }, [
+    slides,
+    presentationId,
+    createPresentationMutation,
+    router,
+    saveAllSlidesToPresentation,
+  ]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -61,6 +198,26 @@ const GammaPage = () => {
     content: any
   ) => {
     dispatch(updateBlockContent({ slideId, blockId, content }));
+
+    // Save to backend if presentation exists
+    if (presentationId) {
+      const slide = slides.find((s) => s.id === slideId);
+      if (slide) {
+        const apiData = convertReduxSlideToApi(slide);
+        updateSlideMutation.mutate(
+          {
+            presentationId: presentationId as string,
+            slideId,
+            payload: apiData,
+          },
+          {
+            onError: (error) => {
+              console.error("Failed to update slide:", error);
+            },
+          }
+        );
+      }
+    }
   };
 
   const handleDeleteRow = (slideId: string, rowId: string) => {
@@ -81,6 +238,57 @@ const GammaPage = () => {
 
   const handleAddRowAtBottom = (slideId: string) => {
     dispatch(addRowWithColumns({ slideId, columnCount: 1 }));
+
+    // Save to backend if presentation exists
+    if (presentationId) {
+      const slide = slides.find((s) => s.id === slideId);
+      if (slide) {
+        const apiData = convertReduxSlideToApi(slide);
+        updateSlideMutation.mutate(
+          {
+            presentationId: presentationId,
+            slideId,
+            payload: apiData,
+          },
+          {
+            onError: (error) => {
+              console.error("Failed to update slide:", error);
+            },
+          }
+        );
+      }
+    }
+  };
+
+  const handleAddSlide = () => {
+    dispatch(addSlide({}));
+
+    // Save to backend if presentation exists
+    if (presentationId && slides.length > 0) {
+      const newSlide = slides[slides.length - 1];
+      const apiData = convertReduxSlideToApi(newSlide);
+      addSlideMutation.mutate(
+        {
+          presentationId: presentationId as string,
+          payload: {
+            ...apiData,
+            order: slides.length - 1,
+          },
+        },
+        {
+          onSuccess: (response) => {
+            if (response.success && response.data?.id) {
+              // Update the slide ID in Redux if needed
+              // (The slide ID from backend should match, but we can update if different)
+            }
+          },
+          onError: (error) => {
+            console.error("Failed to create slide:", error);
+            toast.error("Failed to save slide");
+          },
+        }
+      );
+    }
   };
 
   // --- Drag and Drop ---
@@ -311,16 +519,29 @@ const GammaPage = () => {
         <div className="max-w-[1200px] mx-auto p-8 pr-20">
           {/* Header */}
           <div className="mb-8 flex items-center justify-between">
+            {isLoadingPresentation && (
+              <div className="text-sm text-muted-foreground">
+                Loading presentation...
+              </div>
+            )}
+            {presentationId && (
+              <div className="text-sm text-muted-foreground">
+                Presentation ID: {presentationId}
+              </div>
+            )}
             <AppleButton
-              onClick={() => dispatch(addSlide({}))}
+              onClick={handleAddSlide}
               variant="primary"
               size="default"
               style={{
                 backgroundColor: theme.primary,
               }}
+              disabled={addSlideMutation.isPending}
             >
               <span>+</span>
-              <span>Add Slide</span>
+              <span>
+                {addSlideMutation.isPending ? "Adding..." : "Add Slide"}
+              </span>
             </AppleButton>
           </div>
 

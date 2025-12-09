@@ -4,11 +4,11 @@ import {
   savePrompt,
   updateOutline,
   generateOutlineStream,
+  generateSlidesFromOutline,
   type CreateOutlineDto,
   type UpdateOutlineDto,
-  type Outline,
-  type OutlineResponse,
   type StreamChunk,
+  type SlideGenerationChunk,
 } from "@/services/presentation";
 
 // Query keys
@@ -74,5 +74,18 @@ export const useGenerateOutlineStream = () => {
       outlineId: string;
       onChunk: (chunk: StreamChunk) => void;
     }) => generateOutlineStream(outlineId, onChunk),
+  });
+};
+
+// Generate slides from outline hook
+export const useGenerateSlidesFromOutline = () => {
+  return useMutation({
+    mutationFn: ({
+      outlineId,
+      onChunk,
+    }: {
+      outlineId: string;
+      onChunk: (chunk: SlideGenerationChunk) => void;
+    }) => generateSlidesFromOutline(outlineId, onChunk),
   });
 };

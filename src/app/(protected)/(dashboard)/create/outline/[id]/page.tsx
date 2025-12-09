@@ -2,11 +2,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useOutline, useUpdateOutline, useGenerateOutlineStream } from "@/hooks/use-outline";
+import { useOutline, useUpdateOutline, useGenerateOutlineStream, useGenerateSlidesFromOutline } from "@/hooks/use-outline";
 import type { OutlineResponse } from "@/services/presentation";
 import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAppDispatch } from "@/store/hooks";
+import { setSlides, type Slide } from "@/store/slices/slidesSlice";
+import { nanoid } from "nanoid";
 
 export default function OutlinePage() {
   const params = useParams();
@@ -14,14 +17,21 @@ export default function OutlinePage() {
   const outlineId = params.id as string;
 
   const [outlineData, setOutlineData] = useState<OutlineResponse | null>(null);
+  const [isGeneratingSlides, setIsGeneratingSlides] = useState(false);
+  const [slideGenerationProgress, setSlideGenerationProgress] = useState<{
+    current: number;
+    total: number;
+  } | null>(null);
   const titleRef = useRef<string>('');
   const outlinesRef = useRef<Array<{ content: string }>>([]);
   const hasStartedGeneration = useRef(false);
+  const dispatch = useAppDispatch();
 
   // TanStack Query hooks
   const { data: outlineResponse, isLoading, error: outlineError } = useOutline(outlineId);
   const updateOutlineMutation = useUpdateOutline();
   const generateStreamMutation = useGenerateOutlineStream();
+  const generateSlidesMutation = useGenerateSlidesFromOutline();
 
   const outline = outlineResponse?.data || null;
   // Only show error if there's a query error or API returned failure
@@ -101,6 +111,55 @@ export default function OutlinePage() {
     );
   };
 
+  const generatedSlidesRef = useRef<Slide[]>([]);
+
+  const handleCreatePresentation = () => {
+    if (!outlineId || !outlineData) return;
+
+    setIsGeneratingSlides(true);
+    setSlideGenerationProgress({ current: 0, total: outlineData.outlines.length });
+    generatedSlidesRef.current = [];
+
+    generateSlidesMutation.mutate({
+      outlineId,
+      onChunk: (chunk) => {
+        if (chunk.type === 'slide-start') {
+          setSlideGenerationProgress({
+            current: chunk.slideNumber || 0,
+            total: chunk.totalSlides || outlineData.outlines.length,
+          });
+        } else if (chunk.type === 'slide' && chunk.data) {
+          // Convert API slide format to Redux format
+          const slide: Slide = {
+            id: nanoid(),
+            rows: chunk.data.rows.map((row: any) => ({
+              id: row.id || nanoid(),
+              blocks: row.blocks.map((block: any) => ({
+                id: block.id || nanoid(),
+                content: block.content,
+              })),
+            })),
+          };
+          generatedSlidesRef.current.push(slide);
+        } else if (chunk.type === 'complete') {
+          // All slides generated, set them in Redux and redirect
+          if (generatedSlidesRef.current.length > 0) {
+            dispatch(setSlides(generatedSlidesRef.current));
+            router.push('/editor');
+          } else {
+            alert('No slides were generated. Please try again.');
+            setIsGeneratingSlides(false);
+            setSlideGenerationProgress(null);
+          }
+        } else if (chunk.type === 'slide-error' || chunk.type === 'error') {
+          alert(`Error generating slides: ${chunk.message || 'Unknown error'}`);
+          setIsGeneratingSlides(false);
+          setSlideGenerationProgress(null);
+        }
+      },
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="flex w-full flex-col items-center justify-center py-8 px-4">
@@ -175,14 +234,25 @@ export default function OutlinePage() {
             <div className="flex gap-4 justify-end">
               <Button
                 onClick={handleSave}
-                disabled={updateOutlineMutation.isPending || generateStreamMutation.isPending}
+                disabled={updateOutlineMutation.isPending || generateStreamMutation.isPending || isGeneratingSlides}
                 variant="default"
               >
                 {updateOutlineMutation.isPending ? 'Saving...' : 'Save Outline'}
               </Button>
               <Button
+                onClick={handleCreatePresentation}
+                disabled={updateOutlineMutation.isPending || generateStreamMutation.isPending || isGeneratingSlides}
+                variant="default"
+                className="bg-primary text-primary-foreground"
+              >
+                {isGeneratingSlides
+                  ? `Generating... (${slideGenerationProgress?.current || 0}/${slideGenerationProgress?.total || 0})`
+                  : 'Create Presentation'}
+              </Button>
+              <Button
                 onClick={() => router.push('/home')}
                 variant="outline"
+                disabled={isGeneratingSlides}
               >
                 Back
               </Button>
@@ -205,6 +275,31 @@ export default function OutlinePage() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Slide Generation Progress */}
+        {isGeneratingSlides && (
+          <div className="rounded-xl bg-card border p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Generating Presentation</h3>
+              <span className="text-sm text-muted-foreground">
+                {slideGenerationProgress?.current || 0} / {slideGenerationProgress?.total || 0} slides
+              </span>
+            </div>
+            <div className="w-full bg-muted rounded-full h-2">
+              <div
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{
+                  width: slideGenerationProgress
+                    ? `${(slideGenerationProgress.current / slideGenerationProgress.total) * 100}%`
+                    : '0%',
+                }}
+              />
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Creating slides from your outline...
+            </p>
           </div>
         )}
       </div>
