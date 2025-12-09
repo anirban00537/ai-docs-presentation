@@ -1,28 +1,65 @@
 "use client";
 
+import React, { useState } from "react";
 import { PromptBox } from "@/components/ui/chatgpt-prompt-input";
+import { OutlineViewer } from "@/components/outline-viewer";
+import type { OutlineResponse } from "@/services/presentation";
 
 export default function HomePage() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const message = formData.get("message");
-    // In a real app, you would also handle the uploaded file here.
-    if (!message && !event.currentTarget.querySelector("img")) {
-      return;
+  const [isLoading, setIsLoading] = useState(false);
+  const [outline, setOutline] = useState<OutlineResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleOutlineGenerated = (
+    generatedOutline: OutlineResponse | null,
+    errorMessage: string | null
+  ) => {
+    // If both are null, it means loading started
+    if (generatedOutline === null && errorMessage === null) {
+      setIsLoading(true);
+      setError(null);
+      setOutline(null);
+    } else if (errorMessage) {
+      setError(errorMessage);
+      setOutline(null);
+      setIsLoading(false);
+    } else if (generatedOutline) {
+      setOutline(generatedOutline);
+      setError(null);
+      setIsLoading(false);
     }
-    alert(`Message Submitted!`);
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-center  ">
-      <div className="w-full max-w-xl flex flex-col gap-10">
-        <p className="text-center text-3xl text-foreground">
-          How Can I Help You
-        </p>
-        <form onSubmit={handleSubmit} className="w-full">
-          <PromptBox name="message" />
-        </form>
+    <div className="flex w-full flex-col items-center justify-center py-8 px-4">
+      <div className="w-full max-w-3xl flex flex-col gap-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-semibold text-foreground mb-2">
+            How Can I Help You
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Create a presentation outline from your prompt
+          </p>
+        </div>
+
+        <div className="w-full space-y-4">
+          <PromptBox
+            name="message"
+            onOutlineGenerated={handleOutlineGenerated}
+          />
+
+          {error && (
+            <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+        </div>
+
+        {outline && (
+          <div className="mt-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
+            <OutlineViewer outline={outline} isLoading={isLoading} />
+          </div>
+        )}
       </div>
     </div>
   );
