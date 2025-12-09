@@ -5,6 +5,7 @@ import {
   updateOutline,
   generateOutlineStream,
   generateSlidesFromOutline,
+  generateAndCreateSlides,
   type CreateOutlineDto,
   type UpdateOutlineDto,
   type StreamChunk,
@@ -87,5 +88,18 @@ export const useGenerateSlidesFromOutline = () => {
       outlineId: string;
       onChunk: (chunk: SlideGenerationChunk) => void;
     }) => generateSlidesFromOutline(outlineId, onChunk),
+  });
+};
+
+// Generate and create slides from presentation hook
+export const useGenerateAndCreateSlides = () => {
+  return useMutation({
+    mutationFn: ({
+      presentationId,
+      onChunk,
+    }: {
+      presentationId: string;
+      onChunk: (chunk: SlideGenerationChunk) => void;
+    }) => generateAndCreateSlides(presentationId, onChunk),
   });
 };
