@@ -156,16 +156,27 @@ const GammaPage = () => {
         .sort((a: any, b: any) => a.order - b.order)
         .map(convertApiSlideToRedux);
 
-      if (reduxSlides.length > 0) {
-        dispatch(setSlides(reduxSlides));
-        hasLoadedPresentation.current = true;
-      }
+      // Set slides (empty array if no slides, otherwise the loaded slides)
+      dispatch(setSlides(reduxSlides));
+      hasLoadedPresentation.current = true;
+    } else if (
+      presentationResponse?.success &&
+      (!presentationResponse.data?.slides ||
+        presentationResponse.data.slides.length === 0) &&
+      !hasLoadedPresentation.current
+    ) {
+      // If presentation exists but has no slides, clear the slides array
+      dispatch(setSlides([]));
+      hasLoadedPresentation.current = true;
     }
   }, [presentationResponse, dispatch]);
 
   // Helper function to generate and create slides from presentation
   const startSlideGeneration = React.useCallback(
     (presId: string) => {
+      // Clear existing slides before starting generation
+      dispatch(setSlides([]));
+
       generateAndCreateSlidesMutation.mutate({
         presentationId: presId,
         onChunk: (chunk) => {
@@ -174,6 +185,8 @@ const GammaPage = () => {
               current: 0,
               total: chunk.totalSlides || 0,
             });
+            // Clear slides at the start
+            dispatch(setSlides([]));
           } else if (chunk.type === "slide-start") {
             setSlideGenerationProgress({
               current: chunk.slideNumber || 0,

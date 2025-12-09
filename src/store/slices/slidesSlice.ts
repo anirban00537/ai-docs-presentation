@@ -83,7 +83,6 @@ export const createSlide = (): Slide => ({
 });
 
 // --- Initial State ---
-const initialSlide = createSlide();
 export const DEFAULT_THEME: Theme = {
   primary: "#2B0AFF",
   headingColor: "#000000",
@@ -95,8 +94,8 @@ export const DEFAULT_THEME: Theme = {
 const initialTheme: Theme = DEFAULT_THEME;
 
 const initialState: SlidesState = {
-  slides: [initialSlide],
-  activeSlideId: initialSlide.id,
+  slides: [],
+  activeSlideId: null,
   theme: initialTheme,
 };
 
