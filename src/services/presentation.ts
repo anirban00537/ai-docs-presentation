@@ -45,6 +45,7 @@ export interface Outline {
 
 export interface SavePromptResponse {
   id: string;
+  presentationId?: string;
 }
 
 export const reorderSlides = async (

@@ -45,7 +45,9 @@ import {
   useUpdateSlide,
   useAddSlide,
 } from "@/hooks/use-presentation";
+import { useGenerateSlidesFromOutline, useOutline } from "@/hooks/use-outline";
 import { toast } from "sonner";
+import { nanoid } from "nanoid";
 
 // Utility functions to convert between Redux and API formats
 const convertApiSlideToRedux = (apiSlide: any): ReduxSlide => {
@@ -73,6 +75,7 @@ const GammaPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const presentationId = searchParams.get("id");
+  const outlineId = searchParams.get("outlineId");
 
   const slides = useAppSelector(selectSlides);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
@@ -82,7 +85,14 @@ const GammaPage = () => {
   const [draggingLayoutColumnCount, setDraggingLayoutColumnCount] = useState<
     number | null
   >(null);
+  const [isGeneratingSlides, setIsGeneratingSlides] = useState(false);
+  const [slideGenerationProgress, setSlideGenerationProgress] = useState<{
+    current: number;
+    total: number;
+  } | null>(null);
   const hasLoadedPresentation = useRef(false);
+  const hasStartedGeneration = useRef(false);
+  const slideCountRef = useRef(0);
 
   // TanStack Query hooks - use presentationId from URL directly
   const { data: presentationResponse, isLoading: isLoadingPresentation } =
@@ -90,6 +100,10 @@ const GammaPage = () => {
   const createPresentationMutation = useCreatePresentation();
   const updateSlideMutation = useUpdateSlide();
   const addSlideMutation = useAddSlide();
+  const generateSlidesMutation = useGenerateSlidesFromOutline();
+
+  // Fetch outline if outlineId is present to get presentationId
+  const { data: outlineResponse } = useOutline(outlineId);
 
   // Save all slides to presentation
   const saveAllSlidesToPresentation = React.useCallback(
@@ -144,9 +158,108 @@ const GammaPage = () => {
     }
   }, [presentationResponse, dispatch]);
 
-  // Create presentation if slides exist but no presentationId
+  // Helper function to generate slides from outline
+  const startSlideGeneration = React.useCallback(
+    (presId: string) => {
+      if (!outlineId) return;
+
+      generateSlidesMutation.mutate({
+        outlineId,
+        onChunk: (chunk) => {
+          if (chunk.type === "slide-start") {
+            setSlideGenerationProgress({
+              current: chunk.slideNumber || 0,
+              total: chunk.totalSlides || 0,
+            });
+          } else if (chunk.type === "slide" && chunk.data) {
+            // Convert API slide format to Redux format
+            const slide: ReduxSlide = {
+              id: nanoid(),
+              rows: chunk.data.rows.map((row: any) => ({
+                id: row.id || nanoid(),
+                blocks: row.blocks.map((block: any) => ({
+                  id: block.id || nanoid(),
+                  content: block.content,
+                })),
+              })),
+            };
+
+            // Add slide to Redux immediately (streaming update)
+            const currentOrder = slideCountRef.current;
+            slideCountRef.current += 1;
+
+            // Get current slides and add new one
+            const currentSlides = slides;
+            dispatch(setSlides([...currentSlides, slide]));
+
+            // Also save to backend
+            const apiData = convertReduxSlideToApi(slide);
+            addSlideMutation.mutate({
+              presentationId: presId,
+              payload: {
+                ...apiData,
+                order: currentOrder,
+              },
+            });
+          } else if (chunk.type === "complete") {
+            setIsGeneratingSlides(false);
+            setSlideGenerationProgress(null);
+            toast.success("Presentation created successfully!");
+          } else if (chunk.type === "slide-error" || chunk.type === "error") {
+            setIsGeneratingSlides(false);
+            setSlideGenerationProgress(null);
+            toast.error(
+              `Error generating slides: ${chunk.message || "Unknown error"}`
+            );
+          }
+        },
+      });
+    },
+    [outlineId, generateSlidesMutation, slides, dispatch, addSlideMutation]
+  );
+
+  // Handle outlineId: Use linked presentation and generate slides
   useEffect(() => {
     if (
+      outlineId &&
+      !presentationId &&
+      !generateSlidesMutation.isPending &&
+      !hasStartedGeneration.current &&
+      outlineResponse?.success
+    ) {
+      // Get linked presentation from outline
+      const outline = outlineResponse.data as any;
+      const linkedPresentationId = outline?.presentationId;
+
+      if (!linkedPresentationId) {
+        toast.error("Outline does not have a linked presentation");
+        return;
+      }
+
+      // Use the linked presentation
+      hasStartedGeneration.current = true;
+      slideCountRef.current = 0;
+
+      // Defer state updates to avoid synchronous setState in effect
+      setTimeout(() => {
+        setIsGeneratingSlides(true);
+        router.replace(`/editor?id=${linkedPresentationId}`);
+        startSlideGeneration(linkedPresentationId);
+      }, 0);
+    }
+  }, [
+    outlineId,
+    presentationId,
+    outlineResponse,
+    generateSlidesMutation,
+    router,
+    startSlideGeneration,
+  ]);
+
+  // Create presentation if slides exist but no presentationId (fallback for non-outline flow)
+  useEffect(() => {
+    if (
+      !outlineId &&
       !presentationId &&
       slides.length > 0 &&
       !createPresentationMutation.isPending &&
@@ -181,6 +294,7 @@ const GammaPage = () => {
   }, [
     slides,
     presentationId,
+    outlineId,
     createPresentationMutation,
     router,
     saveAllSlidesToPresentation,
@@ -524,7 +638,29 @@ const GammaPage = () => {
                 Loading presentation...
               </div>
             )}
-            {presentationId && (
+            {isGeneratingSlides && (
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-muted-foreground">
+                  Generating slides... ({slideGenerationProgress?.current || 0}/
+                  {slideGenerationProgress?.total || 0})
+                </div>
+                <div className="w-48 bg-muted rounded-full h-2">
+                  <div
+                    className="bg-primary h-2 rounded-full transition-all duration-300"
+                    style={{
+                      width: slideGenerationProgress
+                        ? `${
+                            (slideGenerationProgress.current /
+                              slideGenerationProgress.total) *
+                            100
+                          }%`
+                        : "0%",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            {presentationId && !isGeneratingSlides && (
               <div className="text-sm text-muted-foreground">
                 Presentation ID: {presentationId}
               </div>
@@ -536,7 +672,7 @@ const GammaPage = () => {
               style={{
                 backgroundColor: theme.primary,
               }}
-              disabled={addSlideMutation.isPending}
+              disabled={addSlideMutation.isPending || isGeneratingSlides}
             >
               <span>+</span>
               <span>

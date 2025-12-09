@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useOutline, useUpdateOutline, useGenerateOutlineStream, useGenerateSlidesFromOutline } from "@/hooks/use-outline";
+import {
+  useOutline,
+  useUpdateOutline,
+  useGenerateOutlineStream,
+} from "@/hooks/use-outline";
 import type { OutlineResponse } from "@/services/presentation";
 import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useAppDispatch } from "@/store/hooks";
-import { setSlides, type Slide } from "@/store/slices/slidesSlice";
-import { nanoid } from "nanoid";
 
 export default function OutlinePage() {
   const params = useParams();
@@ -17,77 +17,96 @@ export default function OutlinePage() {
   const outlineId = params.id as string;
 
   const [outlineData, setOutlineData] = useState<OutlineResponse | null>(null);
-  const [isGeneratingSlides, setIsGeneratingSlides] = useState(false);
-  const [slideGenerationProgress, setSlideGenerationProgress] = useState<{
-    current: number;
-    total: number;
-  } | null>(null);
-  const titleRef = useRef<string>('');
+  const titleRef = useRef<string>("");
   const outlinesRef = useRef<Array<{ content: string }>>([]);
   const hasStartedGeneration = useRef(false);
-  const dispatch = useAppDispatch();
 
   // TanStack Query hooks
-  const { data: outlineResponse, isLoading, error: outlineError } = useOutline(outlineId);
+  const {
+    data: outlineResponse,
+    isLoading,
+    error: outlineError,
+  } = useOutline(outlineId);
   const updateOutlineMutation = useUpdateOutline();
   const generateStreamMutation = useGenerateOutlineStream();
-  const generateSlidesMutation = useGenerateSlidesFromOutline();
 
   const outline = outlineResponse?.data || null;
   // Only show error if there's a query error or API returned failure
-  const error = outlineError?.message || (outlineResponse && !outlineResponse.success ? outlineResponse.message : null);
-  
+  const error =
+    outlineError?.message ||
+    (outlineResponse && !outlineResponse.success
+      ? outlineResponse.message
+      : null);
+
   // Also check for stream mutation errors
-  const streamError = generateStreamMutation.isError ? generateStreamMutation.error?.message : null;
+  const streamError = generateStreamMutation.isError
+    ? generateStreamMutation.error?.message
+    : null;
   const displayError = error || streamError;
 
-  const startGeneration = async () => {
-    if (!outlineId || hasStartedGeneration.current || generateStreamMutation.isPending) return;
+  const startGeneration = React.useCallback(async () => {
+    if (
+      !outlineId ||
+      hasStartedGeneration.current ||
+      generateStreamMutation.isPending
+    )
+      return;
     hasStartedGeneration.current = true;
 
     setOutlineData(null);
-    titleRef.current = '';
+    titleRef.current = "";
     outlinesRef.current = [];
 
     generateStreamMutation.mutate({
       outlineId,
       onChunk: (chunk) => {
-        if (chunk.type === 'title' && chunk.data) {
+        if (chunk.type === "title" && chunk.data) {
           titleRef.current = chunk.data;
           setOutlineData({
             title: chunk.data,
             outlines: [],
           });
-        } else if (chunk.type === 'outline' && chunk.data) {
+        } else if (chunk.type === "outline" && chunk.data) {
           const index = chunk.index ?? outlinesRef.current.length;
           // Create a new array with the updated item
           const updatedOutlines = [...outlinesRef.current];
           updatedOutlines[index] = chunk.data;
           outlinesRef.current = updatedOutlines; // Update the ref
           setOutlineData({
-            title: titleRef.current || 'Untitled Presentation',
+            title: titleRef.current || "Untitled Presentation",
             outlines: updatedOutlines,
           });
-        } else if (chunk.type === 'complete' && chunk.data) {
+        } else if (chunk.type === "complete" && chunk.data) {
           setOutlineData(chunk.data);
-        } else if (chunk.type === 'error') {
-          console.error('Stream error:', chunk.message);
+        } else if (chunk.type === "error") {
+          console.error("Stream error:", chunk.message);
         }
       },
     });
-  };
+  }, [outlineId, generateStreamMutation]);
 
   // Auto-start generation if status is generating
   useEffect(() => {
-    if (outline?.status === 'generating' && !hasStartedGeneration.current) {
+    if (
+      outline?.status === "generating" &&
+      !hasStartedGeneration.current &&
+      !generateStreamMutation.isPending
+    ) {
+      // This is intentional - we want to trigger generation when status changes
       startGeneration();
-    } else if (outline?.status === 'completed' && outline.outlines) {
+    } else if (outline?.status === "completed" && outline.outlines) {
       setOutlineData({
-        title: outline.title || 'Untitled Presentation',
+        title: outline.title || "Untitled Presentation",
         outlines: outline.outlines as any,
       });
     }
-  }, [outline?.status, outline?.outlines, outline?.title]);
+  }, [
+    outline?.status,
+    outline?.outlines,
+    outline?.title,
+    startGeneration,
+    generateStreamMutation.isPending,
+  ]);
 
   const handleSave = async () => {
     if (!outlineData || !outlineId) return;
@@ -102,62 +121,19 @@ export default function OutlinePage() {
       },
       {
         onSuccess: () => {
-          alert('Outline saved successfully!');
+          alert("Outline saved successfully!");
         },
         onError: (err: any) => {
-          console.error('Failed to save outline:', err);
+          console.error("Failed to save outline:", err);
         },
       }
     );
   };
 
-  const generatedSlidesRef = useRef<Slide[]>([]);
-
   const handleCreatePresentation = () => {
-    if (!outlineId || !outlineData) return;
-
-    setIsGeneratingSlides(true);
-    setSlideGenerationProgress({ current: 0, total: outlineData.outlines.length });
-    generatedSlidesRef.current = [];
-
-    generateSlidesMutation.mutate({
-      outlineId,
-      onChunk: (chunk) => {
-        if (chunk.type === 'slide-start') {
-          setSlideGenerationProgress({
-            current: chunk.slideNumber || 0,
-            total: chunk.totalSlides || outlineData.outlines.length,
-          });
-        } else if (chunk.type === 'slide' && chunk.data) {
-          // Convert API slide format to Redux format
-          const slide: Slide = {
-            id: nanoid(),
-            rows: chunk.data.rows.map((row: any) => ({
-              id: row.id || nanoid(),
-              blocks: row.blocks.map((block: any) => ({
-                id: block.id || nanoid(),
-                content: block.content,
-              })),
-            })),
-          };
-          generatedSlidesRef.current.push(slide);
-        } else if (chunk.type === 'complete') {
-          // All slides generated, set them in Redux and redirect
-          if (generatedSlidesRef.current.length > 0) {
-            dispatch(setSlides(generatedSlidesRef.current));
-            router.push('/editor');
-          } else {
-            alert('No slides were generated. Please try again.');
-            setIsGeneratingSlides(false);
-            setSlideGenerationProgress(null);
-          }
-        } else if (chunk.type === 'slide-error' || chunk.type === 'error') {
-          alert(`Error generating slides: ${chunk.message || 'Unknown error'}`);
-          setIsGeneratingSlides(false);
-          setSlideGenerationProgress(null);
-        }
-      },
-    });
+    if (!outlineId) return;
+    // Redirect to editor with outlineId - editor will handle creation and generation
+    router.push(`/editor?outlineId=${outlineId}`);
   };
 
   if (isLoading) {
@@ -194,7 +170,9 @@ export default function OutlinePage() {
             <h2 className="text-sm font-medium text-muted-foreground mb-2">
               Your Prompt
             </h2>
-            <p className="text-foreground whitespace-pre-wrap">{outline.prompt}</p>
+            <p className="text-foreground whitespace-pre-wrap">
+              {outline.prompt}
+            </p>
             <div className="mt-4 text-xs text-muted-foreground">
               Number of slides: {outline.numberOfSlides}
             </div>
@@ -205,7 +183,7 @@ export default function OutlinePage() {
         {displayError && (
           <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
             {displayError}
-            {outline?.status === 'failed' && (
+            {outline?.status === "failed" && (
               <Button
                 onClick={startGeneration}
                 className="mt-2"
@@ -234,26 +212,26 @@ export default function OutlinePage() {
             <div className="flex gap-4 justify-end">
               <Button
                 onClick={handleSave}
-                disabled={updateOutlineMutation.isPending || generateStreamMutation.isPending || isGeneratingSlides}
+                disabled={
+                  updateOutlineMutation.isPending ||
+                  generateStreamMutation.isPending
+                }
                 variant="default"
               >
-                {updateOutlineMutation.isPending ? 'Saving...' : 'Save Outline'}
+                {updateOutlineMutation.isPending ? "Saving..." : "Save Outline"}
               </Button>
               <Button
                 onClick={handleCreatePresentation}
-                disabled={updateOutlineMutation.isPending || generateStreamMutation.isPending || isGeneratingSlides}
+                disabled={
+                  updateOutlineMutation.isPending ||
+                  generateStreamMutation.isPending
+                }
                 variant="default"
                 className="bg-primary text-primary-foreground"
               >
-                {isGeneratingSlides
-                  ? `Generating... (${slideGenerationProgress?.current || 0}/${slideGenerationProgress?.total || 0})`
-                  : 'Create Presentation'}
+                Create Presentation
               </Button>
-              <Button
-                onClick={() => router.push('/home')}
-                variant="outline"
-                disabled={isGeneratingSlides}
-              >
+              <Button onClick={() => router.push("/home")} variant="outline">
                 Back
               </Button>
             </div>
@@ -277,33 +255,7 @@ export default function OutlinePage() {
             </div>
           </div>
         )}
-
-        {/* Slide Generation Progress */}
-        {isGeneratingSlides && (
-          <div className="rounded-xl bg-card border p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Generating Presentation</h3>
-              <span className="text-sm text-muted-foreground">
-                {slideGenerationProgress?.current || 0} / {slideGenerationProgress?.total || 0} slides
-              </span>
-            </div>
-            <div className="w-full bg-muted rounded-full h-2">
-              <div
-                className="bg-primary h-2 rounded-full transition-all duration-300"
-                style={{
-                  width: slideGenerationProgress
-                    ? `${(slideGenerationProgress.current / slideGenerationProgress.total) * 100}%`
-                    : '0%',
-                }}
-              />
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              Creating slides from your outline...
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
 }
-
