@@ -11,10 +11,13 @@ import { Button } from "@/components/ui/button";
 import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useUpdatePresentation } from "@/hooks/use-presentation";
+import { toast } from "sonner";
 
 interface ThemePanelProps {
   isOpen: boolean;
   onClose: () => void;
+  presentationId?: string | null;
 }
 
 // Predefined theme palettes
@@ -197,9 +200,14 @@ const THEME_PALETTES: Array<{ name: string; theme: Theme }> = [
   },
 ];
 
-export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
+export const ThemePanel: React.FC<ThemePanelProps> = ({
+  isOpen,
+  onClose,
+  presentationId,
+}) => {
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const updatePresentationMutation = useUpdatePresentation();
 
   // Animation variants
   const panelVariants = {
@@ -235,7 +243,29 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const handleThemeSelect = (selectedTheme: Theme) => {
+    // Update Redux state immediately for UI responsiveness
     dispatch(setTheme(selectedTheme));
+
+    // Save to backend if presentationId is available
+    if (presentationId) {
+      updatePresentationMutation.mutate(
+        {
+          id: presentationId,
+          payload: {
+            globalTheme: selectedTheme,
+          },
+        },
+        {
+          onSuccess: () => {
+            toast.success("Theme updated successfully");
+          },
+          onError: (error) => {
+            console.error("Failed to update theme:", error);
+            toast.error("Failed to save theme");
+          },
+        }
+      );
+    }
   };
 
   const isThemeActive = (paletteTheme: Theme) => {

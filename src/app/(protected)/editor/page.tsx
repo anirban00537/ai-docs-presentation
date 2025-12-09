@@ -30,6 +30,7 @@ import {
   moveBlock,
   reorderBlocksInRow,
   setSlides,
+  setTheme,
   Block,
   Slide as ReduxSlide,
 } from "@/store/slices/slidesSlice";
@@ -159,6 +160,12 @@ const GammaPage = () => {
 
       // Set slides (empty array if no slides, otherwise the loaded slides)
       dispatch(setSlides(reduxSlides));
+
+      // Load theme from presentation if available
+      if (presentationResponse.data?.globalTheme) {
+        dispatch(setTheme(presentationResponse.data.globalTheme as any));
+      }
+
       hasLoadedPresentation.current = true;
     } else if (
       presentationResponse?.success &&
@@ -168,6 +175,12 @@ const GammaPage = () => {
     ) {
       // If presentation exists but has no slides, clear the slides array
       dispatch(setSlides([]));
+
+      // Load theme from presentation if available
+      if (presentationResponse.data?.globalTheme) {
+        dispatch(setTheme(presentationResponse.data.globalTheme as any));
+      }
+
       hasLoadedPresentation.current = true;
     }
   }, [presentationResponse, dispatch]);
@@ -673,6 +686,7 @@ const GammaPage = () => {
               onToggleLayoutPanel={() =>
                 setIsLayoutPanelOpen(!isLayoutPanelOpen)
               }
+              presentationId={presentationId}
             />
 
             {/* Drag Overlay */}

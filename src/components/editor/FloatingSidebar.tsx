@@ -15,11 +15,13 @@ import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 interface FloatingSidebarProps {
   isLayoutPanelOpen: boolean;
   onToggleLayoutPanel: () => void;
+  presentationId?: string | null;
 }
 
 export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
   isLayoutPanelOpen,
   onToggleLayoutPanel,
+  presentationId,
 }) => {
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
@@ -55,6 +57,7 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
         <ThemePanel
           isOpen={isThemePanelOpen}
           onClose={handleToggleThemePanel}
+          presentationId={presentationId}
         />
         <Tooltip>
           <TooltipTrigger asChild>
