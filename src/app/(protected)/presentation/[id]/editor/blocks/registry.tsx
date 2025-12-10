@@ -8,6 +8,7 @@ import {
 import { ProseMirrorBlock } from "./prosemirror/ProseMirrorBlock";
 import { NumberCardBlock } from "./number-card/NumberCardBlock";
 import { TestimonialBlock } from "./testimonial/TestimonialBlock";
+import { CtaBlock } from "./cta/CtaBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -42,6 +43,11 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: TestimonialBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.TESTIMONIAL, content),
+  },
+  [BLOCK_TYPES.CTA]: {
+    type: BLOCK_TYPES.CTA,
+    component: CtaBlock,
+    normalize: (content) => normalizeBlockContent(BLOCK_TYPES.CTA, content),
   },
 };
 

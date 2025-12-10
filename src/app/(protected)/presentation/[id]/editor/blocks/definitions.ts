@@ -2,6 +2,7 @@ export const BLOCK_TYPES = {
   PROSEMIRROR: "prosemirror",
   NUMBER_CARD: "number-card",
   TESTIMONIAL: "testimonial",
+  CTA: "cta",
 } as const;
 
 export type BlockType = (typeof BLOCK_TYPES)[keyof typeof BLOCK_TYPES];
@@ -25,6 +26,13 @@ export interface TestimonialContent {
   quote: ProseMirrorDocument;
   name: ProseMirrorDocument;
   role: ProseMirrorDocument;
+}
+
+export interface CtaContent {
+  type: "cta";
+  heading: ProseMirrorDocument;
+  body: ProseMirrorDocument;
+  buttonLabel: string;
 }
 
 const createDefaultHeadingContent = (): ProseMirrorDocument => ({
@@ -90,17 +98,40 @@ export const createTestimonialContent = (): TestimonialContent => ({
   },
 });
 
+export const createCtaContent = (): CtaContent => ({
+  type: "cta",
+  heading: {
+    type: "doc",
+    content: [
+      { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Call to action" }] },
+    ],
+  },
+  body: {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        content: [{ type: "text", text: "Describe the benefit here." }],
+      },
+    ],
+  },
+  buttonLabel: "Get started",
+});
+
 export const createBlockContentForType = (
   type: BlockType | undefined
 ):
   | ProseMirrorDocument
   | NumberCardContent
-  | TestimonialContent => {
+  | TestimonialContent
+  | CtaContent => {
   switch (type) {
     case BLOCK_TYPES.NUMBER_CARD:
       return createNumberCardContent();
     case BLOCK_TYPES.TESTIMONIAL:
       return createTestimonialContent();
+    case BLOCK_TYPES.CTA:
+      return createCtaContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return createDefaultHeadingContent();
@@ -113,7 +144,8 @@ export const normalizeBlockContent = (
 ):
   | ProseMirrorDocument
   | NumberCardContent
-  | TestimonialContent => {
+  | TestimonialContent
+  | CtaContent => {
   if (type === BLOCK_TYPES.NUMBER_CARD) {
     const incoming = content as NumberCardContent | undefined;
     if (incoming?.editorContent?.type === "doc") {
@@ -144,6 +176,21 @@ export const normalizeBlockContent = (
       };
     }
     return createTestimonialContent();
+  }
+
+  if (type === BLOCK_TYPES.CTA) {
+    const incoming = content as CtaContent | undefined;
+    const hasValidDoc = (doc?: ProseMirrorDocument) =>
+      doc?.type === "doc" && Array.isArray(doc.content);
+    if (hasValidDoc(incoming?.heading) && hasValidDoc(incoming?.body)) {
+      return {
+        type: BLOCK_TYPES.CTA,
+        heading: incoming.heading,
+        body: incoming.body,
+        buttonLabel: incoming.buttonLabel ?? "Get started",
+      };
+    }
+    return createCtaContent();
   }
 
   // Default to prose content
