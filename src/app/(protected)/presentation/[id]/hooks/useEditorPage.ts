@@ -12,7 +12,7 @@ import {
   setTheme,
 } from "@/store/slices/slidesSlice";
 import { setPresentationId } from "@/store/middleware/slidesApiMiddleware";
-import { detectRowBlockType } from "@/components/editor/blocks/utils";
+import { detectRowBlockType } from "@/app/(protected)/presentation/[id]/editor/blocks/utils";
 import {
   convertApiSlideToRedux,
   convertReduxSlideToApi,

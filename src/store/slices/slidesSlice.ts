@@ -12,13 +12,13 @@ import {
   MAX_BLOCKS_PER_ROW,
   createBlockContentForType,
   createNumberCardContent,
-} from "@/components/editor/blocks/definitions";
+} from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
 import {
   createBlockInstance,
   createRow,
   createRowWithColumns,
   createSlide,
-} from "@/components/editor/blocks/factories";
+} from "@/app/(protected)/presentation/[id]/editor/blocks/factories";
 
 export interface SlidesState {
   slides: Slide[];

@@ -10,8 +10,8 @@ import {
   SmartLayoutIcon,
   SlidesSidebar,
   PresentationTopBar,
-} from "@/components/editor";
-import { NumberCardIcon } from "@/components/editor/icons/layout-icons";
+} from "@/app/(protected)/presentation/[id]/editor";
+import { NumberCardIcon } from "@/app/(protected)/presentation/[id]/editor/icons/layout-icons";
 import { useEditorPage } from "./hooks/useEditorPage";
 
 // --- Main Page Component ---
