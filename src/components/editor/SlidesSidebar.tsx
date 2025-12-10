@@ -8,7 +8,12 @@ import {
   DEFAULT_THEME,
 } from "@/store/slices/slidesSlice";
 import { Card } from "@/components/ui/card";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import {
+  IconChevronRight,
+  IconLayoutGrid,
+  IconList,
+  IconX,
+} from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { setActiveSlide } from "@/store/slices/slidesSlice";
 import { useAppDispatch } from "@/store/hooks";
@@ -31,6 +36,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
   onAddRowAtBottom,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const dispatch = useAppDispatch();
@@ -98,31 +104,62 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
         >
           {/* Header */}
           <div
-            className="px-2.5 py-1.5 flex items-center justify-between"
+            className="px-2 py-1 flex items-center justify-between gap-1"
             style={{
               borderBottom: `1px solid ${theme.primary}15`,
             }}
           >
-            <span
-              className="text-[11px] font-medium tracking-wide uppercase"
+            {/* View Toggle */}
+            <div
+              className="flex items-center gap-0.5 p-0.5 rounded-md"
               style={{
-                color: theme.bodyColor,
-                opacity: 0.7,
+                backgroundColor: theme.primary + "10",
               }}
             >
-              {slides.length} Slide{slides.length !== 1 ? "s" : ""}
-            </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-6 w-6 rounded ${
+                  viewMode === "grid" ? "" : "opacity-50 hover:opacity-70"
+                }`}
+                onClick={() => setViewMode("grid")}
+                style={{
+                  backgroundColor:
+                    viewMode === "grid" ? theme.primary + "20" : "transparent",
+                  color: theme.bodyColor,
+                }}
+              >
+                <IconLayoutGrid className="size-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-6 w-6 rounded ${
+                  viewMode === "list" ? "" : "opacity-50 hover:opacity-70"
+                }`}
+                onClick={() => setViewMode("list")}
+                style={{
+                  backgroundColor:
+                    viewMode === "list" ? theme.primary + "20" : "transparent",
+                  color: theme.bodyColor,
+                }}
+              >
+                <IconList className="size-3.5" />
+              </Button>
+            </div>
+
+            {/* Close Button */}
             <Button
               variant="ghost"
               size="icon"
-              className="h-5 w-5 hover:bg-transparent"
+              className="h-6 w-6 hover:bg-transparent"
               onClick={() => setIsCollapsed(!isCollapsed)}
               style={{
                 color: theme.bodyColor,
-                opacity: 0.6,
+                opacity: 0.5,
               }}
             >
-              <IconChevronLeft className="size-3" />
+              <IconX className="size-3.5" />
             </Button>
           </div>
 
