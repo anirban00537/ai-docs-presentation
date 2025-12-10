@@ -41,7 +41,7 @@ const plans = [
       "Community support",
     ],
     cta: "Get Started",
-    href: "/editor",
+    href: "/presentation",
     popular: false,
   },
   {

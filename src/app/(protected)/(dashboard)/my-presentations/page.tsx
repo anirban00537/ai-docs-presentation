@@ -173,7 +173,7 @@ export default function MyPresentationsPage() {
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/editor?id=${presentation.id}`);
+                          router.push(`/presentation/${presentation.id}`);
                         }}
                       >
                         <IconEdit className="size-4 mr-2" />
@@ -197,7 +197,7 @@ export default function MyPresentationsPage() {
                   </DropdownMenu>
                 </div>
               </CardHeader>
-              <Link href={`/editor?id=${presentation.id}`}>
+              <Link href={`/presentation/${presentation.id}`}>
                 <CardContent className="pb-3">
                   {presentation.thumbnail ? (
                     <div className="aspect-video w-full rounded-lg overflow-hidden border bg-muted relative">

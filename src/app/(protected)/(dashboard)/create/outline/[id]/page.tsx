@@ -138,7 +138,7 @@ export default function OutlinePage() {
   const handleCreatePresentation = () => {
     if (!outlineId) return;
     // Redirect to editor with outlineId - editor will handle creation and generation
-    router.push(`/editor?outlineId=${outlineId}`);
+    router.push(`/presentation?outlineId=${outlineId}`);
   };
 
   if (isLoading) {

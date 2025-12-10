@@ -1,12 +1,9 @@
 "use client";
 
 import React from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
-import {
-  DndContext,
-  DragOverlay,
-} from "@dnd-kit/core";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 import {
   SlideCard,
   FloatingSidebar,
@@ -21,7 +18,8 @@ import { useEditorPage } from "./hooks/useEditorPage";
 const GammaPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const presentationId = searchParams.get("id");
+  const params = useParams();
+  const presentationId = params?.id as string;
   const outlineId = searchParams.get("outlineId");
 
   const {

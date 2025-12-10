@@ -60,7 +60,7 @@ export function PromptBox() {
 
       if (response.success && response.data) {
         toast.success("Presentation created successfully!");
-        router.push(`/editor?presentationId=${response.data.id}`);
+        router.push(`/presentation/${response.data.id}`);
       }
     } catch (error: any) {
       toast.error(

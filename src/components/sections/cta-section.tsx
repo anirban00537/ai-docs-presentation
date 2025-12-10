@@ -58,7 +58,7 @@ export function CTASection() {
               variant="primary"
               className="rounded-xl px-8 text-base"
             >
-              <Link href="/editor">
+              <Link href="/presentation">
                 <span className="inline-flex items-center gap-2 text-white">
                   Get Started Free
                   <ArrowRight className="h-4 w-4 text-white" />

@@ -18,7 +18,10 @@ import {
   convertReduxSlideToApi,
 } from "@/lib/editor/adapters";
 import { createEditorCommandBus } from "@/lib/editor/commands";
-import { usePresentation, useCreatePresentation } from "@/hooks/use-presentation";
+import {
+  usePresentation,
+  useCreatePresentation,
+} from "@/hooks/use-presentation";
 import { useGenerateAndCreateSlides, useOutline } from "@/hooks/use-outline";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
@@ -100,24 +103,23 @@ export const useEditorPage = ({
   }, [presentationId]);
 
   const saveAllSlidesToPresentation = useMemo(
-    () =>
-      async (presId: string) => {
-        if (!presId || slides.length === 0) return;
-        try {
-          const { createSlide } = await import("@/services/presentation");
-          for (let i = 0; i < slides.length; i++) {
-            const slide = slides[i];
-            const apiData = convertReduxSlideToApi(slide);
-            await createSlide(presId, {
-              ...apiData,
-              order: i,
-            });
-          }
-        } catch (error) {
-          console.error("Failed to save slides:", error);
-          toast.error("Failed to save slides to presentation");
+    () => async (presId: string) => {
+      if (!presId || slides.length === 0) return;
+      try {
+        const { createSlide } = await import("@/services/presentation");
+        for (let i = 0; i < slides.length; i++) {
+          const slide = slides[i];
+          const apiData = convertReduxSlideToApi(slide);
+          await createSlide(presId, {
+            ...apiData,
+            order: i,
+          });
         }
-      },
+      } catch (error) {
+        console.error("Failed to save slides:", error);
+        toast.error("Failed to save slides to presentation");
+      }
+    },
     [slides]
   );
 
@@ -209,50 +211,49 @@ export const useEditorPage = ({
   }, [presentationResponse, dispatch]);
 
   const startSlideGeneration = useMemo(
-    () =>
-      (presId: string) => {
-        dispatch(setSlides([]));
-        generateAndCreateSlidesMutation.mutate({
-          presentationId: presId,
-          onChunk: (chunk) => {
-            if (chunk.type === "start") {
-              setSlideGenerationProgress({
-                current: 0,
-                total: chunk.totalSlides || 0,
-              });
-              dispatch(setSlides([]));
-            } else if (chunk.type === "slide-start") {
-              setSlideGenerationProgress({
-                current: chunk.slideNumber || 0,
-                total: chunk.totalSlides || 0,
-              });
-            } else if (chunk.type === "slide" && chunk.data) {
-              const slide = {
-                id: chunk.slideId || nanoid(),
-                rows: chunk.data.rows.map((row: any) => ({
-                  id: row.id || nanoid(),
-                  blocks: row.blocks.map((block: any) => ({
-                    id: block.id || nanoid(),
-                    content: block.content,
-                  })),
+    () => (presId: string) => {
+      dispatch(setSlides([]));
+      generateAndCreateSlidesMutation.mutate({
+        presentationId: presId,
+        onChunk: (chunk) => {
+          if (chunk.type === "start") {
+            setSlideGenerationProgress({
+              current: 0,
+              total: chunk.totalSlides || 0,
+            });
+            dispatch(setSlides([]));
+          } else if (chunk.type === "slide-start") {
+            setSlideGenerationProgress({
+              current: chunk.slideNumber || 0,
+              total: chunk.totalSlides || 0,
+            });
+          } else if (chunk.type === "slide" && chunk.data) {
+            const slide = {
+              id: chunk.slideId || nanoid(),
+              rows: chunk.data.rows.map((row: any) => ({
+                id: row.id || nanoid(),
+                blocks: row.blocks.map((block: any) => ({
+                  id: block.id || nanoid(),
+                  content: block.content,
                 })),
-              };
-              const currentSlides = slidesRef.current;
-              dispatch(setSlides([...currentSlides, slide]));
-            } else if (chunk.type === "complete") {
-              setIsGeneratingSlides(false);
-              setSlideGenerationProgress(null);
-              toast.success("Presentation created successfully!");
-            } else if (chunk.type === "slide-error" || chunk.type === "error") {
-              setIsGeneratingSlides(false);
-              setSlideGenerationProgress(null);
-              toast.error(
-                `Error generating slides: ${chunk.message || "Unknown error"}`
-              );
-            }
-          },
-        });
-      },
+              })),
+            };
+            const currentSlides = slidesRef.current;
+            dispatch(setSlides([...currentSlides, slide]));
+          } else if (chunk.type === "complete") {
+            setIsGeneratingSlides(false);
+            setSlideGenerationProgress(null);
+            toast.success("Presentation created successfully!");
+          } else if (chunk.type === "slide-error" || chunk.type === "error") {
+            setIsGeneratingSlides(false);
+            setSlideGenerationProgress(null);
+            toast.error(
+              `Error generating slides: ${chunk.message || "Unknown error"}`
+            );
+          }
+        },
+      });
+    },
     [dispatch, generateAndCreateSlidesMutation]
   );
 
@@ -273,7 +274,7 @@ export const useEditorPage = ({
       hasStartedGeneration.current = true;
       setTimeout(() => {
         setIsGeneratingSlides(true);
-        router.replace(`/editor?id=${linkedPresentationId}`);
+        router.replace(`/presentation/${linkedPresentationId}`);
         startSlideGeneration(linkedPresentationId);
       }, 0);
     }
@@ -304,7 +305,7 @@ export const useEditorPage = ({
             onSuccess: (response) => {
               if (response.success && response.data?.id) {
                 const newPresentationId = response.data.id;
-                router.replace(`/editor?id=${newPresentationId}`);
+                router.replace(`/presentation/${newPresentationId}`);
                 saveAllSlidesToPresentation(newPresentationId);
               }
             },
@@ -398,4 +399,3 @@ export const useEditorPage = ({
     presentationId,
   };
 };
-

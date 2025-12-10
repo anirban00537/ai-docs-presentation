@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DndContextProps,
   DragEndEvent,
@@ -19,10 +19,7 @@ interface UseEditorDndParams {
   commandBus: EditorCommandBus;
 }
 
-export const useEditorDnd = ({
-  slides,
-  commandBus,
-}: UseEditorDndParams) => {
+export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
   const [isLayoutDragging, setIsLayoutDragging] = useState(false);
   const [draggingLayoutColumnCount, setDraggingLayoutColumnCount] = useState<
@@ -42,7 +39,10 @@ export const useEditorDnd = ({
   );
 
   const slidesRef = useRef(slides);
-  slidesRef.current = slides;
+
+  useEffect(() => {
+    slidesRef.current = slides;
+  }, [slides]);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     const data = event.active.data.current;
@@ -106,9 +106,8 @@ export const useEditorDnd = ({
             const slideId = overData.slideId as string;
             const slide = slidesRef.current.find((s) => s.id === slideId);
             const lastBlockId =
-              slide?.rows
-                .find((r) => r.id === rowId)
-                ?.blocks.at(-1)?.id || undefined;
+              slide?.rows.find((r) => r.id === rowId)?.blocks.at(-1)?.id ||
+              undefined;
 
             commandBus.addBlockAfter({
               slideId,
@@ -184,10 +183,14 @@ export const useEditorDnd = ({
 
         let targetRowId: string | null = null;
         let targetBlockIndex = -1;
-        const targetSlide = slidesRef.current.find((s) => s.id === targetSlideId);
+        const targetSlide = slidesRef.current.find(
+          (s) => s.id === targetSlideId
+        );
         if (targetSlide) {
           for (const row of targetSlide.rows) {
-            const blockIdx = row.blocks.findIndex((b) => b.id === targetBlockId);
+            const blockIdx = row.blocks.findIndex(
+              (b) => b.id === targetBlockId
+            );
             if (blockIdx !== -1) {
               targetRowId = row.id;
               targetBlockIndex = blockIdx;
@@ -255,7 +258,8 @@ export const useEditorDnd = ({
           }
 
           const blockCollision = pointerCollisions.find(
-            (c: any) => c.data?.droppableContainer?.data?.current?.type === "block"
+            (c: any) =>
+              c.data?.droppableContainer?.data?.current?.type === "block"
           );
           if (blockCollision) return [blockCollision];
           return pointerCollisions;
@@ -278,4 +282,3 @@ export const useEditorDnd = ({
     customCollisionDetection,
   };
 };
-
