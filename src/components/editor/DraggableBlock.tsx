@@ -2,7 +2,7 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { BlockRenderer } from "./blocks/BlockRenderer";
-import type { Block } from "@/store/slices/slidesSlice";
+import type { Block } from "@/lib/editor/types";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 

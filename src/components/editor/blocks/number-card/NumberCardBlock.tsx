@@ -1,28 +1,28 @@
 import React, { useCallback, useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block } from "@/store/slices/slidesSlice";
-import type { Theme } from "@/store/slices/slidesSlice";
+import type { Block, Theme } from "@/lib/editor/types";
 import {
-  type NumberCardContent,
   getDefaultNumberCardEditorContent,
-} from "./index";
+  type NumberCardContent,
+} from "../definitions";
 
 interface NumberCardBlockProps {
   block: Block;
   onUpdate: (content: NumberCardContent) => void;
   theme: Theme;
+  placeholder?: string;
 }
 
 export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
   block,
   onUpdate,
   theme,
+  placeholder,
 }) => {
   const content = block.content as NumberCardContent;
   const number = content?.number ?? 1;
   const icon = content?.icon ?? "";
 
-  // Ensure editorContent exists, fallback to default if missing
   const editorContent = useMemo(() => {
     if (content?.editorContent && content.editorContent.type === "doc") {
       return content.editorContent;
@@ -45,7 +45,6 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      {/* Number/Icon Circle - Top Left */}
       <div className="flex items-start">
         <div
           className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold"
@@ -58,17 +57,17 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
         </div>
       </div>
 
-      {/* ProseMirror Editor */}
       <div className="flex-1 min-w-0">
         <ProseMirrorEditor
           key={block.id}
           blockId={block.id}
           value={editorContent}
           onChange={handleEditorChange}
-          placeholder="Type '/' for commands"
+          placeholder={placeholder ?? "Type '/' for commands"}
           className=""
         />
       </div>
     </div>
   );
 };
+

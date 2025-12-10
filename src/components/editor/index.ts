@@ -21,6 +21,6 @@ export {
 
 // Export block components
 export { BlockRenderer } from "./blocks/BlockRenderer";
-export { ProseMirrorBlock } from "./blocks/ProseMirrorBlock";
-export { NumberCardBlock } from "./blocks/NumberCardBlock";
+export { ProseMirrorBlock } from "./blocks/prosemirror/ProseMirrorBlock";
+export { NumberCardBlock } from "./blocks/number-card/NumberCardBlock";
 export { DraggableBlockOption } from "./DraggableBlockOption";

@@ -1,11 +1,12 @@
 import React from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block } from "@/store/slices/slidesSlice";
+import type { Block, Theme } from "@/lib/editor/types";
 
 interface ProseMirrorBlockProps {
   block: Block;
   onUpdate: (content: any) => void;
   placeholder?: string;
+  theme?: Theme;
 }
 
 export const ProseMirrorBlock: React.FC<ProseMirrorBlockProps> = ({

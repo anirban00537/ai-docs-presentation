@@ -1,9 +1,9 @@
 import React from "react";
-import type { Block } from "@/store/slices/slidesSlice";
-import type { Theme } from "@/store/slices/slidesSlice";
-import { BLOCK_TYPES } from "./index";
-import { ProseMirrorBlock } from "./ProseMirrorBlock";
-import { NumberCardBlock } from "./NumberCardBlock";
+import type { Block, Theme } from "@/lib/editor/types";
+import {
+  normalizeBlock,
+  resolveBlockComponent,
+} from "./registry";
 
 interface BlockRendererProps {
   block: Block;
@@ -18,21 +18,14 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   theme,
   placeholder,
 }) => {
-  const blockType = block.type || BLOCK_TYPES.PROSEMIRROR;
-
-  switch (blockType) {
-    case BLOCK_TYPES.NUMBER_CARD:
-      return (
-        <NumberCardBlock block={block} onUpdate={onUpdate} theme={theme} />
-      );
-    case BLOCK_TYPES.PROSEMIRROR:
-    default:
-      return (
-        <ProseMirrorBlock
-          block={block}
-          onUpdate={onUpdate}
-          placeholder={placeholder}
-        />
-      );
-  }
+  const normalized = normalizeBlock(block);
+  const Component = resolveBlockComponent(normalized.type);
+  return (
+    <Component
+      block={normalized}
+      onUpdate={onUpdate}
+      theme={theme}
+      placeholder={placeholder}
+    />
+  );
 };

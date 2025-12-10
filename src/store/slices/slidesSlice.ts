@@ -1,52 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/store";
-import { nanoid } from "nanoid";
-
-// --- Types ---
-export interface Block {
-  id: string;
-  type?: string; // Block type: "prosemirror" (default), "number-card", etc.
-  content: any;
-}
-
-export interface Row {
-  id: string;
-  blocks: Block[];
-}
-
-export interface Slide {
-  id: string;
-  rows: Row[];
-}
-
-export interface Theme {
-  primary: string;
-  headingColor: string;
-  bodyColor: string;
-  cardBackground: string;
-  pageBackground: string;
-  fontFamily?: string;
-}
-
-export interface PresentationInfo {
-  id: string;
-  userId: string;
-  title: string;
-  description: string | null;
-  thumbnail: string | null;
-  isPublic: boolean;
-  isTemplate: boolean;
-  tags: string[];
-  version: number;
-  parentId: string | null;
-  forkedFrom: string | null;
-  sharedWith: string[];
-  ownerId: string;
-  deletedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-  lastViewedAt: string | null;
-}
+import type {
+  Block,
+  PresentationInfo,
+  Row,
+  Slide,
+  Theme,
+} from "@/lib/editor/types";
+import {
+  BLOCK_TYPES,
+  MAX_BLOCKS_PER_ROW,
+  createBlockContentForType,
+  createNumberCardContent,
+} from "@/components/editor/blocks/definitions";
+import {
+  createBlockInstance,
+  createRow,
+  createRowWithColumns,
+  createSlide,
+} from "@/components/editor/blocks/factories";
 
 export interface SlidesState {
   slides: Slide[];
@@ -54,84 +26,6 @@ export interface SlidesState {
   theme: Theme;
   presentation: PresentationInfo | null;
 }
-
-// --- Helpers ---
-// ProseMirror document format for heading
-const createDefaultContent = () => {
-  return {
-    type: "doc",
-    content: [
-      {
-        type: "heading",
-        attrs: { level: 1 },
-        content: [{ type: "text", text: "" }],
-      },
-    ],
-  };
-};
-
-// ProseMirror document format for paragraph
-const createParagraphContent = () => {
-  return {
-    type: "doc",
-    content: [
-      {
-        type: "paragraph",
-        content: [],
-      },
-    ],
-  };
-};
-
-export const createBlock = (type: string = "prosemirror"): Block => ({
-  id: nanoid(),
-  type,
-  content: createDefaultContent(),
-});
-
-// Block with paragraph content (for columns)
-export const createParagraphBlock = (): Block => ({
-  id: nanoid(),
-  type: "prosemirror",
-  content: createParagraphContent(),
-});
-
-// Number card block - uses ProseMirror format for editor content
-const createNumberCardContent = () => ({
-  type: "number-card",
-  icon: "",
-  number: 1,
-  editorContent: {
-    type: "doc",
-    content: [
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Title" }],
-      },
-      {
-        type: "paragraph",
-        content: [{ type: "text", text: "Description" }],
-      },
-    ],
-  },
-});
-
-export const createNumberCardBlock = (): Block => ({
-  id: nanoid(),
-  type: "number-card",
-  content: createNumberCardContent(),
-});
-
-export const createRow = (blocks?: Block[]): Row => ({
-  id: nanoid(),
-  blocks: blocks || [createBlock()],
-});
-
-export const createSlide = (): Slide => ({
-  id: nanoid(),
-  rows: [createRow()],
-});
 
 // --- Initial State ---
 export const DEFAULT_THEME: Theme = {
@@ -243,24 +137,16 @@ const slidesSlice = createSlice({
       const row = slide.rows.find((r) => r.id === rowId);
       if (!row) return;
 
-      const MAX_BLOCKS_PER_ROW = 3;
-
       // If row already has 3 blocks, create a new row at the bottom
       if (row.blocks.length >= MAX_BLOCKS_PER_ROW) {
-        const newBlock =
-          blockType === "number-card"
-            ? createNumberCardBlock()
-            : createBlock(blockType || "prosemirror");
+        const newBlock = createBlockInstance(blockType as any);
         const newRow = createRow([newBlock]);
         const currentRowIndex = slide.rows.findIndex((r) => r.id === rowId);
         slide.rows.splice(currentRowIndex + 1, 0, newRow);
         return;
       }
 
-      const newBlock =
-        blockType === "number-card"
-          ? createNumberCardBlock()
-          : createBlock(blockType || "prosemirror");
+      const newBlock = createBlockInstance(blockType as any);
 
       if (afterBlockId) {
         const index = row.blocks.findIndex((b) => b.id === afterBlockId);
@@ -305,17 +191,8 @@ const slidesSlice = createSlice({
       const { slideId, columnCount, blockType } = action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
-      const MAX_BLOCKS_PER_ROW = 3;
-      const actualColumnCount = Math.min(columnCount, MAX_BLOCKS_PER_ROW);
-      const blocks: Block[] = [];
-      for (let i = 0; i < actualColumnCount; i++) {
-        if (blockType === "number-card") {
-          blocks.push(createNumberCardBlock());
-        } else {
-          blocks.push(createParagraphBlock());
-        }
-      }
-      slide.rows.push(createRow(blocks));
+      const newRow = createRowWithColumns(columnCount, blockType as any);
+      slide.rows.push(newRow);
     },
     addRowAtTop: (
       state,
@@ -324,13 +201,8 @@ const slidesSlice = createSlice({
       const { slideId, columnCount = 1 } = action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
-      const MAX_BLOCKS_PER_ROW = 3;
-      const actualColumnCount = Math.min(columnCount, MAX_BLOCKS_PER_ROW);
-      const blocks: Block[] = [];
-      for (let i = 0; i < actualColumnCount; i++) {
-        blocks.push(createParagraphBlock());
-      }
-      slide.rows.unshift(createRow(blocks));
+      const newRow = createRowWithColumns(columnCount);
+      slide.rows.unshift(newRow);
     },
     setSlideRows: (
       state,
@@ -431,142 +303,54 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, rowId, oldIndex, newIndex } = action.payload;
-      console.log("📦 reorderBlocksInRow called:", {
-        slideId,
-        rowId,
-        oldIndex,
-        newIndex,
-      });
 
       const slide = state.slides.find((s) => s.id === slideId);
-      if (!slide) {
-        console.log("❌ Slide not found");
-        return;
-      }
+      if (!slide) return;
 
       const row = slide.rows.find((r) => r.id === rowId);
-      if (!row) {
-        console.log("❌ Row not found");
-        return;
-      }
-
-      console.log(
-        "Row blocks before reorder:",
-        row.blocks.map((b, i) => `${i}:${b.id}`)
-      );
-      console.log("Block lengths:", {
-        oldIndex,
-        newIndex,
-        arrayLength: row.blocks.length,
-      });
-
-      if (oldIndex < 0 || oldIndex >= row.blocks.length) {
-        console.log("❌ Invalid oldIndex");
-        return;
-      }
-      if (newIndex < 0 || newIndex >= row.blocks.length) {
-        console.log("❌ Invalid newIndex");
-        return;
-      }
-      if (oldIndex === newIndex) {
-        console.log("⚠️ Same index, no move needed");
-        return;
-      }
+      if (!row) return;
+      if (oldIndex < 0 || oldIndex >= row.blocks.length) return;
+      if (newIndex < 0 || newIndex >= row.blocks.length) return;
+      if (oldIndex === newIndex) return;
 
       // Move block from oldIndex to newIndex (not swap)
-      // Get the block reference before removal to verify it exists
       const blockToMove = row.blocks[oldIndex];
-      console.log("Block to move:", {
-        id: blockToMove?.id,
-        hasContent: !!blockToMove?.content,
-      });
+      if (!blockToMove || !blockToMove.id) return;
 
-      // Ensure we have a valid block with content
-      if (!blockToMove || !blockToMove.id) {
-        console.log("❌ Invalid block to move");
-        return;
-      }
-
-      // Store a reference to the original content to verify preservation
       const originalContent = blockToMove.content;
-      console.log(
-        "Original content preserved:",
-        originalContent === blockToMove.content
-      );
 
-      // Remove the block from old position - splice preserves the entire block object reference
-      // This is crucial - we want to move the same object, not create a copy
       const [movedBlock] = row.blocks.splice(oldIndex, 1);
 
-      // Verify the block was correctly removed and is the same block
       if (!movedBlock || movedBlock.id !== blockToMove.id) {
-        // Safety: restore the block if something went wrong
         row.blocks.splice(oldIndex, 0, blockToMove);
         return;
       }
 
-      // Verify content is preserved (should be same reference)
       if (movedBlock.content !== originalContent) {
-        // If content reference changed (shouldn't happen), restore it
         movedBlock.content = originalContent;
       }
 
-      // Final safety check: ensure content is never null/undefined
       if (!movedBlock.content) {
-        // If content was somehow lost, restore to default based on block type
         const blockType = movedBlock.type || "prosemirror";
-        if (blockType === "number-card") {
-          movedBlock.content = createNumberCardContent();
-        } else {
-          movedBlock.content = createDefaultContent();
-        }
+        movedBlock.content =
+          blockType === BLOCK_TYPES.NUMBER_CARD
+            ? createNumberCardContent()
+            : createBlockContentForType(blockType as any);
       }
 
-      // Adjust newIndex based on removal position
-      // When oldIndex < newIndex: after removing from oldIndex, all items after it shift left
-      //   So the target at newIndex is now at newIndex - 1
-      //   To insert before the target (which is the desired behavior), we insert at newIndex - 1
-      // When oldIndex > newIndex: removal doesn't affect positions before oldIndex
-      //   So we insert at newIndex directly
-      // When oldIndex === newIndex: should not happen (checked above), but handle gracefully
       let adjustedNewIndex: number;
       if (oldIndex < newIndex) {
-        // Target shifts left after removal, insert before it
         adjustedNewIndex = newIndex - 1;
-        console.log(
-          "Left-to-right move: adjusted from",
-          newIndex,
-          "to",
-          adjustedNewIndex
-        );
       } else {
-        // Target position unchanged, insert at target
         adjustedNewIndex = newIndex;
-        console.log("Right-to-left move: using index", adjustedNewIndex);
       }
 
-      // Ensure adjusted index is valid (within bounds of the array after removal)
       const finalIndex = Math.max(
         0,
         Math.min(adjustedNewIndex, row.blocks.length)
       );
 
-      console.log(
-        "Final insertion index:",
-        finalIndex,
-        "(array length after removal:",
-        row.blocks.length,
-        ")"
-      );
-
-      // Insert at new position - this preserves the block's content
       row.blocks.splice(finalIndex, 0, movedBlock);
-
-      console.log(
-        "Row blocks after reorder:",
-        row.blocks.map((b, i) => `${i}:${b.id}`)
-      );
-      console.log("✅ Reorder complete");
     },
   },
 });
@@ -592,6 +376,8 @@ export const {
   setPresentation,
   updatePresentationTitle,
 } = slidesSlice.actions;
+
+export type { Block, Row, Slide, Theme, PresentationInfo };
 
 // --- Selectors ---
 export const selectSlidesState = (state: RootState) => state.slides;
