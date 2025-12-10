@@ -98,27 +98,36 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
         >
           {/* Header */}
           <div
-            className="px-4 py-3 border-b flex items-center justify-between"
-            style={{ borderColor: theme.primary + "20" }}
+            className="px-2.5 py-1.5 flex items-center justify-between"
+            style={{
+              borderBottom: `1px solid ${theme.primary}15`,
+            }}
           >
-            <h3
-              className="text-sm font-semibold"
-              style={{ color: theme.bodyColor }}
+            <span
+              className="text-[11px] font-medium tracking-wide uppercase"
+              style={{
+                color: theme.bodyColor,
+                opacity: 0.7,
+              }}
             >
-              Slides ({slides.length})
-            </h3>
+              {slides.length} Slide{slides.length !== 1 ? "s" : ""}
+            </span>
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7"
+              className="h-5 w-5 hover:bg-transparent"
               onClick={() => setIsCollapsed(!isCollapsed)}
+              style={{
+                color: theme.bodyColor,
+                opacity: 0.6,
+              }}
             >
-              <IconChevronLeft className="size-4" />
+              <IconChevronLeft className="size-3" />
             </Button>
           </div>
 
           {/* Slides List */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-3">
+          <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar custom-scrollbar-light">
             {slides.map((slide, index) => {
               const isActive = slide.id === activeSlideId;
               return (
