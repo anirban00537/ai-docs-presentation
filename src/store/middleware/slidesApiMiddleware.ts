@@ -2,6 +2,7 @@ import { Middleware } from "@reduxjs/toolkit";
 import type { RootState, AppDispatch } from "@/store";
 import {
   addSlide as addSlideAction,
+  deleteSlide as deleteSlideAction,
   setActiveSlide as setActiveSlideAction,
   setSlides as setSlidesAction,
   Slide,
@@ -10,6 +11,7 @@ import {
   createSlide,
   updateSlide,
   updatePresentation,
+  deleteSlide,
 } from "@/services/presentation";
 import { toast } from "sonner";
 
@@ -172,6 +174,25 @@ export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
             toast.error("Failed to save slide");
           });
       }
+      return result;
+    }
+
+    // Handle deleteSlide action immediately (no debounce for deletion)
+    if (deleteSlideAction.match(action)) {
+      const slideId = action.payload;
+      // The slide has already been removed from state by the reducer
+      // We need to delete it from the backend
+      deleteSlide(currentPresentationId, slideId)
+        .then(() => {
+          // Update previous state after successful deletion
+          previousSlidesState = JSON.parse(
+            JSON.stringify(state.slides.slides)
+          );
+        })
+        .catch((error) => {
+          console.error("Failed to delete slide:", error);
+          toast.error("Failed to delete slide");
+        });
       return result;
     }
 

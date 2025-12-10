@@ -13,9 +13,14 @@ import {
   IconList,
   IconX,
   IconPlus,
+  IconTrash,
 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { setActiveSlide, addSlide } from "@/store/slices/slidesSlice";
+import {
+  setActiveSlide,
+  addSlide,
+  deleteSlide,
+} from "@/store/slices/slidesSlice";
 import { useAppDispatch } from "@/store/hooks";
 
 interface SlidesSidebarProps {
@@ -71,6 +76,15 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
     dispatch(addSlide({}));
     // The new slide will be automatically selected by the reducer
     // The useEffect will handle scrolling to it
+  };
+
+  const handleDeleteSlide = (e: React.MouseEvent, slideId: string) => {
+    e.stopPropagation(); // Prevent slide selection when clicking delete
+    if (slides.length <= 1) {
+      // The reducer already prevents deletion, but we can show a message
+      return;
+    }
+    dispatch(deleteSlide(slideId));
   };
 
   return (
@@ -202,7 +216,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                       key={slide.id}
                       ref={isActive ? activeSlideRef : null}
                       onClick={() => handleSlideClick(slide.id)}
-                      className={`relative cursor-pointer transition-all rounded-lg overflow-hidden border-2 ${
+                      className={`relative cursor-pointer transition-all rounded-lg overflow-hidden border-2 group ${
                         isActive
                           ? "ring-2 ring-offset-1 shadow-md"
                           : "hover:border-primary/50 border-transparent"
@@ -215,6 +229,21 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                       }}
                       data-slide-preview-id={slide.id}
                     >
+                      {/* Delete Button - Shows on hover */}
+                      {slides.length > 1 && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-1 right-1 h-6 w-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500/90 hover:bg-red-600"
+                          onClick={(e) => handleDeleteSlide(e, slide.id)}
+                          style={{
+                            color: "white",
+                          }}
+                          title="Delete slide"
+                        >
+                          <IconTrash className="size-3" />
+                        </Button>
+                      )}
                       {/* Mini Slide Preview - Scaled down */}
                       <div
                         className="relative overflow-hidden"
@@ -272,7 +301,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                       key={slide.id}
                       ref={isActive ? activeSlideRef : null}
                       onClick={() => handleSlideClick(slide.id)}
-                      className={`relative cursor-pointer transition-all rounded-md px-3 py-2 flex items-center gap-3 ${
+                      className={`relative cursor-pointer transition-all rounded-md px-3 py-2 flex items-center gap-3 group ${
                         isActive ? "" : "hover:opacity-80"
                       }`}
                       style={{
@@ -316,6 +345,21 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                           {slide.rows.length !== 1 ? "s" : ""}
                         </div>
                       </div>
+                      {/* Delete Button - Shows on hover */}
+                      {slides.length > 1 && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                          onClick={(e) => handleDeleteSlide(e, slide.id)}
+                          style={{
+                            color: theme.bodyColor,
+                          }}
+                          title="Delete slide"
+                        >
+                          <IconTrash className="size-3.5" />
+                        </Button>
+                      )}
                     </div>
                   );
                 })}
