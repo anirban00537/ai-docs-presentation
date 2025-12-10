@@ -3,6 +3,7 @@ export { DraggableBlock } from "./DraggableBlock";
 export { DroppableRow } from "./DroppableRow";
 export { SlideCard } from "./SlideCard";
 export { ThemePanel } from "./ThemePanel";
+export { BlocksPanel } from "./BlocksPanel";
 export { FloatingSidebar } from "./FloatingSidebar";
 export { SlidesSidebar } from "./SlidesSidebar";
 export { PresentationTopBar } from "./PresentationTopBar";

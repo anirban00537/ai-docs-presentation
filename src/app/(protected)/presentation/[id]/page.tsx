@@ -9,6 +9,7 @@ import {
   SlidesSidebar,
   PresentationTopBar,
   FloatingSidebar,
+  BlocksPanel,
 } from "@/app/(protected)/presentation/[id]/editor";
 import { NumberCardIcon } from "@/app/(protected)/presentation/[id]/editor/icons/layout-icons";
 import { useEditorPage } from "./hooks/useEditorPage";
@@ -68,6 +69,9 @@ const GammaPage = () => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
+            {/* Blocks Panel needs to be inside DndContext for drag to work */}
+            <FloatingSidebar presentationId={presentationId} />
+
             <div className="flex flex-col gap-8">
               {slides
                 .filter(
@@ -86,9 +90,6 @@ const GammaPage = () => {
                   </div>
                 ))}
             </div>
-
-            {/* Floating Sidebar */}
-            <FloatingSidebar presentationId={presentationId} />
 
             {/* Drag Overlay */}
             <DragOverlay>
