@@ -440,6 +440,16 @@ const GammaPage = () => {
     dispatch(addBlockToRow({ slideId, rowId, afterBlockId, blockType }));
   };
 
+  const handleDuplicateBlock = (
+    slideId: string,
+    rowId: string,
+    afterBlockId: string,
+    blockType: string
+  ) => {
+    // Add a new block of the same type after the current block
+    dispatch(addBlockToRow({ slideId, rowId, afterBlockId, blockType }));
+  };
+
   const handleAddRowAtTop = (slideId: string) => {
     dispatch(addRowAtTop({ slideId, columnCount: 1 }));
   };
@@ -806,6 +816,7 @@ const GammaPage = () => {
                       onUpdateBlock={handleUpdateBlock}
                       onDeleteRow={handleDeleteRow}
                       onAddColumn={handleAddColumn}
+                      onDuplicateBlock={handleDuplicateBlock}
                       onAddRowAtTop={handleAddRowAtTop}
                       onAddRowAtBottom={handleAddRowAtBottom}
                       onDeleteSlide={() => {}}

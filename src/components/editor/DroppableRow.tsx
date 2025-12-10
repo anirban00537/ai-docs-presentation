@@ -16,6 +16,7 @@ interface DroppableRowProps {
   onUpdateBlock: (blockId: string, content: any) => void;
   onDeleteRow: (rowId: string) => void;
   onAddColumn: (rowId: string, afterBlockId: string) => void;
+  onDuplicateBlock: (rowId: string, afterBlockId: string, blockType: string) => void;
   rowCount: number;
 }
 
@@ -25,6 +26,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   onUpdateBlock,
   onDeleteRow,
   onAddColumn,
+  onDuplicateBlock,
   rowCount,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -122,6 +124,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
               rowId={row.id}
               onUpdate={onUpdateBlock}
               onAddColumn={onAddColumn}
+              onDuplicateBlock={onDuplicateBlock}
               isLastBlock={index === row.blocks.length - 1}
               canAddColumn={canAddColumn}
             />
@@ -131,3 +134,4 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
     </div>
   );
 };
+

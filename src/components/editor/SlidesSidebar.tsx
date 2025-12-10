@@ -268,6 +268,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                             onUpdateBlock={onUpdateBlock}
                             onDeleteRow={onDeleteRow}
                             onAddColumn={onAddColumn}
+                            onDuplicateBlock={() => {}}
                             onAddRowAtTop={onAddRowAtTop}
                             onAddRowAtBottom={onAddRowAtBottom}
                             onDeleteSlide={() => {}}
