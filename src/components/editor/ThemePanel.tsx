@@ -11,8 +11,6 @@ import { Button } from "@/components/ui/button";
 import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useUpdatePresentation } from "@/hooks/use-presentation";
-import { toast } from "sonner";
 
 interface ThemePanelProps {
   isOpen: boolean;
@@ -207,7 +205,6 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme) || DEFAULT_THEME;
-  const updatePresentationMutation = useUpdatePresentation();
 
   // Animation variants
   const panelVariants = {
@@ -243,29 +240,8 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
   if (!isOpen) return null;
 
   const handleThemeSelect = (selectedTheme: Theme) => {
-    // Update Redux state immediately for UI responsiveness
+    // Update Redux state - middleware will handle API call
     dispatch(setTheme(selectedTheme));
-
-    // Save to backend if presentationId is available
-    if (presentationId) {
-      updatePresentationMutation.mutate(
-        {
-          id: presentationId,
-          payload: {
-            globalTheme: selectedTheme,
-          },
-        },
-        {
-          onSuccess: () => {
-            toast.success("Theme updated successfully");
-          },
-          onError: (error) => {
-            console.error("Failed to update theme:", error);
-            toast.error("Failed to save theme");
-          },
-        }
-      );
-    }
   };
 
   const isThemeActive = (paletteTheme: Theme) => {
