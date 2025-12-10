@@ -56,6 +56,7 @@ const GammaPage = () => {
         className="min-h-screen overflow-y-auto pt-16"
         style={{
           backgroundColor: theme.pageBackground,
+          backgroundImage: `radial-gradient(circle at 20% 18%, ${theme.primary}14, transparent 32%), radial-gradient(circle at 80% 12%, ${theme.primary}10, transparent 28%)`,
         }}
       >
         {/* Slides Sidebar */}

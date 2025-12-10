@@ -1,7 +1,10 @@
 import React, { useCallback, useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/lib/editor/types";
-import { createTestimonialContent, type TestimonialContent } from "../definitions";
+import {
+  createTestimonialContent,
+  type TestimonialContent,
+} from "../definitions";
 
 interface TestimonialBlockProps {
   block: Block;
@@ -70,16 +73,6 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
     [content, onUpdate]
   );
 
-  const handleFieldChange = useCallback(
-    (field: keyof TestimonialContent, value: string) => {
-      onUpdate({
-        ...(content ?? createTestimonialContent()),
-        [field]: value,
-      });
-    },
-    [content, onUpdate]
-  );
-
   return (
     <div
       className="w-full rounded-xl p-6 shadow-sm flex gap-4"
@@ -100,7 +93,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
         >
           {extractText(nameDoc)
             .split(" ")
-            .map((part) => part[0])
+            .map((part: string) => part[0])
             .join("")
             .slice(0, 2) || "JD"}
         </div>
@@ -138,4 +131,3 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
     </div>
   );
 };
-

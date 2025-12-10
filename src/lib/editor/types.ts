@@ -21,6 +21,7 @@ export interface Theme {
   cardBackground: string;
   pageBackground: string;
   fontFamily?: string;
+  themeType?: "light" | "dark";
 }
 
 export interface PresentationInfo {

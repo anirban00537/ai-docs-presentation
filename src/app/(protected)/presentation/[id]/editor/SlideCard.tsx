@@ -43,9 +43,14 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   return (
     <div
-      className="group/slide relative rounded-2xl shadow-xl px-6 py-4"
+      className="group/slide relative rounded-3xl shadow-xl px-6 py-5 transition-all duration-200 ease-out hover:-translate-y-1"
       style={{
         backgroundColor: theme.cardBackground,
+        border: `1px solid ${theme.primary}1f`,
+        boxShadow: `0 18px 48px rgba(0,0,0,0.08), 0 6px 18px rgba(0,0,0,0.04)`,
+        backdropFilter: "blur(8px)",
+        transition:
+          "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
         fontFamily: getFontFamily(theme.fontFamily || "Inter"),
       }}
       onMouseEnter={() => setIsHovered(true)}
@@ -61,6 +66,8 @@ export const SlideCard: React.FC<SlideCardProps> = ({
         }`}
         style={{
           backgroundColor: theme.primary,
+          border: `1px solid ${theme.primary}30`,
+          boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.opacity = "0.9";
@@ -115,6 +122,8 @@ export const SlideCard: React.FC<SlideCardProps> = ({
         }`}
         style={{
           backgroundColor: theme.primary,
+          border: `1px solid ${theme.primary}30`,
+          boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.opacity = "0.9";

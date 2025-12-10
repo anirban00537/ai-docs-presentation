@@ -35,6 +35,7 @@ export const DEFAULT_THEME: Theme = {
   cardBackground: "#FFFFFF",
   pageBackground: "#F9FAFB",
   fontFamily: "Space Grotesk",
+  themeType: "light",
 };
 const initialTheme: Theme = DEFAULT_THEME;
 

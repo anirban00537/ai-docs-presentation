@@ -86,4 +86,3 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
     </div>
   );
 };
-
