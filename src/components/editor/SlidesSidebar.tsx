@@ -12,9 +12,10 @@ import {
   IconLayoutGrid,
   IconList,
   IconX,
+  IconPlus,
 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { setActiveSlide } from "@/store/slices/slidesSlice";
+import { setActiveSlide, addSlide } from "@/store/slices/slidesSlice";
 import { useAppDispatch } from "@/store/hooks";
 
 interface SlidesSidebarProps {
@@ -45,12 +46,17 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
   // Scroll to active slide when it changes
   useEffect(() => {
     if (activeSlideRef.current && !isCollapsed) {
-      activeSlideRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
+      // Use a small timeout to ensure DOM is updated
+      setTimeout(() => {
+        if (activeSlideRef.current) {
+          activeSlideRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+      }, 100);
     }
-  }, [activeSlideId, isCollapsed]);
+  }, [activeSlideId, isCollapsed, slides.length]);
 
   const handleSlideClick = (slideId: string) => {
     dispatch(setActiveSlide(slideId));
@@ -59,6 +65,12 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
     if (slideElement) {
       slideElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+  };
+
+  const handleAddSlide = () => {
+    dispatch(addSlide({}));
+    // The new slide will be automatically selected by the reducer
+    // The useEffect will handle scrolling to it
   };
 
   return (
@@ -147,19 +159,36 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
               </Button>
             </div>
 
-            {/* Close Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 hover:bg-transparent"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              style={{
-                color: theme.bodyColor,
-                opacity: 0.5,
-              }}
-            >
-              <IconX className="size-3.5" />
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-1">
+              {/* Add Slide Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={handleAddSlide}
+                style={{
+                  color: theme.bodyColor,
+                  opacity: 0.7,
+                }}
+                title="Add new slide"
+              >
+                <IconPlus className="size-3.5" />
+              </Button>
+              {/* Close Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 hover:bg-transparent"
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                style={{
+                  color: theme.bodyColor,
+                  opacity: 0.5,
+                }}
+              >
+                <IconX className="size-3.5" />
+              </Button>
+            </div>
           </div>
 
           {/* Slides List */}
@@ -292,6 +321,22 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                 })}
               </div>
             )}
+            {/* Add New Slide Button at Bottom */}
+            <div className="pt-2 pb-1">
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-2 h-9 text-xs"
+                onClick={handleAddSlide}
+                style={{
+                  color: theme.bodyColor,
+                  opacity: 0.7,
+                  border: `1px dashed ${theme.primary}30`,
+                }}
+              >
+                <IconPlus className="size-3.5" />
+                <span>New Slide</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
