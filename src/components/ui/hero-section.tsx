@@ -158,7 +158,7 @@ function Others1() {
             customVariants={revealVariants}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
           >
-            <Link href="/login">
+            <Link href="/home">
               <AppleButton
                 variant="primary"
                 size="lg"
