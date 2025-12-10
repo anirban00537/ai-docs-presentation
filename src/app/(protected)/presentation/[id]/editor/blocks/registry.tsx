@@ -9,6 +9,9 @@ import { ProseMirrorBlock } from "./prosemirror/ProseMirrorBlock";
 import { NumberCardBlock } from "./number-card/NumberCardBlock";
 import { TestimonialBlock } from "./testimonial/TestimonialBlock";
 import { CtaBlock } from "./cta/CtaBlock";
+import { QuoteBlock } from "./quote/QuoteBlock";
+import { DividerBlock } from "./divider/DividerBlock";
+import { TimelineBlock } from "./timeline/TimelineBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -48,6 +51,23 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     type: BLOCK_TYPES.CTA,
     component: CtaBlock,
     normalize: (content) => normalizeBlockContent(BLOCK_TYPES.CTA, content),
+  },
+  [BLOCK_TYPES.QUOTE]: {
+    type: BLOCK_TYPES.QUOTE,
+    component: QuoteBlock,
+    normalize: (content) => normalizeBlockContent(BLOCK_TYPES.QUOTE, content),
+  },
+  [BLOCK_TYPES.DIVIDER]: {
+    type: BLOCK_TYPES.DIVIDER,
+    component: DividerBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.DIVIDER, content),
+  },
+  [BLOCK_TYPES.TIMELINE]: {
+    type: BLOCK_TYPES.TIMELINE,
+    component: TimelineBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.TIMELINE, content),
   },
 };
 
