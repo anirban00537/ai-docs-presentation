@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { EditorView } from "prosemirror-view";
 import { toggleMark } from "prosemirror-commands";
 import { cn } from "@/lib/utils";
 import { schema } from "./schema";
+import { useAppSelector } from "@/store/hooks";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
 interface SelectionToolbarProps {
   visible: boolean;
@@ -10,6 +12,7 @@ interface SelectionToolbarProps {
   activeMarks: Set<string>;
   activeAlignment?: string;
   view: EditorView | null;
+  onClose?: () => void;
 }
 
 export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
@@ -18,15 +21,47 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
   activeMarks,
   activeAlignment = "left",
   view,
+  onClose,
 }) => {
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+
+  // Handle outside click to close toolbar
+  useEffect(() => {
+    if (!visible || !onClose) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        toolbarRef.current &&
+        !toolbarRef.current.contains(event.target as Node) &&
+        !view?.dom.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    // Use a small delay to avoid immediate closing when clicking to show toolbar
+    const timeoutId = setTimeout(() => {
+      document.addEventListener("mousedown", handleClickOutside);
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [visible, onClose, view]);
+
   if (!visible || !view) return null;
 
   return (
     <div
-      className="absolute z-50 bg-gray-900 rounded-lg shadow-xl py-1 px-1 flex items-center gap-0.5"
+      ref={toolbarRef}
+      className="absolute z-50 rounded-lg shadow-xl py-1 px-1 flex items-center gap-0.5"
       style={{
         top: position.top - 45,
         left: Math.max(0, position.left),
+        backgroundColor: theme.cardBackground || "#1f2937",
+        border: `1px solid ${theme.primary}20`,
       }}
       onMouseDown={(e) => e.preventDefault()}
     >
@@ -38,11 +73,26 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           view.focus();
         }}
         className={cn(
-          "w-8 h-8 rounded flex items-center justify-center transition-colors",
-          activeMarks.has("strong")
-            ? "bg-white/20 text-white"
-            : "text-gray-300 hover:bg-white/10 hover:text-white"
+          "w-8 h-8 rounded flex items-center justify-center transition-colors"
         )}
+        style={{
+          backgroundColor: activeMarks.has("strong")
+            ? theme.primary + "30"
+            : "transparent",
+          color: activeMarks.has("strong")
+            ? theme.primary
+            : theme.bodyColor,
+        }}
+        onMouseEnter={(e) => {
+          if (!activeMarks.has("strong")) {
+            e.currentTarget.style.backgroundColor = theme.primary + "15";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!activeMarks.has("strong")) {
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
         title="Bold (Cmd+B)"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -59,11 +109,26 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           view.focus();
         }}
         className={cn(
-          "w-8 h-8 rounded flex items-center justify-center transition-colors",
-          activeMarks.has("em")
-            ? "bg-white/20 text-white"
-            : "text-gray-300 hover:bg-white/10 hover:text-white"
+          "w-8 h-8 rounded flex items-center justify-center transition-colors"
         )}
+        style={{
+          backgroundColor: activeMarks.has("em")
+            ? theme.primary + "30"
+            : "transparent",
+          color: activeMarks.has("em")
+            ? theme.primary
+            : theme.bodyColor,
+        }}
+        onMouseEnter={(e) => {
+          if (!activeMarks.has("em")) {
+            e.currentTarget.style.backgroundColor = theme.primary + "15";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!activeMarks.has("em")) {
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
         title="Italic (Cmd+I)"
       >
         <svg
@@ -81,7 +146,10 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
       </button>
 
       {/* Separator */}
-      <div className="w-px h-5 bg-gray-600 mx-1" />
+      <div
+        className="w-px h-5 mx-1"
+        style={{ backgroundColor: theme.primary + "30" }}
+      />
 
       {/* Code */}
       <button
@@ -91,11 +159,26 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           view.focus();
         }}
         className={cn(
-          "w-8 h-8 rounded flex items-center justify-center transition-colors",
-          activeMarks.has("code")
-            ? "bg-white/20 text-white"
-            : "text-gray-300 hover:bg-white/10 hover:text-white"
+          "w-8 h-8 rounded flex items-center justify-center transition-colors"
         )}
+        style={{
+          backgroundColor: activeMarks.has("code")
+            ? theme.primary + "30"
+            : "transparent",
+          color: activeMarks.has("code")
+            ? theme.primary
+            : theme.bodyColor,
+        }}
+        onMouseEnter={(e) => {
+          if (!activeMarks.has("code")) {
+            e.currentTarget.style.backgroundColor = theme.primary + "15";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!activeMarks.has("code")) {
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
         title="Code"
       >
         <svg
@@ -119,11 +202,26 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           view.focus();
         }}
         className={cn(
-          "w-8 h-8 rounded flex items-center justify-center transition-colors",
-          activeMarks.has("link")
-            ? "bg-white/20 text-white"
-            : "text-gray-300 hover:bg-white/10 hover:text-white"
+          "w-8 h-8 rounded flex items-center justify-center transition-colors"
         )}
+        style={{
+          backgroundColor: activeMarks.has("link")
+            ? theme.primary + "30"
+            : "transparent",
+          color: activeMarks.has("link")
+            ? theme.primary
+            : theme.bodyColor,
+        }}
+        onMouseEnter={(e) => {
+          if (!activeMarks.has("link")) {
+            e.currentTarget.style.backgroundColor = theme.primary + "15";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!activeMarks.has("link")) {
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
         title="Link"
       >
         <svg
@@ -140,7 +238,10 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
       </button>
 
       {/* Separator */}
-      <div className="w-px h-5 bg-gray-600 mx-1" />
+      <div
+        className="w-px h-5 mx-1"
+        style={{ backgroundColor: theme.primary + "30" }}
+      />
 
       {/* Align Left */}
       <button
@@ -158,11 +259,26 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           view.focus();
         }}
         className={cn(
-            "w-8 h-8 rounded flex items-center justify-center transition-colors",
-             activeAlignment === "left"
-            ? "bg-white/20 text-white"
-            : "text-gray-300 hover:bg-white/10 hover:text-white"
+          "w-8 h-8 rounded flex items-center justify-center transition-colors"
         )}
+        style={{
+          backgroundColor: activeAlignment === "left"
+            ? theme.primary + "30"
+            : "transparent",
+          color: activeAlignment === "left"
+            ? theme.primary
+            : theme.bodyColor,
+        }}
+        onMouseEnter={(e) => {
+          if (activeAlignment !== "left") {
+            e.currentTarget.style.backgroundColor = theme.primary + "15";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (activeAlignment !== "left") {
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
         title="Align Left"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -189,11 +305,26 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           view.focus();
         }}
         className={cn(
-            "w-8 h-8 rounded flex items-center justify-center transition-colors",
-             activeAlignment === "center"
-            ? "bg-white/20 text-white"
-            : "text-gray-300 hover:bg-white/10 hover:text-white"
+          "w-8 h-8 rounded flex items-center justify-center transition-colors"
         )}
+        style={{
+          backgroundColor: activeAlignment === "center"
+            ? theme.primary + "30"
+            : "transparent",
+          color: activeAlignment === "center"
+            ? theme.primary
+            : theme.bodyColor,
+        }}
+        onMouseEnter={(e) => {
+          if (activeAlignment !== "center") {
+            e.currentTarget.style.backgroundColor = theme.primary + "15";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (activeAlignment !== "center") {
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
         title="Align Center"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -220,11 +351,26 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           view.focus();
         }}
         className={cn(
-            "w-8 h-8 rounded flex items-center justify-center transition-colors",
-             activeAlignment === "right"
-            ? "bg-white/20 text-white"
-            : "text-gray-300 hover:bg-white/10 hover:text-white"
+          "w-8 h-8 rounded flex items-center justify-center transition-colors"
         )}
+        style={{
+          backgroundColor: activeAlignment === "right"
+            ? theme.primary + "30"
+            : "transparent",
+          color: activeAlignment === "right"
+            ? theme.primary
+            : theme.bodyColor,
+        }}
+        onMouseEnter={(e) => {
+          if (activeAlignment !== "right") {
+            e.currentTarget.style.backgroundColor = theme.primary + "15";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (activeAlignment !== "right") {
+            e.currentTarget.style.backgroundColor = "transparent";
+          }
+        }}
         title="Align Right"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

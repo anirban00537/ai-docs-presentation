@@ -734,6 +734,9 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
         activeMarks={selectionToolbar.activeMarks}
         activeAlignment={selectionToolbar.activeAlignment}
         view={viewRef.current}
+        onClose={() =>
+          setSelectionToolbar((prev) => ({ ...prev, visible: false }))
+        }
       />
       <ImageUrlModal
         open={imageModal.open}
