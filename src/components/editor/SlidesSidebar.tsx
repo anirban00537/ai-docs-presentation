@@ -321,22 +321,6 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                 })}
               </div>
             )}
-            {/* Add New Slide Button at Bottom */}
-            <div className="pt-2 pb-1">
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-2 h-9 text-xs"
-                onClick={handleAddSlide}
-                style={{
-                  color: theme.bodyColor,
-                  opacity: 0.7,
-                  border: `1px dashed ${theme.primary}30`,
-                }}
-              >
-                <IconPlus className="size-3.5" />
-                <span>New Slide</span>
-              </Button>
-            </div>
           </div>
         </div>
       </div>
