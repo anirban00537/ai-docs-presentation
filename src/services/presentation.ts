@@ -206,6 +206,13 @@ export interface Presentation {
   isPublic?: boolean;
   isTemplate?: boolean;
   tags?: string[];
+  version?: number;
+  parentId?: string | null;
+  forkedFrom?: string | null;
+  sharedWith?: string[];
+  ownerId?: string;
+  deletedAt?: string | null;
+  lastViewedAt?: string | null;
   slides?: Slide[];
   createdAt: string;
   updatedAt: string;

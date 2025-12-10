@@ -27,10 +27,31 @@ export interface Theme {
   fontFamily?: string;
 }
 
+export interface PresentationInfo {
+  id: string;
+  userId: string;
+  title: string;
+  description: string | null;
+  thumbnail: string | null;
+  isPublic: boolean;
+  isTemplate: boolean;
+  tags: string[];
+  version: number;
+  parentId: string | null;
+  forkedFrom: string | null;
+  sharedWith: string[];
+  ownerId: string;
+  deletedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  lastViewedAt: string | null;
+}
+
 export interface SlidesState {
   slides: Slide[];
   activeSlideId: string | null;
   theme: Theme;
+  presentation: PresentationInfo | null;
 }
 
 // --- Helpers ---
@@ -97,6 +118,7 @@ const initialState: SlidesState = {
   slides: [],
   activeSlideId: null,
   theme: initialTheme,
+  presentation: null,
 };
 
 // --- Slice ---
@@ -318,6 +340,14 @@ const slidesSlice = createSlice({
     resetTheme: (state) => {
       state.theme = initialTheme;
     },
+    setPresentation: (state, action: PayloadAction<PresentationInfo>) => {
+      state.presentation = action.payload;
+    },
+    updatePresentationTitle: (state, action: PayloadAction<string>) => {
+      if (state.presentation) {
+        state.presentation.title = action.payload;
+      }
+    },
     reorderBlocksInRow: (
       state,
       action: PayloadAction<{
@@ -481,6 +511,8 @@ export const {
   reorderBlocksInRow,
   setTheme,
   resetTheme,
+  setPresentation,
+  updatePresentationTitle,
 } = slidesSlice.actions;
 
 // --- Selectors ---
@@ -491,5 +523,7 @@ export const selectActiveSlideId = (state: RootState) =>
 export const selectActiveSlide = (state: RootState) =>
   state.slides.slides.find((s) => s.id === state.slides.activeSlideId) || null;
 export const selectTheme = (state: RootState) => state.slides.theme;
+export const selectPresentation = (state: RootState) =>
+  state.slides.presentation;
 
 export default slidesSlice.reducer;

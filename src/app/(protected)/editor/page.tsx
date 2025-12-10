@@ -32,6 +32,7 @@ import {
   reorderBlocksInRow,
   setSlides,
   setTheme,
+  setPresentation,
   Block,
   Slide as ReduxSlide,
 } from "@/store/slices/slidesSlice";
@@ -40,6 +41,7 @@ import {
   FloatingSidebar,
   SmartLayoutIcon,
   SlidesSidebar,
+  PresentationTopBar,
 } from "@/components/editor";
 import { AppleButton } from "@/components/apple-button";
 import {
@@ -183,6 +185,32 @@ const GammaPage = () => {
         dispatch(setTheme(presentationResponse.data.globalTheme as any));
       }
 
+      // Load presentation metadata
+      if (presentationResponse.data) {
+        const presentationData = {
+          id: presentationResponse.data.id,
+          userId: presentationResponse.data.userId,
+          title: presentationResponse.data.title || "Untitled Presentation",
+          description: presentationResponse.data.description ?? null,
+          thumbnail: presentationResponse.data.thumbnail ?? null,
+          isPublic: presentationResponse.data.isPublic || false,
+          isTemplate: presentationResponse.data.isTemplate || false,
+          tags: presentationResponse.data.tags || [],
+          version: presentationResponse.data.version || 1,
+          parentId: presentationResponse.data.parentId ?? null,
+          forkedFrom: presentationResponse.data.forkedFrom ?? null,
+          sharedWith: presentationResponse.data.sharedWith || [],
+          ownerId:
+            presentationResponse.data.ownerId ||
+            presentationResponse.data.userId,
+          deletedAt: presentationResponse.data.deletedAt ?? null,
+          createdAt: presentationResponse.data.createdAt,
+          updatedAt: presentationResponse.data.updatedAt,
+          lastViewedAt: presentationResponse.data.lastViewedAt ?? null,
+        };
+        dispatch(setPresentation(presentationData));
+      }
+
       hasLoadedPresentation.current = true;
     } else if (
       presentationResponse?.success &&
@@ -196,6 +224,32 @@ const GammaPage = () => {
       // Load theme from presentation if available
       if (presentationResponse.data?.globalTheme) {
         dispatch(setTheme(presentationResponse.data.globalTheme as any));
+      }
+
+      // Load presentation metadata
+      if (presentationResponse.data) {
+        const presentationData = {
+          id: presentationResponse.data.id,
+          userId: presentationResponse.data.userId,
+          title: presentationResponse.data.title || "Untitled Presentation",
+          description: presentationResponse.data.description ?? null,
+          thumbnail: presentationResponse.data.thumbnail ?? null,
+          isPublic: presentationResponse.data.isPublic || false,
+          isTemplate: presentationResponse.data.isTemplate || false,
+          tags: presentationResponse.data.tags || [],
+          version: presentationResponse.data.version || 1,
+          parentId: presentationResponse.data.parentId ?? null,
+          forkedFrom: presentationResponse.data.forkedFrom ?? null,
+          sharedWith: presentationResponse.data.sharedWith || [],
+          ownerId:
+            presentationResponse.data.ownerId ||
+            presentationResponse.data.userId,
+          deletedAt: presentationResponse.data.deletedAt ?? null,
+          createdAt: presentationResponse.data.createdAt,
+          updatedAt: presentationResponse.data.updatedAt,
+          lastViewedAt: presentationResponse.data.lastViewedAt ?? null,
+        };
+        dispatch(setPresentation(presentationData));
       }
 
       hasLoadedPresentation.current = true;
@@ -599,8 +653,9 @@ const GammaPage = () => {
   return (
     <>
       <GoogleFontsLoader />
+      <PresentationTopBar />
       <div
-        className="min-h-screen overflow-y-auto"
+        className="min-h-screen overflow-y-auto pt-16"
         style={{
           backgroundColor: theme.pageBackground,
         }}
@@ -616,129 +671,6 @@ const GammaPage = () => {
           onAddRowAtTop={handleAddRowAtTop}
           onAddRowAtBottom={handleAddRowAtBottom}
         />
-
-        <div className="max-w-[1200px] mx-auto p-8 pr-20">
-          {/* Header */}
-          <div className="mb-8 flex items-center justify-between">
-            {isLoadingPresentation && (
-              <div className="text-sm text-muted-foreground">
-                Loading presentation...
-              </div>
-            )}
-            {isGeneratingSlides && (
-              <div className="flex items-center gap-4">
-                <div className="text-sm text-muted-foreground">
-                  Generating slides... ({slideGenerationProgress?.current || 0}/
-                  {slideGenerationProgress?.total || 0})
-                </div>
-                <div className="w-48 bg-muted rounded-full h-2">
-                  <div
-                    className="bg-primary h-2 rounded-full transition-all duration-300"
-                    style={{
-                      width: slideGenerationProgress
-                        ? `${
-                            (slideGenerationProgress.current /
-                              slideGenerationProgress.total) *
-                            100
-                          }%`
-                        : "0%",
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-            {presentationId && !isGeneratingSlides && (
-              <div className="text-sm text-muted-foreground">
-                Presentation ID: {presentationId}
-              </div>
-            )}
-            <AppleButton
-              onClick={handleAddSlide}
-              variant="primary"
-              size="default"
-              style={{
-                backgroundColor: theme.primary,
-              }}
-              disabled={isGeneratingSlides}
-            >
-              <span>+</span>
-              <span>Add Slide</span>
-            </AppleButton>
-          </div>
-
-          {/* All Slides */}
-          <DndContext
-            sensors={sensors}
-            collisionDetection={customCollisionDetection}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <div className="flex flex-col gap-8">
-              {slides
-                .filter(
-                  (slide) => slide && slide.rows && Array.isArray(slide.rows)
-                )
-                .map((slide, index) => (
-                  <div key={slide.id} data-slide-id={slide.id}>
-                    <SlideCard
-                      slide={slide}
-                      index={index}
-                      totalSlides={slides.length}
-                      onUpdateBlock={handleUpdateBlock}
-                      onDeleteRow={handleDeleteRow}
-                      onAddColumn={handleAddColumn}
-                      onAddRowAtTop={handleAddRowAtTop}
-                      onAddRowAtBottom={handleAddRowAtBottom}
-                      onDeleteSlide={() => {}}
-                      isLayoutDragging={isLayoutDragging}
-                      activeLayoutSlideId={null}
-                    />
-                  </div>
-                ))}
-            </div>
-
-            {/* Floating Sidebar */}
-            <FloatingSidebar
-              isLayoutPanelOpen={isLayoutPanelOpen}
-              onToggleLayoutPanel={() =>
-                setIsLayoutPanelOpen(!isLayoutPanelOpen)
-              }
-              presentationId={presentationId}
-            />
-
-            {/* Drag Overlay */}
-            <DragOverlay>
-              {activeBlock && (
-                <div className="bg-white border-2 border-blue-400 rounded-lg p-4 shadow-2xl opacity-90 max-w-[300px]">
-                  <div className="flex items-center gap-2 text-blue-600">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <rect x="3" y="3" width="18" height="18" rx="2" />
-                      <line x1="9" y1="3" x2="9" y2="21" />
-                    </svg>
-                    <span className="text-sm font-medium">Moving block...</span>
-                  </div>
-                </div>
-              )}
-              {isLayoutDragging && draggingLayoutColumnCount && (
-                <div className="bg-white border-2 border-blue-400 rounded-xl p-4 shadow-2xl opacity-90">
-                  <div className="flex items-center gap-2 text-blue-600">
-                    <SmartLayoutIcon />
-                    <span className="text-sm font-medium">
-                      {draggingLayoutColumnCount} Columns
-                    </span>
-                  </div>
-                </div>
-              )}
-            </DragOverlay>
-          </DndContext>
-        </div>
       </div>
     </>
   );

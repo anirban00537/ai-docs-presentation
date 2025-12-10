@@ -8,6 +8,7 @@ export { SmartLayoutPanel } from "./SmartLayoutPanel";
 export { ThemePanel } from "./ThemePanel";
 export { FloatingSidebar } from "./FloatingSidebar";
 export { SlidesSidebar } from "./SlidesSidebar";
+export { PresentationTopBar } from "./PresentationTopBar";
 
 // Export icons
 export {
