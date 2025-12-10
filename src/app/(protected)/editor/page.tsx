@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectSlides,
   selectTheme,
+  selectActiveSlideId,
   DEFAULT_THEME,
   addSlide,
   updateBlockContent,
@@ -80,6 +81,7 @@ const GammaPage = () => {
 
   const slides = useAppSelector(selectSlides);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const activeSlideId = useAppSelector(selectActiveSlideId);
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
   const [isLayoutPanelOpen, setIsLayoutPanelOpen] = useState(false);
   const [isLayoutDragging, setIsLayoutDragging] = useState(false);
@@ -99,6 +101,21 @@ const GammaPage = () => {
   useEffect(() => {
     slidesRef.current = slides;
   }, [slides]);
+
+  // Scroll to active slide when it changes
+  useEffect(() => {
+    if (activeSlideId) {
+      // Use a small timeout to ensure DOM is updated
+      setTimeout(() => {
+        const slideElement = document.querySelector(
+          `[data-slide-id="${activeSlideId}"]`
+        );
+        if (slideElement) {
+          slideElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 100);
+    }
+  }, [activeSlideId, slides.length]);
 
   // TanStack Query hooks - use presentationId from URL directly
   const { data: presentationResponse, isLoading: isLoadingPresentation } =
