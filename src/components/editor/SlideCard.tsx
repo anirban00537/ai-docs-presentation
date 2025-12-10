@@ -14,7 +14,6 @@ interface SlideCardProps {
   onUpdateBlock: (slideId: string, blockId: string, content: any) => void;
   onDeleteRow: (slideId: string, rowId: string) => void;
   onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
-  onDuplicateBlock: (slideId: string, rowId: string, afterBlockId: string, blockType: string) => void;
   onAddRowAtTop: (slideId: string) => void;
   onAddRowAtBottom: (slideId: string) => void;
   onDeleteSlide: (slideId: string) => void;
@@ -29,7 +28,6 @@ export const SlideCard: React.FC<SlideCardProps> = ({
   onUpdateBlock,
   onDeleteRow,
   onAddColumn,
-  onDuplicateBlock,
   onAddRowAtTop,
   onAddRowAtBottom,
   onDeleteSlide,
@@ -101,9 +99,6 @@ export const SlideCard: React.FC<SlideCardProps> = ({
             onDeleteRow={(rowId) => onDeleteRow(slide.id, rowId)}
             onAddColumn={(rowId, afterBlockId) =>
               onAddColumn(slide.id, rowId, afterBlockId)
-            }
-            onDuplicateBlock={(rowId, afterBlockId, blockType) =>
-              onDuplicateBlock(slide.id, rowId, afterBlockId, blockType)
             }
             rowCount={slide.rows?.length || 0}
           />

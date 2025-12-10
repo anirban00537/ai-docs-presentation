@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { BlockRenderer } from "./blocks/BlockRenderer";
@@ -12,7 +12,6 @@ interface DraggableBlockProps {
   rowId: string;
   onUpdate: (blockId: string, content: any) => void;
   onAddColumn: (rowId: string, afterBlockId: string) => void;
-  onDuplicateBlock: (rowId: string, afterBlockId: string, blockType: string) => void;
   isLastBlock: boolean;
   canAddColumn: boolean;
 }
@@ -23,7 +22,6 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   rowId,
   onUpdate,
   onAddColumn,
-  onDuplicateBlock,
   isLastBlock,
   canAddColumn,
 }) => {
@@ -46,13 +44,6 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
     opacity: isDragging ? 0.4 : 1,
     minWidth: 0,
   };
-
-  // Handler to duplicate the current block (for number-card)
-  const handleDuplicate = useCallback(() => {
-    if (block.type) {
-      onDuplicateBlock(rowId, block.id, block.type);
-    }
-  }, [block.id, block.type, onDuplicateBlock, rowId]);
 
   return (
     <div
@@ -141,11 +132,8 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
           onUpdate={(content) => onUpdate(block.id, content)}
           theme={theme}
           placeholder="Type '/' for commands"
-          onDuplicate={block.type === "number-card" ? handleDuplicate : undefined}
-          canDuplicate={block.type === "number-card" ? true : canAddColumn}
         />
       </div>
     </div>
   );
 };
-
