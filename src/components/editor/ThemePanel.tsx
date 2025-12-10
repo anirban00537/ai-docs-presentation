@@ -151,11 +151,6 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
     },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   if (!isOpen) return null;
 
   const handleThemeSelect = (selectedTheme: Theme) => {
@@ -242,7 +237,9 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
                     return (
                       <motion.div
                         key={`${palette.name}-${index}`}
-                        variants={itemVariants}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05, duration: 0.2 }}
                       >
                         <button
                           onClick={() => handleThemeSelect(palette.theme)}
