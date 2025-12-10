@@ -13,13 +13,6 @@ export interface ThemeResponse {
   name: string;
   description?: string;
   themeData: Theme;
-  // Frontend format fields
-  primary: string;
-  headingColor: string;
-  bodyColor: string;
-  cardBackground: string;
-  pageBackground: string;
-  fontFamily: string;
   isAdmin: boolean;
   usageCount: number;
   createdAt: string;

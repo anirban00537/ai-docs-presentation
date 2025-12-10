@@ -15,16 +15,16 @@ import { getAdminThemes } from "@/services/themes";
 interface ThemePanelProps {
   isOpen: boolean;
   onClose: () => void;
-  presentationId?: string | null;
 }
 
-export const ThemePanel: React.FC<ThemePanelProps> = ({
-  isOpen,
-  onClose,
-  presentationId,
-}) => {
+export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const isDark = currentTheme.themeType === "dark";
+  const accent = isDark ? "#60a5fa" : "#2563eb"; // tailwind blue-400 / blue-600
+  const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
+  const textSecondary = isDark ? "#cbd5e1" : "#475569";
+  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
   const [themes, setThemes] = useState<Array<{ name: string; theme: Theme }>>(
     []
   );
@@ -44,35 +44,10 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
         ) {
           const themePalettes = response.data.list
             .map((theme: any) => {
-              // Extract themeData object (could be Theme type or plain object)
-              const themeDataObj = (theme.themeData as any) || {};
-
-              // Build theme object with fallbacks
+              const themeDataObj = (theme.themeData as Theme) || {};
               const themeData: Theme = {
-                primary:
-                  themeDataObj.primary ||
-                  theme.primary ||
-                  DEFAULT_THEME.primary,
-                headingColor:
-                  themeDataObj.headingColor ||
-                  theme.headingColor ||
-                  DEFAULT_THEME.headingColor,
-                bodyColor:
-                  themeDataObj.bodyColor ||
-                  theme.bodyColor ||
-                  DEFAULT_THEME.bodyColor,
-                cardBackground:
-                  themeDataObj.cardBackground ||
-                  theme.cardBackground ||
-                  DEFAULT_THEME.cardBackground,
-                pageBackground:
-                  themeDataObj.pageBackground ||
-                  theme.pageBackground ||
-                  DEFAULT_THEME.pageBackground,
-                fontFamily:
-                  themeDataObj.fontFamily ||
-                  theme.fontFamily ||
-                  DEFAULT_THEME.fontFamily,
+                ...DEFAULT_THEME,
+                ...themeDataObj,
               };
 
               return {
@@ -181,21 +156,23 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
           <div
             className="w-80 h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden"
             style={{
-              backgroundColor: currentTheme.cardBackground + "E6",
-              border: `1px solid ${currentTheme.primary}20`,
+              backgroundColor: isDark
+                ? "rgba(12,12,14,0.9)"
+                : currentTheme.cardBackground + "E6",
+              border: `1px solid ${borderColor}`,
             }}
           >
             {/* Header */}
             <div
               className="px-3 py-2.5 flex items-center justify-between gap-1"
               style={{
-                borderBottom: `1px solid ${currentTheme.primary}15`,
+                borderBottom: `1px solid ${borderColor}`,
               }}
             >
               {/* Title */}
               <div
                 className="text-sm font-medium px-1"
-                style={{ color: currentTheme.bodyColor }}
+                style={{ color: textPrimary }}
               >
                 Themes
               </div>
@@ -209,7 +186,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
                   className="h-6 w-6 hover:bg-transparent"
                   onClick={onClose}
                   style={{
-                    color: currentTheme.bodyColor,
+                    color: textPrimary,
                     opacity: 0.5,
                   }}
                   aria-label="Close"
@@ -224,7 +201,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
                 <div className="flex items-center justify-center py-8">
                   <span
                     className="text-sm"
-                    style={{ color: currentTheme.bodyColor, opacity: 0.6 }}
+                    style={{ color: textPrimary, opacity: 0.6 }}
                   >
                     Loading themes...
                   </span>
@@ -233,7 +210,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
                 <div className="flex items-center justify-center py-8">
                   <span
                     className="text-sm"
-                    style={{ color: currentTheme.bodyColor, opacity: 0.6 }}
+                    style={{ color: textPrimary, opacity: 0.6 }}
                   >
                     No themes available
                   </span>
@@ -256,15 +233,15 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
                           )}
                           style={{
                             backgroundColor: isActive
-                              ? `${currentTheme.primary}15`
+                              ? "rgba(37,99,235,0.12)"
                               : "transparent",
-                            color: isActive
-                              ? currentTheme.headingColor
-                              : currentTheme.bodyColor,
+                            color: isActive ? textPrimary : textSecondary,
                           }}
                           onMouseEnter={(e) => {
                             if (!isActive) {
-                              e.currentTarget.style.backgroundColor = `${currentTheme.bodyColor}10`;
+                              e.currentTarget.style.backgroundColor = isDark
+                                ? "rgba(255,255,255,0.06)"
+                                : "rgba(148,163,184,0.12)";
                             }
                           }}
                           onMouseLeave={(e) => {
@@ -308,7 +285,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
                               className="w-5 h-5 rounded-full border shadow-sm flex items-center justify-center overflow-hidden"
                               style={{
                                 backgroundColor: palette.theme.pageBackground,
-                                borderColor: `${currentTheme.bodyColor}20`,
+                                borderColor: borderColor,
                               }}
                               title="Page Background"
                             >
@@ -325,7 +302,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
                               className="w-5 h-5 rounded-full border shadow-sm"
                               style={{
                                 backgroundColor: palette.theme.primary,
-                                borderColor: `${currentTheme.bodyColor}20`,
+                                borderColor: borderColor,
                               }}
                               title="Primary Color"
                             />
@@ -344,7 +321,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
                                 >
                                   <Check
                                     className="w-4 h-4"
-                                    style={{ color: currentTheme.primary }}
+                                    style={{ color: accent }}
                                   />
                                 </motion.div>
                               )}

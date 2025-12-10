@@ -43,6 +43,11 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const isDark = theme.themeType === "dark";
+  const accent = isDark ? "#60a5fa" : "#2563eb"; // tailwind blue-400 / blue-600
+  const textPrimary = isDark ? "#e5e7eb" : "#0f172a"; // slate-200 / slate-900
+  const textSecondary = isDark ? "#cbd5e1" : "#475569"; // slate-300 / slate-600
+  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const dispatch = useAppDispatch();
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -95,8 +100,10 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
           <div
             className="p-2 rounded-lg backdrop-blur-sm"
             style={{
-              backgroundColor: theme.cardBackground + "E6",
-              border: `1px solid ${theme.primary}20`,
+              backgroundColor: isDark
+                ? "rgba(15,23,42,0.9)"
+                : "rgba(255,255,255,0.92)",
+              border: `1px solid ${borderColor}`,
             }}
           >
             <Button
@@ -123,22 +130,26 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
         <div
           className="w-64 h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden"
           style={{
-            backgroundColor: theme.cardBackground + "E6",
-            border: `1px solid ${theme.primary}20`,
+            backgroundColor: isDark
+              ? "rgba(15,23,42,0.9)"
+              : "rgba(255,255,255,0.94)",
+            border: `1px solid ${borderColor}`,
           }}
         >
           {/* Header */}
           <div
             className="px-2 py-1 flex items-center justify-between gap-1"
             style={{
-              borderBottom: `1px solid ${theme.primary}15`,
+              borderBottom: `1px solid ${borderColor}`,
             }}
           >
             {/* View Toggle */}
             <div
               className="flex items-center gap-0.5 p-0.5 rounded-md"
               style={{
-                backgroundColor: theme.primary + "10",
+                backgroundColor: isDark
+                  ? "rgba(255,255,255,0.05)"
+                  : "rgba(37,99,235,0.08)",
               }}
             >
               <Button
@@ -150,8 +161,10 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                 onClick={() => setViewMode("grid")}
                 style={{
                   backgroundColor:
-                    viewMode === "grid" ? theme.primary + "20" : "transparent",
-                  color: theme.bodyColor,
+                    viewMode === "grid"
+                      ? "rgba(37,99,235,0.14)"
+                      : "transparent",
+                  color: textPrimary,
                 }}
               >
                 <IconLayoutGrid className="size-3.5" />
@@ -165,8 +178,10 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                 onClick={() => setViewMode("list")}
                 style={{
                   backgroundColor:
-                    viewMode === "list" ? theme.primary + "20" : "transparent",
-                  color: theme.bodyColor,
+                    viewMode === "list"
+                      ? "rgba(37,99,235,0.14)"
+                      : "transparent",
+                  color: textPrimary,
                 }}
               >
                 <IconList className="size-3.5" />
@@ -182,7 +197,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                 className="h-6 w-6"
                 onClick={handleAddSlide}
                 style={{
-                  color: theme.bodyColor,
+                  color: textPrimary,
                   opacity: 0.7,
                 }}
                 title="Add new slide"
@@ -196,7 +211,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                 className="h-6 w-6 hover:bg-transparent"
                 onClick={() => setIsCollapsed(!isCollapsed)}
                 style={{
-                  color: theme.bodyColor,
+                  color: textPrimary,
                   opacity: 0.5,
                 }}
               >
@@ -222,9 +237,9 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                           : "hover:border-primary/50 border-transparent"
                       }`}
                       style={{
-                        borderColor: isActive ? theme.primary : "transparent",
+                        borderColor: isActive ? accent : "transparent",
                         boxShadow: isActive
-                          ? `0 0 0 2px ${theme.primary}40`
+                          ? `0 0 0 2px ${accent}40`
                           : undefined,
                       }}
                       data-slide-preview-id={slide.id}
@@ -280,8 +295,8 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                           className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] font-medium z-10"
                           style={{
                             backgroundColor: isActive
-                              ? theme.primary
-                              : theme.primary + "80",
+                              ? accent
+                              : "rgba(37,99,235,0.65)",
                             color: "white",
                           }}
                         >
@@ -306,10 +321,10 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                       }`}
                       style={{
                         backgroundColor: isActive
-                          ? theme.primary + "15"
+                          ? "rgba(37,99,235,0.12)"
                           : "transparent",
                         borderLeft: isActive
-                          ? `3px solid ${theme.primary}`
+                          ? `3px solid ${accent}`
                           : "3px solid transparent",
                       }}
                       data-slide-preview-id={slide.id}
@@ -319,9 +334,9 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                         className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
                         style={{
                           backgroundColor: isActive
-                            ? theme.primary
-                            : theme.primary + "30",
-                          color: isActive ? "white" : theme.bodyColor,
+                            ? accent
+                            : "rgba(37,99,235,0.25)",
+                          color: isActive ? "white" : textPrimary,
                         }}
                       >
                         {index + 1}
@@ -330,14 +345,16 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                       <div className="flex-1 min-w-0">
                         <div
                           className="text-sm font-medium truncate"
-                          style={{ color: theme.bodyColor }}
+                          style={{
+                            color: textPrimary,
+                          }}
                         >
                           Slide {index + 1}
                         </div>
                         <div
                           className="text-xs truncate"
                           style={{
-                            color: theme.bodyColor,
+                            color: textSecondary,
                             opacity: 0.6,
                           }}
                         >
@@ -353,7 +370,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                           className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                           onClick={(e) => handleDeleteSlide(e, slide.id)}
                           style={{
-                            color: theme.bodyColor,
+                            color: textPrimary,
                           }}
                           title="Delete slide"
                         >
