@@ -6,7 +6,6 @@ import {
   Theme,
   DEFAULT_THEME,
 } from "@/store/slices/slidesSlice";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -177,41 +176,50 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
           animate="visible"
           exit="exit"
           variants={panelVariants}
-          className="absolute right-full top-1/2 -translate-y-1/2 mr-4 z-50 origin-right"
+          className="absolute right-full top-1/2 -translate-y-1/2 mr-4 z-40 origin-right"
         >
-          <Card
-            className="w-80 overflow-hidden border shadow-2xl backdrop-blur-3xl rounded-3xl"
+          <div
+            className="w-80 h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden"
             style={{
-              backgroundColor: currentTheme.cardBackground,
-              borderColor: `${currentTheme.primary}20`,
+              backgroundColor: currentTheme.cardBackground + "E6",
+              border: `1px solid ${currentTheme.primary}20`,
             }}
           >
-            <CardHeader
-              className="flex flex-row items-center justify-between p-4 pb-2 space-y-0 border-b"
+            {/* Header */}
+            <div
+              className="px-3 py-2.5 flex items-center justify-between gap-1"
               style={{
-                borderColor: `${currentTheme.bodyColor}10`,
+                borderBottom: `1px solid ${currentTheme.primary}15`,
               }}
             >
-              <CardTitle
-                className="text-sm font-semibold"
-                style={{ color: currentTheme.headingColor }}
+              {/* Title */}
+              <div
+                className="text-sm font-medium px-1"
+                style={{ color: currentTheme.bodyColor }}
               >
                 Themes
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClose}
-                className="h-6 w-6 rounded-full transition-colors"
-                style={{
-                  color: currentTheme.bodyColor,
-                }}
-                aria-label="Close"
-              >
-                <X className="h-3.5 w-3.5" />
-              </Button>
-            </CardHeader>
-            <CardContent className="p-2 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-1">
+                {/* Close Button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 hover:bg-transparent"
+                  onClick={onClose}
+                  style={{
+                    color: currentTheme.bodyColor,
+                    opacity: 0.5,
+                  }}
+                  aria-label="Close"
+                >
+                  <X className="size-3.5" />
+                </Button>
+              </div>
+            </div>
+            {/* Themes List */}
+            <div className="flex-1 overflow-y-auto p-3 custom-scrollbar custom-scrollbar-light">
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <span
@@ -348,8 +356,8 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({
                   })}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
