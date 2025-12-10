@@ -13,6 +13,15 @@ interface NumberCardBlockProps {
   placeholder?: string;
 }
 
+const withAlpha = (hex: string, alpha: number): string => {
+  const raw = hex?.replace("#", "");
+  if (raw.length !== 6) return hex;
+  const r = parseInt(raw.substring(0, 2), 16);
+  const g = parseInt(raw.substring(2, 4), 16);
+  const b = parseInt(raw.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
   block,
   onUpdate,
@@ -44,13 +53,20 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div
+      className="flex flex-col gap-4 p-4 rounded-xl shadow-sm"
+      style={{
+        backgroundColor: withAlpha(theme.primary, 0.3),
+        color: theme.headingColor,
+        border: `1px solid ${theme.primary}55`,
+      }}
+    >
       <div className="flex items-start">
         <div
           className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold"
           style={{
             backgroundColor: theme.primary,
-            color: theme.bodyColor,
+            color: theme.cardBackground,
           }}
         >
           {icon || number}

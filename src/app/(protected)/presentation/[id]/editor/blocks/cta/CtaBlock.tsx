@@ -10,6 +10,15 @@ interface CtaBlockProps {
   placeholder?: string;
 }
 
+const withAlpha = (hex: string, alpha: number): string => {
+  const raw = hex?.replace("#", "");
+  if (raw.length !== 6) return hex;
+  const r = parseInt(raw.substring(0, 2), 16);
+  const g = parseInt(raw.substring(2, 4), 16);
+  const b = parseInt(raw.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 export const CtaBlock: React.FC<CtaBlockProps> = ({
   block,
   onUpdate,
@@ -63,9 +72,9 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
     <div
       className="w-full rounded-xl p-6 shadow-sm flex flex-col gap-4"
       style={{
-        backgroundColor: theme.cardBackground,
-        color: theme.bodyColor,
-        border: `1px solid ${theme.primary}20`,
+        backgroundColor: withAlpha(theme.primary, 0.3),
+        color: theme.headingColor,
+        border: `1px solid ${theme.primary}55`,
       }}
     >
       <ProseMirrorEditor
@@ -96,17 +105,17 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
             autoFocus
             placeholder="Button label"
             style={{
-              backgroundColor: theme.cardBackground,
-              border: `1px solid ${theme.primary}25`,
-              color: theme.bodyColor,
+              backgroundColor: "white",
+              border: `1px solid ${theme.primary}40`,
+              color: theme.primary,
             }}
           />
         ) : (
           <button
             className="px-4 py-2 rounded-md text-sm font-medium shadow-sm transition-colors"
             style={{
-              backgroundColor: theme.primary,
-              color: "white",
+              backgroundColor: "white",
+              color: theme.primary,
             }}
             onClick={() => setIsEditingLabel(true)}
             title="Click to edit label"
@@ -118,4 +127,3 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
     </div>
   );
 };
-
