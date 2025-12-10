@@ -7,6 +7,7 @@ import {
 } from "./definitions";
 import { ProseMirrorBlock } from "./prosemirror/ProseMirrorBlock";
 import { NumberCardBlock } from "./number-card/NumberCardBlock";
+import { TestimonialBlock } from "./testimonial/TestimonialBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -36,6 +37,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.NUMBER_CARD, content),
   },
+  [BLOCK_TYPES.TESTIMONIAL]: {
+    type: BLOCK_TYPES.TESTIMONIAL,
+    component: TestimonialBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.TESTIMONIAL, content),
+  },
 };
 
 export const resolveBlockComponent = (
@@ -56,4 +63,3 @@ export const normalizeBlock = (block: Block): Block => {
 
 export const getRegisteredBlockTypes = (): BlockType[] =>
   Object.keys(BLOCK_REGISTRY) as BlockType[];
-

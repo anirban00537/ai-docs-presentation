@@ -16,6 +16,21 @@ import { Button } from "@/components/ui/button";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
+const QuoteIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M7 17h3l2-5V7H5v5h3zm8 0h3l2-5V7h-6v5h3z" />
+  </svg>
+);
+
 interface SmartLayoutPanelProps {
   isOpen: boolean;
   onClose: () => void;
@@ -95,6 +110,13 @@ export const SmartLayoutPanel: React.FC<SmartLayoutPanelProps> = ({
               icon={<NumberCardIcon />}
               label="3 Number Cards"
               blockType="number-card"
+            />
+            <DraggableLayoutOption
+              id="layout-1-testimonial"
+              columnCount={1}
+              icon={<QuoteIcon />}
+              label="Testimonial"
+              blockType="testimonial"
             />
           </div>
         </div>

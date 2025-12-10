@@ -1,6 +1,7 @@
 export const BLOCK_TYPES = {
   PROSEMIRROR: "prosemirror",
   NUMBER_CARD: "number-card",
+  TESTIMONIAL: "testimonial",
 } as const;
 
 export type BlockType = (typeof BLOCK_TYPES)[keyof typeof BLOCK_TYPES];
@@ -17,6 +18,13 @@ export interface NumberCardContent {
   icon?: string;
   number?: number;
   editorContent: ProseMirrorDocument;
+}
+
+export interface TestimonialContent {
+  type: "testimonial";
+  quote: ProseMirrorDocument;
+  name: ProseMirrorDocument;
+  role: ProseMirrorDocument;
 }
 
 const createDefaultHeadingContent = (): ProseMirrorDocument => ({
@@ -62,12 +70,37 @@ export const createNumberCardContent = (): NumberCardContent => ({
   editorContent: getDefaultNumberCardEditorContent(),
 });
 
+export const createTestimonialContent = (): TestimonialContent => ({
+  type: "testimonial",
+  quote: createParagraphContent(),
+  name: {
+    type: "doc",
+    content: [
+      { type: "paragraph", content: [{ type: "text", text: "Jane Doe" }] },
+    ],
+  },
+  role: {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        content: [{ type: "text", text: "Product Manager" }],
+      },
+    ],
+  },
+});
+
 export const createBlockContentForType = (
   type: BlockType | undefined
-): ProseMirrorDocument | NumberCardContent => {
+):
+  | ProseMirrorDocument
+  | NumberCardContent
+  | TestimonialContent => {
   switch (type) {
     case BLOCK_TYPES.NUMBER_CARD:
       return createNumberCardContent();
+    case BLOCK_TYPES.TESTIMONIAL:
+      return createTestimonialContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return createDefaultHeadingContent();
@@ -77,7 +110,10 @@ export const createBlockContentForType = (
 export const normalizeBlockContent = (
   type: BlockType | undefined,
   content: any
-): ProseMirrorDocument | NumberCardContent => {
+):
+  | ProseMirrorDocument
+  | NumberCardContent
+  | TestimonialContent => {
   if (type === BLOCK_TYPES.NUMBER_CARD) {
     const incoming = content as NumberCardContent | undefined;
     if (incoming?.editorContent?.type === "doc") {
@@ -89,6 +125,25 @@ export const normalizeBlockContent = (
       };
     }
     return createNumberCardContent();
+  }
+
+  if (type === BLOCK_TYPES.TESTIMONIAL) {
+    const incoming = content as TestimonialContent | undefined;
+    const hasValidDoc = (doc?: ProseMirrorDocument) =>
+      doc?.type === "doc" && Array.isArray(doc.content);
+    if (hasValidDoc(incoming?.quote)) {
+      return {
+        type: BLOCK_TYPES.TESTIMONIAL,
+        quote: incoming.quote,
+        name: hasValidDoc(incoming.name)
+          ? incoming.name
+          : createTestimonialContent().name,
+        role: hasValidDoc(incoming.role)
+          ? incoming.role
+          : createTestimonialContent().role,
+      };
+    }
+    return createTestimonialContent();
   }
 
   // Default to prose content
