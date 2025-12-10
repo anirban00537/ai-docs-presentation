@@ -44,9 +44,9 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
-  const accent = isDark ? "#60a5fa" : "#2563eb"; // tailwind blue-400 / blue-600
-  const textPrimary = isDark ? "#e5e7eb" : "#0f172a"; // slate-200 / slate-900
-  const textSecondary = isDark ? "#cbd5e1" : "#475569"; // slate-300 / slate-600
+  const accent = isDark ? "#60a5fa" : "#2563eb"; // match ThemePanel palette
+  const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
+  const textSecondary = isDark ? "#cbd5e1" : "#475569";
   const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const dispatch = useAppDispatch();
@@ -101,8 +101,8 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
             className="p-2 rounded-lg backdrop-blur-sm"
             style={{
               backgroundColor: isDark
-                ? "rgba(15,23,42,0.9)"
-                : "rgba(255,255,255,0.92)",
+                ? "rgba(12,12,14,0.9)"
+                : theme.cardBackground + "E6",
               border: `1px solid ${borderColor}`,
             }}
           >
@@ -131,8 +131,8 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
           className="w-64 h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden"
           style={{
             backgroundColor: isDark
-              ? "rgba(15,23,42,0.9)"
-              : "rgba(255,255,255,0.94)",
+              ? "rgba(12,12,14,0.9)"
+              : theme.cardBackground + "E6",
             border: `1px solid ${borderColor}`,
           }}
         >

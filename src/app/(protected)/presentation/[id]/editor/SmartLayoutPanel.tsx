@@ -58,6 +58,10 @@ export const SmartLayoutPanel: React.FC<SmartLayoutPanelProps> = ({
   onClose,
 }) => {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const isDark = theme.themeType === "dark";
+  const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
+  const textSecondary = isDark ? "#cbd5e1" : "#475569";
+  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
 
   if (!isOpen) return null;
 
@@ -65,14 +69,16 @@ export const SmartLayoutPanel: React.FC<SmartLayoutPanelProps> = ({
     <Card
       className="absolute right-full mr-4 top-1/2 -translate-y-1/2 w-64 shadow-lg z-50 border"
       style={{
-        backgroundColor: theme.cardBackground,
-        borderColor: theme.primary + "20",
-        color: theme.bodyColor,
+        backgroundColor: isDark
+          ? "rgba(12,12,14,0.9)"
+          : theme.cardBackground + "E6",
+        borderColor: borderColor,
+        color: textPrimary,
       }}
     >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm" style={{ color: theme.headingColor }}>
+          <CardTitle className="text-sm" style={{ color: textPrimary }}>
             Smart Layout
           </CardTitle>
           <Button
@@ -96,7 +102,7 @@ export const SmartLayoutPanel: React.FC<SmartLayoutPanelProps> = ({
             </svg>
           </Button>
         </div>
-        <CardDescription className="text-xs" style={{ color: theme.bodyColor }}>
+        <CardDescription className="text-xs" style={{ color: textSecondary }}>
           Drag a layout to add a new row or block
         </CardDescription>
       </CardHeader>
@@ -104,7 +110,7 @@ export const SmartLayoutPanel: React.FC<SmartLayoutPanelProps> = ({
         <div>
           <h3
             className="text-xs font-semibold mb-2"
-            style={{ color: theme.headingColor }}
+            style={{ color: textPrimary }}
           >
             Layouts
           </h3>
