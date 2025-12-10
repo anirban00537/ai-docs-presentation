@@ -7,7 +7,7 @@ import { NumberCardBlock } from "./NumberCardBlock";
 
 interface BlockRendererProps {
   block: Block;
-  onUpdate: (content: any) => void;
+  onUpdate: (content: any) => void; // Content type varies by block type
   theme: Theme;
   placeholder?: string;
 }

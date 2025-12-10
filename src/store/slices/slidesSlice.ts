@@ -296,16 +296,24 @@ const slidesSlice = createSlice({
     },
     addRowWithColumns: (
       state,
-      action: PayloadAction<{ slideId: string; columnCount: number }>
+      action: PayloadAction<{
+        slideId: string;
+        columnCount: number;
+        blockType?: string;
+      }>
     ) => {
-      const { slideId, columnCount } = action.payload;
+      const { slideId, columnCount, blockType } = action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
       const MAX_BLOCKS_PER_ROW = 3;
       const actualColumnCount = Math.min(columnCount, MAX_BLOCKS_PER_ROW);
       const blocks: Block[] = [];
       for (let i = 0; i < actualColumnCount; i++) {
-        blocks.push(createParagraphBlock());
+        if (blockType === "number-card") {
+          blocks.push(createNumberCardBlock());
+        } else {
+          blocks.push(createParagraphBlock());
+        }
       }
       slide.rows.push(createRow(blocks));
     },

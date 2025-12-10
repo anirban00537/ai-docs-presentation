@@ -1,6 +1,5 @@
 import React from "react";
 import { DraggableLayoutOption } from "./DraggableLayoutOption";
-import { DraggableBlockOption } from "./DraggableBlockOption";
 import {
   TwoColumnIcon,
   ThreeColumnIcon,
@@ -90,21 +89,12 @@ export const SmartLayoutPanel: React.FC<SmartLayoutPanelProps> = ({
               icon={<ThreeColumnIcon />}
               label="3 Columns"
             />
-          </div>
-        </div>
-        <div>
-          <h3
-            className="text-xs font-semibold mb-2"
-            style={{ color: theme.headingColor }}
-          >
-            Block Types
-          </h3>
-          <div className="flex flex-col gap-3">
-            <DraggableBlockOption
-              id="block-number-card"
-              blockType="number-card"
+            <DraggableLayoutOption
+              id="layout-3-number-cards"
+              columnCount={3}
               icon={<NumberCardIcon />}
-              label="Number Card"
+              label="3 Number Cards"
+              blockType="number-card"
             />
           </div>
         </div>

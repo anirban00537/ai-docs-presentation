@@ -1,19 +1,16 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block } from "@/store/slices/slidesSlice";
 import type { Theme } from "@/store/slices/slidesSlice";
+import {
+  type NumberCardContent,
+  getDefaultNumberCardEditorContent,
+} from "./index";
 
 interface NumberCardBlockProps {
   block: Block;
-  onUpdate: (content: any) => void;
+  onUpdate: (content: NumberCardContent) => void;
   theme: Theme;
-}
-
-interface NumberCardContent {
-  type: "number-card";
-  icon?: string;
-  number?: number;
-  editorContent: any; // ProseMirror document format
 }
 
 export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
@@ -22,46 +19,42 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
   theme,
 }) => {
   const content = block.content as NumberCardContent;
-  const number = content?.number || 1;
-  const icon = content?.icon || "";
-  const editorContent = content?.editorContent;
+  const number = content?.number ?? 1;
+  const icon = content?.icon ?? "";
 
-  const handleEditorChange = (newEditorContent: any) => {
-    const newContent: NumberCardContent = {
-      type: "number-card",
-      icon,
-      number,
-      editorContent: newEditorContent,
-    };
-    onUpdate(newContent);
-  };
+  // Ensure editorContent exists, fallback to default if missing
+  const editorContent = useMemo(() => {
+    if (content?.editorContent && content.editorContent.type === "doc") {
+      return content.editorContent;
+    }
+    return getDefaultNumberCardEditorContent();
+  }, [content?.editorContent]);
+
+  const handleEditorChange = useCallback(
+    (newEditorContent: any) => {
+      const newContent: NumberCardContent = {
+        type: "number-card",
+        icon,
+        number,
+        editorContent: newEditorContent,
+      };
+      onUpdate(newContent);
+    },
+    [icon, number, onUpdate]
+  );
 
   return (
     <div className="flex flex-col gap-4 p-4">
       {/* Number/Icon Circle - Top Left */}
       <div className="flex items-start">
         <div
-          className="w-12 h-12 rounded-full flex items-center justify-center"
+          className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold"
           style={{
             backgroundColor: theme.primary,
             color: theme.bodyColor,
           }}
         >
-          {icon ? (
-            <span
-              className="text-lg font-bold"
-              style={{ color: theme.bodyColor }}
-            >
-              {icon}
-            </span>
-          ) : (
-            <span
-              className="text-lg font-bold"
-              style={{ color: theme.bodyColor }}
-            >
-              {number}
-            </span>
-          )}
+          {icon || number}
         </div>
       </div>
 

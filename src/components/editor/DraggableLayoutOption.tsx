@@ -7,6 +7,7 @@ interface DraggableLayoutOptionProps {
   columnCount: number;
   icon: React.ReactNode;
   label: string;
+  blockType?: string; // Optional: specify block type (e.g., "number-card")
 }
 
 export const DraggableLayoutOption: React.FC<DraggableLayoutOptionProps> = ({
@@ -14,11 +15,13 @@ export const DraggableLayoutOption: React.FC<DraggableLayoutOptionProps> = ({
   columnCount,
   icon,
   label,
+  blockType,
 }) => {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id,
-    data: { type: "layout-option", columnCount },
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id,
+      data: { type: "layout-option", columnCount, blockType },
+    });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -42,4 +45,3 @@ export const DraggableLayoutOption: React.FC<DraggableLayoutOptionProps> = ({
     </div>
   );
 };
-

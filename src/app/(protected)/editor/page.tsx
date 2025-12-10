@@ -53,6 +53,7 @@ import { useGenerateAndCreateSlides, useOutline } from "@/hooks/use-outline";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 import { setPresentationId } from "@/store/middleware/slidesApiMiddleware";
+import { detectRowBlockType } from "@/components/editor/blocks/utils";
 
 // Utility functions to convert between Redux and API formats
 const convertApiSlideToRedux = (apiSlide: any): ReduxSlide => {
@@ -91,6 +92,9 @@ const GammaPage = () => {
   const [draggingLayoutColumnCount, setDraggingLayoutColumnCount] = useState<
     number | null
   >(null);
+  const [draggingLayoutBlockType, setDraggingLayoutBlockType] = useState<
+    string | undefined
+  >(undefined);
   const [isBlockDragging, setIsBlockDragging] = useState(false);
   const [draggingBlockType, setDraggingBlockType] = useState<string | null>(
     null
@@ -428,14 +432,8 @@ const GammaPage = () => {
 
     if (slide) {
       const row = slide.rows.find((r) => r.id === rowId);
-      if (row && row.blocks.length > 0) {
-        // Get the type from the first block in the row
-        // If all blocks have the same type, use that; otherwise default to prosemirror
-        const firstBlockType = row.blocks[0]?.type || "prosemirror";
-        const allSameType = row.blocks.every(
-          (block) => (block.type || "prosemirror") === firstBlockType
-        );
-        blockType = allSameType ? firstBlockType : "prosemirror";
+      if (row) {
+        blockType = detectRowBlockType(row);
       }
     }
 
@@ -464,6 +462,7 @@ const GammaPage = () => {
     if (data?.type === "layout-option") {
       setIsLayoutDragging(true);
       setDraggingLayoutColumnCount(data.columnCount);
+      setDraggingLayoutBlockType(data.blockType);
       return;
     }
 
@@ -492,20 +491,23 @@ const GammaPage = () => {
       setIsLayoutDragging(false);
 
       // Handle layout drop
-      if (over && draggingLayoutColumnCount) {
+      if (over && draggingLayoutColumnCount !== null) {
         const overData = over.data.current;
+
         if (overData?.type === "slide-drop-zone") {
           const slideId = overData.slideId as string;
           dispatch(
             addRowWithColumns({
               slideId,
               columnCount: draggingLayoutColumnCount,
+              blockType: draggingLayoutBlockType,
             })
           );
         }
       }
 
       setDraggingLayoutColumnCount(null);
+      setDraggingLayoutBlockType(undefined);
       return;
     }
 
