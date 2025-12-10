@@ -7,7 +7,6 @@ import {
   selectActiveSlideId,
   DEFAULT_THEME,
 } from "@/store/slices/slidesSlice";
-import { Card } from "@/components/ui/card";
 import {
   IconChevronRight,
   IconLayoutGrid,
@@ -67,11 +66,11 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
       {/* Collapsed Toggle Button - Always visible when collapsed */}
       {isCollapsed && (
         <div className="fixed left-6 top-1/2 -translate-y-1/2 z-40">
-          <Card
-            className="p-2 shadow-lg border"
+          <div
+            className="p-2 rounded-lg backdrop-blur-sm"
             style={{
-              backgroundColor: theme.cardBackground,
-              borderColor: theme.primary + "20",
+              backgroundColor: theme.cardBackground + "E6",
+              border: `1px solid ${theme.primary}20`,
             }}
           >
             <Button
@@ -82,7 +81,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
             >
               <IconChevronRight className="size-4" />
             </Button>
-          </Card>
+          </div>
         </div>
       )}
 
@@ -95,11 +94,11 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
             : "translate-x-0 opacity-100"
         }`}
       >
-        <Card
-          className="w-64 h-[600px] max-h-[80vh] flex flex-col shadow-xl border"
+        <div
+          className="w-64 h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden"
           style={{
-            backgroundColor: theme.cardBackground,
-            borderColor: theme.primary + "20",
+            backgroundColor: theme.cardBackground + "E6",
+            border: `1px solid ${theme.primary}20`,
           }}
         >
           {/* Header */}
@@ -164,76 +163,137 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
           </div>
 
           {/* Slides List */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar custom-scrollbar-light">
-            {slides.map((slide, index) => {
-              const isActive = slide.id === activeSlideId;
-              return (
-                <div
-                  key={slide.id}
-                  ref={isActive ? activeSlideRef : null}
-                  onClick={() => handleSlideClick(slide.id)}
-                  className={`relative cursor-pointer transition-all rounded-lg overflow-hidden border-2 ${
-                    isActive
-                      ? "ring-2 ring-offset-1 shadow-md"
-                      : "hover:border-primary/50 border-transparent"
-                  }`}
-                  style={{
-                    borderColor: isActive ? theme.primary : "transparent",
-                    boxShadow: isActive
-                      ? `0 0 0 2px ${theme.primary}40`
-                      : undefined,
-                  }}
-                  data-slide-preview-id={slide.id}
-                >
-                  {/* Mini Slide Preview - Scaled down */}
-                  <div
-                    className="relative overflow-hidden"
-                    style={{
-                      height: "120px",
-                      aspectRatio: "16/9",
-                    }}
-                  >
+          <div className="flex-1 overflow-y-auto p-3 custom-scrollbar custom-scrollbar-light">
+            {viewMode === "grid" ? (
+              <div className="space-y-3">
+                {slides.map((slide, index) => {
+                  const isActive = slide.id === activeSlideId;
+                  return (
                     <div
-                      className="absolute top-0 left-0 pointer-events-none"
+                      key={slide.id}
+                      ref={isActive ? activeSlideRef : null}
+                      onClick={() => handleSlideClick(slide.id)}
+                      className={`relative cursor-pointer transition-all rounded-lg overflow-hidden border-2 ${
+                        isActive
+                          ? "ring-2 ring-offset-1 shadow-md"
+                          : "hover:border-primary/50 border-transparent"
+                      }`}
                       style={{
-                        transform: "scale(0.25)",
-                        transformOrigin: "top left",
-                        width: "400%",
-                        height: "400%",
+                        borderColor: isActive ? theme.primary : "transparent",
+                        boxShadow: isActive
+                          ? `0 0 0 2px ${theme.primary}40`
+                          : undefined,
                       }}
+                      data-slide-preview-id={slide.id}
                     >
-                      <SlideCard
-                        slide={slide}
-                        index={index}
-                        totalSlides={slides.length}
-                        onUpdateBlock={onUpdateBlock}
-                        onDeleteRow={onDeleteRow}
-                        onAddColumn={onAddColumn}
-                        onAddRowAtTop={onAddRowAtTop}
-                        onAddRowAtBottom={onAddRowAtBottom}
-                        onDeleteSlide={() => {}}
-                        isLayoutDragging={false}
-                        activeLayoutSlideId={null}
-                      />
+                      {/* Mini Slide Preview - Scaled down */}
+                      <div
+                        className="relative overflow-hidden"
+                        style={{
+                          height: "120px",
+                          aspectRatio: "16/9",
+                        }}
+                      >
+                        <div
+                          className="absolute top-0 left-0 pointer-events-none"
+                          style={{
+                            transform: "scale(0.25)",
+                            transformOrigin: "top left",
+                            width: "400%",
+                            height: "400%",
+                          }}
+                        >
+                          <SlideCard
+                            slide={slide}
+                            index={index}
+                            totalSlides={slides.length}
+                            onUpdateBlock={onUpdateBlock}
+                            onDeleteRow={onDeleteRow}
+                            onAddColumn={onAddColumn}
+                            onAddRowAtTop={onAddRowAtTop}
+                            onAddRowAtBottom={onAddRowAtBottom}
+                            onDeleteSlide={() => {}}
+                            isLayoutDragging={false}
+                            activeLayoutSlideId={null}
+                          />
+                        </div>
+                        {/* Slide Number Badge */}
+                        <div
+                          className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] font-medium z-10"
+                          style={{
+                            backgroundColor: isActive
+                              ? theme.primary
+                              : theme.primary + "80",
+                            color: "white",
+                          }}
+                        >
+                          {index + 1}
+                        </div>
+                      </div>
                     </div>
-                    {/* Slide Number Badge */}
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {slides.map((slide, index) => {
+                  const isActive = slide.id === activeSlideId;
+                  return (
                     <div
-                      className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] font-medium z-10"
+                      key={slide.id}
+                      ref={isActive ? activeSlideRef : null}
+                      onClick={() => handleSlideClick(slide.id)}
+                      className={`relative cursor-pointer transition-all rounded-md px-3 py-2 flex items-center gap-3 ${
+                        isActive ? "" : "hover:opacity-80"
+                      }`}
                       style={{
                         backgroundColor: isActive
-                          ? theme.primary
-                          : theme.primary + "80",
-                        color: "white",
+                          ? theme.primary + "15"
+                          : "transparent",
+                        borderLeft: isActive
+                          ? `3px solid ${theme.primary}`
+                          : "3px solid transparent",
                       }}
+                      data-slide-preview-id={slide.id}
                     >
-                      {index + 1}
+                      {/* Slide Number */}
+                      <div
+                        className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
+                        style={{
+                          backgroundColor: isActive
+                            ? theme.primary
+                            : theme.primary + "30",
+                          color: isActive ? "white" : theme.bodyColor,
+                        }}
+                      >
+                        {index + 1}
+                      </div>
+                      {/* Slide Info */}
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className="text-sm font-medium truncate"
+                          style={{ color: theme.bodyColor }}
+                        >
+                          Slide {index + 1}
+                        </div>
+                        <div
+                          className="text-xs truncate"
+                          style={{
+                            color: theme.bodyColor,
+                            opacity: 0.6,
+                          }}
+                        >
+                          {slide.rows.length} row
+                          {slide.rows.length !== 1 ? "s" : ""}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            )}
           </div>
-        </Card>
+        </div>
       </div>
     </>
   );
