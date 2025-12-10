@@ -8,6 +8,7 @@ import {
   SlideCard,
   SlidesSidebar,
   PresentationTopBar,
+  FloatingSidebar,
 } from "@/app/(protected)/presentation/[id]/editor";
 import { NumberCardIcon } from "@/app/(protected)/presentation/[id]/editor/icons/layout-icons";
 import { useEditorPage } from "./hooks/useEditorPage";
@@ -85,6 +86,9 @@ const GammaPage = () => {
                   </div>
                 ))}
             </div>
+
+            {/* Floating Sidebar */}
+            <FloatingSidebar presentationId={presentationId} />
 
             {/* Drag Overlay */}
             <DragOverlay>

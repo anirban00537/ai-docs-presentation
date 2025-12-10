@@ -103,7 +103,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
   const panelVariants = {
     hidden: {
       opacity: 0,
-      x: -20,
+      x: 20,
       scale: 0.95,
       transition: { duration: 0.2, ease: "easeInOut" as const },
     },
@@ -119,7 +119,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
     },
     exit: {
       opacity: 0,
-      x: -20,
+      x: 20,
       scale: 0.95,
       transition: { duration: 0.2, ease: "easeInOut" as const },
     },
@@ -151,7 +151,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
           animate="visible"
           exit="exit"
           variants={panelVariants}
-          className="absolute right-full top-1/2 -translate-y-1/2 mr-4 z-40 origin-right"
+          className="relative z-40"
         >
           <div
             className="w-80 h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden"
