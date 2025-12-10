@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { TimelineStep as TimelineStepType, Theme } from "../definitions";
+import type { TimelineStep as TimelineStepType } from "../definitions";
 import { createTimelineContent } from "../definitions";
+import type { Theme } from "@/lib/editor/types";
 
 interface TimelineStepProps {
   step: TimelineStepType;
