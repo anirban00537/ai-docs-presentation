@@ -43,7 +43,6 @@ export const useEditorPage = ({
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const activeSlideId = useAppSelector(selectActiveSlideId);
 
-  const [isLayoutPanelOpen, setIsLayoutPanelOpen] = useState(false);
   const [isGeneratingSlides, setIsGeneratingSlides] = useState(false);
   const [slideGenerationProgress, setSlideGenerationProgress] = useState<{
     current: number;
@@ -85,9 +84,6 @@ export const useEditorPage = ({
   const {
     sensors,
     activeBlock,
-    isLayoutDragging,
-    draggingLayoutColumnCount,
-    draggingLayoutBlockType,
     isBlockDragging,
     draggingBlockType,
     handleDragStart,
@@ -371,8 +367,6 @@ export const useEditorPage = ({
     slides,
     theme,
     activeSlideId,
-    isLayoutPanelOpen,
-    setIsLayoutPanelOpen,
     isGeneratingSlides,
     slideGenerationProgress,
     isLoadingPresentation,
@@ -380,9 +374,6 @@ export const useEditorPage = ({
     // dnd
     sensors,
     activeBlock,
-    isLayoutDragging,
-    draggingLayoutColumnCount,
-    draggingLayoutBlockType,
     isBlockDragging,
     draggingBlockType,
     handleDragStart,
@@ -395,7 +386,6 @@ export const useEditorPage = ({
     handleAddColumn,
     handleAddRowAtTop,
     handleAddRowAtBottom,
-    handleAddSlide,
     presentationId,
   };
 };

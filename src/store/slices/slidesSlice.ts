@@ -214,6 +214,16 @@ const slidesSlice = createSlice({
         slide.rows = action.payload.rows;
       }
     },
+    replaceSlideWithLayout: (
+      state,
+      action: PayloadAction<{ slideId: string; rows: Row[] }>
+    ) => {
+      const slide = state.slides.find((s) => s.id === action.payload.slideId);
+      if (slide) {
+        slide.rows = action.payload.rows;
+        state.activeSlideId = slide.id;
+      }
+    },
     moveBlock: (
       state,
       action: PayloadAction<{
@@ -370,6 +380,7 @@ export const {
   addRowWithColumns,
   addRowAtTop,
   setSlideRows,
+  replaceSlideWithLayout,
   moveBlock,
   reorderBlocksInRow,
   setTheme,

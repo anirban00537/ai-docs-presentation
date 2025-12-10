@@ -103,7 +103,11 @@ export const createCtaContent = (): CtaContent => ({
   heading: {
     type: "doc",
     content: [
-      { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Call to action" }] },
+      {
+        type: "heading",
+        attrs: { level: 2 },
+        content: [{ type: "text", text: "Call to action" }],
+      },
     ],
   },
   body: {
@@ -163,7 +167,7 @@ export const normalizeBlockContent = (
     const incoming = content as TestimonialContent | undefined;
     const hasValidDoc = (doc?: ProseMirrorDocument) =>
       doc?.type === "doc" && Array.isArray(doc.content);
-    if (hasValidDoc(incoming?.quote)) {
+    if (incoming && hasValidDoc(incoming.quote)) {
       return {
         type: BLOCK_TYPES.TESTIMONIAL,
         quote: incoming.quote,
@@ -182,7 +186,11 @@ export const normalizeBlockContent = (
     const incoming = content as CtaContent | undefined;
     const hasValidDoc = (doc?: ProseMirrorDocument) =>
       doc?.type === "doc" && Array.isArray(doc.content);
-    if (hasValidDoc(incoming?.heading) && hasValidDoc(incoming?.body)) {
+    if (
+      incoming &&
+      hasValidDoc(incoming.heading) &&
+      hasValidDoc(incoming.body)
+    ) {
       return {
         type: BLOCK_TYPES.CTA,
         heading: incoming.heading,
@@ -200,4 +208,3 @@ export const normalizeBlockContent = (
   }
   return createDefaultHeadingContent();
 };
-

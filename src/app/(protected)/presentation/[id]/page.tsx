@@ -1,13 +1,11 @@
 "use client";
 
 import React from "react";
-import { useSearchParams, useRouter, useParams } from "next/navigation";
+import { useSearchParams, useParams } from "next/navigation";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import {
   SlideCard,
-  FloatingSidebar,
-  SmartLayoutIcon,
   SlidesSidebar,
   PresentationTopBar,
 } from "@/app/(protected)/presentation/[id]/editor";
@@ -16,7 +14,6 @@ import { useEditorPage } from "./hooks/useEditorPage";
 
 // --- Main Page Component ---
 const GammaPage = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const params = useParams();
   const presentationId = params?.id as string;
@@ -25,16 +22,8 @@ const GammaPage = () => {
   const {
     slides,
     theme,
-    activeSlideId,
-    isLayoutPanelOpen,
-    setIsLayoutPanelOpen,
-    isGeneratingSlides,
-    slideGenerationProgress,
     sensors,
     activeBlock,
-    isLayoutDragging,
-    draggingLayoutColumnCount,
-    draggingLayoutBlockType,
     isBlockDragging,
     draggingBlockType,
     handleDragStart,
@@ -45,7 +34,6 @@ const GammaPage = () => {
     handleAddColumn,
     handleAddRowAtTop,
     handleAddRowAtBottom,
-    handleAddSlide,
   } = useEditorPage({ presentationId, outlineId });
 
   return (
@@ -84,33 +72,19 @@ const GammaPage = () => {
                 .filter(
                   (slide) => slide && slide.rows && Array.isArray(slide.rows)
                 )
-                .map((slide, index) => (
+                .map((slide) => (
                   <div key={slide.id} data-slide-id={slide.id}>
                     <SlideCard
                       slide={slide}
-                      index={index}
-                      totalSlides={slides.length}
                       onUpdateBlock={handleUpdateBlock}
                       onDeleteRow={handleDeleteRow}
                       onAddColumn={handleAddColumn}
                       onAddRowAtTop={handleAddRowAtTop}
                       onAddRowAtBottom={handleAddRowAtBottom}
-                      onDeleteSlide={() => {}}
-                      isLayoutDragging={isLayoutDragging}
-                      activeLayoutSlideId={null}
                     />
                   </div>
                 ))}
             </div>
-
-            {/* Floating Sidebar */}
-            <FloatingSidebar
-              isLayoutPanelOpen={isLayoutPanelOpen}
-              onToggleLayoutPanel={() =>
-                setIsLayoutPanelOpen(!isLayoutPanelOpen)
-              }
-              presentationId={presentationId}
-            />
 
             {/* Drag Overlay */}
             <DragOverlay>
@@ -129,16 +103,6 @@ const GammaPage = () => {
                       <line x1="9" y1="3" x2="9" y2="21" />
                     </svg>
                     <span className="text-sm font-medium">Moving block...</span>
-                  </div>
-                </div>
-              )}
-              {isLayoutDragging && draggingLayoutColumnCount && (
-                <div className="bg-white border-2 border-blue-400 rounded-xl p-4 shadow-2xl opacity-90">
-                  <div className="flex items-center gap-2 text-blue-600">
-                    <SmartLayoutIcon />
-                    <span className="text-sm font-medium">
-                      {draggingLayoutColumnCount} Columns
-                    </span>
                   </div>
                 </div>
               )}

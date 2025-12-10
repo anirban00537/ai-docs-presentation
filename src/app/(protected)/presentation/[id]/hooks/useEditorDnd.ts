@@ -21,13 +21,6 @@ interface UseEditorDndParams {
 
 export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
-  const [isLayoutDragging, setIsLayoutDragging] = useState(false);
-  const [draggingLayoutColumnCount, setDraggingLayoutColumnCount] = useState<
-    number | null
-  >(null);
-  const [draggingLayoutBlockType, setDraggingLayoutBlockType] = useState<
-    string | undefined
-  >(undefined);
   const [isBlockDragging, setIsBlockDragging] = useState(false);
   const [draggingBlockType, setDraggingBlockType] = useState<string | null>(
     null
@@ -47,13 +40,6 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
   const handleDragStart = useCallback((event: DragStartEvent) => {
     const data = event.active.data.current;
 
-    if (data?.type === "layout-option") {
-      setIsLayoutDragging(true);
-      setDraggingLayoutColumnCount(data.columnCount);
-      setDraggingLayoutBlockType(data.blockType);
-      return;
-    }
-
     if (data?.type === "block-option") {
       setIsBlockDragging(true);
       setDraggingBlockType(data.blockType);
@@ -72,27 +58,6 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
       setActiveBlock(null);
 
       if (!over) return;
-
-      // Layout drop handling
-      if (isLayoutDragging) {
-        setIsLayoutDragging(false);
-
-        if (over && draggingLayoutColumnCount !== null) {
-          const overData = over.data.current;
-          if (overData?.type === "slide-drop-zone") {
-            const slideId = overData.slideId as string;
-            commandBus.addRowWithColumns({
-              slideId,
-              columnCount: draggingLayoutColumnCount,
-              blockType: draggingLayoutBlockType,
-            });
-          }
-        }
-
-        setDraggingLayoutColumnCount(null);
-        setDraggingLayoutBlockType(undefined);
-        return;
-      }
 
       // Block-type dragging (from toolbar)
       if (isBlockDragging) {
@@ -220,14 +185,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
         });
       }
     },
-    [
-      commandBus,
-      draggingBlockType,
-      draggingLayoutBlockType,
-      draggingLayoutColumnCount,
-      isBlockDragging,
-      isLayoutDragging,
-    ]
+    [commandBus, draggingBlockType, isBlockDragging]
   );
 
   const customCollisionDetection: DndContextProps["collisionDetection"] =
@@ -235,15 +193,6 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
       (args) => {
         const pointerCollisions = pointerWithin(args);
         if (pointerCollisions.length > 0) {
-          if (isLayoutDragging) {
-            const slideDropZone = pointerCollisions.find(
-              (c: any) =>
-                c.data?.droppableContainer?.data?.current?.type ===
-                "slide-drop-zone"
-            );
-            if (slideDropZone) return [slideDropZone];
-          }
-
           if (isBlockDragging) {
             const rowCollision = pointerCollisions.find(
               (c: any) =>
@@ -266,15 +215,12 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
         }
         return closestCenter(args);
       },
-      [isBlockDragging, isLayoutDragging]
+      [isBlockDragging]
     );
 
   return {
     sensors,
     activeBlock,
-    isLayoutDragging,
-    draggingLayoutColumnCount,
-    draggingLayoutBlockType,
     isBlockDragging,
     draggingBlockType,
     handleDragStart,

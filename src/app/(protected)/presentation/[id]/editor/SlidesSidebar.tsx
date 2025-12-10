@@ -20,8 +20,11 @@ import {
   setActiveSlide,
   addSlide,
   deleteSlide,
+  replaceSlideWithLayout,
 } from "@/store/slices/slidesSlice";
 import { useAppDispatch } from "@/store/hooks";
+import { LayoutPickerModal } from "./LayoutPickerModal";
+import type { LayoutTemplate } from "./layoutTemplates";
 
 interface SlidesSidebarProps {
   slides: Slide[];
@@ -42,6 +45,10 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isLayoutModalOpen, setIsLayoutModalOpen] = useState(false);
+  const [pendingLayout, setPendingLayout] = useState<LayoutTemplate | null>(
+    null
+  );
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
   const accent = isDark ? "#60a5fa" : "#2563eb"; // match ThemePanel palette
@@ -52,6 +59,22 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
   const dispatch = useAppDispatch();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const activeSlideRef = useRef<HTMLDivElement>(null);
+  const previousActiveSlideIdRef = useRef<string | null>(null);
+
+  // Apply pending layout when a new slide becomes active
+  useEffect(() => {
+    if (
+      pendingLayout &&
+      activeSlideId &&
+      activeSlideId !== previousActiveSlideIdRef.current
+    ) {
+      const rows = pendingLayout.getRows();
+      dispatch(replaceSlideWithLayout({ slideId: activeSlideId, rows }));
+      // Use setTimeout to avoid setState in effect
+      setTimeout(() => setPendingLayout(null), 0);
+    }
+    previousActiveSlideIdRef.current = activeSlideId;
+  }, [activeSlideId, pendingLayout, dispatch]);
 
   // Scroll to active slide when it changes
   useEffect(() => {
@@ -78,9 +101,15 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
   };
 
   const handleAddSlide = () => {
+    setIsLayoutModalOpen(true);
+  };
+
+  const handleSelectLayout = (template: LayoutTemplate) => {
+    // Store the template to apply when the new slide becomes active
+    setPendingLayout(template);
+    // Create a new slide - the reducer will set it as active
+    // The useEffect will detect the new activeSlideId and apply the layout
     dispatch(addSlide({}));
-    // The new slide will be automatically selected by the reducer
-    // The useEffect will handle scrolling to it
   };
 
   const handleDeleteSlide = (e: React.MouseEvent, slideId: string) => {
@@ -94,6 +123,11 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
 
   return (
     <>
+      <LayoutPickerModal
+        isOpen={isLayoutModalOpen}
+        onClose={() => setIsLayoutModalOpen(false)}
+        onSelectLayout={handleSelectLayout}
+      />
       {/* Collapsed Toggle Button - Always visible when collapsed */}
       {isCollapsed && (
         <div className="fixed left-6 top-1/2 -translate-y-1/2 z-40">
@@ -278,16 +312,11 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                         >
                           <SlideCard
                             slide={slide}
-                            index={index}
-                            totalSlides={slides.length}
                             onUpdateBlock={onUpdateBlock}
                             onDeleteRow={onDeleteRow}
                             onAddColumn={onAddColumn}
                             onAddRowAtTop={onAddRowAtTop}
                             onAddRowAtBottom={onAddRowAtBottom}
-                            onDeleteSlide={() => {}}
-                            isLayoutDragging={false}
-                            activeLayoutSlideId={null}
                           />
                         </div>
                         {/* Slide Number Badge */}

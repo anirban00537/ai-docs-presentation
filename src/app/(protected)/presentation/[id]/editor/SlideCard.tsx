@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { useDroppable } from "@dnd-kit/core";
 import { DroppableRow } from "./DroppableRow";
-import { SlideDropZone } from "./SlideDropZone";
 import type { Slide } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
@@ -9,37 +7,23 @@ import { getFontFamily } from "@/lib/fonts";
 
 interface SlideCardProps {
   slide: Slide;
-  index: number;
-  totalSlides: number;
   onUpdateBlock: (slideId: string, blockId: string, content: any) => void;
   onDeleteRow: (slideId: string, rowId: string) => void;
   onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
   onAddRowAtTop: (slideId: string) => void;
   onAddRowAtBottom: (slideId: string) => void;
-  onDeleteSlide: (slideId: string) => void;
-  isLayoutDragging: boolean;
-  activeLayoutSlideId: string | null;
 }
 
 export const SlideCard: React.FC<SlideCardProps> = ({
   slide,
-  index,
-  totalSlides,
   onUpdateBlock,
   onDeleteRow,
   onAddColumn,
   onAddRowAtTop,
   onAddRowAtBottom,
-  onDeleteSlide,
-  isLayoutDragging,
-  activeLayoutSlideId,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
-  const { setNodeRef, isOver } = useDroppable({
-    id: `slide-drop-${slide.id}`,
-    data: { type: "slide-drop-zone", slideId: slide.id },
-  });
 
   return (
     <div
@@ -148,13 +132,6 @@ export const SlideCard: React.FC<SlideCardProps> = ({
         </svg>
         <span>Add Row</span>
       </button>
-
-      {/* Drop Zone for Layout */}
-      {isLayoutDragging && (
-        <div ref={setNodeRef}>
-          <SlideDropZone slideId={slide.id} isOver={isOver} />
-        </div>
-      )}
     </div>
   );
 };
