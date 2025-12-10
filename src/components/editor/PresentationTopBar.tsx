@@ -75,13 +75,22 @@ export const PresentationTopBar: React.FC = () => {
               </span>
             )}
             {/* Action Buttons */}
-            <div className="flex items-center gap-2 ml-2 pl-2 border-l" style={{ borderColor: `${theme.primary}20` }}>
+            <div
+              className="flex items-center gap-2 ml-2 pl-2 border-l"
+              style={{ borderColor: `${theme.primary}20` }}
+            >
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-8 px-3 gap-2"
                 style={{
                   color: theme.bodyColor,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = theme.primary + "15";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
                 }}
                 title="Share presentation"
               >
@@ -96,6 +105,12 @@ export const PresentationTopBar: React.FC = () => {
                   backgroundColor: theme.primary,
                   color: "white",
                 }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = theme.primary + "DD";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = theme.primary;
+                }}
                 title="Present"
               >
                 <IconPlayerPlay className="size-4" />
@@ -108,4 +123,3 @@ export const PresentationTopBar: React.FC = () => {
     </div>
   );
 };
-
