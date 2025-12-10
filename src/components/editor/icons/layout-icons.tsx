@@ -33,3 +33,14 @@ export const SmartLayoutIcon = ({ className, style }: { className?: string; styl
   </svg>
 );
 
+export const NumberCardIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="2" y="2" width="36" height="36" rx="4" fill="currentColor" fillOpacity="0.05" stroke="currentColor" strokeWidth="1.5"/>
+    <circle cx="20" cy="12" r="6" fill="#90EE90" stroke="currentColor" strokeWidth="1.5"/>
+    <text x="20" y="16" textAnchor="middle" fontSize="10" fontWeight="bold" fill="currentColor">1</text>
+    <rect x="8" y="22" width="24" height="3" rx="1" fill="currentColor" fillOpacity="0.3"/>
+    <rect x="8" y="28" width="20" height="2" rx="1" fill="currentColor" fillOpacity="0.2"/>
+    <rect x="8" y="32" width="18" height="2" rx="1" fill="currentColor" fillOpacity="0.2"/>
+  </svg>
+);
+

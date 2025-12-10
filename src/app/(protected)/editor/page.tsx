@@ -43,6 +43,7 @@ import {
   SlidesSidebar,
   PresentationTopBar,
 } from "@/components/editor";
+import { NumberCardIcon } from "@/components/editor/icons/layout-icons";
 import { AppleButton } from "@/components/apple-button";
 import {
   usePresentation,
@@ -90,6 +91,10 @@ const GammaPage = () => {
   const [draggingLayoutColumnCount, setDraggingLayoutColumnCount] = useState<
     number | null
   >(null);
+  const [isBlockDragging, setIsBlockDragging] = useState(false);
+  const [draggingBlockType, setDraggingBlockType] = useState<string | null>(
+    null
+  );
   const [isGeneratingSlides, setIsGeneratingSlides] = useState(false);
   const [slideGenerationProgress, setSlideGenerationProgress] = useState<{
     current: number;
@@ -417,7 +422,24 @@ const GammaPage = () => {
     rowId: string,
     afterBlockId: string
   ) => {
-    dispatch(addBlockToRow({ slideId, rowId, afterBlockId }));
+    // Detect block type from the row to maintain consistency
+    const slide = slides.find((s) => s.id === slideId);
+    let blockType: string | undefined;
+
+    if (slide) {
+      const row = slide.rows.find((r) => r.id === rowId);
+      if (row && row.blocks.length > 0) {
+        // Get the type from the first block in the row
+        // If all blocks have the same type, use that; otherwise default to prosemirror
+        const firstBlockType = row.blocks[0]?.type || "prosemirror";
+        const allSameType = row.blocks.every(
+          (block) => (block.type || "prosemirror") === firstBlockType
+        );
+        blockType = allSameType ? firstBlockType : "prosemirror";
+      }
+    }
+
+    dispatch(addBlockToRow({ slideId, rowId, afterBlockId, blockType }));
   };
 
   const handleAddRowAtTop = (slideId: string) => {
@@ -442,6 +464,13 @@ const GammaPage = () => {
     if (data?.type === "layout-option") {
       setIsLayoutDragging(true);
       setDraggingLayoutColumnCount(data.columnCount);
+      return;
+    }
+
+    // Check if it's a block option being dragged
+    if (data?.type === "block-option") {
+      setIsBlockDragging(true);
+      setDraggingBlockType(data.blockType);
       return;
     }
 
@@ -477,6 +506,74 @@ const GammaPage = () => {
       }
 
       setDraggingLayoutColumnCount(null);
+      return;
+    }
+
+    // Handle block-type dragging
+    if (isBlockDragging) {
+      setIsBlockDragging(false);
+
+      if (over && draggingBlockType) {
+        const overData = over.data.current;
+
+        // Case 1: Dropped on a row
+        if (overData?.type === "row") {
+          const rowId = overData.rowId as string;
+          const slideId = overData.slideId as string;
+          // Find the last block in the row to insert after
+          const slide = slides.find((s) => s.id === slideId);
+          if (slide) {
+            const row = slide.rows.find((r) => r.id === rowId);
+            if (row && row.blocks.length > 0) {
+              const lastBlockId = row.blocks[row.blocks.length - 1].id;
+              dispatch(
+                addBlockToRow({
+                  slideId,
+                  rowId,
+                  afterBlockId: lastBlockId,
+                  blockType: draggingBlockType,
+                })
+              );
+            } else if (row) {
+              // Empty row - add block directly (no afterBlockId needed)
+              dispatch(
+                addBlockToRow({
+                  slideId,
+                  rowId,
+                  blockType: draggingBlockType,
+                })
+              );
+            }
+          }
+        }
+        // Case 2: Dropped on a block
+        else if (overData?.type === "block") {
+          const targetBlockId = overData.block?.id as string;
+          const targetSlideId = overData.slideId as string;
+          // Find the row containing the target block
+          const slide = slides.find((s) => s.id === targetSlideId);
+          if (slide) {
+            for (const row of slide.rows) {
+              const blockIndex = row.blocks.findIndex(
+                (b) => b.id === targetBlockId
+              );
+              if (blockIndex !== -1) {
+                dispatch(
+                  addBlockToRow({
+                    slideId: targetSlideId,
+                    rowId: row.id,
+                    afterBlockId: targetBlockId,
+                    blockType: draggingBlockType,
+                  })
+                );
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      setDraggingBlockType(null);
       return;
     }
 
@@ -641,6 +738,19 @@ const GammaPage = () => {
         if (slideDropZone) return [slideDropZone];
       }
 
+      // Prioritize rows and blocks when dragging block types
+      if (isBlockDragging) {
+        const rowCollision = pointerCollisions.find(
+          (c: any) => c.data?.droppableContainer?.data?.current?.type === "row"
+        );
+        if (rowCollision) return [rowCollision];
+        const blockCollision = pointerCollisions.find(
+          (c: any) =>
+            c.data?.droppableContainer?.data?.current?.type === "block"
+        );
+        if (blockCollision) return [blockCollision];
+      }
+
       const blockCollision = pointerCollisions.find(
         (c: any) => c.data?.droppableContainer?.data?.current?.type === "block"
       );
@@ -739,6 +849,18 @@ const GammaPage = () => {
                     <SmartLayoutIcon />
                     <span className="text-sm font-medium">
                       {draggingLayoutColumnCount} Columns
+                    </span>
+                  </div>
+                </div>
+              )}
+              {isBlockDragging && draggingBlockType && (
+                <div className="bg-white border-2 border-blue-400 rounded-xl p-4 shadow-2xl opacity-90">
+                  <div className="flex items-center gap-2 text-blue-600">
+                    {draggingBlockType === "number-card" && <NumberCardIcon />}
+                    <span className="text-sm font-medium">
+                      {draggingBlockType === "number-card"
+                        ? "Number Card"
+                        : draggingBlockType}
                     </span>
                   </div>
                 </div>

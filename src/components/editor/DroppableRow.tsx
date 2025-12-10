@@ -34,7 +34,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
     data: { type: "row", rowId: row.id, slideId },
   });
 
-  const MAX_COLUMNS = 4;
+  const MAX_COLUMNS = 3;
   const canAddColumn = row.blocks.length < MAX_COLUMNS;
 
   return (

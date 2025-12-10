@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 // --- Types ---
 export interface Block {
   id: string;
+  type?: string; // Block type: "prosemirror" (default), "number-card", etc.
   content: any;
 }
 
@@ -82,15 +83,44 @@ const createParagraphContent = () => {
   };
 };
 
-export const createBlock = (): Block => ({
+export const createBlock = (type: string = "prosemirror"): Block => ({
   id: nanoid(),
+  type,
   content: createDefaultContent(),
 });
 
 // Block with paragraph content (for columns)
 export const createParagraphBlock = (): Block => ({
   id: nanoid(),
+  type: "prosemirror",
   content: createParagraphContent(),
+});
+
+// Number card block - uses ProseMirror format for editor content
+const createNumberCardContent = () => ({
+  type: "number-card",
+  icon: "",
+  number: 1,
+  editorContent: {
+    type: "doc",
+    content: [
+      {
+        type: "heading",
+        attrs: { level: 3 },
+        content: [{ type: "text", text: "Title" }],
+      },
+      {
+        type: "paragraph",
+        content: [{ type: "text", text: "Description" }],
+      },
+    ],
+  },
+});
+
+export const createNumberCardBlock = (): Block => ({
+  id: nanoid(),
+  type: "number-card",
+  content: createNumberCardContent(),
 });
 
 export const createRow = (blocks?: Block[]): Row => ({
@@ -203,16 +233,47 @@ const slidesSlice = createSlice({
       action: PayloadAction<{
         slideId: string;
         rowId: string;
-        afterBlockId: string;
+        afterBlockId?: string;
+        blockType?: string;
       }>
     ) => {
-      const { slideId, rowId, afterBlockId } = action.payload;
+      const { slideId, rowId, afterBlockId, blockType } = action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
       const row = slide.rows.find((r) => r.id === rowId);
       if (!row) return;
-      const index = row.blocks.findIndex((b) => b.id === afterBlockId);
-      row.blocks.splice(index + 1, 0, createBlock());
+
+      const MAX_BLOCKS_PER_ROW = 3;
+
+      // If row already has 3 blocks, create a new row at the bottom
+      if (row.blocks.length >= MAX_BLOCKS_PER_ROW) {
+        const newBlock =
+          blockType === "number-card"
+            ? createNumberCardBlock()
+            : createBlock(blockType || "prosemirror");
+        const newRow = createRow([newBlock]);
+        const currentRowIndex = slide.rows.findIndex((r) => r.id === rowId);
+        slide.rows.splice(currentRowIndex + 1, 0, newRow);
+        return;
+      }
+
+      const newBlock =
+        blockType === "number-card"
+          ? createNumberCardBlock()
+          : createBlock(blockType || "prosemirror");
+
+      if (afterBlockId) {
+        const index = row.blocks.findIndex((b) => b.id === afterBlockId);
+        if (index !== -1) {
+          row.blocks.splice(index + 1, 0, newBlock);
+        } else {
+          // If afterBlockId not found, append to end
+          row.blocks.push(newBlock);
+        }
+      } else {
+        // No afterBlockId specified, append to end
+        row.blocks.push(newBlock);
+      }
     },
     addRowToSlide: (
       state,
@@ -240,8 +301,10 @@ const slidesSlice = createSlice({
       const { slideId, columnCount } = action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
+      const MAX_BLOCKS_PER_ROW = 3;
+      const actualColumnCount = Math.min(columnCount, MAX_BLOCKS_PER_ROW);
       const blocks: Block[] = [];
-      for (let i = 0; i < columnCount; i++) {
+      for (let i = 0; i < actualColumnCount; i++) {
         blocks.push(createParagraphBlock());
       }
       slide.rows.push(createRow(blocks));
@@ -253,8 +316,10 @@ const slidesSlice = createSlice({
       const { slideId, columnCount = 1 } = action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
+      const MAX_BLOCKS_PER_ROW = 3;
+      const actualColumnCount = Math.min(columnCount, MAX_BLOCKS_PER_ROW);
       const blocks: Block[] = [];
-      for (let i = 0; i < columnCount; i++) {
+      for (let i = 0; i < actualColumnCount; i++) {
         blocks.push(createParagraphBlock());
       }
       slide.rows.unshift(createRow(blocks));
@@ -440,8 +505,13 @@ const slidesSlice = createSlice({
 
       // Final safety check: ensure content is never null/undefined
       if (!movedBlock.content) {
-        // If content was somehow lost, restore to default
-        movedBlock.content = createDefaultContent();
+        // If content was somehow lost, restore to default based on block type
+        const blockType = movedBlock.type || "prosemirror";
+        if (blockType === "number-card") {
+          movedBlock.content = createNumberCardContent();
+        } else {
+          movedBlock.content = createDefaultContent();
+        }
       }
 
       // Adjust newIndex based on removal position

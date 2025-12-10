@@ -1,7 +1,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ProseMirrorEditor } from "@/components/prosemirror";
+import { BlockRenderer } from "./blocks/BlockRenderer";
 import type { Block } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
@@ -126,14 +126,12 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
           </button>
         )}
 
-        {/* Editor */}
-        <ProseMirrorEditor
-          key={block.id}
-          blockId={block.id}
-          value={block.content}
-          onChange={(val) => onUpdate(block.id, val)}
+        {/* Block Renderer */}
+        <BlockRenderer
+          block={block}
+          onUpdate={(content) => onUpdate(block.id, content)}
+          theme={theme}
           placeholder="Type '/' for commands"
-          className=""
         />
       </div>
     </div>

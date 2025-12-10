@@ -16,4 +16,11 @@ export {
   ThreeColumnIcon,
   FourColumnIcon,
   SmartLayoutIcon,
+  NumberCardIcon,
 } from "./icons/layout-icons";
+
+// Export block components
+export { BlockRenderer } from "./blocks/BlockRenderer";
+export { ProseMirrorBlock } from "./blocks/ProseMirrorBlock";
+export { NumberCardBlock } from "./blocks/NumberCardBlock";
+export { DraggableBlockOption } from "./DraggableBlockOption";
