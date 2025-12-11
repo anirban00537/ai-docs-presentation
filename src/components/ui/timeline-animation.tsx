@@ -5,7 +5,7 @@ import { motion, HTMLMotionProps, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface TimelineContentProps extends Omit<HTMLMotionProps<"div">, "as"> {
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
   animationNum: number;
   timelineRef: React.RefObject<HTMLElement | null>;
   customVariants?: Variants;

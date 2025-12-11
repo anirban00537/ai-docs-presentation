@@ -85,11 +85,13 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
       {/* Slide Content */}
       <div className="flex flex-col gap-6">
-        {(slide.rows || []).map((row) => (
+        {(slide.rows || []).map((row, rowIndex) => (
           <DroppableRow
             key={row.id}
             row={row}
             slideId={slide.id}
+            rowIndex={rowIndex}
+            totalRowsInSlide={slide.rows?.length || 0}
             onUpdateBlock={(blockId, content) =>
               onUpdateBlock(slide.id, blockId, content)
             }

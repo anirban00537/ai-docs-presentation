@@ -7,6 +7,9 @@ export { BlocksPanel } from "./BlocksPanel";
 export { FloatingSidebar } from "./FloatingSidebar";
 export { SlidesSidebar } from "./SlidesSidebar";
 export { PresentationTopBar } from "./PresentationTopBar";
+export { BlockActionBar } from "./BlockActionBar";
+export { BlockTransformMenu } from "./BlockTransformMenu";
+export { BlockFocusProvider, useBlockFocus } from "./BlockFocusContext";
 
 // Export icons
 export { NumberCardIcon } from "./icons/layout-icons";

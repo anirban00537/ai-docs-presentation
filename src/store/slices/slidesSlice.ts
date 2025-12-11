@@ -406,6 +406,90 @@ const slidesSlice = createSlice({
       if (!row) return;
       row.columnWidths = columnWidths;
     },
+
+    // Block actions
+    duplicateBlock: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        rowId: string;
+        blockId: string;
+      }>
+    ) => {
+      const { slideId, rowId, blockId } = action.payload;
+      const slide = state.slides.find((s) => s.id === slideId);
+      if (!slide) return;
+      const row = slide.rows.find((r) => r.id === rowId);
+      if (!row) return;
+      const blockIndex = row.blocks.findIndex((b) => b.id === blockId);
+      if (blockIndex === -1) return;
+
+      const originalBlock = row.blocks[blockIndex];
+      const duplicatedBlock: Block = JSON.parse(JSON.stringify(originalBlock));
+      duplicatedBlock.id = nanoid();
+
+      // If row is full, create new row below
+      if (row.blocks.length >= MAX_BLOCKS_PER_ROW) {
+        const newRow = createRow([duplicatedBlock]);
+        const rowIndex = slide.rows.findIndex((r) => r.id === rowId);
+        slide.rows.splice(rowIndex + 1, 0, newRow);
+      } else {
+        // Insert after original block
+        row.blocks.splice(blockIndex + 1, 0, duplicatedBlock);
+        // Recalculate column widths
+        row.columnWidths = row.blocks.map(() => 1);
+      }
+    },
+
+    deleteBlock: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        rowId: string;
+        blockId: string;
+      }>
+    ) => {
+      const { slideId, rowId, blockId } = action.payload;
+      const slide = state.slides.find((s) => s.id === slideId);
+      if (!slide) return;
+      const row = slide.rows.find((r) => r.id === rowId);
+      if (!row) return;
+
+      row.blocks = row.blocks.filter((b) => b.id !== blockId);
+
+      // Recalculate column widths if blocks remain
+      if (row.blocks.length > 0) {
+        row.columnWidths = row.blocks.map(() => 1);
+      }
+
+      // Remove empty rows (but keep at least one row in slide)
+      slide.rows = slide.rows.filter((r) => r.blocks.length > 0);
+      if (slide.rows.length === 0) {
+        slide.rows.push(createRow());
+      }
+    },
+
+    transformBlock: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        rowId: string;
+        blockId: string;
+        newType: string;
+      }>
+    ) => {
+      const { slideId, rowId, blockId, newType } = action.payload;
+      const slide = state.slides.find((s) => s.id === slideId);
+      if (!slide) return;
+      const row = slide.rows.find((r) => r.id === rowId);
+      if (!row) return;
+      const block = row.blocks.find((b) => b.id === blockId);
+      if (!block) return;
+
+      // Change block type and reset content to default for new type
+      block.type = newType;
+      block.content = createBlockContentForType(newType as any);
+    },
   },
 });
 
@@ -427,6 +511,9 @@ export const {
   moveBlock,
   reorderBlocksInRow,
   updateColumnWidths,
+  duplicateBlock,
+  deleteBlock,
+  transformBlock,
   setTheme,
   resetTheme,
   setPresentation,

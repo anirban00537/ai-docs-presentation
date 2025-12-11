@@ -86,9 +86,6 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
             onChange={handleTitleChange}
             placeholder="Timeline title"
             className="text-2xl font-bold"
-            style={{
-              color: theme.headingColor,
-            }}
           />
         </div>
       )}

@@ -11,6 +11,9 @@ interface ResizableColumnProps {
   slideId: string;
   rowId: string;
   index: number;
+  totalBlocksInRow: number;
+  rowIndex: number;
+  totalRowsInSlide: number;
   onUpdate: (blockId: string, content: any) => void;
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   isLastBlock: boolean;
@@ -26,6 +29,9 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
   slideId,
   rowId,
   index,
+  totalBlocksInRow,
+  rowIndex,
+  totalRowsInSlide,
   onUpdate,
   onAddColumn,
   isLastBlock,
@@ -154,6 +160,10 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
           block={block}
           slideId={slideId}
           rowId={rowId}
+          blockIndex={index}
+          totalBlocksInRow={totalBlocksInRow}
+          rowIndex={rowIndex}
+          totalRowsInSlide={totalRowsInSlide}
           onUpdate={onUpdate}
           onAddColumn={onAddColumn}
           isLastBlock={isLastBlock}

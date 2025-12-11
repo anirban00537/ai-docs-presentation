@@ -13,6 +13,8 @@ import { getFontFamily } from "@/lib/fonts";
 interface DroppableRowProps {
   row: Row;
   slideId: string;
+  rowIndex: number;
+  totalRowsInSlide: number;
   onUpdateBlock: (blockId: string, content: any) => void;
   onDeleteRow: (rowId: string) => void;
   onAddColumn: (rowId: string, afterBlockId: string) => void;
@@ -23,6 +25,8 @@ interface DroppableRowProps {
 export const DroppableRow: React.FC<DroppableRowProps> = ({
   row,
   slideId,
+  rowIndex,
+  totalRowsInSlide,
   onUpdateBlock,
   onDeleteRow,
   onAddColumn,
@@ -197,15 +201,18 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           setNodeRef(node);
           rowContainerRef.current = node;
         }}
-        className={`group/row flex-1 grid transition-all items-stretch border ${
+        className={`group/row flex-1 grid transition-all items-stretch rounded-lg ${
           isOver
-            ? "bg-green-50 ring-1 ring-dashed ring-green-400 border-green-400"
-            : "border-transparent hover:border-opacity-30"
+            ? "ring-2 ring-dashed ring-offset-2 animate-pulse"
+            : "border border-transparent hover:border-opacity-30"
         }`}
         style={{
           gridTemplateColumns,
           borderColor: isOver ? undefined : "transparent",
           fontFamily: getFontFamily(theme.fontFamily || "Inter"),
+          // Use CSS variable for ring color with Tailwind
+          ["--tw-ring-color" as any]: isOver ? theme.primary : undefined,
+          backgroundColor: isOver ? `${theme.primary}08` : undefined,
         }}
         onMouseEnter={(e) => {
           if (!isOver) {
@@ -229,6 +236,9 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
               slideId={slideId}
               rowId={row.id}
               index={index}
+              totalBlocksInRow={row.blocks.length}
+              rowIndex={rowIndex}
+              totalRowsInSlide={totalRowsInSlide}
               onUpdate={onUpdateBlock}
               onAddColumn={onAddColumn}
               isLastBlock={index === row.blocks.length - 1}

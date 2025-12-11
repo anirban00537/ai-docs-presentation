@@ -100,11 +100,7 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
           value={quoteDoc}
           onChange={handleQuoteChange}
           placeholder={placeholder ?? "Add an inspiring quote..."}
-          className="text-2xl font-medium leading-relaxed"
-          style={{
-            color: theme.headingColor,
-            fontStyle: "italic",
-          }}
+          className="text-2xl font-medium leading-relaxed italic"
         />
       </div>
 
@@ -123,9 +119,6 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
           onChange={handleAuthorChange}
           placeholder="Author name"
           className="text-base font-semibold"
-          style={{
-            color: theme.headingColor,
-          }}
         />
       </div>
     </div>
