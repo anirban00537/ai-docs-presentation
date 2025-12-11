@@ -15,14 +15,15 @@ export const ProseMirrorBlock: React.FC<ProseMirrorBlockProps> = ({
   placeholder = "Type '/' for commands",
 }) => {
   return (
-    <ProseMirrorEditor
-      key={block.id}
-      blockId={block.id}
-      value={block.content}
-      onChange={onUpdate}
-      placeholder={placeholder}
-      className=""
-    />
+    <div className="w-full h-full flex flex-col">
+      <ProseMirrorEditor
+        key={block.id}
+        blockId={block.id}
+        value={block.content}
+        onChange={onUpdate}
+        placeholder={placeholder}
+        className="flex-1"
+      />
+    </div>
   );
 };
-

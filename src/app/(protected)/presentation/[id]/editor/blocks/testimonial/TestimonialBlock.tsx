@@ -75,7 +75,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
 
   return (
     <div
-      className="w-full rounded-xl p-6 shadow-sm flex gap-4"
+      className="w-full h-full rounded-xl p-6 shadow-sm flex gap-4"
       style={{
         color: theme.bodyColor,
         backgroundColor: theme.cardBackground,

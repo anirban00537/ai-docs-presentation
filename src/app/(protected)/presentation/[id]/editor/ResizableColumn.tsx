@@ -120,11 +120,11 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
     <div
       ref={setSortableRef}
       style={dragStyle}
-      className="group/column relative h-full min-w-0"
+      className="group/column relative h-full w-full min-w-0"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative h-full w-full">
+      <div className="relative h-full w-full flex flex-col">
         {/* Drag Handle - Top center of column (for drag and drop) */}
         <div
           {...attributes}

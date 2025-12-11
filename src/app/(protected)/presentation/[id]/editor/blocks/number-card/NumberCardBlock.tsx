@@ -54,7 +54,7 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
 
   return (
     <div
-      className="flex flex-col gap-4 p-4 rounded-xl shadow-sm"
+      className="flex flex-col gap-4 p-4 rounded-xl shadow-sm h-full w-full"
       style={{
         backgroundColor: withAlpha(theme.primary, 0.3),
         color: theme.headingColor,

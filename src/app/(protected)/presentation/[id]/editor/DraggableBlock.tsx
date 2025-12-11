@@ -56,10 +56,10 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="group/block relative min-w-0 h-full w-full"
+      className="group/block relative min-w-0 h-full w-full flex flex-col"
     >
       <div
-        className={`relative p-2 transition-all h-full ${
+        className={`relative p-2 transition-all h-full w-full flex flex-col flex-1 ${
           isDragging ? "bg-blue-50" : ""
         }`}
       >

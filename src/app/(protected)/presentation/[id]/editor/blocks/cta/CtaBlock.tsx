@@ -70,7 +70,7 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
 
   return (
     <div
-      className="w-full rounded-xl p-6 shadow-sm flex flex-col gap-4"
+      className="w-full h-full rounded-xl p-6 shadow-sm flex flex-col gap-4"
       style={{
         backgroundColor: withAlpha(theme.primary, 0.3),
         color: theme.headingColor,

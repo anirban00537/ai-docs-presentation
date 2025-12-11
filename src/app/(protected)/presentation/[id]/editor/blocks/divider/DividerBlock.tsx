@@ -41,19 +41,27 @@ export const DividerBlock: React.FC<DividerBlockProps> = ({
   };
 
   return (
-    <div className={`w-full ${spacingMap[spacing]} flex items-center justify-center`}>
+    <div
+      className={`w-full h-full ${spacingMap[spacing]} flex items-center justify-center`}
+    >
       {style === "double" ? (
         <div className="w-full flex flex-col gap-2">
           <div
             className="w-full h-0.5"
             style={{
-              borderTop: `2px ${borderStyleMap[style]} ${applyAlpha(theme.primary, 0.3)}`,
+              borderTop: `2px ${borderStyleMap[style]} ${applyAlpha(
+                theme.primary,
+                0.3
+              )}`,
             }}
           />
           <div
             className="w-full h-0.5"
             style={{
-              borderTop: `2px ${borderStyleMap[style]} ${applyAlpha(theme.primary, 0.3)}`,
+              borderTop: `2px ${borderStyleMap[style]} ${applyAlpha(
+                theme.primary,
+                0.3
+              )}`,
             }}
           />
         </div>
@@ -61,11 +69,13 @@ export const DividerBlock: React.FC<DividerBlockProps> = ({
         <div
           className="w-full"
           style={{
-            borderTop: `1px ${borderStyleMap[style]} ${applyAlpha(theme.primary, 0.2)}`,
+            borderTop: `1px ${borderStyleMap[style]} ${applyAlpha(
+              theme.primary,
+              0.2
+            )}`,
           }}
         />
       )}
     </div>
   );
 };
-

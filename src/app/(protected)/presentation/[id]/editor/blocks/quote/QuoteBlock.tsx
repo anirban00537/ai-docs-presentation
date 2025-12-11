@@ -62,7 +62,7 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
 
   return (
     <div
-      className={`w-full rounded-2xl p-8 shadow-lg ${
+      className={`w-full h-full rounded-2xl p-8 shadow-lg flex flex-col ${
         isCentered ? "text-center" : "text-left"
       }`}
       style={{
@@ -110,9 +110,7 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
 
       {/* Author */}
       <div
-        className={`border-t pt-4 ${
-          isCentered ? "text-center" : "text-right"
-        }`}
+        className={`border-t pt-4 ${isCentered ? "text-center" : "text-right"}`}
         style={{
           borderColor: applyAlpha(theme.primary, 0.2),
         }}
@@ -133,4 +131,3 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
     </div>
   );
 };
-

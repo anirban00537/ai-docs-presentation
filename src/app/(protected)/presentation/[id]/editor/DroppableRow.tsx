@@ -197,7 +197,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           setNodeRef(node);
           rowContainerRef.current = node;
         }}
-        className={`group/row flex-1 grid transition-all items-start border ${
+        className={`group/row flex-1 grid transition-all items-stretch border ${
           isOver
             ? "bg-green-50 ring-1 ring-dashed ring-green-400 border-green-400"
             : "border-transparent hover:border-opacity-30"

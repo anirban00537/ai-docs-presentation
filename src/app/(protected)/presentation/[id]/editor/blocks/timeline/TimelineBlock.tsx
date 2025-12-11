@@ -75,7 +75,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full flex flex-col">
       {/* Optional Title */}
       {title && (
         <div className="mb-8">
@@ -121,4 +121,3 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
     </div>
   );
 };
-
