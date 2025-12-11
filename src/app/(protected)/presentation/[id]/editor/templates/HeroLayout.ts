@@ -6,7 +6,7 @@ import type { Block } from "@/lib/editor/types";
 export const HeroLayout = {
   id: "hero-layout",
   name: "Hero Section",
-  description: "Perfect for opening slides with headline and CTA",
+  description: "High-impact opening with bold typography and CTA",
   icon: "🎯",
   getRows: (): Row[] => {
     // Row 1: Main Heading
@@ -18,9 +18,9 @@ export const HeroLayout = {
         content: [
           {
             type: "heading",
-            attrs: { level: 1 },
+            attrs: { level: 1, textAlign: "center" },
             content: [
-              { type: "text", text: "Welcome to Our Platform" },
+              { type: "text", text: "Build Something Amazing" },
             ],
           },
         ],
@@ -36,10 +36,11 @@ export const HeroLayout = {
         content: [
           {
             type: "paragraph",
+            attrs: { textAlign: "center" },
             content: [
               {
                 type: "text",
-                text: "Transform your workflow with our innovative solution. Built for teams who demand excellence.",
+                text: "The all-in-one platform designed to transform your ideas into reality. Start your journey today.",
               },
             ],
           },
@@ -55,7 +56,7 @@ export const HeroLayout = {
         {
           type: "heading",
           attrs: { level: 2 },
-          content: [{ type: "text", text: "Ready to get started?" }],
+          content: [{ type: "text", text: "Ready to launch?" }],
         },
       ],
     };
@@ -67,13 +68,13 @@ export const HeroLayout = {
           content: [
             {
               type: "text",
-              text: "Join thousands of satisfied customers today.",
+              text: "Join over 10,000+ creators building the future.",
             },
           ],
         },
       ],
     };
-    ctaContent.buttonLabel = "Get Started";
+    ctaContent.buttonLabel = "Start Free Trial";
 
     const ctaBlock: Block = {
       id: nanoid(),

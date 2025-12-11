@@ -10,11 +10,11 @@ import type { Block } from "@/lib/editor/types";
 export const ProcessLayout = {
   id: "process-layout",
   name: "Process & Timeline",
-  description: "Show step-by-step process with timeline visualization",
+  description: "Visualize workflows with a step-by-step timeline",
   icon: "⏱️",
   getRows: (): Row[] => {
-    // Row 1: Section Title
-    const titleBlock: Block = {
+    // Row 1: Section Title & Subtitle
+    const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content: {
@@ -22,26 +22,16 @@ export const ProcessLayout = {
         content: [
           {
             type: "heading",
-            attrs: { level: 1 },
-            content: [{ type: "text", text: "How It Works" }],
+            attrs: { level: 2, textAlign: "center" },
+            content: [{ type: "text", text: "Our Methodology" }],
           },
-        ],
-      },
-    };
-
-    // Row 2: Description
-    const descriptionBlock: Block = {
-      id: nanoid(),
-      type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
           {
             type: "paragraph",
+            attrs: { textAlign: "center" },
             content: [
               {
                 type: "text",
-                text: "Our proven methodology ensures success at every stage of your journey.",
+                text: "A systematic approach to delivering exceptional results.",
               },
             ],
           },
@@ -49,20 +39,20 @@ export const ProcessLayout = {
       },
     };
 
-    // Row 3: Divider
+    // Row 2: Divider
     const divider = createDividerContent();
-    divider.style = "solid";
-    divider.spacing = "small";
+    divider.style = "dotted";
+    divider.spacing = "medium";
 
-    // Row 4: Timeline
+    // Row 3: Timeline
     const timeline = createTimelineContent();
     timeline.title = {
       type: "doc",
       content: [
         {
           type: "heading",
-          attrs: { level: 2 },
-          content: [{ type: "text", text: "Our Methodology" }],
+          attrs: { level: 3 },
+          content: [{ type: "text", text: "Workflow Steps" }],
         },
       ],
     };
@@ -73,7 +63,7 @@ export const ProcessLayout = {
           content: [
             {
               type: "paragraph",
-              content: [{ type: "text", text: "Discovery & Planning" }],
+              content: [{ type: "text", text: "Discovery" }],
             },
           ],
         },
@@ -85,7 +75,7 @@ export const ProcessLayout = {
               content: [
                 {
                   type: "text",
-                  text: "We begin by understanding your goals, challenges, and requirements through comprehensive analysis.",
+                  text: "We start by deeply understanding your goals and constraints.",
                 },
               ],
             },
@@ -99,7 +89,7 @@ export const ProcessLayout = {
           content: [
             {
               type: "paragraph",
-              content: [{ type: "text", text: "Design & Strategy" }],
+              content: [{ type: "text", text: "Strategy" }],
             },
           ],
         },
@@ -111,13 +101,13 @@ export const ProcessLayout = {
               content: [
                 {
                   type: "text",
-                  text: "Our team creates a tailored solution architecture and strategic roadmap aligned with your objectives.",
+                  text: "Developing a comprehensive roadmap to success.",
                 },
               ],
             },
           ],
         },
-        icon: "🎨",
+        icon: "🗺️",
       },
       {
         title: {
@@ -125,7 +115,7 @@ export const ProcessLayout = {
           content: [
             {
               type: "paragraph",
-              content: [{ type: "text", text: "Implementation" }],
+              content: [{ type: "text", text: "Execution" }],
             },
           ],
         },
@@ -137,7 +127,7 @@ export const ProcessLayout = {
               content: [
                 {
                   type: "text",
-                  text: "We execute the plan with precision, maintaining clear communication and iterative feedback loops.",
+                  text: "Implementing the solution with precision and care.",
                 },
               ],
             },
@@ -151,7 +141,7 @@ export const ProcessLayout = {
           content: [
             {
               type: "paragraph",
-              content: [{ type: "text", text: "Launch & Support" }],
+              content: [{ type: "text", text: "Launch" }],
             },
           ],
         },
@@ -163,7 +153,7 @@ export const ProcessLayout = {
               content: [
                 {
                   type: "text",
-                  text: "We ensure smooth deployment and provide ongoing support to maximize your success and growth.",
+                  text: "Delivering the final product to your users.",
                 },
               ],
             },
@@ -176,11 +166,7 @@ export const ProcessLayout = {
     return [
       {
         id: nanoid(),
-        blocks: [titleBlock],
-      },
-      {
-        id: nanoid(),
-        blocks: [descriptionBlock],
+        blocks: [headerBlock],
       },
       {
         id: nanoid(),
