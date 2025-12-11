@@ -32,7 +32,7 @@ export const QuoteLayout = {
     // Row 2: Divider
     const divider1 = createDividerContent();
     divider1.style = "dotted";
-    divider1.spacing = "medium";
+    divider1.spacing = "small";
 
     // Row 3: Centered Quote
     const quote1 = createQuoteContent();
@@ -44,7 +44,7 @@ export const QuoteLayout = {
           content: [
             {
               type: "text",
-              text: "Design is not just what it looks like and feels like. Design is how it works.",
+              text: "Design is not just what it looks like. Design is how it works.",
             },
           ],
         },
@@ -61,7 +61,7 @@ export const QuoteLayout = {
     // Row 4: Divider
     const divider2 = createDividerContent();
     divider2.style = "dotted";
-    divider2.spacing = "medium";
+    divider2.spacing = "small";
 
     // Row 5: Pull Quote Style
     const quote2 = createQuoteContent();

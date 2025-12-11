@@ -54,7 +54,7 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
 
   return (
     <div
-      className={`w-full h-full rounded-2xl p-10 flex flex-col gap-6 relative transition-all duration-300 ${
+      className={`w-full h-full rounded-xl p-6 flex flex-col gap-4 relative transition-all duration-300 ${
         isCentered ? "items-center text-center" : "items-start text-left"
       }`}
       style={{
@@ -63,14 +63,14 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
           : "transparent",
         borderLeft: isCentered 
           ? "none" 
-          : `6px solid ${theme.primary}`,
-        borderRadius: isCentered ? "1rem" : "0.5rem",
-        paddingLeft: isCentered ? "2.5rem" : "2rem",
+          : `4px solid ${theme.primary}`,
+        borderRadius: isCentered ? "0.75rem" : "0.5rem",
+        paddingLeft: isCentered ? "1.5rem" : "1.5rem",
       }}
     >
       {/* Decorative Icon */}
       <div
-        className="text-5xl leading-none opacity-20 font-serif select-none mb-2"
+        className="text-4xl leading-none opacity-20 font-serif select-none mb-1"
         style={{ color: theme.primary }}
       >
         "
@@ -83,21 +83,21 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
           value={quoteDoc}
           onChange={handleQuoteChange}
           placeholder={placeholder ?? "Add an inspiring quote..."}
-          className="text-2xl md:text-3xl font-serif italic opacity-90 leading-relaxed"
+          className="text-xl md:text-2xl font-serif italic opacity-90 leading-relaxed"
         />
       </div>
 
-      <div className={`relative z-10 flex items-center gap-3 mt-2 ${isCentered ? "justify-center" : "justify-start"}`}>
-        <div className={`h-px w-8 bg-current opacity-30 ${isCentered ? "block" : "hidden"}`} />
+      <div className={`relative z-10 flex items-center gap-3 mt-1 ${isCentered ? "justify-center" : "justify-start"}`}>
+        <div className={`h-px w-6 bg-current opacity-30 ${isCentered ? "block" : "hidden"}`} />
         <ProseMirrorEditor
           key={`${block.id}-author`}
           blockId={`${block.id}-author`}
           value={authorDoc}
           onChange={handleAuthorChange}
           placeholder="Author name"
-          className="text-base font-semibold tracking-wide uppercase opacity-70"
+          className="text-sm font-medium tracking-wide uppercase opacity-70"
         />
-        <div className={`h-px w-8 bg-current opacity-30 ${isCentered ? "block" : "hidden"}`} />
+        <div className={`h-px w-6 bg-current opacity-30 ${isCentered ? "block" : "hidden"}`} />
       </div>
     </div>
   );
