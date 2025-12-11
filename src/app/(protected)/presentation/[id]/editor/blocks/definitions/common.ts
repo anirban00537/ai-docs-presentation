@@ -6,6 +6,9 @@ export const BLOCK_TYPES = {
   QUOTE: "quote",
   DIVIDER: "divider",
   TIMELINE: "timeline",
+  TEAM_CARD: "team-card",
+  PRICING_CARD: "pricing-card",
+  IMAGE_GALLERY: "image-gallery",
 } as const;
 
 export type BlockType = (typeof BLOCK_TYPES)[keyof typeof BLOCK_TYPES];

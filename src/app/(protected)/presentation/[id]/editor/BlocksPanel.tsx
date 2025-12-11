@@ -15,6 +15,9 @@ import {
   IconQuote,
   IconMinus,
   IconTimeline,
+  IconUsers,
+  IconCreditCard,
+  IconPhoto,
 } from "@tabler/icons-react";
 
 interface BlocksPanelProps {
@@ -149,6 +152,24 @@ const blockDefinitions = [
     icon: <IconTimeline className="w-6 h-6" />,
     label: "Timeline",
     description: "Step-by-step process visualization",
+  },
+  {
+    type: BLOCK_TYPES.TEAM_CARD,
+    icon: <IconUsers className="w-6 h-6" />,
+    label: "Team Member",
+    description: "Profile card with social links",
+  },
+  {
+    type: BLOCK_TYPES.PRICING_CARD,
+    icon: <IconCreditCard className="w-6 h-6" />,
+    label: "Pricing Plan",
+    description: "Feature comparison card",
+  },
+  {
+    type: BLOCK_TYPES.IMAGE_GALLERY,
+    icon: <IconPhoto className="w-6 h-6" />,
+    label: "Image Gallery",
+    description: "Grid layout for multiple images",
   },
 ];
 

@@ -12,6 +12,9 @@ import { CtaBlock } from "./cta/CtaBlock";
 import { QuoteBlock } from "./quote/QuoteBlock";
 import { DividerBlock } from "./divider/DividerBlock";
 import { TimelineBlock } from "./timeline/TimelineBlock";
+import { TeamCardBlock } from "./team/TeamCardBlock";
+import { PricingCardBlock } from "./pricing/PricingCardBlock";
+import { ImageGalleryBlock } from "./gallery/ImageGalleryBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -68,6 +71,24 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: TimelineBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.TIMELINE, content),
+  },
+  [BLOCK_TYPES.TEAM_CARD]: {
+    type: BLOCK_TYPES.TEAM_CARD,
+    component: TeamCardBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.TEAM_CARD, content),
+  },
+  [BLOCK_TYPES.PRICING_CARD]: {
+    type: BLOCK_TYPES.PRICING_CARD,
+    component: PricingCardBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.PRICING_CARD, content),
+  },
+  [BLOCK_TYPES.IMAGE_GALLERY]: {
+    type: BLOCK_TYPES.IMAGE_GALLERY,
+    component: ImageGalleryBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.IMAGE_GALLERY, content),
   },
 };
 
