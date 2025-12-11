@@ -10,12 +10,12 @@ import type { Block } from "@/lib/editor/types";
 
 export const SectionLayout = {
   id: "section-layout",
-  name: "Sectioned Content",
-  description: "Organize content with dividers and mixed blocks",
+  name: "Section Break",
+  description: "Organize your presentation with clear chapters",
   icon: "📑",
   getRows: (): Row[] => {
-    // Row 1: Main Heading
-    const headingBlock: Block = {
+    // Row 1: Section Title
+    const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content: {
@@ -23,26 +23,16 @@ export const SectionLayout = {
         content: [
           {
             type: "heading",
-            attrs: { level: 1 },
-            content: [{ type: "text", text: "Section Title" }],
+            attrs: { level: 1, textAlign: "left" },
+            content: [{ type: "text", text: "Chapter 01: The Vision" }],
           },
-        ],
-      },
-    };
-
-    // Row 2: Subheading
-    const subheadingBlock: Block = {
-      id: nanoid(),
-      type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
           {
             type: "paragraph",
+            attrs: { textAlign: "left" },
             content: [
               {
                 type: "text",
-                text: "A comprehensive overview of key points and insights.",
+                text: "A comprehensive deep dive into our strategic goals and future outlook.",
               },
             ],
           },
@@ -50,29 +40,29 @@ export const SectionLayout = {
       },
     };
 
-    // Row 3: Divider
+    // Row 2: Divider
     const divider1 = createDividerContent();
-    divider1.style = "double";
+    divider1.style = "solid";
     divider1.spacing = "medium";
 
-    // Row 4: Key Points (Number Cards)
+    // Row 3: Key Points (Number Cards)
     const point1 = createNumberCardContent();
     point1.number = 1;
-    point1.icon = "✨";
+    point1.icon = "👁️";
     point1.editorContent = {
       type: "doc",
       content: [
         {
           type: "heading",
           attrs: { level: 3 },
-          content: [{ type: "text", text: "Key Insight" }],
+          content: [{ type: "text", text: "Clarity" }],
         },
         {
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Highlight important information with visual emphasis.",
+              text: "Defining a clear path forward.",
             },
           ],
         },
@@ -81,21 +71,21 @@ export const SectionLayout = {
 
     const point2 = createNumberCardContent();
     point2.number = 2;
-    point2.icon = "🎯";
+    point2.icon = "📈";
     point2.editorContent = {
       type: "doc",
       content: [
         {
           type: "heading",
           attrs: { level: 3 },
-          content: [{ type: "text", text: "Main Focus" }],
+          content: [{ type: "text", text: "Growth" }],
         },
         {
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Emphasize core concepts and strategic priorities.",
+              text: "Scaling our impact globally.",
             },
           ],
         },
@@ -104,67 +94,36 @@ export const SectionLayout = {
 
     const point3 = createNumberCardContent();
     point3.number = 3;
-    point3.icon = "💡";
+    point3.icon = "🤝";
     point3.editorContent = {
       type: "doc",
       content: [
         {
           type: "heading",
           attrs: { level: 3 },
-          content: [{ type: "text", text: "Key Takeaway" }],
+          content: [{ type: "text", text: "Community" }],
         },
         {
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Summarize essential points for easy comprehension.",
+              text: "Building stronger connections.",
             },
           ],
         },
       ],
     };
 
-    // Row 5: Divider
+    // Row 4: Divider
     const divider2 = createDividerContent();
     divider2.style = "dotted";
     divider2.spacing = "medium";
 
-    // Row 6: Inspirational Quote
-    const quote = createQuoteContent();
-    quote.quote = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Great presentations are built on clear structure and meaningful content that resonates with the audience.",
-            },
-          ],
-        },
-      ],
-    };
-    quote.author = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [{ type: "text", text: "Presentation Design Expert" }],
-        },
-      ],
-    };
-    quote.style = "centered";
-
     return [
       {
         id: nanoid(),
-        blocks: [headingBlock],
-      },
-      {
-        id: nanoid(),
-        blocks: [subheadingBlock],
+        blocks: [headerBlock],
       },
       {
         id: nanoid(),
@@ -179,21 +138,9 @@ export const SectionLayout = {
       {
         id: nanoid(),
         blocks: [
-          {
-            id: nanoid(),
-            type: BLOCK_TYPES.NUMBER_CARD,
-            content: point1,
-          },
-          {
-            id: nanoid(),
-            type: BLOCK_TYPES.NUMBER_CARD,
-            content: point2,
-          },
-          {
-            id: nanoid(),
-            type: BLOCK_TYPES.NUMBER_CARD,
-            content: point3,
-          },
+          { id: nanoid(), type: BLOCK_TYPES.NUMBER_CARD, content: point1 },
+          { id: nanoid(), type: BLOCK_TYPES.NUMBER_CARD, content: point2 },
+          { id: nanoid(), type: BLOCK_TYPES.NUMBER_CARD, content: point3 },
         ],
       },
       {
@@ -203,16 +150,6 @@ export const SectionLayout = {
             id: nanoid(),
             type: BLOCK_TYPES.DIVIDER,
             content: divider2,
-          },
-        ],
-      },
-      {
-        id: nanoid(),
-        blocks: [
-          {
-            id: nanoid(),
-            type: BLOCK_TYPES.QUOTE,
-            content: quote,
           },
         ],
       },

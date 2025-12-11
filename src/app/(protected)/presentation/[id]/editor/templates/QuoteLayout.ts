@@ -10,11 +10,11 @@ import type { Block } from "@/lib/editor/types";
 export const QuoteLayout = {
   id: "quote-layout",
   name: "Inspirational Quotes",
-  description: "Showcase inspiring quotes with elegant design",
+  description: "Share wisdom with elegant typography",
   icon: "💭",
   getRows: (): Row[] => {
     // Row 1: Section Title
-    const titleBlock: Block = {
+    const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content: {
@@ -22,14 +22,19 @@ export const QuoteLayout = {
         content: [
           {
             type: "heading",
-            attrs: { level: 1 },
-            content: [{ type: "text", text: "Words That Inspire" }],
+            attrs: { level: 2, textAlign: "center" },
+            content: [{ type: "text", text: "Words to Live By" }],
           },
         ],
       },
     };
 
-    // Row 2: First Quote
+    // Row 2: Divider
+    const divider1 = createDividerContent();
+    divider1.style = "dotted";
+    divider1.spacing = "medium";
+
+    // Row 3: Centered Quote
     const quote1 = createQuoteContent();
     quote1.quote = {
       type: "doc",
@@ -39,7 +44,7 @@ export const QuoteLayout = {
           content: [
             {
               type: "text",
-              text: "The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle.",
+              text: "Design is not just what it looks like and feels like. Design is how it works.",
             },
           ],
         },
@@ -53,12 +58,12 @@ export const QuoteLayout = {
     };
     quote1.style = "centered";
 
-    // Row 3: Divider
-    const divider1 = createDividerContent();
-    divider1.style = "dashed";
-    divider1.spacing = "medium";
+    // Row 4: Divider
+    const divider2 = createDividerContent();
+    divider2.style = "dotted";
+    divider2.spacing = "medium";
 
-    // Row 4: Second Quote
+    // Row 5: Pull Quote Style
     const quote2 = createQuoteContent();
     quote2.quote = {
       type: "doc",
@@ -68,7 +73,7 @@ export const QuoteLayout = {
           content: [
             {
               type: "text",
-              text: "Innovation distinguishes between a leader and a follower. The ability to innovate is what separates success from failure.",
+              text: "Simplicity is the ultimate sophistication.",
             },
           ],
         },
@@ -79,16 +84,26 @@ export const QuoteLayout = {
       content: [
         {
           type: "paragraph",
-          content: [{ type: "text", text: "Anonymous" }],
+          content: [{ type: "text", text: "Leonardo da Vinci" }],
         },
       ],
     };
-    quote2.style = "centered";
+    quote2.style = "left-aligned"; // "default" usually implies the left-border/pull-quote style in many systems, assuming handled by block
 
     return [
       {
         id: nanoid(),
-        blocks: [titleBlock],
+        blocks: [headerBlock],
+      },
+      {
+        id: nanoid(),
+        blocks: [
+          {
+            id: nanoid(),
+            type: BLOCK_TYPES.DIVIDER,
+            content: divider1,
+          },
+        ],
       },
       {
         id: nanoid(),
@@ -106,7 +121,7 @@ export const QuoteLayout = {
           {
             id: nanoid(),
             type: BLOCK_TYPES.DIVIDER,
-            content: divider1,
+            content: divider2,
           },
         ],
       },

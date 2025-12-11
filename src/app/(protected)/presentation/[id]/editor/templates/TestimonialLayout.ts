@@ -8,12 +8,12 @@ import type { Block } from "@/lib/editor/types";
 
 export const TestimonialLayout = {
   id: "testimonial-layout",
-  name: "Testimonials",
-  description: "Showcase customer testimonials and social proof",
+  name: "Customer Stories",
+  description: "Share the love from your community",
   icon: "💬",
   getRows: (): Row[] => {
     // Row 1: Section Title
-    const titleBlock: Block = {
+    const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content: {
@@ -21,14 +21,24 @@ export const TestimonialLayout = {
         content: [
           {
             type: "heading",
-            attrs: { level: 1 },
-            content: [{ type: "text", text: "What Our Customers Say" }],
+            attrs: { level: 2, textAlign: "center" },
+            content: [{ type: "text", text: "Trusted by Leaders" }],
+          },
+          {
+            type: "paragraph",
+            attrs: { textAlign: "center" },
+            content: [
+              {
+                type: "text",
+                text: "Don't just take our word for it. Here is what our customers are saying.",
+              },
+            ],
           },
         ],
       },
     };
 
-    // Row 2: First Testimonial
+    // Row 2: Three Testimonials
     const testimonial1 = createTestimonialContent();
     testimonial1.quote = {
       type: "doc",
@@ -63,7 +73,6 @@ export const TestimonialLayout = {
       ],
     };
 
-    // Row 3: Second Testimonial
     const testimonial2 = createTestimonialContent();
     testimonial2.quote = {
       type: "doc",
@@ -98,7 +107,6 @@ export const TestimonialLayout = {
       ],
     };
 
-    // Row 4: Third Testimonial
     const testimonial3 = createTestimonialContent();
     testimonial3.quote = {
       type: "doc",
@@ -136,7 +144,7 @@ export const TestimonialLayout = {
     return [
       {
         id: nanoid(),
-        blocks: [titleBlock],
+        blocks: [headerBlock],
       },
       {
         id: nanoid(),
@@ -146,21 +154,11 @@ export const TestimonialLayout = {
             type: BLOCK_TYPES.TESTIMONIAL,
             content: testimonial1,
           },
-        ],
-      },
-      {
-        id: nanoid(),
-        blocks: [
           {
             id: nanoid(),
             type: BLOCK_TYPES.TESTIMONIAL,
             content: testimonial2,
           },
-        ],
-      },
-      {
-        id: nanoid(),
-        blocks: [
           {
             id: nanoid(),
             type: BLOCK_TYPES.TESTIMONIAL,
