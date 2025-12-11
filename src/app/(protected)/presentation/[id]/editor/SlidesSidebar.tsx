@@ -324,6 +324,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                             onAddRowAtTop={onAddRowAtTop}
                             onAddRowAtBottom={onAddRowAtBottom}
                             onUpdateColumnWidths={onUpdateColumnWidths}
+                            enableDragHints={false}
                           />
                         </div>
                         {/* Slide Number Badge */}

@@ -1,16 +1,28 @@
 import React, { useState } from "react";
-import { useDroppable } from "@dnd-kit/core";
+import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { DroppableRow } from "./DroppableRow";
 import type { Slide } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
 
+const DragStateBridge: React.FC<{
+  onDragChange: (dragging: boolean) => void;
+}> = ({ onDragChange }) => {
+  useDndMonitor({
+    onDragStart: () => onDragChange(true),
+    onDragEnd: () => onDragChange(false),
+    onDragCancel: () => onDragChange(false),
+  });
+  return null;
+};
+
 const InsertDropZone: React.FC<{
   slideId: string;
   insertIndex: number;
   themePrimary: string;
-}> = ({ slideId, insertIndex, themePrimary }) => {
+  isActive: boolean;
+}> = ({ slideId, insertIndex, themePrimary, isActive }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `row-insert-${slideId}-${insertIndex}`,
     data: {
@@ -21,31 +33,32 @@ const InsertDropZone: React.FC<{
   });
 
   return (
-    <div
-      ref={setNodeRef}
-      className="relative h-4 flex items-center transition-all duration-150"
-    >
+    <div className="relative -my-1">
       <div
-        className={`w-full h-[3px] rounded-full transition-all duration-150 ${
-          isOver ? "opacity-100" : "opacity-0 group-hover/slide:opacity-80"
+        ref={setNodeRef}
+        className={`flex items-center justify-center h-8 rounded-lg border border-dashed transition-all duration-150 bg-white/60 backdrop-blur-sm ${
+          isOver || isActive ? "opacity-100 shadow-sm" : "opacity-0"
         }`}
         style={{
-          backgroundColor: themePrimary,
-          boxShadow: isOver ? `0 0 0 4px ${themePrimary}20` : "none",
+          borderColor: `${themePrimary}60`,
+          boxShadow: isOver ? `0 6px 18px ${themePrimary}33` : "none",
         }}
-      />
-      {isOver && (
-        <span
-          className="absolute left-1/2 -translate-x-1/2 -top-7 text-xs font-medium px-2 py-1 rounded-md shadow-sm"
+      >
+        <div
+          className="flex items-center gap-2 text-xs font-medium px-2 py-1 rounded-full"
           style={{
-            backgroundColor: "#fff",
             color: themePrimary,
+            backgroundColor: isOver ? `${themePrimary}10` : "transparent",
             border: `1px solid ${themePrimary}30`,
           }}
         >
-          Drop to create a new row
-        </span>
-      )}
+          <span
+            className="inline-block h-[6px] w-10 rounded-full"
+            style={{ backgroundColor: themePrimary }}
+          />
+          Drop to add row here
+        </div>
+      </div>
     </div>
   );
 };
@@ -62,6 +75,7 @@ interface SlideCardProps {
     rowId: string,
     columnWidths: number[]
   ) => void;
+  enableDragHints?: boolean;
 }
 
 export const SlideCard: React.FC<SlideCardProps> = ({
@@ -72,9 +86,13 @@ export const SlideCard: React.FC<SlideCardProps> = ({
   onAddRowAtTop,
   onAddRowAtBottom,
   onUpdateColumnWidths,
+  enableDragHints = true,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+
+  const dragActive = enableDragHints ? isDragging : false;
 
   return (
     <div
@@ -91,6 +109,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {enableDragHints && <DragStateBridge onDragChange={setIsDragging} />}
       {/* Add Row at Top Button */}
       <button
         onClick={() => onAddRowAtTop(slide.id)}
@@ -134,6 +153,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
           slideId={slide.id}
           insertIndex={0}
           themePrimary={theme.primary}
+          isActive={dragActive}
         />
         {(slide.rows || []).map((row, rowIndex) => (
           <React.Fragment key={row.id}>
@@ -142,6 +162,8 @@ export const SlideCard: React.FC<SlideCardProps> = ({
               slideId={slide.id}
               rowIndex={rowIndex}
               totalRowsInSlide={slide.rows?.length || 0}
+              isDragging={dragActive}
+              enableDragHints={enableDragHints}
               onUpdateBlock={(blockId, content) =>
                 onUpdateBlock(slide.id, blockId, content)
               }
@@ -158,6 +180,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
               slideId={slide.id}
               insertIndex={rowIndex + 1}
               themePrimary={theme.primary}
+              isActive={dragActive}
             />
           </React.Fragment>
         ))}
