@@ -50,6 +50,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   rowCount,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isAnyDragActive, setIsAnyDragActive] = useState(false);
 
@@ -285,7 +286,19 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
       <div className="relative flex items-center">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="w-5 h-full flex items-center justify-center text-gray-400 opacity-0 group-hover/row:opacity-100 hover:text-gray-600 transition-all"
+          className="w-5 h-full flex items-center justify-center transition-all"
+          style={{
+              color: isMenuOpen || isMenuHovered ? theme.primary : withAlpha(theme.primary, 0.4),
+              opacity: 1
+          }}
+          onMouseEnter={(e) => {
+              setIsMenuHovered(true);
+              e.currentTarget.style.color = theme.primary;
+          }}
+          onMouseLeave={(e) => {
+              setIsMenuHovered(false);
+              e.currentTarget.style.color = isMenuOpen ? theme.primary : withAlpha(theme.primary, 0.4);
+          }}
           title="Row options"
         >
           <svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor">
@@ -334,13 +347,13 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           setNodeRef(node);
           rowContainerRef.current = node;
         }}
-        className={`group/row flex-1 grid gap-1 transition-all items-stretch rounded-xl relative border border-transparent`}
+        className={`group/row flex-1 grid gap-1 transition-all items-stretch rounded-xl relative border`}
         style={{
           gridTemplateColumns,
           fontFamily: getFontFamily(theme.fontFamily || "Inter"),
           borderColor: isOver || (dropIndicator && isAnyDragActive)
             ? theme.primary
-            : "transparent",
+            : withAlpha(theme.primary, 0.1),
             backgroundColor: isOver ? withAlpha(theme.primary, 0.05) : "transparent"
         }}
         onMouseEnter={(e) => {
@@ -352,7 +365,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
         onMouseLeave={(e) => {
             handleMouseLeave(); // Call original handler
             if (!isOver && !isDragging) {
-                e.currentTarget.style.borderColor = "transparent";
+                e.currentTarget.style.borderColor = withAlpha(theme.primary, 0.1);
                 e.currentTarget.style.borderStyle = "solid";
             }
         }}
