@@ -62,18 +62,18 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
       >
         <div
           className="p-2 rounded-lg backdrop-blur-sm"
-          style={{
+        style={{
             backgroundColor: isDark
               ? "rgba(15,23,42,0.9)"
               : "rgba(255,255,255,0.92)",
             border: `1px solid ${borderColor}`,
-          }}
-        >
-          <Button
+        }}
+      >
+            <Button
             onClick={handleToggleBlocksPanel}
             variant={isBlocksPanelOpen ? "default" : "ghost"}
-            size="icon"
-            className="h-10 w-10"
+              size="icon"
+              className="h-10 w-10"
             style={{
               backgroundColor: isBlocksPanelOpen
                 ? accent
@@ -101,23 +101,23 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
               style={{
                 color: isBlocksPanelOpen ? "white" : textPrimary,
               }}
-            />
-          </Button>
+              />
+            </Button>
         </div>
         <div
           className="p-2 rounded-lg backdrop-blur-sm"
-          style={{
+            style={{
             backgroundColor: isDark
               ? "rgba(15,23,42,0.9)"
               : "rgba(255,255,255,0.92)",
             border: `1px solid ${borderColor}`,
-          }}
-        >
-          <Button
+            }}
+          >
+            <Button
             onClick={handleToggleThemePanel}
-            variant={isThemePanelOpen ? "default" : "ghost"}
-            size="icon"
-            className="h-10 w-10"
+              variant={isThemePanelOpen ? "default" : "ghost"}
+              size="icon"
+              className="h-10 w-10"
             style={{
               backgroundColor: isThemePanelOpen
                 ? accent
@@ -168,12 +168,12 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
         <div
           data-theme-panel
           className="fixed right-20 top-1/2 -translate-y-1/2 z-50"
-        >
+          >
           <ThemePanel
             isOpen={isThemePanelOpen}
             onClose={() => setIsThemePanelOpen(false)}
           />
-        </div>
+    </div>
       )}
     </>
   );

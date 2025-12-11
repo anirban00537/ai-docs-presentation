@@ -203,8 +203,73 @@ export const useEditorPage = ({
       }
 
       hasLoadedPresentation.current = true;
+
+      // If outlineId exists and presentation has no slides, trigger generation
+      if (
+        outlineId &&
+        presentationId &&
+        !generateAndCreateSlidesMutation.isPending &&
+        !hasStartedGeneration.current &&
+        outlineResponse?.success
+      ) {
+        hasStartedGeneration.current = true;
+        setIsGeneratingSlides(true);
+        dispatch(setSlides([]));
+        setTimeout(() => {
+          generateAndCreateSlidesMutation.mutate({
+            presentationId: presentationId,
+            onChunk: (chunk) => {
+              if (chunk.type === "start") {
+                setSlideGenerationProgress({
+                  current: 0,
+                  total: chunk.totalSlides || 0,
+                });
+                dispatch(setSlides([]));
+              } else if (chunk.type === "slide-start") {
+                setSlideGenerationProgress({
+                  current: chunk.slideNumber || 0,
+                  total: chunk.totalSlides || 0,
+                });
+              } else if (chunk.type === "slide" && chunk.data) {
+                const slide = {
+                  id: chunk.slideId || nanoid(),
+                  rows: chunk.data.rows.map((row: any) => ({
+                    id: row.id || nanoid(),
+                    blocks: row.blocks.map((block: any) => ({
+                      id: block.id || nanoid(),
+                      content: block.content,
+                    })),
+                  })),
+                };
+                const currentSlides = slidesRef.current;
+                dispatch(setSlides([...currentSlides, slide]));
+              } else if (chunk.type === "complete") {
+                setIsGeneratingSlides(false);
+                setSlideGenerationProgress(null);
+                toast.success("Presentation created successfully!");
+              } else if (
+                chunk.type === "slide-error" ||
+                chunk.type === "error"
+              ) {
+                setIsGeneratingSlides(false);
+                setSlideGenerationProgress(null);
+                toast.error(
+                  `Error generating slides: ${chunk.message || "Unknown error"}`
+                );
+              }
+            },
+          });
+        }, 100);
+      }
     }
-  }, [presentationResponse, dispatch]);
+  }, [
+    presentationResponse,
+    dispatch,
+    outlineId,
+    presentationId,
+    outlineResponse,
+    generateAndCreateSlidesMutation,
+  ]);
 
   const startSlideGeneration = useMemo(
     () => (presId: string) => {
@@ -256,11 +321,31 @@ export const useEditorPage = ({
   useEffect(() => {
     if (
       outlineId &&
+      presentationId &&
+      !generateAndCreateSlidesMutation.isPending &&
+      !hasStartedGeneration.current &&
+      hasLoadedPresentation.current &&
+      outlineResponse?.success
+    ) {
+      // Check if presentation has no slides (empty or null slides array)
+      const hasNoSlides =
+        !presentationResponse?.data?.slides ||
+        presentationResponse.data.slides.length === 0 ||
+        slides.length === 0;
+
+      if (hasNoSlides) {
+        hasStartedGeneration.current = true;
+        setIsGeneratingSlides(true);
+        startSlideGeneration(presentationId);
+      }
+    } else if (
+      outlineId &&
       !presentationId &&
       !generateAndCreateSlidesMutation.isPending &&
       !hasStartedGeneration.current &&
       outlineResponse?.success
     ) {
+      // Legacy case: if no presentationId, create one from outline
       const outline = outlineResponse.data as any;
       const linkedPresentationId = outline?.presentationId;
       if (!linkedPresentationId) {
@@ -278,6 +363,8 @@ export const useEditorPage = ({
     outlineId,
     presentationId,
     outlineResponse,
+    presentationResponse,
+    slides,
     generateAndCreateSlidesMutation,
     router,
     startSlideGeneration,

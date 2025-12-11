@@ -34,7 +34,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
   const slidesRef = useRef(slides);
 
   useEffect(() => {
-    slidesRef.current = slides;
+  slidesRef.current = slides;
   }, [slides]);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {

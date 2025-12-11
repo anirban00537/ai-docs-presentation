@@ -37,6 +37,7 @@ export default function OutlinePage() {
     (outlineResponse && !outlineResponse.success
       ? outlineResponse.message
       : null);
+  console.log(outlineResponse?.data?.presentationId, "outlineResponse");
 
   // Also check for stream mutation errors
   const streamError = generateStreamMutation.isError
@@ -138,7 +139,9 @@ export default function OutlinePage() {
   const handleCreatePresentation = () => {
     if (!outlineId) return;
     // Redirect to editor with outlineId - editor will handle creation and generation
-    router.push(`/presentation?outlineId=${outlineId}`);
+    router.push(
+      `/presentation/${outlineResponse?.data?.presentationId}?outlineId=${outlineId}`
+    );
   };
 
   if (isLoading) {
