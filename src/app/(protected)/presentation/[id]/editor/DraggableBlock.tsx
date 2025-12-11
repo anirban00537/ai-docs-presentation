@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { useSortable } from "@dnd-kit/sortable";
+import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { BlockRenderer } from "./blocks/BlockRenderer";
 import { BlockActionBar } from "./BlockActionBar";
@@ -51,27 +51,24 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   const { focusedBlockId, setFocusedBlock } = useBlockFocus();
   const isFocused = focusedBlockId === block.id;
 
-  // Only use sortable if drag handle is not hidden (i.e., not using ResizableColumn)
-  const sortable = useSortable({
-    id: `${slideId}-${block.id}`,
-    data: { type: "block", block, slideId },
-    disabled: hideDragHandle, // Disable when used in ResizableColumn
-  });
-
+  // Only use useDraggable if drag handle is not hidden (i.e., not using ResizableColumn)
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
-    transition,
     isDragging,
-  } = sortable;
+  } = useDraggable({
+    id: `${slideId}-${block.id}`,
+    data: { type: "block", block, slideId, rowId, index: blockIndex },
+    disabled: hideDragHandle, // Disable when used in ResizableColumn
+  });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: CSS.Translate.toString(transform),
     opacity: isDragging ? 0.4 : 1,
     minWidth: 0,
+    zIndex: isDragging ? 200 : undefined,
   };
 
   // Handle block click to set focus

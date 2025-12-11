@@ -1,14 +1,11 @@
 import React, { useState, useRef, useCallback } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
-import {
-  SortableContext,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
 import { ResizableColumn } from "./ResizableColumn";
 import type { Row } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
+import { DropIndicator } from "./DropIndicator";
 
 // Wrapper to safely use useDndMonitor only when inside DndContext
 const DragMonitorBridge: React.FC<{
@@ -54,12 +51,18 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isAnyDragActive, setIsAnyDragActive] = useState(false);
-  const [hoverInsert, setHoverInsert] = useState<{
+  
+  // New state for manual drop indicators
+  // We'll track where the user wants to drop: { index: number }
+  // index 0 = before first block
+  // index 1 = after first block (between 1 and 2)
+  // ...
+  // index N = after last block
+  const [dropIndicator, setDropIndicator] = useState<{
     index: number;
     leftPercent: number;
-    startPercent: number;
-    widthPercent: number;
   } | null>(null);
+
   // Store widths as fractional units (fr) for grid-template-columns
   const [localWidths, setLocalWidths] = useState<number[]>(() => {
     if (row.columnWidths && row.columnWidths.length === row.blocks.length) {
@@ -71,9 +74,17 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   const latestWidthsRef = useRef<number[]>(localWidths);
   const rowContainerRef = useRef<HTMLDivElement>(null);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  
+  // Use unique ID for this row's drop zone to distinguish it
   const { setNodeRef, isOver } = useDroppable({
     id: `row-drop-${slideId}-${row.id}`,
-    data: { type: "row", rowId: row.id, slideId },
+    data: { 
+      type: "row", 
+      rowId: row.id, 
+      slideId,
+      // Pass the calculated insertion index to the drag event
+      insertIndex: dropIndicator?.index ?? row.blocks.length 
+    },
   });
 
   const MAX_COLUMNS = 3;
@@ -170,123 +181,90 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
     onUpdateColumnWidths(row.id, latestWidthsRef.current);
   }, [onUpdateColumnWidths, row.id]);
 
+  // Enhanced mouse move handler to calculate insertion point
   const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      // Show column suggestions when:
-      // 1. Mouse is over this row (isOver) - works for sidebar blocks
-      // 2. Any drag is active and mouse is over this row - works for existing blocks
+    (e: React.MouseEvent<HTMLDivElement> | MouseEvent) => {
       if ((!isOver && !isAnyDragActive) || !rowContainerRef.current) {
-        if (!isOver && !isAnyDragActive) {
-          setHoverInsert(null);
-        }
-        return;
+         if (!isOver && !isAnyDragActive) setDropIndicator(null);
+         return;
       }
+
       const rect = rowContainerRef.current.getBoundingClientRect();
-      const x = e.clientX - rect.left;
+      // If mouse is just outside but dragging is active (safety buffer), or inside
+      // Check if mouse is roughly over this row's vertical area
+      if (e.clientY < rect.top - 20 || e.clientY > rect.bottom + 20) {
+         setDropIndicator(null);
+         return;
+      }
+      
+      const mouseX = e.clientX;
+      const relativeX = mouseX - rect.left;
+      
       const widths = latestWidthsRef.current;
-      if (!widths || widths.length === 0) return;
-      const totalFr = widths.reduce((sum, w) => sum + w, 0);
-      const boundaries: number[] = [0];
-      let accPx = 0;
-      widths.forEach((w) => {
-        accPx += (w / totalFr) * rect.width;
-        boundaries.push(accPx);
-      });
-
-      let insertIndex = boundaries.findIndex((b) => x < b);
-      if (insertIndex === -1 || insertIndex === 0) {
-        insertIndex = boundaries.length - 1;
-      } else {
-        insertIndex = insertIndex - 1;
+      if (!widths || widths.length === 0) {
+          // Empty row case
+          setDropIndicator({ index: 0, leftPercent: 50 });
+          return;
       }
 
-      // Use midpoint between boundaries for indicator
-      const leftPx = boundaries[insertIndex];
-      const rightPx = boundaries[insertIndex + 1];
-      const left = ((leftPx + rightPx) / 2 / rect.width) * 100;
-      const startPercent = (leftPx / rect.width) * 100;
-      const widthPercent = ((rightPx - leftPx) / rect.width) * 100;
-      setHoverInsert({
-        index: insertIndex,
-        leftPercent: Math.min(100, Math.max(0, left)),
-        startPercent: Math.min(100, Math.max(0, startPercent)),
-        widthPercent: Math.max(0, widthPercent),
+      // Calculate split points (boundaries between columns) in pixels
+      const totalFr = widths.reduce((sum, w) => sum + w, 0);
+      let currentLeft = 0;
+      const boundaries: number[] = [0]; // Include start edge
+      
+      widths.forEach((w) => {
+        const pxWidth = (w / totalFr) * rect.width;
+        currentLeft += pxWidth;
+        boundaries.push(currentLeft);
+      });
+      
+      // boundaries now has [0, widthCol1, widthCol1+widthCol2, ..., totalWidth]
+      // Find the closest boundary to the mouse X
+      let closestIndex = 0;
+      let minDistance = Infinity;
+      
+      boundaries.forEach((boundary, index) => {
+        const dist = Math.abs(relativeX - boundary);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestIndex = index;
+        }
+      });
+      
+      // Calculate percent position for the indicator
+      const leftPercent = (boundaries[closestIndex] / rect.width) * 100;
+
+      // Only allow adding new columns if not full, or if we are just rearranging existing ones within limits
+      // But for drop indicator visualization, we show it anyway, and the logic in onDragEnd will decide valid/invalid
+      // Actually, we should probably enforce MAX_COLUMNS visually too if it's a new block? 
+      // For now, let's just show the indicator where the user points.
+      
+      setDropIndicator({
+        index: closestIndex,
+        leftPercent: Math.min(100, Math.max(0, leftPercent))
       });
     },
     [isOver, isAnyDragActive]
   );
 
   const handleMouseLeave = useCallback(() => {
-    setHoverInsert(null);
+    // Only clear if not dragging anything active (but we track global mouse if dragging)
+    // Actually, if we leave boundaries we clear
+    // setDropIndicator(null); 
   }, []);
 
-  // Track global mouse position when dragging over THIS specific row OR when any drag is active
+  // Track global mouse when dragging to ensure smooth indicator updates even if cursor slips out slightly
   React.useEffect(() => {
-    // Show suggestions when:
-    // 1. Mouse is over this row (isOver) - for sidebar blocks
-    // 2. Any drag is active - for existing blocks (we'll check bounds in the handler)
-    if ((!isOver && !isAnyDragActive) || !rowContainerRef.current) {
-      if (!isOver && !isAnyDragActive) {
-        setHoverInsert(null);
-      }
+    if (!isAnyDragActive) {
+      setDropIndicator(null);
       return;
     }
 
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (!rowContainerRef.current) {
-        setHoverInsert(null);
-        return;
-      }
-      const rect = rowContainerRef.current.getBoundingClientRect();
+    const onGlobalMove = (e: MouseEvent) => handleMouseMove(e);
+    window.addEventListener("mousemove", onGlobalMove);
+    return () => window.removeEventListener("mousemove", onGlobalMove);
+  }, [isAnyDragActive, handleMouseMove]);
 
-      // Only show suggestions if mouse is actually over this row
-      if (
-        e.clientX < rect.left ||
-        e.clientX > rect.right ||
-        e.clientY < rect.top ||
-        e.clientY > rect.bottom
-      ) {
-        setHoverInsert(null);
-        return;
-      }
-
-      const x = e.clientX - rect.left;
-      const widths = latestWidthsRef.current;
-      if (!widths || widths.length === 0) return;
-      const totalFr = widths.reduce((sum, w) => sum + w, 0);
-      const boundaries: number[] = [0];
-      let accPx = 0;
-      widths.forEach((w) => {
-        accPx += (w / totalFr) * rect.width;
-        boundaries.push(accPx);
-      });
-
-      let insertIndex = boundaries.findIndex((b) => x < b);
-      if (insertIndex === -1 || insertIndex === 0) {
-        insertIndex = boundaries.length - 1;
-      } else {
-        insertIndex = insertIndex - 1;
-      }
-
-      const leftPx = boundaries[insertIndex];
-      const rightPx = boundaries[insertIndex + 1];
-      const left = ((leftPx + rightPx) / 2 / rect.width) * 100;
-      const startPercent = (leftPx / rect.width) * 100;
-      const widthPercent = ((rightPx - leftPx) / rect.width) * 100;
-      setHoverInsert({
-        index: insertIndex,
-        leftPercent: Math.min(100, Math.max(0, left)),
-        startPercent: Math.min(100, Math.max(0, startPercent)),
-        widthPercent: Math.max(0, widthPercent),
-      });
-    };
-
-    document.addEventListener("mousemove", handleGlobalMouseMove);
-    return () => {
-      document.removeEventListener("mousemove", handleGlobalMouseMove);
-      setHoverInsert(null);
-    };
-  }, [isOver, isAnyDragActive]);
 
   return (
     <div className="group/row relative flex">
@@ -295,11 +273,11 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           onDragStart={() => setIsAnyDragActive(true)}
           onDragEnd={() => {
             setIsAnyDragActive(false);
-            setHoverInsert(null);
+            setDropIndicator(null);
           }}
           onDragCancel={() => {
             setIsAnyDragActive(false);
-            setHoverInsert(null);
+            setDropIndicator(null);
           }}
         />
       )}
@@ -320,7 +298,6 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
         {/* Dropdown Menu */}
         {isMenuOpen && (
           <>
-            {/* Backdrop to close menu */}
             <div
               className="fixed inset-0 z-30"
               onClick={() => setIsMenuOpen(false)}
@@ -358,93 +335,44 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           rowContainerRef.current = node;
         }}
         className={`group/row flex-1 grid transition-all items-stretch rounded-xl relative ${
-          isOver
-            ? "border-2 border-dashed shadow-[0_6px_24px_rgba(0,0,0,0.08)]"
+          (isOver || (dropIndicator && isAnyDragActive))
+            ? "border border-dashed border-gray-300" 
             : "border border-transparent"
         }`}
         style={{
           gridTemplateColumns,
-          borderColor: isOver
-            ? theme.primary
-            : isDragging
-            ? theme.primary + "33"
-            : "transparent",
           fontFamily: getFontFamily(theme.fontFamily || "Inter"),
-          backgroundColor: isOver ? `${theme.primary}0d` : undefined,
         }}
-        onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        <SortableContext
-          items={row.blocks.map((b) => `${slideId}-${b.id}`)}
-          strategy={horizontalListSortingStrategy}
-        >
-          {row.blocks.map((block, index) => (
-            <ResizableColumn
-              key={block.id}
-              block={block}
-              slideId={slideId}
-              rowId={row.id}
-              index={index}
-              totalBlocksInRow={row.blocks.length}
-              rowIndex={rowIndex}
-              totalRowsInSlide={totalRowsInSlide}
-              onUpdate={onUpdateBlock}
-              onAddColumn={onAddColumn}
-              isLastBlock={index === row.blocks.length - 1}
-              canAddColumn={canAddColumn}
-              onResize={handleResize}
-              isResizing={isResizing}
-              onResizeStart={handleResizeStart}
-              onResizeEnd={handleResizeEnd}
-            />
-          ))}
-        </SortableContext>
-        {(isOver || isAnyDragActive) && hoverInsert && (
-          <>
-            <div
-              className="pointer-events-none absolute top-0 bottom-0 rounded-lg"
-              style={{
-                left: `${hoverInsert.startPercent}%`,
-                width: `${hoverInsert.widthPercent}%`,
-                backgroundColor: `${theme.primary}0d`,
-                border: `1px dashed ${theme.primary}66`,
-              }}
-            />
-            <div
-              className="pointer-events-none absolute top-0 bottom-0 flex items-center"
-              style={{
-                left: `calc(${hoverInsert.leftPercent}% - 1px)`,
-              }}
-            >
-              <div
-                className="w-[3px] rounded-full"
-                style={{
-                  height: "80%",
-                  backgroundColor: theme.primary,
-                  boxShadow: `0 0 0 3px ${theme.primary}22`,
-                }}
-              />
-            </div>
-            <div
-              className="pointer-events-none absolute -top-6 flex items-center justify-center"
-              style={{
-                left: `${hoverInsert.leftPercent}%`,
-                transform: "translateX(-50%)",
-              }}
-            >
-              <div
-                className="px-2 py-1 text-[11px] font-medium rounded-full shadow-sm"
-                style={{
-                  color: theme.primary,
-                  backgroundColor: "#fff",
-                  border: `1px solid ${theme.primary}40`,
-                }}
-              >
-                Drop to add column here
-              </div>
-            </div>
-          </>
+        {row.blocks.map((block, index) => (
+          <ResizableColumn
+            key={block.id}
+            block={block}
+            slideId={slideId}
+            rowId={row.id}
+            index={index}
+            totalBlocksInRow={row.blocks.length}
+            rowIndex={rowIndex}
+            totalRowsInSlide={totalRowsInSlide}
+            onUpdate={onUpdateBlock}
+            onAddColumn={onAddColumn}
+            isLastBlock={index === row.blocks.length - 1}
+            canAddColumn={canAddColumn}
+            onResize={handleResize}
+            isResizing={isResizing}
+            onResizeStart={handleResizeStart}
+            onResizeEnd={handleResizeEnd}
+          />
+        ))}
+
+        {/* The Blue Drop Indicator Line */}
+        {isAnyDragActive && dropIndicator && (
+           <DropIndicator 
+             isVisible={true}
+             orientation="vertical"
+             position={`${dropIndicator.leftPercent}%`}
+           />
         )}
       </div>
     </div>

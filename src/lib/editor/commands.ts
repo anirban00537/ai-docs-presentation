@@ -23,6 +23,7 @@ export interface EditorCommandBus {
     slideId: string;
     rowId: string;
     afterBlockId?: string;
+    insertIndex?: number;
     blockType?: string;
   }) => void;
   addRowAtTop: (params: { slideId: string; columnCount?: number }) => void;
@@ -69,8 +70,8 @@ export const createEditorCommandBus = (
 ): EditorCommandBus => ({
   updateBlock: ({ slideId, blockId, content }) =>
     dispatch(updateBlockContent({ slideId, blockId, content })),
-  addBlockAfter: ({ slideId, rowId, afterBlockId, blockType }) =>
-    dispatch(addBlockToRow({ slideId, rowId, afterBlockId, blockType })),
+  addBlockAfter: ({ slideId, rowId, afterBlockId, insertIndex, blockType }) =>
+    dispatch(addBlockToRow({ slideId, rowId, afterBlockId, insertIndex, blockType })),
   addRowAtTop: ({ slideId, columnCount = 1 }) =>
     dispatch(addRowAtTop({ slideId, columnCount })),
   addRowWithColumns: ({ slideId, columnCount, blockType }) =>

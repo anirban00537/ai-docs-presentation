@@ -133,10 +133,11 @@ const slidesSlice = createSlice({
         slideId: string;
         rowId: string;
         afterBlockId?: string;
+        insertIndex?: number;
         blockType?: string;
       }>
     ) => {
-      const { slideId, rowId, afterBlockId, blockType } = action.payload;
+      const { slideId, rowId, afterBlockId, insertIndex, blockType } = action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
       const row = slide.rows.find((r) => r.id === rowId);
@@ -153,7 +154,11 @@ const slidesSlice = createSlice({
 
       const newBlock = createBlockInstance(blockType as any);
 
-      if (afterBlockId) {
+      if (typeof insertIndex === 'number') {
+          // Explicit index insertion
+          const targetIndex = Math.max(0, Math.min(insertIndex, row.blocks.length));
+          row.blocks.splice(targetIndex, 0, newBlock);
+      } else if (afterBlockId) {
         const index = row.blocks.findIndex((b) => b.id === afterBlockId);
         if (index !== -1) {
           row.blocks.splice(index + 1, 0, newBlock);
@@ -162,7 +167,7 @@ const slidesSlice = createSlice({
           row.blocks.push(newBlock);
         }
       } else {
-        // No afterBlockId specified, append to end
+        // No positioning specified, append to end
         row.blocks.push(newBlock);
       }
 

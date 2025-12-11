@@ -20,6 +20,8 @@ interface UseEditorDndParams {
 }
 
 export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
+  // Fix Key Warning: SlideCard.tsx:160 Fragment key should be unique. It was row.id.
+  // Actually, I should update SlideCard separately.
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
   const [isBlockDragging, setIsBlockDragging] = useState(false);
   const [draggingBlockType, setDraggingBlockType] = useState<string | null>(
@@ -82,33 +84,14 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
           if (overData?.type === "row") {
             const rowId = overData.rowId as string;
             const slideId = overData.slideId as string;
-            const slide = slidesRef.current.find((s) => s.id === slideId);
-            const lastBlockId =
-              slide?.rows.find((r) => r.id === rowId)?.blocks.at(-1)?.id ||
-              undefined;
+            const insertIndex = overData.insertIndex as number | undefined;
 
             commandBus.addBlockAfter({
               slideId,
               rowId,
-              afterBlockId: lastBlockId,
+              insertIndex, // Use the new support for direct index insertion
               blockType: draggingBlockType,
             });
-          } else if (overData?.type === "block") {
-            const targetBlockId = overData.block?.id as string;
-            const targetSlideId = overData.slideId as string;
-            const slide = slidesRef.current.find((s) => s.id === targetSlideId);
-            const targetRow = slide?.rows.find((r) =>
-              r.blocks.some((b) => b.id === targetBlockId)
-            );
-
-            if (targetRow) {
-              commandBus.addBlockAfter({
-                slideId: targetSlideId,
-                rowId: targetRow.id,
-                afterBlockId: targetBlockId,
-                blockType: draggingBlockType,
-              });
-            }
           }
         }
 
@@ -150,64 +133,53 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
         return;
       }
 
+      // Handle drop on a specific Row (Insertion Logic)
       if (overData?.type === "row") {
         const targetRowId = overData.rowId as string;
         const targetSlideId = overData.slideId as string;
-        if (targetRowId === sourceRowId && targetSlideId === sourceSlideId)
-          return;
+        const insertIndex = overData.insertIndex as number | undefined;
+        
+        // If we don't have an insert index, we default to end
+        // But with our new system we usually should have one if dropIndicator worked.
+        // If undefined, default to length (append)
+        
+        const targetSlide = slidesRef.current.find((s) => s.id === targetSlideId);
+        if (!targetSlide) return;
+        const targetRow = targetSlide.rows.find((r) => r.id === targetRowId);
+        if (!targetRow) return;
 
+        const finalInsertIndex = insertIndex ?? targetRow.blocks.length;
+
+        // Same Row Reordering
+        if (targetRowId === sourceRowId && targetSlideId === sourceSlideId) {
+            commandBus.reorderBlocksInRow({
+              slideId: sourceSlideId,
+              rowId: sourceRowId,
+              oldIndex: sourceBlockIndex,
+              newIndex: finalInsertIndex,
+            });
+            return;
+        }
+
+        // Move to different row (or specific position in different row)
+        // We use moveBlockButton logic? No, moveBlockToNewRow is for new rows.
+        // We need 'moveBlock' but we need to find targetBlockId from index.
+        
+        let targetBlockId: string | undefined = undefined;
+        if (finalInsertIndex < targetRow.blocks.length) {
+            targetBlockId = targetRow.blocks[finalInsertIndex].id;
+        }
+        
         commandBus.moveBlock({
-          slideId: sourceSlideId,
-          sourceRowId,
-          targetRowId,
-          blockId: sourceBlockId,
+            slideId: sourceSlideId,
+            sourceRowId,
+            targetRowId,
+            blockId: sourceBlockId,
+            targetBlockId, // undefined means append
         });
         return;
       }
 
-      if (overData?.type === "block") {
-        const targetBlockId = overData.block?.id as string;
-        const targetSlideId = overData.slideId as string;
-        if (sourceBlockId === targetBlockId) return;
-
-        let targetRowId: string | null = null;
-        let targetBlockIndex = -1;
-        const targetSlide = slidesRef.current.find(
-          (s) => s.id === targetSlideId
-        );
-        if (targetSlide) {
-          for (const row of targetSlide.rows) {
-            const blockIdx = row.blocks.findIndex(
-              (b) => b.id === targetBlockId
-            );
-            if (blockIdx !== -1) {
-              targetRowId = row.id;
-              targetBlockIndex = blockIdx;
-              break;
-            }
-          }
-        }
-
-        if (!targetRowId || targetBlockIndex === -1) return;
-
-        if (sourceRowId === targetRowId && sourceSlideId === targetSlideId) {
-          commandBus.reorderBlocksInRow({
-            slideId: sourceSlideId,
-            rowId: sourceRowId,
-            oldIndex: sourceBlockIndex,
-            newIndex: targetBlockIndex,
-          });
-          return;
-        }
-
-        commandBus.moveBlock({
-          slideId: sourceSlideId,
-          sourceRowId,
-          targetRowId,
-          blockId: sourceBlockId,
-          targetBlockId,
-        });
-      }
     },
     [commandBus, draggingBlockType, isBlockDragging]
   );

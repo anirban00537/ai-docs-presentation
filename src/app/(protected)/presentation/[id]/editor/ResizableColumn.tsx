@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { useSortable } from "@dnd-kit/sortable";
+import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { DraggableBlock } from "./DraggableBlock";
 import type { Block } from "@/lib/editor/types";
@@ -54,19 +54,18 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
   const {
     attributes,
     listeners,
-    setNodeRef: setSortableRef,
+    setNodeRef,
     transform,
-    transition,
     isDragging,
-  } = useSortable({
+  } = useDraggable({
     id: `${slideId}-${block.id}`,
-    data: { type: "block", block, slideId },
+    data: { type: "block", block, slideId, rowId, index },
   });
 
   const dragStyle = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: CSS.Translate.toString(transform),
     opacity: isDragging ? 0.4 : 1,
+    zIndex: isDragging ? 200 : undefined,
   };
 
   // Resize handlers for border
@@ -124,7 +123,7 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
 
   return (
     <div
-      ref={setSortableRef}
+      ref={setNodeRef}
       style={dragStyle}
       className="group/column relative h-full w-full min-w-0"
       onMouseEnter={() => setIsHovered(true)}
