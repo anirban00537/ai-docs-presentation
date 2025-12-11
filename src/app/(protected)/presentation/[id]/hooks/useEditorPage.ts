@@ -319,21 +319,23 @@ export const useEditorPage = ({
   );
 
   useEffect(() => {
+    // This effect is a backup that only triggers if the first effect didn't handle it
+    // Only run if presentation has been loaded and has no slides in the API response
     if (
       outlineId &&
       presentationId &&
       !generateAndCreateSlidesMutation.isPending &&
       !hasStartedGeneration.current &&
       hasLoadedPresentation.current &&
-      outlineResponse?.success
+      outlineResponse?.success &&
+      presentationResponse?.success
     ) {
-      // Check if presentation has no slides (empty or null slides array)
-      const hasNoSlides =
-        !presentationResponse?.data?.slides ||
-        presentationResponse.data.slides.length === 0 ||
-        slides.length === 0;
+      // IMPORTANT: Only check API response, not Redux state (which might be empty initially)
+      const hasNoSlidesInApi =
+        !presentationResponse.data?.slides ||
+        presentationResponse.data.slides.length === 0;
 
-      if (hasNoSlides) {
+      if (hasNoSlidesInApi) {
         hasStartedGeneration.current = true;
         setIsGeneratingSlides(true);
         startSlideGeneration(presentationId);
@@ -364,7 +366,6 @@ export const useEditorPage = ({
     presentationId,
     outlineResponse,
     presentationResponse,
-    slides,
     generateAndCreateSlidesMutation,
     router,
     startSlideGeneration,
