@@ -203,6 +203,22 @@ const slidesSlice = createSlice({
       const newRow = createRowWithColumns(columnCount, blockType as any);
       slide.rows.push(newRow);
     },
+    addRowWithColumnsAtIndex: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        columnCount: number;
+        insertIndex: number;
+        blockType?: string;
+      }>
+    ) => {
+      const { slideId, columnCount, insertIndex, blockType } = action.payload;
+      const slide = state.slides.find((s) => s.id === slideId);
+      if (!slide) return;
+      const newRow = createRowWithColumns(columnCount, blockType as any);
+      const targetIndex = Math.max(0, Math.min(insertIndex, slide.rows.length));
+      slide.rows.splice(targetIndex, 0, newRow);
+    },
     addRowAtTop: (
       state,
       action: PayloadAction<{ slideId: string; columnCount?: number }>
@@ -490,6 +506,49 @@ const slidesSlice = createSlice({
       block.type = newType;
       block.content = createBlockContentForType(newType as any);
     },
+    moveBlockToNewRow: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        sourceRowId: string;
+        blockId: string;
+        insertIndex: number;
+      }>
+    ) => {
+      const { slideId, sourceRowId, blockId, insertIndex } = action.payload;
+      const slide = state.slides.find((s) => s.id === slideId);
+      if (!slide) return;
+
+      const sourceRowIndex = slide.rows.findIndex((r) => r.id === sourceRowId);
+      if (sourceRowIndex === -1) return;
+
+      const sourceRow = slide.rows[sourceRowIndex];
+      const blockIndex = sourceRow.blocks.findIndex((b) => b.id === blockId);
+      if (blockIndex === -1) return;
+
+      const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
+      if (!movedBlock) return;
+
+      if (sourceRow.blocks.length > 0) {
+        sourceRow.columnWidths = sourceRow.blocks.map(() => 1);
+      }
+
+      let targetIndex = Math.max(0, Math.min(insertIndex, slide.rows.length));
+
+      if (sourceRow.blocks.length === 0) {
+        slide.rows.splice(sourceRowIndex, 1);
+        if (sourceRowIndex < targetIndex) {
+          targetIndex = Math.max(0, targetIndex - 1);
+        }
+      }
+
+      const newRow = createRow([movedBlock]);
+      slide.rows.splice(targetIndex, 0, newRow);
+
+      if (slide.rows.length === 0) {
+        slide.rows.push(createRow());
+      }
+    },
   },
 });
 
@@ -505,10 +564,12 @@ export const {
   addRowToSlide,
   deleteRow,
   addRowWithColumns,
+  addRowWithColumnsAtIndex,
   addRowAtTop,
   setSlideRows,
   replaceSlideWithLayout,
   moveBlock,
+  moveBlockToNewRow,
   reorderBlocksInRow,
   updateColumnWidths,
   duplicateBlock,

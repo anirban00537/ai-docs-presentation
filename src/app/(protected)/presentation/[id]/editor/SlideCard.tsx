@@ -1,9 +1,54 @@
 import React, { useState } from "react";
+import { useDroppable } from "@dnd-kit/core";
 import { DroppableRow } from "./DroppableRow";
 import type { Slide } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
+
+const InsertDropZone: React.FC<{
+  slideId: string;
+  insertIndex: number;
+  themePrimary: string;
+}> = ({ slideId, insertIndex, themePrimary }) => {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `row-insert-${slideId}-${insertIndex}`,
+    data: {
+      type: "row-insert",
+      slideId,
+      insertIndex,
+    },
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className="relative h-4 flex items-center transition-all duration-150"
+    >
+      <div
+        className={`w-full h-[3px] rounded-full transition-all duration-150 ${
+          isOver ? "opacity-100" : "opacity-0 group-hover/slide:opacity-80"
+        }`}
+        style={{
+          backgroundColor: themePrimary,
+          boxShadow: isOver ? `0 0 0 4px ${themePrimary}20` : "none",
+        }}
+      />
+      {isOver && (
+        <span
+          className="absolute left-1/2 -translate-x-1/2 -top-7 text-xs font-medium px-2 py-1 rounded-md shadow-sm"
+          style={{
+            backgroundColor: "#fff",
+            color: themePrimary,
+            border: `1px solid ${themePrimary}30`,
+          }}
+        >
+          Drop to create a new row
+        </span>
+      )}
+    </div>
+  );
+};
 
 interface SlideCardProps {
   slide: Slide;
@@ -84,26 +129,37 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       </button>
 
       {/* Slide Content */}
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <InsertDropZone
+          slideId={slide.id}
+          insertIndex={0}
+          themePrimary={theme.primary}
+        />
         {(slide.rows || []).map((row, rowIndex) => (
-          <DroppableRow
-            key={row.id}
-            row={row}
-            slideId={slide.id}
-            rowIndex={rowIndex}
-            totalRowsInSlide={slide.rows?.length || 0}
-            onUpdateBlock={(blockId, content) =>
-              onUpdateBlock(slide.id, blockId, content)
-            }
-            onDeleteRow={(rowId) => onDeleteRow(slide.id, rowId)}
-            onAddColumn={(rowId, afterBlockId) =>
-              onAddColumn(slide.id, rowId, afterBlockId)
-            }
-            onUpdateColumnWidths={(rowId, columnWidths) =>
-              onUpdateColumnWidths(slide.id, rowId, columnWidths)
-            }
-            rowCount={slide.rows?.length || 0}
-          />
+          <React.Fragment key={row.id}>
+            <DroppableRow
+              row={row}
+              slideId={slide.id}
+              rowIndex={rowIndex}
+              totalRowsInSlide={slide.rows?.length || 0}
+              onUpdateBlock={(blockId, content) =>
+                onUpdateBlock(slide.id, blockId, content)
+              }
+              onDeleteRow={(rowId) => onDeleteRow(slide.id, rowId)}
+              onAddColumn={(rowId, afterBlockId) =>
+                onAddColumn(slide.id, rowId, afterBlockId)
+              }
+              onUpdateColumnWidths={(rowId, columnWidths) =>
+                onUpdateColumnWidths(slide.id, rowId, columnWidths)
+              }
+              rowCount={slide.rows?.length || 0}
+            />
+            <InsertDropZone
+              slideId={slide.id}
+              insertIndex={rowIndex + 1}
+              themePrimary={theme.primary}
+            />
+          </React.Fragment>
         ))}
       </div>
 

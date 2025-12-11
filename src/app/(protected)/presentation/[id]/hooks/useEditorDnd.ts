@@ -34,7 +34,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
   const slidesRef = useRef(slides);
 
   useEffect(() => {
-  slidesRef.current = slides;
+    slidesRef.current = slides;
   }, [slides]);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
@@ -65,6 +65,19 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
 
         if (over && draggingBlockType) {
           const overData = over.data.current;
+
+          if (overData?.type === "row-insert") {
+            const slideId = overData.slideId as string;
+            const insertIndex = Number(overData.insertIndex ?? 0);
+            commandBus.addRowWithColumnsAtIndex({
+              slideId,
+              columnCount: 1,
+              insertIndex,
+              blockType: draggingBlockType,
+            });
+            setDraggingBlockType(null);
+            return;
+          }
 
           if (overData?.type === "row") {
             const rowId = overData.rowId as string;
@@ -125,6 +138,17 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
       }
 
       if (!sourceRowId || sourceBlockIndex === -1) return;
+
+      if (overData?.type === "row-insert") {
+        const insertIndex = Number(overData.insertIndex ?? 0);
+        commandBus.moveBlockToNewRow({
+          slideId: sourceSlideId,
+          sourceRowId,
+          blockId: sourceBlockId,
+          insertIndex,
+        });
+        return;
+      }
 
       if (overData?.type === "row") {
         const targetRowId = overData.rowId as string;
@@ -193,6 +217,12 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
       (args) => {
         const pointerCollisions = pointerWithin(args);
         if (pointerCollisions.length > 0) {
+          const insertCollision = pointerCollisions.find(
+            (c: any) =>
+              c.data?.droppableContainer?.data?.current?.type === "row-insert"
+          );
+          if (insertCollision) return [insertCollision];
+
           if (isBlockDragging) {
             const rowCollision = pointerCollisions.find(
               (c: any) =>

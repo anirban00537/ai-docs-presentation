@@ -2,8 +2,10 @@ import {
   addBlockToRow,
   addRowAtTop,
   addRowWithColumns,
+  addRowWithColumnsAtIndex,
   deleteRow,
   moveBlock,
+  moveBlockToNewRow,
   reorderBlocksInRow,
   updateBlockContent,
   updateColumnWidths,
@@ -29,6 +31,12 @@ export interface EditorCommandBus {
     columnCount: number;
     blockType?: string;
   }) => void;
+  addRowWithColumnsAtIndex: (params: {
+    slideId: string;
+    columnCount: number;
+    insertIndex: number;
+    blockType?: string;
+  }) => void;
   deleteRow: (params: { slideId: string; rowId: string }) => void;
   moveBlock: (params: {
     slideId: string;
@@ -36,6 +44,12 @@ export interface EditorCommandBus {
     targetRowId: string;
     blockId: string;
     targetBlockId?: string;
+  }) => void;
+  moveBlockToNewRow: (params: {
+    slideId: string;
+    sourceRowId: string;
+    blockId: string;
+    insertIndex: number;
   }) => void;
   reorderBlocksInRow: (params: {
     slideId: string;
@@ -50,7 +64,9 @@ export interface EditorCommandBus {
   }) => void;
 }
 
-export const createEditorCommandBus = (dispatch: Dispatch): EditorCommandBus => ({
+export const createEditorCommandBus = (
+  dispatch: Dispatch
+): EditorCommandBus => ({
   updateBlock: ({ slideId, blockId, content }) =>
     dispatch(updateBlockContent({ slideId, blockId, content })),
   addBlockAfter: ({ slideId, rowId, afterBlockId, blockType }) =>
@@ -59,12 +75,24 @@ export const createEditorCommandBus = (dispatch: Dispatch): EditorCommandBus => 
     dispatch(addRowAtTop({ slideId, columnCount })),
   addRowWithColumns: ({ slideId, columnCount, blockType }) =>
     dispatch(addRowWithColumns({ slideId, columnCount, blockType })),
+  addRowWithColumnsAtIndex: ({
+    slideId,
+    columnCount,
+    insertIndex,
+    blockType,
+  }) =>
+    dispatch(
+      addRowWithColumnsAtIndex({ slideId, columnCount, insertIndex, blockType })
+    ),
   deleteRow: ({ slideId, rowId }) => dispatch(deleteRow({ slideId, rowId })),
   moveBlock: ({ slideId, sourceRowId, targetRowId, blockId, targetBlockId }) =>
-    dispatch(moveBlock({ slideId, sourceRowId, targetRowId, blockId, targetBlockId })),
+    dispatch(
+      moveBlock({ slideId, sourceRowId, targetRowId, blockId, targetBlockId })
+    ),
+  moveBlockToNewRow: ({ slideId, sourceRowId, blockId, insertIndex }) =>
+    dispatch(moveBlockToNewRow({ slideId, sourceRowId, blockId, insertIndex })),
   reorderBlocksInRow: ({ slideId, rowId, oldIndex, newIndex }) =>
     dispatch(reorderBlocksInRow({ slideId, rowId, oldIndex, newIndex })),
   updateColumnWidths: ({ slideId, rowId, columnWidths }) =>
     dispatch(updateColumnWidths({ slideId, rowId, columnWidths })),
 });
-
