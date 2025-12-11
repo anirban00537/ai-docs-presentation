@@ -148,7 +148,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       </button>
 
       {/* Slide Content */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         <InsertDropZone
           slideId={slide.id}
           insertIndex={0}
