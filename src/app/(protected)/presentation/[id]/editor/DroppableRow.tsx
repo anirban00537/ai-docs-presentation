@@ -333,7 +333,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           setNodeRef(node);
           rowContainerRef.current = node;
         }}
-        className={`group/row flex-1 grid transition-all items-stretch rounded-xl relative ${
+        className={`group/row flex-1 grid gap-2 transition-all items-stretch rounded-xl relative ${
           isOver || (dropIndicator && isAnyDragActive)
             ? "border border-dashed border-gray-300"
             : "border border-transparent"
