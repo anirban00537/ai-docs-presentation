@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import {
   DndContextProps,
   DragEndEvent,
@@ -10,7 +11,6 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import type { Block, Slide } from "@/lib/editor/types";
 import type { EditorCommandBus } from "@/lib/editor/commands";
 
@@ -20,8 +20,6 @@ interface UseEditorDndParams {
 }
 
 export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
-  // Fix Key Warning: SlideCard.tsx:160 Fragment key should be unique. It was row.id.
-  // Actually, I should update SlideCard separately.
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
   const [isBlockDragging, setIsBlockDragging] = useState(false);
   const [draggingBlockType, setDraggingBlockType] = useState<string | null>(
@@ -30,7 +28,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor)
   );
 
   const slidesRef = useRef(slides);

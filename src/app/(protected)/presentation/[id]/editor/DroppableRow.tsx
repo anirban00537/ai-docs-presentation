@@ -51,7 +51,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isAnyDragActive, setIsAnyDragActive] = useState(false);
-  
+
   // New state for manual drop indicators
   // We'll track where the user wants to drop: { index: number }
   // index 0 = before first block
@@ -74,16 +74,16 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   const latestWidthsRef = useRef<number[]>(localWidths);
   const rowContainerRef = useRef<HTMLDivElement>(null);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
-  
+
   // Use unique ID for this row's drop zone to distinguish it
   const { setNodeRef, isOver } = useDroppable({
     id: `row-drop-${slideId}-${row.id}`,
-    data: { 
-      type: "row", 
-      rowId: row.id, 
+    data: {
+      type: "row",
+      rowId: row.id,
       slideId,
       // Pass the calculated insertion index to the drag event
-      insertIndex: dropIndicator?.index ?? row.blocks.length 
+      insertIndex: dropIndicator?.index ?? row.blocks.length,
     },
   });
 
@@ -185,44 +185,44 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | MouseEvent) => {
       if ((!isOver && !isAnyDragActive) || !rowContainerRef.current) {
-         if (!isOver && !isAnyDragActive) setDropIndicator(null);
-         return;
+        if (!isOver && !isAnyDragActive) setDropIndicator(null);
+        return;
       }
 
       const rect = rowContainerRef.current.getBoundingClientRect();
       // If mouse is just outside but dragging is active (safety buffer), or inside
       // Check if mouse is roughly over this row's vertical area
       if (e.clientY < rect.top - 20 || e.clientY > rect.bottom + 20) {
-         setDropIndicator(null);
-         return;
+        setDropIndicator(null);
+        return;
       }
-      
+
       const mouseX = e.clientX;
       const relativeX = mouseX - rect.left;
-      
+
       const widths = latestWidthsRef.current;
       if (!widths || widths.length === 0) {
-          // Empty row case
-          setDropIndicator({ index: 0, leftPercent: 50 });
-          return;
+        // Empty row case
+        setDropIndicator({ index: 0, leftPercent: 50 });
+        return;
       }
 
       // Calculate split points (boundaries between columns) in pixels
       const totalFr = widths.reduce((sum, w) => sum + w, 0);
       let currentLeft = 0;
       const boundaries: number[] = [0]; // Include start edge
-      
+
       widths.forEach((w) => {
         const pxWidth = (w / totalFr) * rect.width;
         currentLeft += pxWidth;
         boundaries.push(currentLeft);
       });
-      
+
       // boundaries now has [0, widthCol1, widthCol1+widthCol2, ..., totalWidth]
       // Find the closest boundary to the mouse X
       let closestIndex = 0;
       let minDistance = Infinity;
-      
+
       boundaries.forEach((boundary, index) => {
         const dist = Math.abs(relativeX - boundary);
         if (dist < minDistance) {
@@ -230,18 +230,18 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           closestIndex = index;
         }
       });
-      
+
       // Calculate percent position for the indicator
       const leftPercent = (boundaries[closestIndex] / rect.width) * 100;
 
       // Only allow adding new columns if not full, or if we are just rearranging existing ones within limits
       // But for drop indicator visualization, we show it anyway, and the logic in onDragEnd will decide valid/invalid
-      // Actually, we should probably enforce MAX_COLUMNS visually too if it's a new block? 
+      // Actually, we should probably enforce MAX_COLUMNS visually too if it's a new block?
       // For now, let's just show the indicator where the user points.
-      
+
       setDropIndicator({
         index: closestIndex,
-        leftPercent: Math.min(100, Math.max(0, leftPercent))
+        leftPercent: Math.min(100, Math.max(0, leftPercent)),
       });
     },
     [isOver, isAnyDragActive]
@@ -250,7 +250,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   const handleMouseLeave = useCallback(() => {
     // Only clear if not dragging anything active (but we track global mouse if dragging)
     // Actually, if we leave boundaries we clear
-    // setDropIndicator(null); 
+    // setDropIndicator(null);
   }, []);
 
   // Track global mouse when dragging to ensure smooth indicator updates even if cursor slips out slightly
@@ -264,7 +264,6 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
     window.addEventListener("mousemove", onGlobalMove);
     return () => window.removeEventListener("mousemove", onGlobalMove);
   }, [isAnyDragActive, handleMouseMove]);
-
 
   return (
     <div className="group/row relative flex">
@@ -335,8 +334,8 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           rowContainerRef.current = node;
         }}
         className={`group/row flex-1 grid transition-all items-stretch rounded-xl relative ${
-          (isOver || (dropIndicator && isAnyDragActive))
-            ? "border border-dashed border-gray-300" 
+          isOver || (dropIndicator && isAnyDragActive)
+            ? "border border-dashed border-gray-300"
             : "border border-transparent"
         }`}
         style={{
@@ -368,11 +367,11 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
 
         {/* The Blue Drop Indicator Line */}
         {isAnyDragActive && dropIndicator && (
-           <DropIndicator 
-             isVisible={true}
-             orientation="vertical"
-             position={`${dropIndicator.leftPercent}%`}
-           />
+          <DropIndicator
+            isVisible={true}
+            orientation="vertical"
+            position={`${dropIndicator.leftPercent}%`}
+          />
         )}
       </div>
     </div>
