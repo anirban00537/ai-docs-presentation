@@ -6,6 +6,7 @@ import {
   moveBlock,
   reorderBlocksInRow,
   updateBlockContent,
+  updateColumnWidths,
 } from "@/store/slices/slidesSlice";
 
 type Dispatch = (action: any) => void;
@@ -42,6 +43,11 @@ export interface EditorCommandBus {
     oldIndex: number;
     newIndex: number;
   }) => void;
+  updateColumnWidths: (params: {
+    slideId: string;
+    rowId: string;
+    columnWidths: number[];
+  }) => void;
 }
 
 export const createEditorCommandBus = (dispatch: Dispatch): EditorCommandBus => ({
@@ -58,5 +64,7 @@ export const createEditorCommandBus = (dispatch: Dispatch): EditorCommandBus => 
     dispatch(moveBlock({ slideId, sourceRowId, targetRowId, blockId, targetBlockId })),
   reorderBlocksInRow: ({ slideId, rowId, oldIndex, newIndex }) =>
     dispatch(reorderBlocksInRow({ slideId, rowId, oldIndex, newIndex })),
+  updateColumnWidths: ({ slideId, rowId, columnWidths }) =>
+    dispatch(updateColumnWidths({ slideId, rowId, columnWidths })),
 });
 

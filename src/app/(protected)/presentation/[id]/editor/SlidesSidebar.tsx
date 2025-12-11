@@ -33,6 +33,11 @@ interface SlidesSidebarProps {
   onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
   onAddRowAtTop: (slideId: string) => void;
   onAddRowAtBottom: (slideId: string) => void;
+  onUpdateColumnWidths: (
+    slideId: string,
+    rowId: string,
+    columnWidths: number[]
+  ) => void;
 }
 
 export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
@@ -42,6 +47,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
   onAddColumn,
   onAddRowAtTop,
   onAddRowAtBottom,
+  onUpdateColumnWidths,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -317,6 +323,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                             onAddColumn={onAddColumn}
                             onAddRowAtTop={onAddRowAtTop}
                             onAddRowAtBottom={onAddRowAtBottom}
+                            onUpdateColumnWidths={onUpdateColumnWidths}
                           />
                         </div>
                         {/* Slide Number Badge */}

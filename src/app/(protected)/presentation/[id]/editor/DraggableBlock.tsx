@@ -14,6 +14,7 @@ interface DraggableBlockProps {
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   isLastBlock: boolean;
   canAddColumn: boolean;
+  hideDragHandle?: boolean;
 }
 
 export const DraggableBlock: React.FC<DraggableBlockProps> = ({
@@ -24,8 +25,17 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   onAddColumn,
   isLastBlock,
   canAddColumn,
+  hideDragHandle = false,
 }) => {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+
+  // Only use sortable if drag handle is not hidden (i.e., not using ResizableColumn)
+  const sortable = useSortable({
+    id: `${slideId}-${block.id}`,
+    data: { type: "block", block, slideId },
+    disabled: hideDragHandle, // Disable when used in ResizableColumn
+  });
+
   const {
     attributes,
     listeners,
@@ -33,10 +43,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({
-    id: `${slideId}-${block.id}`,
-    data: { type: "block", block, slideId },
-  });
+  } = sortable;
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -49,49 +56,30 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="group/block relative min-w-0 flex-1"
+      className="group/block relative min-w-0 h-full w-full"
     >
       <div
-        className={`relative p-2 transition-all ${
+        className={`relative p-2 transition-all h-full ${
           isDragging ? "bg-blue-50" : ""
-        } ${
-          !isLastBlock
-            ? "border-r border-transparent group-hover/row:border-opacity-30"
-            : ""
         }`}
-        style={
-          !isLastBlock
-            ? {
-                borderRightColor: "transparent",
-              }
-            : undefined
-        }
-        onMouseEnter={(e) => {
-          if (!isLastBlock) {
-            e.currentTarget.style.borderRightColor = theme.primary + "30";
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!isLastBlock) {
-            e.currentTarget.style.borderRightColor = "transparent";
-          }
-        }}
       >
-        {/* Drag Handle */}
-        <div
-          {...attributes}
-          {...listeners}
-          className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-8 cursor-grab opacity-0 group-hover/block:opacity-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-all z-10"
-        >
-          <svg width="6" height="14" viewBox="0 0 6 14" fill="currentColor">
-            <circle cx="1.5" cy="1.5" r="1.5" />
-            <circle cx="4.5" cy="1.5" r="1.5" />
-            <circle cx="1.5" cy="7" r="1.5" />
-            <circle cx="4.5" cy="7" r="1.5" />
-            <circle cx="1.5" cy="12.5" r="1.5" />
-            <circle cx="4.5" cy="12.5" r="1.5" />
-          </svg>
-        </div>
+        {/* Drag Handle - Only show if not hidden */}
+        {!hideDragHandle && (
+          <div
+            {...attributes}
+            {...listeners}
+            className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-8 cursor-grab opacity-0 group-hover/block:opacity-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-all z-10"
+          >
+            <svg width="6" height="14" viewBox="0 0 6 14" fill="currentColor">
+              <circle cx="1.5" cy="1.5" r="1.5" />
+              <circle cx="4.5" cy="1.5" r="1.5" />
+              <circle cx="1.5" cy="7" r="1.5" />
+              <circle cx="4.5" cy="7" r="1.5" />
+              <circle cx="1.5" cy="12.5" r="1.5" />
+              <circle cx="4.5" cy="12.5" r="1.5" />
+            </svg>
+          </div>
+        )}
 
         {/* Add Column Button - Only on last block and if can add more */}
         {isLastBlock && canAddColumn && (

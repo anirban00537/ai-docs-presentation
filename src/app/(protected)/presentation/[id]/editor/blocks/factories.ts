@@ -15,10 +15,16 @@ export const createBlockInstance = (
   content: createBlockContentForType(type),
 });
 
-export const createRow = (blocks?: Block[]): Row => ({
-  id: nanoid(),
-  blocks: blocks?.length ? blocks : [createBlockInstance()],
-});
+export const createRow = (blocks?: Block[]): Row => {
+  const rowBlocks = blocks?.length ? blocks : [createBlockInstance()];
+  // Initialize equal column widths as fractional units (fr) for CSS Grid
+  const columnWidths = rowBlocks.map(() => 1);
+  return {
+    id: nanoid(),
+    blocks: rowBlocks,
+    columnWidths,
+  };
+};
 
 export const createRowWithColumns = (
   columnCount: number,
@@ -36,4 +42,3 @@ export const createSlide = (): Slide => ({
   id: nanoid(),
   rows: [createRow()],
 });
-

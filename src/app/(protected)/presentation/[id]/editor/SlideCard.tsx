@@ -12,6 +12,11 @@ interface SlideCardProps {
   onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
   onAddRowAtTop: (slideId: string) => void;
   onAddRowAtBottom: (slideId: string) => void;
+  onUpdateColumnWidths: (
+    slideId: string,
+    rowId: string,
+    columnWidths: number[]
+  ) => void;
 }
 
 export const SlideCard: React.FC<SlideCardProps> = ({
@@ -21,6 +26,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
   onAddColumn,
   onAddRowAtTop,
   onAddRowAtBottom,
+  onUpdateColumnWidths,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
@@ -90,6 +96,9 @@ export const SlideCard: React.FC<SlideCardProps> = ({
             onDeleteRow={(rowId) => onDeleteRow(slide.id, rowId)}
             onAddColumn={(rowId, afterBlockId) =>
               onAddColumn(slide.id, rowId, afterBlockId)
+            }
+            onUpdateColumnWidths={(rowId, columnWidths) =>
+              onUpdateColumnWidths(slide.id, rowId, columnWidths)
             }
             rowCount={slide.rows?.length || 0}
           />

@@ -36,6 +36,7 @@ const GammaPage = () => {
     handleAddColumn,
     handleAddRowAtTop,
     handleAddRowAtBottom,
+    handleUpdateColumnWidths,
   } = useEditorPage({ presentationId, outlineId });
 
   return (
@@ -59,6 +60,7 @@ const GammaPage = () => {
           onAddColumn={handleAddColumn}
           onAddRowAtTop={handleAddRowAtTop}
           onAddRowAtBottom={handleAddRowAtBottom}
+          onUpdateColumnWidths={handleUpdateColumnWidths}
         />
 
         <div className="max-w-[1200px] mx-auto p-8 pr-20">
@@ -86,6 +88,7 @@ const GammaPage = () => {
                       onAddColumn={handleAddColumn}
                       onAddRowAtTop={handleAddRowAtTop}
                       onAddRowAtBottom={handleAddRowAtBottom}
+                      onUpdateColumnWidths={handleUpdateColumnWidths}
                     />
                   </div>
                 ))}

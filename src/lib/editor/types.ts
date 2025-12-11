@@ -7,6 +7,7 @@ export interface Block {
 export interface Row {
   id: string;
   blocks: Block[];
+  columnWidths?: number[]; // Array of widths in percentages or pixels (e.g., [33.33, 33.33, 33.34])
 }
 
 export interface Slide {
@@ -43,4 +44,3 @@ export interface PresentationInfo {
   updatedAt: string;
   lastViewedAt: string | null;
 }
-

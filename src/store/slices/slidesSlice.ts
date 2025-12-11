@@ -82,6 +82,10 @@ const slidesSlice = createSlice({
       duplicated.id = nanoid();
       duplicated.rows.forEach((row) => {
         row.id = nanoid();
+        // Preserve column widths if they exist, otherwise initialize to equal fractional units
+        if (!row.columnWidths && row.blocks.length > 0) {
+          row.columnWidths = row.blocks.map(() => 1);
+        }
         row.blocks.forEach((block) => {
           block.id = nanoid();
         });
@@ -161,6 +165,10 @@ const slidesSlice = createSlice({
         // No afterBlockId specified, append to end
         row.blocks.push(newBlock);
       }
+
+      // Recalculate column widths to be equal (fractional units for CSS Grid)
+      const newBlockCount = row.blocks.length;
+      row.columnWidths = row.blocks.map(() => 1);
     },
     addRowToSlide: (
       state,
@@ -259,6 +267,12 @@ const slidesSlice = createSlice({
         const adjustedTargetIndex =
           blockIndex < targetIndex ? targetIndex - 1 : targetIndex;
         sourceRow.blocks.splice(adjustedTargetIndex, 0, movedBlock);
+
+        // Reorder column widths to match block order
+        if (sourceRow.columnWidths && sourceRow.columnWidths.length > 0) {
+          const [movedWidth] = sourceRow.columnWidths.splice(blockIndex, 1);
+          sourceRow.columnWidths.splice(adjustedTargetIndex, 0, movedWidth);
+        }
         return;
       }
 
@@ -281,6 +295,14 @@ const slidesSlice = createSlice({
         }
       } else {
         targetRow.blocks.push(movedBlock);
+      }
+
+      // Recalculate column widths for both rows (fractional units for CSS Grid)
+      if (sourceRow.blocks.length > 0) {
+        sourceRow.columnWidths = sourceRow.blocks.map(() => 1);
+      }
+      if (targetRow.blocks.length > 0) {
+        targetRow.columnWidths = targetRow.blocks.map(() => 1);
       }
 
       // Remove empty rows
@@ -362,6 +384,27 @@ const slidesSlice = createSlice({
       );
 
       row.blocks.splice(finalIndex, 0, movedBlock);
+
+      // Reorder column widths to match block order
+      if (row.columnWidths && row.columnWidths.length === row.blocks.length) {
+        const [movedWidth] = row.columnWidths.splice(oldIndex, 1);
+        row.columnWidths.splice(finalIndex, 0, movedWidth);
+      }
+    },
+    updateColumnWidths: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        rowId: string;
+        columnWidths: number[];
+      }>
+    ) => {
+      const { slideId, rowId, columnWidths } = action.payload;
+      const slide = state.slides.find((s) => s.id === slideId);
+      if (!slide) return;
+      const row = slide.rows.find((r) => r.id === rowId);
+      if (!row) return;
+      row.columnWidths = columnWidths;
     },
   },
 });
@@ -383,6 +426,7 @@ export const {
   replaceSlideWithLayout,
   moveBlock,
   reorderBlocksInRow,
+  updateColumnWidths,
   setTheme,
   resetTheme,
   setPresentation,

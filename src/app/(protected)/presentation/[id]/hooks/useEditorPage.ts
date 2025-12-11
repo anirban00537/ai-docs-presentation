@@ -446,6 +446,14 @@ export const useEditorPage = ({
     commandBus.addRowWithColumns({ slideId, columnCount: 1 });
   };
 
+  const handleUpdateColumnWidths = (
+    slideId: string,
+    rowId: string,
+    columnWidths: number[]
+  ) => {
+    commandBus.updateColumnWidths({ slideId, rowId, columnWidths });
+  };
+
   const handleAddSlide = () => {
     dispatch(addSlide({}));
   };
@@ -474,6 +482,7 @@ export const useEditorPage = ({
     handleAddColumn,
     handleAddRowAtTop,
     handleAddRowAtBottom,
+    handleUpdateColumnWidths,
     presentationId,
   };
 };
