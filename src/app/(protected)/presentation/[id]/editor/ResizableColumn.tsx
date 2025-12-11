@@ -125,7 +125,7 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
     <div
       ref={setNodeRef}
       style={dragStyle}
-      className="group/column relative h-full w-full min-w-0"
+      className="group/column relative h-full w-full min-w-0 border border-transparent group-hover/slide:border-dashed group-hover/slide:border-gray-300/50 rounded-lg"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

@@ -336,7 +336,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
         className={`group/row flex-1 grid gap-1 transition-all items-stretch rounded-xl relative ${
           isOver || (dropIndicator && isAnyDragActive)
             ? "border border-dashed border-gray-300"
-            : "border border-transparent"
+            : "border border-transparent group-hover/slide:border-dashed group-hover/slide:border-gray-300/50"
         }`}
         style={{
           gridTemplateColumns,
