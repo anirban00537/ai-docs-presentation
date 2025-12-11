@@ -31,15 +31,20 @@ const createDefaultHeadingContent = (): ProseMirrorDocument => ({
   ],
 });
 
-export const createParagraphContent = (): ProseMirrorDocument => ({
+export const createParagraphContent = (text: string = ""): ProseMirrorDocument => ({
   type: "doc",
-  content: [
-    {
-      type: "paragraph",
-      content: [],
-    },
-  ],
+  content: [{ type: "paragraph", content: text ? [{ type: "text", text }] : [] }],
 });
 
-export const getDefaultHeadingContent = createDefaultHeadingContent;
+export const withAlpha = (color: string, opacity: number): string => {
+  // Simple hex to rgba conversion
+  if (color.startsWith("#")) {
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+  return color; // Fallback
+};
 
+export const getDefaultHeadingContent = createDefaultHeadingContent;

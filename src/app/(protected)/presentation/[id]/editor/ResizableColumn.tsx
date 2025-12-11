@@ -5,6 +5,7 @@ import { DraggableBlock } from "./DraggableBlock";
 import type { Block } from "@/lib/editor/types";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { withAlpha } from "./blocks/definitions/common";
 
 interface ResizableColumnProps {
   block: Block;
@@ -124,10 +125,21 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
   return (
     <div
       ref={setNodeRef}
-      style={dragStyle}
-      className="group/column relative h-full w-full min-w-0 border border-transparent group-hover/slide:border-dashed group-hover/slide:border-gray-300/50 rounded-lg"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="group/column relative h-full w-full min-w-0 border border-transparent rounded-lg transition-colors duration-200"
+      style={{
+        ...dragStyle,
+        borderColor: isHovered || isBorderHovered 
+          ? withAlpha(theme.primary, 0.5) 
+          : "transparent"
+      }}
+      onMouseEnter={(e) => {
+        setIsHovered(true);
+        e.currentTarget.style.borderColor = withAlpha(theme.primary, 0.5);
+      }}
+      onMouseLeave={(e) => {
+        setIsHovered(false);
+        e.currentTarget.style.borderColor = "transparent";
+      }}
     >
       <div className="relative h-full w-full flex flex-col">
         {/* Drag Handle - Top center of column (for drag and drop) */}

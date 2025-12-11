@@ -6,6 +6,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
 import { DropIndicator } from "./DropIndicator";
+import { withAlpha } from "./blocks/definitions/common";
 
 // Wrapper to safely use useDndMonitor only when inside DndContext
 const DragMonitorBridge: React.FC<{
@@ -333,16 +334,28 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           setNodeRef(node);
           rowContainerRef.current = node;
         }}
-        className={`group/row flex-1 grid gap-1 transition-all items-stretch rounded-xl relative ${
-          isOver || (dropIndicator && isAnyDragActive)
-            ? "border border-dashed border-gray-300"
-            : "border border-transparent group-hover/slide:border-dashed group-hover/slide:border-gray-300/50"
-        }`}
+        className={`group/row flex-1 grid gap-1 transition-all items-stretch rounded-xl relative border border-transparent`}
         style={{
           gridTemplateColumns,
           fontFamily: getFontFamily(theme.fontFamily || "Inter"),
+          borderColor: isOver || (dropIndicator && isAnyDragActive)
+            ? theme.primary
+            : "transparent",
+            backgroundColor: isOver ? withAlpha(theme.primary, 0.05) : "transparent"
         }}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={(e) => {
+           if (!isOver && !isDragging) {
+             e.currentTarget.style.borderColor = withAlpha(theme.primary, 0.3);
+             e.currentTarget.style.borderStyle = "dashed";
+           }
+        }}
+        onMouseLeave={(e) => {
+            handleMouseLeave(); // Call original handler
+            if (!isOver && !isDragging) {
+                e.currentTarget.style.borderColor = "transparent";
+                e.currentTarget.style.borderStyle = "solid";
+            }
+        }}
       >
         {row.blocks.map((block, index) => (
           <ResizableColumn

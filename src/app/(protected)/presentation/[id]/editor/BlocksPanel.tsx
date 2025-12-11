@@ -42,7 +42,7 @@ const DraggableBlockOption: React.FC<
       data: { type: "block-option", blockType },
     });
 
-  const accent = isDark ? "#60a5fa" : "#2563eb";
+  const accent = theme.primary;
   const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
   const textSecondary = isDark ? "#cbd5e1" : "#475569";
   const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
