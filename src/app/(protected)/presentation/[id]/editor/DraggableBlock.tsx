@@ -205,13 +205,10 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
           <div
             {...attributes}
             {...listeners}
-            className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-8 cursor-grab flex items-center justify-center transition-all z-10"
+            className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-8 cursor-grab opacity-0 group-hover/block:opacity-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-all z-10"
             style={{
                 color: theme.primary,
-                opacity: 0.5
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.5"; }}
           >
             <svg width="6" height="14" viewBox="0 0 6 14" fill="currentColor">
               <circle cx="1.5" cy="1.5" r="1.5" />

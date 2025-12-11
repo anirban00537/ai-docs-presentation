@@ -50,7 +50,6 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   rowCount,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isAnyDragActive, setIsAnyDragActive] = useState(false);
 
@@ -286,18 +285,15 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
       <div className="relative flex items-center">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="w-5 h-full flex items-center justify-center transition-all"
+          className="w-5 h-full flex items-center justify-center text-gray-400 opacity-0 group-hover/row:opacity-100 transition-all"
           style={{
-              color: isMenuOpen || isMenuHovered ? theme.primary : withAlpha(theme.primary, 0.4),
-              opacity: 1
+              color: isMenuOpen ? theme.primary : undefined,
           }}
           onMouseEnter={(e) => {
-              setIsMenuHovered(true);
               e.currentTarget.style.color = theme.primary;
           }}
           onMouseLeave={(e) => {
-              setIsMenuHovered(false);
-              e.currentTarget.style.color = isMenuOpen ? theme.primary : withAlpha(theme.primary, 0.4);
+              e.currentTarget.style.color = isMenuOpen ? theme.primary : "";
           }}
           title="Row options"
         >
@@ -353,7 +349,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           fontFamily: getFontFamily(theme.fontFamily || "Inter"),
           borderColor: isOver || (dropIndicator && isAnyDragActive)
             ? theme.primary
-            : withAlpha(theme.primary, 0.1),
+            : "transparent",
             backgroundColor: isOver ? withAlpha(theme.primary, 0.05) : "transparent"
         }}
         onMouseEnter={(e) => {
@@ -365,7 +361,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
         onMouseLeave={(e) => {
             handleMouseLeave(); // Call original handler
             if (!isOver && !isDragging) {
-                e.currentTarget.style.borderColor = withAlpha(theme.primary, 0.1);
+                e.currentTarget.style.borderColor = "transparent";
                 e.currentTarget.style.borderStyle = "solid";
             }
         }}

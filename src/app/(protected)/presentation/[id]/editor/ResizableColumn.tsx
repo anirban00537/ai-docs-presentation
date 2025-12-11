@@ -125,20 +125,15 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
   return (
     <div
       ref={setNodeRef}
-      className="group/column relative h-full w-full min-w-0 border rounded-lg transition-colors duration-200"
+      className="group/column relative h-full w-full min-w-0 border border-transparent rounded-lg transition-colors duration-200"
       style={{
         ...dragStyle,
-        borderColor: isHovered || isBorderHovered 
-          ? withAlpha(theme.primary, 0.5) 
-          : withAlpha(theme.primary, 0.1)
       }}
       onMouseEnter={(e) => {
         setIsHovered(true);
-        e.currentTarget.style.borderColor = withAlpha(theme.primary, 0.5);
       }}
       onMouseLeave={(e) => {
         setIsHovered(false);
-        e.currentTarget.style.borderColor = withAlpha(theme.primary, 0.1);
       }}
     >
       <div className="relative h-full w-full flex flex-col">
@@ -146,29 +141,30 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
         <div
           {...attributes}
           {...listeners}
-          className={`absolute flex items-center justify-center w-[26px] h-4 font-bold text-xs z-30 transition-all duration-200 cursor-grab active:cursor-grabbing`}
+          className={`absolute flex items-center justify-center w-[26px] h-4 font-bold text-xs z-30 transition-all duration-200 cursor-grab active:cursor-grabbing ${
+            isHovered
+              ? "opacity-100"
+              : "opacity-0 group-hover/column:opacity-100"
+          }`}
           onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = theme.primary;
               e.currentTarget.style.color = "white";
-              e.currentTarget.style.opacity = "1";
           }}
           onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = withAlpha(theme.cardBackground, 0.9);
+              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
               e.currentTarget.style.color = theme.primary;
-              e.currentTarget.style.opacity = "0.6";
           }}
           style={{
             top: 0,
             left: "50%",
             transform: "translateY(-50%) translateX(-50%)",
-            backgroundColor: withAlpha(theme.cardBackground, 0.9),
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
             backdropFilter: "blur(8px)",
             border: `1px solid ${withAlpha(theme.primary, 0.2)}`,
             borderRadius: "4px",
             boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
             color: theme.primary,
             paddingTop: "1px",
-            opacity: 0.6
           }}
         >
           <span className="select-none">⋯</span>
