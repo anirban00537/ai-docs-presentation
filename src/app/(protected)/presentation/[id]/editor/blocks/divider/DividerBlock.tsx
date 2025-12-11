@@ -1,6 +1,7 @@
 import React from "react";
 import type { Block, Theme } from "@/lib/editor/types";
 import { createDividerContent, type DividerContent } from "../definitions";
+import { withAlpha } from "../utils";
 
 interface DividerBlockProps {
   block: Block;
@@ -8,15 +9,6 @@ interface DividerBlockProps {
   theme: Theme;
   placeholder?: string;
 }
-
-const applyAlpha = (hex: string, alpha: number): string => {
-  const raw = hex?.replace("#", "");
-  if (raw.length !== 6) return hex;
-  const r = parseInt(raw.substring(0, 2), 16);
-  const g = parseInt(raw.substring(2, 4), 16);
-  const b = parseInt(raw.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
 
 export const DividerBlock: React.FC<DividerBlockProps> = ({
   block,
@@ -45,33 +37,27 @@ export const DividerBlock: React.FC<DividerBlockProps> = ({
       className={`w-full h-full ${spacingMap[spacing]} flex items-center justify-center`}
     >
       {style === "double" ? (
-        <div className="w-full flex flex-col gap-2">
+        <div className="w-full flex flex-col gap-1.5 opacity-60">
           <div
-            className="w-full h-0.5"
+            className="w-full h-px"
             style={{
-              borderTop: `2px ${borderStyleMap[style]} ${applyAlpha(
-                theme.primary,
-                0.3
-              )}`,
+              backgroundColor: withAlpha(theme.primary, 0.3),
             }}
           />
           <div
-            className="w-full h-0.5"
+            className="w-full h-px"
             style={{
-              borderTop: `2px ${borderStyleMap[style]} ${applyAlpha(
-                theme.primary,
-                0.3
-              )}`,
+               backgroundColor: withAlpha(theme.primary, 0.3),
             }}
           />
         </div>
       ) : (
         <div
-          className="w-full"
+          className="w-full opacity-60"
           style={{
-            borderTop: `1px ${borderStyleMap[style]} ${applyAlpha(
+            borderTop: `1px ${borderStyleMap[style]} ${withAlpha(
               theme.primary,
-              0.2
+              0.3
             )}`,
           }}
         />
@@ -79,3 +65,4 @@ export const DividerBlock: React.FC<DividerBlockProps> = ({
     </div>
   );
 };
+

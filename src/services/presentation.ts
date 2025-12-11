@@ -20,6 +20,8 @@ export interface CreatePlanFromPromptDto {
   numberOfSlides: number;
 }
 
+export type CreateFromPromptPayload = CreatePlanFromPromptDto;
+
 export interface CreateOutlineDto {
   prompt: string;
   numberOfSlides: number;

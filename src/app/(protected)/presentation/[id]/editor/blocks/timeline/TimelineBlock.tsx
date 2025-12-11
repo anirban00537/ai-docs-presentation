@@ -7,6 +7,7 @@ import {
   type TimelineStep,
 } from "../definitions";
 import { TimelineStepComponent } from "./TimelineStep";
+import { withAlpha } from "../utils";
 
 interface TimelineBlockProps {
   block: Block;
@@ -14,15 +15,6 @@ interface TimelineBlockProps {
   theme: Theme;
   placeholder?: string;
 }
-
-const applyAlpha = (hex: string, alpha: number): string => {
-  const raw = hex?.replace("#", "");
-  if (raw.length !== 6) return hex;
-  const r = parseInt(raw.substring(0, 2), 16);
-  const g = parseInt(raw.substring(2, 4), 16);
-  const b = parseInt(raw.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
 
 export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   block,
@@ -75,33 +67,33 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   );
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col py-4">
       {/* Optional Title */}
       {title && (
-        <div className="mb-8">
+        <div className="mb-10 pl-2">
           <ProseMirrorEditor
             key={`${block.id}-title`}
             blockId={`${block.id}-title`}
             value={title}
             onChange={handleTitleChange}
             placeholder="Timeline title"
-            className="text-2xl font-bold"
+            className="text-2xl font-bold tracking-tight"
           />
         </div>
       )}
 
       {/* Timeline Steps */}
-      <div className="relative">
+      <div className="relative pl-4">
         {/* Vertical Line */}
         <div
-          className="absolute left-6 top-0 bottom-0 w-0.5"
+          className="absolute left-[23px] top-4 bottom-8 w-px border-l-2 border-dashed"
           style={{
-            backgroundColor: applyAlpha(theme.primary, 0.2),
+            borderColor: withAlpha(theme.primary, 0.3),
           }}
         />
 
         {/* Steps */}
-        <div className="space-y-8">
+        <div className="space-y-10">
           {steps.map((step: TimelineStep, index: number) => (
             <TimelineStepComponent
               key={index}
@@ -118,3 +110,4 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
     </div>
   );
 };
+

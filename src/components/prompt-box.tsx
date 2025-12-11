@@ -56,6 +56,7 @@ export function PromptBox() {
     try {
       const response = await createFromPromptMutation.mutateAsync({
         prompt: prompt.trim(),
+        numberOfSlides: 8,
       });
 
       if (response.success && response.data) {

@@ -5,6 +5,7 @@ import {
   createTestimonialContent,
   type TestimonialContent,
 } from "../definitions";
+import { withAlpha } from "../utils";
 
 interface TestimonialBlockProps {
   block: Block;
@@ -75,48 +76,60 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
 
   return (
     <div
-      className="w-full h-full rounded-xl p-6 shadow-sm flex gap-4"
+      className="group w-full h-full rounded-2xl p-8 flex flex-col gap-6 relative overflow-hidden transition-all"
       style={{
-        color: theme.bodyColor,
-        backgroundColor: theme.cardBackground,
-        border: `1px solid ${theme.primary}20`,
+        color: theme.bodyColor || theme.headingColor,
+        backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.75),
+        backdropFilter: "blur(12px)",
+        border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
+        boxShadow: `0 4px 12px -2px ${withAlpha(theme.primary, 0.05)}`,
       }}
     >
-      <div className="shrink-0">
-        <div
-          className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center text-sm font-medium"
-          style={{
-            backgroundColor: theme.primary + "15",
-            border: `1px solid ${theme.primary}30`,
-            color: theme.headingColor,
-          }}
-        >
-          {extractText(nameDoc)
-            .split(" ")
-            .map((part: string) => part[0])
-            .join("")
-            .slice(0, 2) || "JD"}
-        </div>
+      {/* Large Quote Watermark */}
+      <div 
+        className="absolute top-4 right-6 text-9xl leading-none opacity-5 font-serif select-none pointer-events-none transition-transform group-hover:scale-110 duration-500 origin-top-right"
+        style={{ color: theme.primary }}
+      >
+        "
       </div>
 
-      <div className="flex-1 flex flex-col gap-3 min-w-0">
+      <div className="relative z-10 flex-1 min-w-0">
         <ProseMirrorEditor
           key={block.id}
           blockId={block.id}
           value={quoteDoc}
           onChange={handleQuoteChange}
           placeholder={placeholder ?? "Add a testimonial or quote..."}
-          className="text-lg"
+          className="text-xl italic font-medium leading-relaxed"
         />
+      </div>
 
-        <div className="flex flex-col gap-2">
+      <div className="relative z-10 flex items-center gap-4 pt-4 border-t" style={{ borderColor: withAlpha(theme.primary, 0.1) }}>
+        <div className="shrink-0">
+          <div
+            className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center text-sm font-bold shadow-sm"
+            style={{
+              backgroundColor: theme.primary,
+              color: theme.cardBackground,
+              boxShadow: `0 2px 8px ${withAlpha(theme.primary, 0.25)}`
+            }}
+          >
+            {extractText(nameDoc)
+              .split(" ")
+              .map((part: string) => part[0])
+              .join("")
+              .slice(0, 2) || "JD"}
+          </div>
+        </div>
+
+        <div className="flex flex-col">
           <ProseMirrorEditor
             key={`${block.id}-name`}
             blockId={`${block.id}-name`}
             value={nameDoc}
             onChange={handleNameChange}
             placeholder="Name"
-            className="text-base"
+            className="text-base font-semibold"
           />
           <ProseMirrorEditor
             key={`${block.id}-role`}
@@ -124,10 +137,11 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
             value={roleDoc}
             onChange={handleRoleChange}
             placeholder="Role"
-            className="text-sm"
+            className="text-xs font-medium uppercase tracking-wide opacity-70"
           />
         </div>
       </div>
     </div>
   );
 };
+
