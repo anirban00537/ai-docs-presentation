@@ -5,6 +5,7 @@ import {
   deleteSlide as deleteSlideAction,
   setActiveSlide as setActiveSlideAction,
   setSlides as setSlidesAction,
+  replaceSlideWithServerData,
   Slide,
 } from "@/store/slices/slidesSlice";
 import {
@@ -158,16 +159,68 @@ export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
     if (addSlideAction.match(action)) {
       const newSlide = state.slides.slides[state.slides.slides.length - 1];
       if (newSlide) {
+        const clientId = newSlide.id; // Store client-side ID
         const apiData = convertReduxSlideToApi(newSlide);
         createSlide(currentPresentationId, {
           ...apiData,
-          order: state.slides.slides.length - 1,
+          // Don't send order - let backend calculate maxOrder + 1 to add at the end
         })
-          .then(() => {
-            // Update previous state after successful creation
-            previousSlidesState = JSON.parse(
-              JSON.stringify(state.slides.slides)
-            );
+          .then((response) => {
+            if (response.success && response.data) {
+              // Get current state to preserve any updates (like template rows)
+              const currentState = store.getState();
+              const currentSlide = currentState.slides.slides.find(
+                (s) => s.id === clientId
+              );
+
+              // Convert API Slide format to Redux Slide format
+              // Preserve current rows if they exist (template may have been applied)
+              const serverSlide: Slide = {
+                id: response.data.id,
+                rows: currentSlide?.rows?.length
+                  ? currentSlide.rows // Use current rows if template was applied
+                  : response.data.data?.rows || [], // Otherwise use server rows
+              };
+
+              // Replace client-side slide with server-side slide
+              store.dispatch(
+                replaceSlideWithServerData({
+                  clientId,
+                  serverSlide,
+                })
+              );
+
+              // If template was applied, immediately sync to server
+              if (currentSlide?.rows?.length) {
+                const finalState = store.getState();
+                const finalSlide = finalState.slides.slides.find(
+                  (s) => s.id === response.data.id
+                );
+                if (finalSlide) {
+                  const updateData = convertReduxSlideToApi(finalSlide);
+                  updateSlide(currentPresentationId, finalSlide.id, updateData)
+                    .then(() => {
+                      // Update previous state after successful update
+                      const updatedState = store.getState();
+                      previousSlidesState = JSON.parse(
+                        JSON.stringify(updatedState.slides.slides)
+                      );
+                    })
+                    .catch((error) => {
+                      console.error(
+                        "Failed to update slide with template:",
+                        error
+                      );
+                    });
+                }
+              } else {
+                // Update previous state after successful creation
+                const updatedState = store.getState();
+                previousSlidesState = JSON.parse(
+                  JSON.stringify(updatedState.slides.slides)
+                );
+              }
+            }
           })
           .catch((error) => {
             console.error("Failed to create slide:", error);
@@ -185,9 +238,7 @@ export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
       deleteSlide(currentPresentationId, slideId)
         .then(() => {
           // Update previous state after successful deletion
-          previousSlidesState = JSON.parse(
-            JSON.stringify(state.slides.slides)
-          );
+          previousSlidesState = JSON.parse(JSON.stringify(state.slides.slides));
         })
         .catch((error) => {
           console.error("Failed to delete slide:", error);

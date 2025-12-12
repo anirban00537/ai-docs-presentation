@@ -110,6 +110,35 @@ const slidesSlice = createSlice({
         state.activeSlideId = state.slides[0]?.id || null;
       }
     },
+    updateSlideId: (
+      state,
+      action: PayloadAction<{ oldId: string; newId: string }>
+    ) => {
+      const { oldId, newId } = action.payload;
+      const slideIndex = state.slides.findIndex((s) => s.id === oldId);
+      if (slideIndex !== -1) {
+        state.slides[slideIndex].id = newId;
+        // Update activeSlideId if it was the old ID
+        if (state.activeSlideId === oldId) {
+          state.activeSlideId = newId;
+        }
+      }
+    },
+    replaceSlideWithServerData: (
+      state,
+      action: PayloadAction<{ clientId: string; serverSlide: Slide }>
+    ) => {
+      const { clientId, serverSlide } = action.payload;
+      const slideIndex = state.slides.findIndex((s) => s.id === clientId);
+      if (slideIndex !== -1) {
+        // Replace the client-side slide with server-side slide
+        state.slides[slideIndex] = serverSlide;
+        // Update activeSlideId if it was the client ID
+        if (state.activeSlideId === clientId) {
+          state.activeSlideId = serverSlide.id;
+        }
+      }
+    },
 
     // Row actions (within active slide)
     updateBlockContent: (
@@ -582,6 +611,8 @@ export const {
   duplicateSlide,
   reorderSlides,
   setSlides,
+  updateSlideId,
+  replaceSlideWithServerData,
   updateBlockContent,
   addBlockToRow,
   addRowToSlide,
