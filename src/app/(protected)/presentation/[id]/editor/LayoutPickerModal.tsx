@@ -33,16 +33,48 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
       <DialogContent
         className="max-w-3xl max-h-[80vh] overflow-y-auto"
         style={{
-          backgroundColor: isDark ? "rgba(12,12,14,0.95)" : theme.cardBackground,
+          backgroundColor: isDark
+            ? "rgba(12,12,14,0.95)"
+            : theme.cardBackground,
           borderColor: borderColor,
         }}
       >
         <DialogHeader>
-          <DialogTitle style={{ color: textPrimary }}>Choose a Layout</DialogTitle>
+          <DialogTitle style={{ color: textPrimary }}>
+            Choose a Layout
+          </DialogTitle>
           <DialogDescription style={{ color: textSecondary }}>
             Select a layout template to apply to your slide
           </DialogDescription>
         </DialogHeader>
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={async () => {
+              // DEMO: Insert all templates at once with delays
+              onClose(); // Close modal first
+              for (let i = 0; i < layoutTemplates.length; i++) {
+                onSelectLayout(layoutTemplates[i]);
+                // Wait for the slide to be created and layout applied
+                // The delay allows the useEffect in SlidesSidebar to process each template
+                await new Promise((resolve) => setTimeout(resolve, 300));
+              }
+            }}
+            className="px-4 py-2 rounded-lg font-medium text-sm transition-all hover:scale-105"
+            style={{
+              backgroundColor: accent,
+              color: "#ffffff",
+              border: "none",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = "0.9";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = "1";
+            }}
+          >
+            [DEMO] Insert All Templates
+          </button>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
           {layoutTemplates.map((template) => (
             <button
@@ -94,4 +126,3 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
     </Dialog>
   );
 };
-
