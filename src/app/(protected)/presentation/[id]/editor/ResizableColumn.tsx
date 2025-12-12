@@ -2,10 +2,18 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { DraggableBlock } from "./DraggableBlock";
+import { useBlockFocus } from "./BlockFocusContext";
 import type { Block } from "@/lib/editor/types";
-import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { selectTheme, DEFAULT_THEME, deleteBlock } from "@/store/slices/slidesSlice";
 import { withAlpha } from "./blocks/definitions/common";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Trash2 } from "lucide-react";
 
 interface ResizableColumnProps {
   block: Block;
@@ -48,6 +56,12 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
   const startXRef = useRef<number>(0);
   const lastXRef = useRef<number>(0);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const dispatch = useAppDispatch();
+  const { setFocusedBlock } = useBlockFocus();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const handleStartRef = useRef<{ x: number, y: number } | null>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
+  const wasDraggingRef = useRef(false);
   const mouseMoveHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
   const mouseUpHandlerRef = useRef<(() => void) | null>(null);
 
@@ -137,37 +151,90 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
       }}
     >
       <div className="relative h-full w-full flex flex-col">
-        {/* Drag Handle - Top center of column (for drag and drop) */}
+        {/* Column Controls - Top center */}
         <div
-          {...attributes}
-          {...listeners}
-          className={`absolute flex items-center justify-center w-[26px] h-4 font-bold text-xs z-30 transition-all duration-200 cursor-grab active:cursor-grabbing ${
+          className={`absolute flex items-center justify-center gap-1 z-30 transition-all duration-200 ${
             isHovered
               ? "opacity-100"
               : "opacity-0 group-hover/column:opacity-100"
           }`}
-          onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = theme.primary;
-              e.currentTarget.style.color = "white";
-          }}
-          onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-              e.currentTarget.style.color = theme.primary;
-          }}
           style={{
             top: 0,
             left: "50%",
             transform: "translateY(-50%) translateX(-50%)",
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            backdropFilter: "blur(8px)",
-            border: `1px solid ${withAlpha(theme.primary, 0.2)}`,
-            borderRadius: "4px",
-            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-            color: theme.primary,
-            paddingTop: "1px",
           }}
         >
-          <span className="select-none">⋯</span>
+          {/* Drag Handle - separate from menu trigger */}
+          <div
+              ref={handleRef}
+              {...attributes}
+              {...listeners}
+              className="flex items-center justify-center w-[26px] h-4 cursor-grab active:cursor-grabbing rounded transition-all outline-none"
+              onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = theme.primary;
+                  e.currentTarget.style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+                  e.currentTarget.style.color = theme.primary;
+              }}
+              onPointerDown={(e) => {
+                  handleStartRef.current = { x: e.clientX, y: e.clientY };
+                  wasDraggingRef.current = false;
+                  // Pass event to dnd-kit listeners to start drag
+                  listeners?.onPointerDown?.(e);
+              }}
+              onPointerMove={() => {
+                  // If pointer moves after down, it's a drag
+                  if (handleStartRef.current) {
+                      wasDraggingRef.current = true;
+                  }
+              }}
+              onPointerUp={(e) => {
+                   // Only open menu if it was a click (no drag movement)
+                   if (!wasDraggingRef.current && handleStartRef.current) {
+                       const dist = Math.sqrt(
+                           Math.pow(e.clientX - handleStartRef.current.x, 2) +
+                           Math.pow(e.clientY - handleStartRef.current.y, 2)
+                       );
+                       if (dist < 5) {
+                           e.preventDefault();
+                           e.stopPropagation();
+                           setFocusedBlock(block.id);
+                           setIsMenuOpen(true);
+                       }
+                   }
+                   handleStartRef.current = null;
+              }}
+              style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                  backdropFilter: "blur(8px)",
+                  border: `1px solid ${withAlpha(theme.primary, 0.2)}`,
+                  color: theme.primary,
+                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+              }}
+          >
+              <span className="select-none text-xs font-bold">⋯</span>
+          </div>
+          
+          {/* Menu positioned relative to handle */}
+          <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <DropdownMenuTrigger asChild>
+                <span className="sr-only">Options</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" sideOffset={4}>
+              <DropdownMenuItem 
+                className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                onClick={() => {
+                    dispatch(deleteBlock({ slideId, rowId, blockId: block.id }));
+                    setIsMenuOpen(false);
+                }}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Column
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <DraggableBlock
