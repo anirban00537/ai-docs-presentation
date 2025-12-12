@@ -6,6 +6,7 @@ export interface TestimonialContent {
   quote: ProseMirrorDocument;
   name: ProseMirrorDocument;
   role: ProseMirrorDocument;
+  avatar?: string;
 }
 
 export const createTestimonialContent = (): TestimonialContent => ({
@@ -26,6 +27,7 @@ export const createTestimonialContent = (): TestimonialContent => ({
       },
     ],
   },
+  avatar: "",
 });
 
 const hasValidDoc = (doc?: ProseMirrorDocument) =>
@@ -45,8 +47,8 @@ export const normalizeTestimonialContent = (
       role: hasValidDoc(incoming.role)
         ? incoming.role
         : createTestimonialContent().role,
+      avatar: incoming.avatar ?? "",
     };
   }
   return createTestimonialContent();
 };
-
