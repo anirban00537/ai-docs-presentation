@@ -19,7 +19,6 @@ import { ProgressLayout } from "./templates/ProgressLayout";
 import { SocialProofLayout } from "./templates/SocialProofLayout";
 import { AwardsLayout } from "./templates/AwardsLayout";
 import { ProblemHeroLayout } from "./templates/ProblemHeroLayout";
-import { TitleTaglineLayout } from "./templates/TitleTaglineLayout";
 import { ProblemStatementLayout } from "./templates/ProblemStatementLayout";
 import { ProblemImageLayout } from "./templates/ProblemImageLayout";
 import { ProblemSupportingPointsLayout } from "./templates/ProblemSupportingPointsLayout";
@@ -66,7 +65,6 @@ export const layoutTemplates: LayoutTemplate[] = [
   SocialProofLayout,
   AwardsLayout,
   ProblemHeroLayout,
-  TitleTaglineLayout,
   ProblemStatementLayout,
   ProblemImageLayout,
   ProblemSupportingPointsLayout,
