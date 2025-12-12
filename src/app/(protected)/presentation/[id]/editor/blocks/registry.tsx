@@ -15,6 +15,16 @@ import { TimelineBlock } from "./timeline/TimelineBlock";
 import { TeamCardBlock } from "./team/TeamCardBlock";
 import { PricingCardBlock } from "./pricing/PricingCardBlock";
 import { ImageGalleryBlock } from "./gallery/ImageGalleryBlock";
+import { StatsCounterBlock } from "./stats-counter/StatsCounterBlock";
+import { FeatureListBlock } from "./feature-list/FeatureListBlock";
+import { ComparisonTableBlock } from "./comparison-table/ComparisonTableBlock";
+import { FAQBlock } from "./faq/FAQBlock";
+import { LogoGridBlock } from "./logo-grid/LogoGridBlock";
+import { VideoBlock } from "./video/VideoBlock";
+import { CodeBlock } from "./code/CodeBlock";
+import { ProgressBarBlock } from "./progress-bar/ProgressBarBlock";
+import { SocialProofBlock } from "./social-proof/SocialProofBlock";
+import { BadgeBlock } from "./badge/BadgeBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -63,8 +73,7 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
   [BLOCK_TYPES.DIVIDER]: {
     type: BLOCK_TYPES.DIVIDER,
     component: DividerBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.DIVIDER, content),
+    normalize: (content) => normalizeBlockContent(BLOCK_TYPES.DIVIDER, content),
   },
   [BLOCK_TYPES.TIMELINE]: {
     type: BLOCK_TYPES.TIMELINE,
@@ -89,6 +98,62 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: ImageGalleryBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.IMAGE_GALLERY, content),
+  },
+  [BLOCK_TYPES.STATS_COUNTER]: {
+    type: BLOCK_TYPES.STATS_COUNTER,
+    component: StatsCounterBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.STATS_COUNTER, content),
+  },
+  [BLOCK_TYPES.FEATURE_LIST]: {
+    type: BLOCK_TYPES.FEATURE_LIST,
+    component: FeatureListBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.FEATURE_LIST, content),
+  },
+  [BLOCK_TYPES.COMPARISON_TABLE]: {
+    type: BLOCK_TYPES.COMPARISON_TABLE,
+    component: ComparisonTableBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.COMPARISON_TABLE, content),
+  },
+  [BLOCK_TYPES.FAQ]: {
+    type: BLOCK_TYPES.FAQ,
+    component: FAQBlock,
+    normalize: (content) => normalizeBlockContent(BLOCK_TYPES.FAQ, content),
+  },
+  [BLOCK_TYPES.LOGO_GRID]: {
+    type: BLOCK_TYPES.LOGO_GRID,
+    component: LogoGridBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.LOGO_GRID, content),
+  },
+  [BLOCK_TYPES.VIDEO]: {
+    type: BLOCK_TYPES.VIDEO,
+    component: VideoBlock,
+    normalize: (content) => normalizeBlockContent(BLOCK_TYPES.VIDEO, content),
+  },
+  [BLOCK_TYPES.CODE]: {
+    type: BLOCK_TYPES.CODE,
+    component: CodeBlock,
+    normalize: (content) => normalizeBlockContent(BLOCK_TYPES.CODE, content),
+  },
+  [BLOCK_TYPES.PROGRESS_BAR]: {
+    type: BLOCK_TYPES.PROGRESS_BAR,
+    component: ProgressBarBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.PROGRESS_BAR, content),
+  },
+  [BLOCK_TYPES.SOCIAL_PROOF]: {
+    type: BLOCK_TYPES.SOCIAL_PROOF,
+    component: SocialProofBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.SOCIAL_PROOF, content),
+  },
+  [BLOCK_TYPES.BADGE]: {
+    type: BLOCK_TYPES.BADGE,
+    component: BadgeBlock,
+    normalize: (content) => normalizeBlockContent(BLOCK_TYPES.BADGE, content),
   },
 };
 

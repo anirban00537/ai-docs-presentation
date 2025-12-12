@@ -9,6 +9,16 @@ export const BLOCK_TYPES = {
   TEAM_CARD: "team-card",
   PRICING_CARD: "pricing-card",
   IMAGE_GALLERY: "image-gallery",
+  STATS_COUNTER: "stats-counter",
+  FEATURE_LIST: "feature-list",
+  COMPARISON_TABLE: "comparison-table",
+  FAQ: "faq",
+  LOGO_GRID: "logo-grid",
+  VIDEO: "video",
+  CODE: "code",
+  PROGRESS_BAR: "progress-bar",
+  SOCIAL_PROOF: "social-proof",
+  BADGE: "badge",
 } as const;
 
 export type BlockType = (typeof BLOCK_TYPES)[keyof typeof BLOCK_TYPES];
@@ -31,9 +41,13 @@ const createDefaultHeadingContent = (): ProseMirrorDocument => ({
   ],
 });
 
-export const createParagraphContent = (text: string = ""): ProseMirrorDocument => ({
+export const createParagraphContent = (
+  text: string = ""
+): ProseMirrorDocument => ({
   type: "doc",
-  content: [{ type: "paragraph", content: text ? [{ type: "text", text }] : [] }],
+  content: [
+    { type: "paragraph", content: text ? [{ type: "text", text }] : [] },
+  ],
 });
 
 export const withAlpha = (color: string, opacity: number): string => {

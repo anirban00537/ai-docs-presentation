@@ -18,6 +18,16 @@ import {
   IconUsers,
   IconCreditCard,
   IconPhoto,
+  IconChartBar,
+  IconListCheck,
+  IconTable,
+  IconHelp,
+  IconBrandAppstore,
+  IconVideo,
+  IconCode,
+  IconProgress,
+  IconBrandTwitter,
+  IconAward,
 } from "@tabler/icons-react";
 
 interface BlocksPanelProps {
@@ -64,11 +74,15 @@ const DraggableBlockOption: React.FC<
         className="flex items-start gap-3 p-3 rounded-lg border transition-all hover:shadow-md"
         style={{
           backgroundColor: isDragging
-            ? (isDark ? "rgba(96,165,250,0.15)" : "rgba(37,99,235,0.1)")
+            ? isDark
+              ? "rgba(96,165,250,0.15)"
+              : "rgba(37,99,235,0.1)"
             : "transparent",
           borderColor: isDragging
             ? accent
-            : (isDark ? "rgba(255,255,255,0.08)" : "rgba(148,163,184,0.2)"),
+            : isDark
+            ? "rgba(255,255,255,0.08)"
+            : "rgba(148,163,184,0.2)",
           color: textPrimary,
         }}
         onMouseEnter={(e) => {
@@ -171,9 +185,72 @@ const blockDefinitions = [
     label: "Image Gallery",
     description: "Grid layout for multiple images",
   },
+  {
+    type: BLOCK_TYPES.STATS_COUNTER,
+    icon: <IconChartBar className="w-6 h-6" />,
+    label: "Stats Counter",
+    description: "Animated statistics and metrics",
+  },
+  {
+    type: BLOCK_TYPES.FEATURE_LIST,
+    icon: <IconListCheck className="w-6 h-6" />,
+    label: "Feature List",
+    description: "Showcase features with icons",
+  },
+  {
+    type: BLOCK_TYPES.COMPARISON_TABLE,
+    icon: <IconTable className="w-6 h-6" />,
+    label: "Comparison Table",
+    description: "Compare features side-by-side",
+  },
+  {
+    type: BLOCK_TYPES.FAQ,
+    icon: <IconHelp className="w-6 h-6" />,
+    label: "FAQ",
+    description: "Expandable questions and answers",
+  },
+  {
+    type: BLOCK_TYPES.LOGO_GRID,
+    icon: <IconBrandAppstore className="w-6 h-6" />,
+    label: "Logo Grid",
+    description: "Showcase partners and clients",
+  },
+  {
+    type: BLOCK_TYPES.VIDEO,
+    icon: <IconVideo className="w-6 h-6" />,
+    label: "Video",
+    description: "Embed YouTube or Vimeo videos",
+  },
+  {
+    type: BLOCK_TYPES.CODE,
+    icon: <IconCode className="w-6 h-6" />,
+    label: "Code Block",
+    description: "Syntax-highlighted code snippets",
+  },
+  {
+    type: BLOCK_TYPES.PROGRESS_BAR,
+    icon: <IconProgress className="w-6 h-6" />,
+    label: "Progress Bar",
+    description: "Animated progress indicators",
+  },
+  {
+    type: BLOCK_TYPES.SOCIAL_PROOF,
+    icon: <IconBrandTwitter className="w-6 h-6" />,
+    label: "Social Proof",
+    description: "Social media stats and ratings",
+  },
+  {
+    type: BLOCK_TYPES.BADGE,
+    icon: <IconAward className="w-6 h-6" />,
+    label: "Badge",
+    description: "Awards and certifications",
+  },
 ];
 
-export const BlocksPanel: React.FC<BlocksPanelProps> = ({ isOpen, onClose }) => {
+export const BlocksPanel: React.FC<BlocksPanelProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
   const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
@@ -291,4 +368,3 @@ export const BlocksPanel: React.FC<BlocksPanelProps> = ({ isOpen, onClose }) => 
     </AnimatePresence>
   );
 };
-
