@@ -137,7 +137,8 @@ const slidesSlice = createSlice({
         blockType?: string;
       }>
     ) => {
-      const { slideId, rowId, afterBlockId, insertIndex, blockType } = action.payload;
+      const { slideId, rowId, afterBlockId, insertIndex, blockType } =
+        action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
       const row = slide.rows.find((r) => r.id === rowId);
@@ -154,10 +155,13 @@ const slidesSlice = createSlice({
 
       const newBlock = createBlockInstance(blockType as any);
 
-      if (typeof insertIndex === 'number') {
-          // Explicit index insertion
-          const targetIndex = Math.max(0, Math.min(insertIndex, row.blocks.length));
-          row.blocks.splice(targetIndex, 0, newBlock);
+      if (typeof insertIndex === "number") {
+        // Explicit index insertion
+        const targetIndex = Math.max(
+          0,
+          Math.min(insertIndex, row.blocks.length)
+        );
+        row.blocks.splice(targetIndex, 0, newBlock);
       } else if (afterBlockId) {
         const index = row.blocks.findIndex((b) => b.id === afterBlockId);
         if (index !== -1) {
@@ -364,7 +368,7 @@ const slidesSlice = createSlice({
       const row = slide.rows.find((r) => r.id === rowId);
       if (!row) return;
       if (oldIndex < 0 || oldIndex >= row.blocks.length) return;
-      if (newIndex < 0 || newIndex >= row.blocks.length) return;
+      if (newIndex < 0 || newIndex > row.blocks.length) return;
       if (oldIndex === newIndex) return;
 
       // Move block from oldIndex to newIndex (not swap)
@@ -374,9 +378,17 @@ const slidesSlice = createSlice({
       const originalContent = blockToMove.content;
 
       const [movedBlock] = row.blocks.splice(oldIndex, 1);
+      // Keep column widths in sync while we move the block
+      let movedWidth: number | undefined;
+      if (row.columnWidths && row.columnWidths.length > oldIndex) {
+        movedWidth = row.columnWidths.splice(oldIndex, 1)[0];
+      }
 
       if (!movedBlock || movedBlock.id !== blockToMove.id) {
         row.blocks.splice(oldIndex, 0, blockToMove);
+        if (movedWidth !== undefined && row.columnWidths) {
+          row.columnWidths.splice(oldIndex, 0, movedWidth);
+        }
         return;
       }
 
@@ -407,9 +419,15 @@ const slidesSlice = createSlice({
       row.blocks.splice(finalIndex, 0, movedBlock);
 
       // Reorder column widths to match block order
-      if (row.columnWidths && row.columnWidths.length === row.blocks.length) {
-        const [movedWidth] = row.columnWidths.splice(oldIndex, 1);
-        row.columnWidths.splice(finalIndex, 0, movedWidth);
+      if (row.columnWidths) {
+        const widthToInsert = movedWidth !== undefined ? movedWidth : 1;
+        const safeIndex = Math.max(
+          0,
+          Math.min(finalIndex, row.columnWidths.length)
+        );
+        row.columnWidths.splice(safeIndex, 0, widthToInsert);
+      } else {
+        row.columnWidths = row.blocks.map(() => 1);
       }
     },
     updateColumnWidths: (

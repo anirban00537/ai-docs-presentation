@@ -185,37 +185,49 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
   const customCollisionDetection: DndContextProps["collisionDetection"] =
     useCallback<NonNullable<DndContextProps["collisionDetection"]>>(
       (args) => {
+        // 1. First check if pointer is strictly inside a droppable (highest precision)
         const pointerCollisions = pointerWithin(args);
+        
         if (pointerCollisions.length > 0) {
+          // Priority 1: Row Insertion (between rows) - distinct zones
           const insertCollision = pointerCollisions.find(
             (c: any) =>
               c.data?.droppableContainer?.data?.current?.type === "row-insert"
           );
           if (insertCollision) return [insertCollision];
 
-          if (isBlockDragging) {
-            const rowCollision = pointerCollisions.find(
-              (c: any) =>
-                c.data?.droppableContainer?.data?.current?.type === "row"
-            );
-            if (rowCollision) return [rowCollision];
-            const blockCollision = pointerCollisions.find(
-              (c: any) =>
-                c.data?.droppableContainer?.data?.current?.type === "block"
-            );
-            if (blockCollision) return [blockCollision];
-          }
-
-          const blockCollision = pointerCollisions.find(
+          // Priority 2: Row Drop (inside a row)
+          // We prefer the Row over the Block because the Row component handles
+          // the fine-grained "insertion index" logic via mouse position.
+          const rowCollision = pointerCollisions.find(
             (c: any) =>
-              c.data?.droppableContainer?.data?.current?.type === "block"
+              c.data?.droppableContainer?.data?.current?.type === "row"
           );
-          if (blockCollision) return [blockCollision];
-          return pointerCollisions;
+          if (rowCollision) return [rowCollision];
+          
+          // If we only hit a block but not the row (rare, but possible if row has holes?), 
+          // we usually still want the row. But if pointerWithin failed for row, 
+          // we fall through to fallback or return what we have? element hierarchy usually implies Block in Row.
+          // If Block is hit, Row should be hit too.
         }
-        return closestCenter(args);
+
+        // 2. Fallback: Closest Center
+        // If we are "near" the row (e.g. right corner padding edge), pointerWithin might fail.
+        // closestCenter finds the nearest rect.
+        const centerCollisions = closestCenter(args);
+        
+        // Priority 3: Nearest Row (Fallback)
+        // If we missed precise detection, find the closest Row.
+        const nearestRow = centerCollisions.find(
+             (c: any) => c.data?.droppableContainer?.data?.current?.type === "row"
+        );
+        if (nearestRow) return [nearestRow];
+
+        // Default: return whatever we found (e.g. maybe just a block if row really far?)
+        // But since we really want Row-based logic, this is our best bet.
+        return centerCollisions;
       },
-      [isBlockDragging]
+      [] // Removed dependencies as we don't switch logic based on dragging type anymore
     );
 
   return {
