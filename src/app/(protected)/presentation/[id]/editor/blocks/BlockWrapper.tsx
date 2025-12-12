@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Theme } from "@/lib/editor/types";
 
+
 interface BlockWrapperProps {
   children: React.ReactNode;
   onEdit?: () => void;
@@ -11,6 +12,7 @@ interface BlockWrapperProps {
   className?: string;
   hideEditButton?: boolean;
   theme?: Theme;
+  customControls?: React.ReactNode;
 }
 
 export const BlockWrapper: React.FC<BlockWrapperProps> = ({
@@ -20,6 +22,7 @@ export const BlockWrapper: React.FC<BlockWrapperProps> = ({
   className = "",
   hideEditButton = false,
   theme,
+  customControls,
 }) => {
   const buttonStyle = theme
     ? {
@@ -36,6 +39,7 @@ export const BlockWrapper: React.FC<BlockWrapperProps> = ({
 
       {/* Hover Controls */}
       <div className="absolute top-4 right-4 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto flex gap-2">
+        {customControls}
         {!hideEditButton && onAdd && (
            <Button
             variant={theme ? "default" : "secondary"}
