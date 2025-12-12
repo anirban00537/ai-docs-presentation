@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createQuoteContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const QuoteLayout = {
   id: "quote-layout",
@@ -19,7 +20,7 @@ export const QuoteLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Words to Live By" }],
+            content: [{ type: "text", text: "Guiding Principles" }],
           },
         ],
       },
@@ -27,54 +28,15 @@ export const QuoteLayout = {
 
     // Row 2: Centered Quote
     const quote1 = createQuoteContent();
-    quote1.quote = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Design is not just what it looks like. Design is how it works.",
-            },
-          ],
-        },
-      ],
-    };
-    quote1.author = {
-      type: "doc",
-      content: [
-        { type: "paragraph", content: [{ type: "text", text: "Steve Jobs" }] },
-      ],
-    };
+    quote1.quote = createParagraphContent("“The best way to predict the future is to create it.”");
+    quote1.author = createParagraphContent("Peter Drucker");
     quote1.style = "centered";
 
     // Row 3: Pull Quote Style
     const quote2 = createQuoteContent();
-    quote2.quote = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Simplicity is the ultimate sophistication.",
-            },
-          ],
-        },
-      ],
-    };
-    quote2.author = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [{ type: "text", text: "Leonardo da Vinci" }],
-        },
-      ],
-    };
-    quote2.style = "left-aligned"; // "default" usually implies the left-border/pull-quote style in many systems, assuming handled by block
+    quote2.quote = createParagraphContent("“Culture eats strategy for breakfast.”");
+    quote2.author = createParagraphContent("Peter Drucker");
+    quote2.style = "left-aligned";
 
     return [
       {

@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createBadgeContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const AwardsLayout = {
   id: "awards-layout",
@@ -19,7 +20,7 @@ export const AwardsLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Awards & Recognition" }],
+            content: [{ type: "text", text: "Recognized Excellence" }],
           },
           {
             type: "paragraph",
@@ -27,7 +28,7 @@ export const AwardsLayout = {
             content: [
               {
                 type: "text",
-                text: "Recognized for excellence in innovation",
+                text: "We are proud to be backed by the industry's most respected organizations.",
               },
             ],
           },
@@ -40,83 +41,20 @@ export const AwardsLayout = {
     badges.badges = [
       {
         icon: "🏆",
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Best Product 2024",
-                },
-              ],
-            },
-          ],
-        },
-        issuer: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Tech Awards" }],
-            },
-          ],
-        },
+        title: createParagraphContent("Innovation of the Year"),
+        issuer: createParagraphContent("Gartner Magic Quadrant"),
         date: "2024",
       },
       {
         icon: "⭐",
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Top Rated Platform",
-                },
-              ],
-            },
-          ],
-        },
-        issuer: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Industry Leaders" }],
-            },
-          ],
-        },
+        title: createParagraphContent("Leader in Enterprise"),
+        issuer: createParagraphContent("G2 Crowd"),
         date: "2024",
       },
       {
         icon: "🎖️",
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Innovation Award",
-                },
-              ],
-            },
-          ],
-        },
-        issuer: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Startup Magazine" }],
-            },
-          ],
-        },
+        title: createParagraphContent("Best Security Solution"),
+        issuer: createParagraphContent("TechCrunch Disrupt"),
         date: "2023",
       },
     ];

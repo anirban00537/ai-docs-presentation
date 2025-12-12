@@ -5,6 +5,7 @@ import {
   createComparisonTableContent,
 } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const ComparisonLayout = {
   id: "comparison-layout",
@@ -22,7 +23,7 @@ export const ComparisonLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Choose Your Plan" }],
+            content: [{ type: "text", text: "Find Your Perfect Fit" }],
           },
           {
             type: "paragraph",
@@ -30,7 +31,7 @@ export const ComparisonLayout = {
             content: [
               {
                 type: "text",
-                text: "Find the perfect plan for your needs",
+                text: "Simple, transparent pricing for teams of all sizes.",
               },
             ],
           },
@@ -42,117 +43,41 @@ export const ComparisonLayout = {
     const comparison = createComparisonTableContent();
     comparison.columns = [
       {
-        name: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Basic" }],
-            },
-          ],
-        },
-        price: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "$9/mo" }],
-            },
-          ],
-        },
+        name: createParagraphContent("Basic"),
+        price: createParagraphContent("$0/mo"),
         highlighted: false,
       },
       {
-        name: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Pro" }],
-            },
-          ],
-        },
-        price: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "$29/mo" }],
-            },
-          ],
-        },
+        name: createParagraphContent("Pro"),
+        price: createParagraphContent("$49/mo"),
         highlighted: true,
       },
       {
-        name: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Enterprise" }],
-            },
-          ],
-        },
-        price: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Custom" }],
-            },
-          ],
-        },
+        name: createParagraphContent("Enterprise"),
+        price: createParagraphContent("Custom"),
         highlighted: false,
       },
     ];
     comparison.rows = [
       {
-        feature: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Storage" }],
-            },
-          ],
-        },
-        values: ["10GB", "100GB", "Unlimited"],
+        feature: createParagraphContent("Team Members"),
+        values: ["Up to 3", "Up to 20", "Unlimited"],
       },
       {
-        feature: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Users" }],
-            },
-          ],
-        },
-        values: ["1", "5", "Unlimited"],
+        feature: createParagraphContent("Cloud Storage"),
+        values: ["10GB", "1TB", "Unlimited"],
       },
       {
-        feature: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Support" }],
-            },
-          ],
-        },
-        values: ["Email", "24/7", "Dedicated"],
+        feature: createParagraphContent("API Access"),
+        values: ["Limit: 1k/day", "Limit: 50k/day", "Unlimited"],
       },
       {
-        feature: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "API Access" }],
-            },
-          ],
-        },
-        values: [false, true, true],
+        feature: createParagraphContent("SLA Guarantee"),
+        values: [false, "99.9%", "99.99% + Credits"],
+      },
+      {
+        feature: createParagraphContent("Support"),
+        values: ["Community", "Email (4hr)", "24/7 Phone"],
       },
     ];
 

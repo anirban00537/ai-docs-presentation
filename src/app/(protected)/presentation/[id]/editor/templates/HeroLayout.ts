@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createCtaContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const HeroLayout = {
   id: "hero-layout",
@@ -20,7 +21,7 @@ export const HeroLayout = {
             type: "heading",
             attrs: { level: 1, textAlign: "center" },
             content: [
-              { type: "text", text: "Build Something Amazing" },
+              { type: "text", text: "Transform Your Business" },
             ],
           },
         ],
@@ -40,7 +41,7 @@ export const HeroLayout = {
             content: [
               {
                 type: "text",
-                text: "The all-in-one platform designed to transform your ideas into reality. Start your journey today.",
+                text: "The only platform that unifies your data, teams, and customers in real-time. Stop managing tools and start managing growth.",
               },
             ],
           },
@@ -50,30 +51,8 @@ export const HeroLayout = {
 
     // Row 3: CTA Banner
     const ctaContent = createCtaContent();
-    ctaContent.heading = {
-      type: "doc",
-      content: [
-        {
-          type: "heading",
-          attrs: { level: 2 },
-          content: [{ type: "text", text: "Ready to launch?" }],
-        },
-      ],
-    };
-    ctaContent.body = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Join over 10,000+ creators building the future.",
-            },
-          ],
-        },
-      ],
-    };
+    ctaContent.heading = createParagraphContent("Ready to launch?");
+    ctaContent.body = createParagraphContent("Join over 10,000+ creators building the future.");
     ctaContent.buttonLabel = "Start Free Trial";
 
     const ctaBlock: Block = {

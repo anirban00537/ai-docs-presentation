@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createTimelineContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const ProcessLayout = {
   id: "process-layout",
@@ -19,7 +20,7 @@ export const ProcessLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Our Methodology" }],
+            content: [{ type: "text", text: "Our Proven Methodology" }],
           },
           {
             type: "paragraph",
@@ -27,7 +28,7 @@ export const ProcessLayout = {
             content: [
               {
                 type: "text",
-                text: "A systematic approach to delivering exceptional results.",
+                text: "We follow a rigorous process to ensure on-time, on-budget delivery.",
               },
             ],
           },
@@ -37,119 +38,26 @@ export const ProcessLayout = {
 
     // Row 2: Timeline
     const timeline = createTimelineContent();
-    timeline.title = {
-      type: "doc",
-      content: [
-        {
-          type: "heading",
-          attrs: { level: 3 },
-          content: [{ type: "text", text: "Workflow Steps" }],
-        },
-      ],
-    };
+    timeline.title = createParagraphContent("The 4-Step Agile Flow");
     timeline.steps = [
       {
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Discovery" }],
-            },
-          ],
-        },
-        description: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "We start by deeply understanding your goals and constraints.",
-                },
-              ],
-            },
-          ],
-        },
+        title: createParagraphContent("Discovery & Audit"),
+        description: createParagraphContent("We interview key stakeholders and audit existing infrastructure to identify gaps and opportunities."),
         icon: "🔍",
       },
       {
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Strategy" }],
-            },
-          ],
-        },
-        description: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Developing a comprehensive roadmap to success.",
-                },
-              ],
-            },
-          ],
-        },
-        icon: "🗺️",
+        title: createParagraphContent("Architecture & Design"),
+        description: createParagraphContent("We create a comprehensive blueprint, including technical specs, UI/UX mocks, and a data migration plan."),
+        icon: "📐",
       },
       {
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Execution" }],
-            },
-          ],
-        },
-        description: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Implementing the solution with precision and care.",
-                },
-              ],
-            },
-          ],
-        },
-        icon: "⚙️",
+        title: createParagraphContent("Development & QA"),
+        description: createParagraphContent("Our engineers build in two-week sprints, with continuous integration and automated testing at every step."),
+        icon: "💻",
       },
       {
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Launch" }],
-            },
-          ],
-        },
-        description: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Delivering the final product to your users.",
-                },
-              ],
-            },
-          ],
-        },
+        title: createParagraphContent("Launch & Optimization"),
+        description: createParagraphContent("We execute a phased rollout, monitoring performance metrics and gathering user feedback for immediate iteration."),
         icon: "🚀",
       },
     ];

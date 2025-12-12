@@ -22,7 +22,17 @@ export const GalleryLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Our Work" }],
+            content: [{ type: "text", text: "Visualizing Success" }],
+          },
+          {
+            type: "paragraph",
+            attrs: { textAlign: "center" },
+            content: [
+              {
+                type: "text",
+                text: "A look at our recent high-impact deployments.",
+              },
+            ],
           },
         ],
       },
@@ -30,8 +40,12 @@ export const GalleryLayout = {
 
     // Row 2: Gallery
     const gallery = createImageGalleryContent();
-    // Start with empty gallery or maybe 1 placeholder if needed, usually empty is fine for user to add
     gallery.columns = 3;
+    gallery.images = [
+        { id: nanoid(), url: "", caption: "Deployment Dashboard" },
+        { id: nanoid(), url: "", caption: "Real-time Analytics" },
+        { id: nanoid(), url: "", caption: "Mobile Experience" },
+    ];
 
     return [
       {

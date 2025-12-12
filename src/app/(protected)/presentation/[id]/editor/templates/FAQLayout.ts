@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createFAQContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const FAQLayout = {
   id: "faq-layout",
@@ -27,7 +28,7 @@ export const FAQLayout = {
             content: [
               {
                 type: "text",
-                text: "Everything you need to know",
+                text: "Everything you need to know about security, deployment, and billing.",
               },
             ],
           },
@@ -39,96 +40,23 @@ export const FAQLayout = {
     const faq = createFAQContent();
     faq.items = [
       {
-        question: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "How does it work?",
-                },
-              ],
-            },
-          ],
-        },
-        answer: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "It's simple and straightforward. Just sign up, choose your plan, and start creating. Our intuitive interface makes it easy for anyone to get started.",
-                },
-              ],
-            },
-          ],
-        },
+        question: createParagraphContent("How secure is the platform?"),
+        answer: createParagraphContent("We are SOC2 Type II, ISO 27001, and GDPR compliant. All data is encrypted at rest and in transit."),
         expanded: false,
       },
       {
-        question: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "What are the pricing plans?",
-                },
-              ],
-            },
-          ],
-        },
-        answer: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "We offer flexible pricing plans to suit your needs. Check our pricing page for detailed information about each plan and what's included.",
-                },
-              ],
-            },
-          ],
-        },
+        question: createParagraphContent("Can we self-host?"),
+        answer: createParagraphContent("Yes! We offer on-premise deployment via Docker or Kubernetes for our Enterprise customers."),
         expanded: false,
       },
       {
-        question: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Can I cancel anytime?",
-                },
-              ],
-            },
-          ],
-        },
-        answer: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Yes, absolutely! You can cancel your subscription at any time. There are no long-term contracts or cancellation fees.",
-                },
-              ],
-            },
-          ],
-        },
+        question: createParagraphContent("What kind of support is included?"),
+        answer: createParagraphContent("All plans include community support. Pro plans get email priority, and Enterprise gets 24/7 dedicated phone support."),
+        expanded: false,
+      },
+      {
+        question: createParagraphContent("Do you offer a free trial?"),
+        answer: createParagraphContent("Yes, you can try our Pro plan free for 14 days. No credit card required."),
         expanded: false,
       },
     ];

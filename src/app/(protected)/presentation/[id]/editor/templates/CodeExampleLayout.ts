@@ -19,7 +19,7 @@ export const CodeExampleLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Quick Start" }],
+            content: [{ type: "text", text: "Built for Developers" }],
           },
           {
             type: "paragraph",
@@ -27,7 +27,7 @@ export const CodeExampleLayout = {
             content: [
               {
                 type: "text",
-                text: "Get started in minutes with our simple API",
+                text: "Integrate our full-featured SDK in less than 5 minutes.",
               },
             ],
           },
@@ -38,22 +38,22 @@ export const CodeExampleLayout = {
     // Row 2: Code Block
     const code = createCodeContent();
     code.language = "javascript";
-    code.code = `// Install the package
-npm install @yourcompany/sdk
+    code.code = `import { Butterfast } from '@butterfast/sdk';
 
-// Initialize the client
-import { Client } from '@yourcompany/sdk';
+// Initialize with your secure key
+const client = new Butterfast(process.env.API_KEY);
 
-const client = new Client({
-  apiKey: 'your-api-key',
-  environment: 'production'
+// Deploy scalable infrastructure instantly
+const deployment = await client.deploy({
+  region: 'us-east-1',
+  scaling: 'auto',
+  security_level: 'strict',
+  monitoring: true
 });
 
-// Make your first API call
-const result = await client.getData();
-console.log(result);`;
+console.log(\`🚀 Deployed successfully at: \${deployment.url}\`);`;
     code.showLineNumbers = true;
-    code.theme = "light";
+    code.theme = "dark";
 
     return [
       {

@@ -5,6 +5,7 @@ import {
   createNumberCardContent,
 } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const FeatureLayout = {
   id: "feature-layout",
@@ -22,7 +23,7 @@ export const FeatureLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Why Choose Us" }],
+            content: [{ type: "text", text: "Why We Lead the Market" }],
           },
           {
             type: "paragraph",
@@ -30,7 +31,7 @@ export const FeatureLayout = {
             content: [
               {
                 type: "text",
-                text: "We provide the best tools to help you succeed in your mission.",
+                text: "Built for speed, scale, and security from the ground up.",
               },
             ],
           },
@@ -48,14 +49,14 @@ export const FeatureLayout = {
         {
           type: "heading",
           attrs: { level: 3 },
-          content: [{ type: "text", text: "Lightning Fast" }],
+          content: [{ type: "text", text: "Zero-Config Scale" }],
         },
         {
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Optimized for speed and efficiency.",
+              text: "Handle millions of requests without manual provisioning. It just works.",
             },
           ],
         },
@@ -64,21 +65,21 @@ export const FeatureLayout = {
 
     const feature2 = createNumberCardContent();
     feature2.number = 2;
-    feature2.icon = "🛡️";
+    feature2.icon = "🌍";
     feature2.editorContent = {
       type: "doc",
       content: [
         {
           type: "heading",
           attrs: { level: 3 },
-          content: [{ type: "text", text: "Secure by Design" }],
+          content: [{ type: "text", text: "Global Edge Network" }],
         },
         {
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Enterprise-grade protection for your data.",
+              text: "Deploy in 35 regions simultaneously. Lowest latency, guaranteed.",
             },
           ],
         },
@@ -87,21 +88,21 @@ export const FeatureLayout = {
 
     const feature3 = createNumberCardContent();
     feature3.number = 3;
-    feature3.icon = "🎨";
+    feature3.icon = "👁️";
     feature3.editorContent = {
       type: "doc",
       content: [
         {
           type: "heading",
           attrs: { level: 3 },
-          content: [{ type: "text", text: "Beautiful UI" }],
+          content: [{ type: "text", text: "Deep Observability" }],
         },
         {
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Crafted with attention to every detail.",
+              text: "Trace every request with millisecond precision. No more black boxes.",
             },
           ],
         },

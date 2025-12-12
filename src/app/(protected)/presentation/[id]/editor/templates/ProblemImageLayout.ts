@@ -1,0 +1,76 @@
+import { nanoid } from "nanoid";
+import type { Row } from "@/lib/editor/types";
+import { BLOCK_TYPES, createImageGalleryContent } from "../blocks/definitions";
+import type { Block } from "@/lib/editor/types";
+
+export const ProblemImageLayout = {
+  id: "problem-image-layout",
+  name: "Problem with Visual",
+  description: "Problem statement paired with an illustrative image",
+  icon: "🖼️",
+  getRows: (): Row[] => {
+    const copy: Block = {
+      id: nanoid(),
+      type: BLOCK_TYPES.PROSEMIRROR,
+      content: {
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: { level: 2 },
+            content: [
+              { type: "text", text: "Complexity is Killing Agility" },
+            ],
+          },
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Your teams are spending 40% of their time navigating bureaucratic red tape instead of shipping products.",
+              },
+            ],
+          },
+          {
+             type: "paragraph",
+             content: [
+               {
+                 type: "text",
+                 text: "This visual represents the tangled web of dependencies currently slowing you down.",
+               },
+             ],
+          }
+        ],
+      },
+    };
+
+    const image = createImageGalleryContent();
+    image.layout = "masonry";
+    image.columns = 2;
+    image.images = [
+      {
+        id: nanoid(),
+        url: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=60",
+        caption: "Visual diagram of a complex, tangled workflow process.",
+      },
+      {
+         id: nanoid(),
+         url: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop&q=60",
+         caption: "The impact of inefficiencies on timeline.",
+      }
+    ];
+
+    return [
+      {
+        id: nanoid(),
+        blocks: [copy],
+      },
+      {
+        id: nanoid(),
+        blocks: [
+          { id: nanoid(), type: BLOCK_TYPES.IMAGE_GALLERY, content: image },
+        ],
+      },
+    ];
+  },
+};

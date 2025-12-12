@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createSocialProofContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const SocialProofLayout = {
   id: "social-proof-layout",
@@ -19,7 +20,7 @@ export const SocialProofLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Join Our Community" }],
+            content: [{ type: "text", text: "A Growing Movement" }],
           },
           {
             type: "paragraph",
@@ -27,7 +28,7 @@ export const SocialProofLayout = {
             content: [
               {
                 type: "text",
-                text: "Connect with us on social media",
+                text: "Join over 50,000 developers across the globe who trust us.",
               },
             ],
           },
@@ -40,28 +41,28 @@ export const SocialProofLayout = {
     socialProof.platforms = [
       {
         platform: "twitter",
-        followers: "10K",
+        followers: "25.2K",
         link: "https://twitter.com/example",
       },
       {
         platform: "linkedin",
-        followers: "5K",
+        followers: "18.4K",
         link: "https://linkedin.com/company/example",
       },
       {
-        platform: "facebook",
-        followers: "8K",
-        link: "https://facebook.com/example",
+        platform: "youtube",
+        followers: "7.1K",
+        link: "https://youtube.com/example",
       },
       {
         platform: "instagram",
-        followers: "15K",
+        followers: "12K",
         link: "https://instagram.com/example",
       },
     ];
     socialProof.showRatings = true;
-    socialProof.rating = 4.5;
-    socialProof.reviewCount = "1,234 reviews";
+    socialProof.rating = 4.9;
+    socialProof.reviewCount = "2,300+ reviews";
 
     return [
       {

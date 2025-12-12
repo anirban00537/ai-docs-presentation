@@ -22,24 +22,53 @@ export const createComparisonTableContent = (): ComparisonTableContent => ({
   type: "comparison-table",
   columns: [
     {
-      name: createParagraphContent("Basic"),
-      price: createParagraphContent("$9"),
+      name: createParagraphContent("Starter"),
+      price: createParagraphContent("Free"),
       highlighted: false,
     },
     {
-      name: createParagraphContent("Pro"),
-      price: createParagraphContent("$29"),
+      name: createParagraphContent("Professional"),
+      price: createParagraphContent("$29/mo"),
       highlighted: true,
+    },
+    {
+      name: createParagraphContent("Enterprise"),
+      price: createParagraphContent("Custom"),
+      highlighted: false,
     },
   ],
   rows: [
     {
-      feature: createParagraphContent("Storage"),
-      values: ["10GB", "100GB"],
+      feature: createParagraphContent("Team Members"),
+      values: [createParagraphContent("Up to 3"), createParagraphContent("Up to 20"), createParagraphContent("Unlimited")],
     },
     {
-      feature: createParagraphContent("Support"),
-      values: ["Email", "24/7"],
+      feature: createParagraphContent("Active Projects"),
+      values: [createParagraphContent("1"), createParagraphContent("Unlimited"), createParagraphContent("Unlimited")],
+    },
+    {
+      feature: createParagraphContent("Storage"),
+      values: [createParagraphContent("5GB"), createParagraphContent("100GB"), createParagraphContent("Unlimited")],
+    },
+    {
+      feature: createParagraphContent("Analytics"),
+      values: [false, true, true],
+    },
+    {
+      feature: createParagraphContent("Custom Domain"),
+      values: [false, true, true],
+    },
+    {
+      feature: createParagraphContent("SSO & Advanced Security"),
+      values: [false, false, true],
+    },
+    {
+      feature: createParagraphContent("API Access"),
+      values: [false, "Basic", "Full Access"],
+    },
+    {
+      feature: createParagraphContent("Support Priority"),
+      values: [createParagraphContent("Community"), createParagraphContent("Email"), createParagraphContent("24/7 Dedicated")],
     },
   ],
 });

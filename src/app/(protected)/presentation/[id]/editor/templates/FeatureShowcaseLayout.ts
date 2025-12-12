@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createFeatureListContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const FeatureShowcaseLayout = {
   id: "feature-showcase-layout",
@@ -19,7 +20,7 @@ export const FeatureShowcaseLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Why Choose Us" }],
+            content: [{ type: "text", text: "The Platform Advantage" }],
           },
           {
             type: "paragraph",
@@ -27,7 +28,7 @@ export const FeatureShowcaseLayout = {
             content: [
               {
                 type: "text",
-                text: "Everything you need to succeed in one platform",
+                text: "Everything you need to build, scale, and manage your operations in one place.",
               },
             ],
           },
@@ -40,81 +41,18 @@ export const FeatureShowcaseLayout = {
     features.features = [
       {
         icon: "🚀",
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Lightning Fast" }],
-            },
-          ],
-        },
-        description: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Optimized for speed and efficiency with cutting-edge technology",
-                },
-              ],
-            },
-          ],
-        },
+        title: createParagraphContent("Deploy Anywhere"),
+        description: createParagraphContent("One-click deployment to AWS, GCP, Azure, or your own metal. We abstract the complexity."),
       },
       {
         icon: "🔒",
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Secure by Design" }],
-            },
-          ],
-        },
-        description: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Enterprise-grade security and encryption to protect your data",
-                },
-              ],
-            },
-          ],
-        },
+        title: createParagraphContent("Bank-Grade Security"),
+        description: createParagraphContent("End-to-end encryption, role-based access control, and comprehensive audit logs built-in."),
       },
       {
         icon: "🎨",
-        title: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Beautiful UI" }],
-            },
-          ],
-        },
-        description: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Crafted with attention to every detail for the best experience",
-                },
-              ],
-            },
-          ],
-        },
+        title: createParagraphContent("Pixel-Perfect Design"),
+        description: createParagraphContent("A component library that looks stunning out of the box, fully customizable to your brand."),
       },
     ];
     features.layout = "grid";

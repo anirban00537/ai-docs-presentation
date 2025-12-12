@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createStatsCounterContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const StatsLayout = {
   id: "stats-layout",
@@ -19,7 +20,7 @@ export const StatsLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Our Impact" }],
+            content: [{ type: "text", text: "By The Numbers" }],
           },
           {
             type: "paragraph",
@@ -27,7 +28,7 @@ export const StatsLayout = {
             content: [
               {
                 type: "text",
-                text: "Numbers that speak for themselves",
+                text: "Scale, speed, and reliability you can trust.",
               },
             ],
           },
@@ -39,46 +40,22 @@ export const StatsLayout = {
     const stats = createStatsCounterContent();
     stats.stats = [
       {
-        value: 10000,
-        label: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Active Users" }],
-            },
-          ],
-        },
-        icon: "👥",
+        value: 50000,
+        label: createParagraphContent("Requests / Sec"),
+        icon: "⚡",
         suffix: "+",
+      },
+      {
+        value: 35,
+        label: createParagraphContent("Global Regions"),
+        icon: "🌍",
+        suffix: "",
       },
       {
         value: 99,
-        label: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Uptime" }],
-            },
-          ],
-        },
-        icon: "⚡",
-        suffix: "%",
-      },
-      {
-        value: 50,
-        label: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Countries" }],
-            },
-          ],
-        },
-        icon: "🌍",
-        suffix: "+",
+        label: createParagraphContent("Uptime Guarantee"),
+        icon: "🛡️",
+        suffix: ".99%",
       },
     ];
     stats.layout = "horizontal";

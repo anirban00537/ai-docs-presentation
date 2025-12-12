@@ -6,6 +6,7 @@ import {
   createNumberCardContent,
 } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const SectionLayout = {
   id: "section-layout",
@@ -23,7 +24,7 @@ export const SectionLayout = {
           {
             type: "heading",
             attrs: { level: 1, textAlign: "left" },
-            content: [{ type: "text", text: "Chapter 01: The Vision" }],
+            content: [{ type: "text", text: "Chapter 02: Market Landscape" }],
           },
           {
             type: "paragraph",
@@ -31,7 +32,7 @@ export const SectionLayout = {
             content: [
               {
                 type: "text",
-                text: "A comprehensive deep dive into our strategic goals and future outlook.",
+                text: "A detailed analysis of where we stand today and where the opportunity lies tomorrow.",
               },
             ],
           },
@@ -42,21 +43,21 @@ export const SectionLayout = {
     // Row 2: Key Points (Number Cards)
     const point1 = createNumberCardContent();
     point1.number = 1;
-    point1.icon = "👁️";
+    point1.icon = "🌍";
     point1.editorContent = {
       type: "doc",
       content: [
         {
           type: "heading",
           attrs: { level: 3 },
-          content: [{ type: "text", text: "Clarity" }],
+          content: [{ type: "text", text: "TAM Analysis" }],
         },
         {
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Defining a clear path forward.",
+              text: "$14B Total Addressable Market in US alone.",
             },
           ],
         },
@@ -65,21 +66,21 @@ export const SectionLayout = {
 
     const point2 = createNumberCardContent();
     point2.number = 2;
-    point2.icon = "📈";
+    point2.icon = "⚔️";
     point2.editorContent = {
       type: "doc",
       content: [
         {
           type: "heading",
           attrs: { level: 3 },
-          content: [{ type: "text", text: "Growth" }],
+          content: [{ type: "text", text: "Competitors" }],
         },
         {
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Scaling our impact globally.",
+              text: "Legacy players are slow; new entrants lack capital.",
             },
           ],
         },
@@ -88,21 +89,21 @@ export const SectionLayout = {
 
     const point3 = createNumberCardContent();
     point3.number = 3;
-    point3.icon = "🤝";
+    point3.icon = "📈";
     point3.editorContent = {
       type: "doc",
       content: [
         {
           type: "heading",
           attrs: { level: 3 },
-          content: [{ type: "text", text: "Community" }],
+          content: [{ type: "text", text: "Key Trends" }],
         },
         {
           type: "paragraph",
           content: [
             {
               type: "text",
-              text: "Building stronger connections.",
+              text: "Remote work is accelerating demand for our solution.",
             },
           ],
         },

@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createProgressBarContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const ProgressLayout = {
   id: "progress-layout",
@@ -19,7 +20,7 @@ export const ProgressLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Project Status" }],
+            content: [{ type: "text", text: "Q3 Migration Status" }],
           },
           {
             type: "paragraph",
@@ -27,7 +28,7 @@ export const ProgressLayout = {
             content: [
               {
                 type: "text",
-                text: "Track your progress and milestones",
+                text: "Current tracking against our core infrastructure goals.",
               },
             ],
           },
@@ -39,55 +40,23 @@ export const ProgressLayout = {
     const progress = createProgressBarContent();
     progress.items = [
       {
-        label: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Design" }],
-            },
-          ],
-        },
-        value: 85,
+        label: createParagraphContent("Database Migration"),
+        value: 92,
         color: "#3b82f6",
       },
       {
-        label: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Development" }],
-            },
-          ],
-        },
-        value: 60,
+        label: createParagraphContent("Frontend Refactor"),
+        value: 68,
         color: "#10b981",
       },
       {
-        label: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Testing" }],
-            },
-          ],
-        },
-        value: 40,
+        label: createParagraphContent("Legacy Decommission"),
+        value: 45,
         color: "#f59e0b",
       },
       {
-        label: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Deployment" }],
-            },
-          ],
-        },
-        value: 20,
+        label: createParagraphContent("Team Training"),
+        value: 15,
         color: "#8b5cf6",
       },
     ];

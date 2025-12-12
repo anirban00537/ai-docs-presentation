@@ -5,6 +5,7 @@ import {
   createTestimonialContent,
 } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const TestimonialLayout = {
   id: "testimonial-layout",
@@ -22,7 +23,7 @@ export const TestimonialLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Trusted by Leaders" }],
+            content: [{ type: "text", text: "Loved by Developers" }],
           },
           {
             type: "paragraph",
@@ -30,7 +31,7 @@ export const TestimonialLayout = {
             content: [
               {
                 type: "text",
-                text: "Don't just take our word for it. Here is what our customers are saying.",
+                text: "See why 10,000+ teams switched to a better workflow.",
               },
             ],
           },
@@ -40,106 +41,19 @@ export const TestimonialLayout = {
 
     // Row 2: Three Testimonials
     const testimonial1 = createTestimonialContent();
-    testimonial1.quote = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "This platform has completely transformed how our team collaborates. The productivity gains are remarkable.",
-            },
-          ],
-        },
-      ],
-    };
-    testimonial1.name = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [{ type: "text", text: "Sarah Johnson" }],
-        },
-      ],
-    };
-    testimonial1.role = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [{ type: "text", text: "CEO, Tech Innovations" }],
-        },
-      ],
-    };
+    testimonial1.quote = createParagraphContent("The best developer experience I've ever seen. It just works.");
+    testimonial1.name = createParagraphContent("Alex Rivera");
+    testimonial1.role = createParagraphContent("Senior Engineer, Stripe");
 
     const testimonial2 = createTestimonialContent();
-    testimonial2.quote = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Best investment we've made this year. The features are exactly what we needed to scale our operations.",
-            },
-          ],
-        },
-      ],
-    };
-    testimonial2.name = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [{ type: "text", text: "Michael Chen" }],
-        },
-      ],
-    };
-    testimonial2.role = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [{ type: "text", text: "VP of Engineering, StartupXYZ" }],
-        },
-      ],
-    };
+    testimonial2.quote = createParagraphContent("Saved us months of development time. The ROI is immediate.");
+    testimonial2.name = createParagraphContent("Samantha Chen");
+    testimonial2.role = createParagraphContent("CTO, Vercel");
 
     const testimonial3 = createTestimonialContent();
-    testimonial3.quote = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "The support team is exceptional and the platform is incredibly intuitive. Highly recommended!",
-            },
-          ],
-        },
-      ],
-    };
-    testimonial3.name = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [{ type: "text", text: "Emily Rodriguez" }],
-        },
-      ],
-    };
-    testimonial3.role = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [{ type: "text", text: "Product Manager, Growth Labs" }],
-        },
-      ],
-    };
+    testimonial3.quote = createParagraphContent("Documentation is incredible, and the support is even better.");
+    testimonial3.name = createParagraphContent("Jordan Smith");
+    testimonial3.role = createParagraphContent("Staff Engineer, Linear");
 
     return [
       {

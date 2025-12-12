@@ -5,12 +5,8 @@ import {
   createPricingCardContent,
 } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
-import { getDefaultHeadingContent, createParagraphContent } from "../blocks/definitions/common";
+import { createParagraphContent } from "../blocks/definitions/common";
 
-const createTextDoc = (text: string) => ({
-    type: "doc" as const,
-    content: [{ type: "paragraph", content: [{ type: "text", text }] }],
-});
 const createHeadingDoc = (text: string, level = 3) => ({
     type: "doc" as const,
     content: [{ type: "heading", attrs: { level }, content: [{ type: "text", text }] }],
@@ -40,7 +36,7 @@ export const PricingLayout = {
             content: [
               {
                 type: "text",
-                text: "Choose the plan that's right for you.",
+                text: "No hidden fees. Cancel anytime.",
               },
             ],
           },
@@ -50,37 +46,37 @@ export const PricingLayout = {
 
     // Row 2: Three Pricing Cards
     const plan1 = createPricingCardContent();
-    plan1.planName = createHeadingDoc("Starter");
-    plan1.price = createHeadingDoc("$0/mo");
-    plan1.buttonLabel = "Start Free";
+    plan1.planName = createHeadingDoc("Developer");
+    plan1.price = createHeadingDoc("$15/mo");
+    plan1.buttonLabel = "Start Building";
     plan1.features = [
-        { text: createTextDoc("Basic Features"), included: true },
-        { text: createTextDoc("1 User"), included: true },
-        { text: createTextDoc("Community Support"), included: true },
-        { text: createTextDoc("Advanced Analytics"), included: false },
+        { text: createParagraphContent("For personal projects"), included: true },
+        { text: createParagraphContent("5k API Calls/mo"), included: true },
+        { text: createParagraphContent("Community Support"), included: true },
+        { text: createParagraphContent("SLA"), included: false },
     ];
 
     const plan2 = createPricingCardContent();
-    plan2.planName = createHeadingDoc("Pro");
-    plan2.price = createHeadingDoc("$29/mo");
-    plan2.buttonLabel = "Get Pro";
+    plan2.planName = createHeadingDoc("Startup");
+    plan2.price = createHeadingDoc("$99/mo");
+    plan2.buttonLabel = "Scale Up";
     plan2.isRecommended = true;
     plan2.features = [
-        { text: createTextDoc("All Basic Features"), included: true },
-        { text: createTextDoc("5 Users"), included: true },
-        { text: createTextDoc("Priority Support"), included: true },
-        { text: createTextDoc("Advanced Analytics"), included: true },
+        { text: createParagraphContent("For growing teams"), included: true },
+        { text: createParagraphContent("1M API Calls/mo"), included: true },
+        { text: createParagraphContent("Email Support"), included: true },
+        { text: createParagraphContent("99.9% SLA"), included: true },
     ];
 
     const plan3 = createPricingCardContent();
-    plan3.planName = createHeadingDoc("Enterprise");
-    plan3.price = createHeadingDoc("Custom");
-    plan3.buttonLabel = "Contact Us";
+    plan3.planName = createHeadingDoc("Business");
+    plan3.price = createHeadingDoc("$299/mo");
+    plan3.buttonLabel = "Contact Sales";
     plan3.features = [
-        { text: createTextDoc("Unlimited Users"), included: true },
-        { text: createTextDoc("Dedicated Account Manager"), included: true },
-        { text: createTextDoc("Custom Integrations"), included: true },
-        { text: createTextDoc("SLA"), included: true },
+        { text: createParagraphContent("For high volume"), included: true },
+        { text: createParagraphContent("Unlimited Calls"), included: true },
+        { text: createParagraphContent("24/7 Phone Support"), included: true },
+        { text: createParagraphContent("Dedicated Manager"), included: true },
     ];
 
 

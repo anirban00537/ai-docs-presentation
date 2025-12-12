@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createVideoContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const VideoShowcaseLayout = {
   id: "video-showcase-layout",
@@ -19,7 +20,7 @@ export const VideoShowcaseLayout = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "See It In Action" }],
+            content: [{ type: "text", text: "The Future of Work" }],
           },
           {
             type: "paragraph",
@@ -27,7 +28,7 @@ export const VideoShowcaseLayout = {
             content: [
               {
                 type: "text",
-                text: "Watch how our platform can transform your workflow",
+                text: "A 2-minute overview of where we are going next.",
               },
             ],
           },
@@ -38,21 +39,8 @@ export const VideoShowcaseLayout = {
     // Row 2: Video Block
     const video = createVideoContent();
     video.source = "youtube";
-    video.url = "";
-    video.title = {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Product Demo",
-            },
-          ],
-        },
-      ],
-    };
+    video.url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Placeholder, but valid URL structure
+    video.title = createParagraphContent("Keynote 2024 Highlights");
 
     return [
       {

@@ -18,6 +18,24 @@ import { CodeExampleLayout } from "./templates/CodeExampleLayout";
 import { ProgressLayout } from "./templates/ProgressLayout";
 import { SocialProofLayout } from "./templates/SocialProofLayout";
 import { AwardsLayout } from "./templates/AwardsLayout";
+import { ProblemHeroLayout } from "./templates/ProblemHeroLayout";
+import { TitleTaglineLayout } from "./templates/TitleTaglineLayout";
+import { ProblemStatementLayout } from "./templates/ProblemStatementLayout";
+import { ProblemImageLayout } from "./templates/ProblemImageLayout";
+import { ProblemSupportingPointsLayout } from "./templates/ProblemSupportingPointsLayout";
+import { OpportunityMetricsLayout } from "./templates/OpportunityMetricsLayout";
+import { DiscoveryInsightsLayout } from "./templates/DiscoveryInsightsLayout";
+import { ProblemQuoteLayout } from "./templates/ProblemQuoteLayout";
+import { ProblemTwoQuotesLayout } from "./templates/ProblemTwoQuotesLayout";
+import { CustomerQuotesLayout } from "./templates/CustomerQuotesLayout";
+import { PricingThreeTierLayout } from "./templates/PricingThreeTierLayout";
+import { CustomerStoriesLayout } from "./templates/CustomerStoriesLayout";
+import { ServicesListLayout } from "./templates/ServicesListLayout";
+import { TaglineTitlePageLayout } from "./templates/TaglineTitlePageLayout";
+import { DocIntroLayout } from "./templates/DocIntroLayout";
+import { ComparisonOldNewLayout } from "./templates/ComparisonOldNewLayout";
+import { TargetAudiencesLayout } from "./templates/TargetAudiencesLayout";
+import { NextStepsLayout } from "./templates/NextStepsLayout";
 
 export interface LayoutTemplate {
   id: string;
@@ -47,4 +65,22 @@ export const layoutTemplates: LayoutTemplate[] = [
   ProgressLayout,
   SocialProofLayout,
   AwardsLayout,
+  ProblemHeroLayout,
+  TitleTaglineLayout,
+  ProblemStatementLayout,
+  ProblemImageLayout,
+  ProblemSupportingPointsLayout,
+  OpportunityMetricsLayout,
+  DiscoveryInsightsLayout,
+  ProblemQuoteLayout,
+  ProblemTwoQuotesLayout,
+  CustomerQuotesLayout,
+  PricingThreeTierLayout,
+  CustomerStoriesLayout,
+  ServicesListLayout,
+  TaglineTitlePageLayout,
+  DocIntroLayout,
+  ComparisonOldNewLayout,
+  TargetAudiencesLayout,
+  NextStepsLayout,
 ];

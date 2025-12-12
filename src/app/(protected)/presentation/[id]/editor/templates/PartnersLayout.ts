@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
 import { BLOCK_TYPES, createLogoGridContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
+import { createParagraphContent } from "../blocks/definitions/common";
 
 export const PartnersLayout = {
   id: "partners-layout",
@@ -27,7 +28,7 @@ export const PartnersLayout = {
             content: [
               {
                 type: "text",
-                text: "Join thousands of companies using our platform",
+                text: "Powering innovation at 500+ global enterprises.",
               },
             ],
           },
@@ -39,79 +40,31 @@ export const PartnersLayout = {
     const logos = createLogoGridContent();
     logos.logos = [
       {
-        name: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Company 1" }],
-            },
-          ],
-        },
+        name: createParagraphContent("Acme Corp"),
         link: "https://example.com",
       },
       {
-        name: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Company 2" }],
-            },
-          ],
-        },
+        name: createParagraphContent("Globex"),
         link: "https://example.com",
       },
       {
-        name: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Company 3" }],
-            },
-          ],
-        },
+        name: createParagraphContent("Initech"),
         link: "https://example.com",
       },
       {
-        name: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Company 4" }],
-            },
-          ],
-        },
+        name: createParagraphContent("Soylent"),
         link: "https://example.com",
       },
       {
-        name: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Company 5" }],
-            },
-          ],
-        },
+        name: createParagraphContent("Umbrella"),
         link: "https://example.com",
       },
       {
-        name: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: "Company 6" }],
-            },
-          ],
-        },
+        name: createParagraphContent("Cyberdyne"),
         link: "https://example.com",
       },
     ];
-    logos.columns = 4;
+    logos.columns = 3;
     logos.grayscale = true;
 
     return [

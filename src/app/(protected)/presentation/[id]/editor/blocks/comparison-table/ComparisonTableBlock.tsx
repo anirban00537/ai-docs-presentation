@@ -233,96 +233,121 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
   return (
     <BlockWrapper customControls={customControls} theme={theme}>
       <div
-        className="w-full rounded-2xl overflow-hidden"
+        className="w-full rounded-3xl overflow-hidden relative"
         style={{
-          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.75),
-          backdropFilter: "blur(12px)",
-          border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-          boxShadow: `0 4px 12px -2px ${withAlpha(theme.primary, 0.05)}`,
+          boxShadow: `0 20px 40px -4px ${withAlpha(theme.primary, 0.1)}`,
+          border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
+          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.9),
+          backdropFilter: "blur(20px)",
         }}
       >
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th
-                  className="p-4 text-left font-semibold"
+                <th 
+                  className="p-6 text-left w-1/4 min-w-[200px]"
                   style={{
-                    color: theme.headingColor,
-                    borderBottom: `2px solid ${withAlpha(theme.primary, 0.2)}`,
+                    borderBottom: `1px solid ${withAlpha(theme.primary, 0.1)}`,
                   }}
                 >
-                  Feature
+                  <span 
+                    className="text-xs font-bold uppercase tracking-wider opacity-50 block mb-2"
+                    style={{ color: theme.headingColor }}
+                  >
+                    Compare Plans
+                  </span>
+                  <span 
+                    className="text-lg font-bold block"
+                    style={{ color: theme.headingColor }}
+                  >
+                    Features
+                  </span>
                 </th>
                 {columns.map((col, colIndex) => (
                   <th
                     key={colIndex}
-                    className="p-4 text-center font-semibold relative group"
+                    className="p-6 text-center relative group min-w-[220px]"
                     style={{
                       backgroundColor: col.highlighted
-                        ? withAlpha(theme.primary, 0.1)
+                        ? withAlpha(theme.primary, 0.05)
                         : "transparent",
-                      color: theme.headingColor,
-                      borderBottom: `2px solid ${withAlpha(theme.primary, 0.2)}`,
+                      borderBottom: `1px solid ${withAlpha(theme.primary, 0.1)}`,
+                      borderLeft: colIndex === 0 ? `1px solid ${withAlpha(theme.primary, 0.05)}` : "none",
                     }}
                   >
                     {col.highlighted && (
-                      <div
-                        className="absolute top-0 left-0 right-0 h-1"
-                        style={{ backgroundColor: theme.primary }}
-                      />
+                      <div className="absolute top-0 left-0 right-0 py-1.5 flex justify-center">
+                        <span 
+                          className="text-[10px] font-bold uppercase tracking-widest px-3 py-0.5 rounded-full"
+                          style={{ 
+                            backgroundColor: theme.primary,
+                            color: "#ffffff"
+                          }}
+                        >
+                          Most Popular
+                        </span>
+                      </div>
                     )}
-                     <button
+                    
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         removeColumn(colIndex);
                       }}
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-100 rounded-md text-red-500 transition-all transform hover:scale-110"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-50 text-red-500 rounded-full transition-all duration-200 hover:scale-110 z-10"
                       title="Delete Column"
                     >
                       <IconTrash size={14} />
                     </button>
-                    <div className="mb-2 pt-2">
-                      <ProseMirrorEditor
-                        key={`${block.id}-col-name-${colIndex}`}
-                        blockId={`${block.id}-col-name-${colIndex}`}
-                        value={col.name}
-                        onChange={(newContent) =>
-                          handleColumnNameChange(colIndex, newContent)
-                        }
-                        placeholder="Plan Name"
-                        className="text-center font-semibold"
-                      />
-                    </div>
-                    {col.price && (
-                      <div>
+
+                    <div className="mt-4 space-y-2">
+                       <div className="flex justify-center">
                         <ProseMirrorEditor
-                          key={`${block.id}-col-price-${colIndex}`}
-                          blockId={`${block.id}-col-price-${colIndex}`}
-                          value={col.price}
+                          key={`${block.id}-col-name-${colIndex}`}
+                          blockId={`${block.id}-col-name-${colIndex}`}
+                          value={col.name}
                           onChange={(newContent) =>
-                            handleColumnPriceChange(colIndex, newContent)
+                            handleColumnNameChange(colIndex, newContent)
                           }
-                          placeholder="Price"
-                          className="text-center text-sm opacity-70"
+                          placeholder="Plan Name"
+                          className="text-lg font-bold text-center"
                         />
                       </div>
-                    )}
+                      
+                      {col.price && (
+                        <div className="flex justify-center items-baseline opacity-90">
+                           <ProseMirrorEditor
+                            key={`${block.id}-col-price-${colIndex}`}
+                            blockId={`${block.id}-col-price-${colIndex}`}
+                            value={col.price}
+                            onChange={(newContent) =>
+                              handleColumnPriceChange(colIndex, newContent)
+                            }
+                            placeholder="Price"
+                            className="text-3xl font-extrabold tracking-tight text-center"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </th>
                 ))}
-            </tr>
-          </thead>
+              </tr>
+            </thead>
             <tbody>
               {rows.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  className="border-b"
+                  className="group/row hover:bg-black/5 transition-colors duration-150"
                   style={{
-                    borderColor: withAlpha(theme.primary, 0.1),
+                     borderColor: withAlpha(theme.primary, 0.05),
                   }}
                 >
-                  <td className="p-4">
-                    <div className="min-h-[1.5rem]">
+                  <td 
+                    className="p-5 text-left border-b border-dashed"
+                    style={{ borderColor: withAlpha(theme.primary, 0.1) }}
+                  >
+                    <div className="font-medium" style={{ color: theme.headingColor }}>
                       <ProseMirrorEditor
                         key={`${block.id}-feature-${rowIndex}`}
                         blockId={`${block.id}-feature-${rowIndex}`}
@@ -331,18 +356,19 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                           handleRowFeatureChange(rowIndex, newContent)
                         }
                         placeholder="Feature"
-                        className="font-medium"
+                        className="w-full"
                       />
                     </div>
                   </td>
                   {row.values.map((value, colIndex) => (
                     <td
                       key={colIndex}
-                      className="p-4 text-center"
+                      className="p-5 text-center border-b border-dashed relative"
                       style={{
                         backgroundColor: columns[colIndex]?.highlighted
-                          ? withAlpha(theme.primary, 0.05)
+                          ? withAlpha(theme.primary, 0.03)
                           : "transparent",
+                         borderColor: withAlpha(theme.primary, 0.1)
                       }}
                     >
                       {renderValue(value, rowIndex, colIndex)}
