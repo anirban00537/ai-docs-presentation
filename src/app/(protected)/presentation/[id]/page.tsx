@@ -20,7 +20,6 @@ import {
   IconMessageCircle,
   IconTarget,
   IconQuote,
-  IconMinus,
   IconTimeline,
   IconGripVertical,
 } from "@tabler/icons-react";
@@ -36,8 +35,6 @@ const getBlockTypeIcon = (type: string) => {
       return <IconTarget size={18} />;
     case "quote":
       return <IconQuote size={18} />;
-    case "divider":
-      return <IconMinus size={18} />;
     case "timeline":
       return <IconTimeline size={18} />;
     default:
@@ -55,8 +52,6 @@ const getBlockTypeLabel = (type: string) => {
       return "CTA Banner";
     case "quote":
       return "Quote";
-    case "divider":
-      return "Divider";
     case "timeline":
       return "Timeline";
     case "prosemirror":
@@ -152,10 +147,12 @@ const GammaPage = () => {
             </BlockFocusProvider>
 
             {/* Enhanced Drag Overlay with better ghosting */}
-            <DragOverlay dropAnimation={{
-              duration: 250,
-              easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
-            }}>
+            <DragOverlay
+              dropAnimation={{
+                duration: 250,
+                easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+              }}
+            >
               {activeBlock && (
                 <motion.div
                   initial={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -199,7 +196,9 @@ const GammaPage = () => {
                       <div
                         className="text-xs"
                         style={{
-                          color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+                          color: isDark
+                            ? "rgba(255,255,255,0.5)"
+                            : "rgba(0,0,0,0.5)",
                         }}
                       >
                         Drop to reposition
@@ -208,7 +207,9 @@ const GammaPage = () => {
                     <IconGripVertical
                       size={20}
                       style={{
-                        color: isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)",
+                        color: isDark
+                          ? "rgba(255,255,255,0.4)"
+                          : "rgba(0,0,0,0.3)",
                       }}
                     />
                   </div>
@@ -269,7 +270,9 @@ const GammaPage = () => {
                       <div
                         className="text-xs"
                         style={{
-                          color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+                          color: isDark
+                            ? "rgba(255,255,255,0.5)"
+                            : "rgba(0,0,0,0.5)",
                         }}
                       >
                         Drop to add block

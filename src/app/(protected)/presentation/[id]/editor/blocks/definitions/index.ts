@@ -6,7 +6,6 @@ export * from "./number-card";
 export * from "./testimonial";
 export * from "./cta";
 export * from "./quote";
-export * from "./divider";
 export * from "./timeline";
 export * from "./team-card";
 export * from "./pricing-card";
@@ -28,7 +27,6 @@ import type { NumberCardContent } from "./number-card";
 import type { TestimonialContent } from "./testimonial";
 import type { CtaContent } from "./cta";
 import type { QuoteContent } from "./quote";
-import type { DividerContent } from "./divider";
 import type { TimelineContent } from "./timeline";
 import type { TeamCardContent } from "./team-card";
 import type { PricingCardContent } from "./pricing-card";
@@ -51,7 +49,6 @@ import { createNumberCardContent } from "./number-card";
 import { createTestimonialContent } from "./testimonial";
 import { createCtaContent } from "./cta";
 import { createQuoteContent } from "./quote";
-import { createDividerContent } from "./divider";
 import { createTimelineContent } from "./timeline";
 import { createTeamCardContent } from "./team-card";
 import { createPricingCardContent } from "./pricing-card";
@@ -73,7 +70,6 @@ import { normalizeNumberCardContent } from "./number-card";
 import { normalizeTestimonialContent } from "./testimonial";
 import { normalizeCtaContent } from "./cta";
 import { normalizeQuoteContent } from "./quote";
-import { normalizeDividerContent } from "./divider";
 import { normalizeTimelineContent } from "./timeline";
 import { normalizeTeamCardContent } from "./team-card";
 import { normalizePricingCardContent } from "./pricing-card";
@@ -95,7 +91,6 @@ export type BlockContent =
   | TestimonialContent
   | CtaContent
   | QuoteContent
-  | DividerContent
   | TimelineContent
   | TeamCardContent
   | PricingCardContent
@@ -123,8 +118,6 @@ export const createBlockContentForType = (
       return createCtaContent();
     case BLOCK_TYPES.QUOTE:
       return createQuoteContent();
-    case BLOCK_TYPES.DIVIDER:
-      return createDividerContent();
     case BLOCK_TYPES.TIMELINE:
       return createTimelineContent();
     case BLOCK_TYPES.TEAM_CARD:
@@ -172,8 +165,6 @@ export const normalizeBlockContent = (
       return normalizeCtaContent(content);
     case BLOCK_TYPES.QUOTE:
       return normalizeQuoteContent(content);
-    case BLOCK_TYPES.DIVIDER:
-      return normalizeDividerContent(content);
     case BLOCK_TYPES.TIMELINE:
       return normalizeTimelineContent(content);
     case BLOCK_TYPES.TEAM_CARD:

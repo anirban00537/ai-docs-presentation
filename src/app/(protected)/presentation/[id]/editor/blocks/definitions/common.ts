@@ -4,7 +4,6 @@ export const BLOCK_TYPES = {
   TESTIMONIAL: "testimonial",
   CTA: "cta",
   QUOTE: "quote",
-  DIVIDER: "divider",
   TIMELINE: "timeline",
   TEAM_CARD: "team-card",
   PRICING_CARD: "pricing-card",

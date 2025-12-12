@@ -13,7 +13,6 @@ import {
   IconMessageCircle,
   IconTarget,
   IconQuote,
-  IconMinus,
   IconTimeline,
   IconUsers,
   IconCreditCard,
@@ -154,12 +153,6 @@ const blockDefinitions = [
     icon: <IconQuote className="w-6 h-6" />,
     label: "Quote",
     description: "Inspiring quote with author",
-  },
-  {
-    type: BLOCK_TYPES.DIVIDER,
-    icon: <IconMinus className="w-6 h-6" />,
-    label: "Divider",
-    description: "Visual separator between sections",
   },
   {
     type: BLOCK_TYPES.TIMELINE,

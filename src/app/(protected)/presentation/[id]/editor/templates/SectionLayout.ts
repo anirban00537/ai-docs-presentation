@@ -3,7 +3,6 @@ import type { Row } from "@/lib/editor/types";
 import {
   BLOCK_TYPES,
   createQuoteContent,
-  createDividerContent,
   createNumberCardContent,
 } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
@@ -40,12 +39,7 @@ export const SectionLayout = {
       },
     };
 
-    // Row 2: Divider
-    const divider1 = createDividerContent();
-    divider1.style = "solid";
-    divider1.spacing = "medium";
-
-    // Row 3: Key Points (Number Cards)
+    // Row 2: Key Points (Number Cards)
     const point1 = createNumberCardContent();
     point1.number = 1;
     point1.icon = "👁️";
@@ -115,25 +109,10 @@ export const SectionLayout = {
       ],
     };
 
-    // Row 4: Divider
-    const divider2 = createDividerContent();
-    divider2.style = "dotted";
-    divider2.spacing = "medium";
-
     return [
       {
         id: nanoid(),
         blocks: [headerBlock],
-      },
-      {
-        id: nanoid(),
-        blocks: [
-          {
-            id: nanoid(),
-            type: BLOCK_TYPES.DIVIDER,
-            content: divider1,
-          },
-        ],
       },
       {
         id: nanoid(),
@@ -143,17 +122,6 @@ export const SectionLayout = {
           { id: nanoid(), type: BLOCK_TYPES.NUMBER_CARD, content: point3 },
         ],
       },
-      {
-        id: nanoid(),
-        blocks: [
-          {
-            id: nanoid(),
-            type: BLOCK_TYPES.DIVIDER,
-            content: divider2,
-          },
-        ],
-      },
     ];
   },
 };
-

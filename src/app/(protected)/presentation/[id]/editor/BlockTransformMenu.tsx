@@ -9,7 +9,6 @@ import {
   IconMessageCircle,
   IconTarget,
   IconQuote,
-  IconMinus,
   IconTimeline,
   IconCheck,
 } from "@tabler/icons-react";
@@ -52,12 +51,6 @@ const blockTypeOptions = [
     icon: IconQuote,
     label: "Quote",
     description: "Highlighted quote",
-  },
-  {
-    type: BLOCK_TYPES.DIVIDER,
-    icon: IconMinus,
-    label: "Divider",
-    description: "Section separator",
   },
   {
     type: BLOCK_TYPES.TIMELINE,
@@ -123,7 +116,9 @@ export const BlockTransformMenu: React.FC<BlockTransformMenuProps> = ({
               backgroundColor: isDark
                 ? "rgba(30, 30, 35, 0.98)"
                 : "rgba(255, 255, 255, 0.98)",
-              border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
+              border: `1px solid ${
+                isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"
+              }`,
               boxShadow: isDark
                 ? "0 16px 48px rgba(0,0,0,0.6)"
                 : "0 16px 48px rgba(0,0,0,0.2)",
@@ -134,7 +129,9 @@ export const BlockTransformMenu: React.FC<BlockTransformMenuProps> = ({
               className="px-3 py-2 text-xs font-medium"
               style={{
                 color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
-                borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
+                borderBottom: `1px solid ${
+                  isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"
+                }`,
               }}
             >
               Transform to
@@ -180,13 +177,13 @@ export const BlockTransformMenu: React.FC<BlockTransformMenuProps> = ({
                         backgroundColor: isActive
                           ? theme.primary
                           : isDark
-                            ? "rgba(255,255,255,0.08)"
-                            : "rgba(0,0,0,0.06)",
+                          ? "rgba(255,255,255,0.08)"
+                          : "rgba(0,0,0,0.06)",
                         color: isActive
                           ? "#fff"
                           : isDark
-                            ? "rgba(255,255,255,0.7)"
-                            : "rgba(0,0,0,0.6)",
+                          ? "rgba(255,255,255,0.7)"
+                          : "rgba(0,0,0,0.6)",
                       }}
                     >
                       <Icon size={16} />
@@ -214,10 +211,7 @@ export const BlockTransformMenu: React.FC<BlockTransformMenuProps> = ({
                     </div>
 
                     {isActive && (
-                      <IconCheck
-                        size={16}
-                        style={{ color: theme.primary }}
-                      />
+                      <IconCheck size={16} style={{ color: theme.primary }} />
                     )}
                   </button>
                 );

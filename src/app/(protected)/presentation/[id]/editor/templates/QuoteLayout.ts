@@ -1,10 +1,6 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
-import {
-  BLOCK_TYPES,
-  createQuoteContent,
-  createDividerContent,
-} from "../blocks/definitions";
+import { BLOCK_TYPES, createQuoteContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
 
 export const QuoteLayout = {
@@ -29,12 +25,7 @@ export const QuoteLayout = {
       },
     };
 
-    // Row 2: Divider
-    const divider1 = createDividerContent();
-    divider1.style = "dotted";
-    divider1.spacing = "small";
-
-    // Row 3: Centered Quote
+    // Row 2: Centered Quote
     const quote1 = createQuoteContent();
     quote1.quote = {
       type: "doc",
@@ -58,12 +49,7 @@ export const QuoteLayout = {
     };
     quote1.style = "centered";
 
-    // Row 4: Divider
-    const divider2 = createDividerContent();
-    divider2.style = "dotted";
-    divider2.spacing = "small";
-
-    // Row 5: Pull Quote Style
+    // Row 3: Pull Quote Style
     const quote2 = createQuoteContent();
     quote2.quote = {
       type: "doc",
@@ -100,28 +86,8 @@ export const QuoteLayout = {
         blocks: [
           {
             id: nanoid(),
-            type: BLOCK_TYPES.DIVIDER,
-            content: divider1,
-          },
-        ],
-      },
-      {
-        id: nanoid(),
-        blocks: [
-          {
-            id: nanoid(),
             type: BLOCK_TYPES.QUOTE,
             content: quote1,
-          },
-        ],
-      },
-      {
-        id: nanoid(),
-        blocks: [
-          {
-            id: nanoid(),
-            type: BLOCK_TYPES.DIVIDER,
-            content: divider2,
           },
         ],
       },
@@ -138,4 +104,3 @@ export const QuoteLayout = {
     ];
   },
 };
-

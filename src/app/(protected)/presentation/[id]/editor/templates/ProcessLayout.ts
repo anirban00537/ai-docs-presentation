@@ -1,10 +1,6 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
-import {
-  BLOCK_TYPES,
-  createTimelineContent,
-  createDividerContent,
-} from "../blocks/definitions";
+import { BLOCK_TYPES, createTimelineContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
 
 export const ProcessLayout = {
@@ -39,12 +35,7 @@ export const ProcessLayout = {
       },
     };
 
-    // Row 2: Divider
-    const divider = createDividerContent();
-    divider.style = "dotted";
-    divider.spacing = "medium";
-
-    // Row 3: Timeline
+    // Row 2: Timeline
     const timeline = createTimelineContent();
     timeline.title = {
       type: "doc",
@@ -167,16 +158,6 @@ export const ProcessLayout = {
       {
         id: nanoid(),
         blocks: [headerBlock],
-      },
-      {
-        id: nanoid(),
-        blocks: [
-          {
-            id: nanoid(),
-            type: BLOCK_TYPES.DIVIDER,
-            content: divider,
-          },
-        ],
       },
       {
         id: nanoid(),
