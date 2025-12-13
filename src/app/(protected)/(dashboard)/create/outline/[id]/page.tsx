@@ -1,13 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { useParams, useRouter } from "next/navigation";
-import {
-  useOutline,
-  useUpdateOutline,
-  useGenerateOutlineStream,
-} from "@/hooks/use-outline";
-import type { OutlineResponse } from "@/services/presentation";
+import Link from "next/link";
+import { useOutline, useUpdateOutline } from "@/hooks/use-outline";
 import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
 
@@ -16,11 +12,6 @@ export default function OutlinePage() {
   const router = useRouter();
   const outlineId = params.id as string;
 
-  const [outlineData, setOutlineData] = useState<OutlineResponse | null>(null);
-  const titleRef = useRef<string>("");
-  const outlinesRef = useRef<Array<{ content: string }>>([]);
-  const hasStartedGeneration = useRef(false);
-
   // TanStack Query hooks
   const {
     data: outlineResponse,
@@ -28,7 +19,6 @@ export default function OutlinePage() {
     error: outlineError,
   } = useOutline(outlineId);
   const updateOutlineMutation = useUpdateOutline();
-  const generateStreamMutation = useGenerateOutlineStream();
 
   const outline = outlineResponse?.data || null;
   // Only show error if there's a query error or API returned failure
@@ -37,82 +27,18 @@ export default function OutlinePage() {
     (outlineResponse && !outlineResponse.success
       ? outlineResponse.message
       : null);
-  console.log(outlineResponse?.data?.presentationId, "outlineResponse");
+  const displayError = error;
 
-  // Also check for stream mutation errors
-  const streamError = generateStreamMutation.isError
-    ? generateStreamMutation.error?.message
-    : null;
-  const displayError = error || streamError;
-
-  const startGeneration = React.useCallback(async () => {
-    if (
-      !outlineId ||
-      hasStartedGeneration.current ||
-      generateStreamMutation.isPending
-    )
-      return;
-    hasStartedGeneration.current = true;
-
-    setOutlineData(null);
-    titleRef.current = "";
-    outlinesRef.current = [];
-
-    generateStreamMutation.mutate({
-      outlineId,
-      onChunk: (chunk) => {
-        if (chunk.type === "title" && chunk.data) {
-          titleRef.current = chunk.data;
-          setOutlineData({
-            title: chunk.data,
-            outlines: [],
-          });
-        } else if (chunk.type === "outline" && chunk.data) {
-          const index = chunk.index ?? outlinesRef.current.length;
-          // Create a new array with the updated item
-          const updatedOutlines = [...outlinesRef.current];
-          updatedOutlines[index] = chunk.data;
-          outlinesRef.current = updatedOutlines; // Update the ref
-          setOutlineData({
-            title: titleRef.current || "Untitled Presentation",
-            outlines: updatedOutlines,
-          });
-        } else if (chunk.type === "complete" && chunk.data) {
-          setOutlineData(chunk.data);
-        } else if (chunk.type === "error") {
-          console.error("Stream error:", chunk.message);
-        }
-      },
-    });
-  }, [outlineId, generateStreamMutation]);
-
-  // Auto-start generation if status is generating
-  useEffect(() => {
-    if (
-      outline?.status === "generating" &&
-      !hasStartedGeneration.current &&
-      !generateStreamMutation.isPending
-    ) {
-      // Defer the call to avoid synchronous setState in effect
-      setTimeout(() => {
-        startGeneration();
-      }, 0);
-    } else if (outline?.status === "completed" && outline.outlines) {
-      // Defer setState to avoid synchronous setState in effect
-      setTimeout(() => {
-        setOutlineData({
-          title: outline.title || "Untitled Presentation",
-          outlines: outline.outlines as any,
-        });
-      }, 0);
+  // Get outline data from the fetched outline
+  const outlineData = React.useMemo(() => {
+    if (outline?.outlines && Array.isArray(outline.outlines)) {
+      return {
+        title: outline.title || "Untitled Presentation",
+        outlines: outline.outlines as any,
+      };
     }
-  }, [
-    outline?.status,
-    outline?.outlines,
-    outline?.title,
-    startGeneration,
-    generateStreamMutation.isPending,
-  ]);
+    return null;
+  }, [outline?.title, outline?.outlines]);
 
   const handleSave = async () => {
     if (!outlineData || !outlineId) return;
@@ -136,13 +62,13 @@ export default function OutlinePage() {
     );
   };
 
-  const handleCreatePresentation = () => {
-    if (!outlineId) return;
-    // Redirect to editor with outlineId - editor will handle creation and generation
-    router.push(
-      `/presentation/${outlineResponse?.data?.presentationId}?outlineId=${outlineId}`
-    );
-  };
+  // Get presentationId for Link href
+  const presentationId =
+    outlineResponse?.data?.presentationId || outline?.presentationId;
+  const presentationUrl =
+    presentationId && outlineId
+      ? `/presentation/${presentationId}?outlineId=${outlineId}`
+      : null;
 
   if (isLoading) {
     return (
@@ -184,6 +110,11 @@ export default function OutlinePage() {
             <div className="mt-4 text-xs text-muted-foreground">
               Number of slides: {outline.numberOfSlides}
             </div>
+            {outline.status === "generating" && !outlineData && (
+              <div className="mt-4 text-sm text-muted-foreground">
+                Generating outline... Please wait.
+              </div>
+            )}
           </div>
         )}
 
@@ -191,16 +122,6 @@ export default function OutlinePage() {
         {displayError && (
           <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
             {displayError}
-            {outline?.status === "failed" && (
-              <Button
-                onClick={startGeneration}
-                className="mt-2"
-                variant="outline"
-                size="sm"
-              >
-                Retry Generation
-              </Button>
-            )}
           </div>
         )}
 
@@ -209,10 +130,14 @@ export default function OutlinePage() {
           <div className="space-y-4">
             <OutlineViewer
               outline={outlineData}
-              isLoading={generateStreamMutation.isPending}
+              isLoading={isLoading}
               editable={true}
               onUpdate={(updatedOutline) => {
-                setOutlineData(updatedOutline);
+                // Update is handled by the mutation, which will refetch
+                updateOutlineMutation.mutate({
+                  id: outlineId,
+                  payload: updatedOutline,
+                });
               }}
             />
 
@@ -220,25 +145,30 @@ export default function OutlinePage() {
             <div className="flex gap-4 justify-end">
               <Button
                 onClick={handleSave}
-                disabled={
-                  updateOutlineMutation.isPending ||
-                  generateStreamMutation.isPending
-                }
+                disabled={updateOutlineMutation.isPending}
                 variant="default"
               >
                 {updateOutlineMutation.isPending ? "Saving..." : "Save Outline"}
               </Button>
-              <Button
-                onClick={handleCreatePresentation}
-                disabled={
-                  updateOutlineMutation.isPending ||
-                  generateStreamMutation.isPending
-                }
-                variant="default"
-                className="bg-primary text-primary-foreground"
-              >
-                Create Presentation
-              </Button>
+              {presentationUrl && presentationUrl !== "#" ? (
+                <Link href={presentationUrl}>
+                  <Button
+                    disabled={updateOutlineMutation.isPending}
+                    variant="default"
+                    className="bg-primary text-primary-foreground"
+                  >
+                    Create Presentation
+                  </Button>
+                </Link>
+              ) : (
+                <Button
+                  disabled={true}
+                  variant="default"
+                  className="bg-primary text-primary-foreground"
+                >
+                  Create Presentation
+                </Button>
+              )}
               <Button onClick={() => router.push("/home")} variant="outline">
                 Back
               </Button>
@@ -246,8 +176,8 @@ export default function OutlinePage() {
           </div>
         )}
 
-        {/* Loading State */}
-        {generateStreamMutation.isPending && !outlineData && (
+        {/* Loading State - Show when outline is generating */}
+        {outline?.status === "generating" && !outlineData && (
           <div className="space-y-4">
             <div className="h-8 w-3/4 animate-pulse bg-muted rounded" />
             <div className="space-y-4">
