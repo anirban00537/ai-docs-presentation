@@ -6,7 +6,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { layoutTemplates, type LayoutTemplate } from "./layoutTemplates";
+import {
+  layoutTemplates,
+  layoutIconsMap,
+  type LayoutTemplate,
+} from "./layoutTemplates";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
@@ -104,25 +108,25 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
                   : "rgba(255,255,255,0.8)";
               }}
             >
-              <div className="text-4xl text-primary/80">
+              <div className="flex items-center justify-center w-16 h-16 text-primary/80">
                 {(() => {
-                  // Resolve icon string to component if needed
-                  // For now, most layouts use emoji strings, but new ones use icon names
-                  // We can render emojis directly or map names to Lucide icons
-                  if (
-                    typeof template.icon === "string" &&
-                    !template.icon.match(/[\p{Emoji}]/u)
-                  ) {
-                    // It's likely a Lucide icon name, but we don't have dynamic lookup easily here
-                    // Let's just use a fallback or specific mapping
-                    const iconName = template.icon;
-                    if (iconName === "ChartBar") return "📊";
-                    if (iconName === "Terminal") return "📟";
-                    if (iconName === "Lightbulb") return "💡";
-                    // Add other mappings as needed or default to a generic icon
-                    return "📄";
+                  const IconComponent = layoutIconsMap[template.id];
+                  if (IconComponent) {
+                    return (
+                      <IconComponent
+                        size={32}
+                        style={{
+                          color: isDark ? "#60a5fa" : "#2563eb",
+                        }}
+                      />
+                    );
                   }
-                  return template.icon;
+                  // Fallback to emoji if icon not found in mapping
+                  return (
+                    <span className="text-4xl">
+                      {typeof template.icon === "string" ? template.icon : "📄"}
+                    </span>
+                  );
                 })()}
               </div>
               <div className="text-center">
