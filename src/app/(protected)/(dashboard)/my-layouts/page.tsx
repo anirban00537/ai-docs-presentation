@@ -244,9 +244,9 @@ export default function MyLayoutsPage() {
                 </CardHeader>
 
                 {/* Layout Slides Preview - Scaled Down */}
-                <CardContent className="pt-0 pb-4 flex-1 flex flex-col min-h-0">
+                <CardContent className="pt-0 pb-4 flex-1 flex flex-col">
                   <div
-                    className="rounded-lg overflow-hidden relative flex-1 min-h-[300px] max-h-[400px] flex items-center justify-center"
+                    className="rounded-lg overflow-hidden relative"
                     style={{
                       backgroundColor:
                         layout.layoutTheme?.pageBackground ||
@@ -254,53 +254,71 @@ export default function MyLayoutsPage() {
                       backgroundImage: layout.layoutTheme?.primary
                         ? `radial-gradient(circle at 20% 18%, ${layout.layoutTheme.primary}14, transparent 32%), radial-gradient(circle at 80% 12%, ${layout.layoutTheme.primary}10, transparent 28%)`
                         : undefined,
+                      height: "200px",
+                      aspectRatio: "16/9",
                     }}
                   >
                     {layout.slides && layout.slides.length > 0 ? (
-                      <div className="w-full h-full overflow-auto p-4">
+                      <div className="relative w-full h-full overflow-hidden">
                         <div
-                          className="flex flex-col gap-4 mx-auto"
+                          className="absolute top-0 left-0 pointer-events-none"
                           style={{
-                            transform: "scale(0.4)",
-                            transformOrigin: "top center",
-                            width: "250%",
-                            pointerEvents: "none",
+                            transform: "scale(0.25)",
+                            transformOrigin: "top left",
+                            width: "400%",
+                            height: "400%",
                           }}
                         >
-                          {layout.slides
-                            .slice(0, 2)
-                            .map((slide: Slide, slideIndex: number) => (
-                              <div key={slide.id || `slide-${slideIndex}`}>
-                                <SlideCard
-                                  slide={slide}
-                                  onUpdateBlock={() => {}}
-                                  onDeleteRow={() => {}}
-                                  onAddColumn={() => {}}
-                                  onAddRowAtTop={() => {}}
-                                  onAddRowAtBottom={() => {}}
-                                  onUpdateColumnWidths={() => {}}
-                                  enableDragHints={false}
-                                />
+                          <div className="flex flex-col gap-8">
+                            {layout.slides
+                              .slice(0, 3)
+                              .map((slide: Slide, slideIndex: number) => (
+                                <div key={slide.id || `slide-${slideIndex}`}>
+                                  <SlideCard
+                                    slide={slide}
+                                    onUpdateBlock={() => {}}
+                                    onDeleteRow={() => {}}
+                                    onAddColumn={() => {}}
+                                    onAddRowAtTop={() => {}}
+                                    onAddRowAtBottom={() => {}}
+                                    onUpdateColumnWidths={() => {}}
+                                    enableDragHints={false}
+                                  />
+                                </div>
+                              ))}
+                            {layout.slides.length > 3 && (
+                              <div
+                                className="text-center py-4 text-xs font-medium opacity-75"
+                                style={{
+                                  color:
+                                    layout.layoutTheme?.bodyColor ||
+                                    theme.bodyColor,
+                                }}
+                              >
+                                +{layout.slides.length - 3} more slide
+                                {layout.slides.length - 3 !== 1 ? "s" : ""}
                               </div>
-                            ))}
-                          {layout.slides.length > 2 && (
-                            <div
-                              className="text-center py-2 text-xs font-medium opacity-75"
-                              style={{
-                                color:
-                                  layout.layoutTheme?.bodyColor ||
-                                  theme.bodyColor,
-                              }}
-                            >
-                              +{layout.slides.length - 2} more slide
-                              {layout.slides.length - 2 !== 1 ? "s" : ""}
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
+                        {/* Slide Count Badge */}
+                        {layout.slides.length > 1 && (
+                          <div
+                            className="absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium z-10 backdrop-blur-sm"
+                            style={{
+                              backgroundColor: "rgba(37,99,235,0.85)",
+                              color: "white",
+                            }}
+                          >
+                            {layout.slides.length} slides
+                          </div>
+                        )}
                       </div>
                     ) : (
-                      <div className="text-center py-12 text-muted-foreground text-sm">
-                        No slides in this layout
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center text-muted-foreground text-sm">
+                          No slides in this layout
+                        </div>
                       </div>
                     )}
                   </div>
