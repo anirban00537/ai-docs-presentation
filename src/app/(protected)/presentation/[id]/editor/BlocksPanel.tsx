@@ -27,6 +27,9 @@ import {
   IconProgress,
   IconBrandTwitter,
   IconAward,
+  IconTerminal2,
+  IconActivity,
+  IconBulb,
 } from "@tabler/icons-react";
 
 interface BlocksPanelProps {
@@ -243,6 +246,24 @@ const blockDefinitions = [
     icon: <IconAward className="w-6 h-6" />,
     label: "Badge",
     description: "Awards and certifications",
+  },
+  {
+    type: BLOCK_TYPES.CODE_TERMINAL,
+    icon: <IconTerminal2 className="w-6 h-6" />,
+    label: "Code Terminal",
+    description: "Mini terminal window",
+  },
+  {
+    type: BLOCK_TYPES.PULSE_METRIC,
+    icon: <IconActivity className="w-6 h-6" />,
+    label: "Pulse Metric",
+    description: "Animated growth metric",
+  },
+  {
+    type: BLOCK_TYPES.GLASS_INSIGHT,
+    icon: <IconBulb className="w-6 h-6" />,
+    label: "Glass Insight",
+    description: "Key takeaway box",
   },
 ];
 

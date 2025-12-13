@@ -25,6 +25,9 @@ import { ProgressBarBlock } from "./progress-bar/ProgressBarBlock";
 import { SocialProofBlock } from "./social-proof/SocialProofBlock";
 import { BadgeBlock } from "./badge/BadgeBlock";
 import { SimpleNumberCardBlock } from "./simple-number-card/SimpleNumberCardBlock";
+import { CodeTerminalBlock } from "./code-terminal/CodeTerminalBlock";
+import { PulseMetricBlock } from "./pulse-metric/PulseMetricBlock";
+import { GlassInsightBlock } from "./glass-insight/GlassInsightBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -155,6 +158,24 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: SimpleNumberCardBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.SIMPLE_NUMBER_CARD, content),
+  },
+  [BLOCK_TYPES.CODE_TERMINAL]: {
+    type: BLOCK_TYPES.CODE_TERMINAL,
+    component: CodeTerminalBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.CODE_TERMINAL, content),
+  },
+  [BLOCK_TYPES.PULSE_METRIC]: {
+    type: BLOCK_TYPES.PULSE_METRIC,
+    component: PulseMetricBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.PULSE_METRIC, content),
+  },
+  [BLOCK_TYPES.GLASS_INSIGHT]: {
+    type: BLOCK_TYPES.GLASS_INSIGHT,
+    component: GlassInsightBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.GLASS_INSIGHT, content),
   },
 };
 

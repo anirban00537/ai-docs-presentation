@@ -3,6 +3,9 @@ export * from "./common";
 
 // Block type exports
 export * from "./simple-number-card";
+export * from "./code-terminal";
+export * from "./pulse-metric";
+export * from "./glass-insight";
 export * from "./number-card";
 export * from "./testimonial";
 export * from "./cta";
@@ -43,6 +46,9 @@ import type { ProgressBarContent } from "./progress-bar";
 import type { SocialProofContent } from "./social-proof";
 import type { BadgeContent } from "./badge";
 import type { SimpleNumberCardContent } from "./simple-number-card";
+import type { CodeTerminalContent } from "./code-terminal";
+import type { PulseMetricContent } from "./pulse-metric";
+import type { GlassInsightContent } from "./glass-insight";
 import type { BlockType } from "./common";
 
 // Factory functions
@@ -66,6 +72,9 @@ import { createProgressBarContent } from "./progress-bar";
 import { createSocialProofContent } from "./social-proof";
 import { createBadgeContent } from "./badge";
 import { createSimpleNumberCardContent } from "./simple-number-card";
+import { createCodeTerminalContent } from "./code-terminal";
+import { createPulseMetricContent } from "./pulse-metric";
+import { createGlassInsightContent } from "./glass-insight";
 import { BLOCK_TYPES } from "./common";
 
 // Normalization functions
@@ -88,6 +97,9 @@ import { normalizeProgressBarContent } from "./progress-bar";
 import { normalizeSocialProofContent } from "./social-proof";
 import { normalizeBadgeContent } from "./badge";
 import { normalizeSimpleNumberCardContent } from "./simple-number-card";
+import { normalizeCodeTerminalContent } from "./code-terminal";
+import { normalizePulseMetricContent } from "./pulse-metric";
+import { normalizeGlassInsightContent } from "./glass-insight";
 
 export type BlockContent =
   | ProseMirrorDocument
@@ -109,7 +121,10 @@ export type BlockContent =
   | ProgressBarContent
   | SocialProofContent
   | BadgeContent
-  | SimpleNumberCardContent;
+  | SimpleNumberCardContent
+  | CodeTerminalContent
+  | PulseMetricContent
+  | GlassInsightContent;
 
 export const createBlockContentForType = (
   type: BlockType | undefined
@@ -153,6 +168,12 @@ export const createBlockContentForType = (
       return createBadgeContent();
     case BLOCK_TYPES.SIMPLE_NUMBER_CARD:
       return createSimpleNumberCardContent();
+    case BLOCK_TYPES.CODE_TERMINAL:
+      return createCodeTerminalContent();
+    case BLOCK_TYPES.PULSE_METRIC:
+      return createPulseMetricContent();
+    case BLOCK_TYPES.GLASS_INSIGHT:
+      return createGlassInsightContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return getDefaultHeadingContent();
@@ -202,6 +223,12 @@ export const normalizeBlockContent = (
       return normalizeBadgeContent(content);
     case BLOCK_TYPES.SIMPLE_NUMBER_CARD:
       return normalizeSimpleNumberCardContent(content);
+    case BLOCK_TYPES.CODE_TERMINAL:
+      return normalizeCodeTerminalContent(content);
+    case BLOCK_TYPES.PULSE_METRIC:
+      return normalizePulseMetricContent(content);
+    case BLOCK_TYPES.GLASS_INSIGHT:
+      return normalizeGlassInsightContent(content);
     default:
       // Default to prose content
       const incomingDoc = content as ProseMirrorDocument | undefined;

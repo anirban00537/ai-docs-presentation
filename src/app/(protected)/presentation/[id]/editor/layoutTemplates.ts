@@ -36,6 +36,9 @@ import { ComparisonOldNewLayout } from "./templates/ComparisonOldNewLayout";
 import { TargetAudiencesLayout } from "./templates/TargetAudiencesLayout";
 import { NextStepsLayout } from "./templates/NextStepsLayout";
 import { SummaryLayout } from "./templates/SummaryLayout";
+import { MetricDashboardLayout } from "./templates/MetricDashboardLayout";
+import { TechnicalWalkthroughLayout } from "./templates/TechnicalWalkthroughLayout";
+import { KeyInsightsLayout } from "./templates/KeyInsightsLayout";
 
 export interface LayoutTemplate {
   id: string;
@@ -83,4 +86,7 @@ export const layoutTemplates: LayoutTemplate[] = [
   TargetAudiencesLayout,
   NextStepsLayout,
   SummaryLayout,
+  MetricDashboardLayout,
+  TechnicalWalkthroughLayout,
+  KeyInsightsLayout,
 ];

@@ -19,6 +19,9 @@ export const BLOCK_TYPES = {
   SOCIAL_PROOF: "social-proof",
   BADGE: "badge",
   SIMPLE_NUMBER_CARD: "simple-number-card",
+  CODE_TERMINAL: "code-terminal",
+  PULSE_METRIC: "pulse-metric",
+  GLASS_INSIGHT: "glass-insight",
 } as const;
 
 export type BlockType = (typeof BLOCK_TYPES)[keyof typeof BLOCK_TYPES];
