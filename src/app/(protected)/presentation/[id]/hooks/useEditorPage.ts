@@ -235,8 +235,10 @@ export const useEditorPage = ({
                   id: chunk.slideId || nanoid(),
                   rows: chunk.data.rows.map((row: any) => ({
                     id: row.id || nanoid(),
+                    columnWidths: row.columnWidths,
                     blocks: row.blocks.map((block: any) => ({
                       id: block.id || nanoid(),
+                      type: block.type,
                       content: block.content,
                     })),
                   })),
@@ -293,8 +295,10 @@ export const useEditorPage = ({
               id: chunk.slideId || nanoid(),
               rows: chunk.data.rows.map((row: any) => ({
                 id: row.id || nanoid(),
+                columnWidths: row.columnWidths,
                 blocks: row.blocks.map((block: any) => ({
                   id: block.id || nanoid(),
+                  type: block.type,
                   content: block.content,
                 })),
               })),

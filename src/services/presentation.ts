@@ -61,8 +61,6 @@ export const reorderSlides = async (
   return response.data;
 };
 
-
-
 export const savePrompt = async (
   payload: CreateOutlineDto
 ): Promise<ApiResponse<SavePromptResponse>> => {
