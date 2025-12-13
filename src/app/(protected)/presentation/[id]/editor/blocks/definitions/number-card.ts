@@ -4,6 +4,7 @@ export interface NumberCardContent {
   type: "number-card";
   icon?: string;
   number?: number;
+  size?: "small" | "medium" | "large";
   editorContent: ProseMirrorDocument;
 }
 
@@ -26,6 +27,7 @@ export const createNumberCardContent = (): NumberCardContent => ({
   type: "number-card",
   icon: "",
   number: 1,
+  size: "medium",
   editorContent: getDefaultNumberCardEditorContent(),
 });
 
@@ -38,6 +40,7 @@ export const normalizeNumberCardContent = (
       type: "number-card",
       icon: incoming.icon ?? "",
       number: incoming.number ?? 1,
+      size: incoming.size ?? "medium",
       editorContent: incoming.editorContent,
     };
   }

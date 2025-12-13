@@ -24,6 +24,7 @@ import { CodeBlock } from "./code/CodeBlock";
 import { ProgressBarBlock } from "./progress-bar/ProgressBarBlock";
 import { SocialProofBlock } from "./social-proof/SocialProofBlock";
 import { BadgeBlock } from "./badge/BadgeBlock";
+import { SimpleNumberCardBlock } from "./simple-number-card/SimpleNumberCardBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -148,6 +149,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     type: BLOCK_TYPES.BADGE,
     component: BadgeBlock,
     normalize: (content) => normalizeBlockContent(BLOCK_TYPES.BADGE, content),
+  },
+  [BLOCK_TYPES.SIMPLE_NUMBER_CARD]: {
+    type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
+    component: SimpleNumberCardBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.SIMPLE_NUMBER_CARD, content),
   },
 };
 

@@ -35,6 +35,7 @@ import { DocIntroLayout } from "./templates/DocIntroLayout";
 import { ComparisonOldNewLayout } from "./templates/ComparisonOldNewLayout";
 import { TargetAudiencesLayout } from "./templates/TargetAudiencesLayout";
 import { NextStepsLayout } from "./templates/NextStepsLayout";
+import { SummaryLayout } from "./templates/SummaryLayout";
 
 export interface LayoutTemplate {
   id: string;
@@ -81,4 +82,5 @@ export const layoutTemplates: LayoutTemplate[] = [
   ComparisonOldNewLayout,
   TargetAudiencesLayout,
   NextStepsLayout,
+  SummaryLayout,
 ];

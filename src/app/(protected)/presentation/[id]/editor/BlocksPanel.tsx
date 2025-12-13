@@ -233,6 +233,12 @@ const blockDefinitions = [
     description: "Social media stats and ratings",
   },
   {
+    type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
+    icon: <IconHash className="w-6 h-6" />,
+    label: "Simple Number",
+    description: "Minimalist number with text",
+  },
+  {
     type: BLOCK_TYPES.BADGE,
     icon: <IconAward className="w-6 h-6" />,
     label: "Badge",

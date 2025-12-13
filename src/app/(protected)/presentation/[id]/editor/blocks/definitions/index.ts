@@ -2,6 +2,7 @@
 export * from "./common";
 
 // Block type exports
+export * from "./simple-number-card";
 export * from "./number-card";
 export * from "./testimonial";
 export * from "./cta";
@@ -41,6 +42,7 @@ import type { CodeContent } from "./code";
 import type { ProgressBarContent } from "./progress-bar";
 import type { SocialProofContent } from "./social-proof";
 import type { BadgeContent } from "./badge";
+import type { SimpleNumberCardContent } from "./simple-number-card";
 import type { BlockType } from "./common";
 
 // Factory functions
@@ -63,6 +65,7 @@ import { createCodeContent } from "./code";
 import { createProgressBarContent } from "./progress-bar";
 import { createSocialProofContent } from "./social-proof";
 import { createBadgeContent } from "./badge";
+import { createSimpleNumberCardContent } from "./simple-number-card";
 import { BLOCK_TYPES } from "./common";
 
 // Normalization functions
@@ -84,6 +87,7 @@ import { normalizeCodeContent } from "./code";
 import { normalizeProgressBarContent } from "./progress-bar";
 import { normalizeSocialProofContent } from "./social-proof";
 import { normalizeBadgeContent } from "./badge";
+import { normalizeSimpleNumberCardContent } from "./simple-number-card";
 
 export type BlockContent =
   | ProseMirrorDocument
@@ -104,7 +108,8 @@ export type BlockContent =
   | CodeContent
   | ProgressBarContent
   | SocialProofContent
-  | BadgeContent;
+  | BadgeContent
+  | SimpleNumberCardContent;
 
 export const createBlockContentForType = (
   type: BlockType | undefined
@@ -146,6 +151,8 @@ export const createBlockContentForType = (
       return createSocialProofContent();
     case BLOCK_TYPES.BADGE:
       return createBadgeContent();
+    case BLOCK_TYPES.SIMPLE_NUMBER_CARD:
+      return createSimpleNumberCardContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return getDefaultHeadingContent();
@@ -193,6 +200,8 @@ export const normalizeBlockContent = (
       return normalizeSocialProofContent(content);
     case BLOCK_TYPES.BADGE:
       return normalizeBadgeContent(content);
+    case BLOCK_TYPES.SIMPLE_NUMBER_CARD:
+      return normalizeSimpleNumberCardContent(content);
     default:
       // Default to prose content
       const incomingDoc = content as ProseMirrorDocument | undefined;

@@ -37,12 +37,24 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
         type: "number-card",
         icon,
         number,
+        size: content?.size ?? "medium",
         editorContent: newEditorContent,
       };
       onUpdate(newContent);
     },
-    [icon, number, onUpdate]
+    [icon, number, content?.size, onUpdate]
   );
+
+  const textSizeClass = useMemo(() => {
+    switch (content?.size) {
+      case "small":
+        return "text-sm";
+      case "large":
+        return "text-xl";
+      default:
+        return "text-lg";
+    }
+  }, [content?.size]);
 
   return (
     <div
@@ -82,7 +94,7 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
           value={editorContent}
           onChange={handleEditorChange}
           placeholder={placeholder ?? "Type '/' for commands"}
-          className="text-lg leading-relaxed"
+          className={`${textSizeClass} leading-relaxed`}
         />
       </div>
     </div>
