@@ -61,15 +61,7 @@ export const reorderSlides = async (
   return response.data;
 };
 
-export const createPlanFromPrompt = async (
-  payload: CreatePlanFromPromptDto
-): Promise<ApiResponse<OutlineResponse>> => {
-  const response = await request.post(
-    `/presentation/create-plan-from-prompt`,
-    payload
-  );
-  return response.data;
-};
+
 
 export const savePrompt = async (
   payload: CreateOutlineDto
