@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useSearchParams, useParams } from "next/navigation";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
@@ -15,11 +14,8 @@ import { BlockFocusProvider } from "@/app/(protected)/presentation/[id]/editor/B
 import { useEditorPage } from "./hooks/useEditorPage";
 import { useAppSelector } from "@/store/hooks";
 import { selectPresentation } from "@/store/slices/slidesSlice";
-import { useCreateLayout } from "@/hooks/use-layouts";
 import { Button } from "@/components/ui/button";
 import { IconDownload, IconLoader2 } from "@tabler/icons-react";
-import { toast } from "sonner";
-import { convertReduxSlideToApi } from "@/lib/editor/adapters";
 import {
   IconFileText,
   IconHash,
@@ -93,67 +89,8 @@ const GammaPage = () => {
   } = useEditorPage({ presentationId, outlineId });
 
   const presentation = useAppSelector(selectPresentation);
-  const createLayoutMutation = useCreateLayout();
 
   const isDark = theme.themeType === "dark";
-
-  const handleSaveAsLayout = async (slide?: (typeof slides)[0]) => {
-    if (!presentation) {
-      toast.error("Presentation not found");
-      return;
-    }
-
-    // If a specific slide is provided, save only that slide
-    // Otherwise, save all slides
-    const slidesToSave = slide
-      ? [slide]
-      : slides.filter((s) => s && s.rows && Array.isArray(s.rows));
-
-    if (slidesToSave.length === 0) {
-      toast.error("No slides to save as layout");
-      return;
-    }
-
-    // Convert slides to API format
-    const layoutSlides = slidesToSave.map((s, index) => ({
-      ...convertReduxSlideToApi(s),
-      order: index,
-    }));
-
-    const layoutName = slide
-      ? `${presentation.title || "Untitled"} - Slide ${
-          slides.indexOf(slide) + 1
-        } Layout`
-      : `${presentation.title || "Untitled Presentation"} - Layout`;
-
-    createLayoutMutation.mutate(
-      {
-        name: layoutName,
-        description: slide
-          ? `Single slide layout saved from presentation: ${
-              presentation.title || "Untitled"
-            }`
-          : `Layout saved from presentation: ${
-              presentation.title || "Untitled"
-            }`,
-        data: {
-          slides: layoutSlides,
-          theme: theme,
-        },
-        type: "user",
-        tags: [],
-      },
-      {
-        onSuccess: () => {
-          toast.success("Layout saved successfully!");
-        },
-        onError: (error: any) => {
-          console.error("Failed to save layout:", error);
-          toast.error(error?.message || "Failed to save layout");
-        },
-      }
-    );
-  };
 
   return (
     <>
@@ -212,32 +149,6 @@ const GammaPage = () => {
                         onAddRowAtBottom={handleAddRowAtBottom}
                         onUpdateColumnWidths={handleUpdateColumnWidths}
                       />
-                      {/* Save as Layout Button - Shows on hover */}
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex justify-center mt-4">
-                        <Button
-                          onClick={() => handleSaveAsLayout(slide)}
-                          disabled={createLayoutMutation.isPending}
-                          size="sm"
-                          variant="outline"
-                          className="gap-2"
-                          style={{
-                            borderColor: theme.primary,
-                            color: theme.primary,
-                          }}
-                        >
-                          {createLayoutMutation.isPending ? (
-                            <>
-                              <IconLoader2 className="h-4 w-4 animate-spin" />
-                              Saving...
-                            </>
-                          ) : (
-                            <>
-                              <IconDownload className="h-4 w-4" />
-                              Save as Layout
-                            </>
-                          )}
-                        </Button>
-                      </div>
                     </div>
                   ))}
               </div>
