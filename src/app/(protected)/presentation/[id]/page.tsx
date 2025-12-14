@@ -1,5 +1,7 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
+
 import { useSearchParams, useParams } from "next/navigation";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
@@ -92,10 +94,102 @@ const GammaPage = () => {
 
   const isDark = theme.themeType === "dark";
 
+  const [isPresenting, setIsPresenting] = useState(false);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
+  const handlePresentClick = () => {
+    setIsPresenting(true);
+    setCurrentSlideIndex(0);
+  };
+
+  useEffect(() => {
+    if (!isPresenting) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === "Space") {
+        setCurrentSlideIndex((prev) => Math.min(prev + 1, slides.length - 1));
+      } else if (e.key === "ArrowLeft") {
+        setCurrentSlideIndex((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === "Escape") {
+        setIsPresenting(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isPresenting, slides.length]);
+
   return (
     <>
       <GoogleFontsLoader />
-      <PresentationTopBar />
+      
+      {/* Presentation Mode Overlay */}
+      {isPresenting && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-black text-white">
+             {/* Slide Content Container */}
+             <div 
+                className="min-h-screen w-full flex flex-col items-center py-10"
+                style={{
+                    backgroundColor: theme.pageBackground,
+                    fontFamily: `${theme.fontFamily}, sans-serif`,
+                }}
+             >
+                {/* Navigation Controls (Floating) */}
+                <div className="fixed bottom-8 right-8 flex gap-2 z-50">
+                    <Button 
+                        variant="secondary" 
+                        size="icon" 
+                        onClick={() => setCurrentSlideIndex(prev => Math.max(prev - 1, 0))}
+                        disabled={currentSlideIndex === 0}
+                        className="rounded-full shadow-lg bg-black/50 hover:bg-black/70 text-white border-none"
+                    >
+                        ←
+                    </Button>
+                    <span className="bg-black/50 text-white px-3 py-2 rounded-full text-sm font-medium tabular-nums shadow-lg backdrop-blur-sm">
+                        {currentSlideIndex + 1} / {slides.length}
+                    </span>
+                    <Button 
+                        variant="secondary" 
+                        size="icon" 
+                        onClick={() => setCurrentSlideIndex(prev => Math.min(prev + 1, slides.length - 1))}
+                        disabled={currentSlideIndex === slides.length - 1}
+                        className="rounded-full shadow-lg bg-black/50 hover:bg-black/70 text-white border-none"
+                    >
+                        →
+                    </Button>
+                    <Button 
+                        variant="secondary" 
+                        size="sm" 
+                        onClick={() => setIsPresenting(false)}
+                        className="ml-4 rounded-full shadow-lg bg-black/50 hover:bg-black/70 text-white border-none px-4"
+                    >
+                        Exit
+                    </Button>
+                </div>
+
+                {/* Current Slide */}
+                <div className="w-full max-w-[1200px] px-8 animate-in fade-in duration-300 relative">
+                     {slides[currentSlideIndex] && (
+                        <div className="transform origin-top transition-all duration-300">
+                             <SlideCard
+                                slide={slides[currentSlideIndex]}
+                                onUpdateBlock={handleUpdateBlock}
+                                onDeleteRow={handleDeleteRow}
+                                onAddColumn={handleAddColumn}
+                                onAddRowAtTop={handleAddRowAtTop}
+                                onAddRowAtBottom={handleAddRowAtBottom}
+                                onUpdateColumnWidths={handleUpdateColumnWidths}
+                                enableDragHints={false}
+                                readOnly={true}
+                             />
+                        </div>
+                     )}
+                </div>
+             </div>
+        </div>
+      )}
+
+      <PresentationTopBar onPresentClick={handlePresentClick} />
       {/* Fixed background layer */}
       <div
         className="fixed inset-0 -z-10"

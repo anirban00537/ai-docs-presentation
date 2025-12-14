@@ -8,7 +8,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { IconShare, IconPlayerPlay } from "@tabler/icons-react";
 
-export const PresentationTopBar: React.FC = () => {
+export const PresentationTopBar: React.FC<{
+  onPresentClick?: () => void;
+}> = ({ onPresentClick }) => {
   const presentation = useAppSelector(selectPresentation);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
@@ -121,6 +123,7 @@ export const PresentationTopBar: React.FC = () => {
                   e.currentTarget.style.backgroundColor = accent;
                 }}
                 title="Present"
+                onClick={onPresentClick}
               >
                 <IconPlayerPlay className="size-4" />
                 <span className="text-sm">Present</span>

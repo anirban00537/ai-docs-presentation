@@ -38,6 +38,7 @@ export interface BlockRendererProps {
   onUpdate: (content: any) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export interface BlockRegistryEntry {

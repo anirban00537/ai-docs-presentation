@@ -34,6 +34,7 @@ interface DroppableRowProps {
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   onUpdateColumnWidths: (rowId: string, columnWidths: number[]) => void;
   rowCount: number;
+  readOnly?: boolean;
 }
 
 export const DroppableRow: React.FC<DroppableRowProps> = ({
@@ -48,6 +49,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   onAddColumn,
   onUpdateColumnWidths,
   rowCount,
+  readOnly = false,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -86,6 +88,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
       // Pass the calculated insertion index to the drag event
       insertIndex: dropIndicator?.index ?? row.blocks.length,
     },
+    disabled: readOnly,
   });
 
   const MAX_COLUMNS = 3;
@@ -268,7 +271,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
 
   return (
     <div className="group/row relative flex">
-      {enableDragHints && (
+      {enableDragHints && !readOnly && (
         <DragMonitorBridge
           onDragStart={() => setIsAnyDragActive(true)}
           onDragEnd={() => {
@@ -282,6 +285,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
         />
       )}
       {/* Row Menu Handle - Left Side */}
+      {!readOnly && (
       <div className="relative flex items-center">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -336,8 +340,8 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
           </>
         )}
       </div>
-
-      {/* Row Content */}
+      )}
+ {/* Row Content */}
       <div
         ref={(node) => {
           setNodeRef(node);
@@ -384,6 +388,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
             isResizing={isResizing}
             onResizeStart={handleResizeStart}
             onResizeEnd={handleResizeEnd}
+            readOnly={readOnly}
           />
         ))}
 

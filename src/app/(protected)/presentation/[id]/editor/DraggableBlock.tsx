@@ -28,6 +28,7 @@ interface DraggableBlockProps {
   isLastBlock: boolean;
   canAddColumn: boolean;
   hideDragHandle?: boolean;
+  readOnly?: boolean;
 }
 
 export const DraggableBlock: React.FC<DraggableBlockProps> = ({
@@ -43,6 +44,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   isLastBlock,
   canAddColumn,
   hideDragHandle = false,
+  readOnly = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const blockRef = useRef<HTMLDivElement>(null);
@@ -61,7 +63,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   } = useDraggable({
     id: `${slideId}-${block.id}`,
     data: { type: "block", block, slideId, rowId, index: blockIndex },
-    disabled: hideDragHandle, // Disable when used in ResizableColumn
+    disabled: hideDragHandle || readOnly, // Disable when used in ResizableColumn
   });
 
   const style = {
@@ -77,6 +79,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
       // Don't focus if clicking inside editor
       const target = e.target as HTMLElement;
       if (
+        readOnly ||
         target.closest(".ProseMirror") ||
         target.closest("[data-block-action-bar]")
       ) {
@@ -187,6 +190,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
         }}
       >
         {/* Block Action Bar - Shows on focus */}
+        {!readOnly && (
         <BlockActionBar
           block={block}
           isVisible={isFocused || isHovered}
@@ -199,9 +203,10 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
           canMoveDown={canMoveDown}
           dragHandleProps={!hideDragHandle ? { ...attributes, ...listeners } : undefined}
         />
+        )}
 
         {/* Drag Handle - Only show if not hidden and no action bar visible */}
-        {!hideDragHandle && !isFocused && (
+        {!hideDragHandle && !isFocused && !readOnly && (
           <div
             {...attributes}
             {...listeners}
@@ -222,7 +227,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
         )}
 
         {/* Add Column Button - Only on last block and if can add more */}
-        {isLastBlock && canAddColumn && (
+        {isLastBlock && canAddColumn && !readOnly && (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -260,6 +265,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
           onUpdate={(content) => onUpdate(block.id, content)}
           theme={theme}
           placeholder="Type '/' for commands"
+          readOnly={readOnly}
         />
       </div>
     </div>

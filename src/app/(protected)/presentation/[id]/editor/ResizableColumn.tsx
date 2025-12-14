@@ -31,6 +31,7 @@ interface ResizableColumnProps {
   isResizing: boolean;
   onResizeStart: () => void;
   onResizeEnd: () => void;
+  readOnly?: boolean;
 }
 
 export const ResizableColumn: React.FC<ResizableColumnProps> = ({
@@ -49,6 +50,7 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
   isResizing,
   onResizeStart,
   onResizeEnd,
+  readOnly = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isBorderHovered, setIsBorderHovered] = useState(false);
@@ -75,6 +77,7 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
   } = useDraggable({
     id: `${slideId}-${block.id}`,
     data: { type: "block", block, slideId, rowId, index },
+    disabled: readOnly,
   });
 
   const dragStyle = {
@@ -138,20 +141,21 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
 
   return (
     <div
-      ref={setNodeRef}
-      className="group/column relative h-full w-full min-w-0 border border-transparent rounded-lg transition-colors duration-200"
-      style={{
+      ref={!readOnly ? setNodeRef : undefined}
+      className={`group/column relative h-full w-full min-w-0 border border-transparent rounded-lg transition-colors duration-200 ${readOnly ? "" : ""}`}
+      style={!readOnly ? {
         ...dragStyle,
-      }}
+      } : {}}
       onMouseEnter={(e) => {
-        setIsHovered(true);
+        if (!readOnly) setIsHovered(true);
       }}
       onMouseLeave={(e) => {
-        setIsHovered(false);
+        if (!readOnly) setIsHovered(false);
       }}
     >
       <div className="relative h-full w-full flex flex-col">
         {/* Column Controls - Top center */}
+        {!readOnly && (
         <div
           className={`absolute flex items-center justify-center gap-1 z-30 transition-all duration-200 ${
             isHovered
@@ -236,6 +240,7 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        )}
 
         <DraggableBlock
           block={block}
@@ -250,10 +255,11 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
           isLastBlock={isLastBlock}
           canAddColumn={canAddColumn}
           hideDragHandle={true}
+          readOnly={readOnly}
         />
 
         {/* Border between columns - Resizable handle */}
-        {!isLastBlock && (
+        {!isLastBlock && !readOnly && (
           <div
             ref={borderResizeRef}
             className={`absolute right-0 top-0 bottom-0 w-1 cursor-col-resize z-20 transition-all duration-200 ${

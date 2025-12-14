@@ -76,6 +76,7 @@ interface SlideCardProps {
     columnWidths: number[]
   ) => void;
   enableDragHints?: boolean;
+  readOnly?: boolean;
 }
 
 export const SlideCard: React.FC<SlideCardProps> = ({
@@ -87,6 +88,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
   onAddRowAtBottom,
   onUpdateColumnWidths,
   enableDragHints = true,
+  readOnly = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -96,7 +98,9 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   return (
     <div
-      className="group/slide relative rounded-3xl shadow-xl px-6 py-5 transition-all duration-200 ease-out hover:-translate-y-1"
+      className={`group/slide relative rounded-3xl shadow-xl px-6 py-5 transition-all duration-200 ease-out ${
+        !readOnly ? "hover:-translate-y-1" : ""
+      }`}
       style={{
         backgroundColor: theme.cardBackground,
         border: `1px solid ${theme.primary}1f`,
@@ -109,8 +113,9 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {enableDragHints && <DragStateBridge onDragChange={setIsDragging} />}
+      {enableDragHints && !readOnly && <DragStateBridge onDragChange={setIsDragging} />}
       {/* Add Row at Top Button */}
+      {!readOnly && (
       <button
         onClick={() => onAddRowAtTop(slide.id)}
         className={`absolute left-1/2 -translate-x-1/2 -top-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
@@ -146,15 +151,18 @@ export const SlideCard: React.FC<SlideCardProps> = ({
         </svg>
         <span>Add Row</span>
       </button>
+      )}
 
       {/* Slide Content */}
       <div className="flex flex-col gap-1">
+        {!readOnly && (
         <InsertDropZone
           slideId={slide.id}
           insertIndex={0}
           themePrimary={theme.primary}
           isActive={dragActive}
         />
+        )}
         {(slide.rows || []).map((row, rowIndex) => (
           <React.Fragment key={row.id}>
             <DroppableRow
@@ -175,18 +183,22 @@ export const SlideCard: React.FC<SlideCardProps> = ({
                 onUpdateColumnWidths(slide.id, rowId, columnWidths)
               }
               rowCount={slide.rows?.length || 0}
+              readOnly={readOnly}
             />
+            {!readOnly && (
             <InsertDropZone
               slideId={slide.id}
               insertIndex={rowIndex + 1}
               themePrimary={theme.primary}
               isActive={dragActive}
             />
+            )}
           </React.Fragment>
         ))}
       </div>
 
       {/* Add Row at Bottom Button */}
+      {!readOnly && (
       <button
         onClick={() => onAddRowAtBottom(slide.id)}
         className={`absolute left-1/2 -translate-x-1/2 -bottom-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
@@ -222,6 +234,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
         </svg>
         <span>Add Row</span>
       </button>
+      )}
     </div>
   );
 };

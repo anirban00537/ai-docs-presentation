@@ -7,6 +7,7 @@ interface BlockRendererProps {
   onUpdate: (content: any) => void; // Content type varies by block type
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const BlockRenderer: React.FC<BlockRendererProps> = ({
@@ -14,15 +15,18 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   onUpdate,
   theme,
   placeholder,
+  readOnly = false,
 }) => {
   const normalized = normalizeBlock(block);
   const Component = resolveBlockComponent(normalized.type);
   return (
     <Component
       block={normalized}
-      onUpdate={onUpdate}
+      onUpdate={readOnly ? () => {} : onUpdate}
       theme={theme}
       placeholder={placeholder}
+      readOnly={readOnly} // We need to update registry.tsx to accept this prop type
     />
   );
 };
+

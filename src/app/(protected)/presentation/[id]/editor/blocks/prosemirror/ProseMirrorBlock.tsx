@@ -7,12 +7,14 @@ interface ProseMirrorBlockProps {
   onUpdate: (content: any) => void;
   placeholder?: string;
   theme?: Theme;
+  readOnly?: boolean;
 }
 
 export const ProseMirrorBlock: React.FC<ProseMirrorBlockProps> = ({
   block,
   onUpdate,
   placeholder = "Type '/' for commands",
+  readOnly,
 }) => {
   return (
     <div className="w-full h-full flex flex-col">
@@ -23,6 +25,7 @@ export const ProseMirrorBlock: React.FC<ProseMirrorBlockProps> = ({
         onChange={onUpdate}
         placeholder={placeholder}
         className="flex-1"
+        readOnly={readOnly}
       />
     </div>
   );
