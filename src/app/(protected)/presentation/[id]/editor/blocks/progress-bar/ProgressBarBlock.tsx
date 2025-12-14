@@ -155,15 +155,13 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
             key={index}
             className="group"
             style={{
-              backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.75),
-              backdropFilter: "blur(12px)",
-              padding: "1.5rem",
-              borderRadius: "1rem",
-              border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-              boxShadow: `0 2px 8px -2px ${withAlpha(theme.primary, 0.05)}`,
+              backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.5),
+              padding: "1.25rem",
+              borderRadius: "0.75rem",
+              border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
             }}
           >
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <div className="flex-1 min-w-0 mr-4">
                 <ProseMirrorEditor
                   key={`${block.id}-label-${index}`}
@@ -171,12 +169,12 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
                   value={item.label}
                   onChange={(newContent) => handleLabelChange(index, newContent)}
                   placeholder="Label"
-                  className="font-semibold text-sm"
+                  className="font-medium text-sm"
                 />
               </div>
               {showPercentage && (
                 <div
-                  className="text-lg font-bold shrink-0"
+                  className="text-base font-semibold shrink-0"
                   style={{ color: item.color || theme.primary }}
                 >
                   {animatedValues[index]}%
@@ -184,7 +182,7 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
               )}
             </div>
             <div
-              className="w-full h-3 rounded-full overflow-hidden relative"
+              className="w-full h-2 rounded-full overflow-hidden relative"
               style={{
                 backgroundColor: withAlpha(theme.primary, 0.1),
               }}
@@ -194,21 +192,8 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
                 style={{
                   width: `${animatedValues[index]}%`,
                   backgroundColor: item.color || theme.primary,
-                  boxShadow: `0 0 10px ${withAlpha(
-                    item.color || theme.primary,
-                    0.5
-                  )}`,
                 }}
-              >
-                <div
-                  className="absolute inset-0 opacity-30"
-                  style={{
-                    background:
-                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-                    animation: "shimmer 2s infinite",
-                  }}
-                />
-              </div>
+              />
             </div>
           </div>
         ))}

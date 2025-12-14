@@ -50,11 +50,11 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
       {/* Icon/Number Circle */}
       <div className="relative z-10 shrink-0">
         <div
-          className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold shadow-md"
+          className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold"
           style={{
             backgroundColor: theme.primary,
             color: theme.cardBackground,
-            border: `3px solid ${theme.cardBackground}`,
+            border: `4px solid ${theme.cardBackground}`,
           }}
         >
           {icon}

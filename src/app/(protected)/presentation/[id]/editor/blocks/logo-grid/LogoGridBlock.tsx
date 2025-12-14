@@ -126,11 +126,10 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
         {logos.map((logo, index) => (
           <div
             key={index}
-            className="group flex flex-col items-center justify-center p-6 rounded-xl transition-all duration-300 hover:scale-105 relative"
+            className="group flex flex-col items-center justify-center p-6 rounded-xl transition-all relative"
             style={{
-              backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.5),
-              backdropFilter: "blur(8px)",
-              border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
+              backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.3),
+              border: `1px solid ${withAlpha(theme.primary, 0.08)}`,
             }}
           >
             {logo.image ? (

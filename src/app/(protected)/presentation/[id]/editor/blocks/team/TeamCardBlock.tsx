@@ -90,7 +90,7 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
       {/* Avatar Section */}
       <div className="relative mb-6">
         <div
-          className="w-32 h-32 rounded-full overflow-hidden flex items-center justify-center shadow-lg relative group/avatar cursor-pointer"
+          className="w-32 h-32 rounded-full overflow-hidden flex items-center justify-center relative group/avatar cursor-pointer"
           style={{ 
             border: `4px solid ${withAlpha(theme.primary, 0.2)}`,
             backgroundColor: withAlpha(theme.primary, 0.1),

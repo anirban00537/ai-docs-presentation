@@ -134,33 +134,31 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
         {badges.map((badge, index) => (
           <div
             key={index}
-            className="group flex gap-4 p-6 rounded-2xl transition-all hover:translate-y-[-2px] hover:shadow-lg duration-300 relative"
+            className="group flex gap-4 p-5 rounded-xl transition-all relative"
             style={{
-              backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.75),
-              backdropFilter: "blur(12px)",
-              border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-              boxShadow: `0 4px 12px -2px ${withAlpha(theme.primary, 0.05)}`,
+              backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.5),
+              border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
             }}
           >
             {badge.icon && (
               <div
-                className="shrink-0 w-16 h-16 rounded-xl flex items-center justify-center text-4xl transition-transform group-hover:scale-110 duration-300"
+                className="shrink-0 w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
                 style={{
-                  backgroundColor: withAlpha(theme.primary, 0.1),
+                  backgroundColor: withAlpha(theme.primary, 0.05),
                 }}
               >
                 {badge.icon}
               </div>
             )}
-            <div className="flex-1 min-w-0">
-              <div className="mb-2">
+            <div className="flex-1 min-w-0 py-0.5">
+              <div className="mb-1">
                 <ProseMirrorEditor
                   key={`${block.id}-title-${index}`}
                   blockId={`${block.id}-title-${index}`}
                   value={badge.title}
                   onChange={(newContent) => handleTitleChange(index, newContent)}
                   placeholder="Award Title"
-                  className="text-lg font-bold"
+                  className="text-base font-semibold leading-tight"
                 />
               </div>
               {badge.description && (
@@ -173,11 +171,11 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
                       handleDescriptionChange(index, newContent)
                     }
                     placeholder="Description"
-                    className="text-sm opacity-80"
+                    className="text-sm opacity-70 leading-normal"
                   />
                 </div>
               )}
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-2 mt-1">
                 {badge.issuer && (
                   <div>
                     <ProseMirrorEditor
@@ -188,13 +186,13 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
                         handleIssuerChange(index, newContent)
                       }
                       placeholder="Issuer"
-                      className="text-xs font-medium opacity-60"
+                      className="text-xs font-medium opacity-50 uppercase tracking-wide"
                     />
                   </div>
                 )}
                 {badge.date && (
                   <span
-                    className="text-xs opacity-50"
+                    className="text-xs opacity-40"
                     style={{ color: theme.bodyColor }}
                   >
                     • {badge.date}
@@ -202,7 +200,6 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
                 )}
               </div>
             </div>
-             {/* Delete overlay? Keep simple. Modal is better. */}
           </div>
         ))}
       </div>

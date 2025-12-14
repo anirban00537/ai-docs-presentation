@@ -69,12 +69,10 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
       {features.map((feature, index) => (
         <div
           key={index}
-          className="group flex gap-4 p-6 rounded-2xl transition-all hover:translate-y-[-2px] hover:shadow-lg duration-300"
+          className="group flex gap-4 p-5 rounded-xl transition-all relative"
           style={{
-            backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.75),
-            backdropFilter: "blur(12px)",
-            border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-            boxShadow: `0 4px 12px -2px ${withAlpha(theme.primary, 0.05)}`,
+            backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.5),
+            border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
           }}
         >
           <div

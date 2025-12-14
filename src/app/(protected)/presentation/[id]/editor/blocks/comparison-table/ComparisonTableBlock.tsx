@@ -233,12 +233,10 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
   return (
     <BlockWrapper customControls={customControls} theme={theme}>
       <div
-        className="w-full rounded-3xl overflow-hidden relative"
+        className="w-full rounded-2xl overflow-hidden relative"
         style={{
-          boxShadow: `0 20px 40px -4px ${withAlpha(theme.primary, 0.1)}`,
           border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
-          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.9),
-          backdropFilter: "blur(20px)",
+          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.5),
         }}
       >
         <div className="overflow-x-auto">
@@ -246,19 +244,19 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
             <thead>
               <tr>
                 <th 
-                  className="p-6 text-left w-1/4 min-w-[200px]"
+                  className="p-4 text-left w-1/4 min-w-[200px]"
                   style={{
                     borderBottom: `1px solid ${withAlpha(theme.primary, 0.1)}`,
                   }}
                 >
                   <span 
-                    className="text-xs font-bold uppercase tracking-wider opacity-50 block mb-2"
+                    className="text-[10px] font-semibold uppercase tracking-wider opacity-40 block mb-1"
                     style={{ color: theme.headingColor }}
                   >
                     Compare Plans
                   </span>
                   <span 
-                    className="text-lg font-bold block"
+                    className="text-base font-semibold block"
                     style={{ color: theme.headingColor }}
                   >
                     Features
@@ -267,25 +265,25 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                 {columns.map((col, colIndex) => (
                   <th
                     key={colIndex}
-                    className="p-6 text-center relative group min-w-[220px]"
+                    className="p-4 text-center relative group min-w-[200px]"
                     style={{
                       backgroundColor: col.highlighted
-                        ? withAlpha(theme.primary, 0.05)
+                        ? withAlpha(theme.primary, 0.02)
                         : "transparent",
                       borderBottom: `1px solid ${withAlpha(theme.primary, 0.1)}`,
                       borderLeft: colIndex === 0 ? `1px solid ${withAlpha(theme.primary, 0.05)}` : "none",
                     }}
                   >
                     {col.highlighted && (
-                      <div className="absolute top-0 left-0 right-0 py-1.5 flex justify-center">
+                      <div className="absolute top-0 left-0 right-0 py-1 flex justify-center">
                         <span 
-                          className="text-[10px] font-bold uppercase tracking-widest px-3 py-0.5 rounded-full"
+                          className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
                           style={{ 
                             backgroundColor: theme.primary,
                             color: "#ffffff"
                           }}
                         >
-                          Most Popular
+                          Popular
                         </span>
                       </div>
                     )}
@@ -295,13 +293,13 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                         e.stopPropagation();
                         removeColumn(colIndex);
                       }}
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-50 text-red-500 rounded-full transition-all duration-200 hover:scale-110 z-10"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1 hover:bg-red-50 text-red-500 rounded-full transition-all z-10"
                       title="Delete Column"
                     >
                       <IconTrash size={14} />
                     </button>
 
-                    <div className="mt-4 space-y-2">
+                    <div className="mt-2 space-y-1">
                        <div className="flex justify-center">
                         <ProseMirrorEditor
                           key={`${block.id}-col-name-${colIndex}`}
@@ -311,12 +309,12 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                             handleColumnNameChange(colIndex, newContent)
                           }
                           placeholder="Plan Name"
-                          className="text-lg font-bold text-center"
+                          className="text-base font-semibold text-center leading-tight"
                         />
                       </div>
                       
                       {col.price && (
-                        <div className="flex justify-center items-baseline opacity-90">
+                        <div className="flex justify-center items-baseline opacity-80">
                            <ProseMirrorEditor
                             key={`${block.id}-col-price-${colIndex}`}
                             blockId={`${block.id}-col-price-${colIndex}`}
@@ -325,7 +323,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                               handleColumnPriceChange(colIndex, newContent)
                             }
                             placeholder="Price"
-                            className="text-3xl font-extrabold tracking-tight text-center"
+                            className="text-2xl font-bold tracking-tight text-center"
                           />
                         </div>
                       )}
@@ -339,15 +337,12 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                 <tr
                   key={rowIndex}
                   className="group/row hover:bg-black/5 transition-colors duration-150"
-                  style={{
-                     borderColor: withAlpha(theme.primary, 0.05),
-                  }}
                 >
                   <td 
-                    className="p-5 text-left border-b border-dashed"
+                    className="p-4 text-left border-b border-dashed"
                     style={{ borderColor: withAlpha(theme.primary, 0.1) }}
                   >
-                    <div className="font-medium" style={{ color: theme.headingColor }}>
+                    <div className="font-medium text-sm" style={{ color: theme.headingColor }}>
                       <ProseMirrorEditor
                         key={`${block.id}-feature-${rowIndex}`}
                         blockId={`${block.id}-feature-${rowIndex}`}
@@ -363,10 +358,10 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                   {row.values.map((value, colIndex) => (
                     <td
                       key={colIndex}
-                      className="p-5 text-center border-b border-dashed relative"
+                      className="p-4 text-center border-b border-dashed relative"
                       style={{
                         backgroundColor: columns[colIndex]?.highlighted
-                          ? withAlpha(theme.primary, 0.03)
+                          ? withAlpha(theme.primary, 0.02)
                           : "transparent",
                          borderColor: withAlpha(theme.primary, 0.1)
                       }}

@@ -105,10 +105,11 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
         {images.map((img) => (
           <div 
             key={img.id} 
-            className="group/img relative rounded-xl overflow-hidden shadow-sm transition-all hover:shadow-lg hover:z-10"
+            className="group/img relative rounded-xl overflow-hidden transition-all"
             style={{ 
                aspectRatio: '4/3',
-               backgroundColor: withAlpha(theme.primary, 0.05)
+               backgroundColor: withAlpha(theme.primary, 0.03),
+               border: `1px solid ${withAlpha(theme.primary, 0.05)}`
             }}
           >
             <img 

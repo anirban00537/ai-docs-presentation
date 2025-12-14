@@ -108,15 +108,13 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
         className="group w-full h-full rounded-2xl p-8 flex flex-col gap-6 relative overflow-hidden transition-all"
         style={{
           color: theme.bodyColor || theme.headingColor,
-          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.75),
-          backdropFilter: "blur(12px)",
-          border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-          boxShadow: `0 4px 12px -2px ${withAlpha(theme.primary, 0.05)}`,
+          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.3),
+          border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
         }}
       >
         {/* Large Quote Watermark */}
         <div 
-          className="absolute top-4 right-6 text-9xl leading-none opacity-5 font-serif select-none pointer-events-none transition-transform group-hover:scale-110 duration-500 origin-top-right"
+          className="absolute top-4 right-6 text-9xl leading-none opacity-[0.03] font-serif select-none pointer-events-none origin-top-right"
           style={{ color: theme.primary }}
         >
           "
@@ -129,7 +127,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
             value={quoteDoc}
             onChange={handleQuoteChange}
             placeholder={placeholder ?? "Add a testimonial or quote..."}
-            className="text-xl italic font-medium leading-relaxed"
+            className="text-lg italic font-medium leading-relaxed"
           />
         </div>
 
@@ -139,18 +137,14 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
                 <img 
                     src={avatar} 
                     alt="Avatar" 
-                    className="w-12 h-12 rounded-full object-cover shadow-sm transition-transform hover:scale-110"
-                    style={{
-                         boxShadow: `0 2px 8px ${withAlpha(theme.primary, 0.25)}`
-                    }}
+                    className="w-10 h-10 rounded-full object-cover transition-opacity hover:opacity-80"
                 />
             ) : (
                 <div
-                className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center text-sm font-bold shadow-sm transition-transform hover:scale-110"
+                className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold transition-opacity hover:opacity-80"
                 style={{
                     backgroundColor: theme.primary,
                     color: theme.cardBackground,
-                    boxShadow: `0 2px 8px ${withAlpha(theme.primary, 0.25)}`
                 }}
                 >
                 {extractText(nameDoc)

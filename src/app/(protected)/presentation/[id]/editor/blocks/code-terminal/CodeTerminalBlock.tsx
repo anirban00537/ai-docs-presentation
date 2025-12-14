@@ -32,11 +32,11 @@ export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
 
   return (
     <div
-      className="flex flex-col w-full h-full rounded-lg overflow-hidden font-mono text-sm shadow-lg overflow-y-auto custom-scrollbar custom-scrollbar-dark"
+      className="flex flex-col w-full h-full rounded-lg overflow-hidden font-mono text-sm overflow-y-auto custom-scrollbar custom-scrollbar-dark"
       style={{
         backgroundColor: "#1e1e1e", // Terminal bg always darker
         color: "#e5e7eb",
-        border: `1px solid ${withAlpha(theme.primary, 0.2)}`,
+        border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
       }}
     >
       {/* Terminal Header */}

@@ -165,12 +165,10 @@ export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="group flex-1 min-w-[200px] flex flex-col items-center gap-3 p-6 rounded-2xl transition-all hover:scale-105 hover:shadow-lg duration-300 relative"
+            className="group flex-1 min-w-[200px] flex flex-col items-center gap-3 p-6 rounded-2xl transition-all relative"
             style={{
               backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.75),
-              backdropFilter: "blur(12px)",
               border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-              boxShadow: `0 4px 12px -2px ${withAlpha(theme.primary, 0.05)}`,
             }}
           >
             {stat.icon && (

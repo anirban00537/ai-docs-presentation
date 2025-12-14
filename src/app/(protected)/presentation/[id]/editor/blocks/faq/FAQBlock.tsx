@@ -138,11 +138,9 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
               style={{
                 backgroundColor: withAlpha(
                   theme.cardBackground || "#ffffff",
-                  0.75
+                  0.5
                 ),
-                backdropFilter: "blur(12px)",
-                border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-                boxShadow: `0 2px 8px -2px ${withAlpha(theme.primary, 0.05)}`,
+                border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
               }}
             >
               <button

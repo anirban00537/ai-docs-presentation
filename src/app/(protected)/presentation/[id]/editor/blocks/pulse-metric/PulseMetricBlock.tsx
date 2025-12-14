@@ -139,12 +139,10 @@ export const PulseMetricBlock: React.FC<PulseMetricBlockProps> = ({
 
   return (
     <div
-      className="group relative flex flex-col justify-between p-6 rounded-2xl h-full w-full overflow-hidden transition-all hover:-translate-y-1 hover:shadow-xl"
+      className="group relative flex flex-col justify-between p-6 rounded-2xl h-full w-full overflow-hidden transition-all relative"
       style={{
         backgroundColor: withAlpha(theme.cardBackground, 0.6),
-        backdropFilter: "blur(12px)",
         border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
-        boxShadow: `0 8px 32px ${withAlpha(theme.primary, 0.05)}`,
       }}
     >
       {/* Settings Popover */}
@@ -208,11 +206,7 @@ export const PulseMetricBlock: React.FC<PulseMetricBlockProps> = ({
         </Popover>
       </div>
 
-      {/* Background Pulse Glow */}
-      <div
-        className="absolute w-32 h-32 rounded-full blur-[60px] opacity-20 animate-pulse top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-        style={{ backgroundColor: theme.primary }}
-      />
+      {/* Background Pulse Glow - Removed for cleaner look */}
 
       <div className="relative z-10 flex flex-col gap-1 items-center justify-center text-center mt-2">
         <input

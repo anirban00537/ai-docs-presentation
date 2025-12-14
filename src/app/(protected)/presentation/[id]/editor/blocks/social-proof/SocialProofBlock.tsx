@@ -130,15 +130,13 @@ export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
   return (
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addPlatform} theme={theme}>
       <div
-        className="w-full rounded-2xl p-8"
+        className="w-full rounded-2xl p-6 transition-all"
         style={{
-          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.75),
-          backdropFilter: "blur(12px)",
-          border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-          boxShadow: `0 4px 12px -2px ${withAlpha(theme.primary, 0.05)}`,
+          border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
+          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.5),
         }}
       >
-        <div className="flex flex-wrap items-center justify-center gap-8 block-content">
+        <div className="flex flex-wrap items-center justify-center gap-6 block-content">
           {platforms.map((platform, index) => {
             const IconComponent = platformIcons[platform.platform];
             return (
@@ -147,7 +145,7 @@ export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
                 href={platform.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col items-center gap-2 p-4 rounded-xl transition-all hover:scale-110 hover:shadow-lg duration-300 relative"
+                className="group flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all relative"
                 style={{
                   backgroundColor: withAlpha(theme.primary, 0.05),
                   border: `1px solid ${withAlpha(theme.primary, 0.1)}`,

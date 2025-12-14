@@ -52,26 +52,21 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
 
   return (
     <div
-      className="group relative p-8 rounded-3xl h-full w-full overflow-hidden transition-all hover:shadow-2xl"
+      className="group relative p-8 rounded-3xl h-full w-full overflow-hidden transition-all"
       style={{
-        background: `linear-gradient(135deg, ${withAlpha(
-          theme.cardBackground,
-          0.4
-        )}, ${withAlpha(theme.cardBackground, 0.1)})`,
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        border: `1px solid ${withAlpha("#ffffff", 0.15)}`,
-        borderColor: withAlpha(theme.headingColor, 0.1),
-        boxShadow: `0 8px 32px 0 ${withAlpha("#000000", 0.05)}`,
+        backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.4),
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
       }}
     >
       {/* 3D Icon Container */}
       <Popover>
         <PopoverTrigger asChild>
           <button
-            className="absolute top-0 right-0 p-6 text-6xl transform origin-top-right transition-transform hover:scale-110 hover:-rotate-12 cursor-pointer outline-none focus:outline-none z-20"
+            className="absolute top-0 right-0 p-6 text-6xl transform origin-top-right transition-transform cursor-pointer outline-none focus:outline-none z-20"
             style={{
-              filter: "drop-shadow(0 10px 15px rgba(0,0,0,0.15))",
+              opacity: 0.8
             }}
             title="Change icon"
           >

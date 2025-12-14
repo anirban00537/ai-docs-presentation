@@ -107,11 +107,10 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   return (
     <BlockWrapper onEdit={handleOpenEdit} theme={theme}>
       <div
-        className="w-full rounded-2xl overflow-hidden relative group"
+        className="w-full rounded-xl overflow-hidden relative group"
         style={{
-          backgroundColor: isDark ? "#1e1e1e" : "#f8f9fa",
-          border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-          boxShadow: `0 4px 12px -2px ${withAlpha(theme.primary, 0.05)}`,
+          backgroundColor: isDark ? "#121212" : "#ffffff",
+          border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
         }}
       >
         <div

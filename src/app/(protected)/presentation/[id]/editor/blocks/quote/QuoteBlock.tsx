@@ -63,8 +63,8 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
           : "transparent",
         borderLeft: isCentered 
           ? "none" 
-          : `4px solid ${theme.primary}`,
-        borderRadius: isCentered ? "0.75rem" : "0.5rem",
+          : `3px solid ${theme.primary}`,
+        borderRadius: isCentered ? "0.75rem" : "0",
         paddingLeft: isCentered ? "1.5rem" : "1.5rem",
       }}
     >

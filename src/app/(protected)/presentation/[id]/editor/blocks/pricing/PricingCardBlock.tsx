@@ -114,8 +114,8 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   return (
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addFeature} className="h-full" theme={theme}>
       <div
-        className={`w-full h-full flex flex-col rounded-2xl p-8 relative transition-all duration-300 ${
-          isRecommended ? "transform scale-105 shadow-xl z-10" : "opacity-90 hover:opacity-100"
+        className={`w-full h-full flex flex-col rounded-2xl p-6 relative transition-all duration-300 ${
+          isRecommended ? "scale-105 z-10" : ""
         }`}
         style={{
           backgroundColor: theme.cardBackground || "white",
@@ -123,14 +123,14 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
             ? `2px solid ${theme.primary}` 
             : `1px solid ${withAlpha(theme.primary, 0.1)}`,
           boxShadow: isRecommended 
-            ? `0 20px 40px -10px ${withAlpha(theme.primary, 0.2)}`
+            ? `0 10px 30px -10px ${withAlpha(theme.primary, 0.15)}`
             : "none",
         }}
       >
         {/* Recommended Badge */}
         {isRecommended && (
           <div 
-            className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1 shadow-md"
+            className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1 shadow-sm"
             style={{ backgroundColor: theme.primary }}
           >
             <Star className="w-3 h-3 fill-current" />
@@ -139,7 +139,7 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
         )}
 
         {/* Header */}
-        <div className="text-center mb-8 pb-8 border-b relative group/header" style={{ borderColor: withAlpha(theme.bodyColor, 0.1) }}>
+        <div className="text-center mb-6 pb-6 border-b relative" style={{ borderColor: withAlpha(theme.bodyColor, 0.1) }}>
           <div style={{ color: withAlpha(theme.headingColor, 0.5) }}>
             <ProseMirrorEditor
               key={`${block.id}-plan`}
@@ -147,7 +147,7 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
               value={planNameDoc}
               onChange={handlePlanNameChange}
               placeholder="Plan Name"
-              className="text-lg font-bold mb-2 text-center uppercase tracking-wide"
+              className="text-base font-semibold mb-1 text-center uppercase tracking-wide"
             />
           </div>
           <div className="flex justify-center items-baseline" style={{ color: theme.headingColor }}>
@@ -157,7 +157,7 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
               value={priceDoc}
               onChange={handlePriceChange}
               placeholder="$0/mo"
-              className="text-4xl font-extrabold text-center"
+              className="text-3xl font-bold text-center"
             />
           </div>
         </div>
