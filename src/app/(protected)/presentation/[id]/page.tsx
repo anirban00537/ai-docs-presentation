@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { useSearchParams, useParams } from "next/navigation";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
@@ -96,6 +96,7 @@ const GammaPage = () => {
 
   const [isPresenting, setIsPresenting] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const presentationContainerRef = useRef<HTMLDivElement>(null);
 
   const handlePresentClick = () => {
     setIsPresenting(true);
@@ -114,6 +115,12 @@ const GammaPage = () => {
   }, [isPresenting]);
 
   useEffect(() => {
+    if (presentationContainerRef.current) {
+        presentationContainerRef.current.scrollTop = 0;
+    }
+  }, [currentSlideIndex]);
+
+  useEffect(() => {
     if (!isPresenting) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -121,6 +128,12 @@ const GammaPage = () => {
         setCurrentSlideIndex((prev) => Math.min(prev + 1, slides.length - 1));
       } else if (e.key === "ArrowLeft") {
         setCurrentSlideIndex((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        presentationContainerRef.current?.scrollBy({ top: 100, behavior: 'smooth' });
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        presentationContainerRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
       } else if (e.key === "Escape") {
         setIsPresenting(false);
       }
@@ -136,7 +149,10 @@ const GammaPage = () => {
       
       {/* Presentation Mode Overlay */}
       {isPresenting && (
-        <div className="fixed inset-0 z-[100] overflow-y-auto bg-black text-white">
+        <div 
+            ref={presentationContainerRef}
+            className="fixed inset-0 z-[100] overflow-y-auto bg-black text-white"
+        >
              {/* Slide Content Container */}
              <div 
                 className="min-h-screen w-full flex flex-col items-center justify-center py-10"
