@@ -103,6 +103,17 @@ const GammaPage = () => {
   };
 
   useEffect(() => {
+    if (isPresenting) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isPresenting]);
+
+  useEffect(() => {
     if (!isPresenting) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
