@@ -6,6 +6,12 @@ import {
   type FeatureListContent,
 } from "../definitions";
 import { withAlpha } from "../utils";
+import EmojiPicker from "emoji-picker-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface FeatureListBlockProps {
   block: Block;
@@ -22,6 +28,21 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
   const content =
     (block.content as FeatureListContent) ?? createFeatureListContent();
   const { features, layout, columns = 2 } = content;
+
+  const handleIconChange = useCallback(
+    (index: number, emoji: string) => {
+      const newFeatures = [...features];
+      newFeatures[index] = {
+        ...newFeatures[index],
+        icon: emoji,
+      };
+      onUpdate({
+        ...content,
+        features: newFeatures,
+      });
+    },
+    [features, content, onUpdate]
+  );
 
   const handleTitleChange = useCallback(
     (index: number, newContent: any) => {
@@ -75,15 +96,25 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
             border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
           }}
         >
-          <div
-            className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center text-3xl transition-transform group-hover:scale-110 duration-300"
-            style={{
-              backgroundColor: withAlpha(theme.primary, 0.1),
-              color: theme.primary,
-            }}
-          >
-            {feature.icon}
-          </div>
+
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center text-3xl transition-transform hover:scale-110 duration-300 cursor-pointer outline-none relative z-20"
+                style={{
+                  backgroundColor: withAlpha(theme.primary, 0.1),
+                  color: theme.primary,
+                }}
+                title="Change icon"
+              >
+                {feature.icon || "✨"}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
+              <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
+            </PopoverContent>
+          </Popover>
           <div className="flex-1 min-w-0">
             <div className="mb-2">
               <ProseMirrorEditor

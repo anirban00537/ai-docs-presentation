@@ -3,6 +3,12 @@ import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { TimelineStep as TimelineStepType } from "../definitions";
 import { createTimelineContent } from "../definitions";
 import type { Theme } from "@/lib/editor/types";
+import EmojiPicker from "emoji-picker-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface TimelineStepProps {
   step: TimelineStepType;
@@ -11,6 +17,7 @@ interface TimelineStepProps {
   theme: Theme;
   onTitleChange: (index: number, newDoc: any) => void;
   onDescriptionChange: (index: number, newDoc: any) => void;
+  onIconChange: (index: number, icon: string) => void;
 }
 
 const applyAlpha = (hex: string, alpha: number): string => {
@@ -29,6 +36,7 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
   theme,
   onTitleChange,
   onDescriptionChange,
+  onIconChange,
 }) => {
   const stepContent = step ?? createTimelineContent().steps[0];
 
@@ -47,18 +55,25 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
 
   return (
     <div className="relative flex gap-6">
-      {/* Icon/Number Circle */}
-      <div className="relative z-10 shrink-0">
-        <div
-          className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold"
-          style={{
-            backgroundColor: theme.primary,
-            color: theme.cardBackground,
-            border: `4px solid ${theme.cardBackground}`,
-          }}
-        >
-          {icon}
-        </div>
+      <div className="relative z-20 shrink-0">
+        <Popover>
+            <PopoverTrigger asChild>
+                <button
+                className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold transition-transform hover:scale-110 cursor-pointer outline-none"
+                style={{
+                    backgroundColor: theme.primary,
+                    color: theme.cardBackground,
+                    border: `4px solid ${theme.cardBackground}`,
+                }}
+                title="Change icon"
+                >
+                {icon}
+                </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
+                <EmojiPicker onEmojiClick={(emoji) => onIconChange(stepIndex, emoji.emoji)} />
+            </PopoverContent>
+        </Popover>
       </div>
 
       {/* Content */}

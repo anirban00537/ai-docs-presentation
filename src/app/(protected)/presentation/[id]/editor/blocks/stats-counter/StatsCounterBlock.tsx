@@ -27,6 +27,12 @@ import {
 } from "@/components/ui/select";
 import { Trash2, Plus } from "lucide-react";
 import { createParagraphContent } from "../definitions/common";
+import EmojiPicker from "emoji-picker-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface StatsCounterBlockProps {
   block: Block;
@@ -171,11 +177,21 @@ export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
               border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
             }}
           >
-            {stat.icon && (
-              <div className="text-5xl mb-2 transition-transform group-hover:scale-110 duration-300">
-                {stat.icon}
-              </div>
-            )}
+            <div className="mb-2 relative z-20">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button 
+                    className="text-5xl transition-transform hover:scale-110 duration-300 cursor-pointer outline-none"
+                    title="Change icon"
+                  >
+                    {stat.icon || "📊"}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
+                  <EmojiPicker onEmojiClick={(emoji) => updateStatField(index, "icon", emoji.emoji)} />
+                </PopoverContent>
+              </Popover>
+            </div>
             <div className="text-center w-full">
               <div
                 className="text-5xl font-bold mb-3 transition-colors"
@@ -276,12 +292,16 @@ export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
                              </div>
                               <div className="space-y-1">
                                 <Label className="text-xs">Icon (Emoji)</Label>
-                                <Input 
-                                    value={stat.icon || ""}
-                                    onChange={(e) => updateStatField(index, "icon", e.target.value)}
-                                    className="h-8 text-sm"
-                                    placeholder="🚀"
-                                />
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="outline" className="h-8 w-full text-lg justify-start">
+                                            {stat.icon || "🚀"}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
+                                        <EmojiPicker onEmojiClick={(emoji) => updateStatField(index, "icon", emoji.emoji)} />
+                                    </PopoverContent>
+                                </Popover>
                              </div>
                          </div>
                          <div className="flex items-center gap-2">

@@ -67,7 +67,20 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
     },
     [content, onUpdate, steps]
   );
-
+  const handleStepIconChange = useCallback(
+    (stepIndex: number, newIcon: string) => {
+      const newSteps = [...steps];
+      newSteps[stepIndex] = {
+        ...newSteps[stepIndex],
+        icon: newIcon,
+      };
+      onUpdate({
+        ...(content ?? createTimelineContent()),
+        steps: newSteps,
+      });
+    },
+    [content, onUpdate, steps]
+  );
 
   const addStep = useCallback(() => {
     onUpdate({
@@ -121,6 +134,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
                 theme={theme}
                 onTitleChange={handleStepTitleChange}
                 onDescriptionChange={handleStepDescriptionChange}
+                onIconChange={handleStepIconChange}
               />
             ))}
           </div>

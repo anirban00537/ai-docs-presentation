@@ -24,6 +24,12 @@ import {
 } from "@/components/ui/select";
 import { Trash2, Plus } from "lucide-react";
 import { createParagraphContent } from "../definitions/common";
+import EmojiPicker from "emoji-picker-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface BadgeBlockProps {
   block: Block;
@@ -41,6 +47,15 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   const { badges, layout } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [tempLayout, setTempLayout] = useState<"grid" | "list">(layout);
+
+  const handleIconChange = useCallback(
+    (index: number, emoji: string) => {
+      const newBadges = [...badges];
+      newBadges[index] = { ...newBadges[index], icon: emoji };
+      onUpdate({ ...content, badges: newBadges });
+    },
+    [badges, content, onUpdate]
+  );
 
   const handleTitleChange = useCallback(
     (index: number, newContent: any) => {
@@ -140,16 +155,25 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
               border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
             }}
           >
-            {badge.icon && (
-              <div
-                className="shrink-0 w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
-                style={{
-                  backgroundColor: withAlpha(theme.primary, 0.05),
-                }}
-              >
-                {badge.icon}
-              </div>
-            )}
+
+            <div className="relative z-20">
+               <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    className="shrink-0 w-12 h-12 rounded-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 cursor-pointer outline-none"
+                    style={{
+                      backgroundColor: withAlpha(theme.primary, 0.05),
+                    }}
+                    title="Change icon"
+                  >
+                    {badge.icon || "🏆"}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
+                  <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
+                </PopoverContent>
+              </Popover>
+            </div>
             <div className="flex-1 min-w-0 py-0.5">
               <div className="mb-1">
                 <ProseMirrorEditor
@@ -236,11 +260,16 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
                          <div className="flex gap-4">
                               <div className="space-y-1 w-20">
                                 <Label className="text-xs">Icon</Label>
-                                <Input 
-                                    value={badge.icon || ""}
-                                    onChange={(e) => updateBadgeField(index, "icon", e.target.value)}
-                                    className="h-8 text-sm text-center"
-                                />
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="outline" className="h-8 w-full text-lg justify-start">
+                                            {badge.icon || "🏆"}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
+                                        <EmojiPicker onEmojiClick={(emoji) => updateBadgeField(index, "icon", emoji.emoji)} />
+                                    </PopoverContent>
+                                </Popover>
                              </div>
                              <div className="space-y-1 flex-1">
                                 <Label className="text-xs">Date</Label>
