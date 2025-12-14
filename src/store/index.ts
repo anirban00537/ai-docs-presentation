@@ -11,7 +11,13 @@ const rootReducer = combineReducers({
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(slidesApiMiddleware),
+    getDefaultMiddleware({
+      // Increase serializable check threshold for undo history
+      serializableCheck: {
+        // Ignore these action types
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+      },
+    }).concat(slidesApiMiddleware),
 }) as ReturnType<typeof configureStore>;
 
 // Extract types from rootReducer to avoid circular reference

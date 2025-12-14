@@ -1,4 +1,5 @@
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
+import undoable, { excludeAction, StateWithHistory } from "redux-undo";
 import type { RootState } from "@/store";
 import type {
   Block,
@@ -637,15 +638,53 @@ export const {
 
 export type { Block, Row, Slide, Theme, PresentationInfo };
 
-// --- Selectors ---
-export const selectSlidesState = (state: RootState) => state.slides;
-export const selectSlides = (state: RootState) => state.slides.slides;
-export const selectActiveSlideId = (state: RootState) =>
-  state.slides.activeSlideId;
-export const selectActiveSlide = (state: RootState) =>
-  state.slides.slides.find((s) => s.id === state.slides.activeSlideId) || null;
-export const selectTheme = (state: RootState) => state.slides.theme;
-export const selectPresentation = (state: RootState) =>
-  state.slides.presentation;
+// --- Undoable Reducer ---
+// Wrap the reducer with redux-undo for undo/redo functionality
+// Exclude actions that shouldn't be undoable (e.g., navigation, theme changes)
+const undoableSlidesReducer = undoable(slidesSlice.reducer, {
+  limit: 50, // Maximum number of undo steps
+  filter: excludeAction([
+    // Actions that shouldn't trigger undo history
+    'slides/setActiveSlide',
+    'slides/setTheme',
+    'slides/resetTheme',
+    'slides/setPresentation',
+    'slides/updatePresentationTitle',
+    'slides/setSlides', // Initial load shouldn't be undoable
+    'slides/replaceSlideWithServerData', // Server sync shouldn't be undoable
+  ]),
+  // Group rapid updates together (e.g., typing)
+  groupBy: (action) => {
+    // Group block content updates by block ID to prevent every keystroke from being a separate undo step
+    if (action.type === 'slides/updateBlockContent') {
+      const payload = action.payload as { blockId: string };
+      return `updateBlockContent-${payload.blockId}`;
+    }
+    return null; // Default: don't group
+  },
+  // Sync filter - ignore rapid consecutive actions of the same type
+  syncFilter: true,
+});
 
-export default slidesSlice.reducer;
+// Type for the undoable state
+export type UndoableSlidesState = StateWithHistory<SlidesState>;
+
+// --- Selectors (updated for redux-undo state structure) ---
+// The state now has { past: [], present: SlidesState, future: [] }
+export const selectSlidesState = (state: RootState) => state.slides.present;
+export const selectSlides = (state: RootState) => state.slides.present.slides;
+export const selectActiveSlideId = (state: RootState) =>
+  state.slides.present.activeSlideId;
+export const selectActiveSlide = (state: RootState) =>
+  state.slides.present.slides.find((s) => s.id === state.slides.present.activeSlideId) || null;
+export const selectTheme = (state: RootState) => state.slides.present.theme;
+export const selectPresentation = (state: RootState) =>
+  state.slides.present.presentation;
+
+// --- Undo/Redo Selectors ---
+export const selectCanUndo = (state: RootState) => state.slides.past.length > 0;
+export const selectCanRedo = (state: RootState) => state.slides.future.length > 0;
+export const selectUndoStackLength = (state: RootState) => state.slides.past.length;
+export const selectRedoStackLength = (state: RootState) => state.slides.future.length;
+
+export default undoableSlidesReducer;

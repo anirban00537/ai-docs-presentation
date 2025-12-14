@@ -44,7 +44,7 @@ const STATE_UPDATE_DEBOUNCE_DELAY = 800; // 800ms debounce for all state updates
 const syncStateToApi = async (state: RootState) => {
   if (!currentPresentationId) return;
 
-  const { slides: currentSlides, theme: currentTheme } = state.slides;
+  const { slides: currentSlides, theme: currentTheme } = state.slides.present;
 
   // Update theme if it changed
   const themeChanged =
@@ -65,13 +65,13 @@ const syncStateToApi = async (state: RootState) => {
 
   // Check for new slides (slides added)
   const newSlides = currentSlides.filter(
-    (slide) => !previousSlidesState.find((ps) => ps.id === slide.id)
+    (slide: Slide) => !previousSlidesState.find((ps: Slide) => ps.id === slide.id)
   );
 
   // Create new slides
   for (const newSlide of newSlides) {
     try {
-      const order = currentSlides.findIndex((s) => s.id === newSlide.id);
+      const order = currentSlides.findIndex((s: Slide) => s.id === newSlide.id);
       const apiData = convertReduxSlideToApi(newSlide);
       await createSlide(currentPresentationId, {
         ...apiData,
@@ -84,7 +84,7 @@ const syncStateToApi = async (state: RootState) => {
   }
 
   // Check for updated slides (compare by JSON stringify)
-  const updatedSlides = currentSlides.filter((slide) => {
+  const updatedSlides = currentSlides.filter((slide: Slide) => {
     const previousSlide = previousSlidesState.find((ps) => ps.id === slide.id);
     if (!previousSlide) return false;
     return JSON.stringify(previousSlide) !== JSON.stringify(slide);
@@ -103,7 +103,7 @@ const syncStateToApi = async (state: RootState) => {
 
   // Check for reordered slides - if order changed, update all slides
   // This ensures order is preserved in the database
-  const reordered = currentSlides.some((slide, index) => {
+  const reordered = currentSlides.some((slide: Slide, index: number) => {
     const prevIndex = previousSlidesState.findIndex((ps) => ps.id === slide.id);
     return prevIndex !== -1 && prevIndex !== index;
   });
@@ -150,14 +150,14 @@ export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
     // Skip setSlides action (used for initial load, handled separately)
     if (setSlidesAction.match(action)) {
       // Update previous state but don't sync (initial load)
-      previousSlidesState = JSON.parse(JSON.stringify(state.slides.slides));
-      previousThemeState = JSON.parse(JSON.stringify(state.slides.theme));
+      previousSlidesState = JSON.parse(JSON.stringify(state.slides.present.slides));
+      previousThemeState = JSON.parse(JSON.stringify(state.slides.present.theme));
       return result;
     }
 
     // Handle addSlide action immediately (no debounce for creation)
     if (addSlideAction.match(action)) {
-      const newSlide = state.slides.slides[state.slides.slides.length - 1];
+      const newSlide = state.slides.present.slides[state.slides.present.slides.length - 1];
       if (newSlide) {
         const clientId = newSlide.id; // Store client-side ID
         const apiData = convertReduxSlideToApi(newSlide);
@@ -169,8 +169,8 @@ export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
             if (response.success && response.data) {
               // Get current state to preserve any updates (like template rows)
               const currentState = store.getState();
-              const currentSlide = currentState.slides.slides.find(
-                (s) => s.id === clientId
+              const currentSlide = currentState.slides.present.slides.find(
+                (s: Slide) => s.id === clientId
               );
 
               // Convert API Slide format to Redux Slide format
@@ -193,17 +193,17 @@ export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
               // If template was applied, immediately sync to server
               if (currentSlide?.rows?.length) {
                 const finalState = store.getState();
-                const finalSlide = finalState.slides.slides.find(
-                  (s) => s.id === response.data.id
+                const finalSlide = finalState.slides.present.slides.find(
+                  (s: Slide) => s.id === response.data.id
                 );
                 if (finalSlide) {
                   const updateData = convertReduxSlideToApi(finalSlide);
-                  updateSlide(currentPresentationId, finalSlide.id, updateData)
+                  updateSlide(currentPresentationId!, finalSlide.id, updateData)
                     .then(() => {
                       // Update previous state after successful update
                       const updatedState = store.getState();
                       previousSlidesState = JSON.parse(
-                        JSON.stringify(updatedState.slides.slides)
+                        JSON.stringify(updatedState.slides.present.slides)
                       );
                     })
                     .catch((error) => {
@@ -217,7 +217,7 @@ export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
                 // Update previous state after successful creation
                 const updatedState = store.getState();
                 previousSlidesState = JSON.parse(
-                  JSON.stringify(updatedState.slides.slides)
+                  JSON.stringify(updatedState.slides.present.slides)
                 );
               }
             }
@@ -238,7 +238,7 @@ export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
       deleteSlide(currentPresentationId, slideId)
         .then(() => {
           // Update previous state after successful deletion
-          previousSlidesState = JSON.parse(JSON.stringify(state.slides.slides));
+          previousSlidesState = JSON.parse(JSON.stringify(state.slides.present.slides));
         })
         .catch((error) => {
           console.error("Failed to delete slide:", error);

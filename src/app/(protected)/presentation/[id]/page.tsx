@@ -27,6 +27,7 @@ import {
   IconGripVertical,
 } from "@tabler/icons-react";
 import { FloatingSidebar } from "./editor/FloatingSidebar";
+import { useUndoRedoKeyboardShortcuts } from "@/hooks/useUndoRedo";
 
 // Block type icon mapping
 const getBlockTypeIcon = (type: string) => {
@@ -91,6 +92,9 @@ const GammaPage = () => {
   } = useEditorPage({ presentationId, outlineId });
 
   const presentation = useAppSelector(selectPresentation);
+
+  // Enable undo/redo keyboard shortcuts (Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z)
+  useUndoRedoKeyboardShortcuts();
 
   const isDark = theme.themeType === "dark";
 

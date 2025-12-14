@@ -6,13 +6,22 @@ import {
   DEFAULT_THEME,
 } from "@/store/slices/slidesSlice";
 import { Button } from "@/components/ui/button";
-import { IconShare, IconPlayerPlay } from "@tabler/icons-react";
+import { IconShare, IconPlayerPlay, IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
+import { useUndoRedo } from "@/hooks/useUndoRedo";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const PresentationTopBar: React.FC<{
   onPresentClick?: () => void;
 }> = ({ onPresentClick }) => {
   const presentation = useAppSelector(selectPresentation);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const { undo, redo, canUndo, canRedo } = useUndoRedo();
+  
   const isDark = theme.themeType === "dark";
   const accent = isDark ? "#60a5fa" : "#2563eb"; // tailwind blue-400 / blue-600
   const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
@@ -86,6 +95,54 @@ export const PresentationTopBar: React.FC<{
               className="flex items-center gap-2 ml-2 pl-2 border-l"
               style={{ borderColor }}
             >
+              {/* Undo/Redo Buttons */}
+              <TooltipProvider delayDuration={300}>
+                <div className="flex items-center gap-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={undo}
+                        disabled={!canUndo}
+                        style={{
+                          color: canUndo ? textPrimary : textSecondary,
+                          opacity: canUndo ? 1 : 0.4,
+                        }}
+                      >
+                        <IconArrowBackUp className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p>Undo <span className="text-xs opacity-60 ml-1">⌘Z</span></p>
+                    </TooltipContent>
+                  </Tooltip>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={redo}
+                        disabled={!canRedo}
+                        style={{
+                          color: canRedo ? textPrimary : textSecondary,
+                          opacity: canRedo ? 1 : 0.4,
+                        }}
+                      >
+                        <IconArrowForwardUp className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p>Redo <span className="text-xs opacity-60 ml-1">⌘⇧Z</span></p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </TooltipProvider>
+              
+              <div className="w-px h-5 mx-1" style={{ backgroundColor: borderColor }} />
               <Button
                 variant="ghost"
                 size="sm"
