@@ -25,6 +25,7 @@ import {
 import { useAppDispatch } from "@/store/hooks";
 import { LayoutPickerModal } from "./LayoutPickerModal";
 import type { LayoutTemplate } from "./layoutTemplates";
+import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 
 interface SlidesSidebarProps {
   slides: Slide[];
@@ -168,7 +169,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
         }`}
       >
         <div
-          className="w-64 h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden"
+          className="w-[280px] h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden"
           style={{
             backgroundColor: isDark
               ? "rgba(12,12,14,0.9)"
@@ -260,91 +261,129 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
             </div>
           </div>
 
-          {/* Slides List */}
           <div className="flex-1 overflow-y-auto p-3 custom-scrollbar custom-scrollbar-light">
-            {viewMode === "grid" ? (
-              <div className="space-y-3">
-                {slides.map((slide, index) => {
-                  const isActive = slide.id === activeSlideId;
-                  return (
-                    <div
-                      key={slide.id}
-                      ref={isActive ? activeSlideRef : null}
-                      onClick={() => handleSlideClick(slide.id)}
-                      className={`relative cursor-pointer transition-all rounded-lg overflow-hidden border-2 group ${
-                        isActive
-                          ? "ring-2 ring-offset-1 shadow-md"
-                          : "hover:border-primary/50 border-transparent"
-                      }`}
-                      style={{
-                        borderColor: isActive ? accent : "transparent",
-                        boxShadow: isActive
-                          ? `0 0 0 2px ${accent}40`
-                          : undefined,
-                      }}
-                      data-slide-preview-id={slide.id}
-                    >
-                      {/* Delete Button - Shows on hover */}
-                      {slides.length > 1 && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="absolute top-1 right-1 h-6 w-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500/90 hover:bg-red-600"
-                          onClick={(e) => handleDeleteSlide(e, slide.id)}
-                          style={{
-                            color: "white",
-                          }}
-                          title="Delete slide"
-                        >
-                          <IconTrash className="size-3" />
-                        </Button>
-                      )}
-                      {/* Mini Slide Preview - Scaled down */}
+            {viewMode === "grid" ? (() => {
+              // Calculate proper scale to show full slide (16:9 aspect ratio)
+              const containerWidth = 256; // Available width in sidebar (280px - padding)
+              const scale = containerWidth / SLIDE_MAX_WIDTH;
+              const slideHeight = SLIDE_MAX_WIDTH * (9 / 16); // 16:9 aspect ratio
+              const thumbnailHeight = slideHeight * scale;
+              
+              return (
+                <div className="space-y-4">
+                  {slides.map((slide, index) => {
+                    const isActive = slide.id === activeSlideId;
+                    return (
                       <div
-                        className="relative overflow-hidden"
+                        key={slide.id}
+                        ref={isActive ? activeSlideRef : null}
+                        onClick={() => handleSlideClick(slide.id)}
+                        className={`relative cursor-pointer transition-all duration-300 rounded-xl overflow-hidden group ${
+                          isActive
+                            ? "ring-2 ring-offset-2"
+                            : "hover:shadow-lg hover:-translate-y-0.5"
+                        }`}
                         style={{
-                          height: "120px",
-                          aspectRatio: "16/9",
+                          borderColor: isActive ? accent : "transparent",
+                          boxShadow: isActive
+                            ? `0 8px 32px ${accent}30, 0 4px 12px rgba(0,0,0,0.1)`
+                            : "0 2px 8px rgba(0,0,0,0.06)",
+                          background: isActive 
+                            ? `linear-gradient(135deg, ${accent}15 0%, ${accent}05 100%)`
+                            : "transparent",
+                          // Ring color via CSS variable
+                          ["--tw-ring-color" as any]: accent,
                         }}
+                        data-slide-preview-id={slide.id}
                       >
+                        {/* Delete Button - Shows on hover */}
+                        {slides.length > 1 && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="absolute top-2 right-2 h-7 w-7 z-20 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded-full backdrop-blur-sm"
+                            onClick={(e) => handleDeleteSlide(e, slide.id)}
+                            style={{
+                              backgroundColor: "rgba(239, 68, 68, 0.9)",
+                              color: "white",
+                              boxShadow: "0 2px 8px rgba(239, 68, 68, 0.4)",
+                            }}
+                            title="Delete slide"
+                          >
+                            <IconTrash className="size-3.5" />
+                          </Button>
+                        )}
+                        
+                        {/* Mini Slide Preview - Properly scaled to show full height */}
                         <div
-                          className="absolute top-0 left-0 pointer-events-none"
+                          className="relative overflow-hidden rounded-lg"
                           style={{
-                            transform: "scale(0.18)",
-                            transformOrigin: "top left",
-                            width: "400%",
-                            height: "400%",
+                            height: `${thumbnailHeight}px`,
+                            width: `${containerWidth}px`,
                           }}
                         >
-                          <SlideCard
-                            slide={slide}
-                            onUpdateBlock={onUpdateBlock}
-                            onDeleteRow={onDeleteRow}
-                            onAddColumn={onAddColumn}
-                            onAddRowAtTop={onAddRowAtTop}
-                            onAddRowAtBottom={onAddRowAtBottom}
-                            onUpdateColumnWidths={onUpdateColumnWidths}
-                            enableDragHints={false}
+                          <div
+                            className="absolute top-0 left-0 pointer-events-none"
+                            style={{
+                              transform: `scale(${scale})`,
+                              transformOrigin: "top left",
+                              width: `${SLIDE_MAX_WIDTH}px`,
+                              height: `${slideHeight}px`,
+                            }}
+                          >
+                            <SlideCard
+                              slide={slide}
+                              onUpdateBlock={onUpdateBlock}
+                              onDeleteRow={onDeleteRow}
+                              onAddColumn={onAddColumn}
+                              onAddRowAtTop={onAddRowAtTop}
+                              onAddRowAtBottom={onAddRowAtBottom}
+                              onUpdateColumnWidths={onUpdateColumnWidths}
+                              enableDragHints={false}
+                              readOnly={true}
+                            />
+                          </div>
+                          
+                          {/* Hover overlay */}
+                          <div 
+                            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                            style={{
+                              background: `linear-gradient(180deg, transparent 60%, ${isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.1)'} 100%)`,
+                            }}
                           />
                         </div>
-                        {/* Slide Number Badge */}
+                        
+                        {/* Slide Number Badge - Enhanced */}
                         <div
-                          className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] font-medium z-10"
+                          className="absolute top-2 left-2 px-2.5 py-1 rounded-lg text-xs font-semibold z-10 backdrop-blur-sm transition-all duration-200"
                           style={{
                             backgroundColor: isActive
                               ? accent
-                              : "rgba(37,99,235,0.65)",
+                              : isDark ? "rgba(255,255,255,0.15)" : "rgba(37,99,235,0.85)",
                             color: "white",
+                            boxShadow: isActive 
+                              ? `0 2px 8px ${accent}50`
+                              : "0 1px 4px rgba(0,0,0,0.15)",
                           }}
                         >
                           {index + 1}
                         </div>
+                        
+                        {/* Active indicator bar */}
+                        {isActive && (
+                          <div 
+                            className="absolute bottom-0 left-0 right-0 h-1 rounded-b-xl"
+                            style={{
+                              background: `linear-gradient(90deg, ${accent} 0%, ${accent}80 100%)`,
+                            }}
+                          />
+                        )}
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
+                    );
+                  })}
+                </div>
+              );
+            })() : (
               <div className="space-y-1">
                 {slides.map((slide, index) => {
                   const isActive = slide.id === activeSlideId;
