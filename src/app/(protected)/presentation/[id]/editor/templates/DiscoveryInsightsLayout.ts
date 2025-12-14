@@ -18,11 +18,14 @@ export const DiscoveryInsightsLayout = {
         content: [
           {
             type: "heading",
-            attrs: { level: 2 },
-            content: [{ type: "text", text: "Strategic Discovery: Key Themes" }],
+            attrs: { level: 2, textAlign: "center" },
+            content: [
+              { type: "text", text: "Strategic Discovery: Key Themes" },
+            ],
           },
           {
             type: "paragraph",
+            attrs: { textAlign: "center" },
             content: [
               {
                 type: "text",
@@ -41,22 +44,30 @@ export const DiscoveryInsightsLayout = {
       {
         icon: "🧩",
         title: createParagraphContent("Fragmentation Fatigue"),
-        description: createParagraphContent("Teams are overwhelmed by using 4+ different tools for the same process. There is a strong desire for consolidation."),
+        description: createParagraphContent(
+          "Teams are overwhelmed by using 4+ different tools for the same process. There is a strong desire for consolidation."
+        ),
       },
       {
         icon: "⚡",
         title: createParagraphContent("Speed vs. Quality"),
-        description: createParagraphContent("Current processes force a trade-off. Stakeholders want 'zero-compromise' velocity without sacrificing review standards."),
+        description: createParagraphContent(
+          "Current processes force a trade-off. Stakeholders want 'zero-compromise' velocity without sacrificing review standards."
+        ),
       },
       {
         icon: "🔒",
         title: createParagraphContent("Security & Compliance"),
-        description: createParagraphContent("With recent reg changes, manual compliance checks are becoming a major risk factor and bottleneck."),
+        description: createParagraphContent(
+          "With recent reg changes, manual compliance checks are becoming a major risk factor and bottleneck."
+        ),
       },
       {
         icon: "📱",
         title: createParagraphContent("Mobile Access"),
-        description: createParagraphContent("Field agents feel disconnected. A mobile-first experience is required to bring them into the digital loop."),
+        description: createParagraphContent(
+          "Field agents feel disconnected. A mobile-first experience is required to bring them into the digital loop."
+        ),
       },
     ];
 

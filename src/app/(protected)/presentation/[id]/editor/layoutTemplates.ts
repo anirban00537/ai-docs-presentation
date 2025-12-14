@@ -40,7 +40,6 @@ import {
   IconTerminal2,
   IconHeading,
 } from "@tabler/icons-react";
-import { HeroLayout } from "./templates/HeroLayout";
 import { FeatureLayout } from "./templates/FeatureLayout";
 import { IntroductionLayout } from "./templates/IntroductionLayout";
 import { TeamLayout } from "./templates/TeamLayout";
@@ -49,7 +48,6 @@ import { GalleryLayout } from "./templates/GalleryLayout";
 import { TestimonialLayout } from "./templates/TestimonialLayout";
 import { QuoteLayout } from "./templates/QuoteLayout";
 import { ProcessLayout } from "./templates/ProcessLayout";
-import { SectionLayout } from "./templates/SectionLayout";
 import { StatsLayout } from "./templates/StatsLayout";
 import { FeatureShowcaseLayout } from "./templates/FeatureShowcaseLayout";
 import { ComparisonLayout } from "./templates/ComparisonLayout";
@@ -60,8 +58,6 @@ import { CodeExampleLayout } from "./templates/CodeExampleLayout";
 import { ProgressLayout } from "./templates/ProgressLayout";
 import { SocialProofLayout } from "./templates/SocialProofLayout";
 import { AwardsLayout } from "./templates/AwardsLayout";
-import { ProblemHeroLayout } from "./templates/ProblemHeroLayout";
-import { ProblemStatementLayout } from "./templates/ProblemStatementLayout";
 import { ProblemImageLayout } from "./templates/ProblemImageLayout";
 import { ProblemSupportingPointsLayout } from "./templates/ProblemSupportingPointsLayout";
 import { OpportunityMetricsLayout } from "./templates/OpportunityMetricsLayout";
@@ -72,7 +68,6 @@ import { CustomerQuotesLayout } from "./templates/CustomerQuotesLayout";
 import { PricingThreeTierLayout } from "./templates/PricingThreeTierLayout";
 import { CustomerStoriesLayout } from "./templates/CustomerStoriesLayout";
 import { ServicesListLayout } from "./templates/ServicesListLayout";
-import { TaglineTitlePageLayout } from "./templates/TaglineTitlePageLayout";
 import { DocIntroLayout } from "./templates/DocIntroLayout";
 import { ComparisonOldNewLayout } from "./templates/ComparisonOldNewLayout";
 import { TargetAudiencesLayout } from "./templates/TargetAudiencesLayout";
@@ -131,12 +126,11 @@ export const layoutIconsMap: Record<string, Icon> = {
   "summary-layout": IconChecklist,
   "metric-dashboard": IconChartBar,
   "technical-walkthrough": IconTerminal2,
-  "introduction": IconHeading,
+  introduction: IconHeading,
   "key-insights": IconBulb,
 };
 
 export const layoutTemplates: LayoutTemplate[] = [
-  HeroLayout,
   FeatureLayout,
   TeamLayout,
   PricingLayout,
@@ -144,7 +138,6 @@ export const layoutTemplates: LayoutTemplate[] = [
   TestimonialLayout,
   QuoteLayout,
   ProcessLayout,
-  SectionLayout,
   StatsLayout,
   FeatureShowcaseLayout,
   ComparisonLayout,
@@ -155,9 +148,6 @@ export const layoutTemplates: LayoutTemplate[] = [
   ProgressLayout,
   SocialProofLayout,
   AwardsLayout,
-  ProblemHeroLayout,
-  ProblemStatementLayout,
-  ProblemImageLayout,
   ProblemSupportingPointsLayout,
   IntroductionLayout,
   OpportunityMetricsLayout,
@@ -168,7 +158,6 @@ export const layoutTemplates: LayoutTemplate[] = [
   PricingThreeTierLayout,
   CustomerStoriesLayout,
   ServicesListLayout,
-  TaglineTitlePageLayout,
   DocIntroLayout,
   ComparisonOldNewLayout,
   TargetAudiencesLayout,

@@ -18,11 +18,12 @@ export const ProblemSupportingPointsLayout = {
         content: [
           {
             type: "heading",
-            attrs: { level: 2 },
+            attrs: { level: 2, textAlign: "center" },
             content: [{ type: "text", text: "The Innovation Paradox" }],
           },
           {
             type: "paragraph",
+            attrs: { textAlign: "center" },
             content: [
               {
                 type: "text",
@@ -39,12 +40,16 @@ export const ProblemSupportingPointsLayout = {
       {
         icon: "🐌",
         title: createParagraphContent("Velocity Drag"),
-        description: createParagraphContent("Every new feature requires weeks of manual regression testing, killing momentum and delaying time-to-revenue."),
+        description: createParagraphContent(
+          "Every new feature requires weeks of manual regression testing, killing momentum and delaying time-to-revenue."
+        ),
       },
       {
         icon: "💸",
         title: createParagraphContent("Cost of Maintenance"),
-        description: createParagraphContent("80% of engineering budget is spent keeping the lights on, leaving only 20% for actual value creation."),
+        description: createParagraphContent(
+          "80% of engineering budget is spent keeping the lights on, leaving only 20% for actual value creation."
+        ),
       },
     ];
     features.layout = "grid";

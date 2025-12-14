@@ -18,11 +18,12 @@ export const ProblemQuoteLayout = {
         content: [
           {
             type: "heading",
-            attrs: { level: 2 },
+            attrs: { level: 2, textAlign: "center" },
             content: [{ type: "text", text: "The Voice of the Customer" }],
           },
           {
             type: "paragraph",
+            attrs: { textAlign: "center" },
             content: [
               {
                 type: "text",
@@ -35,7 +36,9 @@ export const ProblemQuoteLayout = {
     };
 
     const quote = createQuoteContent();
-    quote.quote = createParagraphContent("“It takes us 3 weeks to close the monthly books. In today's market, that delay is simply unsustainable. We are flying blind.”");
+    quote.quote = createParagraphContent(
+      "“It takes us 3 weeks to close the monthly books. In today's market, that delay is simply unsustainable. We are flying blind.”"
+    );
     quote.author = createParagraphContent("CFO, Global Retailer");
 
     return [
