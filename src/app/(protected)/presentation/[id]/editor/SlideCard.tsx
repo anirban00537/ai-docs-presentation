@@ -98,12 +98,11 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   return (
     <div
-      className={`group/slide relative rounded-3xl shadow-xl px-6 py-5 transition-all duration-200 ease-out ${
+      className={`group/slide relative shadow-xl px-6 py-5 transition-all duration-200 ease-out ${
         !readOnly ? "hover:-translate-y-1" : ""
       }`}
       style={{
         backgroundColor: theme.cardBackground,
-        border: `1px solid ${theme.primary}1f`,
         boxShadow: `0 18px 48px rgba(0,0,0,0.08), 0 6px 18px rgba(0,0,0,0.04)`,
         backdropFilter: "blur(8px)",
         transition:

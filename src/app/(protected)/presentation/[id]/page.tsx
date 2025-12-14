@@ -131,6 +131,8 @@ const GammaPage = () => {
                 className="min-h-screen w-full flex flex-col items-center py-10"
                 style={{
                     backgroundColor: theme.pageBackground,
+                    backgroundImage: `radial-gradient(circle at 20% 18%, ${theme.primary}14, transparent 32%), radial-gradient(circle at 80% 12%, ${theme.primary}10, transparent 28%)`,
+                    backgroundAttachment: "fixed",
                     fontFamily: `${theme.fontFamily}, sans-serif`,
                 }}
              >
