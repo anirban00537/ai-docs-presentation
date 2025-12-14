@@ -128,7 +128,7 @@ const GammaPage = () => {
         <div className="fixed inset-0 z-[100] overflow-y-auto bg-black text-white">
              {/* Slide Content Container */}
              <div 
-                className="min-h-screen w-full flex flex-col items-center py-10"
+                className="min-h-screen w-full flex flex-col items-center justify-center py-10"
                 style={{
                     backgroundColor: theme.pageBackground,
                     backgroundImage: `radial-gradient(circle at 20% 18%, ${theme.primary}14, transparent 32%), radial-gradient(circle at 80% 12%, ${theme.primary}10, transparent 28%)`,
