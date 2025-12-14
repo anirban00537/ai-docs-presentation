@@ -10,20 +10,16 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 
 // Import all templates
-import { HeroLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/HeroLayout";
 import { FeatureLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/FeatureLayout";
 import { PricingLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/PricingLayout";
 import { TeamLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TeamLayout";
 import { StatsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/StatsLayout";
 import { TestimonialLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TestimonialLayout";
 import { VideoShowcaseLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/VideoShowcaseLayout";
-import { SectionLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/SectionLayout";
 import { ServicesListLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ServicesListLayout";
 import { SocialProofLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/SocialProofLayout";
-import { TaglineTitlePageLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TaglineTitlePageLayout";
 import { TargetAudiencesLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TargetAudiencesLayout";
 import { ProblemQuoteLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemQuoteLayout";
-import { ProblemStatementLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemStatementLayout";
 import { ProblemSupportingPointsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemSupportingPointsLayout";
 import { ProblemTwoQuotesLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemTwoQuotesLayout";
 import { ProcessLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProcessLayout";
@@ -32,7 +28,6 @@ import { QuoteLayout } from "../src/app/(protected)/presentation/[id]/editor/tem
 import { OpportunityMetricsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/OpportunityMetricsLayout";
 import { PartnersLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/PartnersLayout";
 import { PricingThreeTierLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/PricingThreeTierLayout";
-import { ProblemHeroLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemHeroLayout";
 import { ProblemImageLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemImageLayout";
 import { FAQLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/FAQLayout";
 import { FeatureShowcaseLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/FeatureShowcaseLayout";
@@ -46,22 +41,23 @@ import { ComparisonLayout } from "../src/app/(protected)/presentation/[id]/edito
 import { ComparisonOldNewLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ComparisonOldNewLayout";
 import { CodeExampleLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/CodeExampleLayout";
 import { AwardsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/AwardsLayout";
+import { IntroductionLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/IntroductionLayout";
+import { KeyInsightsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/KeyInsightsLayout";
+import { MetricDashboardLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/MetricDashboardLayout";
+import { SummaryLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/SummaryLayout";
+import { TechnicalWalkthroughLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TechnicalWalkthroughLayout";
 
 const templates = [
-  HeroLayout,
   FeatureLayout,
   PricingLayout,
   TeamLayout,
   StatsLayout,
   TestimonialLayout,
   VideoShowcaseLayout,
-  SectionLayout,
   ServicesListLayout,
   SocialProofLayout,
-  TaglineTitlePageLayout,
   TargetAudiencesLayout,
   ProblemQuoteLayout,
-  ProblemStatementLayout,
   ProblemSupportingPointsLayout,
   ProblemTwoQuotesLayout,
   ProcessLayout,
@@ -70,7 +66,6 @@ const templates = [
   OpportunityMetricsLayout,
   PartnersLayout,
   PricingThreeTierLayout,
-  ProblemHeroLayout,
   ProblemImageLayout,
   FAQLayout,
   FeatureShowcaseLayout,
@@ -84,6 +79,11 @@ const templates = [
   ComparisonOldNewLayout,
   CodeExampleLayout,
   AwardsLayout,
+  IntroductionLayout,
+  KeyInsightsLayout,
+  MetricDashboardLayout,
+  SummaryLayout,
+  TechnicalWalkthroughLayout,
 ];
 
 /**
