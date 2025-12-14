@@ -6,6 +6,7 @@ export * from "./simple-number-card";
 export * from "./code-terminal";
 export * from "./pulse-metric";
 export * from "./glass-insight";
+export * from "./spacer";
 export * from "./number-card";
 export * from "./testimonial";
 export * from "./cta";

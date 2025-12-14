@@ -22,6 +22,7 @@ export const BLOCK_TYPES = {
   CODE_TERMINAL: "code-terminal",
   PULSE_METRIC: "pulse-metric",
   GLASS_INSIGHT: "glass-insight",
+  SPACER: "spacer",
 } as const;
 
 export type BlockType = (typeof BLOCK_TYPES)[keyof typeof BLOCK_TYPES];

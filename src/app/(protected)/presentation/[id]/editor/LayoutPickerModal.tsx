@@ -35,7 +35,7 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="max-w-3xl max-h-[80vh] overflow-y-auto"
+        className="max-w-6xl max-h-[80vh] overflow-y-auto"
         style={{
           backgroundColor: isDark
             ? "rgba(12,12,14,0.95)"
@@ -79,7 +79,7 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
             [DEMO] Insert All Templates
           </button>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
           {layoutTemplates.map((template) => (
             <button
               key={template.id}

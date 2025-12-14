@@ -38,9 +38,11 @@ import {
   IconArrowRight,
   IconChecklist,
   IconTerminal2,
+  IconHeading,
 } from "@tabler/icons-react";
 import { HeroLayout } from "./templates/HeroLayout";
 import { FeatureLayout } from "./templates/FeatureLayout";
+import { IntroductionLayout } from "./templates/IntroductionLayout";
 import { TeamLayout } from "./templates/TeamLayout";
 import { PricingLayout } from "./templates/PricingLayout";
 import { GalleryLayout } from "./templates/GalleryLayout";
@@ -129,6 +131,7 @@ export const layoutIconsMap: Record<string, Icon> = {
   "summary-layout": IconChecklist,
   "metric-dashboard": IconChartBar,
   "technical-walkthrough": IconTerminal2,
+  "introduction": IconHeading,
   "key-insights": IconBulb,
 };
 
@@ -156,6 +159,7 @@ export const layoutTemplates: LayoutTemplate[] = [
   ProblemStatementLayout,
   ProblemImageLayout,
   ProblemSupportingPointsLayout,
+  IntroductionLayout,
   OpportunityMetricsLayout,
   DiscoveryInsightsLayout,
   ProblemQuoteLayout,

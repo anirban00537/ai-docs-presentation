@@ -30,6 +30,7 @@ import {
   IconTerminal2,
   IconActivity,
   IconBulb,
+  IconSeparator,
 } from "@tabler/icons-react";
 
 interface BlocksPanelProps {
@@ -73,7 +74,7 @@ const DraggableBlockOption: React.FC<
       className="cursor-grab active:cursor-grabbing"
     >
       <div
-        className="flex items-start gap-3 p-3 rounded-lg border transition-all hover:shadow-md"
+        className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border transition-all hover:shadow-md h-full text-center"
         style={{
           backgroundColor: isDragging
             ? isDark
@@ -105,20 +106,14 @@ const DraggableBlockOption: React.FC<
         }}
       >
         <div
-          className="text-2xl shrink-0 flex items-center justify-center"
+          className="text-3xl shrink-0 flex items-center justify-center mb-1"
           style={{ color: theme.primary }}
         >
           {icon}
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="font-medium text-sm" style={{ color: textPrimary }}>
+        <div className="flex-1 min-w-0 flex items-center justify-center">
+          <div className="font-medium text-xs leading-tight" style={{ color: textPrimary }}>
             {label}
-          </div>
-          <div
-            className="text-xs mt-0.5"
-            style={{ color: textSecondary, opacity: 0.8 }}
-          >
-            {description}
           </div>
         </div>
       </div>
@@ -265,6 +260,12 @@ const blockDefinitions = [
     label: "Glass Insight",
     description: "Key takeaway box",
   },
+  {
+    type: BLOCK_TYPES.SPACER,
+    icon: <IconSeparator className="w-6 h-6" />,
+    label: "Spacer",
+    description: "Adjustable vertical space",
+  },
 ];
 
 export const BlocksPanel: React.FC<BlocksPanelProps> = ({
@@ -317,7 +318,7 @@ export const BlocksPanel: React.FC<BlocksPanelProps> = ({
           className="relative z-40"
         >
           <div
-            className="w-80 h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden shadow-xl"
+            className="w-[420px] h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden shadow-xl"
             style={{
               backgroundColor: isDark
                 ? "rgba(12,12,14,0.9)"
@@ -367,7 +368,7 @@ export const BlocksPanel: React.FC<BlocksPanelProps> = ({
               >
                 Drag a block to add it to your slide
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 {blockDefinitions.map((block) => (
                   <DraggableBlockOption
                     key={block.type}

@@ -1,9 +1,12 @@
+
 import React from "react";
 import type { Block, Theme } from "@/lib/editor/types";
 import {
   BLOCK_TYPES,
   type BlockType,
   normalizeBlockContent,
+  normalizeGlassInsightContent,
+  normalizeSpacerContent,
 } from "./definitions";
 import { ProseMirrorBlock } from "./prosemirror/ProseMirrorBlock";
 import { NumberCardBlock } from "./number-card/NumberCardBlock";
@@ -28,6 +31,7 @@ import { SimpleNumberCardBlock } from "./simple-number-card/SimpleNumberCardBloc
 import { CodeTerminalBlock } from "./code-terminal/CodeTerminalBlock";
 import { PulseMetricBlock } from "./pulse-metric/PulseMetricBlock";
 import { GlassInsightBlock } from "./glass-insight/GlassInsightBlock";
+import { SpacerBlock } from "./spacer/SpacerBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -174,8 +178,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
   [BLOCK_TYPES.GLASS_INSIGHT]: {
     type: BLOCK_TYPES.GLASS_INSIGHT,
     component: GlassInsightBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.GLASS_INSIGHT, content),
+    normalize: normalizeGlassInsightContent,
+  },
+  [BLOCK_TYPES.SPACER]: {
+    type: BLOCK_TYPES.SPACER,
+    component: SpacerBlock,
+    normalize: normalizeSpacerContent,
   },
 };
 
