@@ -5,6 +5,7 @@ import type { Slide } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
+import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 
 const DragStateBridge: React.FC<{
   onDragChange: (dragging: boolean) => void;
@@ -98,7 +99,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   return (
     <div
-      className={`group/slide relative shadow-xl px-6 py-5 transition-all duration-200 ease-out ${
+      className={`group/slide relative shadow-xl px-6 py-5 transition-all duration-200 ease-out w-full mx-auto ${
         !readOnly ? "hover:-translate-y-1" : ""
       }`}
       style={{
@@ -108,59 +109,63 @@ export const SlideCard: React.FC<SlideCardProps> = ({
         transition:
           "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
         fontFamily: getFontFamily(theme.fontFamily || "Inter"),
+        minWidth: `${SLIDE_MAX_WIDTH}px`,
+        maxWidth: `${SLIDE_MAX_WIDTH}px`,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {enableDragHints && !readOnly && <DragStateBridge onDragChange={setIsDragging} />}
+      {enableDragHints && !readOnly && (
+        <DragStateBridge onDragChange={setIsDragging} />
+      )}
       {/* Add Row at Top Button */}
       {!readOnly && (
-      <button
-        onClick={() => onAddRowAtTop(slide.id)}
-        className={`absolute left-1/2 -translate-x-1/2 -top-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
-          isHovered
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 -translate-y-2 pointer-events-none"
-        }`}
-        style={{
-          backgroundColor: theme.primary,
-          border: `1px solid ${theme.primary}30`,
-          boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.opacity = "0.9";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.opacity = isHovered ? "1" : "0";
-        }}
-        title="Add row at top"
-      >
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+        <button
+          onClick={() => onAddRowAtTop(slide.id)}
+          className={`absolute left-1/2 -translate-x-1/2 -top-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
+            isHovered
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-2 pointer-events-none"
+          }`}
+          style={{
+            backgroundColor: theme.primary,
+            border: `1px solid ${theme.primary}30`,
+            boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = "0.9";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = isHovered ? "1" : "0";
+          }}
+          title="Add row at top"
         >
-          <line x1="6" y1="2" x2="6" y2="10" />
-          <line x1="2" y1="6" x2="10" y2="6" />
-        </svg>
-        <span>Add Row</span>
-      </button>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="6" y1="2" x2="6" y2="10" />
+            <line x1="2" y1="6" x2="10" y2="6" />
+          </svg>
+          <span>Add Row</span>
+        </button>
       )}
 
       {/* Slide Content */}
       <div className="flex flex-col gap-1">
         {!readOnly && (
-        <InsertDropZone
-          slideId={slide.id}
-          insertIndex={0}
-          themePrimary={theme.primary}
-          isActive={dragActive}
-        />
+          <InsertDropZone
+            slideId={slide.id}
+            insertIndex={0}
+            themePrimary={theme.primary}
+            isActive={dragActive}
+          />
         )}
         {(slide.rows || []).map((row, rowIndex) => (
           <React.Fragment key={row.id}>
@@ -185,12 +190,12 @@ export const SlideCard: React.FC<SlideCardProps> = ({
               readOnly={readOnly}
             />
             {!readOnly && (
-            <InsertDropZone
-              slideId={slide.id}
-              insertIndex={rowIndex + 1}
-              themePrimary={theme.primary}
-              isActive={dragActive}
-            />
+              <InsertDropZone
+                slideId={slide.id}
+                insertIndex={rowIndex + 1}
+                themePrimary={theme.primary}
+                isActive={dragActive}
+              />
             )}
           </React.Fragment>
         ))}
@@ -198,41 +203,41 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
       {/* Add Row at Bottom Button */}
       {!readOnly && (
-      <button
-        onClick={() => onAddRowAtBottom(slide.id)}
-        className={`absolute left-1/2 -translate-x-1/2 -bottom-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
-          isHovered
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-2 pointer-events-none"
-        }`}
-        style={{
-          backgroundColor: theme.primary,
-          border: `1px solid ${theme.primary}30`,
-          boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.opacity = "0.9";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.opacity = isHovered ? "1" : "0";
-        }}
-        title="Add row at bottom"
-      >
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+        <button
+          onClick={() => onAddRowAtBottom(slide.id)}
+          className={`absolute left-1/2 -translate-x-1/2 -bottom-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
+            isHovered
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-2 pointer-events-none"
+          }`}
+          style={{
+            backgroundColor: theme.primary,
+            border: `1px solid ${theme.primary}30`,
+            boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = "0.9";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = isHovered ? "1" : "0";
+          }}
+          title="Add row at bottom"
         >
-          <line x1="6" y1="2" x2="6" y2="10" />
-          <line x1="2" y1="6" x2="10" y2="6" />
-        </svg>
-        <span>Add Row</span>
-      </button>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="6" y1="2" x2="6" y2="10" />
+            <line x1="2" y1="6" x2="10" y2="6" />
+          </svg>
+          <span>Add Row</span>
+        </button>
       )}
     </div>
   );

@@ -10,7 +10,6 @@ import {
   SlideCard,
   SlidesSidebar,
   PresentationTopBar,
-  FloatingSidebar,
 } from "@/app/(protected)/presentation/[id]/editor";
 import { BlockFocusProvider } from "@/app/(protected)/presentation/[id]/editor/BlockFocusContext";
 import { useEditorPage } from "./hooks/useEditorPage";
@@ -27,6 +26,7 @@ import {
   IconTimeline,
   IconGripVertical,
 } from "@tabler/icons-react";
+import { FloatingSidebar } from "./editor/FloatingSidebar";
 
 // Block type icon mapping
 const getBlockTypeIcon = (type: string) => {
@@ -116,7 +116,7 @@ const GammaPage = () => {
 
   useEffect(() => {
     if (presentationContainerRef.current) {
-        presentationContainerRef.current.scrollTop = 0;
+      presentationContainerRef.current.scrollTop = 0;
     }
   }, [currentSlideIndex]);
 
@@ -130,10 +130,16 @@ const GammaPage = () => {
         setCurrentSlideIndex((prev) => Math.max(prev - 1, 0));
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
-        presentationContainerRef.current?.scrollBy({ top: 100, behavior: 'smooth' });
+        presentationContainerRef.current?.scrollBy({
+          top: 100,
+          behavior: "smooth",
+        });
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        presentationContainerRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
+        presentationContainerRef.current?.scrollBy({
+          top: -100,
+          behavior: "smooth",
+        });
       } else if (e.key === "Escape") {
         setIsPresenting(false);
       }
@@ -146,75 +152,81 @@ const GammaPage = () => {
   return (
     <>
       <GoogleFontsLoader />
-      
+
       {/* Presentation Mode Overlay */}
       {isPresenting && (
-        <div 
-            ref={presentationContainerRef}
-            className="fixed inset-0 z-[100] overflow-y-auto bg-black text-white"
+        <div
+          ref={presentationContainerRef}
+          className="fixed inset-0 z-[100] overflow-y-auto bg-black text-white"
         >
-             {/* Slide Content Container */}
-             <div 
-                className="min-h-screen w-full flex flex-col items-center justify-center py-10"
-                style={{
-                    backgroundColor: theme.pageBackground,
-                    backgroundImage: `radial-gradient(circle at 20% 18%, ${theme.primary}14, transparent 32%), radial-gradient(circle at 80% 12%, ${theme.primary}10, transparent 28%)`,
-                    backgroundAttachment: "fixed",
-                    fontFamily: `${theme.fontFamily}, sans-serif`,
-                }}
-             >
-                {/* Navigation Controls (Floating) */}
-                <div className="fixed bottom-8 right-8 flex gap-2 z-50">
-                    <Button 
-                        variant="secondary" 
-                        size="icon" 
-                        onClick={() => setCurrentSlideIndex(prev => Math.max(prev - 1, 0))}
-                        disabled={currentSlideIndex === 0}
-                        className="rounded-full shadow-lg bg-black/50 hover:bg-black/70 text-white border-none"
-                    >
-                        ←
-                    </Button>
-                    <span className="bg-black/50 text-white px-3 py-2 rounded-full text-sm font-medium tabular-nums shadow-lg backdrop-blur-sm">
-                        {currentSlideIndex + 1} / {slides.length}
-                    </span>
-                    <Button 
-                        variant="secondary" 
-                        size="icon" 
-                        onClick={() => setCurrentSlideIndex(prev => Math.min(prev + 1, slides.length - 1))}
-                        disabled={currentSlideIndex === slides.length - 1}
-                        className="rounded-full shadow-lg bg-black/50 hover:bg-black/70 text-white border-none"
-                    >
-                        →
-                    </Button>
-                    <Button 
-                        variant="secondary" 
-                        size="sm" 
-                        onClick={() => setIsPresenting(false)}
-                        className="ml-4 rounded-full shadow-lg bg-black/50 hover:bg-black/70 text-white border-none px-4"
-                    >
-                        Exit
-                    </Button>
-                </div>
+          {/* Slide Content Container */}
+          <div
+            className="min-h-screen w-full flex flex-col items-center justify-center py-10"
+            style={{
+              backgroundColor: theme.pageBackground,
+              backgroundImage: `radial-gradient(circle at 20% 18%, ${theme.primary}14, transparent 32%), radial-gradient(circle at 80% 12%, ${theme.primary}10, transparent 28%)`,
+              backgroundAttachment: "fixed",
+              fontFamily: `${theme.fontFamily}, sans-serif`,
+            }}
+          >
+            {/* Navigation Controls (Floating) */}
+            <div className="fixed bottom-8 right-8 flex gap-2 z-50">
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={() =>
+                  setCurrentSlideIndex((prev) => Math.max(prev - 1, 0))
+                }
+                disabled={currentSlideIndex === 0}
+                className="rounded-full shadow-lg bg-black/50 hover:bg-black/70 text-white border-none"
+              >
+                ←
+              </Button>
+              <span className="bg-black/50 text-white px-3 py-2 rounded-full text-sm font-medium tabular-nums shadow-lg backdrop-blur-sm">
+                {currentSlideIndex + 1} / {slides.length}
+              </span>
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={() =>
+                  setCurrentSlideIndex((prev) =>
+                    Math.min(prev + 1, slides.length - 1)
+                  )
+                }
+                disabled={currentSlideIndex === slides.length - 1}
+                className="rounded-full shadow-lg bg-black/50 hover:bg-black/70 text-white border-none"
+              >
+                →
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsPresenting(false)}
+                className="ml-4 rounded-full shadow-lg bg-black/50 hover:bg-black/70 text-white border-none px-4"
+              >
+                Exit
+              </Button>
+            </div>
 
-                {/* Current Slide */}
-                <div className="w-full max-w-[1200px] px-8 animate-in fade-in duration-300 relative">
-                     {slides[currentSlideIndex] && (
-                        <div className="transform origin-top transition-all duration-300">
-                             <SlideCard
-                                slide={slides[currentSlideIndex]}
-                                onUpdateBlock={handleUpdateBlock}
-                                onDeleteRow={handleDeleteRow}
-                                onAddColumn={handleAddColumn}
-                                onAddRowAtTop={handleAddRowAtTop}
-                                onAddRowAtBottom={handleAddRowAtBottom}
-                                onUpdateColumnWidths={handleUpdateColumnWidths}
-                                enableDragHints={false}
-                                readOnly={true}
-                             />
-                        </div>
-                     )}
+            {/* Current Slide */}
+            <div className="w-full px-8 animate-in fade-in duration-300 relative">
+              {slides[currentSlideIndex] && (
+                <div className="transform origin-top transition-all duration-300">
+                  <SlideCard
+                    slide={slides[currentSlideIndex]}
+                    onUpdateBlock={handleUpdateBlock}
+                    onDeleteRow={handleDeleteRow}
+                    onAddColumn={handleAddColumn}
+                    onAddRowAtTop={handleAddRowAtTop}
+                    onAddRowAtBottom={handleAddRowAtBottom}
+                    onUpdateColumnWidths={handleUpdateColumnWidths}
+                    enableDragHints={false}
+                    readOnly={true}
+                  />
                 </div>
-             </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -243,7 +255,7 @@ const GammaPage = () => {
           onUpdateColumnWidths={handleUpdateColumnWidths}
         />
 
-        <div className="max-w-[1200px] mx-auto p-8 pr-20">
+        <div className="w-full mx-auto p-8 pr-20">
           {/* All Slides */}
           <DndContext
             sensors={sensors}
