@@ -310,7 +310,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
                         <div
                           className="absolute top-0 left-0 pointer-events-none"
                           style={{
-                            transform: "scale(0.25)",
+                            transform: "scale(0.18)",
                             transformOrigin: "top left",
                             width: "400%",
                             height: "400%",
