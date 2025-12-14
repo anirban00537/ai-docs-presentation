@@ -96,13 +96,17 @@ const GammaPage = () => {
     <>
       <GoogleFontsLoader />
       <PresentationTopBar />
+      {/* Fixed background layer */}
       <div
-        className="min-h-screen overflow-y-auto pt-16"
+        className="fixed inset-0 -z-10"
         style={{
           backgroundColor: theme.pageBackground,
           backgroundImage: `radial-gradient(circle at 20% 18%, ${theme.primary}14, transparent 32%), radial-gradient(circle at 80% 12%, ${theme.primary}10, transparent 28%)`,
+          backgroundAttachment: "fixed",
         }}
-      >
+      />
+      {/* Scrollable content container */}
+      <div className="min-h-screen overflow-y-auto pt-16 relative">
         {/* Slides Sidebar */}
         <SlidesSidebar
           slides={slides.filter(
