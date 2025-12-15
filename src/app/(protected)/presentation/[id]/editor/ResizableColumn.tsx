@@ -6,14 +6,7 @@ import { useBlockFocus } from "./BlockFocusContext";
 import type { Block } from "@/lib/editor/types";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME, deleteBlock } from "@/store/slices/slidesSlice";
-import { withAlpha } from "./blocks/definitions/common";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Trash2 } from "lucide-react";
+import { IconTrash, IconGripHorizontal } from "@tabler/icons-react";
 
 interface ResizableColumnProps {
   block: Block;
@@ -54,20 +47,18 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isBorderHovered, setIsBorderHovered] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const borderResizeRef = useRef<HTMLDivElement>(null);
-  const startXRef = useRef<number>(0);
   const lastXRef = useRef<number>(0);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const isDark = theme.themeType === "dark";
   const dispatch = useAppDispatch();
   const { setFocusedBlock } = useBlockFocus();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const handleStartRef = useRef<{ x: number, y: number } | null>(null);
-  const handleRef = useRef<HTMLDivElement>(null);
+  const handleStartRef = useRef<{ x: number; y: number } | null>(null);
   const wasDraggingRef = useRef(false);
   const mouseMoveHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
   const mouseUpHandlerRef = useRef<(() => void) | null>(null);
 
-  // Drag and drop for column reordering
   const {
     attributes,
     listeners,
@@ -86,13 +77,10 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
     zIndex: isDragging ? 200 : undefined,
   };
 
-  // Resize handlers for border
   useEffect(() => {
     mouseMoveHandlerRef.current = (e: MouseEvent) => {
-      // Calculate incremental delta from last position
       const deltaX = e.clientX - lastXRef.current;
       onResize(index, deltaX);
-      // Update last position for next move
       lastXRef.current = e.clientX;
     };
   }, [index, onResize]);
@@ -113,8 +101,7 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
     (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      startXRef.current = e.clientX;
-      lastXRef.current = e.clientX; // Initialize last position
+      lastXRef.current = e.clientX;
       onResizeStart();
       if (mouseMoveHandlerRef.current) {
         document.addEventListener("mousemove", mouseMoveHandlerRef.current);
@@ -137,109 +124,95 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
     };
   }, []);
 
-  const showBorder = isHovered || isBorderHovered || isResizing;
+  const handleDelete = () => {
+    dispatch(deleteBlock({ slideId, rowId, blockId: block.id }));
+    setIsMenuOpen(false);
+  };
 
   return (
     <div
       ref={!readOnly ? setNodeRef : undefined}
-      className={`group/column relative h-full w-full min-w-0 border border-transparent rounded-lg transition-colors duration-200 ${readOnly ? "" : ""}`}
-      style={!readOnly ? {
-        ...dragStyle,
-      } : {}}
-      onMouseEnter={(e) => {
-        if (!readOnly) setIsHovered(true);
-      }}
-      onMouseLeave={(e) => {
-        if (!readOnly) setIsHovered(false);
-      }}
+      className="group/column relative h-full w-full min-w-0 rounded-xl transition-all"
+      style={!readOnly ? dragStyle : {}}
+      onMouseEnter={() => !readOnly && setIsHovered(true)}
+      onMouseLeave={() => !readOnly && setIsHovered(false)}
     >
       <div className="relative h-full w-full flex flex-col">
-        {/* Column Controls - Top center */}
+        {/* Column Handle - Minimal */}
         {!readOnly && (
-        <div
-          className={`absolute flex items-center justify-center gap-1 z-30 transition-all duration-200 ${
-            isHovered
-              ? "opacity-100"
-              : "opacity-0 group-hover/column:opacity-100"
-          }`}
-          style={{
-            top: 0,
-            left: "50%",
-            transform: "translateY(-50%) translateX(-50%)",
-          }}
-        >
-          {/* Drag Handle - separate from menu trigger */}
           <div
-              ref={handleRef}
+            className={`absolute z-30 transition-all duration-200 ${
+              isHovered ? "opacity-100" : "opacity-0 group-hover/column:opacity-100"
+            }`}
+            style={{
+              top: "-2px",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          >
+            <div
               {...attributes}
               {...listeners}
-              className="flex items-center justify-center w-[26px] h-4 cursor-grab active:cursor-grabbing rounded transition-all outline-none"
-              onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = theme.primary;
-                  e.currentTarget.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-                  e.currentTarget.style.color = theme.primary;
+              className="flex items-center justify-center w-6 h-3 cursor-grab active:cursor-grabbing rounded-full transition-all"
+              style={{
+                backgroundColor: isDark ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)",
+                color: isDark ? "#000" : "#fff",
               }}
               onPointerDown={(e) => {
-                  handleStartRef.current = { x: e.clientX, y: e.clientY };
-                  wasDraggingRef.current = false;
-                  // Pass event to dnd-kit listeners to start drag
-                  listeners?.onPointerDown?.(e);
+                handleStartRef.current = { x: e.clientX, y: e.clientY };
+                wasDraggingRef.current = false;
+                listeners?.onPointerDown?.(e);
               }}
               onPointerMove={() => {
-                  // If pointer moves after down, it's a drag
-                  if (handleStartRef.current) {
-                      wasDraggingRef.current = true;
-                  }
+                if (handleStartRef.current) {
+                  wasDraggingRef.current = true;
+                }
               }}
               onPointerUp={(e) => {
-                   // Only open menu if it was a click (no drag movement)
-                   if (!wasDraggingRef.current && handleStartRef.current) {
-                       const dist = Math.sqrt(
-                           Math.pow(e.clientX - handleStartRef.current.x, 2) +
-                           Math.pow(e.clientY - handleStartRef.current.y, 2)
-                       );
-                       if (dist < 5) {
-                           e.preventDefault();
-                           e.stopPropagation();
-                           setFocusedBlock(block.id);
-                           setIsMenuOpen(true);
-                       }
-                   }
-                   handleStartRef.current = null;
+                if (!wasDraggingRef.current && handleStartRef.current) {
+                  const dist = Math.sqrt(
+                    Math.pow(e.clientX - handleStartRef.current.x, 2) +
+                    Math.pow(e.clientY - handleStartRef.current.y, 2)
+                  );
+                  if (dist < 5) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setFocusedBlock(block.id);
+                    setIsMenuOpen(true);
+                  }
+                }
+                handleStartRef.current = null;
               }}
-              style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.9)",
-                  backdropFilter: "blur(8px)",
-                  border: `1px solid ${withAlpha(theme.primary, 0.2)}`,
-                  color: theme.primary,
-                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-              }}
-          >
-              <span className="select-none text-xs font-bold">⋯</span>
+            >
+              <IconGripHorizontal size={10} />
+            </div>
+
+            {/* Delete Menu */}
+            {isMenuOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-30"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-1 z-40 rounded-lg py-1 min-w-[100px]"
+                  style={{
+                    backgroundColor: isDark ? "rgba(30,30,35,0.98)" : "rgba(255,255,255,0.98)",
+                    backdropFilter: "blur(12px)",
+                  }}
+                >
+                  <button
+                    onClick={handleDelete}
+                    className="w-full px-3 py-1.5 text-left text-sm flex items-center gap-2 transition-colors"
+                    style={{ color: "#ef4444" }}
+                  >
+                    <IconTrash size={14} />
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-          
-          {/* Menu positioned relative to handle */}
-          <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <DropdownMenuTrigger asChild>
-                <span className="sr-only">Options</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" sideOffset={4}>
-              <DropdownMenuItem 
-                className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-                onClick={() => {
-                    dispatch(deleteBlock({ slideId, rowId, blockId: block.id }));
-                    setIsMenuOpen(false);
-                }}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete Column
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
         )}
 
         <DraggableBlock
@@ -258,42 +231,26 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
           readOnly={readOnly}
         />
 
-        {/* Border between columns - Resizable handle */}
+        {/* Resize Handle */}
         {!isLastBlock && !readOnly && (
           <div
             ref={borderResizeRef}
             className={`absolute right-0 top-0 bottom-0 w-1 cursor-col-resize z-20 transition-all duration-200 ${
               isBorderHovered || isResizing
                 ? "opacity-100"
-                : "opacity-0 group-hover/row:opacity-100"
+                : "opacity-0 group-hover/row:opacity-60"
             }`}
             style={{
               transform: "translateX(50%)",
-              backgroundColor: isResizing
-                ? theme.primary
-                : theme.primary + "80",
+              backgroundColor: theme.primary,
             }}
             onMouseDown={handleBorderMouseDown}
             onMouseEnter={() => setIsBorderHovered(true)}
             onMouseLeave={() => setIsBorderHovered(false)}
           >
+            {/* Larger hit area */}
             <div className="absolute inset-0 -mx-2" />
           </div>
-        )}
-
-        {/* Visual border line between columns */}
-        {!isLastBlock && (
-          <div
-            className={`absolute right-0 top-0 bottom-0 w-px transition-all duration-200 ${
-              showBorder
-                ? "opacity-100"
-                : "opacity-0 group-hover/row:opacity-40"
-            }`}
-            style={{
-              backgroundColor: theme.primary,
-              opacity: showBorder ? 0.6 : undefined,
-            }}
-          />
         )}
       </div>
     </div>

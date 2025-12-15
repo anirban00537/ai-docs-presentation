@@ -14,6 +14,7 @@ import {
   transformBlock,
   reorderBlocksInRow,
 } from "@/store/slices/slidesSlice";
+import { IconPlus } from "@tabler/icons-react";
 
 interface DraggableBlockProps {
   block: Block;
@@ -50,10 +51,10 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   const blockRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const isDark = theme.themeType === "dark";
   const { focusedBlockId, setFocusedBlock } = useBlockFocus();
   const isFocused = focusedBlockId === block.id;
 
-  // Only use useDraggable if drag handle is not hidden (i.e., not using ResizableColumn)
   const {
     attributes,
     listeners,
@@ -63,7 +64,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   } = useDraggable({
     id: `${slideId}-${block.id}`,
     data: { type: "block", block, slideId, rowId, index: blockIndex },
-    disabled: hideDragHandle || readOnly, // Disable when used in ResizableColumn
+    disabled: hideDragHandle || readOnly,
   });
 
   const style = {
@@ -73,10 +74,8 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
     zIndex: isDragging ? 200 : undefined,
   };
 
-  // Handle block click to set focus
   const handleBlockClick = useCallback(
     (e: React.MouseEvent) => {
-      // Don't focus if clicking inside editor
       const target = e.target as HTMLElement;
       if (
         readOnly ||
@@ -87,10 +86,9 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
       }
       setFocusedBlock(block.id);
     },
-    [block.id, setFocusedBlock]
+    [block.id, setFocusedBlock, readOnly]
   );
 
-  // Handle clicking outside to unfocus
   useEffect(() => {
     if (!isFocused) return;
 
@@ -109,7 +107,6 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isFocused, setFocusedBlock]);
 
-  // Action handlers
   const handleDuplicate = useCallback(() => {
     dispatch(duplicateBlock({ slideId, rowId, blockId: block.id }));
   }, [dispatch, slideId, rowId, block.id]);
@@ -128,9 +125,6 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
 
   const handleMoveUp = useCallback(() => {
     if (rowIndex === 0 && blockIndex === 0) return;
-
-    // If first block in row, we'd need to move to previous row
-    // For now, just swap with previous block in same row
     if (blockIndex > 0) {
       dispatch(
         reorderBlocksInRow({
@@ -150,8 +144,6 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
     )
       return;
 
-    // If last block in row, we'd need to move to next row
-    // For now, just swap with next block in same row
     if (blockIndex < totalBlocksInRow - 1) {
       dispatch(
         reorderBlocksInRow({
@@ -171,91 +163,78 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
     <div
       ref={(node) => {
         setNodeRef(node);
-        (blockRef as React.MutableRefObject<HTMLDivElement | null>).current =
-          node;
+        (blockRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
       }}
       style={style}
       className={`group/block relative min-w-0 h-full w-full flex flex-col ${
         isFocused ? "z-20" : ""
       }`}
       onClick={handleBlockClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`relative p-2 transition-all h-full w-full flex flex-col flex-1 rounded-lg ${
-          isDragging ? "bg-blue-50" : ""
+        className={`relative p-2 transition-all h-full w-full flex flex-col flex-1 rounded-xl ${
+          isDragging ? "opacity-50" : ""
         }`}
         style={{
           outline: isFocused ? `2px solid ${theme.primary}` : "none",
-          outlineOffset: "2px",
+          outlineOffset: "1px",
         }}
       >
-        {/* Block Action Bar - Shows on focus */}
+        {/* Block Action Bar */}
         {!readOnly && (
-        <BlockActionBar
-          block={block}
-          isVisible={isFocused || isHovered}
-          onDuplicate={handleDuplicate}
-          onDelete={handleDelete}
-          onMoveUp={handleMoveUp}
-          onMoveDown={handleMoveDown}
-          onTransform={handleTransform}
-          canMoveUp={canMoveUp}
-          canMoveDown={canMoveDown}
-          dragHandleProps={!hideDragHandle ? { ...attributes, ...listeners } : undefined}
-        />
+          <BlockActionBar
+            block={block}
+            isVisible={isFocused || isHovered}
+            onDuplicate={handleDuplicate}
+            onDelete={handleDelete}
+            onMoveUp={handleMoveUp}
+            onMoveDown={handleMoveDown}
+            onTransform={handleTransform}
+            canMoveUp={canMoveUp}
+            canMoveDown={canMoveDown}
+            dragHandleProps={!hideDragHandle ? { ...attributes, ...listeners } : undefined}
+          />
         )}
 
-        {/* Drag Handle - Only show if not hidden and no action bar visible */}
+        {/* Drag Handle - Minimal */}
         {!hideDragHandle && !isFocused && !readOnly && (
           <div
             {...attributes}
             {...listeners}
-            className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-8 cursor-grab opacity-0 group-hover/block:opacity-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-all z-10"
-            style={{
-                color: theme.primary,
-            }}
+            className="absolute -left-1 top-1/2 -translate-y-1/2 w-3 h-6 cursor-grab opacity-0 group-hover/block:opacity-40 hover:opacity-100 flex items-center justify-center transition-all z-10"
+            style={{ color: isDark ? "#fff" : "#000" }}
           >
-            <svg width="6" height="14" viewBox="0 0 6 14" fill="currentColor">
-              <circle cx="1.5" cy="1.5" r="1.5" />
-              <circle cx="4.5" cy="1.5" r="1.5" />
-              <circle cx="1.5" cy="7" r="1.5" />
-              <circle cx="4.5" cy="7" r="1.5" />
-              <circle cx="1.5" cy="12.5" r="1.5" />
-              <circle cx="4.5" cy="12.5" r="1.5" />
+            <svg width="4" height="10" viewBox="0 0 4 10" fill="currentColor">
+              <circle cx="1" cy="1" r="1" />
+              <circle cx="3" cy="1" r="1" />
+              <circle cx="1" cy="5" r="1" />
+              <circle cx="3" cy="5" r="1" />
+              <circle cx="1" cy="9" r="1" />
+              <circle cx="3" cy="9" r="1" />
             </svg>
           </div>
         )}
 
-        {/* Add Column Button - Only on last block and if can add more */}
+        {/* Add Column Button - Minimal */}
         {isLastBlock && canAddColumn && !readOnly && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               onAddColumn(rowId, block.id);
             }}
-            className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full text-white opacity-0 group-hover/row:opacity-100 hover:scale-110 transition-all z-20 flex items-center justify-center shadow-md"
-            style={{
-              backgroundColor: theme.primary,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = "0.9";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = "1";
-            }}
-            title="Add column"
+            className="absolute -right-2.5 top-1/2 -translate-y-1/2 opacity-0 group-hover/row:opacity-100 transition-all z-20"
           >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+            <div
+              className="w-5 h-5 rounded-full flex items-center justify-center transition-all hover:scale-110"
+              style={{
+                backgroundColor: `${theme.primary}20`,
+                color: theme.primary,
+              }}
             >
-              <line x1="6" y1="2" x2="6" y2="10" />
-              <line x1="2" y1="6" x2="10" y2="6" />
-            </svg>
+              <IconPlus size={12} stroke={2.5} />
+            </div>
           </button>
         )}
 

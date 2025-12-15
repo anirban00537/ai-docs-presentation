@@ -23,169 +23,103 @@ export const PresentationTopBar: React.FC<{
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
   
   const isDark = theme.themeType === "dark";
-  const accent = isDark ? "#60a5fa" : "#2563eb"; // tailwind blue-400 / blue-600
-  const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
-  const textSecondary = isDark ? "#cbd5e1" : "#475569";
-  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
+  const textPrimary = isDark ? "#f1f5f9" : "#0f172a";
+  const textSecondary = isDark ? "#94a3b8" : "#64748b";
 
   if (!presentation) return null;
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b"
+      className="fixed top-0 left-0 right-0 z-50"
       style={{
-        backgroundColor: isDark ? "rgba(10,10,12,0.9)" : "rgba(255,255,255,0.94)",
-        borderColor,
+        backgroundColor: isDark 
+          ? "rgba(15, 15, 18, 0.8)" 
+          : "rgba(255, 255, 255, 0.8)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
       }}
     >
-      <div className="max-w-[1200px] mx-auto px-8 py-3">
+      <div className="max-w-[1400px] mx-auto px-6 py-2.5">
         <div className="flex items-center justify-between">
+          {/* Left side - Title */}
           <div className="flex items-center gap-3">
             <h1
-              className="text-lg font-semibold truncate max-w-md"
+              className="text-base font-medium truncate max-w-md"
               style={{ color: textPrimary }}
             >
               {presentation.title || "Untitled Presentation"}
             </h1>
-            {presentation.description && (
-              <span
-                className="text-sm truncate max-w-xs"
-                style={{ color: textSecondary, opacity: 0.7 }}
-              >
-                {presentation.description}
-              </span>
-            )}
           </div>
-          <div className="flex items-center gap-3">
-            {presentation.version > 1 && (
-              <span
-                className="text-xs px-2 py-1 rounded"
-                style={{
-                  backgroundColor: isDark ? "rgba(96,165,250,0.16)" : "rgba(37,99,235,0.12)",
-                  color: accent,
-                }}
-              >
-                v{presentation.version}
-              </span>
-            )}
-            {presentation.isPublic && (
-              <span
-                className="text-xs px-2 py-1 rounded"
-                style={{
-                  backgroundColor: isDark ? "rgba(96,165,250,0.16)" : "rgba(37,99,235,0.12)",
-                  color: accent,
-                }}
-              >
-                Public
-              </span>
-            )}
-            {presentation.isTemplate && (
-              <span
-                className="text-xs px-2 py-1 rounded"
-                style={{
-                  backgroundColor: isDark ? "rgba(96,165,250,0.16)" : "rgba(37,99,235,0.12)",
-                  color: accent,
-                }}
-              >
-                Template
-              </span>
-            )}
-            {/* Action Buttons */}
+
+          {/* Right side - Actions */}
+          <div className="flex items-center gap-1">
+            {/* Undo/Redo Buttons */}
+            <TooltipProvider delayDuration={200}>
+              <div className="flex items-center">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      className="p-2 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-30"
+                      onClick={undo}
+                      disabled={!canUndo}
+                      style={{ color: textSecondary }}
+                    >
+                      <IconArrowBackUp size={18} stroke={1.5} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="text-xs">
+                    Undo <span className="opacity-50 ml-1">⌘Z</span>
+                  </TooltipContent>
+                </Tooltip>
+                
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      className="p-2 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-30"
+                      onClick={redo}
+                      disabled={!canRedo}
+                      style={{ color: textSecondary }}
+                    >
+                      <IconArrowForwardUp size={18} stroke={1.5} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="text-xs">
+                    Redo <span className="opacity-50 ml-1">⌘⇧Z</span>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
+
+            {/* Divider */}
             <div
-              className="flex items-center gap-2 ml-2 pl-2 border-l"
-              style={{ borderColor }}
+              className="w-px h-4 mx-2"
+              style={{ 
+                backgroundColor: isDark 
+                  ? "rgba(255,255,255,0.1)" 
+                  : "rgba(0,0,0,0.08)" 
+              }}
+            />
+
+            {/* Share Button */}
+            <button
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:bg-black/5 dark:hover:bg-white/5"
+              style={{ color: textSecondary }}
             >
-              {/* Undo/Redo Buttons */}
-              <TooltipProvider delayDuration={300}>
-                <div className="flex items-center gap-1">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={undo}
-                        disabled={!canUndo}
-                        style={{
-                          color: canUndo ? textPrimary : textSecondary,
-                          opacity: canUndo ? 1 : 0.4,
-                        }}
-                      >
-                        <IconArrowBackUp className="size-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p>Undo <span className="text-xs opacity-60 ml-1">⌘Z</span></p>
-                    </TooltipContent>
-                  </Tooltip>
-                  
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={redo}
-                        disabled={!canRedo}
-                        style={{
-                          color: canRedo ? textPrimary : textSecondary,
-                          opacity: canRedo ? 1 : 0.4,
-                        }}
-                      >
-                        <IconArrowForwardUp className="size-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p>Redo <span className="text-xs opacity-60 ml-1">⌘⇧Z</span></p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </TooltipProvider>
-              
-              <div className="w-px h-5 mx-1" style={{ backgroundColor: borderColor }} />
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-3 gap-2"
-                style={{
-                  color: textPrimary,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDark
-                    ? "rgba(255,255,255,0.06)"
-                    : "rgba(37,99,235,0.12)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-                title="Share presentation"
-              >
-                <IconShare className="size-4" />
-                <span className="text-sm">Share</span>
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                className="h-8 px-3 gap-2"
-                style={{
-                  backgroundColor: accent,
-                  color: "white",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDark
-                    ? "rgba(96,165,250,0.9)"
-                    : "rgba(37,99,235,0.9)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = accent;
-                }}
-                title="Present"
-                onClick={onPresentClick}
-              >
-                <IconPlayerPlay className="size-4" />
-                <span className="text-sm">Present</span>
-              </Button>
-            </div>
+              <IconShare size={16} stroke={1.5} />
+              <span>Share</span>
+            </button>
+
+            {/* Present Button */}
+            <button
+              onClick={onPresentClick}
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-medium text-white transition-all hover:opacity-90"
+              style={{
+                backgroundColor: theme.primary,
+              }}
+            >
+              <IconPlayerPlay size={16} stroke={1.5} />
+              <span>Present</span>
+            </button>
           </div>
         </div>
       </div>

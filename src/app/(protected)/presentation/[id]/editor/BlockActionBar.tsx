@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
@@ -43,159 +43,109 @@ export const BlockActionBar: React.FC<BlockActionBarProps> = ({
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
 
-  const buttonBaseClass =
-    "p-1.5 rounded-md transition-all duration-150 flex items-center justify-center";
-
-  const getButtonStyle = (disabled = false) => ({
-    color: disabled
-      ? isDark
-        ? "rgba(255,255,255,0.3)"
-        : "rgba(0,0,0,0.3)"
-      : isDark
-        ? "#e5e7eb"
-        : "#374151",
-    cursor: disabled ? "not-allowed" : "pointer",
-  });
-
-  const handleButtonHover = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    isEntering: boolean,
-    disabled = false
-  ) => {
-    if (disabled) return;
-    e.currentTarget.style.backgroundColor = isEntering
-      ? isDark
-        ? "rgba(255,255,255,0.1)"
-        : "rgba(0,0,0,0.08)"
-      : "transparent";
-  };
+  const buttonClass = "p-1 rounded-md transition-all flex items-center justify-center";
 
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: 8, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 8, scale: 0.95 }}
-          transition={{ duration: 0.15, ease: "easeOut" }}
-          className="absolute -top-12 left-1/2 -translate-x-1/2 z-50"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 6 }}
+          transition={{ duration: 0.12 }}
+          className="absolute -top-10 left-1/2 -translate-x-1/2 z-50"
+          data-block-action-bar
         >
           <div
-            className="flex items-center gap-0.5 px-1.5 py-1 rounded-lg shadow-xl backdrop-blur-md"
+            className="flex items-center gap-0.5 px-1 py-0.5 rounded-lg"
             style={{
-              backgroundColor: isDark
-                ? "rgba(30, 30, 35, 0.95)"
-                : "rgba(255, 255, 255, 0.98)",
-              border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
-              boxShadow: isDark
-                ? "0 8px 32px rgba(0,0,0,0.5)"
-                : "0 8px 32px rgba(0,0,0,0.15)",
+              backgroundColor: isDark ? "rgba(30,30,35,0.95)" : "rgba(255,255,255,0.98)",
+              backdropFilter: "blur(12px)",
             }}
           >
             {/* Drag Handle */}
             <button
               {...dragHandleProps}
-              className={`${buttonBaseClass} cursor-grab active:cursor-grabbing`}
-              style={getButtonStyle()}
+              className={`${buttonClass} cursor-grab active:cursor-grabbing`}
+              style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.4)" }}
               title="Drag to move"
             >
-              <IconGripVertical size={16} />
+              <IconGripVertical size={14} />
             </button>
 
             <div
-              className="w-px h-4 mx-0.5"
-              style={{
-                backgroundColor: isDark
-                  ? "rgba(255,255,255,0.1)"
-                  : "rgba(0,0,0,0.1)",
-              }}
+              className="w-px h-3 mx-0.5"
+              style={{ backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)" }}
             />
 
             {/* Move Up */}
             <button
               onClick={onMoveUp}
               disabled={!canMoveUp}
-              className={buttonBaseClass}
-              style={getButtonStyle(!canMoveUp)}
-              onMouseEnter={(e) => handleButtonHover(e, true, !canMoveUp)}
-              onMouseLeave={(e) => handleButtonHover(e, false, !canMoveUp)}
+              className={buttonClass}
+              style={{
+                color: !canMoveUp
+                  ? (isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)")
+                  : (isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"),
+              }}
               title="Move up"
             >
-              <IconArrowUp size={16} />
+              <IconArrowUp size={14} />
             </button>
 
             {/* Move Down */}
             <button
               onClick={onMoveDown}
               disabled={!canMoveDown}
-              className={buttonBaseClass}
-              style={getButtonStyle(!canMoveDown)}
-              onMouseEnter={(e) => handleButtonHover(e, true, !canMoveDown)}
-              onMouseLeave={(e) => handleButtonHover(e, false, !canMoveDown)}
+              className={buttonClass}
+              style={{
+                color: !canMoveDown
+                  ? (isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)")
+                  : (isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"),
+              }}
               title="Move down"
             >
-              <IconArrowDown size={16} />
+              <IconArrowDown size={14} />
             </button>
 
             <div
-              className="w-px h-4 mx-0.5"
-              style={{
-                backgroundColor: isDark
-                  ? "rgba(255,255,255,0.1)"
-                  : "rgba(0,0,0,0.1)",
-              }}
+              className="w-px h-3 mx-0.5"
+              style={{ backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)" }}
             />
 
             {/* Transform */}
             <button
               ref={transformButtonRef}
               onClick={() => setIsTransformMenuOpen(!isTransformMenuOpen)}
-              className={buttonBaseClass}
+              className={buttonClass}
               style={{
-                ...getButtonStyle(),
-                backgroundColor: isTransformMenuOpen
-                  ? isDark
-                    ? "rgba(255,255,255,0.1)"
-                    : "rgba(0,0,0,0.08)"
-                  : "transparent",
+                color: isTransformMenuOpen
+                  ? theme.primary
+                  : (isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"),
               }}
-              onMouseEnter={(e) => handleButtonHover(e, true)}
-              onMouseLeave={(e) => {
-                if (!isTransformMenuOpen) handleButtonHover(e, false);
-              }}
-              title="Change block type"
+              title="Change type"
             >
-              <IconTransform size={16} />
+              <IconTransform size={14} />
             </button>
 
             {/* Duplicate */}
             <button
               onClick={onDuplicate}
-              className={buttonBaseClass}
-              style={getButtonStyle()}
-              onMouseEnter={(e) => handleButtonHover(e, true)}
-              onMouseLeave={(e) => handleButtonHover(e, false)}
-              title="Duplicate block"
+              className={buttonClass}
+              style={{ color: isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)" }}
+              title="Duplicate"
             >
-              <IconCopy size={16} />
+              <IconCopy size={14} />
             </button>
 
             {/* Delete */}
             <button
               onClick={onDelete}
-              className={buttonBaseClass}
-              style={{
-                color: "#ef4444",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }}
-              title="Delete block"
+              className={buttonClass}
+              style={{ color: "#ef4444" }}
+              title="Delete"
             >
-              <IconTrash size={16} />
+              <IconTrash size={14} />
             </button>
           </div>
 

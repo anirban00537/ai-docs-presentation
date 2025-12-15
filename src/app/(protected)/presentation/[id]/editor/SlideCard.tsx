@@ -6,6 +6,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
+import { IconPlus } from "@tabler/icons-react";
 
 const DragStateBridge: React.FC<{
   onDragChange: (dragging: boolean) => void;
@@ -33,33 +34,29 @@ const InsertDropZone: React.FC<{
     },
   });
 
+  // Only render the drop zone during active dragging
+  if (!isActive) return null;
+
   return (
-    <div className="relative -my-1">
-      <div
-        ref={setNodeRef}
-        className={`flex items-center justify-center h-8 rounded-lg border border-dashed transition-all duration-150 bg-white/60 backdrop-blur-sm ${
-          isOver || isActive ? "opacity-100 shadow-sm" : "opacity-0"
-        }`}
-        style={{
-          borderColor: `${themePrimary}60`,
-          boxShadow: isOver ? `0 6px 18px ${themePrimary}33` : "none",
-        }}
-      >
-        <div
-          className="flex items-center gap-2 text-xs font-medium px-2 py-1 rounded-full"
-          style={{
-            color: themePrimary,
-            backgroundColor: isOver ? `${themePrimary}10` : "transparent",
-            border: `1px solid ${themePrimary}30`,
-          }}
-        >
-          <span
-            className="inline-block h-[6px] w-10 rounded-full"
+    <div
+      ref={setNodeRef}
+      className="relative h-6 flex items-center justify-center"
+    >
+      {/* Only show the indicator line when hovering over this specific zone */}
+      {isOver && (
+        <div className="absolute inset-x-4 h-0.5 flex items-center" style={{ backgroundColor: themePrimary }}>
+          {/* Left dot */}
+          <div
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full"
             style={{ backgroundColor: themePrimary }}
           />
-          Drop to add row here
+          {/* Right dot */}
+          <div
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full"
+            style={{ backgroundColor: themePrimary }}
+          />
         </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -99,15 +96,11 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   return (
     <div
-      className={`group/slide relative shadow-xl px-6 py-5 transition-all duration-200 ease-out w-full mx-auto ${
-        !readOnly ? "hover:-translate-y-1" : ""
+      className={`group/slide relative px-8 py-8 transition-all duration-300 ease-out w-full mx-auto rounded-2xl ${
+        !readOnly ? "" : ""
       }`}
       style={{
         backgroundColor: theme.cardBackground,
-        boxShadow: `0 18px 48px rgba(0,0,0,0.08), 0 6px 18px rgba(0,0,0,0.04)`,
-        backdropFilter: "blur(8px)",
-        transition:
-          "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
         fontFamily: getFontFamily(theme.fontFamily || "Inter"),
         minWidth: `${SLIDE_MAX_WIDTH}px`,
         maxWidth: `${SLIDE_MAX_WIDTH}px`,
@@ -118,47 +111,31 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       {enableDragHints && !readOnly && (
         <DragStateBridge onDragChange={setIsDragging} />
       )}
-      {/* Add Row at Top Button */}
+      
+      {/* Add Row at Top - Minimal design */}
       {!readOnly && (
         <button
           onClick={() => onAddRowAtTop(slide.id)}
-          className={`absolute left-1/2 -translate-x-1/2 -top-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
+          className={`absolute left-1/2 -translate-x-1/2 -top-3 z-10 transition-all duration-200 ${
             isHovered
               ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-2 pointer-events-none"
+              : "opacity-0 -translate-y-1 pointer-events-none"
           }`}
-          style={{
-            backgroundColor: theme.primary,
-            border: `1px solid ${theme.primary}30`,
-            boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = "0.9";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = isHovered ? "1" : "0";
-          }}
-          title="Add row at top"
         >
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <div
+            className="w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            style={{
+              backgroundColor: `${theme.primary}15`,
+              color: theme.primary,
+            }}
           >
-            <line x1="6" y1="2" x2="6" y2="10" />
-            <line x1="2" y1="6" x2="10" y2="6" />
-          </svg>
-          <span>Add Row</span>
+            <IconPlus size={14} stroke={2.5} />
+          </div>
         </button>
       )}
 
       {/* Slide Content */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-0">
         {!readOnly && (
           <InsertDropZone
             slideId={slide.id}
@@ -201,42 +178,25 @@ export const SlideCard: React.FC<SlideCardProps> = ({
         ))}
       </div>
 
-      {/* Add Row at Bottom Button */}
+      {/* Add Row at Bottom - Minimal design */}
       {!readOnly && (
         <button
           onClick={() => onAddRowAtBottom(slide.id)}
-          className={`absolute left-1/2 -translate-x-1/2 -bottom-4 z-10 px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1.5 shadow-md ${
+          className={`absolute left-1/2 -translate-x-1/2 -bottom-3 z-10 transition-all duration-200 ${
             isHovered
               ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-2 pointer-events-none"
+              : "opacity-0 translate-y-1 pointer-events-none"
           }`}
-          style={{
-            backgroundColor: theme.primary,
-            border: `1px solid ${theme.primary}30`,
-            boxShadow: "0 12px 30px rgba(0,0,0,0.08)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = "0.9";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = isHovered ? "1" : "0";
-          }}
-          title="Add row at bottom"
         >
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <div
+            className="w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            style={{
+              backgroundColor: `${theme.primary}15`,
+              color: theme.primary,
+            }}
           >
-            <line x1="6" y1="2" x2="6" y2="10" />
-            <line x1="2" y1="6" x2="10" y2="6" />
-          </svg>
-          <span>Add Row</span>
+            <IconPlus size={14} stroke={2.5} />
+          </div>
         </button>
       )}
     </div>

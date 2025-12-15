@@ -3,7 +3,6 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
-import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BLOCK_TYPES } from "./blocks/definitions";
@@ -48,17 +47,12 @@ interface DraggableBlockOptionProps {
 
 const DraggableBlockOption: React.FC<
   DraggableBlockOptionProps & { theme: any; isDark: boolean }
-> = ({ id, blockType, icon, label, description, theme, isDark }) => {
+> = ({ id, blockType, icon, label, theme, isDark }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id,
       data: { type: "block-option", blockType },
     });
-
-  const accent = theme.primary;
-  const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
-  const textSecondary = isDark ? "#cbd5e1" : "#475569";
-  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -74,47 +68,35 @@ const DraggableBlockOption: React.FC<
       className="cursor-grab active:cursor-grabbing"
     >
       <div
-        className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border transition-all hover:shadow-md h-full text-center"
+        className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl transition-all h-full text-center"
         style={{
-          backgroundColor: isDragging
-            ? isDark
-              ? "rgba(96,165,250,0.15)"
-              : "rgba(37,99,235,0.1)"
-            : "transparent",
-          borderColor: isDragging
-            ? accent
-            : isDark
-            ? "rgba(255,255,255,0.08)"
-            : "rgba(148,163,184,0.2)",
-          color: textPrimary,
+          backgroundColor: isDragging ? `${theme.primary}15` : "transparent",
         }}
         onMouseEnter={(e) => {
           if (!isDragging) {
-            e.currentTarget.style.borderColor = accent;
-            e.currentTarget.style.backgroundColor = isDark
-              ? "rgba(255,255,255,0.05)"
-              : "rgba(37,99,235,0.05)";
+            e.currentTarget.style.backgroundColor = `${theme.primary}10`;
           }
         }}
         onMouseLeave={(e) => {
           if (!isDragging) {
-            e.currentTarget.style.borderColor = isDark
-              ? "rgba(255,255,255,0.08)"
-              : "rgba(148,163,184,0.2)";
             e.currentTarget.style.backgroundColor = "transparent";
           }
         }}
       >
         <div
-          className="text-3xl shrink-0 flex items-center justify-center mb-1"
-          style={{ color: theme.primary }}
+          className="w-9 h-9 rounded-xl flex items-center justify-center mb-0.5"
+          style={{
+            backgroundColor: `${theme.primary}15`,
+            color: theme.primary,
+          }}
         >
           {icon}
         </div>
-        <div className="flex-1 min-w-0 flex items-center justify-center">
-          <div className="font-medium text-xs leading-tight" style={{ color: textPrimary }}>
-            {label}
-          </div>
+        <div
+          className="font-medium text-[11px] leading-tight"
+          style={{ color: isDark ? "#e5e7eb" : "#374151" }}
+        >
+          {label}
         </div>
       </div>
     </div>
@@ -124,145 +106,145 @@ const DraggableBlockOption: React.FC<
 const blockDefinitions = [
   {
     type: BLOCK_TYPES.PROSEMIRROR,
-    icon: <IconFileText className="w-6 h-6" />,
+    icon: <IconFileText size={18} />,
     label: "Text",
     description: "Rich text editor with formatting",
   },
   {
     type: BLOCK_TYPES.NUMBER_CARD,
-    icon: <IconHash className="w-6 h-6" />,
+    icon: <IconHash size={18} />,
     label: "Number Card",
     description: "Icon, number, and description",
   },
   {
     type: BLOCK_TYPES.TESTIMONIAL,
-    icon: <IconMessageCircle className="w-6 h-6" />,
+    icon: <IconMessageCircle size={18} />,
     label: "Testimonial",
     description: "Customer quote with name and role",
   },
   {
     type: BLOCK_TYPES.CTA,
-    icon: <IconTarget className="w-6 h-6" />,
+    icon: <IconTarget size={18} />,
     label: "CTA Banner",
     description: "Call-to-action with button",
   },
   {
     type: BLOCK_TYPES.QUOTE,
-    icon: <IconQuote className="w-6 h-6" />,
+    icon: <IconQuote size={18} />,
     label: "Quote",
     description: "Inspiring quote with author",
   },
   {
     type: BLOCK_TYPES.TIMELINE,
-    icon: <IconTimeline className="w-6 h-6" />,
+    icon: <IconTimeline size={18} />,
     label: "Timeline",
     description: "Step-by-step process visualization",
   },
   {
     type: BLOCK_TYPES.TEAM_CARD,
-    icon: <IconUsers className="w-6 h-6" />,
-    label: "Team Member",
+    icon: <IconUsers size={18} />,
+    label: "Team",
     description: "Profile card with social links",
   },
   {
     type: BLOCK_TYPES.PRICING_CARD,
-    icon: <IconCreditCard className="w-6 h-6" />,
-    label: "Pricing Plan",
+    icon: <IconCreditCard size={18} />,
+    label: "Pricing",
     description: "Feature comparison card",
   },
   {
     type: BLOCK_TYPES.IMAGE_GALLERY,
-    icon: <IconPhoto className="w-6 h-6" />,
-    label: "Image Gallery",
+    icon: <IconPhoto size={18} />,
+    label: "Gallery",
     description: "Grid layout for multiple images",
   },
   {
     type: BLOCK_TYPES.STATS_COUNTER,
-    icon: <IconChartBar className="w-6 h-6" />,
-    label: "Stats Counter",
+    icon: <IconChartBar size={18} />,
+    label: "Stats",
     description: "Animated statistics and metrics",
   },
   {
     type: BLOCK_TYPES.FEATURE_LIST,
-    icon: <IconListCheck className="w-6 h-6" />,
-    label: "Feature List",
+    icon: <IconListCheck size={18} />,
+    label: "Features",
     description: "Showcase features with icons",
   },
   {
     type: BLOCK_TYPES.COMPARISON_TABLE,
-    icon: <IconTable className="w-6 h-6" />,
-    label: "Comparison Table",
+    icon: <IconTable size={18} />,
+    label: "Compare",
     description: "Compare features side-by-side",
   },
   {
     type: BLOCK_TYPES.FAQ,
-    icon: <IconHelp className="w-6 h-6" />,
+    icon: <IconHelp size={18} />,
     label: "FAQ",
     description: "Expandable questions and answers",
   },
   {
     type: BLOCK_TYPES.LOGO_GRID,
-    icon: <IconBrandAppstore className="w-6 h-6" />,
-    label: "Logo Grid",
+    icon: <IconBrandAppstore size={18} />,
+    label: "Logos",
     description: "Showcase partners and clients",
   },
   {
     type: BLOCK_TYPES.VIDEO,
-    icon: <IconVideo className="w-6 h-6" />,
+    icon: <IconVideo size={18} />,
     label: "Video",
     description: "Embed YouTube or Vimeo videos",
   },
   {
     type: BLOCK_TYPES.CODE,
-    icon: <IconCode className="w-6 h-6" />,
-    label: "Code Block",
+    icon: <IconCode size={18} />,
+    label: "Code",
     description: "Syntax-highlighted code snippets",
   },
   {
     type: BLOCK_TYPES.PROGRESS_BAR,
-    icon: <IconProgress className="w-6 h-6" />,
-    label: "Progress Bar",
+    icon: <IconProgress size={18} />,
+    label: "Progress",
     description: "Animated progress indicators",
   },
   {
     type: BLOCK_TYPES.SOCIAL_PROOF,
-    icon: <IconBrandTwitter className="w-6 h-6" />,
-    label: "Social Proof",
+    icon: <IconBrandTwitter size={18} />,
+    label: "Social",
     description: "Social media stats and ratings",
   },
   {
     type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
-    icon: <IconHash className="w-6 h-6" />,
-    label: "Simple Number",
+    icon: <IconHash size={18} />,
+    label: "Number",
     description: "Minimalist number with text",
   },
   {
     type: BLOCK_TYPES.BADGE,
-    icon: <IconAward className="w-6 h-6" />,
+    icon: <IconAward size={18} />,
     label: "Badge",
     description: "Awards and certifications",
   },
   {
     type: BLOCK_TYPES.CODE_TERMINAL,
-    icon: <IconTerminal2 className="w-6 h-6" />,
-    label: "Code Terminal",
+    icon: <IconTerminal2 size={18} />,
+    label: "Terminal",
     description: "Mini terminal window",
   },
   {
     type: BLOCK_TYPES.PULSE_METRIC,
-    icon: <IconActivity className="w-6 h-6" />,
-    label: "Pulse Metric",
+    icon: <IconActivity size={18} />,
+    label: "Pulse",
     description: "Animated growth metric",
   },
   {
     type: BLOCK_TYPES.GLASS_INSIGHT,
-    icon: <IconBulb className="w-6 h-6" />,
-    label: "Glass Insight",
+    icon: <IconBulb size={18} />,
+    label: "Insight",
     description: "Key takeaway box",
   },
   {
     type: BLOCK_TYPES.SPACER,
-    icon: <IconSeparator className="w-6 h-6" />,
+    icon: <IconSeparator size={18} />,
     label: "Spacer",
     description: "Adjustable vertical space",
   },
@@ -274,33 +256,25 @@ export const BlocksPanel: React.FC<BlocksPanelProps> = ({
 }) => {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
-  const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
-  const textSecondary = isDark ? "#cbd5e1" : "#475569";
-  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
 
-  // Animation variants
   const panelVariants = {
     hidden: {
       opacity: 0,
       x: 20,
-      scale: 0.95,
-      transition: { duration: 0.2, ease: "easeInOut" as const },
+      scale: 0.98,
+      transition: { duration: 0.15 },
     },
     visible: {
       opacity: 1,
       x: 0,
       scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut" as const,
-        staggerChildren: 0.05,
-      },
+      transition: { duration: 0.2 },
     },
     exit: {
       opacity: 0,
       x: 20,
-      scale: 0.95,
-      transition: { duration: 0.2, ease: "easeInOut" as const },
+      scale: 0.98,
+      transition: { duration: 0.15 },
     },
   };
 
@@ -318,57 +292,38 @@ export const BlocksPanel: React.FC<BlocksPanelProps> = ({
           className="relative z-40"
         >
           <div
-            className="w-[420px] h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden shadow-xl"
+            className="w-[380px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: isDark
-                ? "rgba(12,12,14,0.9)"
-                : theme.cardBackground + "E6",
-              border: `1px solid ${borderColor}`,
+              backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+              backdropFilter: "blur(20px)",
             }}
           >
             {/* Header */}
-            <div
-              className="px-3 py-2.5 flex items-center justify-between gap-1 shrink-0"
-              style={{
-                borderBottom: `1px solid ${borderColor}`,
-              }}
-            >
-              <div
-                className="text-sm font-medium px-1"
-                style={{ color: textPrimary }}
+            <div className="px-4 py-3 flex items-center justify-between shrink-0">
+              <span
+                className="text-sm font-medium"
+                style={{ color: isDark ? "#fff" : "#000" }}
               >
-                Blocks
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
+                Add Block
+              </span>
+              <button
+                className="p-1.5 rounded-lg transition-all opacity-50 hover:opacity-100"
                 onClick={onClose}
-                style={{
-                  color: textSecondary,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDark
-                    ? "rgba(255,255,255,0.1)"
-                    : "rgba(0,0,0,0.05)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
+                style={{ color: isDark ? "#fff" : "#000" }}
               >
-                <X className="h-4 w-4" />
-              </Button>
+                <X size={16} />
+              </button>
             </div>
 
-            {/* Blocks List */}
-            <div className="flex-1 overflow-y-auto p-3 custom-scrollbar custom-scrollbar-light">
-              <div
-                className="text-xs font-medium mb-2 px-1"
-                style={{ color: textSecondary, opacity: 0.7 }}
+            {/* Blocks Grid */}
+            <div className="flex-1 overflow-y-auto px-3 pb-3">
+              <p
+                className="text-[11px] font-medium mb-2 px-1 opacity-50"
+                style={{ color: isDark ? "#fff" : "#000" }}
               >
-                Drag a block to add it to your slide
-              </div>
-              <div className="grid grid-cols-3 gap-2">
+                Drag to add to your slide
+              </p>
+              <div className="grid grid-cols-4 gap-1">
                 {blockDefinitions.map((block) => (
                   <DraggableBlockOption
                     key={block.type}

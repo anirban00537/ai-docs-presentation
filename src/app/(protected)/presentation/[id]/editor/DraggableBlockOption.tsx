@@ -1,6 +1,8 @@
 import React from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { useAppSelector } from "@/store/hooks";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
 interface DraggableBlockOptionProps {
   id: string;
@@ -15,6 +17,9 @@ export const DraggableBlockOption: React.FC<DraggableBlockOptionProps> = ({
   icon,
   label,
 }) => {
+  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const isDark = theme.themeType === "dark";
+  
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id,
@@ -32,15 +37,33 @@ export const DraggableBlockOption: React.FC<DraggableBlockOptionProps> = ({
       style={style}
       {...attributes}
       {...listeners}
-      className={`flex flex-col items-center gap-2 p-3 rounded-xl cursor-grab active:cursor-grabbing transition-all border-2 ${
-        isDragging
-          ? "border-blue-400 bg-blue-50 shadow-lg scale-105"
-          : "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50/50"
-      }`}
+      className="flex flex-col items-center gap-1.5 p-3 rounded-xl cursor-grab active:cursor-grabbing transition-all"
+      onMouseEnter={(e) => {
+        if (!isDragging) {
+          e.currentTarget.style.backgroundColor = `${theme.primary}10`;
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isDragging) {
+          e.currentTarget.style.backgroundColor = "transparent";
+        }
+      }}
     >
-      <div className="text-gray-600">{icon}</div>
-      <span className="text-xs font-medium text-gray-600">{label}</span>
+      <div
+        className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
+        style={{
+          backgroundColor: isDragging ? `${theme.primary}20` : `${theme.primary}10`,
+          color: theme.primary,
+        }}
+      >
+        {icon}
+      </div>
+      <span
+        className="text-[11px] font-medium text-center leading-tight"
+        style={{ color: isDark ? "#e5e7eb" : "#374151" }}
+      >
+        {label}
+      </span>
     </div>
   );
 };
-

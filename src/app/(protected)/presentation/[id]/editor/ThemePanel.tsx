@@ -6,10 +6,8 @@ import {
   Theme,
   DEFAULT_THEME,
 } from "@/store/slices/slidesSlice";
-import { Button } from "@/components/ui/button";
 import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 import { getAdminThemes } from "@/services/themes";
 
 interface ThemePanelProps {
@@ -21,16 +19,9 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = currentTheme.themeType === "dark";
-  const accent = isDark ? "#60a5fa" : "#2563eb"; // tailwind blue-400 / blue-600
-  const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
-  const textSecondary = isDark ? "#cbd5e1" : "#475569";
-  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
-  const [themes, setThemes] = useState<Array<{ name: string; theme: Theme }>>(
-    []
-  );
+  const [themes, setThemes] = useState<Array<{ name: string; theme: Theme }>>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch themes from API
   useEffect(() => {
     const fetchThemes = async () => {
       try {
@@ -55,40 +46,19 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                 theme: themeData,
               };
             })
-            .filter((palette) => palette && palette.theme && palette.name); // Filter out any invalid entries
+            .filter((palette) => palette && palette.theme && palette.name);
 
           if (themePalettes.length > 0) {
             setThemes(themePalettes);
           } else {
-            console.warn(
-              "No valid themes found after processing. Response:",
-              response
-            );
-            setThemes([
-              {
-                name: "Default",
-                theme: DEFAULT_THEME,
-              },
-            ]);
+            setThemes([{ name: "Default", theme: DEFAULT_THEME }]);
           }
         } else {
-          console.warn("No themes found in response:", response);
-          setThemes([
-            {
-              name: "Default",
-              theme: DEFAULT_THEME,
-            },
-          ]);
+          setThemes([{ name: "Default", theme: DEFAULT_THEME }]);
         }
       } catch (error) {
         console.error("Failed to fetch themes:", error);
-        // Fallback to default themes if API fails
-        setThemes([
-          {
-            name: "Default",
-            theme: DEFAULT_THEME,
-          },
-        ]);
+        setThemes([{ name: "Default", theme: DEFAULT_THEME }]);
       } finally {
         setIsLoading(false);
       }
@@ -99,36 +69,15 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  // Animation variants
   const panelVariants = {
-    hidden: {
-      opacity: 0,
-      x: 20,
-      scale: 0.95,
-      transition: { duration: 0.2, ease: "easeInOut" as const },
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut" as const,
-        staggerChildren: 0.05,
-      },
-    },
-    exit: {
-      opacity: 0,
-      x: 20,
-      scale: 0.95,
-      transition: { duration: 0.2, ease: "easeInOut" as const },
-    },
+    hidden: { opacity: 0, x: 20, scale: 0.98 },
+    visible: { opacity: 1, x: 0, scale: 1 },
+    exit: { opacity: 0, x: 20, scale: 0.98 },
   };
 
   if (!isOpen) return null;
 
   const handleThemeSelect = (selectedTheme: Theme) => {
-    // Update Redux state - middleware will handle API call
     dispatch(setTheme(selectedTheme));
   };
 
@@ -151,184 +100,123 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
           animate="visible"
           exit="exit"
           variants={panelVariants}
+          transition={{ duration: 0.15 }}
           className="relative z-40"
         >
           <div
-            className="w-80 h-[600px] max-h-[80vh] flex flex-col rounded-xl backdrop-blur-sm overflow-hidden"
+            className="w-72 max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: isDark
-                ? "rgba(12,12,14,0.9)"
-                : currentTheme.cardBackground + "E6",
-              border: `1px solid ${borderColor}`,
+              backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+              backdropFilter: "blur(20px)",
             }}
           >
             {/* Header */}
-            <div
-              className="px-3 py-2.5 flex items-center justify-between gap-1"
-              style={{
-                borderBottom: `1px solid ${borderColor}`,
-              }}
-            >
-              {/* Title */}
-              <div
-                className="text-sm font-medium px-1"
-                style={{ color: textPrimary }}
+            <div className="px-4 py-3 flex items-center justify-between">
+              <span
+                className="text-sm font-medium"
+                style={{ color: isDark ? "#fff" : "#000" }}
               >
                 Themes
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center gap-1">
-                {/* Close Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 hover:bg-transparent"
-                  onClick={onClose}
-                  style={{
-                    color: textPrimary,
-                    opacity: 0.5,
-                  }}
-                  aria-label="Close"
-                >
-                  <X className="size-3.5" />
-                </Button>
-              </div>
+              </span>
+              <button
+                onClick={onClose}
+                className="p-1.5 rounded-lg transition-all opacity-50 hover:opacity-100"
+                style={{ color: isDark ? "#fff" : "#000" }}
+              >
+                <X size={16} />
+              </button>
             </div>
+
             {/* Themes List */}
-            <div className="flex-1 overflow-y-auto p-3 custom-scrollbar custom-scrollbar-light">
+            <div className="flex-1 overflow-y-auto px-3 pb-3">
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <span
-                    className="text-sm"
-                    style={{ color: textPrimary, opacity: 0.6 }}
+                    className="text-sm opacity-50"
+                    style={{ color: isDark ? "#fff" : "#000" }}
                   >
-                    Loading themes...
+                    Loading...
                   </span>
                 </div>
               ) : themes.length === 0 ? (
                 <div className="flex items-center justify-center py-8">
                   <span
-                    className="text-sm"
-                    style={{ color: textPrimary, opacity: 0.6 }}
+                    className="text-sm opacity-50"
+                    style={{ color: isDark ? "#fff" : "#000" }}
                   >
                     No themes available
                   </span>
                 </div>
               ) : (
-                <div className="flex flex-col gap-1">
+                <div className="space-y-1">
                   {themes.map((palette, index) => {
                     const isActive = isThemeActive(palette.theme);
                     return (
-                      <motion.div
+                      <motion.button
                         key={`${palette.name}-${index}`}
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05, duration: 0.2 }}
+                        transition={{ delay: index * 0.03 }}
+                        onClick={() => handleThemeSelect(palette.theme)}
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all"
+                        style={{
+                          backgroundColor: isActive ? `${currentTheme.primary}15` : "transparent",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isActive) {
+                            e.currentTarget.style.backgroundColor = isDark
+                              ? "rgba(255,255,255,0.05)"
+                              : "rgba(0,0,0,0.03)";
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isActive) {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }
+                        }}
                       >
-                        <button
-                          onClick={() => handleThemeSelect(palette.theme)}
-                          className={cn(
-                            "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group relative"
-                          )}
-                          style={{
-                            backgroundColor: isActive
-                              ? "rgba(37,99,235,0.12)"
-                              : "transparent",
-                            color: isActive ? textPrimary : textSecondary,
-                          }}
-                          onMouseEnter={(e) => {
-                            if (!isActive) {
-                              e.currentTarget.style.backgroundColor = isDark
-                                ? "rgba(255,255,255,0.06)"
-                                : "rgba(148,163,184,0.12)";
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (!isActive) {
-                              e.currentTarget.style.backgroundColor =
-                                "transparent";
-                            }
-                          }}
-                        >
-                          {/* Theme Name & Status */}
-                          <div className="flex items-center gap-3">
+                        {/* Theme Name & Colors */}
+                        <div className="flex items-center gap-2.5">
+                          {/* Color Previews */}
+                          <div className="flex -space-x-1">
                             <div
-                              className={cn(
-                                "w-2 h-2 rounded-full transition-all duration-300",
-                                isActive ? "scale-125" : "bg-transparent"
-                              )}
-                              style={
-                                isActive
-                                  ? { backgroundColor: currentTheme.primary }
-                                  : undefined
-                              }
-                            />
-                            <span
-                              className="text-sm font-medium transition-colors"
-                              style={{
-                                color: isActive
-                                  ? currentTheme.headingColor
-                                  : currentTheme.bodyColor,
-                                opacity: 1,
-                                fontWeight: isActive ? 600 : 500,
-                              }}
-                            >
-                              {palette.name}
-                            </span>
-                          </div>
-
-                          {/* Theme Preview Mini-UI */}
-                          <div className="flex items-center gap-1.5">
-                            {/* Page Background Circle */}
-                            <div
-                              className="w-5 h-5 rounded-full border shadow-sm flex items-center justify-center overflow-hidden"
+                              className="w-5 h-5 rounded-full border-2"
                               style={{
                                 backgroundColor: palette.theme.pageBackground,
-                                borderColor: borderColor,
+                                borderColor: isDark ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.8)",
                               }}
-                              title="Page Background"
-                            >
-                              <div
-                                className="w-2 h-2 rounded-full opacity-80"
-                                style={{
-                                  backgroundColor: palette.theme.bodyColor,
-                                }}
-                              />
-                            </div>
-
-                            {/* Primary Color Badge */}
+                            />
                             <div
-                              className="w-5 h-5 rounded-full border shadow-sm"
+                              className="w-5 h-5 rounded-full border-2"
                               style={{
                                 backgroundColor: palette.theme.primary,
-                                borderColor: borderColor,
+                                borderColor: isDark ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.8)",
                               }}
-                              title="Primary Color"
                             />
-
-                            {/* Checkmark for Active State */}
-                            <div className="w-5 flex items-center justify-center">
-                              {isActive && (
-                                <motion.div
-                                  initial={{ scale: 0, opacity: 0 }}
-                                  animate={{ scale: 1, opacity: 1 }}
-                                  transition={{
-                                    type: "spring",
-                                    stiffness: 300,
-                                    damping: 20,
-                                  }}
-                                >
-                                  <Check
-                                    className="w-4 h-4"
-                                    style={{ color: accent }}
-                                  />
-                                </motion.div>
-                              )}
-                            </div>
                           </div>
-                        </button>
-                      </motion.div>
+                          
+                          <span
+                            className="text-sm"
+                            style={{
+                              color: isDark ? "#e5e7eb" : "#374151",
+                              fontWeight: isActive ? 500 : 400,
+                            }}
+                          >
+                            {palette.name}
+                          </span>
+                        </div>
+
+                        {/* Active Indicator */}
+                        {isActive && (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                          >
+                            <Check size={16} style={{ color: currentTheme.primary }} />
+                          </motion.div>
+                        )}
+                      </motion.button>
                     );
                   })}
                 </div>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { IconPalette, IconX, IconBlocks } from "@tabler/icons-react";
+import { IconPalette, IconBlocks } from "@tabler/icons-react";
 import { ThemePanel } from "./ThemePanel";
 import { BlocksPanel } from "./BlocksPanel";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface FloatingSidebarProps {
   presentationId: string;
@@ -17,9 +17,6 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
   const [isBlocksPanelOpen, setIsBlocksPanelOpen] = useState(false);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
-  const accent = isDark ? "#60a5fa" : "#2563eb";
-  const textPrimary = isDark ? "#e5e7eb" : "#0f172a";
-  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
 
   // Close panels when clicking outside
   useEffect(() => {
@@ -45,137 +42,102 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
 
   const handleToggleThemePanel = () => {
     setIsThemePanelOpen(!isThemePanelOpen);
-    setIsBlocksPanelOpen(false); // Close blocks panel if open
+    setIsBlocksPanelOpen(false);
   };
 
   const handleToggleBlocksPanel = () => {
     setIsBlocksPanelOpen(!isBlocksPanelOpen);
-    setIsThemePanelOpen(false); // Close theme panel if open
+    setIsThemePanelOpen(false);
   };
+
+  const buttonClass = "p-2.5 rounded-xl transition-all";
 
   return (
     <>
       {/* Floating Sidebar Buttons */}
       <div
         data-floating-sidebar
-        className="fixed right-6 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-2"
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-1.5"
       >
-        <div
-          className="p-2 rounded-lg backdrop-blur-sm"
-        style={{
-            backgroundColor: isDark
-              ? "rgba(15,23,42,0.9)"
-              : "rgba(255,255,255,0.92)",
-            border: `1px solid ${borderColor}`,
-        }}
-      >
-            <Button
+        <motion.div
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-2xl overflow-hidden"
+          style={{
+            backgroundColor: isDark ? "rgba(20,20,24,0.95)" : "rgba(255,255,255,0.98)",
+            backdropFilter: "blur(16px)",
+          }}
+        >
+          {/* Blocks Button */}
+          <button
             onClick={handleToggleBlocksPanel}
-            variant={isBlocksPanelOpen ? "default" : "ghost"}
-              size="icon"
-              className="h-10 w-10"
+            className={buttonClass}
             style={{
-              backgroundColor: isBlocksPanelOpen
-                ? accent
-                : "transparent",
-              color: isBlocksPanelOpen
-                ? "white"
-                : textPrimary,
+              backgroundColor: isBlocksPanelOpen ? `${theme.primary}15` : "transparent",
+              color: isBlocksPanelOpen ? theme.primary : (isDark ? "#fff" : "#000"),
             }}
-            onMouseEnter={(e) => {
-              if (!isBlocksPanelOpen) {
-                e.currentTarget.style.backgroundColor = isDark
-                  ? "rgba(255,255,255,0.1)"
-                  : "rgba(37,99,235,0.1)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isBlocksPanelOpen) {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }
-            }}
-            title="Blocks"
+            title="Add blocks"
           >
-            <IconBlocks
-              className="size-5"
-              style={{
-                color: isBlocksPanelOpen ? "white" : textPrimary,
-              }}
-              />
-            </Button>
-        </div>
-        <div
-          className="p-2 rounded-lg backdrop-blur-sm"
-            style={{
-            backgroundColor: isDark
-              ? "rgba(15,23,42,0.9)"
-              : "rgba(255,255,255,0.92)",
-            border: `1px solid ${borderColor}`,
-            }}
-          >
-            <Button
+            <IconBlocks size={20} stroke={1.5} />
+          </button>
+
+          {/* Divider */}
+          <div
+            className="mx-2 h-px"
+            style={{ backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }}
+          />
+
+          {/* Theme Button */}
+          <button
             onClick={handleToggleThemePanel}
-              variant={isThemePanelOpen ? "default" : "ghost"}
-              size="icon"
-              className="h-10 w-10"
+            className={buttonClass}
             style={{
-              backgroundColor: isThemePanelOpen
-                ? accent
-                : "transparent",
-              color: isThemePanelOpen
-                ? "white"
-                : textPrimary,
+              backgroundColor: isThemePanelOpen ? `${theme.primary}15` : "transparent",
+              color: isThemePanelOpen ? theme.primary : (isDark ? "#fff" : "#000"),
             }}
-            onMouseEnter={(e) => {
-              if (!isThemePanelOpen) {
-                e.currentTarget.style.backgroundColor = isDark
-                  ? "rgba(255,255,255,0.1)"
-                  : "rgba(37,99,235,0.1)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isThemePanelOpen) {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }
-            }}
-            title="Themes"
+            title="Change theme"
           >
-            <IconPalette
-              className="size-5"
-              style={{
-                color: isThemePanelOpen ? "white" : textPrimary,
-              }}
-            />
-          </Button>
-        </div>
+            <IconPalette size={20} stroke={1.5} />
+          </button>
+        </motion.div>
       </div>
 
-      {/* Blocks Panel - positioned relative to floating button */}
-      {isBlocksPanelOpen && (
-        <div
-          data-blocks-panel
-          className="fixed right-20 top-1/2 -translate-y-1/2 z-50"
-        >
-          <BlocksPanel
-            isOpen={isBlocksPanelOpen}
-            onClose={() => setIsBlocksPanelOpen(false)}
-          />
-        </div>
-      )}
-
-      {/* Theme Panel - positioned relative to floating button */}
-      {isThemePanelOpen && (
-        <div
-          data-theme-panel
-          className="fixed right-20 top-1/2 -translate-y-1/2 z-50"
+      {/* Blocks Panel */}
+      <AnimatePresence>
+        {isBlocksPanelOpen && (
+          <motion.div
+            data-blocks-panel
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            className="fixed right-16 top-1/2 -translate-y-1/2 z-50"
           >
-          <ThemePanel
-            isOpen={isThemePanelOpen}
-            onClose={() => setIsThemePanelOpen(false)}
-          />
-    </div>
-      )}
+            <BlocksPanel
+              isOpen={isBlocksPanelOpen}
+              onClose={() => setIsBlocksPanelOpen(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Theme Panel */}
+      <AnimatePresence>
+        {isThemePanelOpen && (
+          <motion.div
+            data-theme-panel
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            className="fixed right-16 top-1/2 -translate-y-1/2 z-50"
+          >
+            <ThemePanel
+              isOpen={isThemePanelOpen}
+              onClose={() => setIsThemePanelOpen(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
-
