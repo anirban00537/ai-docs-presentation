@@ -169,20 +169,22 @@ const GammaPage = () => {
     }
   }, [activeSlideId, isPresenting]);
 
-  // Show loading screen during initial load or generation
-  const showLoading = isLoadingPresentation || (isGeneratingSlides && slides.length === 0);
+  // Only show loading screen during initial presentation load (not during streaming)
+  // During streaming, show slides as they come in
+  const showLoading = isLoadingPresentation && !isGeneratingSlides;
 
   if (showLoading) {
     return (
       <>
         <GoogleFontsLoader />
         <LoadingScreen 
-          isGenerating={isGeneratingSlides} 
-          progress={slideGenerationProgress} 
+          isGenerating={false} 
+          progress={null} 
         />
       </>
     );
   }
+
 
   return (
     <>
@@ -375,6 +377,31 @@ const GammaPage = () => {
                       />
                     </motion.div>
                   ))}
+                
+                {/* Generating indicator - shows during streaming */}
+                {isGeneratingSlides && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-center gap-3 py-8"
+                  >
+                    <div 
+                      className="w-5 h-5 border-2 rounded-full animate-spin"
+                      style={{ 
+                        borderColor: `${theme.primary}30`,
+                        borderTopColor: theme.primary 
+                      }}
+                    />
+                    <span 
+                      className="text-sm font-medium"
+                      style={{ color: theme.bodyColor }}
+                    >
+                      {slideGenerationProgress 
+                        ? `Generating slide ${slideGenerationProgress.current} of ${slideGenerationProgress.total}...`
+                        : "Generating slides..."}
+                    </span>
+                  </motion.div>
+                )}
               </div>
             </BlockFocusProvider>
 
