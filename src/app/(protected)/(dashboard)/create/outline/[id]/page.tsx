@@ -1,11 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { useOutline, useUpdateOutline } from "@/hooks/use-outline";
 import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
+import { IconFileText, IconSparkles, IconArrowLeft, IconCheck, IconLoader2 } from "@tabler/icons-react";
+import type { OutlineResponse } from "@/services/presentation";
 
 export default function OutlinePage() {
   const params = useParams();
@@ -39,28 +42,61 @@ export default function OutlinePage() {
     }
     return null;
   }, [outline?.title, outline?.outlines]);
+  // Auto-save state
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const savedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleSave = async () => {
-    if (!outlineData || !outlineId) return;
-
-    updateOutlineMutation.mutate(
-      {
-        id: outlineId,
-        payload: {
-          title: outlineData.title,
-          outlines: outlineData.outlines,
-        },
-      },
-      {
-        onSuccess: () => {
-          alert("Outline saved successfully!");
-        },
-        onError: (err: any) => {
-          console.error("Failed to save outline:", err);
-        },
+  // Debounced auto-save function
+  const debouncedSave = useCallback(
+    (updatedOutline: OutlineResponse) => {
+      // Clear any existing timers
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
       }
-    );
-  };
+      if (savedTimeoutRef.current) {
+        clearTimeout(savedTimeoutRef.current);
+      }
+
+      // Set debounce timer
+      debounceTimerRef.current = setTimeout(() => {
+        setSaveStatus('saving');
+        
+        updateOutlineMutation.mutate(
+          {
+            id: outlineId,
+            payload: updatedOutline,
+          },
+          {
+            onSuccess: () => {
+              setSaveStatus('saved');
+              // Reset to idle after showing saved status
+              savedTimeoutRef.current = setTimeout(() => {
+                setSaveStatus('idle');
+              }, 2000);
+            },
+            onError: (err: any) => {
+              console.error("Failed to auto-save outline:", err);
+              setSaveStatus('idle');
+            },
+          }
+        );
+      }, 1500); // 1.5 second debounce
+    },
+    [outlineId, updateOutlineMutation]
+  );
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      if (savedTimeoutRef.current) {
+        clearTimeout(savedTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Get presentationId for Link href
   const presentationId =
@@ -72,11 +108,75 @@ export default function OutlinePage() {
 
   if (isLoading) {
     return (
-      <div className="flex w-full flex-col items-center justify-center py-8 px-4">
-        <div className="w-full max-w-4xl">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 w-3/4 bg-muted rounded" />
-            <div className="h-32 w-full bg-muted rounded" />
+      <div 
+        className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
+        }}
+      >
+        {/* Background Blobs */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: "70vw",
+            height: "60vh",
+            top: "-20%",
+            left: "-20%",
+            background: "radial-gradient(circle at center, rgba(196, 181, 253, 0.6) 0%, rgba(196, 181, 253, 0.25) 40%, transparent 70%)",
+            filter: "blur(80px)",
+            zIndex: 0,
+          }}
+        />
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: "60vw",
+            height: "55vh",
+            top: "-15%",
+            right: "-15%",
+            background: "radial-gradient(circle at center, rgba(147, 197, 253, 0.55) 0%, rgba(147, 197, 253, 0.2) 50%, transparent 70%)",
+            filter: "blur(90px)",
+            zIndex: 0,
+          }}
+        />
+        
+        <div className="relative w-full max-w-4xl px-4">
+          <div className="animate-pulse space-y-6">
+            <div 
+              className="rounded-2xl p-6"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.35)",
+                backdropFilter: "blur(24px) saturate(180%)",
+                WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                boxShadow: `
+                  0 1px 0 0 rgba(255, 255, 255, 1) inset,
+                  0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+                  0 8px 32px rgba(0, 0, 0, 0.08)
+                `,
+              }}
+            >
+              <div className="h-8 w-3/4 bg-muted/50 rounded-xl" />
+              <div className="h-4 w-full bg-muted/50 rounded-xl mt-4" />
+              <div className="h-4 w-2/3 bg-muted/50 rounded-xl mt-2" />
+            </div>
+            {[1, 2, 3].map((i) => (
+              <div 
+                key={i}
+                className="rounded-2xl p-6"
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.35)",
+                  backdropFilter: "blur(24px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                  boxShadow: `
+                    0 1px 0 0 rgba(255, 255, 255, 1) inset,
+                    0 8px 32px rgba(0, 0, 0, 0.08)
+                  `,
+                }}
+              >
+                <div className="h-6 w-1/2 bg-muted/50 rounded-xl" />
+                <div className="h-4 w-full bg-muted/50 rounded-xl mt-3" />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -85,113 +185,390 @@ export default function OutlinePage() {
 
   if (displayError && !outline) {
     return (
-      <div className="flex w-full flex-col items-center justify-center py-8 px-4">
-        <div className="w-full max-w-4xl">
-          <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+      <div 
+        className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
+        }}
+      >
+        <div className="relative w-full max-w-4xl px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl border border-destructive/30 p-6 text-sm text-destructive"
+            style={{
+              backgroundColor: "rgba(254, 202, 202, 0.3)",
+              backdropFilter: "blur(24px) saturate(180%)",
+              WebkitBackdropFilter: "blur(24px) saturate(180%)",
+            }}
+          >
             {displayError}
-          </div>
+          </motion.div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex w-full flex-col items-center justify-center py-8 px-4">
-      <div className="w-full max-w-4xl flex flex-col gap-8">
+    <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)]">
+      {/* === FIXED BACKGROUND LAYER === */}
+      <div 
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
+          zIndex: 0,
+        }}
+      >
+        {/* Soft lavender blob - Top Left */}
+        <div
+          className="absolute"
+          style={{
+            width: "70vw",
+            height: "60vh",
+            top: "-20%",
+            left: "-20%",
+            background: "radial-gradient(circle at center, rgba(196, 181, 253, 0.6) 0%, rgba(196, 181, 253, 0.25) 40%, transparent 70%)",
+            filter: "blur(80px)",
+          }}
+        />
+        
+        {/* Soft sky blue blob - Top Right */}
+        <div
+          className="absolute"
+          style={{
+            width: "60vw",
+            height: "55vh",
+            top: "-15%",
+            right: "-15%",
+            background: "radial-gradient(circle at center, rgba(147, 197, 253, 0.55) 0%, rgba(147, 197, 253, 0.2) 50%, transparent 70%)",
+            filter: "blur(90px)",
+          }}
+        />
+        
+        {/* Soft rose blob - Left */}
+        <div
+          className="absolute"
+          style={{
+            width: "50vw",
+            height: "60vh",
+            top: "20%",
+            left: "-15%",
+            background: "radial-gradient(ellipse at center, rgba(251, 207, 232, 0.6) 0%, rgba(251, 207, 232, 0.2) 50%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
+        />
+        
+        {/* Soft mint blob - Right */}
+        <div
+          className="absolute"
+          style={{
+            width: "55vw",
+            height: "55vh",
+            top: "30%",
+            right: "-10%",
+            background: "radial-gradient(ellipse at center, rgba(167, 243, 208, 0.5) 0%, rgba(167, 243, 208, 0.15) 50%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
+        />
+        
+        {/* Soft peach blob - Bottom Left */}
+        <div
+          className="absolute"
+          style={{
+            width: "60vw",
+            height: "50vh",
+            bottom: "-15%",
+            left: "-10%",
+            background: "radial-gradient(circle at center, rgba(254, 215, 170, 0.55) 0%, rgba(254, 215, 170, 0.15) 50%, transparent 70%)",
+            filter: "blur(90px)",
+          }}
+        />
+        
+        {/* Soft lilac blob - Bottom Right */}
+        <div
+          className="absolute"
+          style={{
+            width: "55vw",
+            height: "50vh",
+            bottom: "-20%",
+            right: "-15%",
+            background: "radial-gradient(circle at center, rgba(221, 214, 254, 0.6) 0%, rgba(196, 181, 253, 0.2) 50%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
+        />
+        
+        {/* Center soft glow */}
+        <div
+          className="absolute"
+          style={{
+            width: "50vw",
+            height: "50vh",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            background: "radial-gradient(circle at center, rgba(255, 255, 255, 0.9) 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+      </div>
+
+      {/* === SCROLLABLE CONTENT LAYER === */}
+      <div className="relative z-10 w-full max-w-4xl flex flex-col gap-6 px-4 py-8 overflow-y-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4"
+        >
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Presentation Outline
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Review and customize your presentation structure
+          </p>
+          
+          {/* Auto-save Status Indicator */}
+          <AnimatePresence mode="wait">
+            {saveStatus !== 'idle' && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="flex items-center gap-2 text-sm mt-3"
+              >
+                {saveStatus === 'saving' && (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    >
+                      <IconLoader2 size={14} className="text-muted-foreground" />
+                    </motion.div>
+                    <span className="text-muted-foreground">Saving changes...</span>
+                  </>
+                )}
+                {saveStatus === 'saved' && (
+                  <>
+                    <IconCheck size={14} className="text-green-500" />
+                    <span className="text-green-600">All changes saved</span>
+                  </>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
         {/* Prompt Display Box */}
         {outline && (
-          <div className="rounded-xl bg-card border p-6">
-            <h2 className="text-sm font-medium text-muted-foreground mb-2">
-              Your Prompt
-            </h2>
-            <p className="text-foreground whitespace-pre-wrap">
-              {outline.prompt}
-            </p>
-            <div className="mt-4 text-xs text-muted-foreground">
-              Number of slides: {outline.numberOfSlides}
-            </div>
-            {outline.status === "generating" && !outlineData && (
-              <div className="mt-4 text-sm text-muted-foreground">
-                Generating outline... Please wait.
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="relative rounded-2xl p-6 overflow-hidden"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.35)",
+              backdropFilter: "blur(24px) saturate(180%)",
+              WebkitBackdropFilter: "blur(24px) saturate(180%)",
+              boxShadow: `
+                0 1px 0 0 rgba(255, 255, 255, 1) inset,
+                0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+                1px 0 0 0 rgba(255, 255, 255, 0.8) inset,
+                -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                0 2px 8px rgba(0, 0, 0, 0.04)
+              `,
+            }}
+          >
+            {/* Glass shine overlay */}
+            <div 
+              className="absolute inset-0 pointer-events-none rounded-2xl"
+              style={{
+                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
+              }}
+            />
+            
+            <div className="relative flex items-start gap-4">
+              <div 
+                className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                style={{
+                  backgroundColor: "rgba(139, 92, 246, 0.15)",
+                  boxShadow: `
+                    0 1px 0 0 rgba(255, 255, 255, 0.8) inset,
+                    0 4px 12px rgba(139, 92, 246, 0.15)
+                  `,
+                }}
+              >
+                <IconFileText size={22} style={{ color: "#8B5CF6" }} />
               </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-sm font-semibold text-foreground mb-2">
+                  Your Prompt
+                </h2>
+                <p className="text-foreground/80 whitespace-pre-wrap text-sm leading-relaxed">
+                  {outline.prompt}
+                </p>
+                <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="px-2 py-1 rounded-lg bg-muted/50">
+                    {outline.numberOfSlides} slides
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            {outline.status === "generating" && !outlineData && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-4 flex items-center gap-2 text-sm text-muted-foreground"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                >
+                  <IconSparkles size={16} className="text-purple-500" />
+                </motion.div>
+                Generating outline... Please wait.
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         )}
 
         {/* Error Display */}
         {displayError && (
-          <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl border border-destructive/30 p-4 text-sm text-destructive"
+            style={{
+              backgroundColor: "rgba(254, 202, 202, 0.3)",
+              backdropFilter: "blur(24px) saturate(180%)",
+              WebkitBackdropFilter: "blur(24px) saturate(180%)",
+            }}
+          >
             {displayError}
-          </div>
+          </motion.div>
         )}
 
         {/* Outline Viewer */}
         {outlineData && (
-          <div className="space-y-4">
-            <OutlineViewer
-              outline={outlineData}
-              isLoading={isLoading}
-              editable={true}
-              onUpdate={(updatedOutline) => {
-                // Update is handled by the mutation, which will refetch
-                updateOutlineMutation.mutate({
-                  id: outlineId,
-                  payload: updatedOutline,
-                });
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="space-y-6"
+          >
+            <div
+              className="relative rounded-2xl p-6 overflow-hidden"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.35)",
+                backdropFilter: "blur(24px) saturate(180%)",
+                WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                boxShadow: `
+                  0 1px 0 0 rgba(255, 255, 255, 1) inset,
+                  0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+                  1px 0 0 0 rgba(255, 255, 255, 0.8) inset,
+                  -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
+                  0 8px 32px rgba(0, 0, 0, 0.08),
+                  0 2px 8px rgba(0, 0, 0, 0.04)
+                `,
               }}
-            />
+            >
+              {/* Glass shine overlay */}
+              <div 
+                className="absolute inset-0 pointer-events-none rounded-2xl"
+                style={{
+                  background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
+                }}
+              />
+              
+              <div className="relative">
+                <OutlineViewer
+                  outline={outlineData}
+                  isLoading={isLoading}
+                  editable={true}
+                  onUpdate={(updatedOutline) => {
+                    // Auto-save with debounce
+                    debouncedSave(updatedOutline);
+                  }}
+                />
+              </div>
+            </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4 justify-end">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex gap-3 justify-end items-center"
+            >
               <Button
-                onClick={handleSave}
-                disabled={updateOutlineMutation.isPending}
-                variant="default"
+                onClick={() => router.push("/home")}
+                variant="outline"
+                className="rounded-xl px-5 h-11 gap-2 transition-all duration-300 hover:scale-[1.02]"
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.5)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.8)",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                }}
               >
-                {updateOutlineMutation.isPending ? "Saving..." : "Save Outline"}
+                <IconArrowLeft size={18} />
+                Back
               </Button>
               {presentationUrl && presentationUrl !== "#" ? (
                 <Link href={presentationUrl}>
                   <Button
                     disabled={updateOutlineMutation.isPending}
-                    variant="default"
-                    className="bg-primary text-primary-foreground"
+                    className="rounded-xl px-6 h-11 gap-2 transition-all duration-300 hover:scale-[1.02] bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
+                    <IconSparkles size={18} />
                     Create Presentation
                   </Button>
                 </Link>
               ) : (
                 <Button
                   disabled={true}
-                  variant="default"
-                  className="bg-primary text-primary-foreground"
+                  className="rounded-xl px-6 h-11 gap-2 bg-primary/50 text-primary-foreground"
                 >
+                  <IconSparkles size={18} />
                   Create Presentation
                 </Button>
               )}
-              <Button onClick={() => router.push("/home")} variant="outline">
-                Back
-              </Button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Loading State - Show when outline is generating */}
         {outline?.status === "generating" && !outlineData && (
-          <div className="space-y-4">
-            <div className="h-8 w-3/4 animate-pulse bg-muted rounded" />
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="rounded-xl bg-card p-6 shadow-sm border space-y-2"
-                >
-                  <div className="h-6 w-2/3 animate-pulse bg-muted rounded" />
-                  <div className="h-4 w-full animate-pulse bg-muted rounded" />
-                </div>
-              ))}
-            </div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="space-y-4"
+          >
+            {[1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * i }}
+                className="rounded-2xl p-6 animate-pulse"
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.35)",
+                  backdropFilter: "blur(24px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                  boxShadow: `
+                    0 1px 0 0 rgba(255, 255, 255, 1) inset,
+                    0 8px 32px rgba(0, 0, 0, 0.08)
+                  `,
+                }}
+              >
+                <div className="h-6 w-2/3 bg-muted/50 rounded-xl" />
+                <div className="h-4 w-full bg-muted/50 rounded-xl mt-3" />
+              </motion.div>
+            ))}
+          </motion.div>
         )}
       </div>
     </div>

@@ -12,7 +12,7 @@ import {
   defaultMarkdownSerializer,
 } from "prosemirror-markdown";
 import { cn } from "@/lib/utils";
-import { PROSEMIRROR_STYLES } from "./prosemirror/styles";
+import { MARKDOWN_VIEWER_STYLES } from "./styles";
 
 interface MarkdownViewerProps {
   content: string;
@@ -30,6 +30,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const contentRef = useRef<string>(content);
+  const isInternalChangeRef = useRef<boolean>(false);
 
   useEffect(() => {
     if (!editorRef.current) return;
@@ -70,11 +71,14 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
         // Call onChange if content changed
         if (transaction.docChanged && onChange) {
           const markdown = defaultMarkdownSerializer.serialize(newState.doc);
+          // Mark this as an internal change to prevent external sync from resetting cursor
+          isInternalChangeRef.current = true;
+          contentRef.current = markdown;
           onChange(markdown);
         }
       },
       attributes: {
-        class: "ProseMirror",
+        class: "markdown-viewer-prosemirror ProseMirror",
       },
     });
 
@@ -89,22 +93,34 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
 
   // Update content when it changes externally
   useEffect(() => {
-    if (!viewRef.current || contentRef.current === content) return;
+    // Skip if view doesn't exist
+    if (!viewRef.current) return;
+    
+    // Skip if this change originated from the editor itself
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      return;
+    }
+    
+    // Skip if content hasn't actually changed
+    if (contentRef.current === content) return;
 
     try {
-      const newDoc = defaultMarkdownParser.parse(content || "");
-      const currentDoc = viewRef.current.state.doc;
-
-      // Only update if content is actually different
-      if (newDoc.content.size !== currentDoc.content.size) {
+      // Get current content as markdown
+      const currentMarkdown = defaultMarkdownSerializer.serialize(viewRef.current.state.doc);
+      
+      // Only update if content is actually different from what's in the editor
+      if (currentMarkdown !== content) {
+        const newDoc = defaultMarkdownParser.parse(content || "");
         const newState = EditorState.create({
           doc: newDoc,
           schema: markdownSchema,
           plugins: viewRef.current.state.plugins,
         });
         viewRef.current.updateState(newState);
-        contentRef.current = content;
       }
+      
+      contentRef.current = content;
     } catch (error) {
       console.error("Error parsing markdown:", error);
     }
@@ -112,7 +128,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
 
   return (
     <div className={cn("relative w-full", className)}>
-      <style>{PROSEMIRROR_STYLES}</style>
+      <style>{MARKDOWN_VIEWER_STYLES}</style>
       <div
         ref={editorRef}
         className="w-full wrap-break-word whitespace-pre-wrap"

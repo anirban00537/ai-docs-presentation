@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MarkdownViewer } from "@/components/markdown-viewer";
+import { MarkdownViewer } from "@/components/markdown-viewer/markdown-viewer";
 import { cn } from "@/lib/utils";
 import type { OutlineResponse } from "@/services/presentation";
 
@@ -64,15 +64,24 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
   if (isLoading) {
     return (
       <div className={cn("w-full space-y-4", className)}>
-        <div className="h-8 w-3/4 animate-pulse rounded bg-muted" />
+        <div className="h-8 w-3/4 animate-pulse rounded-xl bg-muted/30" />
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-xl bg-white dark:bg-card p-6 shadow-sm border space-y-2"
+              className="rounded-2xl p-6 space-y-2 animate-pulse"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.25)",
+                backdropFilter: "blur(16px) saturate(180%)",
+                WebkitBackdropFilter: "blur(16px) saturate(180%)",
+                boxShadow: `
+                  0 1px 0 0 rgba(255, 255, 255, 0.8) inset,
+                  0 4px 16px rgba(0, 0, 0, 0.06)
+                `,
+              }}
             >
-              <div className="h-6 w-2/3 animate-pulse rounded bg-muted" />
-              <div className="h-4 w-full animate-pulse rounded bg-muted" />
+              <div className="h-6 w-2/3 rounded-xl bg-muted/40" />
+              <div className="h-4 w-full rounded-xl bg-muted/30" />
             </div>
           ))}
         </div>
@@ -133,18 +142,46 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
             <div
               key={index}
               className={cn(
-                "rounded-xl bg-white dark:bg-card p-6 shadow-sm border transition-all duration-300",
-                "hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800",
+                "relative rounded-2xl p-6 overflow-hidden transition-all duration-300",
+                "hover:scale-[1.01]",
                 !isLoading && "animate-in fade-in-0 slide-in-from-bottom-4"
               )}
               style={{
+                backgroundColor: "rgba(255, 255, 255, 0.25)",
+                backdropFilter: "blur(16px) saturate(180%)",
+                WebkitBackdropFilter: "blur(16px) saturate(180%)",
+                boxShadow: `
+                  0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+                  0 -1px 0 0 rgba(0, 0, 0, 0.03) inset,
+                  1px 0 0 0 rgba(255, 255, 255, 0.7) inset,
+                  -1px 0 0 0 rgba(0, 0, 0, 0.02) inset,
+                  0 4px 16px rgba(0, 0, 0, 0.06),
+                  0 1px 4px rgba(0, 0, 0, 0.03)
+                `,
                 animationDelay: isLoading ? undefined : `${index * 100}ms`,
               }}
             >
-              <div className="flex gap-4">
+              {/* Glass shine overlay */}
+              <div 
+                className="absolute inset-0 pointer-events-none rounded-2xl"
+                style={{
+                  background: "linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%, transparent 70%, rgba(255, 255, 255, 0.15) 100%)",
+                }}
+              />
+              
+              <div className="relative flex gap-4">
                 {/* Number Badge */}
                 <div className="shrink-0">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-xl shadow-sm">
+                  <div 
+                    className="flex h-12 w-12 items-center justify-center rounded-xl text-white font-bold text-xl"
+                    style={{
+                      background: "linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)",
+                      boxShadow: `
+                        0 4px 12px rgba(139, 92, 246, 0.3),
+                        0 1px 0 0 rgba(255, 255, 255, 0.2) inset
+                      `,
+                    }}
+                  >
                     {index + 1}
                   </div>
                 </div>
