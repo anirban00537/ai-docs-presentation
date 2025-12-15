@@ -165,7 +165,10 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
               }}
             >
               {/* Header */}
-              <div className="px-3 py-2 flex items-center justify-between">
+              <div 
+                className="py-2.5 flex items-center justify-between"
+                style={{ paddingLeft: 14, paddingRight: 14 }}
+              >
                 <span
                   className="text-xs font-medium uppercase tracking-wider opacity-50"
                   style={{ color: isDark ? "#fff" : "#000" }}
@@ -198,7 +201,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
               {/* Slides List */}
               <div 
                 className={`flex-1 overflow-y-auto pb-3 space-y-2.5 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
-                style={{ paddingLeft: 12, paddingRight: 12 }}
+                style={{ paddingLeft: 18, paddingRight: 14, paddingTop: 8 }}
               >
                 {slides.map((slide, index) => {
                   const isActive = slide.id === activeSlideId;

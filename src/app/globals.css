@@ -263,10 +263,13 @@
 .custom-scrollbar-dark {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  scrollbar-gutter: stable;
 }
 
 .custom-scrollbar-dark::-webkit-scrollbar {
   width: 4px;
+  position: absolute;
+  right: 0;
 }
 
 .custom-scrollbar-dark::-webkit-scrollbar-track {
@@ -285,10 +288,13 @@
 .custom-scrollbar-light {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  scrollbar-gutter: stable;
 }
 
 .custom-scrollbar-light::-webkit-scrollbar {
   width: 4px;
+  position: absolute;
+  right: 0;
 }
 
 .custom-scrollbar-light::-webkit-scrollbar-track {
