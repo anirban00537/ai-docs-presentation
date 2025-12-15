@@ -196,7 +196,10 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
               </div>
 
               {/* Slides List */}
-              <div className="flex-1 overflow-y-auto px-3 pb-3 space-y-2.5">
+              <div 
+                className={`flex-1 overflow-y-auto pb-3 space-y-2.5 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
+                style={{ paddingLeft: 12, paddingRight: 12 }}
+              >
                 {slides.map((slide, index) => {
                   const isActive = slide.id === activeSlideId;
                   return (
