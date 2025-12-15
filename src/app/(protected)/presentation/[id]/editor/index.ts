@@ -10,6 +10,10 @@ export { PresentationTopBar } from "./PresentationTopBar";
 export { BlockActionBar } from "./BlockActionBar";
 export { BlockTransformMenu } from "./BlockTransformMenu";
 export { BlockFocusProvider, useBlockFocus } from "./BlockFocusContext";
+export { GeneratingIndicator } from "./GeneratingIndicator";
+export { PresentationMode } from "./PresentationMode";
+export { BlockDragPreview } from "./BlockDragPreview";
+export { getBlockTypeIcon, getBlockTypeLabel } from "./blockTypeUtils";
 
 // Export icons
 export { NumberCardIcon } from "./icons/layout-icons";

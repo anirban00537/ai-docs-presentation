@@ -5,67 +5,22 @@ import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams, useParams } from "next/navigation";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   SlideCard,
   SlidesSidebar,
   PresentationTopBar,
+  GeneratingIndicator,
+  PresentationMode,
+  BlockDragPreview,
 } from "@/app/(protected)/presentation/[id]/editor";
 import { BlockFocusProvider } from "@/app/(protected)/presentation/[id]/editor/BlockFocusContext";
 import { LoadingScreen } from "@/app/(protected)/presentation/[id]/editor/LoadingScreen";
 import { useEditorPage } from "./hooks/useEditorPage";
 import { useAppSelector } from "@/store/hooks";
 import { selectPresentation, selectActiveSlideId } from "@/store/slices/slidesSlice";
-import {
-  IconFileText,
-  IconHash,
-  IconMessageCircle,
-  IconTarget,
-  IconQuote,
-  IconTimeline,
-  IconChevronLeft,
-  IconChevronRight,
-  IconX,
-} from "@tabler/icons-react";
 import { FloatingSidebar } from "./editor/FloatingSidebar";
 import { useUndoRedoKeyboardShortcuts } from "@/hooks/useUndoRedo";
-
-// Block type icon mapping
-const getBlockTypeIcon = (type: string) => {
-  switch (type) {
-    case "number-card":
-      return <IconHash size={16} />;
-    case "testimonial":
-      return <IconMessageCircle size={16} />;
-    case "cta":
-      return <IconTarget size={16} />;
-    case "quote":
-      return <IconQuote size={16} />;
-    case "timeline":
-      return <IconTimeline size={16} />;
-    default:
-      return <IconFileText size={16} />;
-  }
-};
-
-const getBlockTypeLabel = (type: string) => {
-  switch (type) {
-    case "number-card":
-      return "Number Card";
-    case "testimonial":
-      return "Testimonial";
-    case "cta":
-      return "CTA Banner";
-    case "quote":
-      return "Quote";
-    case "timeline":
-      return "Timeline";
-    case "prosemirror":
-      return "Text Block";
-    default:
-      return type;
-  }
-};
 
 // --- Main Page Component ---
 const GammaPage = () => {
@@ -106,13 +61,13 @@ const GammaPage = () => {
   const [isPresenting, setIsPresenting] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const presentationContainerRef = useRef<HTMLDivElement>(null);
-  const editorScrollRef = useRef<HTMLDivElement>(null);
 
   const handlePresentClick = () => {
     setIsPresenting(true);
     setCurrentSlideIndex(0);
   };
 
+  // Lock body scroll during presentation
   useEffect(() => {
     if (isPresenting) {
       document.body.style.overflow = "hidden";
@@ -124,12 +79,14 @@ const GammaPage = () => {
     };
   }, [isPresenting]);
 
+  // Reset scroll position on slide change
   useEffect(() => {
     if (presentationContainerRef.current) {
       presentationContainerRef.current.scrollTop = 0;
     }
   }, [currentSlideIndex]);
 
+  // Keyboard navigation for presentation mode
   useEffect(() => {
     if (!isPresenting) return;
 
@@ -173,9 +130,7 @@ const GammaPage = () => {
   // Auto-scroll to bottom when new slides arrive during generation
   useEffect(() => {
     if (isGeneratingSlides && slides.length > 0) {
-      // Small delay to ensure DOM has updated with the new slide
       const timeoutId = setTimeout(() => {
-        // Scroll the last slide into view
         const allSlides = document.querySelectorAll('[data-slide-id]');
         const lastSlide = allSlides[allSlides.length - 1];
         if (lastSlide) {
@@ -186,132 +141,39 @@ const GammaPage = () => {
     }
   }, [isGeneratingSlides, slides.length]);
 
-  // Only show loading screen during initial presentation load (not during streaming)
-  // During streaming, show slides as they come in
+  // Only show loading screen during initial presentation load
   const showLoading = isLoadingPresentation && !isGeneratingSlides;
 
   if (showLoading) {
     return (
       <>
         <GoogleFontsLoader />
-        <LoadingScreen 
-          isGenerating={false} 
-          progress={null} 
-        />
+        <LoadingScreen isGenerating={false} progress={null} />
       </>
     );
   }
-
 
   return (
     <>
       <GoogleFontsLoader />
 
       {/* Presentation Mode Overlay */}
-      <AnimatePresence>
-        {isPresenting && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            ref={presentationContainerRef}
-            className="fixed inset-0 z-[100] overflow-y-auto"
-            style={{
-              backgroundColor: theme.pageBackground,
-            }}
-          >
-            {/* Minimal gradient overlay */}
-            <div
-              className="fixed inset-0 pointer-events-none"
-              style={{
-                background: `radial-gradient(ellipse at 50% 0%, ${theme.primary}08 0%, transparent 50%)`,
-              }}
-            />
-
-            {/* Minimal Navigation Controls */}
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 z-50">
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl"
-                style={{
-                  backgroundColor: isDark ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.9)",
-                }}
-              >
-                <button
-                  onClick={() => setCurrentSlideIndex((prev) => Math.max(prev - 1, 0))}
-                  disabled={currentSlideIndex === 0}
-                  className="p-1.5 rounded-full transition-all disabled:opacity-30"
-                  style={{ color: isDark ? "#fff" : "#000" }}
-                >
-                  <IconChevronLeft size={18} />
-                </button>
-                
-                <span
-                  className="text-sm font-medium tabular-nums min-w-[3rem] text-center"
-                  style={{ color: isDark ? "#fff" : "#000" }}
-                >
-                  {currentSlideIndex + 1} / {slides.length}
-                </span>
-                
-                <button
-                  onClick={() => setCurrentSlideIndex((prev) => Math.min(prev + 1, slides.length - 1))}
-                  disabled={currentSlideIndex === slides.length - 1}
-                  className="p-1.5 rounded-full transition-all disabled:opacity-30"
-                  style={{ color: isDark ? "#fff" : "#000" }}
-                >
-                  <IconChevronRight size={18} />
-                </button>
-
-                <div
-                  className="w-px h-4 mx-1"
-                  style={{ backgroundColor: isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)" }}
-                />
-
-                <button
-                  onClick={() => setIsPresenting(false)}
-                  className="p-1.5 rounded-full transition-all hover:opacity-70"
-                  style={{ color: isDark ? "#fff" : "#000" }}
-                >
-                  <IconX size={18} />
-                </button>
-              </motion.div>
-            </div>
-
-            {/* Current Slide */}
-            <div
-              className="min-h-screen w-full flex items-center justify-center p-8"
-              style={{ fontFamily: `${theme.fontFamily}, sans-serif` }}
-            >
-              <AnimatePresence mode="wait">
-                {slides[currentSlideIndex] && (
-                  <motion.div
-                    key={currentSlideIndex}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    <SlideCard
-                      slide={slides[currentSlideIndex]}
-                      onUpdateBlock={handleUpdateBlock}
-                      onDeleteRow={handleDeleteRow}
-                      onAddColumn={handleAddColumn}
-                      onAddRowAtTop={handleAddRowAtTop}
-                      onAddRowAtBottom={handleAddRowAtBottom}
-                      onUpdateColumnWidths={handleUpdateColumnWidths}
-                      enableDragHints={false}
-                      readOnly={true}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <PresentationMode
+        isPresenting={isPresenting}
+        slides={slides}
+        currentSlideIndex={currentSlideIndex}
+        theme={theme}
+        containerRef={presentationContainerRef}
+        onPrevSlide={() => setCurrentSlideIndex((prev) => Math.max(prev - 1, 0))}
+        onNextSlide={() => setCurrentSlideIndex((prev) => Math.min(prev + 1, slides.length - 1))}
+        onClose={() => setIsPresenting(false)}
+        onUpdateBlock={handleUpdateBlock}
+        onDeleteRow={handleDeleteRow}
+        onAddColumn={handleAddColumn}
+        onAddRowAtTop={handleAddRowAtTop}
+        onAddRowAtBottom={handleAddRowAtBottom}
+        onUpdateColumnWidths={handleUpdateColumnWidths}
+      />
 
       <PresentationTopBar onPresentClick={handlePresentClick} />
       
@@ -397,7 +259,7 @@ const GammaPage = () => {
               </div>
             </BlockFocusProvider>
 
-            {/* Minimal Drag Overlay */}
+            {/* Drag Overlay */}
             <DragOverlay
               dropAnimation={{
                 duration: 200,
@@ -405,151 +267,22 @@ const GammaPage = () => {
               }}
             >
               {activeBlock && (
-                <motion.div
-                  initial={{ scale: 0.95, opacity: 0.8 }}
-                  animate={{ scale: 1, opacity: 0.95 }}
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    backgroundColor: isDark
-                      ? "rgba(30, 30, 35, 0.95)"
-                      : "rgba(255, 255, 255, 0.95)",
-                    backdropFilter: "blur(12px)",
-                    maxWidth: "280px",
-                  }}
-                >
-                  <div className="px-3 py-2.5 flex items-center gap-2.5">
-                    <div
-                      className="w-7 h-7 rounded-md flex items-center justify-center"
-                      style={{
-                        backgroundColor: `${theme.primary}15`,
-                        color: theme.primary,
-                      }}
-                    >
-                      {getBlockTypeIcon(activeBlock.type || "prosemirror")}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div
-                        className="text-sm font-medium"
-                        style={{ color: isDark ? "#e5e7eb" : "#1f2937" }}
-                      >
-                        {getBlockTypeLabel(activeBlock.type || "prosemirror")}
-                      </div>
-                    </div>
-                  </div>
-                  {/* Subtle accent line */}
-                  <div
-                    className="h-0.5 w-full"
-                    style={{ backgroundColor: theme.primary }}
-                  />
-                </motion.div>
+                <BlockDragPreview block={activeBlock} theme={theme} />
               )}
               {isBlockDragging && draggingBlockType && (
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 0.95 }}
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    backgroundColor: isDark
-                      ? "rgba(30, 30, 35, 0.95)"
-                      : "rgba(255, 255, 255, 0.95)",
-                    backdropFilter: "blur(12px)",
-                  }}
-                >
-                  <div className="px-3 py-2.5 flex items-center gap-2.5">
-                    <div
-                      className="w-7 h-7 rounded-md flex items-center justify-center"
-                      style={{
-                        backgroundColor: `${theme.primary}15`,
-                        color: theme.primary,
-                      }}
-                    >
-                      {getBlockTypeIcon(draggingBlockType)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div
-                        className="text-sm font-medium"
-                        style={{ color: isDark ? "#e5e7eb" : "#1f2937" }}
-                      >
-                        {getBlockTypeLabel(draggingBlockType)}
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="h-0.5 w-full"
-                    style={{ backgroundColor: theme.primary }}
-                  />
-                </motion.div>
+                <BlockDragPreview blockType={draggingBlockType} theme={theme} />
               )}
             </DragOverlay>
           </DndContext>
         </div>
       </div>
 
-      {/* Fixed Glassmorphism Generating Indicator */}
-      <AnimatePresence>
-        {isGeneratingSlides && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
-          >
-            <div
-              className="flex items-center gap-3 px-5 py-3 rounded-2xl border shadow-lg"
-              style={{
-                backgroundColor: isDark 
-                  ? "rgba(30, 30, 35, 0.85)" 
-                  : "rgba(255, 255, 255, 0.85)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderColor: isDark 
-                  ? "rgba(255, 255, 255, 0.1)" 
-                  : "rgba(0, 0, 0, 0.08)",
-                boxShadow: isDark
-                  ? "0 8px 32px rgba(0, 0, 0, 0.4)"
-                  : "0 8px 32px rgba(0, 0, 0, 0.12)",
-              }}
-            >
-              {/* Spinner */}
-              <div 
-                className="w-5 h-5 border-2 rounded-full animate-spin"
-                style={{ 
-                  borderColor: `${theme.primary}30`,
-                  borderTopColor: theme.primary 
-                }}
-              />
-              
-              {/* Text */}
-              <span 
-                className="text-sm font-medium"
-                style={{ color: isDark ? "#e5e7eb" : "#1f2937" }}
-              >
-                {slideGenerationProgress 
-                  ? `Generating slide ${slideGenerationProgress.current} of ${slideGenerationProgress.total}`
-                  : "Generating slides"}
-              </span>
-
-              {/* Progress dots */}
-              <div className="flex gap-1">
-                {[0, 1, 2].map((i) => (
-                  <motion.div
-                    key={i}
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ backgroundColor: theme.primary }}
-                    animate={{ opacity: [0.3, 1, 0.3] }}
-                    transition={{
-                      duration: 1.2,
-                      repeat: Infinity,
-                      delay: i * 0.2,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Generating Indicator */}
+      <GeneratingIndicator
+        isGenerating={isGeneratingSlides}
+        progress={slideGenerationProgress}
+        theme={theme}
+      />
     </>
   );
 };
