@@ -249,13 +249,6 @@ function Sidebar({
             backgroundColor: "rgba(255, 255, 255, 0.5)",
             backdropFilter: "blur(24px) saturate(180%)",
             WebkitBackdropFilter: "blur(24px) saturate(180%)",
-            boxShadow: `
-              0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
-              0 -1px 0 0 rgba(0, 0, 0, 0.03) inset,
-              1px 0 0 0 rgba(255, 255, 255, 0.7) inset,
-              -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
-              0 4px 24px rgba(0, 0, 0, 0.06)
-            `,
           }}
         >
           {children}
