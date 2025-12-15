@@ -128,7 +128,10 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
             </div>
 
             {/* Themes List */}
-            <div className="flex-1 overflow-y-auto px-3 pb-3">
+            <div 
+              className={`flex-1 overflow-y-auto px-3 pb-3 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
+              style={{ paddingTop: 8 }}
+            >
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <span
