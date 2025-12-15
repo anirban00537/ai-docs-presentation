@@ -5,8 +5,7 @@ import {
   createTeamCardContent,
   type TeamCardContent,
 } from "../definitions/team-card";
-import { withAlpha } from "../utils";
-import { User, Linkedin, Twitter, Globe, Upload } from "lucide-react";
+import { IconUser, IconBrandLinkedin, IconBrandX, IconWorld, IconUpload } from "@tabler/icons-react";
 
 interface TeamCardBlockProps {
   block: Block;
@@ -60,8 +59,6 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
     [content, onUpdate]
   );
 
-  // For now simple URL input or file upload placeholder
-  // In a real app this would trigger a file picker
   const handleAvatarClick = () => {
     const url = prompt("Enter avatar image URL:");
     if (url) {
@@ -81,19 +78,18 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
 
   return (
     <div
-      className="w-full h-full flex flex-col items-center rounded-2xl p-8 relative group transition-all duration-300"
+      className="w-full h-full flex flex-col items-center rounded-2xl p-6 relative group transition-all"
       style={{
-        backgroundColor: theme.cardBackground || withAlpha(theme.primary, 0.05),
-        border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
+        background: `linear-gradient(135deg, ${theme.primary}10 0%, ${theme.primary}03 100%)`,
       }}
     >
-      {/* Avatar Section */}
-      <div className="relative mb-6">
+      {/* Avatar */}
+      <div className="relative mb-5">
         <div
-          className="w-32 h-32 rounded-full overflow-hidden flex items-center justify-center relative group/avatar cursor-pointer"
-          style={{ 
-            border: `4px solid ${withAlpha(theme.primary, 0.2)}`,
-            backgroundColor: withAlpha(theme.primary, 0.1),
+          className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center relative group/avatar cursor-pointer transition-all hover:scale-105"
+          style={{
+            backgroundColor: `${theme.primary}15`,
+            border: `3px solid ${theme.primary}20`,
           }}
           onClick={handleAvatarClick}
         >
@@ -104,18 +100,18 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
               className="w-full h-full object-cover"
             />
           ) : (
-            <User className="w-12 h-12 opacity-30" style={{ color: theme.primary }} />
+            <IconUser size={32} style={{ color: theme.primary, opacity: 0.4 }} />
           )}
           
           {/* Hover Overlay */}
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity">
-            <Upload className="w-8 h-8 text-white" />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+            <IconUpload size={20} className="text-white" />
           </div>
         </div>
       </div>
 
       {/* Name & Role */}
-      <div className="w-full text-center space-y-2 mb-4">
+      <div className="w-full text-center space-y-1 mb-3">
         <div style={{ color: theme.headingColor }}>
           <ProseMirrorEditor
             key={`${block.id}-name`}
@@ -123,70 +119,58 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
             value={nameDoc}
             onChange={handleNameChange}
             placeholder="Team Member Name"
-            className="text-xl font-bold text-center"
+            className="text-lg font-bold text-center"
           />
         </div>
-        <div style={{ color: theme.bodyColor || theme.primary }}>
+        <div style={{ color: theme.primary }}>
           <ProseMirrorEditor
             key={`${block.id}-role`}
             blockId={`${block.id}-role`}
             value={roleDoc}
             onChange={handleRoleChange}
             placeholder="Role / Title"
-            className="text-sm font-medium uppercase tracking-wider opacity-70 text-center"
+            className="text-xs font-medium uppercase tracking-wider opacity-70 text-center"
           />
         </div>
       </div>
 
       {/* Description */}
-      <div className="w-full text-center mb-6 px-4">
+      <div className="w-full text-center mb-4 px-2">
         <div style={{ color: theme.bodyColor }}>
           <ProseMirrorEditor
             key={`${block.id}-desc`}
             blockId={`${block.id}-desc`}
             value={descriptionDoc}
             onChange={handleDescriptionChange}
-            placeholder="Short bio or description..."
-            className="text-sm leading-relaxed opacity-80 text-center"
+            placeholder="Short bio..."
+            className="text-sm leading-relaxed opacity-60 text-center"
           />
         </div>
       </div>
 
       {/* Social Links */}
-      <div className="flex items-center gap-3 mt-auto">
-        <button
-          onClick={() => handleSocialClick("linkedin")}
-          className={`p-2 rounded-full transition-colors ${content.socials?.linkedin ? 'opacity-100' : 'opacity-30 hover:opacity-100'}`}
-          title="LinkedIn"
-          style={{ 
-            color: theme.primary,
-            backgroundColor: content.socials?.linkedin ? withAlpha(theme.primary, 0.1) : 'transparent' 
-          }}
-        >
-          <Linkedin className="w-5 h-5" />
-        </button>
-        <button
-          onClick={() => handleSocialClick("twitter")}
-          className={`p-2 rounded-full transition-colors ${content.socials?.twitter ? 'opacity-100' : 'opacity-30 hover:opacity-100'}`}
-          title="Twitter"
-          style={{ 
-            color: theme.primary,
-            backgroundColor: content.socials?.twitter ? withAlpha(theme.primary, 0.1) : 'transparent' 
-          }}
-        >
-          <Twitter className="w-5 h-5" />
-        </button>
-        <button
-          onClick={() => handleSocialClick("website")}
-          className={`p-2 rounded-full transition-colors ${content.socials?.website ? 'opacity-100' : 'opacity-30 hover:opacity-100'}`}
-          title="Website"
-          style={{ 
-            color: theme.primary,
-            backgroundColor: content.socials?.website ? withAlpha(theme.primary, 0.1) : 'transparent' 
-          }}
-        >
-          <Globe className="w-5 h-5" />
-        </button>
+      <div className="flex items-center gap-2 mt-auto">
+        {[
+          { key: "linkedin", icon: IconBrandLinkedin },
+          { key: "twitter", icon: IconBrandX },
+          { key: "website", icon: IconWorld },
+        ].map(({ key, icon: Icon }) => (
+          <button
+            key={key}
+            onClick={() => handleSocialClick(key as any)}
+            className="p-2 rounded-lg transition-all hover:scale-105"
+            title={key.charAt(0).toUpperCase() + key.slice(1)}
+            style={{
+              backgroundColor: content.socials?.[key as keyof typeof content.socials]
+                ? `${theme.primary}15`
+                : "transparent",
+              color: theme.primary,
+              opacity: content.socials?.[key as keyof typeof content.socials] ? 1 : 0.3,
+            }}
+          >
+            <Icon size={18} />
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import type { Block, Theme } from "@/lib/editor/types";
 import { createCodeContent, type CodeContent } from "../definitions";
-import { withAlpha } from "../utils";
 import { IconCopy, IconCheck } from "@tabler/icons-react";
 import { BlockWrapper } from "../BlockWrapper";
 import {
@@ -13,7 +12,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -62,18 +60,13 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   const { language, code, showLineNumbers, theme: codeTheme } = content;
   const [copied, setCopied] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-
-  // Local state
   const [tempLanguage, setTempLanguage] = useState(language);
   const [tempShowLineNumbers, setTempShowLineNumbers] = useState(showLineNumbers);
   const [tempCodeTheme, setTempCodeTheme] = useState(codeTheme);
 
   const handleCodeChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      onUpdate({
-        ...content,
-        code: e.target.value,
-      });
+      onUpdate({ ...content, code: e.target.value });
     },
     [content, onUpdate]
   );
@@ -102,57 +95,61 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   };
 
   const lines = code.split("\n");
-  const isDark = (codeTheme === "dark" || (!codeTheme && theme.themeType === "dark"));
+  const isDark = codeTheme === "dark" || (!codeTheme && theme.themeType === "dark");
+  const panelDark = theme.themeType === "dark";
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} theme={theme}>
       <div
-        className="w-full rounded-xl overflow-hidden relative group"
+        className="w-full rounded-2xl overflow-hidden relative group"
         style={{
-          backgroundColor: isDark ? "#121212" : "#ffffff",
-          border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
+          backgroundColor: isDark ? "#0d0d0d" : "#fafafa",
         }}
       >
+        {/* Header */}
         <div
-          className="flex items-center justify-between px-4 py-2 border-b"
+          className="flex items-center justify-between px-4 py-2.5"
           style={{
-            backgroundColor: isDark ? "#252526" : "#e9ecef",
-            borderColor: withAlpha(theme.primary, 0.1),
+            backgroundColor: isDark ? "#1a1a1a" : "#f0f0f0",
           }}
         >
-          <div className="text-xs font-mono opacity-80 uppercase" style={{ color: isDark ? "#d4d4d4" : theme.bodyColor }}>
-              {language}
+          <div
+            className="text-xs font-mono font-medium uppercase tracking-wider opacity-50"
+            style={{ color: isDark ? "#fff" : "#000" }}
+          >
+            {language}
           </div>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-2 px-3 py-1 rounded text-sm transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all hover:opacity-80"
             style={{
-              backgroundColor: isDark ? "#1e1e1e" : "#ffffff",
-              color: isDark ? "#d4d4d4" : theme.bodyColor,
+              backgroundColor: isDark ? "#252525" : "#e5e5e5",
+              color: isDark ? "#fff" : "#000",
             }}
           >
             {copied ? (
               <>
-                <IconCheck className="size-4" />
-                <span>Copied!</span>
+                <IconCheck size={14} />
+                <span>Copied</span>
               </>
             ) : (
               <>
-                <IconCopy className="size-4" />
+                <IconCopy size={14} />
                 <span>Copy</span>
               </>
             )}
           </button>
         </div>
+
+        {/* Code Area */}
         <div className="relative overflow-x-auto">
           <div className="flex">
             {showLineNumbers && (
               <div
-                className="px-4 py-4 text-right select-none font-mono text-sm border-r"
+                className="px-4 py-4 text-right select-none font-mono text-sm"
                 style={{
-                  backgroundColor: isDark ? "#252526" : "#f1f3f5",
-                  color: isDark ? "#858585" : "#868e96",
-                  borderColor: withAlpha(theme.primary, 0.1),
+                  backgroundColor: isDark ? "#141414" : "#f5f5f5",
+                  color: isDark ? "#555" : "#aaa",
                 }}
               >
                 {lines.map((_, i) => (
@@ -167,7 +164,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
               onChange={handleCodeChange}
               className="flex-1 px-4 py-4 font-mono text-sm leading-6 resize-none outline-none border-none bg-transparent"
               style={{
-                color: isDark ? "#d4d4d4" : "#212529",
+                color: isDark ? "#e5e5e5" : "#1a1a1a",
                 minHeight: `${Math.max(lines.length * 1.5, 6)}rem`,
               }}
               rows={lines.length}
@@ -177,53 +174,61 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         </div>
       </div>
 
-       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent
+          className="sm:max-w-[400px]"
+          style={{
+            backgroundColor: panelDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+            backdropFilter: "blur(20px)",
+            border: "none",
+          }}
+        >
           <DialogHeader>
-            <DialogTitle>Edit Code Block</DialogTitle>
-             <DialogDescription>
-                Customize code snippets.
-              </DialogDescription>
+            <DialogTitle style={{ color: panelDark ? "#fff" : "#000" }}>
+              Code Settings
+            </DialogTitle>
+            <DialogDescription style={{ color: panelDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>
+              Customize code block appearance.
+            </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-6 py-4">
-             <div className="space-y-2">
-                <Label>Language</Label>
-                <Select
-                    value={tempLanguage}
-                    onValueChange={(v: string) => setTempLanguage(v)}
-                >
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label style={{ color: panelDark ? "#fff" : "#000" }}>Language</Label>
+              <Select value={tempLanguage} onValueChange={setTempLanguage}>
                 <SelectTrigger>
-                    <SelectValue />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="max-h-[200px]">
-                    {languages.map((lang) => (
-                         <SelectItem key={lang} value={lang}>{lang}</SelectItem>
-                    ))}
+                  {languages.map((lang) => (
+                    <SelectItem key={lang} value={lang}>
+                      {lang}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
-                </Select>
+              </Select>
             </div>
-             <div className="flex items-center justify-between">
-                <Label htmlFor="line-numbers">Show Line Numbers</Label>
-                <Switch
-                  id="line-numbers"
-                  checked={tempShowLineNumbers}
-                  onCheckedChange={setTempShowLineNumbers}
-                />
-              </div>
-               <div className="flex items-center justify-between">
-                <Label htmlFor="theme-select">Dark Theme</Label>
-                 <Switch
-                  id="theme-select"
-                  checked={tempCodeTheme === 'dark'}
-                  onCheckedChange={(checked) => setTempCodeTheme(checked ? 'dark' : 'light')}
-                />
-              </div>
+            <div className="flex items-center justify-between">
+              <Label style={{ color: panelDark ? "#fff" : "#000" }}>Line Numbers</Label>
+              <Switch
+                checked={tempShowLineNumbers}
+                onCheckedChange={setTempShowLineNumbers}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label style={{ color: panelDark ? "#fff" : "#000" }}>Dark Theme</Label>
+              <Switch
+                checked={tempCodeTheme === "dark"}
+                onCheckedChange={(checked) => setTempCodeTheme(checked ? "dark" : "light")}
+              />
+            </div>
           </div>
           <DialogFooter>
-             <Button variant="outline" onClick={() => setIsEditOpen(false)}>
-                Cancel
-              </Button>
-            <Button onClick={handleSave}>Save Changes</Button>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} style={{ backgroundColor: theme.primary }}>
+              Save
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

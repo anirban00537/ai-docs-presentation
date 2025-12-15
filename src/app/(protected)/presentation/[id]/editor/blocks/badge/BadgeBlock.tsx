@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/lib/editor/types";
 import { createBadgeContent, type BadgeContent } from "../definitions";
-import { withAlpha } from "../utils";
 import { BlockWrapper } from "../BlockWrapper";
 import {
   Dialog,
@@ -13,7 +12,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -22,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Trash2, Plus } from "lucide-react";
+import { IconTrash, IconPlus } from "@tabler/icons-react";
 import { createParagraphContent } from "../definitions/common";
 import EmojiPicker from "emoji-picker-react";
 import {
@@ -47,6 +45,7 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   const { badges, layout } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [tempLayout, setTempLayout] = useState<"grid" | "list">(layout);
+  const isDark = theme.themeType === "dark";
 
   const handleIconChange = useCallback(
     (index: number, emoji: string) => {
@@ -60,14 +59,8 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   const handleTitleChange = useCallback(
     (index: number, newContent: any) => {
       const newBadges = [...badges];
-      newBadges[index] = {
-        ...newBadges[index],
-        title: newContent,
-      };
-      onUpdate({
-        ...content,
-        badges: newBadges,
-      });
+      newBadges[index] = { ...newBadges[index], title: newContent };
+      onUpdate({ ...content, badges: newBadges });
     },
     [badges, content, onUpdate]
   );
@@ -75,14 +68,8 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   const handleDescriptionChange = useCallback(
     (index: number, newContent: any) => {
       const newBadges = [...badges];
-      newBadges[index] = {
-        ...newBadges[index],
-        description: newContent,
-      };
-      onUpdate({
-        ...content,
-        badges: newBadges,
-      });
+      newBadges[index] = { ...newBadges[index], description: newContent };
+      onUpdate({ ...content, badges: newBadges });
     },
     [badges, content, onUpdate]
   );
@@ -90,14 +77,8 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   const handleIssuerChange = useCallback(
     (index: number, newContent: any) => {
       const newBadges = [...badges];
-      newBadges[index] = {
-        ...newBadges[index],
-        issuer: newContent,
-      };
-      onUpdate({
-        ...content,
-        badges: newBadges,
-      });
+      newBadges[index] = { ...newBadges[index], issuer: newContent };
+      onUpdate({ ...content, badges: newBadges });
     },
     [badges, content, onUpdate]
   );
@@ -108,10 +89,7 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   };
 
   const handleSave = () => {
-    onUpdate({
-      ...content,
-      layout: tempLayout,
-    });
+    onUpdate({ ...content, layout: tempLayout });
     setIsEditOpen(false);
   };
 
@@ -134,14 +112,8 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
     onUpdate({ ...content, badges: newBadges });
   };
 
-  const updateBadgeField = (index: number, field: string, value: any) => {
-      const newBadges = [...badges];
-      newBadges[index] = { ...newBadges[index], [field]: value };
-      onUpdate({ ...content, badges: newBadges });
-  };
-
   const gridClass =
-    layout === "grid" ? "grid grid-cols-2 gap-6" : "flex flex-col gap-6";
+    layout === "grid" ? "grid grid-cols-2 gap-4" : "flex flex-col gap-3";
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addBadge} theme={theme}>
@@ -149,31 +121,37 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
         {badges.map((badge, index) => (
           <div
             key={index}
-            className="group flex gap-4 p-5 rounded-xl transition-all relative"
+            className="group/badge flex gap-4 p-4 rounded-2xl transition-all relative"
             style={{
-              backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.5),
-              border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
+              backgroundColor: `${theme.primary}08`,
             }}
           >
+            {/* Delete button */}
+            <button
+              onClick={() => removeBadge(index)}
+              className="absolute top-3 right-3 p-1.5 rounded-lg opacity-0 group-hover/badge:opacity-100 transition-all hover:bg-red-500/10"
+              style={{ color: "#ef4444" }}
+            >
+              <IconTrash size={14} />
+            </button>
 
-            <div className="relative z-20">
-               <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    className="shrink-0 w-12 h-12 rounded-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 cursor-pointer outline-none"
-                    style={{
-                      backgroundColor: withAlpha(theme.primary, 0.05),
-                    }}
-                    title="Change icon"
-                  >
-                    {badge.icon || "🏆"}
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
-                  <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
-                </PopoverContent>
-              </Popover>
-            </div>
+            {/* Icon */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-105 cursor-pointer"
+                  style={{ backgroundColor: `${theme.primary}15` }}
+                  title="Change icon"
+                >
+                  {badge.icon || "🏆"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 border-none shadow-xl">
+                <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
+              </PopoverContent>
+            </Popover>
+
+            {/* Content */}
             <div className="flex-1 min-w-0 py-0.5">
               <div className="mb-1">
                 <ProseMirrorEditor
@@ -191,32 +169,26 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
                     key={`${block.id}-desc-${index}`}
                     blockId={`${block.id}-desc-${index}`}
                     value={badge.description}
-                    onChange={(newContent) =>
-                      handleDescriptionChange(index, newContent)
-                    }
+                    onChange={(newContent) => handleDescriptionChange(index, newContent)}
                     placeholder="Description"
-                    className="text-sm opacity-70 leading-normal"
+                    className="text-sm opacity-60 leading-relaxed"
                   />
                 </div>
               )}
               <div className="flex items-center gap-2 mt-1">
                 {badge.issuer && (
-                  <div>
-                    <ProseMirrorEditor
-                      key={`${block.id}-issuer-${index}`}
-                      blockId={`${block.id}-issuer-${index}`}
-                      value={badge.issuer}
-                      onChange={(newContent) =>
-                        handleIssuerChange(index, newContent)
-                      }
-                      placeholder="Issuer"
-                      className="text-xs font-medium opacity-50 uppercase tracking-wide"
-                    />
-                  </div>
+                  <ProseMirrorEditor
+                    key={`${block.id}-issuer-${index}`}
+                    blockId={`${block.id}-issuer-${index}`}
+                    value={badge.issuer}
+                    onChange={(newContent) => handleIssuerChange(index, newContent)}
+                    placeholder="Issuer"
+                    className="text-xs font-medium opacity-40 uppercase tracking-wide"
+                  />
                 )}
                 {badge.date && (
                   <span
-                    className="text-xs opacity-40"
+                    className="text-xs opacity-30"
                     style={{ color: theme.bodyColor }}
                   >
                     • {badge.date}
@@ -228,78 +200,44 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
         ))}
       </div>
 
-       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent
+          className="sm:max-w-[400px]"
+          style={{
+            backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+            backdropFilter: "blur(20px)",
+            border: "none",
+          }}
+        >
           <DialogHeader>
-            <DialogTitle>Edit Badges</DialogTitle>
-             <DialogDescription>
-                Customize badges and awards.
-              </DialogDescription>
+            <DialogTitle style={{ color: isDark ? "#fff" : "#000" }}>
+              Edit Badges
+            </DialogTitle>
+            <DialogDescription style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>
+              Customize layout and style.
+            </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-6 py-4">
-             <div className="space-y-2">
-                <Label>Layout</Label>
-                <Select
-                    value={tempLayout}
-                    onValueChange={(v: any) => setTempLayout(v)}
-                >
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label style={{ color: isDark ? "#fff" : "#000" }}>Layout</Label>
+              <Select value={tempLayout} onValueChange={(v: any) => setTempLayout(v)}>
                 <SelectTrigger>
-                    <SelectValue />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="grid">Grid</SelectItem>
-                    <SelectItem value="list">List</SelectItem>
+                  <SelectItem value="grid">Grid</SelectItem>
+                  <SelectItem value="list">List</SelectItem>
                 </SelectContent>
-                </Select>
-            </div>
-
-            <div className="space-y-4">
-                <Label>Badge Items</Label>
-                {badges.map((badge, index) => (
-                    <div key={index} className="flex flex-col gap-3 p-3 border rounded-lg bg-muted/20 relative">
-                         <div className="flex gap-4">
-                              <div className="space-y-1 w-20">
-                                <Label className="text-xs">Icon</Label>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button variant="outline" className="h-8 w-full text-lg justify-start">
-                                            {badge.icon || "🏆"}
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
-                                        <EmojiPicker onEmojiClick={(emoji) => updateBadgeField(index, "icon", emoji.emoji)} />
-                                    </PopoverContent>
-                                </Popover>
-                             </div>
-                             <div className="space-y-1 flex-1">
-                                <Label className="text-xs">Date</Label>
-                                <Input 
-                                    value={badge.date || ""}
-                                    onChange={(e) => updateBadgeField(index, "date", e.target.value)}
-                                    className="h-8 text-sm"
-                                />
-                             </div>
-                         </div>
-                         <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeBadge(index)}
-                             className="absolute top-2 right-2 h-6 w-6 text-muted-foreground hover:text-red-500"
-                        >
-                            <Trash2 className="w-3 h-3" />
-                        </Button>
-                    </div>
-                ))}
-                 <Button variant="outline" size="sm" onClick={addBadge} className="w-full border-dashed">
-                    <Plus className="w-4 h-4 mr-2" /> Add Badge
-                </Button>
+              </Select>
             </div>
           </div>
           <DialogFooter>
-             <Button variant="outline" onClick={() => setIsEditOpen(false)}>
-                Cancel
-              </Button>
-            <Button onClick={handleSave}>Save Changes</Button>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} style={{ backgroundColor: theme.primary }}>
+              Save
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -5,7 +5,6 @@ import {
   createTestimonialContent,
   type TestimonialContent,
 } from "../definitions";
-import { withAlpha } from "../utils";
 import { BlockWrapper } from "../BlockWrapper";
 import {
   Dialog,
@@ -36,6 +35,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
   const { avatar } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [tempAvatar, setTempAvatar] = useState(avatar || "");
+  const isDark = theme.themeType === "dark";
 
   const quoteDoc = useMemo(() => {
     if (content?.quote?.type === "doc") return content.quote;
@@ -105,54 +105,58 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
   return (
     <BlockWrapper onEdit={handleOpenEdit} theme={theme}>
       <div
-        className="group w-full h-full rounded-2xl p-8 flex flex-col gap-6 relative overflow-hidden transition-all"
+        className="group w-full h-full rounded-2xl p-6 flex flex-col gap-5 relative overflow-hidden transition-all"
         style={{
+          background: `linear-gradient(135deg, ${theme.primary}10 0%, ${theme.primary}03 100%)`,
           color: theme.bodyColor || theme.headingColor,
-          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.3),
-          border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
         }}
       >
-        {/* Large Quote Watermark */}
-        <div 
-          className="absolute top-4 right-6 text-9xl leading-none opacity-[0.03] font-serif select-none pointer-events-none origin-top-right"
+        {/* Quote mark */}
+        <div
+          className="absolute top-4 right-5 text-7xl leading-none opacity-10 font-serif select-none pointer-events-none"
           style={{ color: theme.primary }}
         >
           "
         </div>
 
+        {/* Quote */}
         <div className="relative z-10 flex-1 min-w-0">
           <ProseMirrorEditor
             key={block.id}
             blockId={block.id}
             value={quoteDoc}
             onChange={handleQuoteChange}
-            placeholder={placeholder ?? "Add a testimonial or quote..."}
-            className="text-lg italic font-medium leading-relaxed"
+            placeholder={placeholder ?? "Add a testimonial..."}
+            className="text-lg italic font-medium leading-relaxed opacity-80"
           />
         </div>
 
-        <div className="relative z-10 flex items-center gap-4 pt-4 border-t" style={{ borderColor: withAlpha(theme.primary, 0.1) }}>
+        {/* Author */}
+        <div
+          className="relative z-10 flex items-center gap-3 pt-4"
+          style={{ borderTop: `1px solid ${theme.primary}10` }}
+        >
           <div className="shrink-0 cursor-pointer" onClick={handleOpenEdit}>
             {avatar ? (
-                <img 
-                    src={avatar} 
-                    alt="Avatar" 
-                    className="w-10 h-10 rounded-full object-cover transition-opacity hover:opacity-80"
-                />
+              <img
+                src={avatar}
+                alt="Avatar"
+                className="w-10 h-10 rounded-full object-cover transition-opacity hover:opacity-80"
+              />
             ) : (
-                <div
-                className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold transition-opacity hover:opacity-80"
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-opacity hover:opacity-80"
                 style={{
-                    backgroundColor: theme.primary,
-                    color: theme.cardBackground,
+                  backgroundColor: theme.primary,
+                  color: "#fff",
                 }}
-                >
+              >
                 {extractText(nameDoc)
-                    .split(" ")
-                    .map((part: string) => part[0])
-                    .join("")
-                    .slice(0, 2) || "JD"}
-                </div>
+                  .split(" ")
+                  .map((part: string) => part[0])
+                  .join("")
+                  .slice(0, 2) || "JD"}
+              </div>
             )}
           </div>
 
@@ -163,7 +167,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
               value={nameDoc}
               onChange={handleNameChange}
               placeholder="Name"
-              className="text-base font-semibold"
+              className="text-sm font-semibold"
             />
             <ProseMirrorEditor
               key={`${block.id}-role`}
@@ -171,35 +175,46 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
               value={roleDoc}
               onChange={handleRoleChange}
               placeholder="Role"
-              className="text-xs font-medium uppercase tracking-wide opacity-70"
+              className="text-[11px] font-medium uppercase tracking-wide opacity-50"
             />
           </div>
         </div>
       </div>
 
-       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent
+          className="sm:max-w-[400px]"
+          style={{
+            backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+            backdropFilter: "blur(20px)",
+            border: "none",
+          }}
+        >
           <DialogHeader>
-            <DialogTitle>Edit Testimonial</DialogTitle>
-             <DialogDescription>
-                Customize testimonial appearance.
-              </DialogDescription>
+            <DialogTitle style={{ color: isDark ? "#fff" : "#000" }}>
+              Testimonial Settings
+            </DialogTitle>
+            <DialogDescription style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>
+              Customize testimonial appearance.
+            </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-6 py-4">
-             <div className="space-y-2">
-                <Label>Avatar URL</Label>
-                <Input
-                  value={tempAvatar}
-                  onChange={(e) => setTempAvatar(e.target.value)}
-                  placeholder="https://..."
-                />
-              </div>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label style={{ color: isDark ? "#fff" : "#000" }}>Avatar URL</Label>
+              <Input
+                value={tempAvatar}
+                onChange={(e) => setTempAvatar(e.target.value)}
+                placeholder="https://..."
+              />
+            </div>
           </div>
           <DialogFooter>
-             <Button variant="outline" onClick={() => setIsEditOpen(false)}>
-                Cancel
-              </Button>
-            <Button onClick={handleSave}>Save Changes</Button>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} style={{ backgroundColor: theme.primary }}>
+              Save
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

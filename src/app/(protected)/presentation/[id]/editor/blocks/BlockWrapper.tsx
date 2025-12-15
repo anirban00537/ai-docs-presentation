@@ -1,9 +1,6 @@
 import React from "react";
-import { Edit2, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { IconSettings, IconPlus } from "@tabler/icons-react";
 import type { Theme } from "@/lib/editor/types";
-
 
 interface BlockWrapperProps {
   children: React.ReactNode;
@@ -24,57 +21,49 @@ export const BlockWrapper: React.FC<BlockWrapperProps> = ({
   theme,
   customControls,
 }) => {
-  const buttonStyle = theme
-    ? {
-        backgroundColor: theme.primary,
-        color: "#ffffff",
-        border: "none",
-      }
-    : {};
+  const isDark = theme?.themeType === "dark";
 
   return (
-    <div className={cn("relative group w-full h-full", className)}>
+    <div className={`relative group w-full h-full ${className}`}>
       {/* Content */}
       {children}
 
-      {/* Hover Controls */}
-      <div className="absolute top-4 right-4 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto flex gap-2">
+      {/* Hover Controls - Minimal floating buttons */}
+      <div className="absolute top-3 right-3 z-50 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none group-hover:pointer-events-auto flex items-center gap-1.5">
         {customControls}
+        
         {!hideEditButton && onAdd && (
-           <Button
-            variant={theme ? "default" : "secondary"}
-            size="sm"
-            className={cn(
-              "shadow-lg backdrop-blur-md transition-all transform hover:scale-105 px-3",
-              !theme && "bg-background/80 hover:bg-background border"
-            )}
-            style={buttonStyle}
+          <button
             onClick={(e) => {
               e.stopPropagation();
               onAdd();
             }}
+            className="p-1.5 rounded-lg transition-all hover:scale-105"
+            style={{
+              backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+              color: theme?.primary || (isDark ? "#fff" : "#000"),
+            }}
             title="Add Item"
           >
-            <Plus className="w-4 h-4" />
-          </Button>
+            <IconPlus size={14} stroke={2} />
+          </button>
         )}
+        
         {!hideEditButton && onEdit && (
-          <Button
-            variant={theme ? "default" : "secondary"}
-            size="sm"
-            className={cn(
-               "shadow-lg backdrop-blur-md transition-all transform hover:scale-105",
-               !theme && "bg-background/80 hover:bg-background border"
-            )}
-            style={buttonStyle}
+          <button
             onClick={(e) => {
               e.stopPropagation();
               onEdit();
             }}
+            className="p-1.5 rounded-lg transition-all hover:scale-105"
+            style={{
+              backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+              color: theme?.primary || (isDark ? "#fff" : "#000"),
+            }}
+            title="Edit Block"
           >
-            <Edit2 className="w-3.5 h-3.5 mr-2" />
-            Edit Block
-          </Button>
+            <IconSettings size={14} stroke={2} />
+          </button>
         )}
       </div>
     </div>

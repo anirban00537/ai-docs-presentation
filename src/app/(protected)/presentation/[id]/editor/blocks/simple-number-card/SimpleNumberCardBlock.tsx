@@ -57,38 +57,46 @@ export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({
   );
 
   return (
-    <div className="flex flex-row gap-4 items-start w-full h-full p-2">
+    <div className="flex flex-row gap-4 items-start w-full h-full p-3">
       <style>{`
-        /* Hide spin buttons for Chrome, Safari, Edge, Opera */
         .no-spinner::-webkit-outer-spin-button,
         .no-spinner::-webkit-inner-spin-button {
           -webkit-appearance: none;
           margin: 0;
         }
-        /* Hide spin buttons for Firefox */
         .no-spinner {
           -moz-appearance: textfield;
         }
       `}</style>
-      <input
-        type="number"
-        value={String(number).padStart(2, "0")}
-        onChange={handleNumberChange}
-        className="no-spinner text-4xl leading-none font-light select-none tabular-nums opacity-60 flex-shrink-0 bg-transparent border-none outline-none p-0 m-0 w-auto"
+      
+      {/* Number */}
+      <div
+        className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shrink-0"
         style={{
-          color: theme.headingColor,
-          fontFamily: "var(--font-heading)",
-          width: "1.5em", // Enough for 2 digits
+          backgroundColor: `${theme.primary}15`,
+          color: theme.primary,
         }}
-      />
-      <div className="flex-1 min-w-0 pt-0.5">
+      >
+        <input
+          type="number"
+          value={String(number).padStart(2, "0")}
+          onChange={handleNumberChange}
+          className="no-spinner bg-transparent border-none outline-none text-center w-full font-bold"
+          style={{
+            color: theme.primary,
+          }}
+        />
+      </div>
+      
+      {/* Content */}
+      <div className="flex-1 min-w-0 pt-1.5">
         <ProseMirrorEditor
           key={block.id}
           blockId={block.id}
           value={editorContent}
           onChange={handleEditorChange}
           placeholder={placeholder ?? "Type description..."}
-          className="text-base leading-relaxed opacity-90"
+          className="text-sm leading-relaxed opacity-80"
         />
       </div>
     </div>

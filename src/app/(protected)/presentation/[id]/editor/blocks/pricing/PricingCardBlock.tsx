@@ -5,8 +5,7 @@ import {
   createPricingCardContent,
   type PricingCardContent,
 } from "../definitions/pricing-card";
-import { withAlpha } from "../utils";
-import { Check, X, Star, Trash2, Plus } from "lucide-react";
+import { IconCheck, IconX, IconStar, IconTrash } from "@tabler/icons-react";
 import { createParagraphContent } from "../definitions/common";
 import { BlockWrapper } from "../BlockWrapper";
 import {
@@ -39,10 +38,9 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   const content = (block.content as PricingCardContent) || createPricingCardContent();
   const { isRecommended, buttonLabel, features } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
-
-  // Local state for modal
   const [tempIsRecommended, setTempIsRecommended] = useState(isRecommended);
   const [tempButtonLabel, setTempButtonLabel] = useState(buttonLabel);
+  const isDark = theme.themeType === "dark";
 
   const planNameDoc = useMemo(() => {
     if (content?.planName?.type === "doc") return content.planName;
@@ -67,10 +65,6 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
     },
     [content, onUpdate]
   );
-
-  const toggleRecommended = () => {
-    onUpdate({ ...content, isRecommended: !content.isRecommended });
-  };
 
   const toggleFeature = (index: number) => {
     const newFeatures = [...content.features];
@@ -114,44 +108,41 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   return (
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addFeature} className="h-full" theme={theme}>
       <div
-        className={`w-full h-full flex flex-col rounded-2xl p-6 relative transition-all duration-300 ${
-          isRecommended ? "scale-105 z-10" : ""
+        className={`w-full h-full flex flex-col rounded-2xl p-6 relative transition-all ${
+          isRecommended ? "scale-[1.02] z-10" : ""
         }`}
         style={{
-          backgroundColor: theme.cardBackground || "white",
-          border: isRecommended 
-            ? `2px solid ${theme.primary}` 
-            : `1px solid ${withAlpha(theme.primary, 0.1)}`,
-          boxShadow: isRecommended 
-            ? `0 10px 30px -10px ${withAlpha(theme.primary, 0.15)}`
-            : "none",
+          background: isRecommended
+            ? `linear-gradient(135deg, ${theme.primary}15 0%, ${theme.primary}05 100%)`
+            : `${theme.primary}05`,
+          border: isRecommended ? `2px solid ${theme.primary}` : "none",
         }}
       >
         {/* Recommended Badge */}
         {isRecommended && (
           <div 
-            className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1 shadow-sm"
+            className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider text-white flex items-center gap-1"
             style={{ backgroundColor: theme.primary }}
           >
-            <Star className="w-3 h-3 fill-current" />
-            Recommended
+            <IconStar size={10} className="fill-current" />
+            Popular
           </div>
         )}
 
         {/* Header */}
-        <div className="text-center mb-6 pb-6 border-b relative" style={{ borderColor: withAlpha(theme.bodyColor, 0.1) }}>
-          <div style={{ color: withAlpha(theme.headingColor, 0.5) }}>
+        <div className="text-center mb-5 pb-5" style={{ borderBottom: `1px solid ${theme.primary}10` }}>
+          <div style={{ color: `${theme.headingColor}80` }}>
             <ProseMirrorEditor
               key={`${block.id}-plan`}
               blockId={`${block.id}-plan`}
               value={planNameDoc}
               onChange={handlePlanNameChange}
               placeholder="Plan Name"
-              className="text-base font-semibold mb-1 text-center uppercase tracking-wide"
+              className="text-sm font-medium mb-1 text-center uppercase tracking-wide"
             />
           </div>
-          <div className="flex justify-center items-baseline" style={{ color: theme.headingColor }}>
-             <ProseMirrorEditor
+          <div style={{ color: theme.headingColor }}>
+            <ProseMirrorEditor
               key={`${block.id}-price`}
               blockId={`${block.id}-price`}
               value={priceDoc}
@@ -163,35 +154,36 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
         </div>
 
         {/* Features List */}
-        <div className="flex-1 space-y-4 mb-8">
+        <div className="flex-1 space-y-3 mb-6">
           {features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3 group/feature relative">
               <button 
                 onClick={() => toggleFeature(index)}
-                className="mt-1 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-colors"
+                className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all"
                 style={{
-                  backgroundColor: feature.included ? withAlpha(theme.primary, 0.1) : withAlpha(theme.bodyColor, 0.05),
-                  color: feature.included ? theme.primary : withAlpha(theme.bodyColor, 0.3),
+                  backgroundColor: feature.included ? `${theme.primary}15` : `${theme.bodyColor}10`,
+                  color: feature.included ? theme.primary : `${theme.bodyColor}40`,
                 }}
               >
-                {feature.included ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                {feature.included ? <IconCheck size={12} /> : <IconX size={12} />}
               </button>
               <div className="flex-1" style={{ color: theme.bodyColor }}>
-                 <ProseMirrorEditor
+                <ProseMirrorEditor
                   key={`${block.id}-feature-${index}`}
                   blockId={`${block.id}-feature-${index}`}
                   value={feature.text}
                   onChange={(doc) => updateFeatureText(index, doc)}
                   placeholder="Feature description"
-                  className={`text-sm ${!feature.included && 'line-through opacity-50'}`}
+                  className={`text-sm ${!feature.included && 'line-through opacity-40'}`}
                 />
               </div>
               <button
                 onClick={() => removeFeature(index)}
-                className="opacity-0 group-hover/feature:opacity-100 p-1 text-red-500 hover:bg-red-50 rounded transition-all"
+                className="opacity-0 group-hover/feature:opacity-100 p-1 rounded-lg transition-all hover:bg-red-500/10"
+                style={{ color: "#ef4444" }}
                 title="Remove Feature"
               >
-                <Trash2 className="w-3 h-3" />
+                <IconTrash size={12} />
               </button>
             </div>
           ))}
@@ -199,39 +191,43 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
 
         {/* CTA Button */}
         <button
-          className="w-full py-3 rounded-xl font-bold transition-transform hover:scale-105 active:scale-95 shadow-lg relative group/btn"
+          className="w-full py-2.5 rounded-xl font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
           style={{
-            backgroundColor: isRecommended ? theme.primary : withAlpha(theme.primary, 0.05),
-            color: isRecommended ? 'white' : theme.primary,
+            backgroundColor: isRecommended ? theme.primary : `${theme.primary}15`,
+            color: isRecommended ? "#fff" : theme.primary,
           }}
           onClick={handleOpenEdit}
         >
           {buttonLabel}
-          <div className="absolute top-1 right-1 opacity-0 group-hover/btn:opacity-100">
-             <Edit2 className="w-3 h-3" />
-          </div>
         </button>
 
-         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="sm:max-w-[425px]">
+        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+          <DialogContent
+            className="sm:max-w-[400px]"
+            style={{
+              backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+              backdropFilter: "blur(20px)",
+              border: "none",
+            }}
+          >
             <DialogHeader>
-              <DialogTitle>Edit Pricing Card</DialogTitle>
-              <DialogDescription>
-                Customize layout and details.
+              <DialogTitle style={{ color: isDark ? "#fff" : "#000" }}>
+                Pricing Card Settings
+              </DialogTitle>
+              <DialogDescription style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>
+                Customize pricing display.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-6 py-4">
+            <div className="grid gap-4 py-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="recommended-mode">Recommended Plan</Label>
+                <Label style={{ color: isDark ? "#fff" : "#000" }}>Highlight as Popular</Label>
                 <Switch
-                  id="recommended-mode"
                   checked={tempIsRecommended}
                   onCheckedChange={setTempIsRecommended}
                 />
               </div>
-
-               <div className="space-y-2">
-                <Label>Button Label</Label>
+              <div className="space-y-2">
+                <Label style={{ color: isDark ? "#fff" : "#000" }}>Button Label</Label>
                 <Input
                   value={tempButtonLabel}
                   onChange={(e) => setTempButtonLabel(e.target.value)}
@@ -240,10 +236,12 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
               </div>
             </div>
             <DialogFooter>
-               <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              <Button variant="outline" onClick={() => setIsEditOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSave}>Save Changes</Button>
+              <Button onClick={handleSave} style={{ backgroundColor: theme.primary }}>
+                Save
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -251,10 +249,3 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
     </BlockWrapper>
   );
 };
-
-// Start Icon helper
-function Edit2({ className }: { className?: string }) {
-  return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-  )
-}

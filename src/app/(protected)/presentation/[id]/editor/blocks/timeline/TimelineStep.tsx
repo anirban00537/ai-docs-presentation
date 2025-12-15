@@ -20,15 +20,6 @@ interface TimelineStepProps {
   onIconChange: (index: number, icon: string) => void;
 }
 
-const applyAlpha = (hex: string, alpha: number): string => {
-  const raw = hex?.replace("#", "");
-  if (raw.length !== 6) return hex;
-  const r = parseInt(raw.substring(0, 2), 16);
-  const g = parseInt(raw.substring(2, 4), 16);
-  const b = parseInt(raw.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
-
 export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
   step,
   stepIndex,
@@ -46,47 +37,46 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
   }, [stepContent?.title]);
 
   const descriptionDoc = useMemo(() => {
-    if (stepContent?.description?.type === "doc")
-      return stepContent.description;
+    if (stepContent?.description?.type === "doc") return stepContent.description;
     return createTimelineContent().steps[0].description;
   }, [stepContent?.description]);
 
   const icon = stepContent?.icon ?? "•";
 
   return (
-    <div className="relative flex gap-6">
+    <div className="relative flex gap-5">
+      {/* Step Marker */}
       <div className="relative z-20 shrink-0">
         <Popover>
-            <PopoverTrigger asChild>
-                <button
-                className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold transition-transform hover:scale-110 cursor-pointer outline-none"
-                style={{
-                    backgroundColor: theme.primary,
-                    color: theme.cardBackground,
-                    border: `4px solid ${theme.cardBackground}`,
-                }}
-                title="Change icon"
-                >
-                {icon}
-                </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
-                <EmojiPicker onEmojiClick={(emoji) => onIconChange(stepIndex, emoji.emoji)} />
-            </PopoverContent>
+          <PopoverTrigger asChild>
+            <button
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-base font-medium transition-all hover:scale-110 cursor-pointer outline-none"
+              style={{
+                backgroundColor: `${theme.primary}15`,
+                color: theme.primary,
+              }}
+              title="Change icon"
+            >
+              {icon}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0 border-none shadow-xl">
+            <EmojiPicker onEmojiClick={(emoji) => onIconChange(stepIndex, emoji.emoji)} />
+          </PopoverContent>
         </Popover>
       </div>
 
       {/* Content */}
-      <div className="flex-1 pb-4">
+      <div className="flex-1 pb-2 pt-1">
         {/* Step Title */}
-        <div className="mb-2">
+        <div className="mb-1">
           <ProseMirrorEditor
             key={`${blockId}-step-${stepIndex}-title`}
             blockId={`${blockId}-step-${stepIndex}-title`}
             value={titleDoc}
             onChange={(newDoc) => onTitleChange(stepIndex, newDoc)}
             placeholder={`Step ${stepIndex + 1} title`}
-            className="text-xl font-semibold"
+            className="text-base font-semibold"
           />
         </div>
 
@@ -98,11 +88,10 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
             value={descriptionDoc}
             onChange={(newDoc) => onDescriptionChange(stepIndex, newDoc)}
             placeholder={`Step ${stepIndex + 1} description`}
-            className="text-base"
+            className="text-sm opacity-60"
           />
         </div>
       </div>
     </div>
   );
 };
-

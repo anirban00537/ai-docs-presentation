@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/lib/editor/types";
 import {
@@ -7,7 +7,6 @@ import {
   type TimelineStep,
 } from "../definitions";
 import { TimelineStepComponent } from "./TimelineStep";
-import { withAlpha } from "../utils";
 import { BlockWrapper } from "../BlockWrapper";
 import { createParagraphContent } from "../definitions/common";
 
@@ -41,10 +40,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   const handleStepTitleChange = useCallback(
     (stepIndex: number, newDoc: any) => {
       const newSteps = [...steps];
-      newSteps[stepIndex] = {
-        ...newSteps[stepIndex],
-        title: newDoc,
-      };
+      newSteps[stepIndex] = { ...newSteps[stepIndex], title: newDoc };
       onUpdate({
         ...(content ?? createTimelineContent()),
         steps: newSteps,
@@ -56,10 +52,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   const handleStepDescriptionChange = useCallback(
     (stepIndex: number, newDoc: any) => {
       const newSteps = [...steps];
-      newSteps[stepIndex] = {
-        ...newSteps[stepIndex],
-        description: newDoc,
-      };
+      newSteps[stepIndex] = { ...newSteps[stepIndex], description: newDoc };
       onUpdate({
         ...(content ?? createTimelineContent()),
         steps: newSteps,
@@ -67,13 +60,11 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
     },
     [content, onUpdate, steps]
   );
+
   const handleStepIconChange = useCallback(
     (stepIndex: number, newIcon: string) => {
       const newSteps = [...steps];
-      newSteps[stepIndex] = {
-        ...newSteps[stepIndex],
-        icon: newIcon,
-      };
+      newSteps[stepIndex] = { ...newSteps[stepIndex], icon: newIcon };
       onUpdate({
         ...(content ?? createTimelineContent()),
         steps: newSteps,
@@ -98,17 +89,17 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
 
   return (
     <BlockWrapper onAdd={addStep} theme={theme}>
-      <div className="w-full h-full flex flex-col py-4">
+      <div className="w-full h-full flex flex-col py-2">
         {/* Optional Title */}
         {title && (
-          <div className="mb-10 pl-2">
+          <div className="mb-8 pl-2">
             <ProseMirrorEditor
               key={`${block.id}-title`}
               blockId={`${block.id}-title`}
               value={title}
               onChange={handleTitleChange}
               placeholder="Timeline title"
-              className="text-2xl font-bold tracking-tight"
+              className="text-xl font-bold tracking-tight"
             />
           </div>
         )}
@@ -117,14 +108,14 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
         <div className="relative pl-4">
           {/* Vertical Line */}
           <div
-            className="absolute left-[23px] top-4 bottom-8 w-px border-l-2 border-dashed"
+            className="absolute left-[19px] top-3 bottom-6 w-0.5"
             style={{
-              borderColor: withAlpha(theme.primary, 0.3),
+              backgroundColor: `${theme.primary}20`,
             }}
           />
 
           {/* Steps */}
-          <div className="space-y-10">
+          <div className="space-y-8">
             {steps.map((step: TimelineStep, index: number) => (
               <TimelineStepComponent
                 key={index}
@@ -143,4 +134,3 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
     </BlockWrapper>
   );
 };
-

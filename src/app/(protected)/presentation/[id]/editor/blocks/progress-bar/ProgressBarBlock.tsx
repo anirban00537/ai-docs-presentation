@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/lib/editor/types";
 import {
   createProgressBarContent,
   type ProgressBarContent,
 } from "../definitions";
-import { withAlpha } from "../utils";
 import { BlockWrapper } from "../BlockWrapper";
 import {
   Dialog,
@@ -19,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Plus, Palette } from "lucide-react";
+import { IconTrash, IconPlus } from "@tabler/icons-react";
 import { createParagraphContent } from "../definitions/common";
 
 interface ProgressBarBlockProps {
@@ -40,6 +39,7 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [tempShowPercentage, setTempShowPercentage] = useState(showPercentage);
   const [tempAnimated, setTempAnimated] = useState(animated);
+  const isDark = theme.themeType === "dark";
 
   const [animatedValues, setAnimatedValues] = useState<number[]>(
     items.map(() => 0)
@@ -54,7 +54,6 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
     const duration = 2000;
     const steps = 60;
     const stepDuration = duration / steps;
-
     const intervals: NodeJS.Timeout[] = [];
 
     items.forEach((item, index) => {
@@ -88,14 +87,8 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
   const handleLabelChange = useCallback(
     (index: number, newContent: any) => {
       const newItems = [...items];
-      newItems[index] = {
-        ...newItems[index],
-        label: newContent,
-      };
-      onUpdate({
-        ...content,
-        items: newItems,
-      });
+      newItems[index] = { ...newItems[index], label: newContent };
+      onUpdate({ ...content, items: newItems });
     },
     [items, content, onUpdate]
   );
@@ -149,16 +142,13 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addItem} theme={theme}>
-      <div className="w-full flex flex-col gap-6">
+      <div className="w-full flex flex-col gap-4">
         {items.map((item, index) => (
           <div
             key={index}
-            className="group"
+            className="group p-4 rounded-xl"
             style={{
-              backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.5),
-              padding: "1.25rem",
-              borderRadius: "0.75rem",
-              border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
+              backgroundColor: `${theme.primary}05`,
             }}
           >
             <div className="flex items-center justify-between mb-2">
@@ -174,7 +164,7 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
               </div>
               {showPercentage && (
                 <div
-                  className="text-base font-semibold shrink-0"
+                  className="text-sm font-semibold shrink-0"
                   style={{ color: item.color || theme.primary }}
                 >
                   {animatedValues[index]}%
@@ -182,13 +172,13 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
               )}
             </div>
             <div
-              className="w-full h-2 rounded-full overflow-hidden relative"
+              className="w-full h-1.5 rounded-full overflow-hidden"
               style={{
-                backgroundColor: withAlpha(theme.primary, 0.1),
+                backgroundColor: `${theme.primary}15`,
               }}
             >
               <div
-                className="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                className="h-full rounded-full transition-all duration-1000 ease-out"
                 style={{
                   width: `${animatedValues[index]}%`,
                   backgroundColor: item.color || theme.primary,
@@ -197,96 +187,118 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
             </div>
           </div>
         ))}
-        <style jsx>{`
-          @keyframes shimmer {
-            0% {
-              transform: translateX(-100%);
-            }
-            100% {
-              transform: translateX(100%);
-            }
-          }
-        `}</style>
       </div>
 
-       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent
+          className="sm:max-w-[450px] max-h-[80vh] overflow-y-auto"
+          style={{
+            backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+            backdropFilter: "blur(20px)",
+            border: "none",
+          }}
+        >
           <DialogHeader>
-            <DialogTitle>Edit Progress Bars</DialogTitle>
-             <DialogDescription>
-                Customize items and animations.
-              </DialogDescription>
+            <DialogTitle style={{ color: isDark ? "#fff" : "#000" }}>
+              Progress Bar Settings
+            </DialogTitle>
+            <DialogDescription style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>
+              Customize items and animations.
+            </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-6 py-4">
-             <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                    <Switch
-                        id="percentage-mode"
-                        checked={tempShowPercentage}
-                        onCheckedChange={setTempShowPercentage}
-                    />
-                    <Label htmlFor="percentage-mode">Show %</Label>
-                </div>
-                 <div className="flex items-center gap-2">
-                    <Switch
-                        id="animate-mode"
-                        checked={tempAnimated}
-                        onCheckedChange={setTempAnimated}
-                    />
-                    <Label htmlFor="animate-mode">Animated</Label>
-                </div>
+          <div className="grid gap-4 py-4">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="percentage-mode"
+                  checked={tempShowPercentage}
+                  onCheckedChange={setTempShowPercentage}
+                />
+                <Label htmlFor="percentage-mode" style={{ color: isDark ? "#fff" : "#000" }}>
+                  Show %
+                </Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="animate-mode"
+                  checked={tempAnimated}
+                  onCheckedChange={setTempAnimated}
+                />
+                <Label htmlFor="animate-mode" style={{ color: isDark ? "#fff" : "#000" }}>
+                  Animated
+                </Label>
+              </div>
             </div>
 
-            <div className="space-y-4">
-                <Label>Items Configuration</Label>
-                {items.map((item, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 border rounded-lg bg-muted/20">
-                         <div className="flex-1 grid grid-cols-2 gap-2">
-                             <div className="space-y-1">
-                                <Label className="text-xs">Value (0-100)</Label>
-                                <Input 
-                                    type="number" min="0" max="100"
-                                    value={item.value}
-                                    onChange={(e) => updateItemValue(index, e.target.value)}
-                                    className="h-8 text-sm"
-                                />
-                             </div>
-                              <div className="space-y-1">
-                                <Label className="text-xs">Color</Label>
-                                <div className="flex gap-2">
-                                     <div 
-                                        className="w-8 h-8 rounded border shadow-sm"
-                                        style={{ backgroundColor: item.color || theme.primary }}
-                                     />
-                                     <Input 
-                                        value={item.color || ""}
-                                        onChange={(e) => updateItemColor(index, e.target.value)}
-                                        className="h-8 text-sm flex-1"
-                                        placeholder="#hex"
-                                    />
-                                </div>
-                             </div>
-                         </div>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeItem(index)}
-                             className="h-8 w-8 mt-4 text-muted-foreground hover:text-red-500"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                        </Button>
+            <div className="space-y-3">
+              <Label style={{ color: isDark ? "#fff" : "#000" }}>Items</Label>
+              {items.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-3 rounded-lg"
+                  style={{ backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }}
+                >
+                  <div className="flex-1 grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-xs" style={{ color: isDark ? "#aaa" : "#666" }}>
+                        Value
+                      </Label>
+                      <Input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={item.value}
+                        onChange={(e) => updateItemValue(index, e.target.value)}
+                        className="h-8 text-sm"
+                      />
                     </div>
-                ))}
-                 <Button variant="outline" size="sm" onClick={addItem} className="w-full border-dashed">
-                    <Plus className="w-4 h-4 mr-2" /> Add Item
-                </Button>
+                    <div className="space-y-1">
+                      <Label className="text-xs" style={{ color: isDark ? "#aaa" : "#666" }}>
+                        Color
+                      </Label>
+                      <div className="flex gap-2">
+                        <div
+                          className="w-8 h-8 rounded-lg"
+                          style={{ backgroundColor: item.color || theme.primary }}
+                        />
+                        <Input
+                          value={item.color || ""}
+                          onChange={(e) => updateItemColor(index, e.target.value)}
+                          className="h-8 text-sm flex-1"
+                          placeholder="#hex"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => removeItem(index)}
+                    className="p-1.5 rounded-lg transition-all hover:bg-red-500/10"
+                    style={{ color: "#ef4444" }}
+                  >
+                    <IconTrash size={14} />
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={addItem}
+                className="w-full p-2 rounded-lg border border-dashed flex items-center justify-center gap-2 text-sm transition-all"
+                style={{
+                  borderColor: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
+                  color: isDark ? "#aaa" : "#666",
+                }}
+              >
+                <IconPlus size={14} />
+                Add Item
+              </button>
             </div>
           </div>
           <DialogFooter>
-             <Button variant="outline" onClick={() => setIsEditOpen(false)}>
-                Cancel
-              </Button>
-            <Button onClick={handleSave}>Save Changes</Button>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} style={{ backgroundColor: theme.primary }}>
+              Save
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

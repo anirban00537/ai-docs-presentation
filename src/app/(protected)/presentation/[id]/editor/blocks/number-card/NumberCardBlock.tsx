@@ -5,7 +5,6 @@ import {
   getDefaultNumberCardEditorContent,
   type NumberCardContent,
 } from "../definitions";
-import { withAlpha } from "../utils";
 
 interface NumberCardBlockProps {
   block: Block;
@@ -52,41 +51,38 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
       case "large":
         return "text-xl";
       default:
-        return "text-lg";
+        return "text-base";
     }
   }, [content?.size]);
 
   return (
     <div
-      className="group flex flex-col gap-6 p-6 rounded-2xl h-full w-full relative overflow-hidden transition-all hover:translate-y-[-2px] hover:shadow-lg duration-300"
+      className="group flex flex-col gap-5 p-6 rounded-2xl h-full w-full relative overflow-hidden transition-all"
       style={{
-        backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.7),
-        backdropFilter: "blur(8px)",
+        background: `linear-gradient(135deg, ${theme.primary}10 0%, ${theme.primary}03 100%)`,
         color: theme.headingColor,
-        border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
-        boxShadow: `0 4px 6px -1px ${withAlpha(theme.primary, 0.05)}`,
       }}
     >
+      {/* Number badge */}
       <div className="flex items-start justify-between">
         <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-bold shadow-sm transition-transform group-hover:scale-105 duration-300"
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold transition-all group-hover:scale-105"
           style={{
             backgroundColor: theme.primary,
-            color: theme.cardBackground,
-            boxShadow: `0 8px 16px -4px ${withAlpha(theme.primary, 0.4)}`,
-            fontFamily: "var(--font-heading)",
+            color: "#fff",
           }}
         >
           {icon || number}
         </div>
         
-        {/* Decorative corner accent */}
+        {/* Decorative corner */}
         <div 
-          className="absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-10 pointer-events-none transition-opacity group-hover:opacity-20 duration-500"
+          className="absolute -top-10 -right-10 w-28 h-28 rounded-full opacity-10 pointer-events-none"
           style={{ backgroundColor: theme.primary }}
         />
       </div>
 
+      {/* Content */}
       <div className="flex-1 min-w-0 z-10">
         <ProseMirrorEditor
           key={block.id}
@@ -100,4 +96,3 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
     </div>
   );
 };
-

@@ -2,8 +2,7 @@ import React, { useMemo, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/lib/editor/types";
 import { createVideoContent, type VideoContent } from "../definitions";
-import { withAlpha } from "../utils";
-import { IconVideo } from "@tabler/icons-react";
+import { IconVideo, IconPlayerPlay } from "@tabler/icons-react";
 import { BlockWrapper } from "../BlockWrapper";
 import {
   Dialog,
@@ -57,7 +56,7 @@ const getVideoEmbedUrl = (url: string, source: string, autoplay = false, loop = 
       const params = new URLSearchParams();
       if (autoplay) params.append("autoplay", "1");
       if (loop) params.append("loop", "1");
-      return params.toString() ? `${embedUrl}?${params}` : embedUrl; 
+      return params.toString() ? `${embedUrl}?${params}` : embedUrl;
     }
   }
 
@@ -70,14 +69,13 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
   theme,
 }) => {
   const content = (block.content as VideoContent) ?? createVideoContent();
-  const { source, url, thumbnail, autoplay, loop, title } = content;
+  const { source, url, autoplay, loop, title } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
-
-  // Local state for the modal form
   const [tempSource, setTempSource] = useState(source);
   const [tempUrl, setTempUrl] = useState(url);
   const [tempAutoplay, setTempAutoplay] = useState(autoplay);
   const [tempLoop, setTempLoop] = useState(loop);
+  const isDark = theme.themeType === "dark";
 
   const embedUrl = useMemo(() => {
     return getVideoEmbedUrl(url, source, autoplay, loop);
@@ -103,10 +101,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
   };
 
   const handleTitleChange = (newContent: any) => {
-    onUpdate({
-      ...content,
-      title: newContent,
-    });
+    onUpdate({ ...content, title: newContent });
   };
 
   return (
@@ -114,10 +109,9 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
       <div
         className="w-full rounded-2xl overflow-hidden relative group h-full flex flex-col"
         style={{
-          backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.75),
-          backdropFilter: "blur(12px)",
-          border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
-          boxShadow: `0 4px 12px -2px ${withAlpha(theme.primary, 0.05)}`,
+          background: embedUrl
+            ? "transparent"
+            : `linear-gradient(135deg, ${theme.primary}10 0%, ${theme.primary}03 100%)`,
         }}
       >
         {embedUrl ? (
@@ -132,62 +126,73 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
               />
             </div>
             {title && (
-              <div className="p-4 bg-background/50 backdrop-blur-sm">
-                 <ProseMirrorEditor
-                      key={`${block.id}-title`}
-                      blockId={`${block.id}-title`}
-                      value={title}
-                      onChange={handleTitleChange}
-                      placeholder="Video Title"
-                      className="text-lg font-semibold"
-                    />
+              <div
+                className="p-4"
+                style={{ backgroundColor: `${theme.primary}05` }}
+              >
+                <ProseMirrorEditor
+                  key={`${block.id}-title`}
+                  blockId={`${block.id}-title`}
+                  value={title}
+                  onChange={handleTitleChange}
+                  placeholder="Video Title"
+                  className="text-base font-semibold"
+                />
               </div>
             )}
-           </>
+          </>
         ) : (
           <div
-            className="w-full h-full min-h-[300px] flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-colors"
-            style={{
-              backgroundColor: withAlpha(theme.primary, 0.03),
-            }}
+            className="w-full h-full min-h-[240px] flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all"
             onClick={handleOpenEdit}
           >
-             <div
-                className="w-20 h-20 rounded-full flex items-center justify-center mb-6 transition-transform group-hover:scale-110 shadow-lg"
-                style={{
-                  backgroundColor: theme.primary,
-                  color: theme.cardBackground,
-                }}
-              >
-                <IconVideo className="size-10" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Add Video</h3>
-              <p className="text-sm opacity-60 max-w-xs mx-auto mb-6">
-                Embed a video from YouTube, Vimeo, or a direct link.
-              </p>
-              <Button onClick={(e) => { e.stopPropagation(); handleOpenEdit(); }}>
-                Configure Video
-              </Button>
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
+              style={{
+                backgroundColor: `${theme.primary}15`,
+                color: theme.primary,
+              }}
+            >
+              <IconPlayerPlay size={28} />
+            </div>
+            <h3
+              className="text-lg font-semibold mb-1"
+              style={{ color: theme.headingColor }}
+            >
+              Add Video
+            </h3>
+            <p
+              className="text-xs opacity-50 max-w-[200px] mx-auto"
+              style={{ color: theme.bodyColor }}
+            >
+              Embed from YouTube, Vimeo, or direct link
+            </p>
           </div>
         )}
 
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent
+            className="sm:max-w-[400px]"
+            style={{
+              backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+              backdropFilter: "blur(20px)",
+              border: "none",
+            }}
+          >
             <DialogHeader>
-              <DialogTitle>Edit Video Block</DialogTitle>
-              <DialogDescription>
-                Configure your video options.
+              <DialogTitle style={{ color: isDark ? "#fff" : "#000" }}>
+                Video Settings
+              </DialogTitle>
+              <DialogDescription style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>
+                Configure video options.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-6 py-4">
+            <div className="grid gap-4 py-4">
               <div className="space-y-2">
-                <Label>Video Source</Label>
-                <Select
-                  value={tempSource}
-                  onValueChange={(v: any) => setTempSource(v)}
-                >
+                <Label style={{ color: isDark ? "#fff" : "#000" }}>Source</Label>
+                <Select value={tempSource} onValueChange={(v: any) => setTempSource(v)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select source" />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="youtube">YouTube</SelectItem>
@@ -198,7 +203,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
               </div>
 
               <div className="space-y-2">
-                <Label>Video URL</Label>
+                <Label style={{ color: isDark ? "#fff" : "#000" }}>Video URL</Label>
                 <Input
                   value={tempUrl}
                   onChange={(e) => setTempUrl(e.target.value)}
@@ -207,28 +212,22 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
               </div>
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="autoplay-mode">Autoplay</Label>
-                <Switch
-                  id="autoplay-mode"
-                  checked={tempAutoplay}
-                  onCheckedChange={setTempAutoplay}
-                />
+                <Label style={{ color: isDark ? "#fff" : "#000" }}>Autoplay</Label>
+                <Switch checked={tempAutoplay} onCheckedChange={setTempAutoplay} />
               </div>
 
-               <div className="flex items-center justify-between">
-                <Label htmlFor="loop-mode">Loop</Label>
-                <Switch
-                  id="loop-mode"
-                  checked={tempLoop}
-                  onCheckedChange={setTempLoop}
-                />
+              <div className="flex items-center justify-between">
+                <Label style={{ color: isDark ? "#fff" : "#000" }}>Loop</Label>
+                <Switch checked={tempLoop} onCheckedChange={setTempLoop} />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsEditOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSave}>Save Changes</Button>
+              <Button onClick={handleSave} style={{ backgroundColor: theme.primary }}>
+                Save
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

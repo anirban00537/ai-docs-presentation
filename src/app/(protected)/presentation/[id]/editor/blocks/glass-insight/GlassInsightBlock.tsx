@@ -5,7 +5,6 @@ import {
   type GlassInsightContent,
   createGlassInsightContent,
 } from "../definitions/glass-insight";
-import { withAlpha } from "../utils";
 import EmojiPicker from "emoji-picker-react";
 import {
   Popover,
@@ -28,6 +27,7 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
 }) => {
   const content = block.content as GlassInsightContent;
   const icon = content?.icon ?? "💡";
+  const isDark = theme.themeType === "dark";
 
   const editorContent = useMemo(() => {
     if (content?.editorContent && content.editorContent.type === "doc") {
@@ -52,28 +52,24 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
 
   return (
     <div
-      className="group relative p-8 rounded-3xl h-full w-full overflow-hidden transition-all"
+      className="group relative p-8 rounded-2xl h-full w-full overflow-hidden transition-all"
       style={{
-        backgroundColor: withAlpha(theme.cardBackground || "#ffffff", 0.4),
+        background: `linear-gradient(135deg, ${theme.primary}12 0%, ${theme.primary}05 100%)`,
         backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        border: `1px solid ${withAlpha(theme.primary, 0.1)}`,
       }}
     >
-      {/* 3D Icon Container */}
+      {/* Floating Icon */}
       <Popover>
         <PopoverTrigger asChild>
           <button
-            className="absolute top-0 right-0 p-6 text-6xl transform origin-top-right transition-transform cursor-pointer outline-none focus:outline-none z-20"
-            style={{
-              opacity: 0.8
-            }}
+            className="absolute top-6 right-6 text-5xl transition-all hover:scale-110 cursor-pointer outline-none z-20"
+            style={{ opacity: 0.7 }}
             title="Change icon"
           >
             {icon}
           </button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 border-none shadow-none bg-transparent">
+        <PopoverContent className="w-auto p-0 border-none shadow-xl">
           <EmojiPicker onEmojiClick={handleIconChange} />
         </PopoverContent>
       </Popover>
@@ -81,8 +77,8 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
       {/* Content Area */}
       <div className="relative z-10 flex flex-col h-full justify-center">
         <div 
-          className="mb-4 w-12 h-1 rounded-full opacity-30"
-          style={{ backgroundColor: theme.primary }}
+          className="mb-4 w-10 h-0.5 rounded-full"
+          style={{ backgroundColor: theme.primary, opacity: 0.4 }}
         />
         <ProseMirrorEditor
           key={block.id}
@@ -90,13 +86,14 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
           value={editorContent}
           onChange={handleEditorChange}
           placeholder={placeholder ?? "Type your insight..."}
-          className="text-xl md:text-2xl font-serif italic leading-relaxed opacity-90"
+          className="text-xl font-medium leading-relaxed opacity-80"
         />
       </div>
 
-      {/* Decorative Shimmer */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none mix-blend-overlay"
+      {/* Decorative gradient */}
+      <div
+        className="absolute -bottom-20 -right-20 w-48 h-48 rounded-full opacity-30 blur-3xl pointer-events-none"
+        style={{ backgroundColor: theme.primary }}
       />
     </div>
   );

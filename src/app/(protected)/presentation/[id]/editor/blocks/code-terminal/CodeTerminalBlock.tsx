@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import type { Block, Theme } from "@/lib/editor/types";
 import { type CodeTerminalContent } from "../definitions/code-terminal";
-import { withAlpha } from "../utils";
 
 interface CodeTerminalBlockProps {
   block: Block;
@@ -32,27 +31,34 @@ export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
 
   return (
     <div
-      className="flex flex-col w-full h-full rounded-lg overflow-hidden font-mono text-sm overflow-y-auto custom-scrollbar custom-scrollbar-dark"
+      className="flex flex-col w-full h-full rounded-2xl overflow-hidden font-mono text-sm"
       style={{
-        backgroundColor: "#1e1e1e", // Terminal bg always darker
+        backgroundColor: "#0d0d0d",
         color: "#e5e7eb",
-        border: `1px solid ${withAlpha(theme.primary, 0.15)}`,
       }}
     >
-      {/* Terminal Header */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-[#2d2d2d] border-b border-[#3e3e3e] shrink-0">
-        <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-        <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-        <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
-        <div className="flex-1 text-center text-xs text-gray-500 font-sans opacity-60">
+      {/* Terminal Header - Minimal */}
+      <div className="flex items-center gap-2 px-4 py-3 bg-[#1a1a1a]">
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+        </div>
+        <div className="flex-1 text-center text-[10px] text-gray-500 font-sans uppercase tracking-wider">
           terminal
         </div>
       </div>
 
       {/* Terminal Body */}
-      <div className="p-4 flex flex-col gap-2 relative">
-        <div className="flex items-center gap-2 text-[#4ade80]">
-          <span className="select-none font-bold">$</span>
+      <div className="p-4 flex flex-col gap-3">
+        {/* Command line */}
+        <div className="flex items-center gap-2">
+          <span
+            className="select-none font-bold text-sm"
+            style={{ color: theme.primary }}
+          >
+            $
+          </span>
           <input
             value={content.command}
             onChange={handleCommandChange}
@@ -61,11 +67,13 @@ export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
             spellCheck={false}
           />
         </div>
+        
+        {/* Output */}
         <textarea
           value={content.output}
           onChange={handleOutputChange}
           rows={3}
-          className="w-full bg-transparent border-none outline-none font-mono text-[#9ca3af] resize-none placeholder-gray-700"
+          className="w-full bg-transparent border-none outline-none font-mono text-[#888] resize-none placeholder-gray-700 leading-relaxed"
           placeholder="Command output..."
           spellCheck={false}
         />

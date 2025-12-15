@@ -1,11 +1,10 @@
-import React, { useCallback } from "react";
+import React from "react";
 import type { Block, Theme } from "@/lib/editor/types";
 import {
   type ImageGalleryContent,
   type GalleryImage,
 } from "../definitions/image-gallery";
-import { withAlpha } from "../utils";
-import { ImagePlus, LayoutGrid, Trash2, Columns2, Columns3, Columns4 } from "lucide-react";
+import { IconPhoto, IconTrash, IconPlus, IconColumns2, IconColumns3, IconLayoutGrid } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 
 interface ImageGalleryBlockProps {
@@ -25,7 +24,7 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
   const content = block.content as ImageGalleryContent;
   const images = content.images || [];
   const columns = content.columns || 3;
-  const layout = content.layout || "masonry";
+  const isDark = theme.themeType === "dark";
 
   const addImage = () => {
     const url = prompt("Enter image URL:");
@@ -56,48 +55,50 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
 
   return (
     <div className="w-full h-full flex flex-col gap-4 relative group/gallery">
-      {/* Controls Overlay (Visible on Hover) */}
-      <div className="absolute -top-10 right-0 flex items-center gap-2 opacity-0 group-hover/gallery:opacity-100 transition-opacity bg-white/90 backdrop-blur-sm p-1.5 rounded-lg border border-gray-200 shadow-sm z-20">
-         <div className="flex items-center border-r border-gray-200 pr-2 mr-2 gap-1">
+      {/* Controls Overlay */}
+      <div
+        className="absolute -top-2 right-0 flex items-center gap-1 opacity-0 group-hover/gallery:opacity-100 transition-all z-20 p-1 rounded-lg"
+        style={{
+          backgroundColor: isDark ? "rgba(30,30,35,0.95)" : "rgba(255,255,255,0.95)",
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        {/* Column buttons */}
+        <div className="flex items-center gap-0.5 pr-2 mr-1" style={{ borderRight: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"}` }}>
+          {[2, 3, 4].map((col) => (
             <button
-            onClick={() => changeColumns(2)}
-            className={`p-1 rounded ${columns === 2 ? 'bg-gray-100 text-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}
-            title="2 Columns"
+              key={col}
+              onClick={() => changeColumns(col as 2 | 3 | 4)}
+              className="p-1.5 rounded-lg transition-all"
+              style={{
+                backgroundColor: columns === col ? `${theme.primary}20` : "transparent",
+                color: columns === col ? theme.primary : (isDark ? "#aaa" : "#666"),
+              }}
+              title={`${col} Columns`}
             >
-            <Columns2 className="w-4 h-4" />
+              {col === 2 && <IconColumns2 size={14} />}
+              {col === 3 && <IconColumns3 size={14} />}
+              {col === 4 && <IconLayoutGrid size={14} />}
             </button>
-            <button
-            onClick={() => changeColumns(3)}
-            className={`p-1 rounded ${columns === 3 ? 'bg-gray-100 text-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}
-            title="3 Columns"
-            >
-            <Columns3 className="w-4 h-4" />
-            </button>
-            <button
-            onClick={() => changeColumns(4)}
-            className={`p-1 rounded ${columns === 4 ? 'bg-gray-100 text-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}
-            title="4 Columns"
-            >
-             <Columns4 className="w-4 h-4" />
-            </button>
-         </div>
+          ))}
+        </div>
 
+        {/* Add button */}
         <button
           onClick={addImage}
-          className="flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors"
+          className="p-1.5 rounded-lg transition-all flex items-center gap-1"
           style={{
-              backgroundColor: withAlpha(theme.primary, 0.1),
-              color: theme.primary,
+            backgroundColor: `${theme.primary}15`,
+            color: theme.primary,
           }}
         >
-          <ImagePlus className="w-3.5 h-3.5" />
-          Add Image
+          <IconPlus size={14} stroke={2} />
         </button>
       </div>
 
       {/* Grid Layout */}
       <div 
-        className="w-full grid gap-4"
+        className="w-full grid gap-3"
         style={{
           gridTemplateColumns: `repeat(${columns}, 1fr)`,
         }}
@@ -107,9 +108,8 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
             key={img.id} 
             className="group/img relative rounded-xl overflow-hidden transition-all"
             style={{ 
-               aspectRatio: '4/3',
-               backgroundColor: withAlpha(theme.primary, 0.03),
-               border: `1px solid ${withAlpha(theme.primary, 0.05)}`
+              aspectRatio: '4/3',
+              backgroundColor: `${theme.primary}05`,
             }}
           >
             <img 
@@ -118,42 +118,35 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
               className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500" 
             />
             
-            {/* Image Overlay */}
-             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button 
-                  onClick={() => removeImage(img.id)}
-                  className="p-2 bg-white/90 rounded-full text-red-500 hover:bg-white transition-colors shadow-sm"
-                  title="Remove Image"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-             </div>
+            {/* Delete overlay */}
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+              <button 
+                onClick={() => removeImage(img.id)}
+                className="p-2 rounded-full transition-all hover:scale-110"
+                style={{
+                  backgroundColor: "rgba(255,255,255,0.9)",
+                  color: "#ef4444",
+                }}
+                title="Remove Image"
+              >
+                <IconTrash size={16} />
+              </button>
+            </div>
           </div>
         ))}
 
-        {/* Empty State / Add Placeholder */}
+        {/* Empty State */}
         {images.length === 0 && (
           <div 
             onClick={addImage}
-            className="col-span-full h-64 border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-3 cursor-pointer transition-all"
+            className="col-span-full h-48 rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer transition-all"
             style={{
-                borderColor: withAlpha(theme.bodyColor, 0.2),
-                color: withAlpha(theme.bodyColor, 0.5),
-                backgroundColor: withAlpha(theme.cardBackground, 0.5)
-            }}
-            onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = theme.primary;
-                e.currentTarget.style.color = theme.primary;
-                e.currentTarget.style.backgroundColor = withAlpha(theme.primary, 0.05);
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = withAlpha(theme.bodyColor, 0.2);
-                e.currentTarget.style.color = withAlpha(theme.bodyColor, 0.5);
-                e.currentTarget.style.backgroundColor = withAlpha(theme.cardBackground, 0.5);
+              backgroundColor: `${theme.primary}05`,
+              color: `${theme.bodyColor}80`,
             }}
           >
-            <LayoutGrid className="w-10 h-10 opacity-50" />
-            <span className="font-medium">Add images to create a gallery</span>
+            <IconPhoto size={32} stroke={1.5} style={{ opacity: 0.5 }} />
+            <span className="text-sm font-medium opacity-50">Click to add images</span>
           </div>
         )}
       </div>
