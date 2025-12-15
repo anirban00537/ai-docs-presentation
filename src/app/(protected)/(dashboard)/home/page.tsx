@@ -245,9 +245,6 @@ export default function HomePage() {
           <h1 className="text-4xl font-bold text-foreground mb-3">
             What would you like to create?
           </h1>
-          <p className="text-base text-muted-foreground max-w-md mx-auto">
-            Describe your presentation idea and let AI craft beautiful slides for you in seconds.
-          </p>
         </motion.div>
 
         {/* Prompt Box */}
