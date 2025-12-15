@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogOverlay,
 } from "@/components/ui/dialog";
 import {
   layoutTemplates,
@@ -12,7 +13,7 @@ import {
 } from "./layoutTemplates";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface LayoutPickerModalProps {
   isOpen: boolean;
@@ -30,16 +31,43 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogOverlay className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[99]" />
       <DialogContent
-        className="max-w-5xl max-h-[85vh] overflow-hidden p-0"
+        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-5xl w-[95vw] max-h-[85vh] overflow-hidden p-0 z-[100] rounded-2xl"
         style={{
-          backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
-          backdropFilter: "blur(20px)",
+          backgroundColor: isDark 
+            ? "rgba(30, 30, 40, 0.6)" 
+            : "rgba(255, 255, 255, 0.6)",
+          backdropFilter: "blur(32px) saturate(200%)",
+          WebkitBackdropFilter: "blur(32px) saturate(200%)",
+          boxShadow: isDark
+            ? `
+              0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+              0 -1px 0 0 rgba(0, 0, 0, 0.2) inset,
+              0 24px 80px rgba(0, 0, 0, 0.5),
+              0 8px 24px rgba(0, 0, 0, 0.3)
+            `
+            : `
+              0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+              0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+              0 24px 80px rgba(0, 0, 0, 0.12),
+              0 8px 24px rgba(0, 0, 0, 0.06)
+            `,
           border: "none",
         }}
       >
+        {/* Glass shine overlay */}
+        <div 
+          className="absolute inset-0 pointer-events-none rounded-2xl"
+          style={{
+            background: isDark
+              ? "linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.03) 100%)"
+              : "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.4) 100%)",
+          }}
+        />
+
         {/* Header */}
-        <DialogHeader className="px-6 pt-6 pb-2">
+        <DialogHeader className="relative px-6 pt-6 pb-2">
           <DialogTitle
             className="text-lg font-medium"
             style={{ color: isDark ? "#fff" : "#000" }}
@@ -55,7 +83,7 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
         </DialogHeader>
 
         {/* Layouts Grid */}
-        <div className="px-6 pb-6 overflow-y-auto max-h-[calc(85vh-100px)]">
+        <div className={`relative px-6 pb-6 overflow-y-auto max-h-[calc(85vh-100px)] ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
             {layoutTemplates.map((template, index) => (
               <motion.button
@@ -72,7 +100,7 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
                   backgroundColor: "transparent",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = `${theme.primary}10`;
+                  e.currentTarget.style.backgroundColor = `${theme.primary}15`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "transparent";
@@ -82,7 +110,7 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center"
                   style={{
-                    backgroundColor: `${theme.primary}15`,
+                    backgroundColor: `${theme.primary}20`,
                     color: theme.primary,
                   }}
                 >
@@ -111,7 +139,10 @@ export const LayoutPickerModal: React.FC<LayoutPickerModalProps> = ({
           </div>
 
           {/* Demo Button - Smaller and subtle */}
-          <div className="mt-6 pt-4 border-t flex justify-center" style={{ borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }}>
+          <div 
+            className="mt-6 pt-4 border-t flex justify-center" 
+            style={{ borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)" }}
+          >
             <button
               onClick={async () => {
                 onClose();

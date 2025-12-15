@@ -158,15 +158,40 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
             className="fixed left-4 top-1/2 -translate-y-1/2 z-40"
           >
             <div
-              className="w-[260px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
+              className="relative w-[260px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
               style={{
-                backgroundColor: isDark ? "rgba(20,20,24,0.95)" : "rgba(255,255,255,0.98)",
-                backdropFilter: "blur(20px)",
+                backgroundColor: isDark 
+                  ? "rgba(30, 30, 40, 0.5)" 
+                  : "rgba(255, 255, 255, 0.5)",
+                backdropFilter: "blur(32px) saturate(200%)",
+                WebkitBackdropFilter: "blur(32px) saturate(200%)",
+                boxShadow: isDark
+                  ? `
+                    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+                    0 -1px 0 0 rgba(0, 0, 0, 0.2) inset,
+                    0 8px 40px rgba(0, 0, 0, 0.4),
+                    0 2px 8px rgba(0, 0, 0, 0.2)
+                  `
+                  : `
+                    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+                    0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+                    0 8px 40px rgba(0, 0, 0, 0.08),
+                    0 2px 8px rgba(0, 0, 0, 0.04)
+                  `,
               }}
             >
+              {/* Glass shine overlay */}
+              <div 
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: isDark
+                    ? "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.02) 100%)"
+                    : "linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.3) 100%)",
+                }}
+              />
               {/* Header */}
               <div 
-                className="py-2.5 flex items-center justify-between"
+                className="relative py-2.5 flex items-center justify-between"
                 style={{ paddingLeft: 14, paddingRight: 14 }}
               >
                 <span
@@ -200,7 +225,7 @@ export const SlidesSidebar: React.FC<SlidesSidebarProps> = ({
 
               {/* Slides List */}
               <div 
-                className={`flex-1 overflow-y-auto pb-3 space-y-2.5 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
+                className={`relative flex-1 overflow-y-auto pb-3 space-y-2.5 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
                 style={{ paddingLeft: 18, paddingRight: 14, paddingTop: 8 }}
               >
                 {slides.map((slide, index) => {
