@@ -292,14 +292,40 @@ export const BlocksPanel: React.FC<BlocksPanelProps> = ({
           className="relative z-40"
         >
           <div
-            className="w-[380px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
+            className="relative w-[380px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
-              backdropFilter: "blur(20px)",
+              backgroundColor: isDark 
+                ? "rgba(30, 30, 40, 0.5)" 
+                : "rgba(255, 255, 255, 0.5)",
+              backdropFilter: "blur(32px) saturate(200%)",
+              WebkitBackdropFilter: "blur(32px) saturate(200%)",
+              boxShadow: isDark
+                ? `
+                  0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+                  0 -1px 0 0 rgba(0, 0, 0, 0.2) inset,
+                  0 8px 40px rgba(0, 0, 0, 0.4),
+                  0 2px 8px rgba(0, 0, 0, 0.2)
+                `
+                : `
+                  0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+                  0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+                  0 8px 40px rgba(0, 0, 0, 0.08),
+                  0 2px 8px rgba(0, 0, 0, 0.04)
+                `,
             }}
           >
+            {/* Glass shine overlay */}
+            <div 
+              className="absolute inset-0 pointer-events-none rounded-2xl"
+              style={{
+                background: isDark
+                  ? "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.02) 100%)"
+                  : "linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.3) 100%)",
+              }}
+            />
+
             {/* Header */}
-            <div className="px-4 py-3 flex items-center justify-between shrink-0">
+            <div className="relative px-4 py-3 flex items-center justify-between shrink-0">
               <span
                 className="text-sm font-medium"
                 style={{ color: isDark ? "#fff" : "#000" }}
@@ -316,7 +342,7 @@ export const BlocksPanel: React.FC<BlocksPanelProps> = ({
             </div>
 
             {/* Blocks Grid */}
-            <div className="flex-1 overflow-y-auto px-3 pb-3">
+            <div className={`relative flex-1 overflow-y-auto px-3 pb-3 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}>
               <p
                 className="text-[11px] font-medium mb-2 px-1 opacity-50"
                 style={{ color: isDark ? "#fff" : "#000" }}
