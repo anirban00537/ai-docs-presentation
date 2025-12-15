@@ -26,13 +26,23 @@ export function NavSecondary({
   return (
     <SidebarGroup {...props}>
       <div className="mx-2 mt-4 mb-2">
-        <div className="relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 p-4 shadow-lg shadow-primary/10 backdrop-blur-sm">
-          {/* Premium glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 via-yellow-400/20 to-primary/20 opacity-50 blur-xl" />
-
-          {/* Shine effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
+        <div 
+          className="relative overflow-hidden rounded-2xl p-4"
+          style={{
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            backdropFilter: "blur(20px) saturate(180%)",
+            WebkitBackdropFilter: "blur(20px) saturate(180%)",
+            boxShadow: `
+              0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+              0 -1px 0 0 rgba(0, 0, 0, 0.03) inset,
+              1px 0 0 0 rgba(255, 255, 255, 0.7) inset,
+              -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
+              0 4px 16px rgba(0, 0, 0, 0.06)
+            `,
+          }}
+        >
+          {/* Glass shine effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent pointer-events-none rounded-2xl" />
 
           <div className="relative space-y-3">
             <div className="flex items-start gap-3">

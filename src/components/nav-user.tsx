@@ -73,7 +73,10 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-white/60 hover:bg-white/50 rounded-xl transition-all duration-200"
+              style={{
+                backdropFilter: "blur(12px)",
+              }}
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 {user?.photo ? (
@@ -97,10 +100,22 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-2xl border-0"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.7)",
+              backdropFilter: "blur(24px) saturate(180%)",
+              WebkitBackdropFilter: "blur(24px) saturate(180%)",
+              boxShadow: `
+                0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+                0 -1px 0 0 rgba(0, 0, 0, 0.03) inset,
+                1px 0 0 0 rgba(255, 255, 255, 0.7) inset,
+                -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
+                0 8px 32px rgba(0, 0, 0, 0.12)
+              `,
+            }}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">

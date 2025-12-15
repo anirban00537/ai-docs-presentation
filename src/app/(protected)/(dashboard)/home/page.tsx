@@ -128,7 +128,7 @@ export default function HomePage() {
 
   return (
     <div 
-      className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]  overflow-hidden rounded-2xl"
+      className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]  overflow-hidden "
       style={{
         background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
       }}

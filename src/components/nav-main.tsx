@@ -39,12 +39,16 @@ export function NavMain({
                   size="default"
                   isActive={isActive}
                   className={cn(
-                    "group relative h-9 rounded-lg px-3 transition-all duration-200",
-                    "hover:bg-primary/10",
+                    "group relative h-9 rounded-xl px-3 transition-all duration-200",
+                    "hover:bg-white/50 hover:backdrop-blur-sm",
                     "active:scale-[0.98]",
                     isActive &&
-                      "!bg-sidebar-accent !text-sidebar-accent-foreground font-semibold"
+                      "!bg-white/60 font-semibold shadow-sm"
                   )}
+                  style={isActive ? {
+                    backdropFilter: "blur(12px)",
+                    boxShadow: "0 1px 0 0 rgba(255, 255, 255, 0.8) inset, 0 2px 8px rgba(0, 0, 0, 0.06)"
+                  } : undefined}
                 >
                   <Link
                     href={item.url}
@@ -55,7 +59,7 @@ export function NavMain({
                         className={cn(
                           "h-4 w-4 transition-all duration-200",
                           isActive
-                            ? "text-primary-foreground scale-110"
+                            ? "text-primary scale-110"
                             : "text-muted-foreground group-hover:text-primary group-hover:scale-110"
                         )}
                       />
