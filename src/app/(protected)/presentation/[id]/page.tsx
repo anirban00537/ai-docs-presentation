@@ -106,6 +106,7 @@ const GammaPage = () => {
   const [isPresenting, setIsPresenting] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const presentationContainerRef = useRef<HTMLDivElement>(null);
+  const editorScrollRef = useRef<HTMLDivElement>(null);
 
   const handlePresentClick = () => {
     setIsPresenting(true);
@@ -168,6 +169,22 @@ const GammaPage = () => {
       }
     }
   }, [activeSlideId, isPresenting]);
+
+  // Auto-scroll to bottom when new slides arrive during generation
+  useEffect(() => {
+    if (isGeneratingSlides && slides.length > 0) {
+      // Small delay to ensure DOM has updated with the new slide
+      const timeoutId = setTimeout(() => {
+        // Scroll the last slide into view
+        const allSlides = document.querySelectorAll('[data-slide-id]');
+        const lastSlide = allSlides[allSlides.length - 1];
+        if (lastSlide) {
+          lastSlide.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isGeneratingSlides, slides.length]);
 
   // Only show loading screen during initial presentation load (not during streaming)
   // During streaming, show slides as they come in
@@ -377,31 +394,6 @@ const GammaPage = () => {
                       />
                     </motion.div>
                   ))}
-                
-                {/* Generating indicator - shows during streaming */}
-                {isGeneratingSlides && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-center gap-3 py-8"
-                  >
-                    <div 
-                      className="w-5 h-5 border-2 rounded-full animate-spin"
-                      style={{ 
-                        borderColor: `${theme.primary}30`,
-                        borderTopColor: theme.primary 
-                      }}
-                    />
-                    <span 
-                      className="text-sm font-medium"
-                      style={{ color: theme.bodyColor }}
-                    >
-                      {slideGenerationProgress 
-                        ? `Generating slide ${slideGenerationProgress.current} of ${slideGenerationProgress.total}...`
-                        : "Generating slides..."}
-                    </span>
-                  </motion.div>
-                )}
               </div>
             </BlockFocusProvider>
 
@@ -492,6 +484,72 @@ const GammaPage = () => {
           </DndContext>
         </div>
       </div>
+
+      {/* Fixed Glassmorphism Generating Indicator */}
+      <AnimatePresence>
+        {isGeneratingSlides && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+          >
+            <div
+              className="flex items-center gap-3 px-5 py-3 rounded-2xl border shadow-lg"
+              style={{
+                backgroundColor: isDark 
+                  ? "rgba(30, 30, 35, 0.85)" 
+                  : "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderColor: isDark 
+                  ? "rgba(255, 255, 255, 0.1)" 
+                  : "rgba(0, 0, 0, 0.08)",
+                boxShadow: isDark
+                  ? "0 8px 32px rgba(0, 0, 0, 0.4)"
+                  : "0 8px 32px rgba(0, 0, 0, 0.12)",
+              }}
+            >
+              {/* Spinner */}
+              <div 
+                className="w-5 h-5 border-2 rounded-full animate-spin"
+                style={{ 
+                  borderColor: `${theme.primary}30`,
+                  borderTopColor: theme.primary 
+                }}
+              />
+              
+              {/* Text */}
+              <span 
+                className="text-sm font-medium"
+                style={{ color: isDark ? "#e5e7eb" : "#1f2937" }}
+              >
+                {slideGenerationProgress 
+                  ? `Generating slide ${slideGenerationProgress.current} of ${slideGenerationProgress.total}`
+                  : "Generating slides"}
+              </span>
+
+              {/* Progress dots */}
+              <div className="flex gap-1">
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ backgroundColor: theme.primary }}
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{
+                      duration: 1.2,
+                      repeat: Infinity,
+                      delay: i * 0.2,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
