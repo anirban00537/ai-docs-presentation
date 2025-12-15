@@ -40,7 +40,7 @@ export function NavMain({
                   isActive={isActive}
                   className={cn(
                     "group relative h-9 rounded-xl px-3 transition-all duration-200",
-                    "hover:bg-white/50 hover:backdrop-blur-sm",
+                    "hover:bg-white/45 hover:backdrop-blur-sm",
                     "active:scale-[0.98]",
                     isActive &&
                       "!bg-white/60 font-semibold shadow-sm"
@@ -59,8 +59,8 @@ export function NavMain({
                         className={cn(
                           "h-4 w-4 transition-all duration-200",
                           isActive
-                            ? "text-primary scale-110"
-                            : "text-muted-foreground group-hover:text-primary group-hover:scale-110"
+                            ? "text-foreground scale-110 drop-shadow-sm"
+                            : "text-muted-foreground/80 group-hover:text-foreground group-hover:scale-105 group-hover:drop-shadow-sm"
                         )}
                       />
                     )}
