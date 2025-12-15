@@ -12,10 +12,10 @@ import {
   PresentationTopBar,
 } from "@/app/(protected)/presentation/[id]/editor";
 import { BlockFocusProvider } from "@/app/(protected)/presentation/[id]/editor/BlockFocusContext";
+import { LoadingScreen } from "@/app/(protected)/presentation/[id]/editor/LoadingScreen";
 import { useEditorPage } from "./hooks/useEditorPage";
 import { useAppSelector } from "@/store/hooks";
 import { selectPresentation, selectActiveSlideId } from "@/store/slices/slidesSlice";
-import { Button } from "@/components/ui/button";
 import {
   IconFileText,
   IconHash,
@@ -90,6 +90,9 @@ const GammaPage = () => {
     handleAddRowAtTop,
     handleAddRowAtBottom,
     handleUpdateColumnWidths,
+    isLoadingPresentation,
+    isGeneratingSlides,
+    slideGenerationProgress,
   } = useEditorPage({ presentationId, outlineId });
 
   const presentation = useAppSelector(selectPresentation);
@@ -165,6 +168,21 @@ const GammaPage = () => {
       }
     }
   }, [activeSlideId, isPresenting]);
+
+  // Show loading screen during initial load or generation
+  const showLoading = isLoadingPresentation || (isGeneratingSlides && slides.length === 0);
+
+  if (showLoading) {
+    return (
+      <>
+        <GoogleFontsLoader />
+        <LoadingScreen 
+          isGenerating={isGeneratingSlides} 
+          progress={slideGenerationProgress} 
+        />
+      </>
+    );
+  }
 
   return (
     <>
