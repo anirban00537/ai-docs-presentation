@@ -177,7 +177,7 @@ const GammaPage = () => {
 
       <PresentationTopBar onPresentClick={handlePresentClick} />
       
-      {/* Clean background */}
+      {/* Base background */}
       <div
         className="fixed inset-0 -z-10"
         style={{
@@ -185,13 +185,123 @@ const GammaPage = () => {
         }}
       />
       
-      {/* Subtle ambient gradient */}
+      {/* === MESH GRADIENT === */}
+      {/* Primary blob - Top Left */}
       <div
-        className="fixed inset-0 -z-10 pointer-events-none"
+        className="fixed -z-10 pointer-events-none"
         style={{
-          background: isDark 
-            ? `radial-gradient(ellipse at 30% 20%, ${theme.primary}06 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, ${theme.primary}04 0%, transparent 40%)`
-            : `radial-gradient(ellipse at 30% 20%, ${theme.primary}08 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, ${theme.primary}05 0%, transparent 40%)`,
+          width: "60vw",
+          height: "60vh",
+          top: "-20%",
+          left: "-10%",
+          background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '20' : '15'} 0%, ${theme.primary}${isDark ? '08' : '05'} 40%, transparent 70%)`,
+          filter: "blur(80px)",
+          transform: "rotate(-15deg)",
+        }}
+      />
+      
+      {/* Heading color blob - Top Right */}
+      <div
+        className="fixed -z-10 pointer-events-none"
+        style={{
+          width: "50vw",
+          height: "50vh",
+          top: "-15%",
+          right: "-15%",
+          background: `radial-gradient(circle at center, ${theme.headingColor}${isDark ? '12' : '08'} 0%, ${theme.primary}${isDark ? '06' : '04'} 50%, transparent 70%)`,
+          filter: "blur(100px)",
+          transform: "rotate(20deg)",
+        }}
+      />
+      
+      {/* Primary accent - Left Center */}
+      <div
+        className="fixed -z-10 pointer-events-none"
+        style={{
+          width: "40vw",
+          height: "70vh",
+          top: "20%",
+          left: "-15%",
+          background: `radial-gradient(ellipse at center, ${theme.primary}${isDark ? '15' : '10'} 0%, transparent 70%)`,
+          filter: "blur(90px)",
+        }}
+      />
+      
+      {/* Card background blob - Right Center */}
+      <div
+        className="fixed -z-10 pointer-events-none"
+        style={{
+          width: "45vw",
+          height: "60vh",
+          top: "30%",
+          right: "-10%",
+          background: `radial-gradient(ellipse at center, ${theme.cardBackground}${isDark ? '18' : '12'} 0%, ${theme.primary}${isDark ? '05' : '03'} 50%, transparent 70%)`,
+          filter: "blur(110px)",
+          transform: "rotate(-10deg)",
+        }}
+      />
+      
+      {/* Body color - Center */}
+      <div
+        className="fixed -z-10 pointer-events-none"
+        style={{
+          width: "50vw",
+          height: "50vh",
+          top: "25%",
+          left: "25%",
+          background: `radial-gradient(circle at center, ${theme.bodyColor}${isDark ? '06' : '04'} 0%, transparent 60%)`,
+          filter: "blur(120px)",
+        }}
+      />
+      
+      {/* Primary blob - Bottom Left */}
+      <div
+        className="fixed -z-10 pointer-events-none"
+        style={{
+          width: "55vw",
+          height: "55vh",
+          bottom: "-20%",
+          left: "-10%",
+          background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '18' : '12'} 0%, ${theme.headingColor}${isDark ? '06' : '04'} 50%, transparent 70%)`,
+          filter: "blur(100px)",
+          transform: "rotate(25deg)",
+        }}
+      />
+      
+      {/* Heading accent - Bottom Right */}
+      <div
+        className="fixed -z-10 pointer-events-none"
+        style={{
+          width: "50vw",
+          height: "50vh",
+          bottom: "-15%",
+          right: "-10%",
+          background: `radial-gradient(circle at center, ${theme.headingColor}${isDark ? '10' : '06'} 0%, ${theme.cardBackground}${isDark ? '08' : '05'} 40%, transparent 70%)`,
+          filter: "blur(90px)",
+          transform: "rotate(-20deg)",
+        }}
+      />
+      
+      {/* Primary center glow */}
+      <div
+        className="fixed -z-10 pointer-events-none"
+        style={{
+          width: "35vw",
+          height: "35vh",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '08' : '05'} 0%, transparent 70%)`,
+          filter: "blur(80px)",
+        }}
+      />
+
+      {/* Subtle noise texture overlay */}
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none opacity-[0.02]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundSize: "256px 256px",
         }}
       />
 
