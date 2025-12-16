@@ -1,15 +1,35 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   createTheme,
-  getThemesList,
-  getAdminThemesList,
+  getThemes,
+  getAdminThemes,
   getTheme,
   updateTheme,
   deleteTheme,
-  type CreateThemePayload,
-  type UpdateThemePayload,
-  type ListThemesParams,
+  type ThemeResponse,
 } from "@/services/themes";
+import type { Theme } from "@/store/slices/slidesSlice";
+
+// Types for hook params/payloads
+export interface ListThemesParams {
+  includeAdmin?: boolean;
+  includeUser?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+export interface CreateThemePayload {
+  name: string;
+  description?: string;
+  themeData: Theme;
+  isAdmin?: boolean;
+}
+
+export interface UpdateThemePayload {
+  name?: string;
+  description?: string;
+  themeData?: Partial<Theme>;
+}
 
 // Query keys
 export const themeKeys = {
@@ -33,7 +53,7 @@ export const useThemesList = (params?: ListThemesParams) => {
     queryKey: themeKeys.list(params),
     queryFn: async () => {
       try {
-        return await getThemesList(params);
+        return await getThemes(params);
       } catch (error: any) {
         throw new Error(
           error.message || "Failed to load themes. Please try again."
@@ -56,7 +76,7 @@ export const useAdminThemesList = (
     queryKey: themeKeys.admin.list(params),
     queryFn: async () => {
       try {
-        return await getAdminThemesList(params);
+        return await getAdminThemes();
       } catch (error: any) {
         throw new Error(
           error.message || "Failed to load admin themes. Please try again."
