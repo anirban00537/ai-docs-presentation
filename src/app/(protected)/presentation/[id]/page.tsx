@@ -23,7 +23,7 @@ import { FloatingSidebar } from "./editor/FloatingSidebar";
 import { useUndoRedoKeyboardShortcuts } from "@/hooks/useUndoRedo";
 
 // --- Main Page Component ---
-const GammaPage = () => {
+const PresentationEditorPage = () => {
   const searchParams = useSearchParams();
   const params = useParams();
   const presentationId = params?.id as string;
@@ -397,4 +397,4 @@ const GammaPage = () => {
   );
 };
 
-export default GammaPage;
+export default PresentationEditorPage;
