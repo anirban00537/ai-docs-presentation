@@ -108,38 +108,7 @@ export default function OutlinePage() {
 
   if (isLoading) {
     return (
-      <div 
-        className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
-        }}
-      >
-        {/* Background Blobs */}
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            width: "70vw",
-            height: "60vh",
-            top: "-20%",
-            left: "-20%",
-            background: "radial-gradient(circle at center, rgba(196, 181, 253, 0.6) 0%, rgba(196, 181, 253, 0.25) 40%, transparent 70%)",
-            filter: "blur(80px)",
-            zIndex: 0,
-          }}
-        />
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            width: "60vw",
-            height: "55vh",
-            top: "-15%",
-            right: "-15%",
-            background: "radial-gradient(circle at center, rgba(147, 197, 253, 0.55) 0%, rgba(147, 197, 253, 0.2) 50%, transparent 70%)",
-            filter: "blur(90px)",
-            zIndex: 0,
-          }}
-        />
-        
+      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden">
         <div className="relative w-full max-w-4xl px-4">
           <div className="animate-pulse space-y-6">
             <div 
@@ -185,12 +154,7 @@ export default function OutlinePage() {
 
   if (displayError && !outline) {
     return (
-      <div 
-        className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
-        }}
-      >
+      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden">
         <div className="relative w-full max-w-4xl px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -211,107 +175,6 @@ export default function OutlinePage() {
 
   return (
     <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)]">
-      {/* === FIXED BACKGROUND LAYER === */}
-      <div 
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
-          zIndex: 0,
-        }}
-      >
-        {/* Soft lavender blob - Top Left */}
-        <div
-          className="absolute"
-          style={{
-            width: "70vw",
-            height: "60vh",
-            top: "-20%",
-            left: "-20%",
-            background: "radial-gradient(circle at center, rgba(196, 181, 253, 0.6) 0%, rgba(196, 181, 253, 0.25) 40%, transparent 70%)",
-            filter: "blur(80px)",
-          }}
-        />
-        
-        {/* Soft sky blue blob - Top Right */}
-        <div
-          className="absolute"
-          style={{
-            width: "60vw",
-            height: "55vh",
-            top: "-15%",
-            right: "-15%",
-            background: "radial-gradient(circle at center, rgba(147, 197, 253, 0.55) 0%, rgba(147, 197, 253, 0.2) 50%, transparent 70%)",
-            filter: "blur(90px)",
-          }}
-        />
-        
-        {/* Soft rose blob - Left */}
-        <div
-          className="absolute"
-          style={{
-            width: "50vw",
-            height: "60vh",
-            top: "20%",
-            left: "-15%",
-            background: "radial-gradient(ellipse at center, rgba(251, 207, 232, 0.6) 0%, rgba(251, 207, 232, 0.2) 50%, transparent 70%)",
-            filter: "blur(100px)",
-          }}
-        />
-        
-        {/* Soft mint blob - Right */}
-        <div
-          className="absolute"
-          style={{
-            width: "55vw",
-            height: "55vh",
-            top: "30%",
-            right: "-10%",
-            background: "radial-gradient(ellipse at center, rgba(167, 243, 208, 0.5) 0%, rgba(167, 243, 208, 0.15) 50%, transparent 70%)",
-            filter: "blur(100px)",
-          }}
-        />
-        
-        {/* Soft peach blob - Bottom Left */}
-        <div
-          className="absolute"
-          style={{
-            width: "60vw",
-            height: "50vh",
-            bottom: "-15%",
-            left: "-10%",
-            background: "radial-gradient(circle at center, rgba(254, 215, 170, 0.55) 0%, rgba(254, 215, 170, 0.15) 50%, transparent 70%)",
-            filter: "blur(90px)",
-          }}
-        />
-        
-        {/* Soft lilac blob - Bottom Right */}
-        <div
-          className="absolute"
-          style={{
-            width: "55vw",
-            height: "50vh",
-            bottom: "-20%",
-            right: "-15%",
-            background: "radial-gradient(circle at center, rgba(221, 214, 254, 0.6) 0%, rgba(196, 181, 253, 0.2) 50%, transparent 70%)",
-            filter: "blur(100px)",
-          }}
-        />
-        
-        {/* Center soft glow */}
-        <div
-          className="absolute"
-          style={{
-            width: "50vw",
-            height: "50vh",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            background: "radial-gradient(circle at center, rgba(255, 255, 255, 0.9) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
-      </div>
-
       {/* === SCROLLABLE CONTENT LAYER === */}
       <div className="relative z-10 w-full max-w-4xl flex flex-col gap-6 px-4 py-8 overflow-y-auto">
         {/* Header */}
