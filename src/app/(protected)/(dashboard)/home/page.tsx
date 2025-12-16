@@ -4,40 +4,40 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { PromptBox } from "@/components/ui/chatgpt-prompt-input";
 import {
-  IconPresentation,
-  IconBulb,
-  IconChartBar,
-  IconUsers,
+  IconRobot,
+  IconRocket,
+  IconLeaf,
+  IconBooks,
 } from "@tabler/icons-react";
 
 // Quick start suggestion cards
 const suggestions = [
   {
-    icon: IconBulb,
-    title: "Startup Pitch",
-    description: "Create a compelling investor pitch deck",
-    prompt: "Create a startup pitch deck for a SaaS product that helps businesses automate their workflows",
+    icon: IconRobot,
+    title: "AI Revolution",
+    description: "How AI is transforming industries",
+    prompt: "Create a presentation about how artificial intelligence is revolutionizing healthcare, education, and creative industries",
     color: "#8B5CF6", // Purple
   },
   {
-    icon: IconChartBar,
-    title: "Quarterly Report",
-    description: "Present your business metrics",
-    prompt: "Create a quarterly business review presentation with key metrics and growth analysis",
+    icon: IconRocket,
+    title: "Space Exploration",
+    description: "Journey through the cosmos",
+    prompt: "Create a presentation about recent breakthroughs in space exploration, Mars missions, and the future of interstellar travel",
     color: "#3B82F6", // Blue
   },
   {
-    icon: IconUsers,
-    title: "Team Introduction",
-    description: "Introduce your team members",
-    prompt: "Create a team introduction presentation showcasing our talented team members and their roles",
+    icon: IconLeaf,
+    title: "Climate Solutions",
+    description: "Saving our planet",
+    prompt: "Create a presentation about innovative climate change solutions, renewable energy technologies, and sustainable living practices",
     color: "#10B981", // Green
   },
   {
-    icon: IconPresentation,
-    title: "Product Launch",
-    description: "Launch your new product",
-    prompt: "Create a product launch presentation for a mobile app with features and benefits",
+    icon: IconBooks,
+    title: "Ancient Wonders",
+    description: "Mysteries of history",
+    prompt: "Create a presentation about the Seven Wonders of the Ancient World, their construction, and their historical significance",
     color: "#F59E0B", // Amber
   },
 ];
@@ -54,10 +54,10 @@ const SuggestionCard: React.FC<{
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 + index * 0.1 }}
-      whileHover={{ scale: 1.02, y: -6 }}
+      whileHover={{ scale: 1.02, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(suggestion.prompt)}
-      className="group relative flex flex-col items-start gap-3 p-5 rounded-2xl text-left transition-all duration-300 overflow-hidden"
+      className="group relative flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-300 overflow-hidden"
       style={{
         backgroundColor: "rgba(255, 255, 255, 0.35)",
         backdropFilter: "blur(24px) saturate(180%)",
@@ -67,14 +67,14 @@ const SuggestionCard: React.FC<{
           0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
           1px 0 0 0 rgba(255, 255, 255, 0.8) inset,
           -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
-          0 8px 32px rgba(0, 0, 0, 0.08),
-          0 2px 8px rgba(0, 0, 0, 0.04)
+          0 4px 16px rgba(0, 0, 0, 0.06),
+          0 1px 4px rgba(0, 0, 0, 0.03)
         `,
       }}
     >
       {/* Glass shine overlay */}
       <div 
-        className="absolute inset-0 pointer-events-none rounded-2xl"
+        className="absolute inset-0 pointer-events-none rounded-xl"
         style={{
           background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
         }}
@@ -84,27 +84,24 @@ const SuggestionCard: React.FC<{
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
-          background: `radial-gradient(circle at 50% 0%, ${suggestion.color}25 0%, transparent 70%)`,
+          background: `radial-gradient(circle at 0% 50%, ${suggestion.color}20 0%, transparent 60%)`,
         }}
       />
 
       <div 
-        className="relative w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+        className="relative w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
         style={{
           backgroundColor: `${suggestion.color}15`,
-          boxShadow: `
-            0 1px 0 0 rgba(255, 255, 255, 0.8) inset,
-            0 4px 12px ${suggestion.color}15
-          `,
+          boxShadow: `0 2px 8px ${suggestion.color}15`,
         }}
       >
-        <Icon size={22} style={{ color: suggestion.color }} />
+        <Icon size={18} style={{ color: suggestion.color }} />
       </div>
-      <div className="relative">
-        <h3 className="text-sm font-semibold text-foreground mb-1 group-hover:text-foreground transition-colors">
+      <div className="relative min-w-0">
+        <h3 className="text-sm font-semibold text-foreground group-hover:text-foreground transition-colors truncate">
           {suggestion.title}
         </h3>
-        <p className="text-xs text-muted-foreground line-clamp-2">
+        <p className="text-xs text-muted-foreground truncate">
           {suggestion.description}
         </p>
       </div>
@@ -118,12 +115,6 @@ export default function HomePage() {
 
   const handleSuggestionClick = (prompt: string) => {
     setPromptValue(prompt);
-    const textarea = document.querySelector('textarea[name="message"]') as HTMLTextAreaElement;
-    if (textarea) {
-      textarea.value = prompt;
-      textarea.dispatchEvent(new Event('input', { bubbles: true }));
-      textarea.focus();
-    }
   };
 
   return (
@@ -256,6 +247,7 @@ export default function HomePage() {
         >
           <PromptBox
             name="message"
+            defaultValue={promptValue}
             onError={(errorMessage) => setError(errorMessage)}
           />
 

@@ -365,21 +365,29 @@ const toolsList = [
 interface PromptBoxProps {
   className?: string;
   name?: string;
+  defaultValue?: string;
   onError?: (error: string) => void;
 }
 
 export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
-  ({ className, onError, ...props }, ref) => {
+  ({ className, onError, defaultValue = "", ...props }, ref) => {
     const router = useRouter();
     const savePromptMutation = useSavePrompt();
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
-    const [value, setValue] = React.useState("");
+    const [value, setValue] = React.useState(defaultValue);
     const [imagePreview, setImagePreview] = React.useState<string | null>(null);
     const [selectedTool, setSelectedTool] = React.useState<string | null>(null);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isImageDialogOpen, setIsImageDialogOpen] = React.useState(false);
     const [numberOfSlides, setNumberOfSlides] = React.useState<string>("5");
+
+    // Update value when defaultValue prop changes
+    React.useEffect(() => {
+      if (defaultValue) {
+        setValue(defaultValue);
+      }
+    }, [defaultValue]);
 
     React.useImperativeHandle(ref, () => internalTextareaRef.current!, []);
 
