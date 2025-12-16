@@ -7,8 +7,6 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   IconDashboard,
-  IconFileText,
-  IconTemplate,
   IconSettings,
   IconPhoto,
   IconPresentation,
@@ -37,8 +35,6 @@ import { AppleButton } from "./apple-button";
 const navItems = [
   { title: "Home", url: "/home", icon: IconDashboard },
   { title: "My Presentations", url: "/my-presentations", icon: IconPresentation },
-  { title: "My Layouts", url: "/my-layouts", icon: IconFileText },
-  { title: "Templates", url: "/templates", icon: IconTemplate },
   { title: "Media", url: "/media", icon: IconPhoto },
 ];
 
