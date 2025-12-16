@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { IconPalette, IconBlocks } from "@tabler/icons-react";
+import { IconPalette, IconBlocks, IconPhoto } from "@tabler/icons-react";
 import { ThemePanel } from "./ThemePanel";
 import { BlocksPanel } from "./BlocksPanel";
+import { ImagesPanel } from "./ImagesPanel";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,21 +16,24 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
 }) => {
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
   const [isBlocksPanelOpen, setIsBlocksPanelOpen] = useState(false);
+  const [isImagesPanelOpen, setIsImagesPanelOpen] = useState(false);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
 
   // Close panels when clicking outside
   useEffect(() => {
-    if (isThemePanelOpen || isBlocksPanelOpen) {
+    if (isThemePanelOpen || isBlocksPanelOpen || isImagesPanelOpen) {
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
         if (
           !target.closest('[data-floating-sidebar]') &&
           !target.closest('[data-theme-panel]') &&
-          !target.closest('[data-blocks-panel]')
+          !target.closest('[data-blocks-panel]') &&
+          !target.closest('[data-images-panel]')
         ) {
           setIsThemePanelOpen(false);
           setIsBlocksPanelOpen(false);
+          setIsImagesPanelOpen(false);
         }
       };
 
@@ -38,16 +42,24 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }
-  }, [isThemePanelOpen, isBlocksPanelOpen]);
+  }, [isThemePanelOpen, isBlocksPanelOpen, isImagesPanelOpen]);
 
   const handleToggleThemePanel = () => {
     setIsThemePanelOpen(!isThemePanelOpen);
     setIsBlocksPanelOpen(false);
+    setIsImagesPanelOpen(false);
   };
 
   const handleToggleBlocksPanel = () => {
     setIsBlocksPanelOpen(!isBlocksPanelOpen);
     setIsThemePanelOpen(false);
+    setIsImagesPanelOpen(false);
+  };
+
+  const handleToggleImagesPanel = () => {
+    setIsImagesPanelOpen(!isImagesPanelOpen);
+    setIsThemePanelOpen(false);
+    setIsBlocksPanelOpen(false);
   };
 
   const buttonClass = "p-2.5 rounded-xl transition-all";
@@ -114,6 +126,25 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
             style={{ backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }}
           />
 
+          {/* Images Button */}
+          <button
+            onClick={handleToggleImagesPanel}
+            className={`relative ${buttonClass}`}
+            style={{
+              backgroundColor: isImagesPanelOpen ? `${theme.primary}15` : "transparent",
+              color: isImagesPanelOpen ? theme.primary : (isDark ? "#fff" : "#000"),
+            }}
+            title="Add images"
+          >
+            <IconPhoto size={20} stroke={1.5} />
+          </button>
+
+          {/* Divider */}
+          <div
+            className="mx-2 h-px"
+            style={{ backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }}
+          />
+
           {/* Theme Button */}
           <button
             onClick={handleToggleThemePanel}
@@ -142,6 +173,24 @@ export const FloatingSidebar: React.FC<FloatingSidebarProps> = ({
             <BlocksPanel
               isOpen={isBlocksPanelOpen}
               onClose={() => setIsBlocksPanelOpen(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Images Panel */}
+      <AnimatePresence>
+        {isImagesPanelOpen && (
+          <motion.div
+            data-images-panel
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            className="fixed right-16 top-1/2 -translate-y-1/2 z-50"
+          >
+            <ImagesPanel
+              isOpen={isImagesPanelOpen}
+              onClose={() => setIsImagesPanelOpen(false)}
             />
           </motion.div>
         )}
