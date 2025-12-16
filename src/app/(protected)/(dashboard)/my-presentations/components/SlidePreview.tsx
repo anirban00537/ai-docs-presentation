@@ -29,9 +29,20 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
 
   return (
     <div 
-      className="relative overflow-hidden rounded-xl"
-      style={{ height: `${thumbnailHeight}px` }}
+      className="relative overflow-hidden"
+      style={{ 
+        height: `${thumbnailHeight}px`,
+        borderRadius: "0.75rem 0.75rem 0 0",
+      }}
     >
+      {/* Subtle gradient overlay at top for depth */}
+      <div 
+        className="absolute inset-x-0 top-0 h-8 z-10 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, transparent 100%)",
+        }}
+      />
+      
       <div
         className="absolute top-0 left-0 pointer-events-none"
         style={{

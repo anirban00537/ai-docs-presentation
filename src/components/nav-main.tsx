@@ -27,7 +27,7 @@ export function NavMain({
   return (
     <SidebarGroup>
       <SidebarGroupContent>
-        <SidebarMenu className="space-y-1.5">
+        <SidebarMenu className="space-y-1">
           {items.map((item) => {
             const isActive =
               pathname === item.url || pathname.startsWith(item.url + "/");
@@ -39,32 +39,58 @@ export function NavMain({
                   size="default"
                   isActive={isActive}
                   className={cn(
-                    "group relative h-9 rounded-xl px-3 transition-all duration-200",
-                    "hover:bg-white/45 hover:backdrop-blur-sm",
+                    "group relative h-10 rounded-xl px-3 transition-all duration-200",
+                    "hover:bg-white/50",
                     "active:scale-[0.98]",
-                    isActive &&
-                      "!bg-white/60 font-semibold shadow-sm"
+                    isActive && "!bg-white/65 font-semibold"
                   )}
                   style={isActive ? {
-                    backdropFilter: "blur(12px)",
-                    boxShadow: "0 1px 0 0 rgba(255, 255, 255, 0.8) inset, 0 2px 8px rgba(0, 0, 0, 0.06)"
-                  } : undefined}
+                    backdropFilter: "blur(16px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(16px) saturate(180%)",
+                    boxShadow: `
+                      0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+                      0 -1px 0 0 rgba(0, 0, 0, 0.03) inset,
+                      0 2px 8px rgba(0, 0, 0, 0.06)
+                    `
+                  } : {
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                  }}
                 >
                   <Link
                     href={item.url}
-                    className="flex items-center gap-2.5 w-full"
+                    className="flex items-center gap-3 w-full"
                   >
                     {item.icon && (
-                      <item.icon
+                      <div 
                         className={cn(
-                          "h-4 w-4 transition-all duration-200",
-                          isActive
-                            ? "text-foreground scale-110 drop-shadow-sm"
-                            : "text-muted-foreground/80 group-hover:text-foreground group-hover:scale-105 group-hover:drop-shadow-sm"
+                          "flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-200",
+                          isActive 
+                            ? "bg-primary/15 shadow-sm" 
+                            : "bg-transparent group-hover:bg-white/40"
                         )}
-                      />
+                        style={isActive ? {
+                          boxShadow: "0 2px 6px rgba(139, 92, 246, 0.15)"
+                        } : undefined}
+                      >
+                        <item.icon
+                          className={cn(
+                            "h-4 w-4 transition-all duration-200",
+                            isActive
+                              ? "text-primary"
+                              : "text-foreground/60 group-hover:text-foreground"
+                          )}
+                        />
+                      </div>
                     )}
-                    <span className="text-sm font-medium tracking-tight">
+                    <span 
+                      className={cn(
+                        "text-sm tracking-tight transition-colors duration-200",
+                        isActive 
+                          ? "text-foreground font-semibold" 
+                          : "text-foreground/70 font-medium group-hover:text-foreground"
+                      )}
+                    >
                       {item.title}
                     </span>
                   </Link>

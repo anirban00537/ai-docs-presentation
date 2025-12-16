@@ -67,8 +67,110 @@ export default function MyPresentationsPage() {
   }
 
   return (
-    <div className="flex-1">
-      <div className="w-full px-8 py-8">
+    <div className="relative flex-1 flex flex-col min-h-[calc(100vh-80px)]">
+      {/* === FIXED BACKGROUND LAYER === */}
+      <div 
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
+          zIndex: 0,
+        }}
+      >
+        {/* Soft lavender blob - Top Left */}
+        <div
+          className="absolute"
+          style={{
+            width: "70vw",
+            height: "60vh",
+            top: "-20%",
+            left: "-20%",
+            background: "radial-gradient(circle at center, rgba(196, 181, 253, 0.6) 0%, rgba(196, 181, 253, 0.25) 40%, transparent 70%)",
+            filter: "blur(80px)",
+          }}
+        />
+        
+        {/* Soft sky blue blob - Top Right */}
+        <div
+          className="absolute"
+          style={{
+            width: "60vw",
+            height: "55vh",
+            top: "-15%",
+            right: "-15%",
+            background: "radial-gradient(circle at center, rgba(147, 197, 253, 0.55) 0%, rgba(147, 197, 253, 0.2) 50%, transparent 70%)",
+            filter: "blur(90px)",
+          }}
+        />
+        
+        {/* Soft rose blob - Left */}
+        <div
+          className="absolute"
+          style={{
+            width: "50vw",
+            height: "60vh",
+            top: "20%",
+            left: "-15%",
+            background: "radial-gradient(ellipse at center, rgba(251, 207, 232, 0.6) 0%, rgba(251, 207, 232, 0.2) 50%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
+        />
+        
+        {/* Soft mint blob - Right */}
+        <div
+          className="absolute"
+          style={{
+            width: "55vw",
+            height: "55vh",
+            top: "30%",
+            right: "-10%",
+            background: "radial-gradient(ellipse at center, rgba(167, 243, 208, 0.5) 0%, rgba(167, 243, 208, 0.15) 50%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
+        />
+        
+        {/* Soft peach blob - Bottom Left */}
+        <div
+          className="absolute"
+          style={{
+            width: "60vw",
+            height: "50vh",
+            bottom: "-15%",
+            left: "-10%",
+            background: "radial-gradient(circle at center, rgba(254, 215, 170, 0.55) 0%, rgba(254, 215, 170, 0.15) 50%, transparent 70%)",
+            filter: "blur(90px)",
+          }}
+        />
+        
+        {/* Soft lilac blob - Bottom Right */}
+        <div
+          className="absolute"
+          style={{
+            width: "55vw",
+            height: "50vh",
+            bottom: "-20%",
+            right: "-15%",
+            background: "radial-gradient(circle at center, rgba(221, 214, 254, 0.6) 0%, rgba(196, 181, 253, 0.2) 50%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
+        />
+        
+        {/* Center soft glow */}
+        <div
+          className="absolute"
+          style={{
+            width: "50vw",
+            height: "50vh",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            background: "radial-gradient(circle at center, rgba(255, 255, 255, 0.9) 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+      </div>
+
+      {/* === SCROLLABLE CONTENT LAYER === */}
+      <div className="relative z-10 w-full flex-1 px-8 py-8 overflow-y-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -94,7 +196,7 @@ export default function MyPresentationsPage() {
           >
             <Button
               onClick={() => router.push("/home")}
-              className="gap-2 px-5 h-10 rounded-xl text-sm font-medium"
+              className="gap-2 px-5 h-10 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-[1.02]"
             >
               <IconPlus size={18} />
               New Presentation
@@ -124,7 +226,18 @@ export default function MyPresentationsPage() {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent
+          className="rounded-2xl border-0"
+          style={{
+            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            backdropFilter: "blur(24px) saturate(180%)",
+            WebkitBackdropFilter: "blur(24px) saturate(180%)",
+            boxShadow: `
+              0 1px 0 0 rgba(255, 255, 255, 1) inset,
+              0 25px 50px rgba(0, 0, 0, 0.15)
+            `,
+          }}
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Presentation</AlertDialogTitle>
             <AlertDialogDescription>
@@ -133,10 +246,10 @@ export default function MyPresentationsPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
               disabled={deletePresentationMutation.isPending}
             >
               {deletePresentationMutation.isPending ? "Deleting..." : "Delete"}
