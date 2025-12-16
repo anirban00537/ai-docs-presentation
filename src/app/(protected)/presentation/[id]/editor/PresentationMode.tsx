@@ -114,19 +114,20 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
             </motion.div>
           </div>
 
-          {/* Current Slide */}
+          {/* Current Slide - Full Width */}
           <div
-            className="min-h-screen w-full flex items-center justify-center p-8"
+            className="min-h-screen w-full"
             style={{ fontFamily: `${theme.fontFamily}, sans-serif` }}
           >
             <AnimatePresence mode="wait">
               {slides[currentSlideIndex] && (
                 <motion.div
                   key={currentSlideIndex}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
+                  className="w-full"
                 >
                   <SlideCard
                     slide={slides[currentSlideIndex]}
@@ -138,6 +139,7 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
                     onUpdateColumnWidths={onUpdateColumnWidths}
                     enableDragHints={false}
                     readOnly={true}
+                    fullWidth={true}
                   />
                 </motion.div>
               )}

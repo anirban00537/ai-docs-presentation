@@ -75,6 +75,8 @@ interface SlideCardProps {
   ) => void;
   enableDragHints?: boolean;
   readOnly?: boolean;
+  /** When true, slide takes full width without max-width constraints (for presentation mode) */
+  fullWidth?: boolean;
 }
 
 export const SlideCard: React.FC<SlideCardProps> = ({
@@ -87,6 +89,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
   onUpdateColumnWidths,
   enableDragHints = true,
   readOnly = false,
+  fullWidth = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -94,17 +97,31 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   const dragActive = enableDragHints ? isDragging : false;
 
+  // Dynamic styles based on fullWidth mode
+  const containerStyle: React.CSSProperties = {
+    backgroundColor: theme.cardBackground,
+    fontFamily: getFontFamily(theme.fontFamily || "Inter"),
+    ...(fullWidth
+      ? {
+          // Full-width mode for presentation - no width constraints
+          width: "100%",
+          minHeight: "100vh",
+        }
+      : {
+          // Constrained mode for editor
+          minWidth: `${SLIDE_MAX_WIDTH}px`,
+          maxWidth: `${SLIDE_MAX_WIDTH}px`,
+        }),
+  };
+
   return (
     <div
-      className={`group/slide relative px-8 py-8 transition-all duration-300 ease-out w-full mx-auto rounded-2xl ${
-        !readOnly ? "" : ""
-      }`}
-      style={{
-        backgroundColor: theme.cardBackground,
-        fontFamily: getFontFamily(theme.fontFamily || "Inter"),
-        minWidth: `${SLIDE_MAX_WIDTH}px`,
-        maxWidth: `${SLIDE_MAX_WIDTH}px`,
-      }}
+      className={`group/slide relative transition-all duration-300 ease-out ${
+        fullWidth
+          ? "w-full px-12 md:px-20 lg:px-32 py-12 md:py-16 lg:py-20"
+          : "px-8 py-8 mx-auto rounded-2xl"
+      } ${!readOnly ? "" : ""}`}
+      style={containerStyle}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
