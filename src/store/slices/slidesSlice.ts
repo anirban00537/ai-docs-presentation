@@ -165,9 +165,10 @@ const slidesSlice = createSlice({
         afterBlockId?: string;
         insertIndex?: number;
         blockType?: string;
+        initialContent?: any;
       }>
     ) => {
-      const { slideId, rowId, afterBlockId, insertIndex, blockType } =
+      const { slideId, rowId, afterBlockId, insertIndex, blockType, initialContent } =
         action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
@@ -176,14 +177,14 @@ const slidesSlice = createSlice({
 
       // If row already has 3 blocks, create a new row at the bottom
       if (row.blocks.length >= MAX_BLOCKS_PER_ROW) {
-        const newBlock = createBlockInstance(blockType as any);
+        const newBlock = createBlockInstance(blockType as any, initialContent);
         const newRow = createRow([newBlock]);
         const currentRowIndex = slide.rows.findIndex((r) => r.id === rowId);
         slide.rows.splice(currentRowIndex + 1, 0, newRow);
         return;
       }
 
-      const newBlock = createBlockInstance(blockType as any);
+      const newBlock = createBlockInstance(blockType as any, initialContent);
 
       if (typeof insertIndex === "number") {
         // Explicit index insertion
@@ -249,12 +250,13 @@ const slidesSlice = createSlice({
         columnCount: number;
         insertIndex: number;
         blockType?: string;
+        initialContent?: any;
       }>
     ) => {
-      const { slideId, columnCount, insertIndex, blockType } = action.payload;
+      const { slideId, columnCount, insertIndex, blockType, initialContent } = action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
-      const newRow = createRowWithColumns(columnCount, blockType as any);
+      const newRow = createRowWithColumns(columnCount, blockType as any, initialContent);
       const targetIndex = Math.max(0, Math.min(insertIndex, slide.rows.length));
       slide.rows.splice(targetIndex, 0, newRow);
     },

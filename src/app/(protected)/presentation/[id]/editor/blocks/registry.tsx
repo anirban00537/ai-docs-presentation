@@ -17,6 +17,7 @@ import { TimelineBlock } from "./timeline/TimelineBlock";
 import { TeamCardBlock } from "./team/TeamCardBlock";
 import { PricingCardBlock } from "./pricing/PricingCardBlock";
 import { ImageGalleryBlock } from "./gallery/ImageGalleryBlock";
+import { ImageBlock } from "./image/ImageBlock";
 import { StatsCounterBlock } from "./stats-counter/StatsCounterBlock";
 import { FeatureListBlock } from "./feature-list/FeatureListBlock";
 import { ComparisonTableBlock } from "./comparison-table/ComparisonTableBlock";
@@ -101,6 +102,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: ImageGalleryBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.IMAGE_GALLERY, content),
+  },
+  [BLOCK_TYPES.IMAGE]: {
+    type: BLOCK_TYPES.IMAGE,
+    component: ImageBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.IMAGE, content),
   },
   [BLOCK_TYPES.STATS_COUNTER]: {
     type: BLOCK_TYPES.STATS_COUNTER,

@@ -25,6 +25,7 @@ export interface EditorCommandBus {
     afterBlockId?: string;
     insertIndex?: number;
     blockType?: string;
+    initialContent?: any;
   }) => void;
   addRowAtTop: (params: { slideId: string; columnCount?: number }) => void;
   addRowWithColumns: (params: {
@@ -37,6 +38,7 @@ export interface EditorCommandBus {
     columnCount: number;
     insertIndex: number;
     blockType?: string;
+    initialContent?: any;
   }) => void;
   deleteRow: (params: { slideId: string; rowId: string }) => void;
   moveBlock: (params: {
@@ -70,8 +72,8 @@ export const createEditorCommandBus = (
 ): EditorCommandBus => ({
   updateBlock: ({ slideId, blockId, content }) =>
     dispatch(updateBlockContent({ slideId, blockId, content })),
-  addBlockAfter: ({ slideId, rowId, afterBlockId, insertIndex, blockType }) =>
-    dispatch(addBlockToRow({ slideId, rowId, afterBlockId, insertIndex, blockType })),
+  addBlockAfter: ({ slideId, rowId, afterBlockId, insertIndex, blockType, initialContent }) =>
+    dispatch(addBlockToRow({ slideId, rowId, afterBlockId, insertIndex, blockType, initialContent })),
   addRowAtTop: ({ slideId, columnCount = 1 }) =>
     dispatch(addRowAtTop({ slideId, columnCount })),
   addRowWithColumns: ({ slideId, columnCount, blockType }) =>
@@ -81,9 +83,10 @@ export const createEditorCommandBus = (
     columnCount,
     insertIndex,
     blockType,
+    initialContent,
   }) =>
     dispatch(
-      addRowWithColumnsAtIndex({ slideId, columnCount, insertIndex, blockType })
+      addRowWithColumnsAtIndex({ slideId, columnCount, insertIndex, blockType, initialContent })
     ),
   deleteRow: ({ slideId, rowId }) => dispatch(deleteRow({ slideId, rowId })),
   moveBlock: ({ slideId, sourceRowId, targetRowId, blockId, targetBlockId }) =>

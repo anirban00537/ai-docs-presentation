@@ -8,6 +8,7 @@ export const BLOCK_TYPES = {
   TEAM_CARD: "team-card",
   PRICING_CARD: "pricing-card",
   IMAGE_GALLERY: "image-gallery",
+  IMAGE: "image",
   STATS_COUNTER: "stats-counter",
   FEATURE_LIST: "feature-list",
   COMPARISON_TABLE: "comparison-table",

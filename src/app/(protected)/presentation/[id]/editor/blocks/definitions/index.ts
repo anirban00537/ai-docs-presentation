@@ -15,6 +15,7 @@ export * from "./timeline";
 export * from "./team-card";
 export * from "./pricing-card";
 export * from "./image-gallery";
+export * from "./image";
 export * from "./stats-counter";
 export * from "./feature-list";
 export * from "./comparison-table";
@@ -36,6 +37,7 @@ import type { TimelineContent } from "./timeline";
 import type { TeamCardContent } from "./team-card";
 import type { PricingCardContent } from "./pricing-card";
 import type { ImageGalleryContent } from "./image-gallery";
+import type { ImageContent } from "./image";
 import type { StatsCounterContent } from "./stats-counter";
 import type { FeatureListContent } from "./feature-list";
 import type { ComparisonTableContent } from "./comparison-table";
@@ -62,6 +64,7 @@ import { createTimelineContent } from "./timeline";
 import { createTeamCardContent } from "./team-card";
 import { createPricingCardContent } from "./pricing-card";
 import { createImageGalleryContent } from "./image-gallery";
+import { createImageContent } from "./image";
 import { createStatsCounterContent } from "./stats-counter";
 import { createFeatureListContent } from "./feature-list";
 import { createComparisonTableContent } from "./comparison-table";
@@ -87,6 +90,7 @@ import { normalizeTimelineContent } from "./timeline";
 import { normalizeTeamCardContent } from "./team-card";
 import { normalizePricingCardContent } from "./pricing-card";
 import { normalizeImageGalleryContent } from "./image-gallery";
+import { normalizeImageContent } from "./image";
 import { normalizeStatsCounterContent } from "./stats-counter";
 import { normalizeFeatureListContent } from "./feature-list";
 import { normalizeComparisonTableContent } from "./comparison-table";
@@ -112,6 +116,7 @@ export type BlockContent =
   | TeamCardContent
   | PricingCardContent
   | ImageGalleryContent
+  | ImageContent
   | StatsCounterContent
   | FeatureListContent
   | ComparisonTableContent
@@ -147,6 +152,8 @@ export const createBlockContentForType = (
       return createPricingCardContent();
     case BLOCK_TYPES.IMAGE_GALLERY:
       return createImageGalleryContent();
+    case BLOCK_TYPES.IMAGE:
+      return createImageContent();
     case BLOCK_TYPES.STATS_COUNTER:
       return createStatsCounterContent();
     case BLOCK_TYPES.FEATURE_LIST:
@@ -202,6 +209,8 @@ export const normalizeBlockContent = (
       return normalizePricingCardContent(content);
     case BLOCK_TYPES.IMAGE_GALLERY:
       return normalizeImageGalleryContent(content);
+    case BLOCK_TYPES.IMAGE:
+      return normalizeImageContent(content);
     case BLOCK_TYPES.STATS_COUNTER:
       return normalizeStatsCounterContent(content);
     case BLOCK_TYPES.FEATURE_LIST:

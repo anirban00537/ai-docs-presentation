@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useRef } from "react";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { X, Search, Upload, Loader2, Heart, ExternalLink } from "lucide-react";
@@ -19,6 +21,74 @@ import {
   useTrackUnsplashDownload,
 } from "@/hooks/use-images";
 import type { UnsplashPhoto, MediaItem } from "@/services/images";
+
+// Draggable Image Item Component
+interface DraggableImageItemProps {
+  id: string;
+  imageUrl: string;
+  thumbnailUrl: string;
+  alt: string;
+  attribution?: { name: string; link: string };
+  authorName?: string;
+  onClick: () => void;
+}
+
+const DraggableImageItem: React.FC<DraggableImageItemProps> = ({
+  id,
+  imageUrl,
+  thumbnailUrl,
+  alt,
+  attribution,
+  authorName,
+  onClick,
+}) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `image-option-${id}`,
+    data: {
+      type: "image-option",
+      imageUrl,
+      imageAlt: alt,
+      attribution,
+    },
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={onClick}
+      className="relative aspect-square rounded-lg overflow-hidden group cursor-grab active:cursor-grabbing"
+    >
+      <img
+        src={thumbnailUrl}
+        alt={alt}
+        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+        loading="lazy"
+        draggable={false}
+      />
+      {/* Hover overlay */}
+      {authorName && (
+        <div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1.5 pointer-events-none"
+          style={{
+            background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)",
+          }}
+        >
+          <span className="text-white text-[9px] truncate">
+            {authorName}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface ImagesPanelProps {
   isOpen: boolean;
@@ -343,33 +413,20 @@ export const ImagesPanel: React.FC<ImagesPanelProps> = ({
                       </div>
                     ) : (
                       <div className="grid grid-cols-3 gap-1.5">
-                        {unsplashPhotos.map((photo, index) => (
-                          <motion.button
+                        {unsplashPhotos.map((photo) => (
+                          <DraggableImageItem
                             key={photo.id}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.02 }}
+                            id={photo.id}
+                            imageUrl={photo.urls.regular}
+                            thumbnailUrl={photo.urls.small}
+                            alt={photo.altDescription || "Unsplash photo"}
+                            attribution={{
+                              name: photo.user.name,
+                              link: `https://unsplash.com/@${photo.user.username}?utm_source=butterfast&utm_medium=referral`,
+                            }}
+                            authorName={photo.user.name}
                             onClick={() => handleImageSelect(photo)}
-                            className="relative aspect-square rounded-lg overflow-hidden group"
-                          >
-                            <img
-                              src={photo.urls.small}
-                              alt={photo.altDescription || "Unsplash photo"}
-                              className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                              loading="lazy"
-                            />
-                            {/* Hover overlay */}
-                            <div 
-                              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1.5"
-                              style={{
-                                background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)",
-                              }}
-                            >
-                              <span className="text-white text-[9px] truncate">
-                                {photo.user.name}
-                              </span>
-                            </div>
-                          </motion.button>
+                          />
                         ))}
                       </div>
                     )}
@@ -395,31 +452,25 @@ export const ImagesPanel: React.FC<ImagesPanelProps> = ({
                       </div>
                     ) : (
                       <div className="grid grid-cols-3 gap-1.5">
-                        {userPhotos.map((media, index) => (
-                          <motion.button
-                            key={media.id}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.02 }}
-                            onClick={() => handleImageSelect(media)}
-                            className="relative aspect-square rounded-lg overflow-hidden group"
-                          >
-                            <img
-                              src={media.url}
+                        {userPhotos.map((media) => (
+                          <div key={media.id} className="relative">
+                            <DraggableImageItem
+                              id={media.id}
+                              imageUrl={media.url}
+                              thumbnailUrl={media.url}
                               alt={media.name}
-                              className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                              loading="lazy"
+                              onClick={() => handleImageSelect(media)}
                             />
                             {/* Favorite indicator */}
                             {media.isFavorite && (
-                              <div className="absolute top-1.5 right-1.5">
+                              <div className="absolute top-1.5 right-1.5 pointer-events-none">
                                 <Heart 
                                   size={12} 
                                   className="text-red-500 fill-red-500"
                                 />
                               </div>
                             )}
-                          </motion.button>
+                          </div>
                         ))}
                       </div>
                     )}

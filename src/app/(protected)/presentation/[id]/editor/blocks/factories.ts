@@ -8,11 +8,12 @@ import {
 } from "./definitions";
 
 export const createBlockInstance = (
-  type: BlockType | undefined = BLOCK_TYPES.PROSEMIRROR
+  type: BlockType | undefined = BLOCK_TYPES.PROSEMIRROR,
+  content?: any
 ): Block => ({
   id: nanoid(),
   type,
-  content: createBlockContentForType(type),
+  content: content ?? createBlockContentForType(type),
 });
 
 export const createRow = (blocks?: Block[]): Row => {
@@ -28,12 +29,13 @@ export const createRow = (blocks?: Block[]): Row => {
 
 export const createRowWithColumns = (
   columnCount: number,
-  blockType?: BlockType
+  blockType?: BlockType,
+  initialContent?: any
 ): Row => {
   const actualCount = Math.min(columnCount, MAX_BLOCKS_PER_ROW);
   const blocks: Block[] = [];
   for (let i = 0; i < actualCount; i++) {
-    blocks.push(createBlockInstance(blockType));
+    blocks.push(createBlockInstance(blockType, initialContent));
   }
   return createRow(blocks);
 };

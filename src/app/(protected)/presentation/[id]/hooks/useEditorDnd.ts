@@ -25,6 +25,11 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
   const [draggingBlockType, setDraggingBlockType] = useState<string | null>(
     null
   );
+  const [draggingImageData, setDraggingImageData] = useState<{
+    url: string;
+    alt?: string;
+    attribution?: { name: string; link: string };
+  } | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -46,6 +51,17 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
       return;
     }
 
+    if (data?.type === "image-option") {
+      setIsBlockDragging(true);
+      setDraggingBlockType("image"); // Use the IMAGE block type
+      setDraggingImageData({
+        url: data.imageUrl,
+        alt: data.imageAlt,
+        attribution: data.attribution,
+      });
+      return;
+    }
+
     const block = data?.block as Block;
     if (block) {
       setActiveBlock(block);
@@ -59,12 +75,21 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
 
       if (!over) return;
 
-      // Block-type dragging (from toolbar)
+      // Block-type dragging (from toolbar or images panel)
       if (isBlockDragging) {
         setIsBlockDragging(false);
 
         if (over && draggingBlockType) {
           const overData = over.data.current;
+          
+          // Build initialContent for image blocks
+          const initialContent = draggingImageData ? {
+            url: draggingImageData.url,
+            alt: draggingImageData.alt || "",
+            caption: "",
+            objectFit: "cover",
+            attribution: draggingImageData.attribution,
+          } : undefined;
 
           if (overData?.type === "row-insert") {
             const slideId = overData.slideId as string;
@@ -74,8 +99,10 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
               columnCount: 1,
               insertIndex,
               blockType: draggingBlockType,
+              initialContent,
             });
             setDraggingBlockType(null);
+            setDraggingImageData(null);
             return;
           }
 
@@ -89,11 +116,13 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
               rowId,
               insertIndex, // Use the new support for direct index insertion
               blockType: draggingBlockType,
+              initialContent,
             });
           }
         }
 
         setDraggingBlockType(null);
+        setDraggingImageData(null);
         return;
       }
 
@@ -179,7 +208,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
       }
 
     },
-    [commandBus, draggingBlockType, isBlockDragging]
+    [commandBus, draggingBlockType, draggingImageData, isBlockDragging]
   );
 
   const customCollisionDetection: DndContextProps["collisionDetection"] =
