@@ -1,14 +1,18 @@
 "use client";
 
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, { useCallback, useRef, useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useOutline, useUpdateOutline } from "@/hooks/use-outline";
+import { useAdminThemesList } from "@/hooks/use-themes";
+import { updatePresentation } from "@/services/presentation";
 import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
-import { IconFileText, IconSparkles, IconArrowLeft, IconCheck, IconLoader2 } from "@tabler/icons-react";
+import { IconFileText, IconSparkles, IconArrowLeft, IconCheck, IconLoader2, IconPalette, IconChevronDown } from "@tabler/icons-react";
 import type { OutlineResponse } from "@/services/presentation";
+import type { ThemeResponse } from "@/services/themes";
+import { cn } from "@/lib/utils";
 
 export default function OutlinePage() {
   const params = useParams();
@@ -22,6 +26,16 @@ export default function OutlinePage() {
     error: outlineError,
   } = useOutline(outlineId);
   const updateOutlineMutation = useUpdateOutline();
+
+  // Fetch admin themes
+  const { data: themesResponse, isLoading: themesLoading } = useAdminThemesList();
+  const themes = useMemo(() => themesResponse?.data?.list || [], [themesResponse]);
+
+  // Theme selection state
+  const [selectedTheme, setSelectedTheme] = useState<ThemeResponse | null>(null);
+  const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
+  const [themeSaveStatus, setThemeSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const hasAutoSelectedTheme = useRef(false);
 
   const outline = outlineResponse?.data || null;
   // Only show error if there's a query error or API returned failure
@@ -42,6 +56,71 @@ export default function OutlinePage() {
     }
     return null;
   }, [outline?.title, outline?.outlines]);
+
+  // Get presentationId early for theme saving
+  const presentationId =
+    outlineResponse?.data?.presentationId || outline?.presentationId;
+
+  // Auto-select random theme on page load
+  useEffect(() => {
+    if (
+      !hasAutoSelectedTheme.current &&
+      themes.length > 0 &&
+      presentationId &&
+      !selectedTheme
+    ) {
+      hasAutoSelectedTheme.current = true;
+      const randomIndex = Math.floor(Math.random() * themes.length);
+      const randomTheme = themes[randomIndex];
+      setSelectedTheme(randomTheme);
+      
+      // Auto-save the random theme to presentation
+      saveThemeToPresentation(randomTheme);
+    }
+  }, [themes, presentationId, selectedTheme]);
+
+  // Save theme to presentation
+  const saveThemeToPresentation = async (theme: ThemeResponse) => {
+    if (!presentationId) return;
+    
+    setThemeSaveStatus('saving');
+    try {
+      await updatePresentation(presentationId, {
+        globalTheme: theme.themeData,
+      });
+      setThemeSaveStatus('saved');
+      setTimeout(() => setThemeSaveStatus('idle'), 2000);
+    } catch (err) {
+      console.error("Failed to save theme:", err);
+      setThemeSaveStatus('idle');
+    }
+  };
+
+  // Handle theme selection
+  const handleThemeSelect = (theme: ThemeResponse) => {
+    setSelectedTheme(theme);
+    setThemeDropdownOpen(false);
+    saveThemeToPresentation(theme);
+  };
+
+  // Ref for theme dropdown to handle click outside
+  const themeDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (themeDropdownRef.current && !themeDropdownRef.current.contains(event.target as Node)) {
+        setThemeDropdownOpen(false);
+      }
+    };
+    if (themeDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [themeDropdownOpen]);
+
   // Auto-save state
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -98,9 +177,7 @@ export default function OutlinePage() {
     };
   }, []);
 
-  // Get presentationId for Link href
-  const presentationId =
-    outlineResponse?.data?.presentationId || outline?.presentationId;
+  // Build presentation URL for navigation
   const presentationUrl =
     presentationId && outlineId
       ? `/presentation/${presentationId}?outlineId=${outlineId}`
@@ -219,6 +296,168 @@ export default function OutlinePage() {
               </motion.div>
             )}
           </AnimatePresence>
+        </motion.div>
+
+        {/* Theme Selector */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="relative"
+        >
+          <div
+            className="relative rounded-2xl p-4 z-20"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.35)",
+              backdropFilter: "blur(24px) saturate(180%)",
+              WebkitBackdropFilter: "blur(24px) saturate(180%)",
+              boxShadow: `
+                0 1px 0 0 rgba(255, 255, 255, 1) inset,
+                0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+                0 4px 16px rgba(0, 0, 0, 0.06)
+              `,
+            }}
+          >
+            {/* Glass shine overlay */}
+            <div 
+              className="absolute inset-0 pointer-events-none rounded-2xl"
+              style={{
+                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
+              }}
+            />
+            
+            <div className="relative flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div 
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                  style={{
+                    backgroundColor: "rgba(139, 92, 246, 0.15)",
+                    boxShadow: "0 2px 8px rgba(139, 92, 246, 0.15)",
+                  }}
+                >
+                  <IconPalette size={20} style={{ color: "#8B5CF6" }} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">Presentation Theme</h3>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedTheme ? selectedTheme.name : "Select a theme for your slides"}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Theme dropdown */}
+              <div className="relative" ref={themeDropdownRef}>
+                <button
+                  onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
+                  disabled={themesLoading}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200",
+                    "bg-white/50 hover:bg-white/70 border border-white/60",
+                    "text-sm font-medium text-foreground"
+                  )}
+                  style={{
+                    backdropFilter: "blur(12px)",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                  }}
+                >
+                  {themesLoading ? (
+                    <IconLoader2 size={16} className="animate-spin" />
+                  ) : selectedTheme ? (
+                    <>
+                      {/* Theme color preview */}
+                      <div className="flex gap-0.5">
+                        <div 
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: selectedTheme.themeData?.primary || "#8B5CF6" }}
+                        />
+                        <div 
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: selectedTheme.themeData?.cardBackground || "#ffffff" }}
+                        />
+                      </div>
+                      <span className="max-w-[100px] truncate">{selectedTheme.name}</span>
+                    </>
+                  ) : (
+                    <span>Choose theme</span>
+                  )}
+                  <IconChevronDown 
+                    size={14} 
+                    className={cn(
+                      "transition-transform duration-200",
+                      themeDropdownOpen && "rotate-180"
+                    )}
+                  />
+                </button>
+                
+                {/* Dropdown menu */}
+                <AnimatePresence>
+                  {themeDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-full mt-2 w-64 max-h-80 overflow-y-auto rounded-xl z-50"
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        backdropFilter: "blur(24px) saturate(180%)",
+                        WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.4) inset",
+                      }}
+                    >
+                      <div className="p-2 space-y-1">
+                        {themes.map((theme) => (
+                          <button
+                            key={theme.id}
+                            onClick={() => handleThemeSelect(theme)}
+                            className={cn(
+                              "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150",
+                              "text-left hover:bg-white/70",
+                              selectedTheme?.id === theme.id && "bg-primary/10"
+                            )}
+                          >
+                            {/* Theme color swatches */}
+                            <div className="flex gap-0.5 shrink-0">
+                              <div 
+                                className="w-4 h-4 rounded-full border border-white/50"
+                                style={{ backgroundColor: theme.themeData?.primary || "#8B5CF6" }}
+                              />
+                              <div 
+                                className="w-4 h-4 rounded-full border border-black/5"
+                                style={{ backgroundColor: theme.themeData?.cardBackground || "#ffffff" }}
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className={cn(
+                                "text-sm font-medium truncate",
+                                selectedTheme?.id === theme.id ? "text-primary" : "text-foreground"
+                              )}>
+                                {theme.name}
+                              </p>
+                              {theme.description && (
+                                <p className="text-xs text-muted-foreground truncate">
+                                  {theme.description}
+                                </p>
+                              )}
+                            </div>
+                            {selectedTheme?.id === theme.id && (
+                              <IconCheck size={14} className="text-primary shrink-0" />
+                            )}
+                          </button>
+                        ))}
+                        {themes.length === 0 && !themesLoading && (
+                          <p className="text-sm text-muted-foreground text-center py-4">
+                            No themes available
+                          </p>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              
+            </div>
+          </div>
         </motion.div>
 
         {/* Prompt Display Box */}
