@@ -12,6 +12,7 @@ interface ImageGalleryBlockProps {
   onUpdate: (content: ImageGalleryContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
   isEditable?: boolean;
 }
 

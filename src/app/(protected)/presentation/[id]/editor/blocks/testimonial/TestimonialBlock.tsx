@@ -23,6 +23,7 @@ interface TestimonialBlockProps {
   onUpdate: (content: TestimonialContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
@@ -30,6 +31,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
   onUpdate,
   theme,
   placeholder,
+  readOnly = false,
 }) => {
   const content =
     (block.content as TestimonialContent) ?? createTestimonialContent();
@@ -140,6 +142,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
             placeholder={placeholder ?? "Add a testimonial..."}
             className="text-lg italic font-medium leading-relaxed opacity-80"
             theme={theme}
+            readOnly={readOnly}
           />
         </div>
 
@@ -148,7 +151,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
           className="relative z-10 flex items-center gap-3 pt-4"
           style={{ borderTop: `1px solid ${theme.primary}10` }}
         >
-          <div className="shrink-0 cursor-pointer" onClick={handleOpenEdit}>
+          <div className={`shrink-0 ${!readOnly ? 'cursor-pointer' : ''}`} onClick={!readOnly ? handleOpenEdit : undefined}>
             {avatar ? (
               <img
                 src={avatar}
@@ -181,6 +184,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
               placeholder="Name"
               className="text-sm font-semibold"
               theme={theme}
+              readOnly={readOnly}
             />
             <ProseMirrorEditor
               key={`${block.id}-role`}
@@ -190,6 +194,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
               placeholder="Role"
               className="text-[11px] font-medium uppercase tracking-wide opacity-50"
               theme={theme}
+              readOnly={readOnly}
             />
           </div>
         </div>

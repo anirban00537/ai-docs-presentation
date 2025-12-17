@@ -167,23 +167,23 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   return (
     <div
       ref={(node) => {
-        setNodeRef(node);
+        if (!readOnly) setNodeRef(node);
         (blockRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
       }}
-      style={style}
+      style={!readOnly ? style : {}}
       className={`group/block relative min-w-0 h-full w-full flex flex-col ${
-        isFocused ? "z-20" : ""
+        !readOnly && isFocused ? "z-20" : ""
       }`}
-      onClick={handleBlockClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onClick={!readOnly ? handleBlockClick : undefined}
+      onMouseEnter={!readOnly ? () => setIsHovered(true) : undefined}
+      onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
     >
       <div
         className={`relative p-2 transition-all h-full w-full flex flex-col flex-1 rounded-xl ${
-          isDragging ? "opacity-50" : ""
+          isDragging && !readOnly ? "opacity-50" : ""
         }`}
         style={{
-          outline: isFocused ? `2px solid ${theme.primary}` : "none",
+          outline: !readOnly && isFocused ? `2px solid ${theme.primary}` : "none",
           outlineOffset: "1px",
         }}
       >

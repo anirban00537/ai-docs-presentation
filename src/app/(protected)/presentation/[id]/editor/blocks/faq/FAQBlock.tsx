@@ -29,12 +29,14 @@ interface FAQBlockProps {
   onUpdate: (content: FAQContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const FAQBlock: React.FC<FAQBlockProps> = ({
   block,
   onUpdate,
   theme,
+  readOnly = false,
 }) => {
   const content = (block.content as FAQContent) ?? createFAQContent();
   const { items, style } = content;
@@ -110,7 +112,7 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
   };
 
   return (
-    <BlockWrapper onEdit={handleOpenEdit} onAdd={addItem} theme={theme}>
+    <BlockWrapper onEdit={!readOnly ? handleOpenEdit : undefined} onAdd={!readOnly ? addItem : undefined} theme={theme} readOnly={readOnly}>
       <div className="w-full flex flex-col gap-2">
         {items.map((item, index) => {
           const isExpanded = expandedItems[index];
@@ -137,6 +139,7 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
                     placeholder="Question?"
                     className="font-medium text-base"
                     theme={theme}
+                    readOnly={readOnly}
                   />
                 </div>
                 <motion.div
@@ -170,6 +173,7 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
                         placeholder="Answer..."
                         className="text-sm opacity-70 leading-relaxed"
                         theme={theme}
+                        readOnly={readOnly}
                       />
                     </div>
                   </motion.div>
@@ -177,16 +181,18 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
               </AnimatePresence>
 
               {/* Delete button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeItem(index);
-                }}
-                className="absolute top-4 right-12 z-10 opacity-0 group-hover/item:opacity-100 p-1.5 rounded-lg transition-all hover:bg-red-500/10"
-                style={{ color: "#ef4444" }}
-              >
-                <IconTrash size={14} />
-              </button>
+              {!readOnly && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeItem(index);
+                  }}
+                  className="absolute top-4 right-12 z-10 opacity-0 group-hover/item:opacity-100 p-1.5 rounded-lg transition-all hover:bg-red-500/10"
+                  style={{ color: "#ef4444" }}
+                >
+                  <IconTrash size={14} />
+                </button>
+              )}
             </div>
           );
         })}

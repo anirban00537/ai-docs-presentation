@@ -26,6 +26,7 @@ interface PricingCardBlockProps {
   onUpdate: (content: PricingCardContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
   isEditable?: boolean;
 }
 
@@ -34,6 +35,7 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   onUpdate,
   theme,
   isEditable = true,
+  readOnly = false,
 }) => {
   const content =
     (block.content as PricingCardContent) || createPricingCardContent();
@@ -112,10 +114,11 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
 
   return (
     <BlockWrapper
-      onEdit={handleOpenEdit}
-      onAdd={addFeature}
+      onEdit={!readOnly ? handleOpenEdit : undefined}
+      onAdd={!readOnly ? addFeature : undefined}
       className="h-full"
       theme={theme}
+      readOnly={readOnly}
     >
       <div
         className={`w-full h-full flex flex-col rounded-2xl p-6 relative transition-all ${
@@ -152,6 +155,8 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
               onChange={handlePlanNameChange}
               placeholder="Plan Name"
               className="text-sm font-medium mb-1 text-center uppercase tracking-wide"
+              theme={theme}
+              readOnly={readOnly}
             />
           </div>
           <div style={{ color: theme.headingColor }}>
@@ -162,6 +167,8 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
               onChange={handlePriceChange}
               placeholder="$0/mo"
               className="text-3xl font-bold text-center"
+              theme={theme}
+              readOnly={readOnly}
             />
           </div>
         </div>
@@ -174,8 +181,8 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
               className="flex items-start gap-3 group/feature relative"
             >
               <button
-                onClick={() => toggleFeature(index)}
-                className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all"
+                onClick={!readOnly ? () => toggleFeature(index) : undefined}
+                className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all ${!readOnly ? 'cursor-pointer' : ''}`}
                 style={{
                   backgroundColor: feature.included
                     ? `${theme.primary}15`
@@ -201,16 +208,20 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
                   className={`text-sm ${
                     !feature.included && "line-through opacity-40"
                   }`}
+                  theme={theme}
+                  readOnly={readOnly}
                 />
               </div>
-              <button
-                onClick={() => removeFeature(index)}
-                className="opacity-0 group-hover/feature:opacity-100 p-1 rounded-lg transition-all hover:bg-red-500/10"
-                style={{ color: "#ef4444" }}
-                title="Remove Feature"
-              >
-                <IconTrash size={12} />
-              </button>
+              {!readOnly && (
+                <button
+                  onClick={() => removeFeature(index)}
+                  className="opacity-0 group-hover/feature:opacity-100 p-1 rounded-lg transition-all hover:bg-red-500/10"
+                  style={{ color: "#ef4444" }}
+                  title="Remove Feature"
+                >
+                  <IconTrash size={12} />
+                </button>
+              )}
             </div>
           ))}
         </div>

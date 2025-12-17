@@ -38,6 +38,7 @@ interface StatsCounterBlockProps {
   onUpdate: (content: StatsCounterContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({

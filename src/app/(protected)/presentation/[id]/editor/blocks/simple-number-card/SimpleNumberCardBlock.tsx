@@ -11,6 +11,7 @@ interface SimpleNumberCardBlockProps {
   onUpdate: (content: SimpleNumberCardContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({

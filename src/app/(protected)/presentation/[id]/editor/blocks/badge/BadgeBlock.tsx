@@ -34,12 +34,14 @@ interface BadgeBlockProps {
   onUpdate: (content: BadgeContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   block,
   onUpdate,
   theme,
+  readOnly = false,
 }) => {
   const content = (block.content as BadgeContent) ?? createBadgeContent();
   const { badges, layout } = content;
@@ -116,7 +118,7 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
     layout === "grid" ? "grid grid-cols-2 gap-4" : "flex flex-col gap-3";
 
   return (
-    <BlockWrapper onEdit={handleOpenEdit} onAdd={addBadge} theme={theme}>
+    <BlockWrapper onEdit={!readOnly ? handleOpenEdit : undefined} onAdd={!readOnly ? addBadge : undefined} theme={theme} readOnly={readOnly}>
       <div className={`${gridClass} w-full`}>
         {badges.map((badge, index) => (
           <div
@@ -127,29 +129,40 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
             }}
           >
             {/* Delete button */}
-            <button
-              onClick={() => removeBadge(index)}
-              className="absolute top-3 right-3 p-1.5 rounded-lg opacity-0 group-hover/badge:opacity-100 transition-all hover:bg-red-500/10"
-              style={{ color: "#ef4444" }}
-            >
-              <IconTrash size={14} />
-            </button>
+            {!readOnly && (
+              <button
+                onClick={() => removeBadge(index)}
+                className="absolute top-3 right-3 p-1.5 rounded-lg opacity-0 group-hover/badge:opacity-100 transition-all hover:bg-red-500/10"
+                style={{ color: "#ef4444" }}
+              >
+                <IconTrash size={14} />
+              </button>
+            )}
 
             {/* Icon */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-105 cursor-pointer"
-                  style={{ backgroundColor: `${theme.primary}15` }}
-                  title="Change icon"
-                >
-                  {badge.icon || "🏆"}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 border-none shadow-xl">
-                <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
-              </PopoverContent>
-            </Popover>
+            {!readOnly ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-105 cursor-pointer"
+                    style={{ backgroundColor: `${theme.primary}15` }}
+                    title="Change icon"
+                  >
+                    {badge.icon || "🏆"}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 border-none shadow-xl">
+                  <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <div
+                className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+                style={{ backgroundColor: `${theme.primary}15` }}
+              >
+                {badge.icon || "🏆"}
+              </div>
+            )}
 
             {/* Content */}
             <div className="flex-1 min-w-0 py-0.5">
@@ -161,6 +174,8 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
                   onChange={(newContent) => handleTitleChange(index, newContent)}
                   placeholder="Award Title"
                   className="text-base font-semibold leading-tight"
+                  theme={theme}
+                  readOnly={readOnly}
                 />
               </div>
               {badge.description && (

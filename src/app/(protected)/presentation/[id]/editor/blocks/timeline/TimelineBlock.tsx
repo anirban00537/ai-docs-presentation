@@ -15,6 +15,7 @@ interface TimelineBlockProps {
   onUpdate: (content: TimelineContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const TimelineBlock: React.FC<TimelineBlockProps> = ({
@@ -22,6 +23,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   onUpdate,
   theme,
   placeholder,
+  readOnly = false,
 }) => {
   const content = block.content as TimelineContent;
   const steps = content?.steps ?? createTimelineContent().steps;
@@ -88,7 +90,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   }, [content, onUpdate, steps]);
 
   return (
-    <BlockWrapper onAdd={addStep} theme={theme}>
+    <BlockWrapper onAdd={!readOnly ? addStep : undefined} theme={theme} readOnly={readOnly}>
       <div className="w-full h-full flex flex-col py-2">
         {/* Optional Title */}
         {title && (
@@ -101,6 +103,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
               placeholder="Timeline title"
               className="text-xl font-bold tracking-tight"
               theme={theme}
+              readOnly={readOnly}
             />
           </div>
         )}
@@ -127,6 +130,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
                 onTitleChange={handleStepTitleChange}
                 onDescriptionChange={handleStepDescriptionChange}
                 onIconChange={handleStepIconChange}
+                readOnly={readOnly}
               />
             ))}
           </div>

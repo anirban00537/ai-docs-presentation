@@ -40,6 +40,7 @@ interface SocialProofBlockProps {
   onUpdate: (content: SocialProofContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 const platformIcons = {

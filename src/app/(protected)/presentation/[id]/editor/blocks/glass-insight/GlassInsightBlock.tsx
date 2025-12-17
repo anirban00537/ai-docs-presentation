@@ -17,6 +17,7 @@ interface GlassInsightBlockProps {
   onUpdate: (content: GlassInsightContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
@@ -24,6 +25,7 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
   onUpdate,
   theme,
   placeholder,
+  readOnly = false,
 }) => {
   const content = block.content as GlassInsightContent;
   const icon = content?.icon ?? "💡";
@@ -49,27 +51,36 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
 
   return (
     <div
-      className="group relative p-8 rounded-2xl h-full w-full overflow-hidden transition-all"
+      className="relative p-8 rounded-2xl h-full w-full overflow-hidden transition-all"
       style={{
         background: `linear-gradient(135deg, ${theme.primary}12 0%, ${theme.primary}05 100%)`,
         backdropFilter: "blur(12px)",
       }}
     >
       {/* Floating Icon */}
-      <Popover>
-        <PopoverTrigger asChild>
-          <button
-            className="absolute top-6 right-6 text-5xl transition-all hover:scale-110 cursor-pointer outline-none z-20"
-            style={{ opacity: 0.7 }}
-            title="Change icon"
-          >
-            {icon}
-          </button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 border-none shadow-xl">
-          <EmojiPicker onEmojiClick={handleIconChange} />
-        </PopoverContent>
-      </Popover>
+      {!readOnly ? (
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              className="absolute top-6 right-6 text-5xl transition-all hover:scale-110 cursor-pointer outline-none z-20"
+              style={{ opacity: 0.7 }}
+              title="Change icon"
+            >
+              {icon}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0 border-none shadow-xl">
+            <EmojiPicker onEmojiClick={handleIconChange} />
+          </PopoverContent>
+        </Popover>
+      ) : (
+        <div
+          className="absolute top-6 right-6 text-5xl z-20"
+          style={{ opacity: 0.7 }}
+        >
+          {icon}
+        </div>
+      )}
 
       {/* Content Area */}
       <div className="relative z-10 flex flex-col h-full justify-center">
@@ -85,6 +96,7 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
           placeholder={placeholder ?? "Type your insight..."}
           className="text-xl font-medium leading-relaxed opacity-80"
           theme={theme}
+          readOnly={readOnly}
         />
       </div>
 

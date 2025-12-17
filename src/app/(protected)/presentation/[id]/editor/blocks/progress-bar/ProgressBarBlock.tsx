@@ -26,6 +26,7 @@ interface ProgressBarBlockProps {
   onUpdate: (content: ProgressBarContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({

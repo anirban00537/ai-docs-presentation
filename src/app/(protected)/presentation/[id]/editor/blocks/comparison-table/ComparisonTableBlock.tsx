@@ -14,6 +14,7 @@ interface ComparisonTableBlockProps {
   onUpdate: (content: ComparisonTableContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({

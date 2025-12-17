@@ -6,12 +6,14 @@ interface SpacerBlockProps {
   block: Block;
   onUpdate: (content: SpacerContent) => void;
   theme: Theme;
+  readOnly?: boolean;
 }
 
 export const SpacerBlock: React.FC<SpacerBlockProps> = ({
   block,
   onUpdate,
   theme,
+  readOnly = false,
 }) => {
   const content = block.content as SpacerContent;
   const { height } = content;
@@ -19,6 +21,7 @@ export const SpacerBlock: React.FC<SpacerBlockProps> = ({
 
   const handleMouseDown = React.useCallback(
     (e: React.MouseEvent) => {
+      if (readOnly) return;
       e.preventDefault();
       setIsResizing(true);
       const startY = e.clientY;
@@ -39,8 +42,18 @@ export const SpacerBlock: React.FC<SpacerBlockProps> = ({
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
     },
-    [height, content, onUpdate]
+    [height, content, onUpdate, readOnly]
   );
+
+  // In readOnly mode, just show the spacer without any interactive elements
+  if (readOnly) {
+    return (
+      <div
+        className="w-full"
+        style={{ height }}
+      />
+    );
+  }
 
   return (
     <div

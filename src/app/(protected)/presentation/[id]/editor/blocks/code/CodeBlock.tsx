@@ -27,6 +27,7 @@ interface CodeBlockProps {
   onUpdate: (content: CodeContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 const languages = [

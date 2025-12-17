@@ -131,10 +131,10 @@ export const SlideCard: React.FC<SlideCardProps> = ({
         fullWidth
           ? "w-full px-12 md:px-20 lg:px-32 py-16 md:py-24 lg:py-32 flex flex-col justify-center"
           : "px-8 py-8 mx-auto rounded-2xl"
-      } ${!readOnly ? "" : ""}`}
+      }`}
       style={containerStyle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={!readOnly ? () => setIsHovered(true) : undefined}
+      onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
     >
       {enableDragHints && !readOnly && (
         <DragStateBridge onDragChange={setIsDragging} />

@@ -8,6 +8,7 @@ interface QuoteBlockProps {
   onUpdate: (content: QuoteContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const QuoteBlock: React.FC<QuoteBlockProps> = ({
@@ -15,6 +16,7 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
   onUpdate,
   theme,
   placeholder,
+  readOnly = false,
 }) => {
   const content = block.content as QuoteContent;
   const style = content?.style ?? "centered";
@@ -80,6 +82,7 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
           placeholder={placeholder ?? "Add an inspiring quote..."}
           className="text-xl font-medium italic opacity-80 leading-relaxed"
           theme={theme}
+          readOnly={readOnly}
         />
       </div>
 
@@ -103,6 +106,7 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
           placeholder="Author name"
           className="text-xs font-medium tracking-wide uppercase opacity-50"
           theme={theme}
+          readOnly={readOnly}
         />
         {isCentered && (
           <div

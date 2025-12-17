@@ -18,6 +18,7 @@ interface TimelineStepProps {
   onTitleChange: (index: number, newDoc: any) => void;
   onDescriptionChange: (index: number, newDoc: any) => void;
   onIconChange: (index: number, icon: string) => void;
+  readOnly?: boolean;
 }
 
 export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
@@ -28,6 +29,7 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
   onTitleChange,
   onDescriptionChange,
   onIconChange,
+  readOnly = false,
 }) => {
   const stepContent = step ?? createTimelineContent().steps[0];
 
@@ -47,25 +49,37 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
     <div className="relative flex gap-5">
       {/* Step Marker */}
       <div className="relative z-20 shrink-0">
-        <Popover>
-          <PopoverTrigger asChild>
-            <button
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-base font-medium transition-all hover:scale-110 cursor-pointer outline-none"
-              style={{
-                backgroundColor: `${theme.primary}15`,
-                color: theme.primary,
-              }}
-              title="Change icon"
-            >
-              {icon}
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 border-none shadow-xl">
-            <EmojiPicker
-              onEmojiClick={(emoji) => onIconChange(stepIndex, emoji.emoji)}
-            />
-          </PopoverContent>
-        </Popover>
+        {!readOnly ? (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-base font-medium transition-all hover:scale-110 cursor-pointer outline-none"
+                style={{
+                  backgroundColor: `${theme.primary}15`,
+                  color: theme.primary,
+                }}
+                title="Change icon"
+              >
+                {icon}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 border-none shadow-xl">
+              <EmojiPicker
+                onEmojiClick={(emoji) => onIconChange(stepIndex, emoji.emoji)}
+              />
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-base font-medium"
+            style={{
+              backgroundColor: `${theme.primary}15`,
+              color: theme.primary,
+            }}
+          >
+            {icon}
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -80,6 +94,7 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
             placeholder={`Step ${stepIndex + 1} title`}
             className="text-base font-semibold"
             theme={theme}
+            readOnly={readOnly}
           />
         </div>
 
@@ -93,6 +108,7 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
             placeholder={`Step ${stepIndex + 1} description`}
             className="text-sm opacity-60"
             theme={theme}
+            readOnly={readOnly}
           />
         </div>
       </div>

@@ -18,6 +18,7 @@ interface TeamCardBlockProps {
   onUpdate: (content: TeamCardContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
   isEditable?: boolean;
 }
 
@@ -26,6 +27,7 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
   onUpdate,
   theme,
   isEditable = true,
+  readOnly = false,
 }) => {
   const content = block.content as TeamCardContent;
 
@@ -63,6 +65,7 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
   );
 
   const handleAvatarClick = () => {
+    if (readOnly) return;
     const url = prompt("Enter avatar image URL:");
     if (url) {
       onUpdate({ ...content, avatar: url });
@@ -70,6 +73,7 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
   };
 
   const handleSocialClick = (platform: "linkedin" | "twitter" | "website") => {
+    if (readOnly) return;
     const url = prompt(
       `Enter ${platform} URL:`,
       content.socials?.[platform] || ""
@@ -92,12 +96,12 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
       {/* Avatar */}
       <div className="relative mb-5">
         <div
-          className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center relative group/avatar cursor-pointer transition-all hover:scale-105"
+          className={`w-24 h-24 rounded-full overflow-hidden flex items-center justify-center relative group/avatar ${!readOnly ? 'cursor-pointer hover:scale-105' : ''} transition-all`}
           style={{
             backgroundColor: `${theme.primary}15`,
             border: `3px solid ${theme.primary}20`,
           }}
-          onClick={handleAvatarClick}
+          onClick={!readOnly ? handleAvatarClick : undefined}
         >
           {content.avatar ? (
             <img
@@ -113,9 +117,11 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
           )}
 
           {/* Hover Overlay */}
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity rounded-full">
-            <IconUpload size={20} className="text-white" />
-          </div>
+          {!readOnly && (
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+              <IconUpload size={20} className="text-white" />
+            </div>
+          )}
         </div>
       </div>
 
@@ -129,6 +135,8 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
             onChange={handleNameChange}
             placeholder="Team Member Name"
             className="text-lg font-bold text-center"
+            theme={theme}
+            readOnly={readOnly}
           />
         </div>
         <div style={{ color: theme.primary }}>
@@ -139,6 +147,8 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
             onChange={handleRoleChange}
             placeholder="Role / Title"
             className="text-xs font-medium uppercase tracking-wider opacity-70 text-center"
+            theme={theme}
+            readOnly={readOnly}
           />
         </div>
       </div>
@@ -153,6 +163,8 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
             onChange={handleDescriptionChange}
             placeholder="Short bio..."
             className="text-sm leading-relaxed opacity-60 text-center"
+            theme={theme}
+            readOnly={readOnly}
           />
         </div>
       </div>
@@ -166,8 +178,8 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
         ].map(({ key, icon: Icon }) => (
           <button
             key={key}
-            onClick={() => handleSocialClick(key as any)}
-            className="p-2 rounded-lg transition-all hover:scale-105"
+            onClick={!readOnly ? () => handleSocialClick(key as any) : undefined}
+            className={`p-2 rounded-lg transition-all ${!readOnly ? 'hover:scale-105 cursor-pointer' : ''}`}
             title={key.charAt(0).toUpperCase() + key.slice(1)}
             style={{
               backgroundColor: content.socials?.[

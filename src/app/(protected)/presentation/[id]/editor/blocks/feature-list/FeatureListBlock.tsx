@@ -17,12 +17,14 @@ interface FeatureListBlockProps {
   onUpdate: (content: FeatureListContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
   block,
   onUpdate,
   theme,
+  readOnly = false,
 }) => {
   const content =
     (block.content as FeatureListContent) ?? createFeatureListContent();
@@ -30,29 +32,32 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
 
   const handleIconChange = useCallback(
     (index: number, emoji: string) => {
+      if (readOnly) return;
       const newFeatures = [...features];
       newFeatures[index] = { ...newFeatures[index], icon: emoji };
       onUpdate({ ...content, features: newFeatures });
     },
-    [features, content, onUpdate]
+    [features, content, onUpdate, readOnly]
   );
 
   const handleTitleChange = useCallback(
     (index: number, newContent: any) => {
+      if (readOnly) return;
       const newFeatures = [...features];
       newFeatures[index] = { ...newFeatures[index], title: newContent };
       onUpdate({ ...content, features: newFeatures });
     },
-    [features, content, onUpdate]
+    [features, content, onUpdate, readOnly]
   );
 
   const handleDescriptionChange = useCallback(
     (index: number, newContent: any) => {
+      if (readOnly) return;
       const newFeatures = [...features];
       newFeatures[index] = { ...newFeatures[index], description: newContent };
       onUpdate({ ...content, features: newFeatures });
     },
-    [features, content, onUpdate]
+    [features, content, onUpdate, readOnly]
   );
 
   const gridClass =
@@ -71,28 +76,39 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
       {features.map((feature, index) => (
         <div
           key={index}
-          className="group flex gap-4 p-5 rounded-2xl transition-all relative"
+          className="flex gap-4 p-5 rounded-2xl transition-all relative"
           style={{
             backgroundColor: `${theme.primary}08`,
           }}
         >
           {/* Icon */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-105 cursor-pointer outline-none relative z-20"
-                style={{
-                  backgroundColor: `${theme.primary}15`,
-                }}
-                title="Change icon"
-              >
-                {feature.icon || "✨"}
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 border-none shadow-xl">
-              <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
-            </PopoverContent>
-          </Popover>
+          {!readOnly ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-105 cursor-pointer outline-none relative z-20"
+                  style={{
+                    backgroundColor: `${theme.primary}15`,
+                  }}
+                  title="Change icon"
+                >
+                  {feature.icon || "✨"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 border-none shadow-xl">
+                <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <div
+              className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+              style={{
+                backgroundColor: `${theme.primary}15`,
+              }}
+            >
+              {feature.icon || "✨"}
+            </div>
+          )}
 
           {/* Content */}
           <div className="flex-1 min-w-0">
@@ -105,6 +121,7 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
                 placeholder="Feature Title"
                 className="text-base font-semibold leading-tight"
                 theme={theme}
+                readOnly={readOnly}
               />
             </div>
             <div>
@@ -116,6 +133,7 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
                 placeholder="Feature description"
                 className="text-sm opacity-60 leading-relaxed"
                 theme={theme}
+                readOnly={readOnly}
               />
             </div>
           </div>

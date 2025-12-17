@@ -30,6 +30,7 @@ interface LogoGridBlockProps {
   onUpdate: (content: LogoGridContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({

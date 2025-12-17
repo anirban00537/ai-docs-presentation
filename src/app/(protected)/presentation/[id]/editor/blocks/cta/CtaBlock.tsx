@@ -9,6 +9,7 @@ interface CtaBlockProps {
   onUpdate: (content: CtaContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const CtaBlock: React.FC<CtaBlockProps> = ({
@@ -16,6 +17,7 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
   onUpdate,
   theme,
   placeholder,
+  readOnly = false,
 }) => {
   const content = block.content as CtaContent;
   const [isEditingLabel, setIsEditingLabel] = useState(false);
@@ -76,6 +78,7 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
           placeholder={placeholder ?? "Ready to get started?"}
           className="text-2xl font-semibold tracking-tight leading-tight"
           theme={theme}
+          readOnly={readOnly}
         />
 
         <ProseMirrorEditor
@@ -86,6 +89,7 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
           placeholder="Add a compelling description here..."
           className="text-base opacity-60 leading-relaxed max-w-2xl"
           theme={theme}
+          readOnly={readOnly}
         />
       </div>
 

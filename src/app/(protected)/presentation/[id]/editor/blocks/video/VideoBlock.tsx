@@ -29,6 +29,7 @@ interface VideoBlockProps {
   onUpdate: (content: VideoContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 const getVideoEmbedUrl = (url: string, source: string, autoplay = false, loop = false): string => {

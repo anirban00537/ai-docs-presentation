@@ -840,29 +840,34 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
         data-gramm_editor="false"
         data-enable-grammarly="false"
       />
-      <SlashMenu
-        open={menuState.open}
-        query={menuState.query}
-        position={menuState.position}
-        selectedIndex={menuState.selectedIndex}
-        onSelect={handleMenuClick}
-      />
-      <SelectionToolbar
-        visible={selectionToolbar.visible}
-        position={selectionToolbar.position}
-        activeMarks={selectionToolbar.activeMarks}
-        activeAlignment={selectionToolbar.activeAlignment}
-        view={viewRef.current}
-        onClose={() =>
-          setSelectionToolbar((prev) => ({ ...prev, visible: false }))
-        }
-      />
-      <ImageUrlModal
-        open={imageModal.open}
-        onClose={handleImageModalClose}
-        onSubmit={handleImageUrlSubmit}
-        initialUrl={imageModal.currentSrc}
-      />
+      {/* Edit UI - hidden in readOnly mode */}
+      {!readOnly && (
+        <>
+          <SlashMenu
+            open={menuState.open}
+            query={menuState.query}
+            position={menuState.position}
+            selectedIndex={menuState.selectedIndex}
+            onSelect={handleMenuClick}
+          />
+          <SelectionToolbar
+            visible={selectionToolbar.visible}
+            position={selectionToolbar.position}
+            activeMarks={selectionToolbar.activeMarks}
+            activeAlignment={selectionToolbar.activeAlignment}
+            view={viewRef.current}
+            onClose={() =>
+              setSelectionToolbar((prev) => ({ ...prev, visible: false }))
+            }
+          />
+          <ImageUrlModal
+            open={imageModal.open}
+            onClose={handleImageModalClose}
+            onSubmit={handleImageUrlSubmit}
+            initialUrl={imageModal.currentSrc}
+          />
+        </>
+      )}
     </div>
   );
 };

@@ -11,6 +11,7 @@ interface NumberCardBlockProps {
   onUpdate: (content: NumberCardContent) => void;
   theme: Theme;
   placeholder?: string;
+  readOnly?: boolean;
 }
 
 export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
@@ -18,6 +19,7 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
   onUpdate,
   theme,
   placeholder,
+  readOnly = false,
 }) => {
   const content = block.content as NumberCardContent;
   const number = content?.number ?? 1;
@@ -29,6 +31,7 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
 
   const handleEditorChange = useCallback(
     (newEditorContent: any) => {
+      if (readOnly) return;
       const newContent: NumberCardContent = {
         type: "number-card",
         icon,
@@ -38,7 +41,7 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
       };
       onUpdate(newContent);
     },
-    [icon, number, content?.size, onUpdate]
+    [icon, number, content?.size, onUpdate, readOnly]
   );
 
   const textSizeClass = useMemo(() => {
@@ -54,7 +57,7 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
 
   return (
     <div
-      className="group flex flex-col gap-5 p-6 rounded-2xl h-full w-full relative overflow-hidden transition-all"
+      className="flex flex-col gap-5 p-6 rounded-2xl h-full w-full relative overflow-hidden transition-all"
       style={{
         background: `linear-gradient(135deg, ${theme.primary}10 0%, ${theme.primary}03 100%)`,
         color: theme.headingColor,
@@ -63,7 +66,7 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
       {/* Number badge */}
       <div className="flex items-start justify-between">
         <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold transition-all group-hover:scale-105"
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold transition-all"
           style={{
             backgroundColor: theme.primary,
             color: "#fff",
@@ -88,6 +91,8 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
           onChange={handleEditorChange}
           placeholder={placeholder ?? "Type '/' for commands"}
           className={`${textSizeClass} leading-relaxed`}
+          readOnly={readOnly}
+          theme={theme}
         />
       </div>
     </div>
