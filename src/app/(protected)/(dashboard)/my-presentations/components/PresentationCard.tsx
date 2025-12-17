@@ -92,14 +92,6 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
             }}
           />
 
-          {/* Colored glow on hover */}
-          <div
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0"
-            style={{
-              background: `radial-gradient(circle at 50% 0%, ${theme.primary}15 0%, transparent 60%)`,
-            }}
-          />
-
           {/* Slide Preview */}
           <div className="relative" style={{ borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
             {firstSlide ? (
