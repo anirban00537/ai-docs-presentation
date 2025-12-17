@@ -13,7 +13,7 @@ export const DiscoveryInsightsLayout = {
     const intro: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## Strategic Discovery: Key Themes\n\nWe spoke with 15 key stakeholders. Here is a synthesis of the critical challenges and opportunities identified.",
+      content: "<h2 style=\"text-align: center\">Strategic Discovery: Key Themes</h2>\n\n<p style=\"text-align: center\">We spoke with 15 key stakeholders. Here is a synthesis of the critical challenges and opportunities identified.</p>",
     };
 
     const insights = createFeatureListContent();

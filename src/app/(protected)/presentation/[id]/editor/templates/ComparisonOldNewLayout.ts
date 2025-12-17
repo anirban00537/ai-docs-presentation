@@ -16,7 +16,7 @@ export const ComparisonOldNewLayout = {
     const intro: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## Transforming the Workflow: Then vs. Now\n\nThe traditional approach is fraught with inefficiencies and manual bottlenecks. Our modern solution streamlines operations, reducing friction and accelerating time-to-market.",
+      content: "<h2 style=\"text-align: center\">Transforming the Workflow: Then vs. Now</h2>\n\n<p style=\"text-align: center\">The traditional approach is fraught with inefficiencies and manual bottlenecks. Our modern solution streamlines operations, reducing friction and accelerating time-to-market.</p>",
     };
 
     const table = createComparisonTableContent();

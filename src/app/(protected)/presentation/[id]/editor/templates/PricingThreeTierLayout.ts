@@ -1,10 +1,11 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/lib/editor/types";
+import type { LayoutTemplate } from "../layoutTemplates";
 import { BLOCK_TYPES, createPricingCardContent } from "../blocks/definitions";
 import type { Block } from "@/lib/editor/types";
 import { createParagraphContent } from "../blocks/definitions/common";
 
-export const PricingThreeTierLayout = {
+export const PricingThreeTierLayout: LayoutTemplate = {
   id: "pricing-three-tier-layout",
   name: "Pricing - 3 Tier",
   description: "Three-tier pricing table with a highlighted plan",
@@ -13,7 +14,7 @@ export const PricingThreeTierLayout = {
     const header: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## Transparent Pricing. Scales With You.\n\nStart small and upgrade as you grow. No hidden fees, cancel anytime.",
+      content: '<h2 style="text-align: center">Transparent Pricing. Scales With You.</h2>\n\n<p style="text-align: center">Start small and upgrade as you grow. No hidden fees, cancel anytime.</p>',
     };
 
     const plans = [

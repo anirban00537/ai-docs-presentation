@@ -17,7 +17,7 @@ export const TestimonialLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## Loved by Developers\n\nSee why 10,000+ teams switched to a better workflow.",
+      content: "<h2 style=\"text-align: center\">Loved by Developers</h2>\n\n<p style=\"text-align: center\">See why 10,000+ teams switched to a better workflow.</p>",
     };
 
     // Row 2: Three Testimonials

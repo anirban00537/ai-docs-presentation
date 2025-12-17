@@ -426,7 +426,12 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
               // Get active alignment
               const { $from } = newState.selection;
               const node = $from.parent;
-              const activeAlignment = node.attrs.textAlign || "left";
+              const align = node.attrs.textAlign || "left";
+              // Validate alignment (fallback to left if invalid)
+              const validAligns = ["left", "center", "right", "justify"];
+              const activeAlignment = validAligns.includes(align)
+                ? align
+                : "left";
 
               setSelectionToolbar({
                 visible: true,

@@ -79,9 +79,7 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           backgroundColor: activeMarks.has("strong")
             ? theme.primary + "30"
             : "transparent",
-          color: activeMarks.has("strong")
-            ? theme.primary
-            : theme.bodyColor,
+          color: activeMarks.has("strong") ? theme.primary : theme.bodyColor,
         }}
         onMouseEnter={(e) => {
           if (!activeMarks.has("strong")) {
@@ -115,9 +113,7 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           backgroundColor: activeMarks.has("em")
             ? theme.primary + "30"
             : "transparent",
-          color: activeMarks.has("em")
-            ? theme.primary
-            : theme.bodyColor,
+          color: activeMarks.has("em") ? theme.primary : theme.bodyColor,
         }}
         onMouseEnter={(e) => {
           if (!activeMarks.has("em")) {
@@ -165,9 +161,7 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           backgroundColor: activeMarks.has("code")
             ? theme.primary + "30"
             : "transparent",
-          color: activeMarks.has("code")
-            ? theme.primary
-            : theme.bodyColor,
+          color: activeMarks.has("code") ? theme.primary : theme.bodyColor,
         }}
         onMouseEnter={(e) => {
           if (!activeMarks.has("code")) {
@@ -198,7 +192,10 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
       <button
         onMouseDown={(e) => {
           e.preventDefault();
-          toggleMark(schema.marks.link, { href: "" })(view.state, view.dispatch);
+          toggleMark(schema.marks.link, { href: "" })(
+            view.state,
+            view.dispatch
+          );
           view.focus();
         }}
         className={cn(
@@ -208,9 +205,7 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
           backgroundColor: activeMarks.has("link")
             ? theme.primary + "30"
             : "transparent",
-          color: activeMarks.has("link")
-            ? theme.primary
-            : theme.bodyColor,
+          color: activeMarks.has("link") ? theme.primary : theme.bodyColor,
         }}
         onMouseEnter={(e) => {
           if (!activeMarks.has("link")) {
@@ -243,144 +238,231 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
         style={{ backgroundColor: theme.primary + "30" }}
       />
 
-      {/* Align Left */}
-      <button
-        onMouseDown={(e) => {
-          e.preventDefault();
+      {/* Helper function to set alignment */}
+      {(() => {
+        const setAlignment = (
+          alignment: "left" | "center" | "right" | "justify"
+        ) => {
           const { state, dispatch } = view;
-          const { from, to } = state.selection;
+          const { $from, from, to } = state.selection;
           let tr = state.tr;
-          state.doc.nodesBetween(from, to, (node, pos) => {
-             if (node.type.name === 'paragraph' || node.type.name.includes('heading')) {
-               tr = tr.setNodeMarkup(pos, undefined, { ...node.attrs, textAlign: 'left' });
-             }
-          });
-          if (tr.docChanged) dispatch(tr);
-          view.focus();
-        }}
-        className={cn(
-          "w-8 h-8 rounded flex items-center justify-center transition-colors"
-        )}
-        style={{
-          backgroundColor: activeAlignment === "left"
-            ? theme.primary + "30"
-            : "transparent",
-          color: activeAlignment === "left"
-            ? theme.primary
-            : theme.bodyColor,
-        }}
-        onMouseEnter={(e) => {
-          if (activeAlignment !== "left") {
-            e.currentTarget.style.backgroundColor = theme.primary + "15";
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (activeAlignment !== "left") {
-            e.currentTarget.style.backgroundColor = "transparent";
-          }
-        }}
-        title="Align Left"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <line x1="17" y1="10" x2="3" y2="10"></line>
-          <line x1="21" y1="6" x2="3" y2="6"></line>
-          <line x1="21" y1="14" x2="3" y2="14"></line>
-          <line x1="17" y1="18" x2="3" y2="18"></line>
-        </svg>
-      </button>
 
-      {/* Align Center */}
-      <button
-        onMouseDown={(e) => {
-          e.preventDefault();
-          const { state, dispatch } = view;
-          const { from, to } = state.selection;
-          let tr = state.tr;
-          state.doc.nodesBetween(from, to, (node, pos) => {
-             if (node.type.name === 'paragraph' || node.type.name.includes('heading')) {
-               tr = tr.setNodeMarkup(pos, undefined, { ...node.attrs, textAlign: 'center' });
-             }
-          });
-          if (tr.docChanged) dispatch(tr);
-          view.focus();
-        }}
-        className={cn(
-          "w-8 h-8 rounded flex items-center justify-center transition-colors"
-        )}
-        style={{
-          backgroundColor: activeAlignment === "center"
-            ? theme.primary + "30"
-            : "transparent",
-          color: activeAlignment === "center"
-            ? theme.primary
-            : theme.bodyColor,
-        }}
-        onMouseEnter={(e) => {
-          if (activeAlignment !== "center") {
-            e.currentTarget.style.backgroundColor = theme.primary + "15";
+          // If there's a selection, apply to all affected nodes
+          if (from !== to) {
+            state.doc.nodesBetween(from, to, (node, pos) => {
+              if (
+                node.type.name === "paragraph" ||
+                node.type.name.includes("heading")
+              ) {
+                tr = tr.setNodeMarkup(pos, undefined, {
+                  ...node.attrs,
+                  textAlign: alignment,
+                });
+              }
+            });
+          } else {
+            // No selection - apply to current block
+            const node = $from.parent;
+            if (
+              node.type.name === "paragraph" ||
+              node.type.name.includes("heading")
+            ) {
+              const pos = $from.before($from.depth);
+              tr = tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                textAlign: alignment,
+              });
+            }
           }
-        }}
-        onMouseLeave={(e) => {
-          if (activeAlignment !== "center") {
-            e.currentTarget.style.backgroundColor = "transparent";
-          }
-        }}
-        title="Align Center"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <line x1="21" y1="6" x2="3" y2="6"></line>
-          <line x1="17" y1="10" x2="7" y2="10"></line>
-          <line x1="19" y1="14" x2="5" y2="14"></line>
-          <line x1="21" y1="18" x2="3" y2="18"></line>
-        </svg>
-      </button>
 
-      {/* Align Right */}
-      <button
-        onMouseDown={(e) => {
-          e.preventDefault();
-          const { state, dispatch } = view;
-          const { from, to } = state.selection;
-          let tr = state.tr;
-          state.doc.nodesBetween(from, to, (node, pos) => {
-             if (node.type.name === 'paragraph' || node.type.name.includes('heading')) {
-               tr = tr.setNodeMarkup(pos, undefined, { ...node.attrs, textAlign: 'right' });
-             }
-          });
           if (tr.docChanged) dispatch(tr);
           view.focus();
-        }}
-        className={cn(
-          "w-8 h-8 rounded flex items-center justify-center transition-colors"
-        )}
-        style={{
-          backgroundColor: activeAlignment === "right"
-            ? theme.primary + "30"
-            : "transparent",
-          color: activeAlignment === "right"
-            ? theme.primary
-            : theme.bodyColor,
-        }}
-        onMouseEnter={(e) => {
-          if (activeAlignment !== "right") {
-            e.currentTarget.style.backgroundColor = theme.primary + "15";
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (activeAlignment !== "right") {
-            e.currentTarget.style.backgroundColor = "transparent";
-          }
-        }}
-        title="Align Right"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <line x1="21" y1="10" x2="7" y2="10"></line>
-          <line x1="21" y1="6" x2="3" y2="6"></line>
-          <line x1="21" y1="14" x2="3" y2="14"></line>
-          <line x1="21" y1="18" x2="7" y2="18"></line>
-        </svg>
-      </button>
+        };
+
+        return (
+          <>
+            {/* Align Left */}
+            <button
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setAlignment("left");
+              }}
+              className={cn(
+                "w-8 h-8 rounded flex items-center justify-center transition-colors"
+              )}
+              style={{
+                backgroundColor:
+                  activeAlignment === "left"
+                    ? theme.primary + "30"
+                    : "transparent",
+                color:
+                  activeAlignment === "left" ? theme.primary : theme.bodyColor,
+              }}
+              onMouseEnter={(e) => {
+                if (activeAlignment !== "left") {
+                  e.currentTarget.style.backgroundColor = theme.primary + "15";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeAlignment !== "left") {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }
+              }}
+              title="Align Left"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <line x1="17" y1="10" x2="3" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="17" y1="18" x2="3" y2="18"></line>
+              </svg>
+            </button>
+
+            {/* Align Center */}
+            <button
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setAlignment("center");
+              }}
+              className={cn(
+                "w-8 h-8 rounded flex items-center justify-center transition-colors"
+              )}
+              style={{
+                backgroundColor:
+                  activeAlignment === "center"
+                    ? theme.primary + "30"
+                    : "transparent",
+                color:
+                  activeAlignment === "center"
+                    ? theme.primary
+                    : theme.bodyColor,
+              }}
+              onMouseEnter={(e) => {
+                if (activeAlignment !== "center") {
+                  e.currentTarget.style.backgroundColor = theme.primary + "15";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeAlignment !== "center") {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }
+              }}
+              title="Align Center"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="17" y1="10" x2="7" y2="10"></line>
+                <line x1="19" y1="14" x2="5" y2="14"></line>
+                <line x1="21" y1="18" x2="3" y2="18"></line>
+              </svg>
+            </button>
+
+            {/* Align Right */}
+            <button
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setAlignment("right");
+              }}
+              className={cn(
+                "w-8 h-8 rounded flex items-center justify-center transition-colors"
+              )}
+              style={{
+                backgroundColor:
+                  activeAlignment === "right"
+                    ? theme.primary + "30"
+                    : "transparent",
+                color:
+                  activeAlignment === "right" ? theme.primary : theme.bodyColor,
+              }}
+              onMouseEnter={(e) => {
+                if (activeAlignment !== "right") {
+                  e.currentTarget.style.backgroundColor = theme.primary + "15";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeAlignment !== "right") {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }
+              }}
+              title="Align Right"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <line x1="21" y1="10" x2="7" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="21" y1="18" x2="7" y2="18"></line>
+              </svg>
+            </button>
+
+            {/* Align Justify */}
+            <button
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setAlignment("justify");
+              }}
+              className={cn(
+                "w-8 h-8 rounded flex items-center justify-center transition-colors"
+              )}
+              style={{
+                backgroundColor:
+                  activeAlignment === "justify"
+                    ? theme.primary + "30"
+                    : "transparent",
+                color:
+                  activeAlignment === "justify"
+                    ? theme.primary
+                    : theme.bodyColor,
+              }}
+              onMouseEnter={(e) => {
+                if (activeAlignment !== "justify") {
+                  e.currentTarget.style.backgroundColor = theme.primary + "15";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeAlignment !== "justify") {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }
+              }}
+              title="Justify"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="10" x2="3" y2="10"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="21" y1="18" x2="3" y2="18"></line>
+              </svg>
+            </button>
+          </>
+        );
+      })()}
     </div>
   );
 };
-

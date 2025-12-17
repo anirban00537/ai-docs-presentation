@@ -13,7 +13,7 @@ export const NextStepsLayout = {
     const header: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## The Path Forward\n\nWe are ready to move fast. Here is our proposed 30-day onboarding plan to get your team live and realizing value.",
+      content: "<h2 style=\"text-align: center\">The Path Forward</h2>\n\n<p style=\"text-align: center\">We are ready to move fast. Here is our proposed 30-day onboarding plan to get your team live and realizing value.</p>",
     };
 
     const timeline = createTimelineContent();

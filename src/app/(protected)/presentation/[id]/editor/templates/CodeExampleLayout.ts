@@ -13,7 +13,8 @@ export const CodeExampleLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## Built for Developers\n\nIntegrate our full-featured SDK in less than 5 minutes.",
+      content:
+        '<h2 style="text-align: center">Built for Developers</h2>\n\n<p style="text-align: center">Integrate our full-featured SDK in less than 5 minutes.</p>',
     };
 
     // Row 2: Code Block

@@ -17,7 +17,7 @@ export const DocIntroLayout = {
     const intro: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "# Project Alpha: Executive Brief\n\nThis document outlines the strategic vision, scope, and implementation plan for the upcoming Q3 initiatives. Our goal is to align all stakeholders on the critical path to launch.",
+      content: "<h1 style=\"text-align: center\">Project Alpha: Executive Brief</h1>\n\n<p style=\"text-align: center\">This document outlines the strategic vision, scope, and implementation plan for the upcoming Q3 initiatives. Our goal is to align all stakeholders on the critical path to launch.</p>",
     };
 
     const sections = createFeatureListContent();

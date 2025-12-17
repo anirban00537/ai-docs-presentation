@@ -2,7 +2,6 @@ import { Row, Block } from "@/lib/editor/types";
 import type { LayoutTemplate } from "../layoutTemplates";
 import {
   BLOCK_TYPES,
-  createParagraphContent,
   createPulseMetricContent,
   createGlassInsightContent,
 } from "../blocks/definitions";
@@ -20,9 +19,7 @@ export const MetricDashboardLayout: LayoutTemplate = {
         {
           id: nanoid(),
           type: BLOCK_TYPES.PROSEMIRROR,
-          content: createParagraphContent(
-            "Q3 Performance Overview"
-          ),
+          content: "<p style=\"text-align: center\">Q3 Performance Overview</p>",
         } as Block,
       ],
     },

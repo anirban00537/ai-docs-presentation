@@ -16,7 +16,7 @@ export const GalleryLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## Visualizing Success\n\nA look at our recent high-impact deployments.",
+      content: "<h2 style=\"text-align: center\">Visualizing Success</h2>\n\n<p style=\"text-align: center\">A look at our recent high-impact deployments.</p>",
     };
 
     // Row 2: Gallery

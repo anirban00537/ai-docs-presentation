@@ -16,7 +16,7 @@ import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from
 
 export const createTimelineContent = (): TimelineContent => ({
   type: "timeline",
-  title: "## Our Process",
+  title: '<h2 style="text-align: center">Our Process</h2>',
   steps: [
     {
       title: "Step 1: Planning",

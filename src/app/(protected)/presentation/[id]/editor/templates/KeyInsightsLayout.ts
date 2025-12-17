@@ -1,10 +1,6 @@
 import { Row, Block } from "@/lib/editor/types";
 import type { LayoutTemplate } from "../layoutTemplates";
-import {
-  BLOCK_TYPES,
-  createParagraphContent,
-  createGlassInsightContent,
-} from "../blocks/definitions";
+import { BLOCK_TYPES, createGlassInsightContent } from "../blocks/definitions";
 import { nanoid } from "@reduxjs/toolkit";
 
 export const KeyInsightsLayout: LayoutTemplate = {
@@ -19,9 +15,7 @@ export const KeyInsightsLayout: LayoutTemplate = {
         {
           id: nanoid(),
           type: BLOCK_TYPES.PROSEMIRROR,
-          content: createParagraphContent(
-            "Core Strategic Pillars"
-          ),
+          content: '<p style="text-align: center">Core Strategic Pillars</p>',
         } as Block,
       ],
     },

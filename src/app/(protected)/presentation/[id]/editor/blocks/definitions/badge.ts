@@ -34,7 +34,11 @@ export const createBadgeContent = (): BadgeContent => ({
   layout: "grid",
 });
 
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+import {
+  normalizeToMarkdown,
+  isLegacyProseMirrorFormat,
+  isMarkdownFormat,
+} from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeBadgeContent = (content: any): BadgeContent => {
   const incoming = content as BadgeContent | undefined;
@@ -49,18 +53,18 @@ export const normalizeBadgeContent = (content: any): BadgeContent => {
           ? normalizeToMarkdown(badge.title)
           : createParagraphContent("Award Title"),
         description: badge.description
-          ? (isMarkdownFormat(badge.description)
-              ? badge.description
-              : isLegacyProseMirrorFormat(badge.description)
-              ? normalizeToMarkdown(badge.description)
-              : undefined)
+          ? isMarkdownFormat(badge.description)
+            ? badge.description
+            : isLegacyProseMirrorFormat(badge.description)
+            ? normalizeToMarkdown(badge.description)
+            : undefined
           : undefined,
         issuer: badge.issuer
-          ? (isMarkdownFormat(badge.issuer)
-              ? badge.issuer
-              : isLegacyProseMirrorFormat(badge.issuer)
-              ? normalizeToMarkdown(badge.issuer)
-              : undefined)
+          ? isMarkdownFormat(badge.issuer)
+            ? badge.issuer
+            : isLegacyProseMirrorFormat(badge.issuer)
+            ? normalizeToMarkdown(badge.issuer)
+            : undefined
           : undefined,
         date: badge.date,
       })),

@@ -11,8 +11,8 @@ import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from
 
 export const createCtaContent = (): CtaContent => ({
   type: "cta",
-  heading: "## Call to action",
-  body: "Describe the benefit here.",
+  heading: '<h2 style="text-align: center">Call to action</h2>',
+  body: '<p style="text-align: center">Describe the benefit here.</p>',
   buttonLabel: "Get started",
 });
 

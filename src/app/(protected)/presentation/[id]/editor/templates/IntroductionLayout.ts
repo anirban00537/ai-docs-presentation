@@ -26,7 +26,7 @@ export const IntroductionLayout: LayoutTemplate = {
           id: nanoid(),
           type: BLOCK_TYPES.PROSEMIRROR,
           content:
-            "# User Research Findings for Product Development\n\nKey insights, pain points, and actionable recommendations from our recent research study",
+            '<h1 style="text-align: center">User Research Findings for Product Development</h1>\n\n<p style="text-align: center">Key insights, pain points, and actionable recommendations from our recent research study</p>',
         } as Block,
       ],
     },

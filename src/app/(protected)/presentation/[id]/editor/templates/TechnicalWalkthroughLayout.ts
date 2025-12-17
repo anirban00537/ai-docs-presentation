@@ -2,7 +2,6 @@ import { Row, Block } from "@/lib/editor/types";
 import type { LayoutTemplate } from "../layoutTemplates";
 import {
   BLOCK_TYPES,
-  createParagraphContent,
   createCodeTerminalContent,
   createSimpleNumberCardContent,
 } from "../blocks/definitions";
@@ -20,9 +19,7 @@ export const TechnicalWalkthroughLayout: LayoutTemplate = {
         {
           id: nanoid(),
           type: BLOCK_TYPES.PROSEMIRROR,
-          content: createParagraphContent(
-            "Quick Start Guide"
-          ),
+          content: "<p style=\"text-align: center\">Quick Start Guide</p>",
         } as Block,
       ],
     },

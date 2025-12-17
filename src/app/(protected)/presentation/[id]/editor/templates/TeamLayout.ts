@@ -22,7 +22,7 @@ export const TeamLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## Meet The Builders\n\nObsessed with quality, craft, and user experience.",
+      content: "<h2 style=\"text-align: center\">Meet The Builders</h2>\n\n<p style=\"text-align: center\">Obsessed with quality, craft, and user experience.</p>",
     };
 
     // Row 2: Three Team Cards

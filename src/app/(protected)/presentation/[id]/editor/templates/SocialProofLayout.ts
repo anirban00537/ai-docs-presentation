@@ -14,7 +14,7 @@ export const SocialProofLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## A Growing Movement\n\nJoin over 50,000 developers across the globe who trust us.",
+      content: "<h2 style=\"text-align: center\">A Growing Movement</h2>\n\n<p style=\"text-align: center\">Join over 50,000 developers across the globe who trust us.</p>",
     };
 
     // Row 2: Social Proof Block

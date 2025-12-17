@@ -22,7 +22,7 @@ export const PricingLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## Simple, Transparent Pricing\n\nNo hidden fees. Cancel anytime.",
+      content: "<h2 style=\"text-align: center\">Simple, Transparent Pricing</h2>\n\n<p style=\"text-align: center\">No hidden fees. Cancel anytime.</p>",
     };
 
     // Row 2: Three Pricing Cards

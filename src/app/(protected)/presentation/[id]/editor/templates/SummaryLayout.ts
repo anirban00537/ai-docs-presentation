@@ -1,8 +1,9 @@
 import { nanoid } from "nanoid";
 import type { Row, Block } from "@/lib/editor/types";
+import type { LayoutTemplate } from "../layoutTemplates";
 import { BLOCK_TYPES } from "../blocks/definitions";
 
-export const SummaryLayout = {
+export const SummaryLayout: LayoutTemplate = {
   id: "summary-layout",
   name: "Summary",
   description: "Executive summary with key points organized in two columns.",
@@ -11,7 +12,7 @@ export const SummaryLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "# Summary",
+      content: '<h1 style="text-align: center">Summary</h1>',
     };
 
     const createCard = (num: number, title: string, description: string): Block => {
