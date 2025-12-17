@@ -34,8 +34,11 @@ export const createLogoGridContent = (): LogoGridContent => ({
   grayscale: true,
 });
 
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
+import {
+  normalizeToMarkdown,
+  isLegacyProseMirrorFormat,
+  isMarkdownFormat,
+} from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeLogoGridContent = (content: any): LogoGridContent => {
   const incoming = content as LogoGridContent | undefined;
@@ -44,8 +47,10 @@ export const normalizeLogoGridContent = (content: any): LogoGridContent => {
       type: "logo-grid",
       logos: incoming.logos.map((logo) => ({
         image: logo.image,
-        name: hasValidDoc(logo.name)
+        name: isMarkdownFormat(logo.name)
           ? logo.name
+          : isLegacyProseMirrorFormat(logo.name)
+          ? normalizeToMarkdown(logo.name)
           : createParagraphContent("Company"),
         link: logo.link,
       })),

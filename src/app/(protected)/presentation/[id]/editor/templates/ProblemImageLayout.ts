@@ -12,36 +12,7 @@ export const ProblemImageLayout = {
     const copy: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2 },
-            content: [
-              { type: "text", text: "Complexity is Killing Agility" },
-            ],
-          },
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "Your teams are spending 40% of their time navigating bureaucratic red tape instead of shipping products.",
-              },
-            ],
-          },
-          {
-             type: "paragraph",
-             content: [
-               {
-                 type: "text",
-                 text: "This visual represents the tangled web of dependencies currently slowing you down.",
-               },
-             ],
-          }
-        ],
-      },
+      content: "## Complexity is Killing Agility\n\nYour teams are spending 40% of their time navigating bureaucratic red tape instead of shipping products.\n\nThis visual represents the tangled web of dependencies currently slowing you down.",
     };
 
     const image = createImageGalleryContent();

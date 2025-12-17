@@ -13,26 +13,7 @@ export const CustomerQuotesLayout = {
     const header: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Trusted by Industry Leaders" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Don't just take our word for it. Here's what the best in the business have to say about our impact.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Trusted by Industry Leaders\n\nDon't just take our word for it. Here's what the best in the business have to say about our impact.",
     };
 
     const quotes = [

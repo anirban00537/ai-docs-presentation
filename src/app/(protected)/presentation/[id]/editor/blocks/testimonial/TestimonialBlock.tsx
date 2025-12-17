@@ -31,33 +31,44 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
   theme,
   placeholder,
 }) => {
-  const content = (block.content as TestimonialContent) ?? createTestimonialContent();
+  const content =
+    (block.content as TestimonialContent) ?? createTestimonialContent();
   const { avatar } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [tempAvatar, setTempAvatar] = useState(avatar || "");
   const isDark = theme.themeType === "dark";
 
   const quoteDoc = useMemo(() => {
-    if (content?.quote?.type === "doc") return content.quote;
-    return createTestimonialContent().quote;
+    return content?.quote ?? createTestimonialContent().quote;
   }, [content]);
 
   const nameDoc = useMemo(() => {
-    if (content?.name?.type === "doc") return content.name;
-    return createTestimonialContent().name;
+    return content?.name ?? createTestimonialContent().name;
   }, [content]);
 
   const roleDoc = useMemo(() => {
-    if (content?.role?.type === "doc") return content.role;
-    return createTestimonialContent().role;
+    return content?.role ?? createTestimonialContent().role;
   }, [content]);
 
-  const extractText = (doc: any) =>
-    doc?.content
-      ?.flatMap((node: any) => node?.content || [])
-      ?.map((n: any) => n?.text || "")
-      ?.join("")
-      ?.trim() || "JD";
+  const extractText = (doc: any) => {
+    // Handle Markdown string
+    if (typeof doc === "string") {
+      // Extract first letters from first two words
+      const words = doc.trim().split(/\s+/);
+      if (words.length >= 2) {
+        return (words[0][0] || "") + (words[1][0] || "");
+      }
+      return words[0]?.[0] || "JD";
+    }
+    // Handle legacy JSON format
+    return (
+      doc?.content
+        ?.flatMap((node: any) => node?.content || [])
+        ?.map((n: any) => n?.text || "")
+        ?.join("")
+        ?.trim() || "JD"
+    );
+  };
 
   const handleQuoteChange = useCallback(
     (newDoc: any) => {
@@ -116,7 +127,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
           className="absolute top-4 right-5 text-7xl leading-none opacity-10 font-serif select-none pointer-events-none"
           style={{ color: theme.primary }}
         >
-          "
+          &quot;
         </div>
 
         {/* Quote */}
@@ -185,7 +196,9 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
         <DialogContent
           className="sm:max-w-[400px]"
           style={{
-            backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+            backgroundColor: isDark
+              ? "rgba(20,20,24,0.98)"
+              : "rgba(255,255,255,0.98)",
             backdropFilter: "blur(20px)",
             border: "none",
           }}
@@ -194,13 +207,19 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
             <DialogTitle style={{ color: isDark ? "#fff" : "#000" }}>
               Testimonial Settings
             </DialogTitle>
-            <DialogDescription style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>
+            <DialogDescription
+              style={{
+                color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+              }}
+            >
               Customize testimonial appearance.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label style={{ color: isDark ? "#fff" : "#000" }}>Avatar URL</Label>
+              <Label style={{ color: isDark ? "#fff" : "#000" }}>
+                Avatar URL
+              </Label>
               <Input
                 value={tempAvatar}
                 onChange={(e) => setTempAvatar(e.target.value)}
@@ -212,7 +231,10 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
             <Button variant="outline" onClick={() => setIsEditOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave} style={{ backgroundColor: theme.primary }}>
+            <Button
+              onClick={handleSave}
+              style={{ backgroundColor: theme.primary }}
+            >
               Save
             </Button>
           </DialogFooter>

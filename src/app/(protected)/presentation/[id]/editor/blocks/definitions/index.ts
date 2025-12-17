@@ -29,6 +29,11 @@ export * from "./badge";
 
 // Type unions
 import type { ProseMirrorDocument } from "./common";
+import {
+  normalizeToMarkdown,
+  isLegacyProseMirrorFormat,
+  isMarkdownFormat,
+} from "@/lib/markdown/prosemirror-converter";
 import type { NumberCardContent } from "./number-card";
 import type { TestimonialContent } from "./testimonial";
 import type { CtaContent } from "./cta";
@@ -240,11 +245,16 @@ export const normalizeBlockContent = (
     case BLOCK_TYPES.GLASS_INSIGHT:
       return normalizeGlassInsightContent(content);
     default:
-      // Default to prose content
-      const incomingDoc = content as ProseMirrorDocument | undefined;
-      if (incomingDoc?.type === "doc" && Array.isArray(incomingDoc.content)) {
-        return incomingDoc;
+      // Default to prose content (prosemirror blocks)
+      // Handle both Markdown string (new format) and legacy JSON object
+      if (isMarkdownFormat(content)) {
+        // Already in Markdown format
+        return content;
+      } else if (isLegacyProseMirrorFormat(content)) {
+        // Legacy JSON format - convert to Markdown
+        return normalizeToMarkdown(content);
       }
+      // Invalid or empty content - return default
       return getDefaultHeadingContent();
   }
 };

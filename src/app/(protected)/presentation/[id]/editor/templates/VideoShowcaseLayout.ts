@@ -14,26 +14,7 @@ export const VideoShowcaseLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "The Future of Work" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "A 2-minute overview of where we are going next.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## The Future of Work\n\nA 2-minute overview of where we are going next.",
     };
 
     // Row 2: Video Block

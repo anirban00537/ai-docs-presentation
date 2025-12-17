@@ -32,8 +32,7 @@ export const createProgressBarContent = (): ProgressBarContent => ({
   animated: true,
 });
 
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeProgressBarContent = (
   content: any
@@ -43,8 +42,10 @@ export const normalizeProgressBarContent = (
     return {
       type: "progress-bar",
       items: incoming.items.map((item) => ({
-        label: hasValidDoc(item.label)
+        label: isMarkdownFormat(item.label)
           ? item.label
+          : isLegacyProseMirrorFormat(item.label)
+          ? normalizeToMarkdown(item.label)
           : createParagraphContent("Label"),
         value: Math.min(100, Math.max(0, item.value ?? 0)),
         color: item.color,

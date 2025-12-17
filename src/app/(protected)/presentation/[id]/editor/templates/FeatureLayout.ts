@@ -17,97 +17,24 @@ export const FeatureLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Why We Lead the Market" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Built for speed, scale, and security from the ground up.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Why We Lead the Market\n\nBuilt for speed, scale, and security from the ground up.",
     };
 
     // Row 2: Three Premium Feature Cards
     const feature1 = createNumberCardContent();
     feature1.number = 1;
     feature1.icon = "⚡";
-    feature1.editorContent = {
-      type: "doc",
-      content: [
-        {
-          type: "heading",
-          attrs: { level: 3 },
-          content: [{ type: "text", text: "Zero-Config Scale" }],
-        },
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Handle millions of requests without manual provisioning. It just works.",
-            },
-          ],
-        },
-      ],
-    };
+    feature1.editorContent = "### Zero-Config Scale\n\nHandle millions of requests without manual provisioning. It just works.";
 
     const feature2 = createNumberCardContent();
     feature2.number = 2;
     feature2.icon = "🌍";
-    feature2.editorContent = {
-      type: "doc",
-      content: [
-        {
-          type: "heading",
-          attrs: { level: 3 },
-          content: [{ type: "text", text: "Global Edge Network" }],
-        },
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Deploy in 35 regions simultaneously. Lowest latency, guaranteed.",
-            },
-          ],
-        },
-      ],
-    };
+    feature2.editorContent = "### Global Edge Network\n\nDeploy in 35 regions simultaneously. Lowest latency, guaranteed.";
 
     const feature3 = createNumberCardContent();
     feature3.number = 3;
     feature3.icon = "👁️";
-    feature3.editorContent = {
-      type: "doc",
-      content: [
-        {
-          type: "heading",
-          attrs: { level: 3 },
-          content: [{ type: "text", text: "Deep Observability" }],
-        },
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Trace every request with millisecond precision. No more black boxes.",
-            },
-          ],
-        },
-      ],
-    };
+    feature3.editorContent = "### Deep Observability\n\nTrace every request with millisecond precision. No more black boxes.";
 
     return [
       {

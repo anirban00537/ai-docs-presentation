@@ -14,26 +14,7 @@ export const ProcessLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Our Proven Methodology" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "We follow a rigorous process to ensure on-time, on-budget delivery.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Our Proven Methodology\n\nWe follow a rigorous process to ensure on-time, on-budget delivery.",
     };
 
     // Row 2: Timeline

@@ -13,26 +13,7 @@ export const ServicesListLayout = {
     const header: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Comprehensive Capabilities" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "We don't just provide software. We provide the end-to-end partnership required for transformation.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Comprehensive Capabilities\n\nWe don't just provide software. We provide the end-to-end partnership required for transformation.",
     };
 
     const features = createFeatureListContent();

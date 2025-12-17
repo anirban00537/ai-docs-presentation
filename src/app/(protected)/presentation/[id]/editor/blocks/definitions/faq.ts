@@ -34,8 +34,7 @@ export const createFAQContent = (): FAQContent => ({
   style: "accordion",
 });
 
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeFAQContent = (content: any): FAQContent => {
   const incoming = content as FAQContent | undefined;
@@ -43,11 +42,15 @@ export const normalizeFAQContent = (content: any): FAQContent => {
     return {
       type: "faq",
       items: incoming.items.map((item) => ({
-        question: hasValidDoc(item.question)
+        question: isMarkdownFormat(item.question)
           ? item.question
+          : isLegacyProseMirrorFormat(item.question)
+          ? normalizeToMarkdown(item.question)
           : createParagraphContent("Question?"),
-        answer: hasValidDoc(item.answer)
+        answer: isMarkdownFormat(item.answer)
           ? item.answer
+          : isLegacyProseMirrorFormat(item.answer)
+          ? normalizeToMarkdown(item.answer)
           : createParagraphContent("Answer here..."),
         expanded: item.expanded ?? false,
       })),

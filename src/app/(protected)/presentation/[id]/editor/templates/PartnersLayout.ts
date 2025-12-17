@@ -14,26 +14,7 @@ export const PartnersLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Trusted by Industry Leaders" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Powering innovation at 500+ global enterprises.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Trusted by Industry Leaders\n\nPowering innovation at 500+ global enterprises.",
     };
 
     // Row 2: Logo Grid

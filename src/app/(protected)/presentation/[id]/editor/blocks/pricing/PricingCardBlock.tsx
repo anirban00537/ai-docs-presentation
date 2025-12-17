@@ -35,7 +35,8 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   theme,
   isEditable = true,
 }) => {
-  const content = (block.content as PricingCardContent) || createPricingCardContent();
+  const content =
+    (block.content as PricingCardContent) || createPricingCardContent();
   const { isRecommended, buttonLabel, features } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [tempIsRecommended, setTempIsRecommended] = useState(isRecommended);
@@ -43,13 +44,11 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   const isDark = theme.themeType === "dark";
 
   const planNameDoc = useMemo(() => {
-    if (content?.planName?.type === "doc") return content.planName;
-    return createPricingCardContent().planName;
+    return content?.planName ?? createPricingCardContent().planName;
   }, [content]);
 
   const priceDoc = useMemo(() => {
-    if (content?.price?.type === "doc") return content.price;
-    return createPricingCardContent().price;
+    return content?.price ?? createPricingCardContent().price;
   }, [content]);
 
   const handlePlanNameChange = useCallback(
@@ -68,7 +67,10 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
 
   const toggleFeature = (index: number) => {
     const newFeatures = [...content.features];
-    newFeatures[index] = { ...newFeatures[index], included: !newFeatures[index].included };
+    newFeatures[index] = {
+      ...newFeatures[index],
+      included: !newFeatures[index].included,
+    };
     onUpdate({ ...content, features: newFeatures });
   };
 
@@ -81,7 +83,10 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   const addFeature = () => {
     onUpdate({
       ...content,
-      features: [...content.features, { text: createParagraphContent(), included: true }],
+      features: [
+        ...content.features,
+        { text: createParagraphContent(), included: true },
+      ],
     });
   };
 
@@ -106,7 +111,12 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   };
 
   return (
-    <BlockWrapper onEdit={handleOpenEdit} onAdd={addFeature} className="h-full" theme={theme}>
+    <BlockWrapper
+      onEdit={handleOpenEdit}
+      onAdd={addFeature}
+      className="h-full"
+      theme={theme}
+    >
       <div
         className={`w-full h-full flex flex-col rounded-2xl p-6 relative transition-all ${
           isRecommended ? "scale-[1.02] z-10" : ""
@@ -120,7 +130,7 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
       >
         {/* Recommended Badge */}
         {isRecommended && (
-          <div 
+          <div
             className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider text-white flex items-center gap-1"
             style={{ backgroundColor: theme.primary }}
           >
@@ -130,7 +140,10 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
         )}
 
         {/* Header */}
-        <div className="text-center mb-5 pb-5" style={{ borderBottom: `1px solid ${theme.primary}10` }}>
+        <div
+          className="text-center mb-5 pb-5"
+          style={{ borderBottom: `1px solid ${theme.primary}10` }}
+        >
           <div style={{ color: `${theme.headingColor}80` }}>
             <ProseMirrorEditor
               key={`${block.id}-plan`}
@@ -156,16 +169,27 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
         {/* Features List */}
         <div className="flex-1 space-y-3 mb-6">
           {features.map((feature, index) => (
-            <div key={index} className="flex items-start gap-3 group/feature relative">
-              <button 
+            <div
+              key={index}
+              className="flex items-start gap-3 group/feature relative"
+            >
+              <button
                 onClick={() => toggleFeature(index)}
                 className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all"
                 style={{
-                  backgroundColor: feature.included ? `${theme.primary}15` : `${theme.bodyColor}10`,
-                  color: feature.included ? theme.primary : `${theme.bodyColor}40`,
+                  backgroundColor: feature.included
+                    ? `${theme.primary}15`
+                    : `${theme.bodyColor}10`,
+                  color: feature.included
+                    ? theme.primary
+                    : `${theme.bodyColor}40`,
                 }}
               >
-                {feature.included ? <IconCheck size={12} /> : <IconX size={12} />}
+                {feature.included ? (
+                  <IconCheck size={12} />
+                ) : (
+                  <IconX size={12} />
+                )}
               </button>
               <div className="flex-1" style={{ color: theme.bodyColor }}>
                 <ProseMirrorEditor
@@ -174,7 +198,9 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
                   value={feature.text}
                   onChange={(doc) => updateFeatureText(index, doc)}
                   placeholder="Feature description"
-                  className={`text-sm ${!feature.included && 'line-through opacity-40'}`}
+                  className={`text-sm ${
+                    !feature.included && "line-through opacity-40"
+                  }`}
                 />
               </div>
               <button
@@ -193,7 +219,9 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
         <button
           className="w-full py-2.5 rounded-xl font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
           style={{
-            backgroundColor: isRecommended ? theme.primary : `${theme.primary}15`,
+            backgroundColor: isRecommended
+              ? theme.primary
+              : `${theme.primary}15`,
             color: isRecommended ? "#fff" : theme.primary,
           }}
           onClick={handleOpenEdit}
@@ -205,7 +233,9 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
           <DialogContent
             className="sm:max-w-[400px]"
             style={{
-              backgroundColor: isDark ? "rgba(20,20,24,0.98)" : "rgba(255,255,255,0.98)",
+              backgroundColor: isDark
+                ? "rgba(20,20,24,0.98)"
+                : "rgba(255,255,255,0.98)",
               backdropFilter: "blur(20px)",
               border: "none",
             }}
@@ -214,20 +244,28 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
               <DialogTitle style={{ color: isDark ? "#fff" : "#000" }}>
                 Pricing Card Settings
               </DialogTitle>
-              <DialogDescription style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}>
+              <DialogDescription
+                style={{
+                  color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+                }}
+              >
                 Customize pricing display.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="flex items-center justify-between">
-                <Label style={{ color: isDark ? "#fff" : "#000" }}>Highlight as Popular</Label>
+                <Label style={{ color: isDark ? "#fff" : "#000" }}>
+                  Highlight as Popular
+                </Label>
                 <Switch
                   checked={tempIsRecommended}
                   onCheckedChange={setTempIsRecommended}
                 />
               </div>
               <div className="space-y-2">
-                <Label style={{ color: isDark ? "#fff" : "#000" }}>Button Label</Label>
+                <Label style={{ color: isDark ? "#fff" : "#000" }}>
+                  Button Label
+                </Label>
                 <Input
                   value={tempButtonLabel}
                   onChange={(e) => setTempButtonLabel(e.target.value)}
@@ -239,7 +277,10 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
               <Button variant="outline" onClick={() => setIsEditOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSave} style={{ backgroundColor: theme.primary }}>
+              <Button
+                onClick={handleSave}
+                style={{ backgroundColor: theme.primary }}
+              >
                 Save
               </Button>
             </DialogFooter>

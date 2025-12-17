@@ -20,13 +20,11 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
   const style = content?.style ?? "centered";
 
   const quoteDoc = useMemo(() => {
-    if (content?.quote?.type === "doc") return content.quote;
-    return createQuoteContent().quote;
+    return content?.quote ?? createQuoteContent().quote;
   }, [content]);
 
   const authorDoc = useMemo(() => {
-    if (content?.author?.type === "doc") return content.author;
-    return createQuoteContent().author;
+    return content?.author ?? createQuoteContent().author;
   }, [content]);
 
   const handleQuoteChange = useCallback(
@@ -69,7 +67,7 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
         className="text-5xl leading-none font-serif select-none opacity-15"
         style={{ color: theme.primary }}
       >
-        "
+        &quot;
       </div>
 
       {/* Quote Content */}
@@ -85,7 +83,11 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
       </div>
 
       {/* Author */}
-      <div className={`relative z-10 flex items-center gap-3 mt-1 ${isCentered ? "justify-center" : "justify-start"}`}>
+      <div
+        className={`relative z-10 flex items-center gap-3 mt-1 ${
+          isCentered ? "justify-center" : "justify-start"
+        }`}
+      >
         {isCentered && (
           <div
             className="h-px w-5"

@@ -14,26 +14,7 @@ export const StatsLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "By The Numbers" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Scale, speed, and reliability you can trust.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## By The Numbers\n\nScale, speed, and reliability you can trust.",
     };
 
     // Row 2: Stats Counter

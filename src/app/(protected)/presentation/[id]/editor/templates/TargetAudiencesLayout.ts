@@ -13,26 +13,7 @@ export const TargetAudiencesLayout = {
     const heading: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Who Wins With Us" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "We solve critical pain points for every level of the organization, ensuring alignment from day one.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Who Wins With Us\n\nWe solve critical pain points for every level of the organization, ensuring alignment from day one.",
     };
 
     const audiences = createFeatureListContent();

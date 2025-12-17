@@ -24,10 +24,7 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
   const icon = content?.icon ?? "";
 
   const editorContent = useMemo(() => {
-    if (content?.editorContent && content.editorContent.type === "doc") {
-      return content.editorContent;
-    }
-    return getDefaultNumberCardEditorContent();
+    return content?.editorContent ?? getDefaultNumberCardEditorContent();
   }, [content?.editorContent]);
 
   const handleEditorChange = useCallback(
@@ -74,9 +71,9 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
         >
           {icon || number}
         </div>
-        
+
         {/* Decorative corner */}
-        <div 
+        <div
           className="absolute -top-10 -right-10 w-28 h-28 rounded-full opacity-10 pointer-events-none"
           style={{ backgroundColor: theme.primary }}
         />

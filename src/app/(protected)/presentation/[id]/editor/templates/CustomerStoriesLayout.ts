@@ -17,25 +17,7 @@ export const CustomerStoriesLayout = {
     const header: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2 },
-            content: [{ type: "text", text: "Case Study: Scaling Global Operations" }],
-          },
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "How Acme Corp reduced overhead by 30% while expanding into 5 new markets.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Case Study: Scaling Global Operations\n\nHow Acme Corp reduced overhead by 30% while expanding into 5 new markets.",
     };
 
     const timeline = createTimelineContent();

@@ -30,30 +30,16 @@ export type BlockType = (typeof BLOCK_TYPES)[keyof typeof BLOCK_TYPES];
 
 export const MAX_BLOCKS_PER_ROW = 3;
 
-export interface ProseMirrorDocument {
-  type: "doc";
-  content: any[];
-}
+// ProseMirrorDocument is now a Markdown string instead of nested JSON
+export type ProseMirrorDocument = string;
 
-const createDefaultHeadingContent = (): ProseMirrorDocument => ({
-  type: "doc",
-  content: [
-    {
-      type: "heading",
-      attrs: { level: 1 },
-      content: [{ type: "text", text: "" }],
-    },
-  ],
-});
+const createDefaultHeadingContent = (): ProseMirrorDocument => "# ";
 
 export const createParagraphContent = (
   text: string = ""
-): ProseMirrorDocument => ({
-  type: "doc",
-  content: [
-    { type: "paragraph", content: text ? [{ type: "text", text }] : [] },
-  ],
-});
+): ProseMirrorDocument => {
+  return text || "";
+};
 
 export const withAlpha = (color: string, opacity: number): string => {
   // Simple hex to rgba conversion

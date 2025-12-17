@@ -21,13 +21,11 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
   const [isEditingLabel, setIsEditingLabel] = useState(false);
 
   const headingDoc = useMemo(() => {
-    if (content?.heading?.type === "doc") return content.heading;
-    return createCtaContent().heading;
+    return content?.heading ?? createCtaContent().heading;
   }, [content]);
 
   const bodyDoc = useMemo(() => {
-    if (content?.body?.type === "doc") return content.body;
-    return createCtaContent().body;
+    return content?.body ?? createCtaContent().body;
   }, [content]);
 
   const handleHeadingChange = useCallback(

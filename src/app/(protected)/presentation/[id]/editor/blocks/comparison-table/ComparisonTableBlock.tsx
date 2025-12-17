@@ -89,8 +89,16 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
         <ProseMirrorEditor
           key={`${block.id}-value-${rowIndex}-${colIndex}`}
           blockId={`${block.id}-value-${rowIndex}-${colIndex}`}
-          value={typeof value === "string" ? createParagraphContent(value) : value}
-          onChange={(newContent) => handleValueChange(rowIndex, colIndex, newContent)}
+          value={
+            typeof value === "string"
+              ? createParagraphContent(value)
+              : typeof value === "object" && value !== null
+              ? value
+              : createParagraphContent("")
+          }
+          onChange={(newContent) =>
+            handleValueChange(rowIndex, colIndex, newContent)
+          }
           placeholder="Value"
           className="text-center text-sm"
         />
@@ -147,7 +155,9 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
         }}
         className="p-1.5 rounded-lg transition-all hover:scale-105 flex items-center gap-1"
         style={{
-          backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+          backgroundColor: isDark
+            ? "rgba(255,255,255,0.1)"
+            : "rgba(0,0,0,0.05)",
           color: theme.primary,
         }}
         title="Add Row"
@@ -162,7 +172,9 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
         }}
         className="p-1.5 rounded-lg transition-all hover:scale-105 flex items-center gap-1"
         style={{
-          backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+          backgroundColor: isDark
+            ? "rgba(255,255,255,0.1)"
+            : "rgba(0,0,0,0.05)",
           color: theme.primary,
         }}
         title="Add Column"
@@ -209,7 +221,9 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                     key={colIndex}
                     className="p-4 text-center relative group min-w-[160px]"
                     style={{
-                      backgroundColor: col.highlighted ? `${theme.primary}08` : "transparent",
+                      backgroundColor: col.highlighted
+                        ? `${theme.primary}08`
+                        : "transparent",
                       borderBottom: `1px solid ${theme.primary}10`,
                     }}
                   >
@@ -239,13 +253,19 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                       <IconTrash size={14} />
                     </button>
 
-                    <div className={`${col.highlighted ? "mt-4" : "mt-1"} space-y-1`}>
+                    <div
+                      className={`${
+                        col.highlighted ? "mt-4" : "mt-1"
+                      } space-y-1`}
+                    >
                       <div className="flex justify-center">
                         <ProseMirrorEditor
                           key={`${block.id}-col-name-${colIndex}`}
                           blockId={`${block.id}-col-name-${colIndex}`}
                           value={col.name}
-                          onChange={(newContent) => handleColumnNameChange(colIndex, newContent)}
+                          onChange={(newContent) =>
+                            handleColumnNameChange(colIndex, newContent)
+                          }
                           placeholder="Plan Name"
                           className="text-sm font-semibold text-center"
                         />
@@ -256,7 +276,9 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                             key={`${block.id}-col-price-${colIndex}`}
                             blockId={`${block.id}-col-price-${colIndex}`}
                             value={col.price}
-                            onChange={(newContent) => handleColumnPriceChange(colIndex, newContent)}
+                            onChange={(newContent) =>
+                              handleColumnPriceChange(colIndex, newContent)
+                            }
                             placeholder="Price"
                             className="text-xl font-bold text-center"
                           />
@@ -273,7 +295,8 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                   key={rowIndex}
                   className="group/row transition-colors"
                   style={{
-                    backgroundColor: rowIndex % 2 === 1 ? `${theme.primary}03` : "transparent",
+                    backgroundColor:
+                      rowIndex % 2 === 1 ? `${theme.primary}03` : "transparent",
                   }}
                 >
                   <td
@@ -282,12 +305,17 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                       borderBottom: `1px solid ${theme.primary}08`,
                     }}
                   >
-                    <div className="text-sm" style={{ color: theme.headingColor }}>
+                    <div
+                      className="text-sm"
+                      style={{ color: theme.headingColor }}
+                    >
                       <ProseMirrorEditor
                         key={`${block.id}-feature-${rowIndex}`}
                         blockId={`${block.id}-feature-${rowIndex}`}
                         value={row.feature}
-                        onChange={(newContent) => handleRowFeatureChange(rowIndex, newContent)}
+                        onChange={(newContent) =>
+                          handleRowFeatureChange(rowIndex, newContent)
+                        }
                         placeholder="Feature"
                         className="w-full"
                       />

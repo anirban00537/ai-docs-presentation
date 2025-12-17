@@ -8,20 +8,8 @@ export interface NumberCardContent {
   editorContent: ProseMirrorDocument;
 }
 
-export const getDefaultNumberCardEditorContent = (): ProseMirrorDocument => ({
-  type: "doc",
-  content: [
-    {
-      type: "heading",
-      attrs: { level: 3 },
-      content: [{ type: "text", text: "Title" }],
-    },
-    {
-      type: "paragraph",
-      content: [{ type: "text", text: "Description" }],
-    },
-  ],
-});
+export const getDefaultNumberCardEditorContent = (): ProseMirrorDocument =>
+  "### Title\n\nDescription";
 
 export const createNumberCardContent = (): NumberCardContent => ({
   type: "number-card",
@@ -31,19 +19,29 @@ export const createNumberCardContent = (): NumberCardContent => ({
   editorContent: getDefaultNumberCardEditorContent(),
 });
 
-export const normalizeNumberCardContent = (
-  content: any
-): NumberCardContent => {
+import {
+  normalizeToMarkdown,
+  isLegacyProseMirrorFormat,
+  isMarkdownFormat,
+} from "@/lib/markdown/prosemirror-converter";
+
+export const normalizeNumberCardContent = (content: any): NumberCardContent => {
   const incoming = content as NumberCardContent | undefined;
-  if (incoming?.editorContent?.type === "doc") {
+  if (incoming?.editorContent) {
+    // Handle both Markdown string and legacy JSON
+    const editorContent = isMarkdownFormat(incoming.editorContent)
+      ? incoming.editorContent
+      : isLegacyProseMirrorFormat(incoming.editorContent)
+      ? normalizeToMarkdown(incoming.editorContent)
+      : getDefaultNumberCardEditorContent();
+
     return {
       type: "number-card",
       icon: incoming.icon ?? "",
       number: incoming.number ?? 1,
       size: incoming.size ?? "medium",
-      editorContent: incoming.editorContent,
+      editorContent,
     };
   }
   return createNumberCardContent();
 };
-

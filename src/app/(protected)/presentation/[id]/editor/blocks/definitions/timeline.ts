@@ -12,119 +12,57 @@ export interface TimelineContent {
   steps: TimelineStep[];
 }
 
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+
 export const createTimelineContent = (): TimelineContent => ({
   type: "timeline",
-  title: {
-    type: "doc",
-    content: [
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Our Process" }],
-      },
-    ],
-  },
+  title: "## Our Process",
   steps: [
     {
-      title: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [{ type: "text", text: "Step 1: Planning" }],
-          },
-        ],
-      },
-      description: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "Define objectives and requirements for your project.",
-              },
-            ],
-          },
-        ],
-      },
+      title: "Step 1: Planning",
+      description: "Define objectives and requirements for your project.",
       icon: "📋",
     },
     {
-      title: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [{ type: "text", text: "Step 2: Execution" }],
-          },
-        ],
-      },
-      description: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "Implement and develop according to the plan.",
-              },
-            ],
-          },
-        ],
-      },
+      title: "Step 2: Execution",
+      description: "Implement and develop according to the plan.",
       icon: "⚡",
     },
     {
-      title: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [{ type: "text", text: "Step 3: Delivery" }],
-          },
-        ],
-      },
-      description: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "Launch and provide ongoing support and optimization.",
-              },
-            ],
-          },
-        ],
-      },
+      title: "Step 3: Delivery",
+      description: "Launch and provide ongoing support and optimization.",
       icon: "🚀",
     },
   ],
 });
 
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
-
 export const normalizeTimelineContent = (content: any): TimelineContent => {
   const incoming = content as TimelineContent | undefined;
   if (incoming && Array.isArray(incoming.steps)) {
+    const title = incoming.title
+      ? (isMarkdownFormat(incoming.title)
+          ? incoming.title
+          : isLegacyProseMirrorFormat(incoming.title)
+          ? normalizeToMarkdown(incoming.title)
+          : undefined)
+      : undefined;
+    
+    const defaultStep = createTimelineContent().steps[0];
+    
     return {
       type: "timeline",
-      title:
-        incoming.title && hasValidDoc(incoming.title)
-          ? incoming.title
-          : undefined,
+      title,
       steps: incoming.steps.map((step) => ({
-        title: hasValidDoc(step.title)
+        title: isMarkdownFormat(step.title)
           ? step.title
-          : createTimelineContent().steps[0].title,
-        description: hasValidDoc(step.description)
+          : isLegacyProseMirrorFormat(step.title)
+          ? normalizeToMarkdown(step.title)
+          : defaultStep.title,
+        description: isMarkdownFormat(step.description)
           ? step.description
-          : createTimelineContent().steps[0].description,
+          : isLegacyProseMirrorFormat(step.description)
+          ? normalizeToMarkdown(step.description)
+          : defaultStep.description,
         icon: step.icon ?? "",
       })),
     };

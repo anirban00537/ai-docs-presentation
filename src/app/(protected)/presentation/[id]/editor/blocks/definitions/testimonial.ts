@@ -9,44 +9,44 @@ export interface TestimonialContent {
   avatar?: string;
 }
 
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+
 export const createTestimonialContent = (): TestimonialContent => ({
   type: "testimonial",
   quote: createParagraphContent(),
-  name: {
-    type: "doc",
-    content: [
-      { type: "paragraph", content: [{ type: "text", text: "Jane Doe" }] },
-    ],
-  },
-  role: {
-    type: "doc",
-    content: [
-      {
-        type: "paragraph",
-        content: [{ type: "text", text: "Product Manager" }],
-      },
-    ],
-  },
+  name: "Jane Doe",
+  role: "Product Manager",
   avatar: "",
 });
-
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
 
 export const normalizeTestimonialContent = (
   content: any
 ): TestimonialContent => {
   const incoming = content as TestimonialContent | undefined;
-  if (incoming && hasValidDoc(incoming.quote)) {
+  if (incoming) {
+    const quote = isMarkdownFormat(incoming.quote)
+      ? incoming.quote
+      : isLegacyProseMirrorFormat(incoming.quote)
+      ? normalizeToMarkdown(incoming.quote)
+      : createTestimonialContent().quote;
+    
+    const name = isMarkdownFormat(incoming.name)
+      ? incoming.name
+      : isLegacyProseMirrorFormat(incoming.name)
+      ? normalizeToMarkdown(incoming.name)
+      : createTestimonialContent().name;
+    
+    const role = isMarkdownFormat(incoming.role)
+      ? incoming.role
+      : isLegacyProseMirrorFormat(incoming.role)
+      ? normalizeToMarkdown(incoming.role)
+      : createTestimonialContent().role;
+    
     return {
       type: "testimonial",
-      quote: incoming.quote,
-      name: hasValidDoc(incoming.name)
-        ? incoming.name
-        : createTestimonialContent().name,
-      role: hasValidDoc(incoming.role)
-        ? incoming.role
-        : createTestimonialContent().role,
+      quote,
+      name,
+      role,
       avatar: incoming.avatar ?? "",
     };
   }

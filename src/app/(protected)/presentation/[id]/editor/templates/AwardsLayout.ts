@@ -14,26 +14,7 @@ export const AwardsLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Recognized Excellence" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "We are proud to be backed by the industry's most respected organizations.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Recognized Excellence\n\nWe are proud to be backed by the industry's most respected organizations.",
     };
 
     // Row 2: Badges

@@ -7,7 +7,10 @@ import {
 import type { Block } from "@/lib/editor/types";
 import { createParagraphContent, getDefaultHeadingContent } from "../blocks/definitions/common";
 
-const createHeading = (text: string, level = 1) => ({ type: "doc" as const, content: [{ type: "heading", attrs: { level }, content: [{ type: "text", text }] }] });
+const createHeading = (text: string, level = 1) => {
+  const hashes = "#".repeat(level);
+  return `${hashes} ${text}`;
+};
 
 export const TeamLayout = {
   id: "team-layout",
@@ -19,26 +22,7 @@ export const TeamLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Meet The Builders" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Obsessed with quality, craft, and user experience.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Meet The Builders\n\nObsessed with quality, craft, and user experience.",
     };
 
     // Row 2: Three Team Cards

@@ -17,26 +17,7 @@ export const ComparisonLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Find Your Perfect Fit" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Simple, transparent pricing for teams of all sizes.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Find Your Perfect Fit\n\nSimple, transparent pricing for teams of all sizes.",
     };
 
     // Row 2: Comparison Table

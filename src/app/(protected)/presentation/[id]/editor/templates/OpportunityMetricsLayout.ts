@@ -13,26 +13,7 @@ export const OpportunityMetricsLayout = {
     const header: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "A Massive Untapped Opportunity" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "The market is shifting rapidly. We are positioned to capture a significant share of this emerging $100B+ ecosystem.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## A Massive Untapped Opportunity\n\nThe market is shifting rapidly. We are positioned to capture a significant share of this emerging $100B+ ecosystem.",
     };
 
     const stats = createStatsCounterContent();

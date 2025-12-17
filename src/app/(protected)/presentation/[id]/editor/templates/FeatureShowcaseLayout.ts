@@ -14,26 +14,7 @@ export const FeatureShowcaseLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "The Platform Advantage" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Everything you need to build, scale, and manage your operations in one place.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## The Platform Advantage\n\nEverything you need to build, scale, and manage your operations in one place.",
     };
 
     // Row 2: Feature List

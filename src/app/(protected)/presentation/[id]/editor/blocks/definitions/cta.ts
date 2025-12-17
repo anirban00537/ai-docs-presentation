@@ -7,44 +7,34 @@ export interface CtaContent {
   buttonLabel: string;
 }
 
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+
 export const createCtaContent = (): CtaContent => ({
   type: "cta",
-  heading: {
-    type: "doc",
-    content: [
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Call to action" }],
-      },
-    ],
-  },
-  body: {
-    type: "doc",
-    content: [
-      {
-        type: "paragraph",
-        content: [{ type: "text", text: "Describe the benefit here." }],
-      },
-    ],
-  },
+  heading: "## Call to action",
+  body: "Describe the benefit here.",
   buttonLabel: "Get started",
 });
 
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
-
 export const normalizeCtaContent = (content: any): CtaContent => {
   const incoming = content as CtaContent | undefined;
-  if (
-    incoming &&
-    hasValidDoc(incoming.heading) &&
-    hasValidDoc(incoming.body)
-  ) {
+  if (incoming) {
+    const heading = isMarkdownFormat(incoming.heading)
+      ? incoming.heading
+      : isLegacyProseMirrorFormat(incoming.heading)
+      ? normalizeToMarkdown(incoming.heading)
+      : createCtaContent().heading;
+    
+    const body = isMarkdownFormat(incoming.body)
+      ? incoming.body
+      : isLegacyProseMirrorFormat(incoming.body)
+      ? normalizeToMarkdown(incoming.body)
+      : createCtaContent().body;
+    
     return {
       type: "cta",
-      heading: incoming.heading,
-      body: incoming.body,
+      heading,
+      body,
       buttonLabel: incoming.buttonLabel ?? "Get started",
     };
   }

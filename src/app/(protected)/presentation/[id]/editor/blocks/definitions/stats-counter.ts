@@ -37,8 +37,7 @@ export const createStatsCounterContent = (): StatsCounterContent => ({
   columns: 2,
 });
 
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeStatsCounterContent = (
   content: any
@@ -49,8 +48,10 @@ export const normalizeStatsCounterContent = (
       type: "stats-counter",
       stats: incoming.stats.map((stat) => ({
         value: stat.value ?? 0,
-        label: hasValidDoc(stat.label)
+        label: isMarkdownFormat(stat.label)
           ? stat.label
+          : isLegacyProseMirrorFormat(stat.label)
+          ? normalizeToMarkdown(stat.label)
           : createParagraphContent("Label"),
         icon: stat.icon ?? "",
         prefix: stat.prefix ?? "",

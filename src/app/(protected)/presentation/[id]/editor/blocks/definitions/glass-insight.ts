@@ -16,15 +16,23 @@ export const createGlassInsightContent = (
   editorContent: createParagraphContent(text),
 });
 
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+
 export const normalizeGlassInsightContent = (
   content: any
 ): GlassInsightContent => {
   const incoming = content as GlassInsightContent | undefined;
-  if (incoming?.editorContent?.type === "doc") {
+  if (incoming?.editorContent) {
+    const editorContent = isMarkdownFormat(incoming.editorContent)
+      ? incoming.editorContent
+      : isLegacyProseMirrorFormat(incoming.editorContent)
+      ? normalizeToMarkdown(incoming.editorContent)
+      : createGlassInsightContent().editorContent;
+    
     return {
       type: "glass-insight",
       icon: incoming.icon ?? "💡",
-      editorContent: incoming.editorContent,
+      editorContent,
     };
   }
   return createGlassInsightContent();

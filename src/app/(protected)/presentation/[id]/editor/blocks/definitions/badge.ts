@@ -34,8 +34,7 @@ export const createBadgeContent = (): BadgeContent => ({
   layout: "grid",
 });
 
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeBadgeContent = (content: any): BadgeContent => {
   const incoming = content as BadgeContent | undefined;
@@ -44,18 +43,24 @@ export const normalizeBadgeContent = (content: any): BadgeContent => {
       type: "badge",
       badges: incoming.badges.map((badge) => ({
         icon: badge.icon ?? "🏆",
-        title: hasValidDoc(badge.title)
+        title: isMarkdownFormat(badge.title)
           ? badge.title
+          : isLegacyProseMirrorFormat(badge.title)
+          ? normalizeToMarkdown(badge.title)
           : createParagraphContent("Award Title"),
         description: badge.description
-          ? hasValidDoc(badge.description)
-            ? badge.description
-            : undefined
+          ? (isMarkdownFormat(badge.description)
+              ? badge.description
+              : isLegacyProseMirrorFormat(badge.description)
+              ? normalizeToMarkdown(badge.description)
+              : undefined)
           : undefined,
         issuer: badge.issuer
-          ? hasValidDoc(badge.issuer)
-            ? badge.issuer
-            : undefined
+          ? (isMarkdownFormat(badge.issuer)
+              ? badge.issuer
+              : isLegacyProseMirrorFormat(badge.issuer)
+              ? normalizeToMarkdown(badge.issuer)
+              : undefined)
           : undefined,
         date: badge.date,
       })),

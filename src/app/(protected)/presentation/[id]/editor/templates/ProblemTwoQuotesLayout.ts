@@ -13,25 +13,7 @@ export const ProblemTwoQuotesLayout = {
     const intro: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2 },
-            content: [{ type: "text", text: "Frustration is Universal" }],
-          },
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "From the front lines to the C-suite, the lack of visibility is causing paralysis.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Frustration is Universal\n\nFrom the front lines to the C-suite, the lack of visibility is causing paralysis.",
     };
 
     const quote1 = createQuoteContent();

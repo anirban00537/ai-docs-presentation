@@ -14,26 +14,7 @@ export const FAQLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Frequently Asked Questions" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Everything you need to know about security, deployment, and billing.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Frequently Asked Questions\n\nEverything you need to know about security, deployment, and billing.",
     };
 
     // Row 2: FAQ Block

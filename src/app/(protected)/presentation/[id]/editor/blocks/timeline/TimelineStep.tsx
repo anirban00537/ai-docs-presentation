@@ -32,13 +32,13 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
   const stepContent = step ?? createTimelineContent().steps[0];
 
   const titleDoc = useMemo(() => {
-    if (stepContent?.title?.type === "doc") return stepContent.title;
-    return createTimelineContent().steps[0].title;
+    return stepContent?.title ?? createTimelineContent().steps[0].title;
   }, [stepContent?.title]);
 
   const descriptionDoc = useMemo(() => {
-    if (stepContent?.description?.type === "doc") return stepContent.description;
-    return createTimelineContent().steps[0].description;
+    return (
+      stepContent?.description ?? createTimelineContent().steps[0].description
+    );
   }, [stepContent?.description]);
 
   const icon = stepContent?.icon ?? "•";
@@ -61,7 +61,9 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0 border-none shadow-xl">
-            <EmojiPicker onEmojiClick={(emoji) => onIconChange(stepIndex, emoji.emoji)} />
+            <EmojiPicker
+              onEmojiClick={(emoji) => onIconChange(stepIndex, emoji.emoji)}
+            />
           </PopoverContent>
         </Popover>
       </div>

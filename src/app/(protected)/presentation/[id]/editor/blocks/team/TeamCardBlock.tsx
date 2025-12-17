@@ -5,7 +5,13 @@ import {
   createTeamCardContent,
   type TeamCardContent,
 } from "../definitions/team-card";
-import { IconUser, IconBrandLinkedin, IconBrandX, IconWorld, IconUpload } from "@tabler/icons-react";
+import {
+  IconUser,
+  IconBrandLinkedin,
+  IconBrandX,
+  IconWorld,
+  IconUpload,
+} from "@tabler/icons-react";
 
 interface TeamCardBlockProps {
   block: Block;
@@ -24,18 +30,15 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
   const content = block.content as TeamCardContent;
 
   const nameDoc = useMemo(() => {
-    if (content?.name?.type === "doc") return content.name;
-    return createTeamCardContent().name;
+    return content?.name ?? createTeamCardContent().name;
   }, [content]);
 
   const roleDoc = useMemo(() => {
-    if (content?.role?.type === "doc") return content.role;
-    return createTeamCardContent().role;
+    return content?.role ?? createTeamCardContent().role;
   }, [content]);
 
   const descriptionDoc = useMemo(() => {
-    if (content?.description?.type === "doc") return content.description;
-    return createTeamCardContent().description;
+    return content?.description ?? createTeamCardContent().description;
   }, [content]);
 
   const handleNameChange = useCallback(
@@ -67,7 +70,10 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
   };
 
   const handleSocialClick = (platform: "linkedin" | "twitter" | "website") => {
-    const url = prompt(`Enter ${platform} URL:`, content.socials?.[platform] || "");
+    const url = prompt(
+      `Enter ${platform} URL:`,
+      content.socials?.[platform] || ""
+    );
     if (url !== null) {
       onUpdate({
         ...content,
@@ -100,9 +106,12 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
               className="w-full h-full object-cover"
             />
           ) : (
-            <IconUser size={32} style={{ color: theme.primary, opacity: 0.4 }} />
+            <IconUser
+              size={32}
+              style={{ color: theme.primary, opacity: 0.4 }}
+            />
           )}
-          
+
           {/* Hover Overlay */}
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity rounded-full">
             <IconUpload size={20} className="text-white" />
@@ -161,11 +170,15 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
             className="p-2 rounded-lg transition-all hover:scale-105"
             title={key.charAt(0).toUpperCase() + key.slice(1)}
             style={{
-              backgroundColor: content.socials?.[key as keyof typeof content.socials]
+              backgroundColor: content.socials?.[
+                key as keyof typeof content.socials
+              ]
                 ? `${theme.primary}15`
                 : "transparent",
               color: theme.primary,
-              opacity: content.socials?.[key as keyof typeof content.socials] ? 1 : 0.3,
+              opacity: content.socials?.[key as keyof typeof content.socials]
+                ? 1
+                : 0.3,
             }}
           >
             <Icon size={18} />

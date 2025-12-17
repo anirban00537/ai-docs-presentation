@@ -13,26 +13,7 @@ export const ProblemSupportingPointsLayout = {
     const statement: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "The Innovation Paradox" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Organizations are desperate to innovate, but their legacy infrastructure is actively preventing them from moving forward.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## The Innovation Paradox\n\nOrganizations are desperate to innovate, but their legacy infrastructure is actively preventing them from moving forward.",
     };
 
     const features = createFeatureListContent();

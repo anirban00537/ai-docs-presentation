@@ -13,26 +13,7 @@ export const PricingThreeTierLayout = {
     const header: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Transparent Pricing. Scales With You." }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Start small and upgrade as you grow. No hidden fees, cancel anytime.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Transparent Pricing. Scales With You.\n\nStart small and upgrade as you grow. No hidden fees, cancel anytime.",
     };
 
     const plans = [

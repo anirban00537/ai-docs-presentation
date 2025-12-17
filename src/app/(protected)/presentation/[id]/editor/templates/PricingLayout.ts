@@ -7,10 +7,10 @@ import {
 import type { Block } from "@/lib/editor/types";
 import { createParagraphContent } from "../blocks/definitions/common";
 
-const createHeadingDoc = (text: string, level = 3) => ({
-    type: "doc" as const,
-    content: [{ type: "heading", attrs: { level }, content: [{ type: "text", text }] }],
-});
+const createHeadingDoc = (text: string, level = 3) => {
+  const hashes = "#".repeat(level);
+  return `${hashes} ${text}`;
+};
 
 export const PricingLayout = {
   id: "pricing-layout",
@@ -22,26 +22,7 @@ export const PricingLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Simple, Transparent Pricing" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "No hidden fees. Cancel anytime.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Simple, Transparent Pricing\n\nNo hidden fees. Cancel anytime.",
     };
 
     // Row 2: Three Pricing Cards

@@ -1,11 +1,7 @@
 import { nanoid } from "nanoid";
 import { Row, Block } from "@/lib/editor/types";
 import type { LayoutTemplate } from "../layoutTemplates";
-import {
-  BLOCK_TYPES,
-  createParagraphContent,
-  createSpacerContent,
-} from "../blocks/definitions";
+import { BLOCK_TYPES, createSpacerContent } from "../blocks/definitions";
 
 export const IntroductionLayout: LayoutTemplate = {
   id: "introduction",
@@ -29,31 +25,8 @@ export const IntroductionLayout: LayoutTemplate = {
         {
           id: nanoid(),
           type: BLOCK_TYPES.PROSEMIRROR,
-          content: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 1, textAlign: "center" },
-                content: [
-                  {
-                    type: "text",
-                    text: "User Research Findings for Product Development",
-                  },
-                ],
-              },
-              {
-                type: "paragraph",
-                attrs: { textAlign: "center" },
-                content: [
-                  {
-                    type: "text",
-                    text: "Key insights, pain points, and actionable recommendations from our recent research study",
-                  },
-                ],
-              },
-            ],
-          },
+          content:
+            "# User Research Findings for Product Development\n\nKey insights, pain points, and actionable recommendations from our recent research study",
         } as Block,
       ],
     },

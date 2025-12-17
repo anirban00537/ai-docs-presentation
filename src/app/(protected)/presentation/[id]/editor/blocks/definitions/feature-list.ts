@@ -36,8 +36,7 @@ export const createFeatureListContent = (): FeatureListContent => ({
   columns: 2,
 });
 
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeFeatureListContent = (
   content: any
@@ -48,11 +47,15 @@ export const normalizeFeatureListContent = (
       type: "feature-list",
       features: incoming.features.map((feature) => ({
         icon: feature.icon ?? "✨",
-        title: hasValidDoc(feature.title)
+        title: isMarkdownFormat(feature.title)
           ? feature.title
+          : isLegacyProseMirrorFormat(feature.title)
+          ? normalizeToMarkdown(feature.title)
           : createParagraphContent("Feature Title"),
-        description: hasValidDoc(feature.description)
+        description: isMarkdownFormat(feature.description)
           ? feature.description
+          : isLegacyProseMirrorFormat(feature.description)
+          ? normalizeToMarkdown(feature.description)
           : createParagraphContent("Feature description"),
       })),
       layout: incoming.layout ?? "grid",

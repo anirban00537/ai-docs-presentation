@@ -23,10 +23,9 @@ export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({
   const number = content?.number ?? 1;
 
   const editorContent = useMemo(() => {
-    if (content?.editorContent && content.editorContent.type === "doc") {
-      return content.editorContent;
-    }
-    return createSimpleNumberCardContent().editorContent;
+    return (
+      content?.editorContent ?? createSimpleNumberCardContent().editorContent
+    );
   }, [content?.editorContent]);
 
   const handleEditorChange = useCallback(
@@ -45,7 +44,7 @@ export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const val = parseInt(e.target.value, 10);
       const newNumber = isNaN(val) ? 0 : val;
-      
+
       const newContent: SimpleNumberCardContent = {
         type: "simple-number-card",
         number: newNumber,
@@ -68,7 +67,7 @@ export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({
           -moz-appearance: textfield;
         }
       `}</style>
-      
+
       {/* Number */}
       <div
         className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shrink-0"
@@ -87,7 +86,7 @@ export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({
           }}
         />
       </div>
-      
+
       {/* Content */}
       <div className="flex-1 min-w-0 pt-1.5">
         <ProseMirrorEditor

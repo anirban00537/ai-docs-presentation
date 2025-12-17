@@ -14,26 +14,7 @@ export const ProgressLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Q3 Migration Status" }],
-          },
-          {
-            type: "paragraph",
-            attrs: { textAlign: "center" },
-            content: [
-              {
-                type: "text",
-                text: "Current tracking against our core infrastructure goals.",
-              },
-            ],
-          },
-        ],
-      },
+      content: "## Q3 Migration Status\n\nCurrent tracking against our core infrastructure goals.",
     };
 
     // Row 2: Progress Bars

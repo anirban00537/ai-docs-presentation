@@ -19,12 +19,19 @@ export const createVideoContent = (): VideoContent => ({
   loop: false,
 });
 
-const hasValidDoc = (doc?: ProseMirrorDocument) =>
-  doc?.type === "doc" && Array.isArray(doc.content);
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeVideoContent = (content: any): VideoContent => {
   const incoming = content as VideoContent | undefined;
   if (incoming) {
+    const title = incoming.title
+      ? (isMarkdownFormat(incoming.title)
+          ? incoming.title
+          : isLegacyProseMirrorFormat(incoming.title)
+          ? normalizeToMarkdown(incoming.title)
+          : undefined)
+      : undefined;
+    
     return {
       type: "video",
       source: incoming.source ?? "youtube",
@@ -32,7 +39,7 @@ export const normalizeVideoContent = (content: any): VideoContent => {
       thumbnail: incoming.thumbnail,
       autoplay: incoming.autoplay ?? false,
       loop: incoming.loop ?? false,
-      title: hasValidDoc(incoming.title) ? incoming.title : undefined,
+      title,
     };
   }
   return createVideoContent();

@@ -30,10 +30,22 @@ import { ImageUrlModal } from "./plugins/image-plugin";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
+import {
+  prosemirrorToMarkdown,
+  markdownToProseMirror,
+  isLegacyProseMirrorFormat,
+  isMarkdownFormat,
+} from "@/lib/markdown/prosemirror-converter";
+
+// Legacy ProseMirrorDocument type (for backward compatibility)
+interface LegacyProseMirrorDocument {
+  type: "doc";
+  content: any[];
+}
 
 // --- Main Editor Component ---
 type ProseMirrorEditorProps = {
-  value: any;
+  value: string | LegacyProseMirrorDocument | any; // Accept both Markdown string and legacy JSON
   onChange: (value: any) => void;
   readOnly?: boolean;
   className?: string;
@@ -105,39 +117,65 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       return;
     }
 
-    // External value change (e.g., from Redux after block swap)
-    if (value && typeof value === "object" && value.type === "doc") {
+    // Handle both Markdown string and legacy JSON format
+    let prosemirrorDoc: ProseMirrorNode | null = null;
+
+    if (isMarkdownFormat(value)) {
+      // New format: Markdown string
       try {
-        const newDoc = ProseMirrorNode.fromJSON(schema, value);
-        const currentDoc = viewRef.current.state.doc;
-
-        // Only update if content is actually different
-        // Use eq() which compares document structure, not just references
-        if (!currentDoc.eq(newDoc)) {
-          // Additional check: compare JSON to ensure content really changed
-          const currentJSON = currentDoc.toJSON();
-          const newJSON = newDoc.toJSON();
-          const contentChanged =
-            JSON.stringify(currentJSON) !== JSON.stringify(newJSON);
-
-          if (contentChanged) {
-            const newState = EditorState.create({
-              doc: newDoc,
-              plugins: viewRef.current.state.plugins,
-            });
-            viewRef.current.updateState(newState);
-          }
-        }
+        const legacyDoc = markdownToProseMirror(value);
+        prosemirrorDoc = ProseMirrorNode.fromJSON(schema, legacyDoc);
       } catch (error) {
-        // Invalid JSON, ignore
-        console.warn("ProseMirror sync error:", error);
+        console.warn("Failed to parse Markdown:", error);
+        return;
+      }
+    } else if (isLegacyProseMirrorFormat(value)) {
+      // Legacy format: ProseMirror JSON object
+      try {
+        prosemirrorDoc = ProseMirrorNode.fromJSON(schema, value);
+      } catch (error) {
+        console.warn("Failed to parse legacy ProseMirror JSON:", error);
+        return;
+      }
+    } else {
+      // Invalid format, skip
+      return;
+    }
+
+    if (prosemirrorDoc) {
+      const currentDoc = viewRef.current.state.doc;
+
+      // Only update if content is actually different
+      if (!currentDoc.eq(prosemirrorDoc)) {
+        // Additional check: compare JSON to ensure content really changed
+        const currentJSON = currentDoc.toJSON();
+        const newJSON = prosemirrorDoc.toJSON();
+        const contentChanged =
+          JSON.stringify(currentJSON) !== JSON.stringify(newJSON);
+
+        if (contentChanged) {
+          const newState = EditorState.create({
+            doc: prosemirrorDoc,
+            plugins: viewRef.current.state.plugins,
+          });
+          viewRef.current.updateState(newState);
+        }
       }
     }
   }, [value]);
 
   // Parse initial value to ProseMirror doc
   const initialDoc = useMemo(() => {
-    if (value && typeof value === "object" && value.type === "doc") {
+    if (isMarkdownFormat(value)) {
+      // New format: Markdown string
+      try {
+        const legacyDoc = markdownToProseMirror(value);
+        return ProseMirrorNode.fromJSON(schema, legacyDoc);
+      } catch {
+        // Invalid Markdown, create empty doc
+      }
+    } else if (isLegacyProseMirrorFormat(value)) {
+      // Legacy format: ProseMirror JSON object
       try {
         return ProseMirrorNode.fromJSON(schema, value);
       } catch {
@@ -411,9 +449,11 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
         }
 
         if (transaction.docChanged) {
+          // Convert ProseMirror doc to Markdown before saving
           const json = newState.doc.toJSON();
+          const markdown = prosemirrorToMarkdown(json);
           isInternalChangeRef.current = true; // Mark as internal change
-          onChangeRef.current(json);
+          onChangeRef.current(markdown);
 
           // Check for slash command trigger
           const { $from } = newState.selection;

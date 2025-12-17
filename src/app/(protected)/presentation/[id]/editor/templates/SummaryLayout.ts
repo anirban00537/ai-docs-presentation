@@ -11,38 +11,11 @@ export const SummaryLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "heading",
-            attrs: { level: 1 },
-            content: [{ type: "text", text: "Summary" }],
-          },
-        ],
-      },
+      content: "# Summary",
     };
 
     const createCard = (num: number, title: string, description: string): Block => {
-      const editorContent = {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: `${title}: `,
-                marks: [{ type: "strong" }],
-              },
-              {
-                type: "text",
-                text: description,
-              },
-            ],
-          },
-        ],
-      };
+      const editorContent = `**${title}**: ${description}`;
 
       return {
         id: nanoid(),

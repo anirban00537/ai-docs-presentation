@@ -25,7 +25,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
 }) => {
   const content = block.content as TimelineContent;
   const steps = content?.steps ?? createTimelineContent().steps;
-  const title = content?.title;
+  const title = content?.title ?? undefined;
 
   const handleTitleChange = useCallback(
     (newDoc: any) => {

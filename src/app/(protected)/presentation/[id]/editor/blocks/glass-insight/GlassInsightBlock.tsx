@@ -30,10 +30,7 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
   const isDark = theme.themeType === "dark";
 
   const editorContent = useMemo(() => {
-    if (content?.editorContent && content.editorContent.type === "doc") {
-      return content.editorContent;
-    }
-    return createGlassInsightContent().editorContent;
+    return content?.editorContent ?? createGlassInsightContent().editorContent;
   }, [content?.editorContent]);
 
   const handleEditorChange = useCallback(
@@ -76,7 +73,7 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
 
       {/* Content Area */}
       <div className="relative z-10 flex flex-col h-full justify-center">
-        <div 
+        <div
           className="mb-4 w-10 h-0.5 rounded-full"
           style={{ backgroundColor: theme.primary, opacity: 0.4 }}
         />

@@ -7,6 +7,8 @@ export interface SimpleNumberCardContent {
   editorContent: ProseMirrorDocument;
 }
 
+import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+
 export const createSimpleNumberCardContent = (
   number: number = 1,
   title: string = "Title",
@@ -14,36 +16,24 @@ export const createSimpleNumberCardContent = (
 ): SimpleNumberCardContent => ({
   type: "simple-number-card",
   number,
-  editorContent: {
-    type: "doc",
-    content: [
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: `${title}: `,
-            marks: [{ type: "strong" }],
-          },
-          {
-            type: "text",
-            text: description,
-          },
-        ],
-      },
-    ],
-  },
+  editorContent: `**${title}**: ${description}`,
 });
 
 export const normalizeSimpleNumberCardContent = (
   content: any
 ): SimpleNumberCardContent => {
   const incoming = content as SimpleNumberCardContent | undefined;
-  if (incoming?.editorContent?.type === "doc") {
+  if (incoming?.editorContent) {
+    const editorContent = isMarkdownFormat(incoming.editorContent)
+      ? incoming.editorContent
+      : isLegacyProseMirrorFormat(incoming.editorContent)
+      ? normalizeToMarkdown(incoming.editorContent)
+      : createSimpleNumberCardContent().editorContent;
+    
     return {
       type: "simple-number-card",
       number: incoming.number ?? 1,
-      editorContent: incoming.editorContent,
+      editorContent,
     };
   }
   return createSimpleNumberCardContent();
