@@ -114,7 +114,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
     fontFamily: getFontFamily(theme.fontFamily || "Inter"),
     ...(fullWidth
       ? {
-          // Full-width mode for presentation - no width constraints
+          // Full-width mode for presentation - fill the screen
           width: "100%",
           minHeight: "100vh",
         }
@@ -129,7 +129,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
     <div
       className={`group/slide relative transition-all duration-300 ease-out ${
         fullWidth
-          ? "w-full px-12 md:px-20 lg:px-32 py-12 md:py-16 lg:py-20"
+          ? "w-full px-12 md:px-20 lg:px-32 py-16 md:py-24 lg:py-32 flex flex-col justify-center"
           : "px-8 py-8 mx-auto rounded-2xl"
       } ${!readOnly ? "" : ""}`}
       style={containerStyle}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 
 import { useSearchParams, useParams } from "next/navigation";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
@@ -17,6 +17,7 @@ import {
 import { BlockFocusProvider } from "@/app/(protected)/presentation/[id]/editor/BlockFocusContext";
 import { LoadingScreen } from "@/app/(protected)/presentation/[id]/editor/LoadingScreen";
 import { useEditorPage } from "./hooks/useEditorPage";
+import { usePresentationMode } from "./hooks/usePresentationMode";
 import { useAppSelector } from "@/store/hooks";
 import { selectPresentation, selectActiveSlideId } from "@/store/slices/slidesSlice";
 import { FloatingSidebar } from "./editor/FloatingSidebar";
@@ -58,64 +59,16 @@ const PresentationEditorPage = () => {
 
   const isDark = theme.themeType === "dark";
 
-  const [isPresenting, setIsPresenting] = useState(false);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const presentationContainerRef = useRef<HTMLDivElement>(null);
-
-  const handlePresentClick = () => {
-    setIsPresenting(true);
-    setCurrentSlideIndex(0);
-  };
-
-  // Lock body scroll during presentation
-  useEffect(() => {
-    if (isPresenting) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isPresenting]);
-
-  // Reset scroll position on slide change
-  useEffect(() => {
-    if (presentationContainerRef.current) {
-      presentationContainerRef.current.scrollTop = 0;
-    }
-  }, [currentSlideIndex]);
-
-  // Keyboard navigation for presentation mode
-  useEffect(() => {
-    if (!isPresenting) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight" || e.key === " ") {
-        e.preventDefault();
-        setCurrentSlideIndex((prev) => Math.min(prev + 1, slides.length - 1));
-      } else if (e.key === "ArrowLeft") {
-        setCurrentSlideIndex((prev) => Math.max(prev - 1, 0));
-      } else if (e.key === "ArrowDown") {
-        e.preventDefault();
-        presentationContainerRef.current?.scrollBy({
-          top: 100,
-          behavior: "smooth",
-        });
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        presentationContainerRef.current?.scrollBy({
-          top: -100,
-          behavior: "smooth",
-        });
-      } else if (e.key === "Escape") {
-        setIsPresenting(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isPresenting, slides.length]);
+  // Presentation mode hook - handles all presentation state and navigation
+  const {
+    isPresenting,
+    currentSlideIndex,
+    presentationContainerRef,
+    startPresentation,
+    stopPresentation,
+    goToNextSlide,
+    goToPrevSlide,
+  } = usePresentationMode({ slidesCount: slides.length });
 
   // Scroll active slide into view
   useEffect(() => {
@@ -164,9 +117,9 @@ const PresentationEditorPage = () => {
         currentSlideIndex={currentSlideIndex}
         theme={theme}
         containerRef={presentationContainerRef}
-        onPrevSlide={() => setCurrentSlideIndex((prev) => Math.max(prev - 1, 0))}
-        onNextSlide={() => setCurrentSlideIndex((prev) => Math.min(prev + 1, slides.length - 1))}
-        onClose={() => setIsPresenting(false)}
+        onPrevSlide={goToPrevSlide}
+        onNextSlide={goToNextSlide}
+        onClose={stopPresentation}
         onUpdateBlock={handleUpdateBlock}
         onDeleteRow={handleDeleteRow}
         onAddColumn={handleAddColumn}
@@ -175,7 +128,7 @@ const PresentationEditorPage = () => {
         onUpdateColumnWidths={handleUpdateColumnWidths}
       />
 
-      <PresentationTopBar onPresentClick={handlePresentClick} />
+      <PresentationTopBar onPresentClick={startPresentation} />
       
       {/* Base background */}
       <div

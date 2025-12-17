@@ -50,7 +50,9 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
           ref={containerRef}
-          className="fixed inset-0 z-[100] overflow-y-auto"
+          className={`fixed inset-0 z-[100] overflow-y-auto ${
+            isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+          }`}
           style={{
             backgroundColor: theme.pageBackground,
           }}
@@ -114,9 +116,9 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
             </motion.div>
           </div>
 
-          {/* Current Slide - Full Width */}
+          {/* Current Slide - Full Width with Vertical Centering */}
           <div
-            className="min-h-screen w-full"
+            className="min-h-screen w-full flex flex-col justify-center"
             style={{ fontFamily: `${theme.fontFamily}, sans-serif` }}
           >
             <AnimatePresence mode="wait">
@@ -127,7 +129,7 @@ export const PresentationMode: React.FC<PresentationModeProps> = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="w-full"
+                  className="w-full my-auto"
                 >
                   <SlideCard
                     slide={slides[currentSlideIndex]}
