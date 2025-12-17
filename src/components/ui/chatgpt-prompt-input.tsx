@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useSavePrompt } from "@/hooks/use-outline";
+import { useSavePrompt } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
 import { useRouter } from "next/navigation";
 
 // --- Utility Function & Radix Primitives ---

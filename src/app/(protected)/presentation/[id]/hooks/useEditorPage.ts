@@ -22,7 +22,7 @@ import {
   usePresentation,
   useCreatePresentation,
 } from "@/hooks/use-presentation";
-import { useGenerateAndCreateSlides, useOutline } from "@/hooks/use-outline";
+import { useGenerateAndCreateSlides, useOutline } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 import { useEditorDnd } from "./useEditorDnd";

@@ -15,7 +15,7 @@ import {
   IconArrowForwardUp,
   IconChevronLeft,
 } from "@tabler/icons-react";
-import { useUndoRedo } from "@/hooks/useUndoRedo";
+import { useUndoRedo } from "@/app/(protected)/presentation/[id]/hooks/useUndoRedo";
 import {
   Tooltip,
   TooltipContent,

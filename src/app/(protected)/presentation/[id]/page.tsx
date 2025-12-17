@@ -21,7 +21,7 @@ import { usePresentationMode } from "./hooks/usePresentationMode";
 import { useAppSelector } from "@/store/hooks";
 import { selectPresentation, selectActiveSlideId } from "@/store/slices/slidesSlice";
 import { FloatingSidebar } from "./editor/FloatingSidebar";
-import { useUndoRedoKeyboardShortcuts } from "@/hooks/useUndoRedo";
+import { useUndoRedoKeyboardShortcuts } from "@/app/(protected)/presentation/[id]/hooks/useUndoRedo";
 
 // --- Main Page Component ---
 const PresentationEditorPage = () => {

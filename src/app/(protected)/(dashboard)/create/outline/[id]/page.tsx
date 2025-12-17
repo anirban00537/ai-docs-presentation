@@ -4,8 +4,8 @@ import React, { useCallback, useRef, useState, useEffect, useMemo } from "react"
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useOutline, useUpdateOutline } from "@/hooks/use-outline";
-import { useAdminThemesList } from "@/hooks/use-themes";
+import { useOutline, useUpdateOutline } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
+import { useAdminThemesList } from "@/app/(protected)/presentation/[id]/hooks/use-themes";
 import { updatePresentation } from "@/services/presentation";
 import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
