@@ -28,7 +28,11 @@ import { PROSEMIRROR_STYLES } from "./styles";
 import { placeholderPlugin } from "./plugins/placeholder-plugin";
 import { ImageUrlModal } from "./plugins/image-plugin";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import {
+  selectTheme,
+  DEFAULT_THEME,
+  type Theme,
+} from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
 import {
   prosemirrorToMarkdown,
@@ -51,6 +55,8 @@ type ProseMirrorEditorProps = {
   className?: string;
   placeholder?: string;
   blockId?: string;
+  /** Optional theme prop. If not provided, falls back to Redux store theme */
+  theme?: Theme;
 };
 
 export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
@@ -59,12 +65,22 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   readOnly = false,
   className,
   placeholder = "Type '/' for commands...",
+  blockId,
+  theme: themeProp,
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   const isInternalChangeRef = useRef(false); // Track if change is from editor itself
-  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const reduxTheme = useAppSelector(selectTheme);
+  const theme = themeProp || reduxTheme || DEFAULT_THEME;
+
+  // Generate unique ID for scoping styles - always unique to prevent conflicts when multiple slides have same blockId
+  const editorIdRef = useRef<string>(
+    blockId
+      ? `${blockId}-${Math.random().toString(36).substr(2, 9)}`
+      : `prosemirror-${Math.random().toString(36).substr(2, 9)}`
+  );
 
   // Slash menu state
   const [menuState, setMenuState] = useState<{
@@ -116,6 +132,32 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       isInternalChangeRef.current = false;
       return;
     }
+
+    // #region agent log
+    const hasInlineColorStyles =
+      typeof value === "string" &&
+      (value.includes('style="color') ||
+        value.includes("style='color") ||
+        value.includes("color:"));
+    fetch("http://127.0.0.1:7242/ingest/e8f5be2f-77ff-445e-8e96-5a33ec9bea24", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        location: "editor.tsx:112",
+        message: "Content sync - checking for inline color styles",
+        data: {
+          hasInlineColorStyles,
+          valueType: typeof value,
+          valuePreview:
+            typeof value === "string" ? value.substring(0, 200) : "not-string",
+        },
+        timestamp: Date.now(),
+        sessionId: "debug-session",
+        runId: "run1",
+        hypothesisId: "C",
+      }),
+    }).catch(() => {});
+    // #endregion
 
     // Handle both Markdown string and legacy JSON format
     let prosemirrorDoc: ProseMirrorNode | null = null;
@@ -719,46 +761,78 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
     });
   }, []);
 
-  // Generate dynamic styles based on theme
+  // Generate dynamic styles based on theme, scoped to this editor instance
   const dynamicStyles = useMemo(() => {
     const fontFamily = getFontFamily(theme.fontFamily || "Inter");
+    const editorId = editorIdRef.current;
     return `
       ${PROSEMIRROR_STYLES}
-      .ProseMirror {
-        color: ${theme.bodyColor};
-        font-family: ${fontFamily};
+      [data-prosemirror-id="${editorId}"] .ProseMirror {
+        color: ${theme.bodyColor} !important;
+        font-family: ${fontFamily} !important;
       }
-      .ProseMirror h1,
-      .ProseMirror h2,
-      .ProseMirror h3,
-      .ProseMirror h4 {
-        color: ${theme.headingColor};
+      [data-prosemirror-id="${editorId}"] .ProseMirror h1,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h2,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h3,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h4 {
+        color: ${theme.headingColor} !important;
       }
-      .ProseMirror p.is-empty::before,
-      .ProseMirror h1.is-empty::before,
-      .ProseMirror h2.is-empty::before,
-      .ProseMirror h3.is-empty::before,
-      .ProseMirror h4.is-empty::before {
-        color: ${theme.bodyColor}80;
+      [data-prosemirror-id="${editorId}"] .ProseMirror p,
+      [data-prosemirror-id="${editorId}"] .ProseMirror li,
+      [data-prosemirror-id="${editorId}"] .ProseMirror ul,
+      [data-prosemirror-id="${editorId}"] .ProseMirror ol,
+      [data-prosemirror-id="${editorId}"] .ProseMirror span,
+      [data-prosemirror-id="${editorId}"] .ProseMirror div,
+      [data-prosemirror-id="${editorId}"] .ProseMirror strong,
+      [data-prosemirror-id="${editorId}"] .ProseMirror em {
+        color: ${theme.bodyColor} !important;
+      }
+      [data-prosemirror-id="${editorId}"] .ProseMirror h1 *,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h2 *,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h3 *,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h4 * {
+        color: ${theme.headingColor} !important;
+      }
+      /* Override inline color styles in HTML content */
+      [data-prosemirror-id="${editorId}"] .ProseMirror [style*="color"] {
+        color: ${theme.bodyColor} !important;
+      }
+      [data-prosemirror-id="${editorId}"] .ProseMirror h1[style*="color"],
+      [data-prosemirror-id="${editorId}"] .ProseMirror h2[style*="color"],
+      [data-prosemirror-id="${editorId}"] .ProseMirror h3[style*="color"],
+      [data-prosemirror-id="${editorId}"] .ProseMirror h4[style*="color"] {
+        color: ${theme.headingColor} !important;
+      }
+      [data-prosemirror-id="${editorId}"] .ProseMirror p.is-empty::before,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h1.is-empty::before,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h2.is-empty::before,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h3.is-empty::before,
+      [data-prosemirror-id="${editorId}"] .ProseMirror h4.is-empty::before {
+        color: ${theme.bodyColor}80 !important;
       }
       /* Image bottom cursor blinking animation */
       @keyframes image-cursor-blink {
         0%, 50% { opacity: 1; }
         51%, 100% { opacity: 0; }
       }
-      .image-bottom-cursor {
+      [data-prosemirror-id="${editorId}"] .image-bottom-cursor {
         animation: image-cursor-blink 1s step-end infinite;
       }
       /* Image bottom area hover effect */
-      .prosemirror-image-wrapper .group:hover {
+      [data-prosemirror-id="${editorId}"] .prosemirror-image-wrapper .group:hover {
         background-color: rgba(0, 0, 0, 0.02);
       }
     `;
   }, [theme]);
 
   return (
-    <div className={cn("relative w-full", className)}>
-      <style>{dynamicStyles}</style>
+    <div
+      className={cn("relative w-full", className)}
+      data-prosemirror-id={editorIdRef.current}
+    >
+      <style key={`prosemirror-styles-${editorIdRef.current}`}>
+        {dynamicStyles}
+      </style>
       <div
         ref={editorRef}
         className="w-full wrap-break-word whitespace-pre-wrap"

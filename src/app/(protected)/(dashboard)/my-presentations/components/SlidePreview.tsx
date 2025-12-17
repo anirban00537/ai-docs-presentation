@@ -4,8 +4,6 @@ import React, { useMemo } from "react";
 import { SlideCard } from "@/app/(protected)/presentation/[id]/editor/SlideCard";
 import { Theme } from "@/store/slices/slidesSlice";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
-import { Provider } from "react-redux";
-import { store } from "@/store";
 
 interface SlidePreviewProps {
   slide: any;
@@ -19,30 +17,34 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
   const thumbnailHeight = slideHeight * scale;
 
   // Convert API slide data to Redux format
-  const reduxSlide = useMemo(() => ({
-    id: slide.id,
-    rows: slide.data?.rows || [],
-  }), [slide]);
+  const reduxSlide = useMemo(
+    () => ({
+      id: slide.id,
+      rows: slide.data?.rows || [],
+    }),
+    [slide]
+  );
 
   // No-op handlers for read-only preview
   const noop = () => {};
 
   return (
-    <div 
+    <div
       className="relative overflow-hidden"
-      style={{ 
+      style={{
         height: `${thumbnailHeight}px`,
         borderRadius: "0.75rem 0.75rem 0 0",
       }}
     >
       {/* Subtle gradient overlay at top for depth */}
-      <div 
+      <div
         className="absolute inset-x-0 top-0 h-8 z-10 pointer-events-none"
         style={{
-          background: "linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, transparent 100%)",
+          background:
+            "linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, transparent 100%)",
         }}
       />
-      
+
       <div
         className="absolute top-0 left-0 pointer-events-none"
         style={{
@@ -52,26 +54,25 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
           height: `${slideHeight}px`,
         }}
       >
-        <Provider store={store}>
-          <div
-            style={{
-              backgroundColor: theme.pageBackground,
-              fontFamily: `${theme.fontFamily}, sans-serif`,
-            }}
-          >
-            <SlideCard
-              slide={reduxSlide}
-              onUpdateBlock={noop}
-              onDeleteRow={noop}
-              onAddColumn={noop}
-              onAddRowAtTop={noop}
-              onAddRowAtBottom={noop}
-              onUpdateColumnWidths={noop}
-              enableDragHints={false}
-              readOnly={true}
-            />
-          </div>
-        </Provider>
+        <div
+          style={{
+            backgroundColor: theme.pageBackground,
+            fontFamily: `${theme.fontFamily}, sans-serif`,
+          }}
+        >
+          <SlideCard
+            slide={reduxSlide}
+            onUpdateBlock={noop}
+            onDeleteRow={noop}
+            onAddColumn={noop}
+            onAddRowAtTop={noop}
+            onAddRowAtBottom={noop}
+            onUpdateColumnWidths={noop}
+            enableDragHints={false}
+            readOnly={true}
+            theme={theme}
+          />
+        </div>
       </div>
     </div>
   );

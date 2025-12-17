@@ -84,6 +84,7 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
           onChange={handleEditorChange}
           placeholder={placeholder ?? "Type your insight..."}
           className="text-xl font-medium leading-relaxed opacity-80"
+          theme={theme}
         />
       </div>
 

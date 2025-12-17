@@ -139,6 +139,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
             onChange={handleQuoteChange}
             placeholder={placeholder ?? "Add a testimonial..."}
             className="text-lg italic font-medium leading-relaxed opacity-80"
+            theme={theme}
           />
         </div>
 
@@ -179,6 +180,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
               onChange={handleNameChange}
               placeholder="Name"
               className="text-sm font-semibold"
+              theme={theme}
             />
             <ProseMirrorEditor
               key={`${block.id}-role`}
@@ -187,6 +189,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
               onChange={handleRoleChange}
               placeholder="Role"
               className="text-[11px] font-medium uppercase tracking-wide opacity-50"
+              theme={theme}
             />
           </div>
         </div>

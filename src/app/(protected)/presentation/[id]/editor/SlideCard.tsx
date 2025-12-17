@@ -3,7 +3,11 @@ import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { DroppableRow } from "./DroppableRow";
 import type { Slide } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import {
+  selectTheme,
+  DEFAULT_THEME,
+  type Theme,
+} from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 import { IconPlus } from "@tabler/icons-react";
@@ -44,7 +48,10 @@ const InsertDropZone: React.FC<{
     >
       {/* Only show the indicator line when hovering over this specific zone */}
       {isOver && (
-        <div className="absolute inset-x-4 h-0.5 flex items-center" style={{ backgroundColor: themePrimary }}>
+        <div
+          className="absolute inset-x-4 h-0.5 flex items-center"
+          style={{ backgroundColor: themePrimary }}
+        >
           {/* Left dot */}
           <div
             className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full"
@@ -77,6 +84,8 @@ interface SlideCardProps {
   readOnly?: boolean;
   /** When true, slide takes full width without max-width constraints (for presentation mode) */
   fullWidth?: boolean;
+  /** Optional theme prop. If not provided, falls back to Redux store theme */
+  theme?: Theme;
 }
 
 export const SlideCard: React.FC<SlideCardProps> = ({
@@ -90,10 +99,12 @@ export const SlideCard: React.FC<SlideCardProps> = ({
   enableDragHints = true,
   readOnly = false,
   fullWidth = false,
+  theme: themeProp,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const reduxTheme = useAppSelector(selectTheme);
+  const theme = themeProp || reduxTheme || DEFAULT_THEME;
 
   const dragActive = enableDragHints ? isDragging : false;
 
@@ -128,7 +139,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       {enableDragHints && !readOnly && (
         <DragStateBridge onDragChange={setIsDragging} />
       )}
-      
+
       {/* Add Row at Top - Minimal design */}
       {!readOnly && (
         <button
@@ -182,6 +193,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
               }
               rowCount={slide.rows?.length || 0}
               readOnly={readOnly}
+              theme={theme}
             />
             {!readOnly && (
               <InsertDropZone

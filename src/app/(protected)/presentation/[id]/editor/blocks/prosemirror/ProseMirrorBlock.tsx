@@ -15,6 +15,7 @@ export const ProseMirrorBlock: React.FC<ProseMirrorBlockProps> = ({
   onUpdate,
   placeholder = "Type '/' for commands",
   readOnly,
+  theme,
 }) => {
   return (
     <div className="w-full h-full flex flex-col">
@@ -26,6 +27,7 @@ export const ProseMirrorBlock: React.FC<ProseMirrorBlockProps> = ({
         placeholder={placeholder}
         className="flex-1"
         readOnly={readOnly}
+        theme={theme}
       />
     </div>
   );

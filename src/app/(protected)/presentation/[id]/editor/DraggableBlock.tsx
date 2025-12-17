@@ -13,6 +13,7 @@ import {
   deleteBlock,
   transformBlock,
   reorderBlocksInRow,
+  type Theme,
 } from "@/store/slices/slidesSlice";
 import { IconPlus } from "@tabler/icons-react";
 
@@ -30,6 +31,8 @@ interface DraggableBlockProps {
   canAddColumn: boolean;
   hideDragHandle?: boolean;
   readOnly?: boolean;
+  /** Optional theme prop. If not provided, falls back to Redux store theme */
+  theme?: Theme;
 }
 
 export const DraggableBlock: React.FC<DraggableBlockProps> = ({
@@ -46,11 +49,13 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   canAddColumn,
   hideDragHandle = false,
   readOnly = false,
+  theme: themeProp,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const blockRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
-  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const reduxTheme = useAppSelector(selectTheme);
+  const theme = themeProp || reduxTheme || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
   const { focusedBlockId, setFocusedBlock } = useBlockFocus();
   const isFocused = focusedBlockId === block.id;

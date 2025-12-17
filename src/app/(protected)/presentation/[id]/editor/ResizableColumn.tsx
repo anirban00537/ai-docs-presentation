@@ -5,7 +5,7 @@ import { DraggableBlock } from "./DraggableBlock";
 import { useBlockFocus } from "./BlockFocusContext";
 import type { Block } from "@/lib/editor/types";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME, deleteBlock } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME, deleteBlock, type Theme } from "@/store/slices/slidesSlice";
 import { IconTrash, IconGripHorizontal } from "@tabler/icons-react";
 
 interface ResizableColumnProps {
@@ -25,6 +25,8 @@ interface ResizableColumnProps {
   onResizeStart: () => void;
   onResizeEnd: () => void;
   readOnly?: boolean;
+  /** Optional theme prop. If not provided, falls back to Redux store theme */
+  theme?: Theme;
 }
 
 export const ResizableColumn: React.FC<ResizableColumnProps> = ({
@@ -44,13 +46,15 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
   onResizeStart,
   onResizeEnd,
   readOnly = false,
+  theme: themeProp,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isBorderHovered, setIsBorderHovered] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const borderResizeRef = useRef<HTMLDivElement>(null);
   const lastXRef = useRef<number>(0);
-  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const reduxTheme = useAppSelector(selectTheme);
+  const theme = themeProp || reduxTheme || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
   const dispatch = useAppDispatch();
   const { setFocusedBlock } = useBlockFocus();
@@ -229,6 +233,7 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
           canAddColumn={canAddColumn}
           hideDragHandle={true}
           readOnly={readOnly}
+          theme={theme}
         />
 
         {/* Resize Handle */}

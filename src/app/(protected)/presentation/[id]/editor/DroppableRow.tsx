@@ -3,7 +3,7 @@ import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { ResizableColumn } from "./ResizableColumn";
 import type { Row } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME, type Theme } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
 import { DropIndicator } from "./DropIndicator";
 import { IconTrash } from "@tabler/icons-react";
@@ -35,6 +35,8 @@ interface DroppableRowProps {
   onUpdateColumnWidths: (rowId: string, columnWidths: number[]) => void;
   rowCount: number;
   readOnly?: boolean;
+  /** Optional theme prop. If not provided, falls back to Redux store theme */
+  theme?: Theme;
 }
 
 export const DroppableRow: React.FC<DroppableRowProps> = ({
@@ -50,6 +52,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   onUpdateColumnWidths,
   rowCount,
   readOnly = false,
+  theme: themeProp,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -68,7 +71,8 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
   
   const latestWidthsRef = useRef<number[]>(localWidths);
   const rowContainerRef = useRef<HTMLDivElement>(null);
-  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const reduxTheme = useAppSelector(selectTheme);
+  const theme = themeProp || reduxTheme || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
 
   const { setNodeRef, isOver } = useDroppable({
@@ -312,6 +316,7 @@ export const DroppableRow: React.FC<DroppableRowProps> = ({
             onResizeStart={handleResizeStart}
             onResizeEnd={handleResizeEnd}
             readOnly={readOnly}
+            theme={theme}
           />
         ))}
 

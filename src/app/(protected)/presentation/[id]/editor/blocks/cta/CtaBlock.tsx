@@ -75,6 +75,7 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
           onChange={handleHeadingChange}
           placeholder={placeholder ?? "Ready to get started?"}
           className="text-2xl font-semibold tracking-tight leading-tight"
+          theme={theme}
         />
 
         <ProseMirrorEditor
@@ -84,6 +85,7 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
           onChange={handleBodyChange}
           placeholder="Add a compelling description here..."
           className="text-base opacity-60 leading-relaxed max-w-2xl"
+          theme={theme}
         />
       </div>
 

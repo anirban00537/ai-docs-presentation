@@ -79,6 +79,7 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
             onChange={(newDoc) => onTitleChange(stepIndex, newDoc)}
             placeholder={`Step ${stepIndex + 1} title`}
             className="text-base font-semibold"
+            theme={theme}
           />
         </div>
 
@@ -91,6 +92,7 @@ export const TimelineStepComponent: React.FC<TimelineStepProps> = ({
             onChange={(newDoc) => onDescriptionChange(stepIndex, newDoc)}
             placeholder={`Step ${stepIndex + 1} description`}
             className="text-sm opacity-60"
+            theme={theme}
           />
         </div>
       </div>

@@ -104,6 +104,7 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
                 onChange={(newContent) => handleTitleChange(index, newContent)}
                 placeholder="Feature Title"
                 className="text-base font-semibold leading-tight"
+                theme={theme}
               />
             </div>
             <div>
@@ -114,6 +115,7 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
                 onChange={(newContent) => handleDescriptionChange(index, newContent)}
                 placeholder="Feature description"
                 className="text-sm opacity-60 leading-relaxed"
+                theme={theme}
               />
             </div>
           </div>
