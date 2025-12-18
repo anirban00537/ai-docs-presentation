@@ -109,6 +109,48 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
     { id: "capsule", label: "Capsule", desc: "Rounded corners with playful blocks" },
   ];
 
+  const SliderControl = ({ 
+    label, 
+    value, 
+    onChange, 
+    min = 0, 
+    max, 
+    step = 1, 
+    unit = "",
+    isDark 
+  }: { 
+    label: string, 
+    value: number, 
+    onChange: (val: number) => void, 
+    min?: number, 
+    max: number, 
+    step?: number, 
+    unit?: string,
+    isDark: boolean
+  }) => (
+    <div className="space-y-2">
+      <div className="flex justify-between items-center">
+        <label className="text-[10px] font-bold opacity-50 uppercase tracking-wider" style={{ color: isDark ? "#fff" : "#000" }}>{label}</label>
+        <div className="px-1.5 py-0.5 rounded bg-neutral-500/10 text-[10px] font-mono opacity-80" style={{ color: isDark ? "#fff" : "#000" }}>{value}{unit}</div>
+      </div>
+      <input 
+        type="range" 
+        min={min} 
+        max={max} 
+        step={step} 
+        value={value} 
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="w-full h-1.5 bg-neutral-500/10 rounded-lg appearance-none cursor-pointer accent-primary border-none outline-none" 
+      />
+    </div>
+  );
+
+  const parsePx = (val: string | undefined, fallback = 0): number => {
+    if (!val) return fallback;
+    if (typeof val === 'number') return val;
+    return parseInt(val.replace("px", "")) || 0;
+  };
+
   const getPreviewStyles = (styleId: string): React.CSSProperties => {
     const primary = currentTheme.primary;
     switch (styleId) {
@@ -300,6 +342,49 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                            {pattern}
                          </button>
                        ))}
+                    </div>
+                  </div>
+
+                  {/* Granular Controls */}
+                  <div className="space-y-4 pt-2 border-t border-neutral-500/10">
+                    <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 block" style={{ color: isDark ? "#fff" : "#000" }}>Fine Tuning</label>
+                    <div className="p-4 rounded-2xl space-y-5" style={{ backgroundColor: isDark ? "rgba(0,0,0,0.2)" : "rgba(0,0,0,0.03)" }}>
+                      <SliderControl 
+                        label="Roundness"
+                        value={parsePx(currentTheme.cardBorderRadius, 12)}
+                        onChange={(val) => updateThemeProperty({ cardBorderRadius: `${val}px` })}
+                        max={60}
+                        unit="px"
+                        isDark={isDark}
+                      />
+
+                      <SliderControl 
+                        label="Transparency"
+                        value={currentTheme.cardOpacity !== undefined ? Math.round(currentTheme.cardOpacity * 100) : 100}
+                        onChange={(val) => updateThemeProperty({ cardOpacity: val / 100 })}
+                        min={0}
+                        max={100}
+                        unit="%"
+                        isDark={isDark}
+                      />
+
+                      <SliderControl 
+                        label="Backdrop Blur"
+                        value={parsePx(currentTheme.cardBackdropBlur, 0)}
+                        onChange={(val) => updateThemeProperty({ cardBackdropBlur: `${val}px` })}
+                        max={20}
+                        unit="px"
+                        isDark={isDark}
+                      />
+
+                      <SliderControl 
+                        label="Border Width"
+                        value={parsePx(currentTheme.cardBorderWidth, 1)}
+                        onChange={(val) => updateThemeProperty({ cardBorderWidth: `${val}px` })}
+                        max={5}
+                        unit="px"
+                        isDark={isDark}
+                      />
                     </div>
                   </div>
                 </div>
