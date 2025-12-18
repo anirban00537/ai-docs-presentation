@@ -145,6 +145,8 @@ export const SlideCard: React.FC<SlideCardProps> = ({
     }
   };
 
+  const cardRadius = fullWidth ? "0px" : `${theme.cardRoundness || 16}px`;
+
   const containerStyle: React.CSSProperties = {
     backgroundColor: getCardBaseBackground(),
     backdropFilter: theme.cardTransparency === "frosted" ? "blur(24px)" : "none",
@@ -192,7 +194,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   return (
     <div
-      className={`group/slide relative transition-all duration-300 ease-out overflow-hidden ${
+      className={`group/slide relative transition-all duration-300 ease-out z-0 hover:z-20 ${
         fullWidth
           ? "w-full px-12 md:px-20 lg:px-32 py-16 md:py-24 lg:py-32 flex flex-col justify-center"
           : "px-8 py-8 mx-auto"
@@ -201,7 +203,10 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       onMouseEnter={!readOnly ? () => setIsHovered(true) : undefined}
       onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
     >
-      {renderPattern()}
+      {/* Pattern clipping layer */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ borderRadius: cardRadius }}>
+        {renderPattern()}
+      </div>
       {enableDragHints && !readOnly && (
         <DragStateBridge onDragChange={setIsDragging} />
       )}
@@ -210,7 +215,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       {!readOnly && (
         <button
           onClick={() => onAddRowAtTop(slide.id)}
-          className={`absolute left-1/2 -translate-x-1/2 -top-3 z-10 transition-all duration-200 ${
+          className={`absolute left-1/2 -translate-x-1/2 -top-3 z-30 transition-all duration-200 ${
             isHovered
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-1 pointer-events-none"
@@ -277,7 +282,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       {!readOnly && (
         <button
           onClick={() => onAddRowAtBottom(slide.id)}
-          className={`absolute left-1/2 -translate-x-1/2 -bottom-3 z-10 transition-all duration-200 ${
+          className={`absolute left-1/2 -translate-x-1/2 -bottom-3 z-30 transition-all duration-200 ${
             isHovered
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-1 pointer-events-none"

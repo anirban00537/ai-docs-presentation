@@ -53,28 +53,31 @@ export const CommonCard: React.FC<CommonCardProps> = ({
 
   return (
     <div 
-      className={`relative overflow-hidden group/card ${className}`} 
+      className={`relative group/card ${className}`} 
       style={cardStyle}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={onClick}
     >
-      {/* Subtle background gradient overlay for visual depth */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.4]"
-        style={{
-          background: `linear-gradient(135deg, ${theme.primary}08 0%, transparent 100%)`
-        }}
-      />
-      
-      {/* Shine effect on hover */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-700"
-        style={{
-          background: `linear-gradient(135deg, transparent 0%, ${theme.primary}03 50%, transparent 100%)`,
-          transform: "translateX(-100%) group-hover/card:translateX(100%)",
-        }}
-      />
+      {/* Background effects with clipping */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ borderRadius: cardStyle.borderRadius }}>
+        {/* Subtle background gradient overlay for visual depth */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-[0.4]"
+          style={{
+            background: `linear-gradient(135deg, ${theme.primary}08 0%, transparent 100%)`
+          }}
+        />
+        
+        {/* Shine effect on hover */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-700"
+          style={{
+            background: `linear-gradient(135deg, transparent 0%, ${theme.primary}03 50%, transparent 100%)`,
+            transform: "translateX(-100%) group-hover/card:translateX(100%)",
+          }}
+        />
+      </div>
 
       <div className="relative z-10 w-full h-full">
         {children}
