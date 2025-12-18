@@ -15,6 +15,7 @@ import {
   IconChevronRight,
   IconMenu2,
   IconX,
+  IconCreditCard,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -36,9 +37,11 @@ const navItems = [
   { title: "Home", url: "/home", icon: IconDashboard },
   { title: "My Presentations", url: "/my-presentations", icon: IconPresentation },
   { title: "Media", url: "/media", icon: IconPhoto },
+  { title: "Pricing", url: "/pricing", icon: IconSparkles },
 ];
 
 const secondaryItems = [
+  { title: "Subscription", url: "/subscription", icon: IconCreditCard },
   { title: "Settings", url: "/settings", icon: IconSettings },
 ];
 

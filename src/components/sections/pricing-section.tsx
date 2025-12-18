@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { Check, ArrowRight } from "lucide-react";
 import { Variants } from "framer-motion";
+import { useProducts } from "@/hooks/use-pricing";
+import { formatPrice, getRecurringText } from "@/services/pricing";
 
 import { AppleButton } from "@/components/apple-button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
@@ -85,6 +87,28 @@ const plans = [
 ];
 
 export function PricingSection() {
+  const { data: products, isLoading } = useProducts();
+  
+  // Use real products if available, otherwise fall back to static plans
+  const displayPlans = products && products.length > 0
+    ? products.slice(0, 3).map((product, index) => {
+        const primaryPrice = product.prices?.[0];
+        return {
+          name: product.name,
+          price: primaryPrice ? formatPrice(primaryPrice) : "Custom",
+          period: product.recurringInterval 
+            ? getRecurringText(product).replace("per ", "").replace("every ", "")
+            : "",
+          description: product.description || "",
+          features: (product.metadata?.features as string[]) || [],
+          cta: primaryPrice ? "Get Started" : "Contact Sales",
+          href: "/pricing",
+          popular: index === 1,
+          monthlyCreditLimit: product.monthlyCreditLimit,
+        };
+      })
+    : plans;
+
   return (
     <section className="relative py-20 md:py-32" id="pricing">
       <div className="absolute inset-0 bg-linear-to-b from-white via-primary/10 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
@@ -110,7 +134,7 @@ export function PricingSection() {
         </AnimatedGroup>
 
         <div className="mt-16 grid gap-8 lg:grid-cols-3">
-          {plans.map((plan, index) => (
+          {displayPlans.map((plan: any, index: number) => (
             <AnimatedGroup
               key={index}
               variants={transitionVariants}
@@ -148,10 +172,18 @@ export function PricingSection() {
                       </span>
                     )}
                   </div>
+                  {plan.monthlyCreditLimit !== undefined && (
+                    <div className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                      {plan.monthlyCreditLimit === 0
+                        ? "Unlimited credits"
+                        : `${plan.monthlyCreditLimit.toLocaleString()} credits/month`}
+                    </div>
+                  )}
                 </div>
 
                 <ul className="mt-8 space-y-4">
-                  {plan.features.map((feature, featureIndex) => (
+                  {plan.features && plan.features.length > 0 ? (
+                    plan.features.map((feature: string, featureIndex: number) => (
                     <li key={featureIndex} className="flex items-start gap-3">
                       <div className="mt-0.5 shrink-0 rounded-full bg-primary/20 p-1 dark:bg-primary/20">
                         <Check className="h-4 w-4 text-primary dark:text-primary" />
@@ -160,7 +192,12 @@ export function PricingSection() {
                         {feature}
                       </span>
                     </li>
-                  ))}
+                    ))
+                  ) : (
+                    <li className="text-sm text-zinc-500 dark:text-zinc-400">
+                      Features coming soon
+                    </li>
+                  )}
                 </ul>
 
                 <div className="mt-8">

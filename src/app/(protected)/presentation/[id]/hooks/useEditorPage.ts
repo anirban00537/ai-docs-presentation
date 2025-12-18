@@ -212,6 +212,15 @@ export const useEditorPage = ({
         !hasStartedGeneration.current &&
         outlineResponse?.success
       ) {
+        // Check credits before starting generation
+        const outlineItems = outlineResponse.data?.outlines || [];
+        const estimatedSlides = outlineItems.length;
+        const creditsPerSlide = 1; // Should match backend
+        const requiredCredits = estimatedSlides * creditsPerSlide;
+
+        // Note: Backend will also check credits, but we can show a better UX here
+        // The backend will return an error if credits are insufficient
+        
         hasStartedGeneration.current = true;
         setIsGeneratingSlides(true);
         dispatch(setSlides([]));
@@ -255,9 +264,22 @@ export const useEditorPage = ({
               ) {
                 setIsGeneratingSlides(false);
                 setSlideGenerationProgress(null);
-                toast.error(
-                  `Error generating slides: ${chunk.message || "Unknown error"}`
-                );
+                const errorMessage = chunk.message || "Unknown error";
+                
+                // Check if it's a credit-related error
+                if (errorMessage.toLowerCase().includes("insufficient credits") || 
+                    errorMessage.toLowerCase().includes("credits")) {
+                  toast.error(errorMessage, {
+                    action: {
+                      label: "View Subscription",
+                      onClick: () => {
+                        window.location.href = "/subscription";
+                      },
+                    },
+                  });
+                } else {
+                  toast.error(`Error generating slides: ${errorMessage}`);
+                }
               }
             },
           });
