@@ -137,7 +137,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
     return {
       ...baseStyle,
-      backgroundColor: opacity < 1 ? `rgba(${isDark ? '255, 255, 255' : '255, 255, 255'}, ${opacity})` : theme.cardBackground,
+      backgroundColor: opacity < 1 ? `rgba(${isDark ? '0, 0, 0' : '255, 255, 255'}, ${opacity})` : theme.cardBackground,
       borderRadius,
       boxShadow,
       border: `${borderWidth} ${borderStyle} ${borderColor}`,
