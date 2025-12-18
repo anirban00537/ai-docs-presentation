@@ -28,7 +28,13 @@ export interface Theme {
   // Card customization
   cardDesignPattern?: string; // "none", "dots", "grid", "mesh", "glass", "waves"
   cardBorderColor?: string;
-  cardStyle?: "standard" | "flat" | "outline" | "sharp" | "blocky" | "glass" | "rounded" | "soft-cloud" | "capsule";
+  // Granular Style Properties
+  cardBorderRadius?: string;
+  cardBoxShadow?: string;
+  cardBorderWidth?: string;
+  cardBorderStyle?: string;
+  cardBackdropBlur?: string;
+  cardOpacity?: number;
 }
 
 export interface PresentationInfo {

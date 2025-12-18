@@ -9,6 +9,7 @@ import {
 import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAdminThemes } from "@/services/themes";
+import { applyCardStylePreset } from "@/lib/editor/card-styles";
 
 interface ThemePanelProps {
   isOpen: boolean;
@@ -92,8 +93,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
       paletteTheme.headingColor === currentTheme.headingColor &&
       paletteTheme.bodyColor === currentTheme.bodyColor &&
       paletteTheme.cardBackground === currentTheme.cardBackground &&
-      paletteTheme.pageBackground === currentTheme.pageBackground &&
-      paletteTheme.cardStyle === currentTheme.cardStyle
+      paletteTheme.pageBackground === currentTheme.pageBackground
     );
   };
 
@@ -247,14 +247,14 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                     <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 block" style={{ color: isDark ? "#fff" : "#000" }}>Card Design</label>
                     <div className="grid grid-cols-3 gap-3">
                       {cardStyleOptions.map((opt) => {
-                        const isActive = currentTheme.cardStyle === opt.id || (!currentTheme.cardStyle && opt.id === "standard");
                         return (
                           <button
                             key={opt.id}
-                            onClick={() => updateThemeProperty({ cardStyle: opt.id as any })}
-                            className={`group relative flex flex-col items-center gap-2 p-1.5 rounded-2xl transition-all duration-300 ${
-                              isActive ? 'bg-primary/10 ring-1 ring-primary' : 'hover:bg-neutral-500/5'
-                            }`}
+                            onClick={() => {
+                              const updatedTheme = applyCardStylePreset(currentTheme, opt.id);
+                              dispatch(setTheme(updatedTheme));
+                            }}
+                            className="group relative flex flex-col items-center gap-2 p-1.5 rounded-2xl transition-all duration-300 hover:bg-neutral-500/5"
                           >
                             <div 
                               className="w-full aspect-[4/3] rounded-lg transition-all duration-300 flex items-center justify-center overflow-hidden border border-transparent"
@@ -274,7 +274,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                               />
                             </div>
                             <div className="flex flex-col items-center">
-                              <span className={`text-[10px] font-bold ${isActive ? 'text-primary' : (isDark ? 'text-white/70' : 'text-neutral-700')}`}>{opt.label}</span>
+                              <span className={`text-[10px] font-bold ${isDark ? 'text-white/70' : 'text-neutral-700'}`}>{opt.label}</span>
                             </div>
                           </button>
                         );

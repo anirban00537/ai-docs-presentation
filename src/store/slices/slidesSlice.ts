@@ -40,7 +40,12 @@ export const DEFAULT_THEME: Theme = {
   themeType: "light",
   cardDesignPattern: "none",
   cardBorderColor: "#2B0AFF15",
-  cardStyle: "standard",
+  cardBorderRadius: "12px",
+  cardBoxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+  cardBorderWidth: "1px",
+  cardBorderStyle: "solid",
+  cardBackdropBlur: "0px",
+  cardOpacity: 1,
 };
 const initialTheme: Theme = DEFAULT_THEME;
 
