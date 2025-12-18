@@ -106,9 +106,7 @@ export default function SubscriptionPage() {
           className="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6"
         >
           <div className="text-center sm:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-3">
-              Billing Overview
-            </div>
+
             <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-tight">
               Subscription & <span className="text-primary/80 font-normal italic">billing</span>
             </h1>

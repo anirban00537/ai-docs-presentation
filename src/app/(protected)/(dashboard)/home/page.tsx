@@ -123,13 +123,15 @@ export default function HomePage() {
       <div className="relative w-full max-w-3xl flex flex-col gap-10">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center"
+          className="text-center space-y-6"
         >
-          <h1 className="text-4xl font-bold text-foreground mb-3">
-            What would you like to create?
+
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground leading-tight">
+            What would you like to <span className="text-primary/80 font-normal italic">build</span> today?
           </h1>
+          
         </motion.div>
 
         {/* Prompt Box */}

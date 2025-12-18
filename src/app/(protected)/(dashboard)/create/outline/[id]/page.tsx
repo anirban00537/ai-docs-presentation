@@ -256,15 +256,16 @@ export default function OutlinePage() {
       <div className="relative z-10 w-full max-w-4xl flex flex-col gap-6 px-4 py-8 overflow-y-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4"
+          className="mb-6"
         >
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Presentation Outline
+
+          <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-tight">
+            Refine your <span className="text-primary/80 font-normal italic">outline</span>
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Review and customize your presentation structure
+          <p className="text-sm md:text-base text-muted-foreground/70 mt-3 font-medium max-w-2xl">
+            Review and customize your presentation structure. Your changes are saved automatically.
           </p>
           
           {/* Auto-save Status Indicator */}
@@ -274,7 +275,7 @@ export default function OutlinePage() {
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                className="flex items-center gap-2 text-sm mt-3"
+                className="flex items-center gap-2 text-xs mt-4"
               >
                 {saveStatus === 'saving' && (
                   <>
@@ -282,15 +283,15 @@ export default function OutlinePage() {
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                     >
-                      <IconLoader2 size={14} className="text-muted-foreground" />
+                      <IconLoader2 size={12} className="text-muted-foreground/60" />
                     </motion.div>
-                    <span className="text-muted-foreground">Saving changes...</span>
+                    <span className="text-muted-foreground/60 font-medium">Syncing changes...</span>
                   </>
                 )}
                 {saveStatus === 'saved' && (
                   <>
-                    <IconCheck size={14} className="text-green-500" />
-                    <span className="text-green-600">All changes saved</span>
+                    <IconCheck size={12} className="text-green-500/70" />
+                    <span className="text-green-600/70 font-medium">Draft preserved</span>
                   </>
                 )}
               </motion.div>

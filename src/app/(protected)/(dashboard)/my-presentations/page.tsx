@@ -72,33 +72,34 @@ export default function MyPresentationsPage() {
       <div className="relative z-10 w-full flex-1 px-8 py-8 overflow-y-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 flex items-end justify-between"
+          className="mb-10 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6"
         >
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-1">
-              My Presentations
+          <div className="text-center sm:text-left">
+
+            <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-tight">
+              My <span className="text-primary/80 font-normal italic">presentations</span>
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground/70 mt-3 font-medium max-w-md">
               {presentations.length > 0 
-                ? `${presentations.length} presentation${presentations.length !== 1 ? 's' : ''} in your library`
-                : "Create and manage your presentations"
+                ? `You have ${presentations.length} presentation${presentations.length !== 1 ? 's' : ''} in your library.`
+                : "Create and manage your professional presentations."
               }
             </p>
           </div>
           
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
           >
             <Button
               onClick={() => router.push("/home")}
-              className="gap-2 px-5 h-10 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-[1.02]"
+              className="gap-2 h-12 px-6 rounded-2xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all font-semibold"
             >
               <IconPlus size={18} />
-              New Presentation
+              New Project
             </Button>
           </motion.div>
         </motion.div>

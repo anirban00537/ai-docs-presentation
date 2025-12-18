@@ -513,30 +513,31 @@ export default function MediaPage() {
       <div className="relative z-10 w-full flex-1 px-8 py-8 overflow-y-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex items-end justify-between"
+          className="mb-10 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6"
         >
-          <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              Media Library
+          <div className="text-center sm:text-left">
+
+            <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-tight">
+              Media <span className="text-primary/80 font-normal italic">library</span>
             </h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your images and media files
+            <p className="text-sm md:text-base text-muted-foreground/70 mt-3 font-medium max-w-md">
+              Manage your images and media files in one central place.
             </p>
           </div>
 
           <Button
             onClick={handleUpload}
             disabled={uploadMutation.isPending}
-            className="rounded-xl px-5 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all"
+            className="rounded-2xl h-12 px-6 shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all font-semibold"
           >
             {uploadMutation.isPending ? (
               <IconLoader2 size={18} className="mr-2 animate-spin" />
             ) : (
               <IconUpload size={18} className="mr-2" />
             )}
-            Upload
+            Upload Media
           </Button>
         </motion.div>
 

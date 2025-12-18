@@ -87,9 +87,7 @@ export default function PricingPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-6"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-2">
-            Pricing Plans
-          </div>
+
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground leading-tight">
             Simple, <span className="text-primary/80 font-normal italic">transparent</span> pricing
           </h1>
