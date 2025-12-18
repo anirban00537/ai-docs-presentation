@@ -12,6 +12,8 @@ export const CARD_STYLE_PRESETS: Record<string, any> = {
     cardBorderStyle: "solid",
     cardBackdropBlur: "0px",
     cardOpacity: 1,
+    cardNoiseOpacity: 0.02,
+    cardVignetteOpacity: 0.05,
   }),
   flat: () => ({
     cardBorderRadius: "8px",
@@ -20,6 +22,8 @@ export const CARD_STYLE_PRESETS: Record<string, any> = {
     cardBorderStyle: "none",
     cardBackdropBlur: "0px",
     cardOpacity: 1,
+    cardNoiseOpacity: 0.01,
+    cardVignetteOpacity: 0,
   }),
   outline: (primary: string) => ({
     cardBorderRadius: "4px",
@@ -28,6 +32,8 @@ export const CARD_STYLE_PRESETS: Record<string, any> = {
     cardBorderStyle: "solid",
     cardBackdropBlur: "0px",
     cardOpacity: 1,
+    cardNoiseOpacity: 0.02,
+    cardVignetteOpacity: 0.05,
   }),
   sharp: () => ({
     cardBorderRadius: "0px",
@@ -36,6 +42,8 @@ export const CARD_STYLE_PRESETS: Record<string, any> = {
     cardBorderStyle: "solid",
     cardBackdropBlur: "0px",
     cardOpacity: 1,
+    cardNoiseOpacity: 0,
+    cardVignetteOpacity: 0,
   }),
   blocky: (primary: string) => ({
     cardBorderRadius: "0px",
@@ -44,14 +52,18 @@ export const CARD_STYLE_PRESETS: Record<string, any> = {
     cardBorderStyle: "solid",
     cardBackdropBlur: "0px",
     cardOpacity: 1,
+    cardNoiseOpacity: 0,
+    cardVignetteOpacity: 0,
   }),
   glass: (primary: string, isDark: boolean) => ({
     cardBorderRadius: "16px",
-    cardBoxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.1)",
+    cardBoxShadow: isDark ? "0 8px 32px 0 rgba(0, 0, 0, 0.4)" : "0 8px 32px 0 rgba(0, 0, 0, 0.1)",
     cardBorderWidth: "1px",
     cardBorderStyle: "solid",
     cardBackdropBlur: "12px",
     cardOpacity: isDark ? 0.4 : 0.7,
+    cardNoiseOpacity: 0.05,
+    cardVignetteOpacity: 0.1,
   }),
   rounded: (primary: string, isDark: boolean) => ({
     cardBorderRadius: "24px",
@@ -60,6 +72,8 @@ export const CARD_STYLE_PRESETS: Record<string, any> = {
     cardBorderStyle: "solid",
     cardBackdropBlur: "0px",
     cardOpacity: 1,
+    cardNoiseOpacity: 0.02,
+    cardVignetteOpacity: 0.05,
   }),
   "soft-cloud": (primary: string, isDark: boolean) => ({
     cardBorderRadius: "20px",
@@ -68,6 +82,8 @@ export const CARD_STYLE_PRESETS: Record<string, any> = {
     cardBorderStyle: "none",
     cardBackdropBlur: "0px",
     cardOpacity: isDark ? 0.9 : 1,
+    cardNoiseOpacity: 0.04,
+    cardVignetteOpacity: 0.15,
   }),
   capsule: (primary: string) => ({
     cardBorderRadius: "60px",
@@ -76,6 +92,8 @@ export const CARD_STYLE_PRESETS: Record<string, any> = {
     cardBorderStyle: "solid",
     cardBackdropBlur: "0px",
     cardOpacity: 1,
+    cardNoiseOpacity: 0.02,
+    cardVignetteOpacity: 0.05,
   }),
 };
 

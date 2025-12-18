@@ -8,10 +8,8 @@ import {
   DEFAULT_THEME,
   type Theme,
 } from "@/store/slices/slidesSlice";
-import { getFontFamily } from "@/lib/fonts";
-import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 import { IconPlus } from "@tabler/icons-react";
-import * as Patterns from "./patterns";
+import { CardWrapper } from "./CardWrapper";
 
 const DragStateBridge: React.FC<{
   onDragChange: (dragging: boolean) => void;
@@ -109,85 +107,19 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   const dragActive = enableDragHints ? isDragging : false;
 
-  const getCardStyle = (): React.CSSProperties => {
-    const isDark = theme.themeType === "dark";
-    const primaryColor = theme.primary;
-
-    const baseStyle: React.CSSProperties = {
-      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-      backgroundColor: theme.cardBackground,
-      fontFamily: getFontFamily(theme.fontFamily || "Inter"),
-      ...(fullWidth
-        ? { width: "100%", minHeight: "100vh" }
-        : { minWidth: `${SLIDE_MAX_WIDTH}px`, maxWidth: `${SLIDE_MAX_WIDTH}px` }),
-    };
-
-    if (fullWidth) {
-      return { ...baseStyle, borderRadius: "0px", boxShadow: "none", border: "none" };
-    }
-
-    // Use granular properties from theme with fallbacks
-    const borderRadius = theme.cardBorderRadius || "12px";
-    const boxShadow = theme.cardBoxShadow || (isDark ? "0 4px 20px rgba(0, 0, 0, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.08)");
-    const borderWidth = theme.cardBorderWidth || "1px";
-    const borderStyle = theme.cardBorderStyle || "solid";
-    const borderColor = theme.cardBorderColor || `${primaryColor}15`;
-    const backdropBlur = theme.cardBackdropBlur || "0px";
-    const opacity = theme.cardOpacity !== undefined ? theme.cardOpacity : 1;
-
-    return {
-      ...baseStyle,
-      backgroundColor: opacity < 1 ? `rgba(${isDark ? '0, 0, 0' : '255, 255, 255'}, ${opacity})` : theme.cardBackground,
-      borderRadius,
-      boxShadow,
-      border: `${borderWidth} ${borderStyle} ${borderColor}`,
-      backdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
-      WebkitBackdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
-    };
-  };
-
-  const containerStyle = getCardStyle();
-  const cardRadius = containerStyle.borderRadius;
-
-  const renderPattern = () => {
-    const pattern = theme.cardDesignPattern;
-    if (!pattern || pattern === "none") return null;
-
-    const secondaryColors = theme.secondaryColors || [];
-    const color1 = secondaryColors[0] || theme.primary;
-    const color2 = secondaryColors[1] || theme.primary;
-
-    switch (pattern) {
-      case "dots":
-        return <Patterns.Dots color={theme.primary} id={slide.id} />;
-      case "grid":
-        return <Patterns.Grid color={theme.primary} id={slide.id} />;
-      case "mesh":
-        return <Patterns.Mesh primary={theme.primary} color1={color1} color2={color2} />;
-      case "waves":
-        return <Patterns.Waves color={theme.primary} />;
-      case "glass":
-        return <Patterns.Glass color={theme.primary} />;
-      default:
-        return null;
-    }
-  };
-
   return (
-    <div
+    <CardWrapper
+      theme={theme}
+      slideId={slide.id}
+      fullWidth={fullWidth}
+      onMouseEnter={!readOnly ? () => setIsHovered(true) : undefined}
+      onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
       className={`group/slide relative transition-all duration-300 ease-out z-0 hover:z-20 ${
         fullWidth
           ? "w-full px-12 md:px-20 lg:px-32 py-16 md:py-24 lg:py-32 flex flex-col justify-center"
           : "px-8 py-8 mx-auto"
       }`}
-      style={containerStyle}
-      onMouseEnter={!readOnly ? () => setIsHovered(true) : undefined}
-      onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
     >
-      {/* Pattern clipping layer */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ borderRadius: cardRadius }}>
-        {renderPattern()}
-      </div>
       {enableDragHints && !readOnly && (
         <DragStateBridge onDragChange={setIsDragging} />
       )}
@@ -215,7 +147,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       )}
 
       {/* Slide Content */}
-      <div className="flex flex-col gap-0 relative z-10">
+      <div className="flex flex-col gap-0 relative">
         {!readOnly && (
           <InsertDropZone
             slideId={slide.id}
@@ -280,6 +212,6 @@ export const SlideCard: React.FC<SlideCardProps> = ({
           </div>
         </button>
       )}
-    </div>
+    </CardWrapper>
   );
 };

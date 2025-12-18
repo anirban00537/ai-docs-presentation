@@ -35,6 +35,9 @@ export interface Theme {
   cardBorderStyle?: string;
   cardBackdropBlur?: string;
   cardOpacity?: number;
+  // Texture & Overlays
+  cardNoiseOpacity?: number; // 0 to 1
+  cardVignetteOpacity?: number; // 0 to 1
 }
 
 export interface PresentationInfo {

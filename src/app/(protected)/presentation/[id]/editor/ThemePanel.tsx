@@ -385,6 +385,26 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                         unit="px"
                         isDark={isDark}
                       />
+
+                      <SliderControl 
+                        label="Grain Intensity"
+                        value={currentTheme.cardNoiseOpacity !== undefined ? Math.round(currentTheme.cardNoiseOpacity * 100) : 0}
+                        onChange={(val) => updateThemeProperty({ cardNoiseOpacity: val / 100 })}
+                        min={0}
+                        max={40}
+                        unit="%"
+                        isDark={isDark}
+                      />
+
+                      <SliderControl 
+                        label="Vignette"
+                        value={currentTheme.cardVignetteOpacity !== undefined ? Math.round(currentTheme.cardVignetteOpacity * 100) : 0}
+                        onChange={(val) => updateThemeProperty({ cardVignetteOpacity: val / 100 })}
+                        min={0}
+                        max={60}
+                        unit="%"
+                        isDark={isDark}
+                      />
                     </div>
                   </div>
                 </div>
