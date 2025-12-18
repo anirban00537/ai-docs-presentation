@@ -33,6 +33,8 @@ interface LogoGridBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
   block,
   onUpdate,
@@ -106,12 +108,10 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addLogo} theme={theme}>
       <div className={`grid ${gridClass} gap-4 w-full p-4`}>
         {logos.map((logo, index) => (
-          <div
+          <CommonCard
             key={index}
-            className="group/logo flex flex-col items-center justify-center p-5 rounded-xl transition-all relative"
-            style={{
-              backgroundColor: `${theme.primary}05`,
-            }}
+            theme={theme}
+            className="group/logo flex flex-col items-center justify-center p-5 relative"
           >
             {logo.image ? (
               <img
@@ -130,6 +130,7 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
                   onChange={(newContent) => handleNameChange(index, newContent)}
                   placeholder="Company Name"
                   className="text-center font-medium text-sm opacity-60"
+                  theme={theme}
                 />
               </div>
             )}
@@ -144,7 +145,7 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
                 <IconTrash size={14} />
               </button>
             </div>
-          </div>
+          </CommonCard>
         ))}
       </div>
 

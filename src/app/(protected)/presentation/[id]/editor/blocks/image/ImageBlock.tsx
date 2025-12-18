@@ -26,6 +26,8 @@ interface ImageBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const ImageBlock: React.FC<ImageBlockProps> = ({
   block,
   onUpdate,
@@ -159,20 +161,21 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
   if (!url) {
     return (
       <>
-        <div
+        <CommonCard
+          theme={theme}
           onClick={openModal}
-          className={`w-full h-48 rounded-xl flex flex-col items-center justify-center gap-3 transition-all ${!readOnly ? 'cursor-pointer hover:bg-opacity-10' : ''}`}
+          className={`w-full h-48 flex flex-col items-center justify-center gap-3 transition-all ${!readOnly ? 'cursor-pointer' : ''} border-dashed`}
           style={{
-            backgroundColor: `${theme.primary}08`,
-            border: `2px dashed ${theme.primary}30`,
+            borderColor: `${theme.primary}30`,
             color: theme.bodyColor,
+            borderWidth: '2px',
           }}
         >
           <IconPhoto size={40} stroke={1.5} style={{ opacity: 0.4 }} />
           <span className="text-sm font-medium opacity-50">
             {readOnly ? "No image" : "Click to add image"}
           </span>
-        </div>
+        </CommonCard>
 
         {/* Image Picker Modal */}
         <ImagePickerModal
@@ -202,10 +205,13 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
 
   return (
     <>
-      <div className="w-full h-full flex flex-col gap-2 group/image relative">
+      <CommonCard 
+        theme={theme}
+        className="w-full h-full flex flex-col gap-0 group/image relative p-0 overflow-hidden border-none"
+      >
         {/* Image Container */}
         <div 
-          className="relative w-full flex-1 min-h-[200px] rounded-xl overflow-hidden"
+          className="relative w-full flex-1 min-h-[200px]"
           style={{
             backgroundColor: `${theme.primary}05`,
           }}
@@ -295,7 +301,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
             <IconExternalLink size={10} />
           </a>
         )}
-      </div>
+      </CommonCard>
 
       {/* Image Picker Modal */}
       <ImagePickerModal

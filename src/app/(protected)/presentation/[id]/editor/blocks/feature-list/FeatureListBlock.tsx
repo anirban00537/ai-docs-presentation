@@ -20,6 +20,8 @@ interface FeatureListBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
   block,
   onUpdate,
@@ -74,41 +76,37 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
   return (
     <div className={`${gridClass} w-full`}>
       {features.map((feature, index) => (
-        <div
-          key={index}
-          className="flex gap-4 p-5 rounded-2xl transition-all relative"
-          style={{
-            backgroundColor: `${theme.primary}08`,
-          }}
-        >
+        <CommonCard key={index} theme={theme} className="flex gap-4 p-5">
           {/* Icon */}
-          {!readOnly ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-105 cursor-pointer outline-none relative z-20"
-                  style={{
-                    backgroundColor: `${theme.primary}15`,
-                  }}
-                  title="Change icon"
-                >
-                  {feature.icon || "✨"}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 border-none shadow-xl">
-                <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
-              </PopoverContent>
-            </Popover>
-          ) : (
-            <div
-              className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-              style={{
-                backgroundColor: `${theme.primary}15`,
-              }}
-            >
-              {feature.icon || "✨"}
-            </div>
-          )}
+          <div className="flex-shrink-0">
+            {!readOnly ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-105 cursor-pointer outline-none relative z-20"
+                    style={{
+                      backgroundColor: `${theme.primary}15`,
+                    }}
+                    title="Change icon"
+                  >
+                    {feature.icon || "✨"}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 border-none shadow-xl">
+                  <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <div
+                className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+                style={{
+                  backgroundColor: `${theme.primary}15`,
+                }}
+              >
+                {feature.icon || "✨"}
+              </div>
+            )}
+          </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
@@ -137,7 +135,7 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
               />
             </div>
           </div>
-        </div>
+        </CommonCard>
       ))}
     </div>
   );

@@ -203,6 +203,13 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                           <div className="flex -space-x-1.5">
                             <div className="w-5 h-5 rounded-full border-2" style={{ backgroundColor: palette.theme.pageBackground, borderColor: isDark ? "#000" : "#fff" }} />
                             <div className="w-5 h-5 rounded-full border-2" style={{ backgroundColor: palette.theme.primary, borderColor: isDark ? "#000" : "#fff" }} />
+                            {(palette.theme.secondaryColors || []).map((color, colorIndex) => (
+                              <div 
+                                key={colorIndex}
+                                className="w-5 h-5 rounded-full border-2" 
+                                style={{ backgroundColor: color, borderColor: isDark ? "#000" : "#fff" }} 
+                              />
+                            ))}
                           </div>
                           <span className="text-xs font-medium" style={{ color: isDark ? "#e5e7eb" : "#374151" }}>{palette.name}</span>
                         </div>

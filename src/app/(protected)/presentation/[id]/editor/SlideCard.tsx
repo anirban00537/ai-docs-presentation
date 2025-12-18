@@ -138,7 +138,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
           ? "0 24px 48px rgba(0, 0, 0, 0.5)"
           : "0 20px 40px rgba(0, 0, 0, 0.12)";
       case "glow":
-        return `0 0 25px ${theme.primary}40`;
+        return `0 0 20px ${theme.primary}15, 0 0 50px ${theme.primary}10`;
       case "none":
       default:
         return "none";
@@ -152,7 +152,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
     boxShadow: getCardShadow(),
     fontFamily: getFontFamily(theme.fontFamily || "Inter"),
     borderRadius: fullWidth ? "0px" : `${theme.cardRoundness || 16}px`,
-    borderWidth: fullWidth ? "0px" : "1px",
+    borderWidth: "0px",
     borderStyle: (theme.cardBorderStyle as any) || "solid",
     borderColor: theme.cardBorderColor || `${theme.primary}15`,
     ...(fullWidth

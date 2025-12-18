@@ -13,6 +13,7 @@ export { BlockFocusProvider, useBlockFocus } from "./BlockFocusContext";
 export { GeneratingIndicator } from "./GeneratingIndicator";
 export { PresentationMode } from "./PresentationMode";
 export { BlockDragPreview } from "./BlockDragPreview";
+export { EditorBackground } from "./EditorBackground";
 export { getBlockTypeIcon, getBlockTypeLabel } from "./blockTypeUtils";
 
 // Export icons

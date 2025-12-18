@@ -22,6 +22,8 @@ interface PulseMetricBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const PulseMetricBlock: React.FC<PulseMetricBlockProps> = ({
   block,
   onUpdate,
@@ -132,137 +134,134 @@ export const PulseMetricBlock: React.FC<PulseMetricBlockProps> = ({
   };
 
   return (
-    <div
-      className="relative flex flex-col justify-between p-6 rounded-2xl h-full w-full overflow-hidden transition-all"
-      style={{
-        background: `linear-gradient(135deg, ${theme.primary}10 0%, ${theme.primary}03 100%)`,
-      }}
-    >
-      {/* Settings Popover - hidden in readOnly mode */}
-      {!readOnly && (
-        <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                className="p-1.5 rounded-lg transition-all hover:scale-105"
+    <CommonCard theme={theme} className="w-full h-full p-6">
+      <div className="relative flex flex-col justify-between h-full w-full overflow-hidden transition-all">
+        {/* Settings Popover - hidden in readOnly mode */}
+        {!readOnly && (
+          <div className="absolute top-0 right-0 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className="p-1.5 rounded-lg transition-all hover:scale-105"
+                  style={{
+                    backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+                    color: theme.primary,
+                  }}
+                >
+                  <IconSettings size={14} stroke={2} />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-56 p-3 rounded-xl shadow-xl"
                 style={{
-                  backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
-                  color: theme.primary,
+                  backgroundColor: isDark ? "rgba(30,30,35,0.98)" : "rgba(255,255,255,0.98)",
+                  backdropFilter: "blur(20px)",
+                  border: "none",
                 }}
               >
-                <IconSettings size={14} stroke={2} />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-56 p-3 rounded-xl shadow-xl"
-              style={{
-                backgroundColor: isDark ? "rgba(30,30,35,0.98)" : "rgba(255,255,255,0.98)",
-                backdropFilter: "blur(20px)",
-                border: "none",
-              }}
-            >
-              <div className="flex flex-col gap-3">
-                <div className="space-y-2">
-                  <label
-                    className="text-[10px] font-medium uppercase tracking-wider"
-                    style={{ color: isDark ? "#888" : "#666" }}
-                  >
-                    Trend
-                  </label>
-                  <div
-                    className="flex gap-1 p-1 rounded-lg"
-                    style={{ backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }}
-                  >
-                    {[
-                      { val: "up", icon: IconTrendingUp },
-                      { val: "neutral", icon: IconMinus },
-                      { val: "down", icon: IconTrendingDown }
-                    ].map(({ val, icon: Icon }) => (
-                      <button
-                        key={val}
-                        onClick={() => handleTrendChange(val as any)}
-                        className="flex-1 p-2 rounded-md flex justify-center transition-all"
-                        style={{
-                          backgroundColor: trend === val ? `${theme.primary}20` : "transparent",
-                          color: trend === val ? theme.primary : (isDark ? "#888" : "#666"),
-                        }}
-                      >
-                        <Icon size={14} />
-                      </button>
-                    ))}
+                <div className="flex flex-col gap-3">
+                  <div className="space-y-2">
+                    <label
+                      className="text-[10px] font-medium uppercase tracking-wider"
+                      style={{ color: isDark ? "#888" : "#666" }}
+                    >
+                      Trend
+                    </label>
+                    <div
+                      className="flex gap-1 p-1 rounded-lg"
+                      style={{ backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }}
+                    >
+                      {[
+                        { val: "up", icon: IconTrendingUp },
+                        { val: "neutral", icon: IconMinus },
+                        { val: "down", icon: IconTrendingDown }
+                      ].map(({ val, icon: Icon }) => (
+                        <button
+                          key={val}
+                          onClick={() => handleTrendChange(val as any)}
+                          className="flex-1 p-2 rounded-md flex justify-center transition-all"
+                          style={{
+                            backgroundColor: trend === val ? `${theme.primary}20` : "transparent",
+                            color: trend === val ? theme.primary : (isDark ? "#888" : "#666"),
+                          }}
+                        >
+                          <Icon size={14} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      className="text-[10px] font-medium uppercase tracking-wider"
+                      style={{ color: isDark ? "#888" : "#666" }}
+                    >
+                      Style
+                    </label>
+                    <div className="grid grid-cols-2 gap-1">
+                      {["smooth", "linear", "step", "bars"].map((type) => (
+                        <button
+                          key={type}
+                          onClick={() => handleTypeChange(type as any)}
+                          className="px-2 py-1.5 text-[10px] font-medium rounded-lg capitalize transition-all"
+                          style={{
+                            backgroundColor: sparklineType === type ? `${theme.primary}20` : (isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"),
+                            color: sparklineType === type ? theme.primary : (isDark ? "#888" : "#666"),
+                          }}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <label
-                    className="text-[10px] font-medium uppercase tracking-wider"
-                    style={{ color: isDark ? "#888" : "#666" }}
-                  >
-                    Style
-                  </label>
-                  <div className="grid grid-cols-2 gap-1">
-                    {["smooth", "linear", "step", "bars"].map((type) => (
-                      <button
-                        key={type}
-                        onClick={() => handleTypeChange(type as any)}
-                        className="px-2 py-1.5 text-[10px] font-medium rounded-lg capitalize transition-all"
-                        style={{
-                          backgroundColor: sparklineType === type ? `${theme.primary}20` : (isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"),
-                          color: sparklineType === type ? theme.primary : (isDark ? "#888" : "#666"),
-                        }}
-                      >
-                        {type}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-      )}
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col gap-1 items-center justify-center text-center mt-2">
-        {readOnly ? (
-          <>
-            <div
-              className="text-4xl font-bold text-center"
-              style={{ color: theme.headingColor }}
-            >
-              {value}
-            </div>
-            <div
-              className="text-xs font-medium text-center opacity-50 uppercase tracking-wider"
-              style={{ color: theme.headingColor }}
-            >
-              {label}
-            </div>
-          </>
-        ) : (
-          <>
-            <input
-              value={value}
-              onChange={handleValueChange}
-              className="bg-transparent border-none outline-none text-4xl font-bold text-center w-full"
-              style={{
-                color: theme.headingColor,
-              }}
-            />
-            <input
-              value={label}
-              onChange={handleLabelChange}
-              className="bg-transparent border-none outline-none text-xs font-medium text-center opacity-50 w-full uppercase tracking-wider"
-              style={{ color: theme.headingColor }}
-            />
-          </>
+              </PopoverContent>
+            </Popover>
+          </div>
         )}
-      </div>
 
-      {/* Chart */}
-      <div className="relative z-10 h-14 w-full mt-4 opacity-70">
-        {renderChart()}
+        {/* Content */}
+        <div className="relative z-10 flex flex-col gap-1 items-center justify-center text-center mt-2">
+          {readOnly ? (
+            <>
+              <div
+                className="text-4xl font-bold text-center"
+                style={{ color: theme.headingColor }}
+              >
+                {value}
+              </div>
+              <div
+                className="text-xs font-medium text-center opacity-50 uppercase tracking-wider"
+                style={{ color: theme.headingColor }}
+              >
+                {label}
+              </div>
+            </>
+          ) : (
+            <>
+              <input
+                value={value}
+                onChange={handleValueChange}
+                className="bg-transparent border-none outline-none text-4xl font-bold text-center w-full"
+                style={{
+                  color: theme.headingColor,
+                }}
+              />
+              <input
+                value={label}
+                onChange={handleLabelChange}
+                className="bg-transparent border-none outline-none text-xs font-medium text-center opacity-50 w-full uppercase tracking-wider"
+                style={{ color: theme.headingColor }}
+              />
+            </>
+          )}
+        </div>
+
+        {/* Chart */}
+        <div className="relative z-10 h-14 w-full mt-4 opacity-70">
+          {renderChart()}
+        </div>
       </div>
-    </div>
+    </CommonCard>
   );
 };

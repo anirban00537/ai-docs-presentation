@@ -26,6 +26,8 @@ interface TestimonialBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
   block,
   onUpdate,
@@ -117,88 +119,89 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} theme={theme}>
-      <div
-        className="group w-full h-full rounded-2xl p-6 flex flex-col gap-5 relative overflow-hidden transition-all"
-        style={{
-          background: `linear-gradient(135deg, ${theme.primary}10 0%, ${theme.primary}03 100%)`,
-          color: theme.bodyColor || theme.headingColor,
-        }}
-      >
-        {/* Quote mark */}
+      <CommonCard theme={theme} className="w-full h-full p-6">
         <div
-          className="absolute top-4 right-5 text-7xl leading-none opacity-10 font-serif select-none pointer-events-none"
-          style={{ color: theme.primary }}
+          className="group flex flex-col gap-5 relative overflow-hidden transition-all"
+          style={{
+            color: theme.bodyColor || theme.headingColor,
+          }}
         >
-          &quot;
-        </div>
+          {/* Quote mark */}
+          <div
+            className="absolute top-4 right-5 text-7xl leading-none opacity-10 font-serif select-none pointer-events-none"
+            style={{ color: theme.primary }}
+          >
+            &quot;
+          </div>
 
-        {/* Quote */}
-        <div className="relative z-10 flex-1 min-w-0">
-          <ProseMirrorEditor
-            key={block.id}
-            blockId={block.id}
-            value={quoteDoc}
-            onChange={handleQuoteChange}
-            placeholder={placeholder ?? "Add a testimonial..."}
-            className="text-lg italic font-medium leading-relaxed opacity-80"
-            theme={theme}
-            readOnly={readOnly}
-          />
-        </div>
+          {/* Quote */}
+          <div className="relative z-10 flex-1 min-w-0">
+            <ProseMirrorEditor
+              key={block.id}
+              blockId={block.id}
+              value={quoteDoc}
+              onChange={handleQuoteChange}
+              placeholder={placeholder ?? "Add a testimonial..."}
+              className="text-lg italic font-medium leading-relaxed opacity-80"
+              theme={theme}
+              readOnly={readOnly}
+            />
+          </div>
 
-        {/* Author */}
-        <div
-          className="relative z-10 flex items-center gap-3 pt-4"
-          style={{ borderTop: `1px solid ${theme.primary}10` }}
-        >
-          <div className={`shrink-0 ${!readOnly ? 'cursor-pointer' : ''}`} onClick={!readOnly ? handleOpenEdit : undefined}>
-            {avatar ? (
-              <img
-                src={avatar}
-                alt="Avatar"
-                className="w-10 h-10 rounded-full object-cover transition-opacity hover:opacity-80"
+          {/* Author */}
+          <div
+            className="relative z-10 flex items-center gap-3 pt-4"
+            style={{ borderTop: `1px solid ${theme.primary}10` }}
+          >
+            <div className={`shrink-0 ${!readOnly ? 'cursor-pointer' : ''}`} onClick={!readOnly ? handleOpenEdit : undefined}>
+              {avatar ? (
+                <img
+                  src={avatar}
+                  alt="Avatar"
+                  className="w-10 h-10 rounded-full object-cover transition-opacity hover:opacity-80"
+                />
+              ) : (
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-opacity hover:opacity-80"
+                  style={{
+                    backgroundColor: theme.primary,
+                    color: "#fff",
+                  }}
+                >
+                  {extractText(nameDoc)
+                    .split(" ")
+                    .map((part: string) => part[0])
+                    .join("")
+                    .slice(0, 2) || "JD"}
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col">
+              <ProseMirrorEditor
+                key={`${block.id}-name`}
+                blockId={`${block.id}-name`}
+                value={nameDoc}
+                onChange={handleNameChange}
+                placeholder="Name"
+                className="text-sm font-semibold"
+                theme={theme}
+                readOnly={readOnly}
               />
-            ) : (
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-opacity hover:opacity-80"
-                style={{
-                  backgroundColor: theme.primary,
-                  color: "#fff",
-                }}
-              >
-                {extractText(nameDoc)
-                  .split(" ")
-                  .map((part: string) => part[0])
-                  .join("")
-                  .slice(0, 2) || "JD"}
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <ProseMirrorEditor
-              key={`${block.id}-name`}
-              blockId={`${block.id}-name`}
-              value={nameDoc}
-              onChange={handleNameChange}
-              placeholder="Name"
-              className="text-sm font-semibold"
-              theme={theme}
-              readOnly={readOnly}
-            />
-            <ProseMirrorEditor
-              key={`${block.id}-role`}
-              blockId={`${block.id}-role`}
-              value={roleDoc}
-              onChange={handleRoleChange}
-              placeholder="Role"
-              className="text-[11px] font-medium uppercase tracking-wide opacity-50"
-              theme={theme}
-              readOnly={readOnly}
-            />
+              <ProseMirrorEditor
+                key={`${block.id}-role`}
+                blockId={`${block.id}-role`}
+                value={roleDoc}
+                onChange={handleRoleChange}
+                placeholder="Role"
+                className="text-[11px] font-medium uppercase tracking-wide opacity-50"
+                theme={theme}
+                readOnly={readOnly}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </CommonCard>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent

@@ -29,6 +29,8 @@ interface ProgressBarBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
   block,
   onUpdate,
@@ -145,12 +147,10 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addItem} theme={theme}>
       <div className="w-full flex flex-col gap-4">
         {items.map((item, index) => (
-          <div
+          <CommonCard
             key={index}
-            className="group p-4 rounded-xl"
-            style={{
-              backgroundColor: `${theme.primary}05`,
-            }}
+            theme={theme}
+            className="group p-4"
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex-1 min-w-0 mr-4">
@@ -161,6 +161,7 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
                   onChange={(newContent) => handleLabelChange(index, newContent)}
                   placeholder="Label"
                   className="font-medium text-sm"
+                  theme={theme}
                 />
               </div>
               {showPercentage && (
@@ -186,7 +187,7 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
                 }}
               />
             </div>
-          </div>
+          </CommonCard>
         ))}
       </div>
 

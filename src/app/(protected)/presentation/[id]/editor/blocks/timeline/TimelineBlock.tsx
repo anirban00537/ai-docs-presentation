@@ -18,6 +18,8 @@ interface TimelineBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   block,
   onUpdate,
@@ -91,51 +93,53 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
 
   return (
     <BlockWrapper onAdd={!readOnly ? addStep : undefined} theme={theme} readOnly={readOnly}>
-      <div className="w-full h-full flex flex-col py-2">
-        {/* Optional Title */}
-        {title && (
-          <div className="mb-8 pl-2">
-            <ProseMirrorEditor
-              key={`${block.id}-title`}
-              blockId={`${block.id}-title`}
-              value={title}
-              onChange={handleTitleChange}
-              placeholder="Timeline title"
-              className="text-xl font-bold tracking-tight"
-              theme={theme}
-              readOnly={readOnly}
-            />
-          </div>
-        )}
-
-        {/* Timeline Steps */}
-        <div className="relative pl-4">
-          {/* Vertical Line */}
-          <div
-            className="absolute left-[19px] top-3 bottom-6 w-0.5"
-            style={{
-              backgroundColor: `${theme.primary}20`,
-            }}
-          />
-
-          {/* Steps */}
-          <div className="space-y-8">
-            {steps.map((step: TimelineStep, index: number) => (
-              <TimelineStepComponent
-                key={index}
-                step={step}
-                stepIndex={index}
-                blockId={block.id}
+      <CommonCard theme={theme} className="w-full h-full p-6">
+        <div className="w-full h-full flex flex-col py-2">
+          {/* Optional Title */}
+          {title && (
+            <div className="mb-8 pl-2">
+              <ProseMirrorEditor
+                key={`${block.id}-title`}
+                blockId={`${block.id}-title`}
+                value={title}
+                onChange={handleTitleChange}
+                placeholder="Timeline title"
+                className="text-xl font-bold tracking-tight"
                 theme={theme}
-                onTitleChange={handleStepTitleChange}
-                onDescriptionChange={handleStepDescriptionChange}
-                onIconChange={handleStepIconChange}
                 readOnly={readOnly}
               />
-            ))}
+            </div>
+          )}
+
+          {/* Timeline Steps */}
+          <div className="relative pl-4">
+            {/* Vertical Line */}
+            <div
+              className="absolute left-[19px] top-3 bottom-6 w-0.5"
+              style={{
+                backgroundColor: `${theme.primary}20`,
+              }}
+            />
+
+            {/* Steps */}
+            <div className="space-y-8">
+              {steps.map((step: TimelineStep, index: number) => (
+                <TimelineStepComponent
+                  key={index}
+                  step={step}
+                  stepIndex={index}
+                  blockId={block.id}
+                  theme={theme}
+                  onTitleChange={handleStepTitleChange}
+                  onDescriptionChange={handleStepDescriptionChange}
+                  onIconChange={handleStepIconChange}
+                  readOnly={readOnly}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </CommonCard>
     </BlockWrapper>
   );
 };

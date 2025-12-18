@@ -17,6 +17,8 @@ interface ComparisonTableBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
   block,
   onUpdate,
@@ -102,6 +104,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
           }
           placeholder="Value"
           className="text-center text-sm"
+          theme={theme}
         />
       </div>
     );
@@ -188,12 +191,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
 
   return (
     <BlockWrapper customControls={customControls} theme={theme}>
-      <div
-        className="w-full rounded-2xl overflow-hidden"
-        style={{
-          backgroundColor: `${theme.primary}05`,
-        }}
-      >
+      <CommonCard theme={theme} className="w-full overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
@@ -269,6 +267,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                           }
                           placeholder="Plan Name"
                           className="text-sm font-semibold text-center"
+                          theme={theme}
                         />
                       </div>
                       {col.price && (
@@ -282,6 +281,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                             }
                             placeholder="Price"
                             className="text-xl font-bold text-center"
+                            theme={theme}
                           />
                         </div>
                       )}
@@ -319,6 +319,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                         }
                         placeholder="Feature"
                         className="w-full"
+                        theme={theme}
                       />
                     </div>
                   </td>
@@ -341,7 +342,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
             </tbody>
           </table>
         </div>
-      </div>
+      </CommonCard>
     </BlockWrapper>
   );
 };

@@ -11,6 +11,8 @@ interface QuoteBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const QuoteBlock: React.FC<QuoteBlockProps> = ({
   block,
   onUpdate,
@@ -52,69 +54,70 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
   const isCentered = style === "centered";
 
   return (
-    <div
-      className={`w-full h-full rounded-2xl p-6 flex flex-col gap-4 relative transition-all ${
+    <CommonCard
+      theme={theme}
+      className={`w-full h-full p-6 ${
         isCentered ? "items-center text-center" : "items-start text-left"
       }`}
       style={{
-        background: isCentered
-          ? `linear-gradient(135deg, ${theme.primary}08 0%, ${theme.primary}03 100%)`
-          : "transparent",
-        borderLeft: isCentered ? "none" : `3px solid ${theme.primary}`,
-        paddingLeft: isCentered ? "1.5rem" : "1.5rem",
+        borderLeft: isCentered ? "none" : `4px solid ${theme.primary}`,
+        background: isCentered ? undefined : "transparent",
+        boxShadow: isCentered ? undefined : "none",
       }}
     >
-      {/* Decorative Quote Mark */}
-      <div
-        className="text-5xl leading-none font-serif select-none opacity-15"
-        style={{ color: theme.primary }}
-      >
-        &quot;
-      </div>
+      <div className={`flex flex-col gap-4 relative w-full h-full ${isCentered ? "items-center" : "items-start"}`}>
+        {/* Decorative Quote Mark */}
+        <div
+          className="text-5xl leading-none font-serif select-none opacity-15"
+          style={{ color: theme.primary }}
+        >
+          &quot;
+        </div>
 
-      {/* Quote Content */}
-      <div className="relative z-10 w-full">
-        <ProseMirrorEditor
-          key={`${block.id}-quote`}
-          blockId={`${block.id}-quote`}
-          value={quoteDoc}
-          onChange={handleQuoteChange}
-          placeholder={placeholder ?? "Add an inspiring quote..."}
-          className="text-xl font-medium italic opacity-80 leading-relaxed"
-          theme={theme}
-          readOnly={readOnly}
-        />
-      </div>
+        {/* Quote Content */}
+        <div className="relative z-10 w-full">
+          <ProseMirrorEditor
+            key={`${block.id}-quote`}
+            blockId={`${block.id}-quote`}
+            value={quoteDoc}
+            onChange={handleQuoteChange}
+            placeholder={placeholder ?? "Add an inspiring quote..."}
+            className="text-xl font-medium italic opacity-80 leading-relaxed"
+            theme={theme}
+            readOnly={readOnly}
+          />
+        </div>
 
-      {/* Author */}
-      <div
-        className={`relative z-10 flex items-center gap-3 mt-1 ${
-          isCentered ? "justify-center" : "justify-start"
-        }`}
-      >
-        {isCentered && (
-          <div
-            className="h-px w-5"
-            style={{ backgroundColor: theme.primary, opacity: 0.3 }}
+        {/* Author */}
+        <div
+          className={`relative z-10 flex items-center gap-3 mt-1 ${
+            isCentered ? "justify-center" : "justify-start"
+          }`}
+        >
+          {isCentered && (
+            <div
+              className="h-px w-5"
+              style={{ backgroundColor: theme.primary, opacity: 0.3 }}
+            />
+          )}
+          <ProseMirrorEditor
+            key={`${block.id}-author`}
+            blockId={`${block.id}-author`}
+            value={authorDoc}
+            onChange={handleAuthorChange}
+            placeholder="Author name"
+            className="text-xs font-medium tracking-wide uppercase opacity-50"
+            theme={theme}
+            readOnly={readOnly}
           />
-        )}
-        <ProseMirrorEditor
-          key={`${block.id}-author`}
-          blockId={`${block.id}-author`}
-          value={authorDoc}
-          onChange={handleAuthorChange}
-          placeholder="Author name"
-          className="text-xs font-medium tracking-wide uppercase opacity-50"
-          theme={theme}
-          readOnly={readOnly}
-        />
-        {isCentered && (
-          <div
-            className="h-px w-5"
-            style={{ backgroundColor: theme.primary, opacity: 0.3 }}
-          />
-        )}
+          {isCentered && (
+            <div
+              className="h-px w-5"
+              style={{ backgroundColor: theme.primary, opacity: 0.3 }}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </CommonCard>
   );
 };

@@ -14,6 +14,8 @@ interface SimpleNumberCardBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({
   block,
   onUpdate,
@@ -57,48 +59,51 @@ export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({
   );
 
   return (
-    <div className="flex flex-row gap-4 items-start w-full h-full p-3">
-      <style>{`
-        .no-spinner::-webkit-outer-spin-button,
-        .no-spinner::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-        .no-spinner {
-          -moz-appearance: textfield;
-        }
-      `}</style>
+    <CommonCard theme={theme} className="w-full h-full p-4">
+      <div className="flex flex-row gap-4 items-start w-full">
+        <style>{`
+          .no-spinner::-webkit-outer-spin-button,
+          .no-spinner::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+          .no-spinner {
+            -moz-appearance: textfield;
+          }
+        `}</style>
 
-      {/* Number */}
-      <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shrink-0"
-        style={{
-          backgroundColor: `${theme.primary}15`,
-          color: theme.primary,
-        }}
-      >
-        <input
-          type="number"
-          value={String(number).padStart(2, "0")}
-          onChange={handleNumberChange}
-          className="no-spinner bg-transparent border-none outline-none text-center w-full font-bold"
+        {/* Number */}
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shrink-0"
           style={{
+            backgroundColor: `${theme.primary}15`,
             color: theme.primary,
           }}
-        />
-      </div>
+        >
+          <input
+            type="number"
+            value={String(number).padStart(2, "0")}
+            onChange={handleNumberChange}
+            className="no-spinner bg-transparent border-none outline-none text-center w-full font-bold"
+            style={{
+              color: theme.primary,
+            }}
+          />
+        </div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0 pt-1.5">
-        <ProseMirrorEditor
-          key={block.id}
-          blockId={block.id}
-          value={editorContent}
-          onChange={handleEditorChange}
-          placeholder={placeholder ?? "Type description..."}
-          className="text-sm leading-relaxed opacity-80"
-        />
+        {/* Content */}
+        <div className="flex-1 min-w-0 pt-1.5">
+          <ProseMirrorEditor
+            key={block.id}
+            blockId={block.id}
+            value={editorContent}
+            onChange={handleEditorChange}
+            placeholder={placeholder ?? "Type description..."}
+            className="text-sm leading-relaxed opacity-80"
+            theme={theme}
+          />
+        </div>
       </div>
-    </div>
+    </CommonCard>
   );
 };

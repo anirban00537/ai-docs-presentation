@@ -8,6 +8,8 @@ interface CodeTerminalBlockProps {
   theme: Theme;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
   block,
   onUpdate,
@@ -30,8 +32,9 @@ export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
   );
 
   return (
-    <div
-      className="flex flex-col w-full h-full rounded-2xl overflow-hidden font-mono text-sm"
+    <CommonCard
+      theme={theme}
+      className="flex flex-col w-full h-full overflow-hidden font-mono text-sm p-0 border-none"
       style={{
         backgroundColor: "#0d0d0d",
         color: "#e5e7eb",
@@ -78,6 +81,6 @@ export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
           spellCheck={false}
         />
       </div>
-    </div>
+    </CommonCard>
   );
 };

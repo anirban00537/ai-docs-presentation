@@ -41,6 +41,8 @@ interface StatsCounterBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
   block,
   onUpdate,
@@ -160,52 +162,53 @@ export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addStat} theme={theme}>
       <div className={`${gridClass} w-full`}>
         {stats.map((stat, index) => (
-          <div
+          <CommonCard
             key={index}
-            className="group flex-1 min-w-[160px] flex flex-col items-center gap-2 p-5 rounded-2xl transition-all relative"
-            style={{
-              background: `linear-gradient(135deg, ${theme.primary}10 0%, ${theme.primary}03 100%)`,
-            }}
+            theme={theme}
+            className="flex-1 min-w-[160px] p-5"
           >
-            {/* Icon */}
-            <div className="mb-1 relative z-20">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    className="text-3xl transition-all hover:scale-110 cursor-pointer outline-none"
-                    title="Change icon"
-                  >
-                    {stat.icon || "📊"}
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 border-none shadow-xl">
-                  <EmojiPicker onEmojiClick={(emoji) => updateStatField(index, "icon", emoji.emoji)} />
-                </PopoverContent>
-              </Popover>
-            </div>
+            <div className="group flex flex-col items-center gap-2 relative transition-all">
+              {/* Icon */}
+              <div className="mb-1 relative z-20">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      className="text-3xl transition-all hover:scale-110 cursor-pointer outline-none"
+                      title="Change icon"
+                    >
+                      {stat.icon || "📊"}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 border-none shadow-xl">
+                    <EmojiPicker onEmojiClick={(emoji) => updateStatField(index, "icon", emoji.emoji)} />
+                  </PopoverContent>
+                </Popover>
+              </div>
 
-            {/* Value */}
-            <div
-              className="text-3xl font-bold transition-colors"
-              style={{ color: stat.color || theme.primary }}
-            >
-              {stat.prefix}
-              {animatedValues[index]?.toLocaleString()}
-              {stat.suffix}
-            </div>
+              {/* Value */}
+              <div
+                className="text-3xl font-bold transition-colors"
+                style={{ color: stat.color || theme.primary }}
+              >
+                {stat.prefix}
+                {animatedValues[index]?.toLocaleString()}
+                {stat.suffix}
+              </div>
 
-            {/* Label */}
-            <div className="min-h-[1.5rem] w-full">
-              <ProseMirrorEditor
-                key={`${block.id}-label-${index}`}
-                blockId={`${block.id}-label-${index}`}
-                value={stat.label}
-                onChange={(newContent) => handleLabelChange(index, newContent)}
-                placeholder="Label"
-                className="text-center text-xs font-medium opacity-60"
-              />
+              {/* Label */}
+              <div className="min-h-[1.5rem] w-full">
+                <ProseMirrorEditor
+                  key={`${block.id}-label-${index}`}
+                  blockId={`${block.id}-label-${index}`}
+                  value={stat.label}
+                  onChange={(newContent) => handleLabelChange(index, newContent)}
+                  placeholder="Label"
+                  className="text-center text-xs font-medium opacity-60"
+                  theme={theme}
+                />
+              </div>
             </div>
-          </div>
+          </CommonCard>
         ))}
       </div>
 

@@ -32,6 +32,8 @@ interface FAQBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const FAQBlock: React.FC<FAQBlockProps> = ({
   block,
   onUpdate,
@@ -117,12 +119,10 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
         {items.map((item, index) => {
           const isExpanded = expandedItems[index];
           return (
-            <div
+            <CommonCard
               key={index}
-              className="rounded-xl overflow-hidden transition-all relative group/item"
-              style={{
-                backgroundColor: `${theme.primary}08`,
-              }}
+              theme={theme}
+              className="overflow-hidden relative group/item"
             >
               {/* Question header */}
               <button
@@ -193,7 +193,7 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
                   <IconTrash size={14} />
                 </button>
               )}
-            </div>
+            </CommonCard>
           );
         })}
       </div>

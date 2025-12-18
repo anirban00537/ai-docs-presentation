@@ -16,6 +16,8 @@ interface ImageGalleryBlockProps {
   isEditable?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
   block,
   onUpdate,
@@ -105,12 +107,12 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
         }}
       >
         {images.map((img) => (
-          <div 
+          <CommonCard 
             key={img.id} 
-            className="group/img relative rounded-xl overflow-hidden transition-all"
+            theme={theme}
+            className="group/img relative overflow-hidden transition-all p-0 border-none"
             style={{ 
               aspectRatio: '4/3',
-              backgroundColor: `${theme.primary}05`,
             }}
           >
             <img 
@@ -133,22 +135,22 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
                 <IconTrash size={16} />
               </button>
             </div>
-          </div>
+          </CommonCard>
         ))}
 
         {/* Empty State */}
         {images.length === 0 && (
-          <div 
+          <CommonCard 
+            theme={theme}
             onClick={addImage}
-            className="col-span-full h-48 rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer transition-all"
+            className="col-span-full h-48 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all"
             style={{
-              backgroundColor: `${theme.primary}05`,
               color: `${theme.bodyColor}80`,
             }}
           >
             <IconPhoto size={32} stroke={1.5} style={{ opacity: 0.5 }} />
             <span className="text-sm font-medium opacity-50">Click to add images</span>
-          </div>
+          </CommonCard>
         )}
       </div>
     </div>

@@ -52,6 +52,8 @@ const languages = [
   "plaintext",
 ];
 
+import { CommonCard } from "../CommonCard";
+
 export const CodeBlock: React.FC<CodeBlockProps> = ({
   block,
   onUpdate,
@@ -101,8 +103,9 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} theme={theme}>
-      <div
-        className="w-full rounded-2xl overflow-hidden relative group"
+      <CommonCard
+        theme={theme}
+        className="w-full overflow-hidden relative group p-0 border-none"
         style={{
           backgroundColor: isDark ? "#0d0d0d" : "#fafafa",
         }}
@@ -173,7 +176,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
             />
           </div>
         </div>
-      </div>
+      </CommonCard>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent

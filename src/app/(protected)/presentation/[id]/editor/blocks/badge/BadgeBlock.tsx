@@ -37,6 +37,8 @@ interface BadgeBlockProps {
   readOnly?: boolean;
 }
 
+import { CommonCard } from "../CommonCard";
+
 export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   block,
   onUpdate,
@@ -121,12 +123,10 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
     <BlockWrapper onEdit={!readOnly ? handleOpenEdit : undefined} onAdd={!readOnly ? addBadge : undefined} theme={theme} readOnly={readOnly}>
       <div className={`${gridClass} w-full`}>
         {badges.map((badge, index) => (
-          <div
+          <CommonCard
             key={index}
-            className="group/badge flex gap-4 p-4 rounded-2xl transition-all relative"
-            style={{
-              backgroundColor: `${theme.primary}08`,
-            }}
+            theme={theme}
+            className="group/badge flex gap-4 p-4 relative"
           >
             {/* Delete button */}
             {!readOnly && (
@@ -187,6 +187,8 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
                     onChange={(newContent) => handleDescriptionChange(index, newContent)}
                     placeholder="Description"
                     className="text-sm opacity-60 leading-relaxed"
+                    theme={theme}
+                    readOnly={readOnly}
                   />
                 </div>
               )}
@@ -199,6 +201,8 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
                     onChange={(newContent) => handleIssuerChange(index, newContent)}
                     placeholder="Issuer"
                     className="text-xs font-medium opacity-40 uppercase tracking-wide"
+                    theme={theme}
+                    readOnly={readOnly}
                   />
                 )}
                 {badge.date && (
@@ -211,7 +215,7 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
                 )}
               </div>
             </div>
-          </div>
+          </CommonCard>
         ))}
       </div>
 

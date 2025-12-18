@@ -4,6 +4,7 @@ import type { Block, Theme } from "@/lib/editor/types";
 import { createVideoContent, type VideoContent } from "../definitions";
 import { IconVideo, IconPlayerPlay } from "@tabler/icons-react";
 import { BlockWrapper } from "../BlockWrapper";
+import { CommonCard } from "../CommonCard";
 import {
   Dialog,
   DialogContent,
@@ -107,13 +108,9 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} className="h-full" theme={theme}>
-      <div
-        className="w-full rounded-2xl overflow-hidden relative group h-full flex flex-col"
-        style={{
-          background: embedUrl
-            ? "transparent"
-            : `linear-gradient(135deg, ${theme.primary}10 0%, ${theme.primary}03 100%)`,
-        }}
+      <CommonCard
+        theme={theme}
+        className="w-full overflow-hidden relative group h-full flex flex-col p-0 border-none"
       >
         {embedUrl ? (
           <>
@@ -138,6 +135,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
                   onChange={handleTitleChange}
                   placeholder="Video Title"
                   className="text-base font-semibold"
+                  theme={theme}
                 />
               </div>
             )}
@@ -232,7 +230,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
+      </CommonCard>
     </BlockWrapper>
   );
 };

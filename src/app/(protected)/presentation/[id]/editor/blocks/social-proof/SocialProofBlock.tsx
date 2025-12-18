@@ -15,6 +15,7 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import { BlockWrapper } from "../BlockWrapper";
+import { CommonCard } from "../CommonCard";
 import {
   Dialog,
   DialogContent,
@@ -114,11 +115,9 @@ export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addPlatform} theme={theme}>
-      <div
-        className="w-full rounded-2xl p-6 transition-all"
-        style={{
-          background: `linear-gradient(135deg, ${theme.primary}08 0%, ${theme.primary}03 100%)`,
-        }}
+      <CommonCard
+        theme={theme}
+        className="w-full p-6 transition-all"
       >
         {/* Platforms */}
         <div className="flex flex-wrap items-center justify-center gap-4">
@@ -187,7 +186,7 @@ export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
             )}
           </div>
         )}
-      </div>
+      </CommonCard>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent
