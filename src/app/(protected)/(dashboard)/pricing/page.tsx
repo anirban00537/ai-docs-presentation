@@ -8,7 +8,10 @@ import {
   IconCheck,
   IconArrowRight,
   IconLoader,
+  IconRocket,
+  IconLoader2,
 } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 import { useSubscriptionStatus } from "@/hooks/use-subscription";
 import { useProducts } from "@/hooks/use-pricing";
 import { formatPrice, getRecurringText, createCheckout } from "@/services/pricing";
@@ -36,13 +39,10 @@ export default function PricingPage() {
       setLoadingCheckout(productId);
       toast.info("Creating checkout session...");
 
-      // Get success URL - redirect to subscription page after successful checkout
       const successUrl = `${window.location.origin}/subscription?checkout=success`;
-
       const response = await createCheckout(productId, successUrl);
 
       if (response.success && response.data?.checkoutUrl) {
-        // Redirect to Polar.sh checkout
         window.location.href = response.data.checkoutUrl;
       } else {
         toast.error(response.message || "Failed to create checkout session");
@@ -61,22 +61,17 @@ export default function PricingPage() {
 
   if (productsLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="space-y-6">
-          <Skeleton className="h-10 w-64" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-96" />
-            ))}
-          </div>
+      <div className="container mx-auto px-4 py-12 max-w-7xl h-full flex items-center justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-[500px] rounded-3xl bg-white/20 animate-pulse border border-white/40 shadow-xl" />
+          ))}
         </div>
       </div>
     );
   }
 
   const availableProducts = products?.filter((p) => !p.isArchived) || [];
-
-  // Sort products by price (lowest first)
   const sortedProducts = [...availableProducts].sort((a, b) => {
     const priceA = a.prices?.[0]?.priceAmount || 0;
     const priceB = b.prices?.[0]?.priceAmount || 0;
@@ -84,196 +79,214 @@ export default function PricingPage() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="space-y-8">
+    <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] overflow-y-auto px-4 py-16">
+      <div className="relative z-10 w-full max-w-7xl flex flex-col gap-16">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center"
+          className="text-center space-y-6"
         >
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            Choose Your Plan
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-2">
+            Pricing Plans
+          </div>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground leading-tight">
+            Simple, <span className="text-primary/80 font-normal italic">transparent</span> pricing
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Select the perfect plan for your needs. All plans include our core
-            features with transparent pricing.
+          <p className="text-base md:text-lg text-muted-foreground/80 max-w-xl mx-auto leading-relaxed">
+            Choose the perfect plan to supercharge your presentation workflow with AI. No hidden fees, just pure creativity.
           </p>
         </motion.div>
 
-        {/* Current Subscription Badge */}
+        {/* Current Subscription Status */}
         {currentSubscription && currentSubscription.status === "active" && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             className="flex justify-center"
           >
-            <Badge className="bg-green-500 px-4 py-2">
-              You are currently on: {currentSubscription.productId || "Active Plan"}
-            </Badge>
+            <div 
+              className="px-5 py-2 rounded-2xl flex items-center gap-2.5 border border-green-500/20 text-xs font-semibold text-green-600/90"
+              style={{
+                backgroundColor: "rgba(34, 197, 94, 0.05)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              Active Plan: {currentSubscription.productId || "Pro"}
+            </div>
           </motion.div>
         )}
 
         {/* Products Grid */}
-        {sortedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedProducts.map((product, index) => {
-              const primaryPrice = product.prices?.[0];
-              const isCurrentPlan =
-                currentSubscription?.productId === product.id &&
-                currentSubscription?.status === "active";
-              const isPopular = index === Math.floor(sortedProducts.length / 2);
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">
+          {sortedProducts.map((product, index) => {
+            const primaryPrice = product.prices?.[0];
+            const isCurrentPlan = currentSubscription?.productId === product.id && currentSubscription?.status === "active";
+            const isPopular = index === 1 || product.name.toLowerCase().includes('pro');
 
-              return (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+            return (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
+                className="relative h-full"
+              >
+                {isPopular && (
+                  <div className="absolute -top-4 inset-x-0 flex justify-center z-20">
+                    <span className="bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg shadow-primary/25">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+
+                <div
+                  className={cn(
+                    "relative h-full flex flex-col p-8 rounded-[38px] transition-all duration-500 group",
+                    isPopular ? "scale-[1.02] ring-1 ring-primary/10 shadow-xl shadow-primary/5" : "border border-white/40"
+                  )}
+                  style={{
+                    backgroundColor: "rgba(255, 255, 255, 0.4)",
+                    backdropFilter: "blur(28px) saturate(190%)",
+                    WebkitBackdropFilter: "blur(28px) saturate(190%)",
+                    boxShadow: "0 10px 40px -15px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.8) inset",
+                  }}
                 >
-                  <Card
-                    className={`relative p-6 h-full flex flex-col ${
-                      isPopular
-                        ? "border-primary/50 shadow-lg scale-105"
-                        : "hover:shadow-lg transition-shadow"
-                    }`}
-                  >
-                    {isPopular && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                        <Badge className="bg-primary text-white px-4 py-1">
-                          Most Popular
-                        </Badge>
-                      </div>
-                    )}
+                  {/* Glass shine overlay */}
+                  <div 
+                    className="absolute inset-x-0 top-0 h-1/2 pointer-events-none rounded-t-[38px]"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%)",
+                    }}
+                  />
 
-                    {isCurrentPlan && (
-                      <div className="absolute top-4 right-4">
-                        <Badge variant="outline" className="bg-green-50">
-                          Current Plan
-                        </Badge>
-                      </div>
-                    )}
-
-                    {/* Product Header */}
-                    <div className="mb-6">
-                      <h3 className="text-2xl font-bold text-foreground mb-2">
-                        {product.name}
-                      </h3>
-                      {product.description && (
-                        <p className="text-sm text-muted-foreground">
-                          {product.description}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Pricing */}
-                    <div className="mb-6">
-                      {primaryPrice ? (
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-4xl font-bold text-foreground">
-                            {formatPrice(primaryPrice)}
-                          </span>
-                          {product.recurringInterval && (
-                            <span className="text-muted-foreground">
-                              {getRecurringText(product)}
-                            </span>
-                          )}
-                        </div>
+                  {/* Header/Icon */}
+                  <div className="relative z-10 mb-10">
+                    <div 
+                      className="w-11 h-11 rounded-1.5xl flex items-center justify-center mb-6"
+                      style={{
+                        backgroundColor: isPopular ? "rgba(139, 92, 246, 0.08)" : "rgba(100, 116, 139, 0.05)",
+                      }}
+                    >
+                      {isPopular ? (
+                        <IconSparkles size={20} className="text-primary/70" />
                       ) : (
-                        <div className="text-2xl font-bold text-foreground">
-                          Custom Pricing
-                        </div>
+                        <IconRocket size={20} className="text-slate-400" />
                       )}
                     </div>
+                    <h3 className="text-xl font-semibold text-foreground tracking-tight">
+                      {product.name}
+                    </h3>
+                    {product.description && (
+                      <p className="text-sm text-muted-foreground/70 mt-2 leading-relaxed font-medium">
+                        {product.description}
+                      </p>
+                    )}
+                  </div>
 
-                    {/* Credit Limit */}
-                    {product.monthlyCreditLimit !== undefined && (
-                      <div className="mb-6 p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
-                        <div className="flex items-center gap-2">
-                          <IconSparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                          <span className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                            {product.monthlyCreditLimit === 0
-                              ? "Unlimited"
-                              : `${product.monthlyCreditLimit.toLocaleString()} credits/month`}
+                  {/* Pricing */}
+                  <div className="relative z-10 mb-10">
+                    {primaryPrice ? (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-semibold text-foreground tracking-tight">
+                          {formatPrice(primaryPrice)}
+                        </span>
+                        {product.recurringInterval && (
+                          <span className="text-muted-foreground/60 text-sm font-medium">
+                            /{product.recurringInterval}
                           </span>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-xl font-semibold">Custom</span>
+                    )}
+                  </div>
+
+                  {/* Credit Feature Box */}
+                  {product.monthlyCreditLimit !== undefined && (
+                    <div 
+                      className="relative z-10 mb-10 p-4 rounded-2.5xl"
+                      style={{
+                        backgroundColor: "rgba(139, 92, 246, 0.04)",
+                        border: "1px solid rgba(139, 92, 246, 0.08)",
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <IconSparkles size={16} className="text-primary/50" />
+                        <div>
+                          <p className="text-sm font-semibold text-primary/80">
+                            {product.monthlyCreditLimit === 0 ? "Unlimited" : product.monthlyCreditLimit.toLocaleString()} credits
+                          </p>
+                          <p className="text-[9px] text-primary/40 uppercase tracking-widest font-bold">Monthly Quota</p>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {/* Features from metadata */}
+                  {/* Features List */}
+                  <div className="relative z-10 flex-1 mb-10">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/40 mb-5">Features</p>
                     {product.metadata?.features && (
-                      <ul className="flex-1 space-y-3 mb-6">
-                        {(product.metadata.features as string[]).map(
-                          (feature, idx) => (
-                            <li key={idx} className="flex items-start gap-2">
-                              <IconCheck className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
-                              <span className="text-sm text-foreground">
-                                {feature}
-                              </span>
-                            </li>
-                          )
-                        )}
+                      <ul className="space-y-4">
+                        {(product.metadata.features as string[]).map((feature, idx) => (
+                          <li key={idx} className="flex items-start gap-3">
+                            <div className="mt-1 w-4 h-4 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+                              <IconCheck size={10} className="text-green-600/70" />
+                            </div>
+                            <span className="text-sm text-foreground/70 font-medium leading-normal">
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
                       </ul>
                     )}
+                  </div>
 
-                    {/* CTA Button */}
-                    <div className="mt-auto">
-                      {isCurrentPlan ? (
-                        <Button
-                          variant="outline"
-                          className="w-full"
-                          onClick={() => router.push("/subscription")}
-                        >
-                          Manage Subscription
-                        </Button>
-                      ) : (
-                        <Button
-                          className="w-full"
-                          onClick={() =>
-                            handleSelectPlan(product.id, primaryPrice?.id)
-                          }
-                          disabled={!primaryPrice || loadingCheckout === product.id}
-                        >
-                          {loadingCheckout === product.id ? (
-                            <>
-                              <IconLoader className="mr-2 h-4 w-4 animate-spin" />
-                              Creating...
-                            </>
-                          ) : primaryPrice ? (
-                            <>
-                              Subscribe Now
-                              <IconArrowRight className="ml-2 h-4 w-4" />
-                            </>
-                          ) : (
-                            "Contact Sales"
-                          )}
-                        </Button>
+                  {/* CTA Button */}
+                  <div className="relative z-10 mt-auto">
+                    <Button
+                      onClick={() => isCurrentPlan ? router.push("/subscription") : handleSelectPlan(product.id, primaryPrice?.id)}
+                      disabled={(!primaryPrice && !isCurrentPlan) || loadingCheckout === product.id}
+                      className={cn(
+                        "w-full h-13 rounded-2xl text-sm font-semibold transition-all duration-300 transform active:scale-[0.97]",
+                        isCurrentPlan 
+                          ? "bg-white/50 hover:bg-white/80 text-slate-600 border border-white/60 shadow-none"
+                          : isPopular 
+                            ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+                            : "bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/10"
                       )}
-                    </div>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              No pricing plans available at the moment.
-            </p>
-          </div>
-        )}
+                    >
+                      {loadingCheckout === product.id ? (
+                        <IconLoader2 size={18} className="animate-spin" />
+                      ) : isCurrentPlan ? (
+                        "Current Plan"
+                      ) : (
+                        primaryPrice ? "Choose " + product.name : "Contact for Quote"
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
 
         {/* Footer Note */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center pt-8"
+          transition={{ delay: 0.8 }}
+          className="text-center space-y-4 pt-4"
         >
-          <p className="text-sm text-muted-foreground">
-            All plans include a 14-day free trial. No credit card required.
-            Cancel anytime.
+          <p className="text-sm text-muted-foreground font-medium">
+            Join thousands of creators building amazing presentations with Butterfast.
           </p>
+          <div className="flex items-center justify-center gap-6">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Secured with Polar.sh</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">No Hidden Fees</span>
+          </div>
         </motion.div>
       </div>
     </div>
