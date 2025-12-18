@@ -17,12 +17,21 @@ export interface Slide {
 
 export interface Theme {
   primary: string;
+  secondaryColors?: string[]; // Array of secondary colors
   headingColor: string;
   bodyColor: string;
   cardBackground: string;
   pageBackground: string;
   fontFamily?: string;
   themeType?: "light" | "dark";
+
+  // Card customization
+  cardDesignPattern?: string; // "none", "dots", "grid", "mesh", "glass", "waves"
+  cardBorderStyle?: string; // "solid", "dashed", "dotted", "none"
+  cardRoundness?: number; // pixel value
+  cardBorderColor?: string;
+  cardTransparency?: "default" | "faded" | "frosted";
+  cardShadow?: "none" | "soft" | "hard" | "floating" | "glow";
 }
 
 export interface PresentationInfo {

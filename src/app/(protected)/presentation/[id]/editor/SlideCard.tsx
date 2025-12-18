@@ -11,6 +11,7 @@ import {
 import { getFontFamily } from "@/lib/fonts";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 import { IconPlus } from "@tabler/icons-react";
+import * as Patterns from "./patterns";
 
 const DragStateBridge: React.FC<{
   onDragChange: (dragging: boolean) => void;
@@ -108,34 +109,99 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   const dragActive = enableDragHints ? isDragging : false;
 
-  // Dynamic styles based on fullWidth mode
+  // Background style based on transparency
+  const getCardBaseBackground = () => {
+    if (theme.cardTransparency === "faded") {
+      return `${theme.cardBackground}40`;
+    }
+    if (theme.cardTransparency === "frosted") {
+      return `${theme.cardBackground}10`;
+    }
+    return theme.cardBackground;
+  };
+
+  // Generate CSS Box Shadow
+  const getCardShadow = () => {
+    if (fullWidth) return "none";
+    const shadowType = theme.cardShadow || "none";
+    const isDark = theme.themeType === "dark";
+    
+    switch (shadowType) {
+      case "soft":
+        return isDark 
+          ? "0 4px 24px rgba(0, 0, 0, 0.4)" 
+          : "0 4px 20px rgba(0, 0, 0, 0.06)";
+      case "hard":
+        return `6px 6px 0px ${isDark ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.1)'}`;
+      case "floating":
+        return isDark
+          ? "0 24px 48px rgba(0, 0, 0, 0.5)"
+          : "0 20px 40px rgba(0, 0, 0, 0.12)";
+      case "glow":
+        return `0 0 25px ${theme.primary}40`;
+      case "none":
+      default:
+        return "none";
+    }
+  };
+
   const containerStyle: React.CSSProperties = {
-    backgroundColor: theme.cardBackground,
+    backgroundColor: getCardBaseBackground(),
+    backdropFilter: theme.cardTransparency === "frosted" ? "blur(24px)" : "none",
+    WebkitBackdropFilter: theme.cardTransparency === "frosted" ? "blur(24px)" : "none",
+    boxShadow: getCardShadow(),
     fontFamily: getFontFamily(theme.fontFamily || "Inter"),
+    borderRadius: fullWidth ? "0px" : `${theme.cardRoundness || 16}px`,
+    borderWidth: fullWidth ? "0px" : "1px",
+    borderStyle: (theme.cardBorderStyle as any) || "solid",
+    borderColor: theme.cardBorderColor || `${theme.primary}15`,
     ...(fullWidth
       ? {
-          // Full-width mode for presentation - fill the screen
           width: "100%",
           minHeight: "100vh",
         }
       : {
-          // Constrained mode for editor
           minWidth: `${SLIDE_MAX_WIDTH}px`,
           maxWidth: `${SLIDE_MAX_WIDTH}px`,
         }),
   };
 
+  const renderPattern = () => {
+    const pattern = theme.cardDesignPattern;
+    if (!pattern || pattern === "none") return null;
+
+    const secondaryColors = theme.secondaryColors || [];
+    const color1 = secondaryColors[0] || theme.primary;
+    const color2 = secondaryColors[1] || theme.primary;
+
+    switch (pattern) {
+      case "dots":
+        return <Patterns.Dots color={theme.primary} id={slide.id} />;
+      case "grid":
+        return <Patterns.Grid color={theme.primary} id={slide.id} />;
+      case "mesh":
+        return <Patterns.Mesh primary={theme.primary} color1={color1} color2={color2} />;
+      case "waves":
+        return <Patterns.Waves color={theme.primary} />;
+      case "glass":
+        return <Patterns.Glass color={theme.primary} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div
-      className={`group/slide relative transition-all duration-300 ease-out ${
+      className={`group/slide relative transition-all duration-300 ease-out overflow-hidden ${
         fullWidth
           ? "w-full px-12 md:px-20 lg:px-32 py-16 md:py-24 lg:py-32 flex flex-col justify-center"
-          : "px-8 py-8 mx-auto rounded-2xl"
+          : "px-8 py-8 mx-auto"
       }`}
       style={containerStyle}
       onMouseEnter={!readOnly ? () => setIsHovered(true) : undefined}
       onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
     >
+      {renderPattern()}
       {enableDragHints && !readOnly && (
         <DragStateBridge onDragChange={setIsDragging} />
       )}
@@ -151,7 +217,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
           }`}
         >
           <div
-            className="w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            className="w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-sm"
             style={{
               backgroundColor: `${theme.primary}15`,
               color: theme.primary,
@@ -163,7 +229,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
       )}
 
       {/* Slide Content */}
-      <div className="flex flex-col gap-0">
+      <div className="flex flex-col gap-0 relative z-10">
         {!readOnly && (
           <InsertDropZone
             slideId={slide.id}
@@ -218,7 +284,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
           }`}
         >
           <div
-            className="w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            className="w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-sm"
             style={{
               backgroundColor: `${theme.primary}15`,
               color: theme.primary,

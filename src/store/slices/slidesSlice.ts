@@ -31,12 +31,19 @@ export interface SlidesState {
 // --- Initial State ---
 export const DEFAULT_THEME: Theme = {
   primary: "#2B0AFF",
+  secondaryColors: ["#FF4D00", "#00C2FF"],
   headingColor: "#000000",
   bodyColor: "#272525",
   cardBackground: "#FFFFFF",
   pageBackground: "#F9FAFB",
   fontFamily: "Space Grotesk",
   themeType: "light",
+  cardDesignPattern: "none",
+  cardBorderStyle: "solid",
+  cardRoundness: 16,
+  cardBorderColor: "#2B0AFF15",
+  cardTransparency: "default",
+  cardShadow: "none",
 };
 const initialTheme: Theme = DEFAULT_THEME;
 

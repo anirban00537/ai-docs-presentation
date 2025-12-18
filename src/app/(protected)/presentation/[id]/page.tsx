@@ -153,7 +153,7 @@ const PresentationEditorPage = () => {
         }}
       />
       
-      {/* Heading color blob - Top Right */}
+      {/* Secondary Color 1 blob - Top Right */}
       <div
         className="fixed -z-10 pointer-events-none"
         style={{
@@ -161,13 +161,13 @@ const PresentationEditorPage = () => {
           height: "50vh",
           top: "-15%",
           right: "-15%",
-          background: `radial-gradient(circle at center, ${theme.headingColor}${isDark ? '12' : '08'} 0%, ${theme.primary}${isDark ? '06' : '04'} 50%, transparent 70%)`,
+          background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.headingColor}${isDark ? '12' : '08'} 0%, ${theme.primary}${isDark ? '06' : '04'} 50%, transparent 70%)`,
           filter: "blur(100px)",
           transform: "rotate(20deg)",
         }}
       />
       
-      {/* Primary accent - Left Center */}
+      {/* Secondary Color 2 accent - Left Center */}
       <div
         className="fixed -z-10 pointer-events-none"
         style={{
@@ -175,7 +175,7 @@ const PresentationEditorPage = () => {
           height: "70vh",
           top: "20%",
           left: "-15%",
-          background: `radial-gradient(ellipse at center, ${theme.primary}${isDark ? '15' : '10'} 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse at center, ${theme.secondaryColors?.[1] || theme.primary}${isDark ? '15' : '10'} 0%, transparent 70%)`,
           filter: "blur(90px)",
         }}
       />
@@ -221,7 +221,7 @@ const PresentationEditorPage = () => {
         }}
       />
       
-      {/* Heading accent - Bottom Right */}
+      {/* Secondary Color 1 accent - Bottom Right */}
       <div
         className="fixed -z-10 pointer-events-none"
         style={{
@@ -229,7 +229,7 @@ const PresentationEditorPage = () => {
           height: "50vh",
           bottom: "-15%",
           right: "-10%",
-          background: `radial-gradient(circle at center, ${theme.headingColor}${isDark ? '10' : '06'} 0%, ${theme.cardBackground}${isDark ? '08' : '05'} 40%, transparent 70%)`,
+          background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.headingColor}${isDark ? '10' : '06'} 0%, ${theme.cardBackground}${isDark ? '08' : '05'} 40%, transparent 70%)`,
           filter: "blur(90px)",
           transform: "rotate(-20deg)",
         }}

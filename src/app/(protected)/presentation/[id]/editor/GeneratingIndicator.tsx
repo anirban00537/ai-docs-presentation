@@ -68,7 +68,11 @@ export const GeneratingIndicator: React.FC<GeneratingIndicatorProps> = ({
                 <motion.div
                   key={i}
                   className="w-1.5 h-1.5 rounded-full"
-                  style={{ backgroundColor: theme.primary }}
+                  style={{ 
+                    backgroundColor: theme.secondaryColors && theme.secondaryColors[i] 
+                      ? theme.secondaryColors[i] 
+                      : theme.primary 
+                  }}
                   animate={{ opacity: [0.3, 1, 0.3] }}
                   transition={{
                     duration: 1.2,
