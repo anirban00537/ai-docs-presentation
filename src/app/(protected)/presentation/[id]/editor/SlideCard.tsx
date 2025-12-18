@@ -109,64 +109,99 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   const dragActive = enableDragHints ? isDragging : false;
 
-  // Background style based on transparency
-  const getCardBaseBackground = () => {
-    if (theme.cardTransparency === "faded") {
-      return `${theme.cardBackground}40`;
-    }
-    if (theme.cardTransparency === "frosted") {
-      return `${theme.cardBackground}10`;
-    }
-    return theme.cardBackground;
-  };
-
-  // Generate CSS Box Shadow
-  const getCardShadow = () => {
-    if (fullWidth) return "none";
-    const shadowType = theme.cardShadow || "none";
+  const getCardStyle = (): React.CSSProperties => {
+    const styleName = theme.cardStyle || "standard";
+    const primaryColor = theme.primary;
     const isDark = theme.themeType === "dark";
-    
-    switch (shadowType) {
-      case "soft":
-        return isDark 
-          ? "0 4px 24px rgba(0, 0, 0, 0.4)" 
-          : "0 4px 20px rgba(0, 0, 0, 0.06)";
-      case "hard":
-        return `6px 6px 0px ${isDark ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.1)'}`;
-      case "floating":
-        return isDark
-          ? "0 24px 48px rgba(0, 0, 0, 0.5)"
-          : "0 20px 40px rgba(0, 0, 0, 0.12)";
-      case "glow":
-        return `0 0 20px ${theme.primary}15, 0 0 50px ${theme.primary}10`;
-      case "none":
+
+    const baseStyle: React.CSSProperties = {
+      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+      backgroundColor: theme.cardBackground,
+      fontFamily: getFontFamily(theme.fontFamily || "Inter"),
+      ...(fullWidth
+        ? { width: "100%", minHeight: "100vh" }
+        : { minWidth: `${SLIDE_MAX_WIDTH}px`, maxWidth: `${SLIDE_MAX_WIDTH}px` }),
+    };
+
+    if (fullWidth) {
+      return { ...baseStyle, borderRadius: "0px", boxShadow: "none", border: "none" };
+    }
+
+    switch (styleName) {
+      case "standard":
+        return {
+          ...baseStyle,
+          borderRadius: "12px",
+          boxShadow: isDark ? "0 4px 20px rgba(0, 0, 0, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.08)",
+          border: `1px solid ${theme.cardBorderColor || `${primaryColor}15`}`,
+        };
+      case "flat":
+        return {
+          ...baseStyle,
+          borderRadius: "8px",
+          boxShadow: "none",
+          border: "none",
+        };
+      case "outline":
+        return {
+          ...baseStyle,
+          borderRadius: "4px",
+          boxShadow: "none",
+          border: `2px solid ${primaryColor}`,
+        };
+      case "sharp":
+        return {
+          ...baseStyle,
+          borderRadius: "0px",
+          boxShadow: "none",
+          border: `1px solid ${theme.cardBorderColor || `${primaryColor}30`}`,
+        };
+      case "blocky":
+        return {
+          ...baseStyle,
+          borderRadius: "0px",
+          boxShadow: `4px 4px 0px ${primaryColor}`,
+          border: `2px solid ${primaryColor}`,
+        };
+      case "glass":
+        return {
+          ...baseStyle,
+          borderRadius: "16px",
+          backgroundColor: isDark ? `${theme.cardBackground}40` : `${theme.cardBackground}70`,
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.3)"}`,
+          boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.1)",
+        };
+      case "rounded":
+        return {
+          ...baseStyle,
+          borderRadius: "24px",
+          boxShadow: isDark ? "0 8px 30px rgba(0, 0, 0, 0.4)" : "0 8px 16px rgba(0, 0, 0, 0.06)",
+          border: `1px solid ${theme.cardBorderColor || `${primaryColor}15`}`,
+        };
+      case "soft-cloud":
+        return {
+          ...baseStyle,
+          borderRadius: "20px",
+          boxShadow: isDark ? "0 20px 50px rgba(0, 0, 0, 0.5)" : "0 10px 40px rgba(0, 0, 0, 0.05)",
+          border: "none",
+          backgroundColor: isDark ? `${theme.cardBackground}90` : theme.cardBackground,
+        };
+      case "capsule":
+        return {
+          ...baseStyle,
+          borderRadius: "60px",
+          boxShadow: `4px 4px 0px ${primaryColor}`,
+          border: `2px solid ${primaryColor}`,
+        };
       default:
-        return "none";
+        return baseStyle;
     }
   };
 
-  const cardRadius = fullWidth ? "0px" : `${theme.cardRoundness || 16}px`;
-
-  const containerStyle: React.CSSProperties = {
-    backgroundColor: getCardBaseBackground(),
-    backdropFilter: theme.cardTransparency === "frosted" ? "blur(24px)" : "none",
-    WebkitBackdropFilter: theme.cardTransparency === "frosted" ? "blur(24px)" : "none",
-    boxShadow: getCardShadow(),
-    fontFamily: getFontFamily(theme.fontFamily || "Inter"),
-    borderRadius: fullWidth ? "0px" : `${theme.cardRoundness || 16}px`,
-    borderWidth: "0px",
-    borderStyle: (theme.cardBorderStyle as any) || "solid",
-    borderColor: theme.cardBorderColor || `${theme.primary}15`,
-    ...(fullWidth
-      ? {
-          width: "100%",
-          minHeight: "100vh",
-        }
-      : {
-          minWidth: `${SLIDE_MAX_WIDTH}px`,
-          maxWidth: `${SLIDE_MAX_WIDTH}px`,
-        }),
-  };
+  const containerStyle = getCardStyle();
+  const cardRadius = containerStyle.borderRadius;
 
   const renderPattern = () => {
     const pattern = theme.cardDesignPattern;

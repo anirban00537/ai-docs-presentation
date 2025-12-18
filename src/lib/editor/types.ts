@@ -27,11 +27,8 @@ export interface Theme {
 
   // Card customization
   cardDesignPattern?: string; // "none", "dots", "grid", "mesh", "glass", "waves"
-  cardBorderStyle?: string; // "solid", "dashed", "dotted", "none"
-  cardRoundness?: number; // pixel value
   cardBorderColor?: string;
-  cardTransparency?: "default" | "faded" | "frosted";
-  cardShadow?: "none" | "soft" | "hard" | "floating" | "glow";
+  cardStyle?: "standard" | "flat" | "outline" | "sharp" | "blocky" | "glass" | "rounded" | "soft-cloud" | "capsule";
 }
 
 export interface PresentationInfo {

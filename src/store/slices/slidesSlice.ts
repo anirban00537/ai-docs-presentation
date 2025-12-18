@@ -39,11 +39,8 @@ export const DEFAULT_THEME: Theme = {
   fontFamily: "Space Grotesk",
   themeType: "light",
   cardDesignPattern: "none",
-  cardBorderStyle: "solid",
-  cardRoundness: 16,
   cardBorderColor: "#2B0AFF15",
-  cardTransparency: "default",
-  cardShadow: "none",
+  cardStyle: "standard",
 };
 const initialTheme: Theme = DEFAULT_THEME;
 

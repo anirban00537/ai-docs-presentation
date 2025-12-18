@@ -92,17 +92,38 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
       paletteTheme.headingColor === currentTheme.headingColor &&
       paletteTheme.bodyColor === currentTheme.bodyColor &&
       paletteTheme.cardBackground === currentTheme.cardBackground &&
-      paletteTheme.pageBackground === currentTheme.pageBackground
+      paletteTheme.pageBackground === currentTheme.pageBackground &&
+      paletteTheme.cardStyle === currentTheme.cardStyle
     );
   };
 
-  const shadowOptions = [
-    { id: "none", label: "None", shadow: "none" },
-    { id: "soft", label: "Soft", shadow: isDark ? "0 4px 12px rgba(0,0,0,0.5)" : "0 4px 12px rgba(0,0,0,0.08)" },
-    { id: "hard", label: "Hard", shadow: isDark ? "4px 4px 0 rgba(0,0,0,0.4)" : "4px 4px 0 rgba(0,0,0,0.1)" },
-    { id: "floating", label: "Float", shadow: isDark ? "0 12px 24px rgba(0,0,0,0.6)" : "0 10px 20px rgba(0,0,0,0.12)" },
-    { id: "glow", label: "Glow", shadow: `0 0 15px ${currentTheme.primary}40` },
+  const cardStyleOptions = [
+    { id: "standard", label: "Standard", desc: "Subtle rounding and shadows" },
+    { id: "flat", label: "Flat", desc: "Clean design with no borders" },
+    { id: "outline", label: "Outline", desc: "Outlined boxes with hard edges" },
+    { id: "sharp", label: "Sharp", desc: "Flat design with sharp edges" },
+    { id: "blocky", label: "Blocky", desc: "Square cards with a 3D effect" },
+    { id: "glass", label: "Glass", desc: "Soft and transparent" },
+    { id: "rounded", label: "Rounded", desc: "Gentle, inviting corners" },
+    { id: "soft-cloud", label: "Soft Cloud", desc: "Soft shadows with subtle contrast" },
+    { id: "capsule", label: "Capsule", desc: "Rounded corners with playful blocks" },
   ];
+
+  const getPreviewStyles = (styleId: string): React.CSSProperties => {
+    const primary = currentTheme.primary;
+    switch (styleId) {
+      case "standard": return { borderRadius: "4px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", border: "1px solid rgba(0,0,0,0.05)" };
+      case "flat": return { borderRadius: "3px", border: "none" };
+      case "outline": return { borderRadius: "2px", border: `1.5px solid ${primary}` };
+      case "sharp": return { borderRadius: "0px", border: "1px solid rgba(0,0,0,0.1)" };
+      case "blocky": return { borderRadius: "0px", boxShadow: `2px 2px 0px ${primary}`, border: `1.5px solid ${primary}` };
+      case "glass": return { borderRadius: "4px", backgroundColor: "rgba(255,255,255,0.4)", backdropFilter: "blur(4px)", border: "1px solid rgba(255,255,255,0.5)" };
+      case "rounded": return { borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.05)", border: "1px solid rgba(0,0,0,0.05)" };
+      case "soft-cloud": return { borderRadius: "6px", boxShadow: "0 4px 10px rgba(0,0,0,0.05)", border: "none" };
+      case "capsule": return { borderRadius: "14px", boxShadow: `2px 2px 0px ${primary}`, border: `1.5px solid ${primary}` };
+      default: return {};
+    }
+  };
 
   return (
     <AnimatePresence mode="wait">
@@ -221,58 +242,43 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
               ) : (
                 /* CUSTOMIZATION CONTROLS */
                 <div className="py-2 space-y-6">
-                  {/* Card Shadow Section */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[11px] uppercase tracking-wider font-bold opacity-50" style={{ color: isDark ? "#fff" : "#000" }}>Card Shadow</label>
-                      <span className="text-[10px] py-0.5 px-1.5 rounded-md bg-neutral-500/10 opacity-60" style={{ color: isDark ? "#fff" : "#000" }}>
-                        {currentTheme.cardShadow || "none"}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between bg-neutral-500/5 p-2 rounded-2xl gap-2">
-                      {shadowOptions.map((opt) => (
-                        <button
-                          key={opt.id}
-                          onClick={() => updateThemeProperty({ cardShadow: opt.id as any })}
-                          className={`group relative flex flex-col items-center gap-1.5 flex-1 transition-all`}
-                        >
-                          <div 
-                            className={`w-10 h-10 rounded-xl transition-all duration-300 flex items-center justify-center overflow-hidden
-                              ${currentTheme.cardShadow === opt.id ? 'ring-2 ring-primary ring-offset-2 dark:ring-offset-neutral-900 scale-110' : 'hover:scale-105'}
-                            `}
-                            style={{ 
-                              backgroundColor: isDark ? "#1e1e28" : "#fff",
-                              boxShadow: opt.shadow === "none" ? "none" : opt.shadow,
-                              borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
-                              borderWidth: opt.id === "none" ? "1px" : "0px"
-                            }}
+                  {/* Card Design Section */}
+                  <div className="space-y-4">
+                    <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 block" style={{ color: isDark ? "#fff" : "#000" }}>Card Design</label>
+                    <div className="grid grid-cols-3 gap-3">
+                      {cardStyleOptions.map((opt) => {
+                        const isActive = currentTheme.cardStyle === opt.id || (!currentTheme.cardStyle && opt.id === "standard");
+                        return (
+                          <button
+                            key={opt.id}
+                            onClick={() => updateThemeProperty({ cardStyle: opt.id as any })}
+                            className={`group relative flex flex-col items-center gap-2 p-1.5 rounded-2xl transition-all duration-300 ${
+                              isActive ? 'bg-primary/10 ring-1 ring-primary' : 'hover:bg-neutral-500/5'
+                            }`}
                           >
-                            {currentTheme.cardShadow === opt.id && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
-                          </div>
-                          <span className="text-[9px] font-medium opacity-60 group-hover:opacity-100 transition-opacity" style={{ color: isDark ? "#fff" : "#000" }}>{opt.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card Roundness */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[11px] uppercase tracking-wider font-bold opacity-50" style={{ color: isDark ? "#fff" : "#000" }}>Card Roundness</label>
-                      <span className="text-[10px] py-0.5 px-1.5 rounded-md bg-neutral-500/10 opacity-60" style={{ color: isDark ? "#fff" : "#000" }}>
-                        {currentTheme.cardRoundness || 0}px
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 bg-neutral-500/5 p-3 rounded-2xl">
-                       <input 
-                        type="range"
-                        min="0"
-                        max="48"
-                        step="4"
-                        value={currentTheme.cardRoundness || 0}
-                        onChange={(e) => updateThemeProperty({ cardRoundness: parseInt(e.target.value) })}
-                        className="flex-1 accent-primary h-1.5 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer"
-                       />
+                            <div 
+                              className="w-full aspect-[4/3] rounded-lg transition-all duration-300 flex items-center justify-center overflow-hidden border border-transparent"
+                              style={{ 
+                                backgroundColor: isDark ? "#121216" : "#f8fafc",
+                              }}
+                            >
+                              <div 
+                                className="w-[70%] h-[50%] bg-white border border-transparent transition-transform duration-300 group-hover:scale-110" 
+                                style={{
+                                  ...getPreviewStyles(opt.id),
+                                  backgroundColor: opt.id === "glass" ? undefined : (isDark ? "#2a2a35" : "#fff"),
+                                  borderColor: (opt.id === "outline" || opt.id === "blocky" || opt.id === "capsule") 
+                                    ? currentTheme.primary 
+                                    : (isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)")
+                                }}
+                              />
+                            </div>
+                            <div className="flex flex-col items-center">
+                              <span className={`text-[10px] font-bold ${isActive ? 'text-primary' : (isDark ? 'text-white/70' : 'text-neutral-700')}`}>{opt.label}</span>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -284,7 +290,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                          <button
                            key={pattern}
                            onClick={() => updateThemeProperty({ cardDesignPattern: pattern })}
-                           className={`py-2 px-3 text-[10px] capitalize rounded-xl border transition-all ${
+                           className={`py-2.5 px-3 text-[10px] capitalize rounded-xl border transition-all ${
                              currentTheme.cardDesignPattern === pattern
                                ? "bg-primary/10 border-primary text-primary font-bold shadow-sm"
                                : "border-transparent bg-neutral-500/5 opacity-70 hover:opacity-100"
@@ -292,26 +298,6 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                            style={{ color: currentTheme.cardDesignPattern === pattern ? "inherit" : (isDark ? "#fff" : "#000") }}
                          >
                            {pattern}
-                         </button>
-                       ))}
-                    </div>
-                  </div>
-
-                  {/* Transparency */}
-                  <div className="space-y-3">
-                    <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 block" style={{ color: isDark ? "#fff" : "#000" }}>Style Effect</label>
-                    <div className="flex p-1 rounded-xl gap-1 bg-neutral-500/5">
-                       {["default", "faded", "frosted"].map((effect) => (
-                         <button
-                           key={effect}
-                           onClick={() => updateThemeProperty({ cardTransparency: effect as any })}
-                           className={`flex-1 py-2 text-[10px] capitalize rounded-lg transition-all ${
-                             currentTheme.cardTransparency === effect
-                               ? (isDark ? "bg-white/10 text-white shadow-sm font-bold" : "bg-white text-black shadow-sm font-bold")
-                               : "text-neutral-500 hover:text-neutral-700"
-                           }`}
-                         >
-                           {effect}
                          </button>
                        ))}
                     </div>
