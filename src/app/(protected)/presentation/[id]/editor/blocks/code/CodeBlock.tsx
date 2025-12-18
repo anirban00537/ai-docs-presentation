@@ -108,6 +108,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         className="w-full overflow-hidden relative group p-0 border-none"
         style={{
           backgroundColor: isDark ? "#0d0d0d" : "#fafafa",
+          border: "none",
+          boxShadow: "none",
         }}
       >
         {/* Header */}

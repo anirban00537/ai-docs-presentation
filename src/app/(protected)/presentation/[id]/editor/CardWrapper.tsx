@@ -63,10 +63,10 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
 
     return {
       ...baseStyle,
-      backgroundColor: opacity < 1 ? `rgba(${isDark ? '0, 0, 0' : '255, 255, 255'}, ${opacity})` : theme.cardBackground,
+      backgroundColor: style.backgroundColor || (opacity < 1 ? `rgba(${isDark ? '0, 0, 0' : '255, 255, 255'}, ${opacity})` : theme.cardBackground),
       borderRadius,
-      boxShadow,
-      border: `${borderWidth} ${borderStyle} ${borderColor}`,
+      boxShadow: style.boxShadow || boxShadow,
+      border: style.border || `${borderWidth} ${borderStyle} ${borderColor}`,
       backdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
       WebkitBackdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
     };
