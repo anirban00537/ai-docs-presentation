@@ -15,7 +15,7 @@ export const EditorBackground: React.FC<EditorBackgroundProps> = ({ theme }) => 
         className="fixed inset-0 -z-10"
         style={{
           backgroundColor: theme.pageBackground,
-          backgroundImage: `linear-gradient(135deg, ${theme.primary}25 0%, ${theme.secondaryColors?.[0] || theme.primary}25 50%, ${theme.secondaryColors?.[1] || theme.secondaryColors?.[0] || theme.primary}25 100%)`,
+          backgroundImage: `linear-gradient(135deg, ${theme.primary}15 0%, ${theme.secondaryColors?.[0] || theme.primary}15 50%, ${theme.secondaryColors?.[1] || theme.secondaryColors?.[0] || theme.primary}15 100%)`,
         }}
       />
 
@@ -28,10 +28,10 @@ export const EditorBackground: React.FC<EditorBackgroundProps> = ({ theme }) => 
           height: "70vh",
           top: "-25%",
           left: "-15%",
-          background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '40' : '30'} 0%, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '20' : '15'} 60%, transparent 100%)`,
+          background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '40' : '30'} 0%, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '15' : '10'} 60%, transparent 100%)`,
           filter: "blur(100px)",
           transform: "rotate(-15deg)",
-          opacity: 0.85,
+          opacity: 0.9,
         }}
       />
 
@@ -43,10 +43,10 @@ export const EditorBackground: React.FC<EditorBackgroundProps> = ({ theme }) => 
           height: "60vh",
           top: "-20%",
           right: "-20%",
-          background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '40' : '30'} 0%, ${theme.primary}${isDark ? '20' : '15'} 60%, transparent 100%)`,
+          background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '40' : '30'} 0%, ${theme.primary}${isDark ? '15' : '10'} 60%, transparent 100%)`,
           filter: "blur(120px)",
           transform: "rotate(20deg)",
-          opacity: 0.8,
+          opacity: 0.85,
         }}
       />
 
@@ -58,9 +58,9 @@ export const EditorBackground: React.FC<EditorBackgroundProps> = ({ theme }) => 
           height: "80vh",
           top: "15%",
           left: "-20%",
-          background: `radial-gradient(ellipse at center, ${theme.secondaryColors?.[1] || theme.primary}${isDark ? '35' : '25'} 0%, ${theme.secondaryColors?.[0] || theme.primary}15 60%, transparent 100%)`,
+          background: `radial-gradient(ellipse at center, ${theme.secondaryColors?.[1] || theme.primary}${isDark ? '35' : '25'} 0%, ${theme.secondaryColors?.[0] || theme.primary}10 60%, transparent 100%)`,
           filter: "blur(110px)",
-          opacity: 0.75,
+          opacity: 0.8,
         }}
       />
 
@@ -72,10 +72,10 @@ export const EditorBackground: React.FC<EditorBackgroundProps> = ({ theme }) => 
           height: "70vh",
           top: "25%",
           right: "-15%",
-          background: `radial-gradient(ellipse at center, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '35' : '25'} 0%, ${theme.primary}15 60%, transparent 100%)`,
+          background: `radial-gradient(ellipse at center, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '35' : '25'} 0%, ${theme.primary}10 60%, transparent 100%)`,
           filter: "blur(130px)",
           transform: "rotate(-10deg)",
-          opacity: 0.75,
+          opacity: 0.8,
         }}
       />
 
@@ -87,7 +87,7 @@ export const EditorBackground: React.FC<EditorBackgroundProps> = ({ theme }) => 
           height: "60vh",
           top: "20%",
           left: "20%",
-          background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '25' : '20'} 0%, ${theme.secondaryColors?.[0] || theme.primary}15 65%, transparent 100%)`,
+          background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '25' : '20'} 0%, ${theme.secondaryColors?.[0] || theme.primary}10 65%, transparent 100%)`,
           filter: "blur(140px)",
           opacity: 0.7,
         }}
@@ -101,10 +101,10 @@ export const EditorBackground: React.FC<EditorBackgroundProps> = ({ theme }) => 
           height: "65vh",
           bottom: "-25%",
           left: "-15%",
-          background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '40' : '30'} 0%, ${theme.secondaryColors?.[1] || theme.primary}20 60%, transparent 100%)`,
+          background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '40' : '30'} 0%, ${theme.secondaryColors?.[1] || theme.primary}15 60%, transparent 100%)`,
           filter: "blur(120px)",
           transform: "rotate(25deg)",
-          opacity: 0.85,
+          opacity: 0.9,
         }}
       />
 
@@ -116,10 +116,10 @@ export const EditorBackground: React.FC<EditorBackgroundProps> = ({ theme }) => 
           height: "60vh",
           bottom: "-20%",
           right: "-15%",
-          background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '40' : '30'} 0%, ${theme.primary}15 60%, transparent 100%)`,
+          background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '40' : '30'} 0%, ${theme.primary}10 60%, transparent 100%)`,
           filter: "blur(110px)",
           transform: "rotate(-20deg)",
-          opacity: 0.8,
+          opacity: 0.85,
         }}
       />
 
