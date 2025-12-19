@@ -77,75 +77,77 @@ export default function BlogPostPage() {
         </div>
 
         {/* Header */}
-        <header className="mb-12">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+        <header className="mb-10 text-center max-w-3xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-6xl font-black text-slate-900 leading-tight mb-8"
+            className="flex items-center justify-center gap-3 text-xs font-bold text-slate-400 uppercase tracking-widest mb-6"
+          >
+             <span className="flex items-center gap-1.5">
+               <Calendar size={12} />
+               {format(new Date(post.publishedAt), "MMM d, yyyy")}
+             </span>
+             <span className="w-1 h-1 rounded-full bg-slate-200" />
+             <span className="flex items-center gap-1.5">
+               <Clock size={12} />
+               {Math.ceil(post.content.length / 1000)} min read
+             </span>
+          </motion.div>
+
+          <motion.h1 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-3xl md:text-5xl font-bold text-slate-900 leading-[1.2] mb-8 tracking-tight"
           >
             {post.title}
           </motion.h1>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-12 border-b border-slate-100">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                {post.author.photo ? (
-                    <img src={post.author.photo} alt="" className="w-full h-full rounded-full object-cover" />
-                ) : (
-                    <User size={20} />
-                )}
-              </div>
-              <div>
-                <p className="text-sm font-bold text-slate-900">
-                  {post.author.first_name} {post.author.last_name}
-                </p>
-                <div className="flex items-center gap-3 text-xs text-slate-400 font-bold uppercase tracking-widest mt-0.5">
-                  <span className="flex items-center gap-1.5">
-                    <Calendar size={12} />
-                    {format(new Date(post.publishedAt), "MMM d, yyyy")}
-                  </span>
-                  <span className="w-1 h-1 rounded-full bg-slate-200" />
-                  <span className="flex items-center gap-1.5">
-                    <Clock size={12} />
-                    {Math.ceil(post.content.length / 1000)} min read
-                  </span>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center justify-center gap-2"
+          >
+             <div className="flex items-center gap-2.5 p-1.5 pr-4 rounded-full bg-white border border-slate-100 shadow-sm">
+                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 overflow-hidden ring-2 ring-white">
+                  {post.author.photo ? <img src={post.author.photo} alt="" className="w-full h-full object-cover" /> : <User size={14} />}
                 </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" className="rounded-xl border-slate-100 text-slate-400 hover:text-sky-500 hover:border-sky-100 hover:bg-sky-50 transition-all" onClick={copyLink}>
-                <Twitter size={18} />
-              </Button>
-              <Button variant="outline" size="icon" className="rounded-xl border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-100 hover:bg-blue-50 transition-all" onClick={copyLink}>
-                <Facebook size={18} />
-              </Button>
-              <Button variant="outline" size="icon" className="rounded-xl border-slate-100 text-slate-400 hover:text-primary hover:border-primary/10 hover:bg-primary/5 transition-all" onClick={copyLink}>
-                <LinkIcon size={18} />
-              </Button>
-            </div>
-          </div>
+                <div className="text-left">
+                  <p className="text-sm font-bold text-slate-900 leading-none">
+                     {post.author.first_name} {post.author.last_name}
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-medium leading-tight mt-0.5">Author</p>
+                </div>
+             </div>
+          </motion.div>
         </header>
 
         {/* Featured Image */}
         {post.featuredImg && (
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-16 rounded-[40px] overflow-hidden shadow-2xl shadow-slate-200/50"
+            transition={{ delay: 0.3 }}
+            className="mb-16 rounded-[32px] overflow-hidden border border-white/60 bg-white/40 p-1.5 shadow-xl shadow-slate-200/50"
+            style={{
+                backdropFilter: "blur(24px) saturate(180%)",
+            }}
           >
-            <img src={post.featuredImg} alt={post.title} className="w-full h-auto object-cover max-h-[600px]" />
+            <div className="relative aspect-[21/9] rounded-[24px] overflow-hidden bg-slate-100">
+                <img src={post.featuredImg} alt={post.title} className="w-full h-full object-cover" />
+            </div>
           </motion.div>
         )}
 
         {/* Content */}
         <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="pb-20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="pb-20 max-w-3xl mx-auto"
         >
-          <MarkdownReader content={post.content.body || post.content} className="max-w-none prose-lg md:prose-xl prose-slate prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900" />
+          <MarkdownReader content={post.content.body || post.content} className="max-w-none prose-lg prose-slate prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-2xl prose-img:shadow-lg" />
         </motion.div>
 
         {/* Footer Meta */}
