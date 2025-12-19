@@ -8,6 +8,7 @@ import { AppleButton } from "@/components/apple-button";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
+  { name: "Blog", href: "/blog" },
   { name: "AI Research", href: "#link" },
   { name: "Templates", href: "#link" },
   { name: "Pricing", href: "#link" },
