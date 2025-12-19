@@ -1,174 +1,131 @@
-"use client";
-
-import { usePost } from "@/hooks/use-blog";
-import { useParams, useRouter } from "next/navigation";
+import { getPostSSR } from "@/services/blog";
 import { format } from "date-fns";
-import { Calendar, User, Clock, ChevronLeft, Share2, Facebook, Twitter, Link as LinkIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { User, ArrowLeft, Clock } from "lucide-react";
 import { MarkdownReader } from "@/components/ui/markdown-reader";
-import { motion } from "framer-motion";
-import { toast } from "sonner";
+import { Metadata } from "next";
+import { Badge } from "@/components/ui/badge";
 
-export default function BlogPostPage() {
-  const { slug } = useParams();
-  const router = useRouter();
-  const { data: postResponse, isLoading } = usePost(slug as string);
-  const post = postResponse?.data;
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast.success("Link copied to clipboard!");
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostSSR(slug);
+  if (!post) return { title: "Post Not Found" };
+
+  return {
+    title: `${post.title} | Butterfast`,
+    description: post.excerpt || post.title,
+    openGraph: {
+      images: post.featuredImg ? [post.featuredImg] : [],
+    },
   };
+}
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white pt-24 pb-20">
-        <div className="container max-w-4xl mx-auto px-4">
-          <Skeleton className="h-4 w-20 mb-8 rounded-full" />
-          <Skeleton className="h-16 w-full mb-6 rounded-2xl" />
-          <Skeleton className="h-6 w-2/3 mb-10 rounded-xl" />
-          <div className="flex gap-4 mb-12">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <Skeleton className="h-10 w-32 rounded-lg" />
-          </div>
-          <Skeleton className="h-[400px] w-full mb-12 rounded-[40px]" />
-          <div className="space-y-4">
-            <Skeleton className="h-4 w-full rounded" />
-            <Skeleton className="h-4 w-full rounded" />
-            <Skeleton className="h-4 w-3/4 rounded" />
-          </div>
-        </div>
-      </div>
-    );
-  }
+export default async function BlogPostPage({ params }: PageProps) {
+  console.log("[BlogPostPage] Rendering...");
+  const { slug } = await params;
+  console.log("[BlogPostPage] slug:", slug);
+  const post = await getPostSSR(slug);
+  console.log("[BlogPostPage] post:", post ? post.title : "null");
 
   if (!post) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <h1 className="text-4xl font-black text-slate-900 mb-4">Post Not Found</h1>
-        <p className="text-slate-500 mb-8">The blog post you're looking for doesn't exist or has been removed.</p>
-        <Button onClick={() => router.push("/blog")} className="rounded-2xl h-12 px-8 font-bold">
-          Back to Blog
-        </Button>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white text-slate-900 font-serif pt-20">
+        <h1 className="text-4xl font-bold mb-4">404</h1>
+        <p className="text-xl mb-6 text-slate-500">Post not found.</p>
+        <Link href="/blog" className="text-base font-sans underline underline-offset-4 hover:text-slate-600 transition-colors">
+            Back to stories
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white pt-24 pb-20">
-      <article className="container max-w-4xl mx-auto px-4">
-        {/* Navigation & Category */}
-        <div className="flex items-center justify-between mb-10">
-          <Button 
-            variant="ghost" 
-            onClick={() => router.push("/blog")}
-            className="rounded-xl font-bold gap-2 text-slate-500 hover:text-primary transition-all p-0 hover:bg-transparent"
-          >
-            <ChevronLeft size={20} />
-            Back to Articles
-          </Button>
-          {post.category && (
-            <Badge className="bg-primary/5 text-primary border-primary/10 rounded-lg px-4 py-1 font-bold capitalize">
-              {post.category.name}
-            </Badge>
-          )}
+    <article className="min-h-screen bg-white pt-24 pb-20">
+      <div className="container max-w-3xl mx-auto px-6">
+        {/* Navigation */}
+        <div className="mb-12">
+            <Link href="/blog" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors group">
+                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                <span className="font-sans text-sm font-medium">Back to stories</span>
+            </Link>
         </div>
 
         {/* Header */}
-        <header className="mb-10 text-center max-w-3xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-3 text-xs font-bold text-slate-400 uppercase tracking-widest mb-6"
-          >
-             <span className="flex items-center gap-1.5">
-               <Calendar size={12} />
-               {format(new Date(post.publishedAt), "MMM d, yyyy")}
-             </span>
-             <span className="w-1 h-1 rounded-full bg-slate-200" />
-             <span className="flex items-center gap-1.5">
-               <Clock size={12} />
-               {Math.ceil(post.content.length / 1000)} min read
-             </span>
-          </motion.div>
-
-          <motion.h1 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl font-bold text-slate-900 leading-[1.2] mb-8 tracking-tight"
-          >
-            {post.title}
-          </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center justify-center gap-2"
-          >
-             <div className="flex items-center gap-2.5 p-1.5 pr-4 rounded-full bg-white border border-slate-100 shadow-sm">
-                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 overflow-hidden ring-2 ring-white">
-                  {post.author.photo ? <img src={post.author.photo} alt="" className="w-full h-full object-cover" /> : <User size={14} />}
+        <header className="mb-10 space-y-6">
+            <h1 className="text-4xl md:text-6xl font-serif font-bold text-slate-900 leading-[1.1] tracking-tight">
+                {post.title}
+            </h1>
+            {post.excerpt && (
+                <p className="text-xl md:text-2xl text-slate-500 font-serif leading-relaxed">
+                    {post.excerpt}
+                </p>
+            )}
+            
+            <div className="flex items-center justify-between border-b border-t border-slate-100 py-6 mt-8">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden relative">
+                       {post.author.photo ? (
+                         <img src={post.author.photo} alt={post.author.first_name} className="w-full h-full object-cover" />
+                       ) : (
+                         <div className="w-full h-full flex items-center justify-center text-slate-400">
+                           <User size={20} />
+                         </div>
+                       )}
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-2 text-base font-medium text-slate-900 font-sans">
+                            {post.author.first_name} {post.author.last_name}
+                            <button className="text-emerald-600 font-sans text-sm hover:underline ml-2 hidden sm:inline-block">Follow</button>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-500 font-sans">
+                            <span>{format(new Date(post.publishedAt), "MMM d, yyyy")}</span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1">
+                                <Clock size={14} />
+                                {Math.ceil((post.content?.body?.length || post.content?.length || 0) / 1000)} min read
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div className="text-left">
-                  <p className="text-sm font-bold text-slate-900 leading-none">
-                     {post.author.first_name} {post.author.last_name}
-                  </p>
-                  <p className="text-[10px] text-slate-400 font-medium leading-tight mt-0.5">Author</p>
-                </div>
-             </div>
-          </motion.div>
+            </div>
         </header>
 
         {/* Featured Image */}
         {post.featuredImg && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mb-16 rounded-[32px] overflow-hidden border border-white/60 bg-white/40 p-1.5 shadow-xl shadow-slate-200/50"
-            style={{
-                backdropFilter: "blur(24px) saturate(180%)",
-            }}
-          >
-            <div className="relative aspect-[21/9] rounded-[24px] overflow-hidden bg-slate-100">
-                <img src={post.featuredImg} alt={post.title} className="w-full h-full object-cover" />
-            </div>
-          </motion.div>
+            <figure className="mb-14 -mx-6 md:-mx-0">
+                <img 
+                    src={post.featuredImg} 
+                    alt={post.title} 
+                    className="w-full h-auto max-h-[600px] object-cover md:rounded-sm bg-slate-50"
+                />
+            </figure>
         )}
 
         {/* Content */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="pb-20 max-w-3xl mx-auto"
-        >
-          <MarkdownReader content={post.content.body || post.content} className="max-w-none prose-lg prose-slate prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-2xl prose-img:shadow-lg" />
-        </motion.div>
+        <div className="prose prose-lg md:prose-xl prose-slate max-w-none font-serif prose-headings:font-sans prose-headings:font-bold prose-headings:tracking-tight prose-p:leading-relaxed prose-p:text-slate-800 prose-img:rounded-md">
+            <MarkdownReader content={post.content.body || post.content} />
+        </div>
 
-        {/* Footer Meta */}
-        <footer className="pt-12 border-t border-slate-100 flex flex-wrap gap-4 items-center justify-between">
-           <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Tagged in:</span>
-              <div className="flex gap-2">
-                 {post.metaKeywords.split(',').map((kw: string, i: number) => (
-                   <Badge key={i} variant="secondary" className="bg-slate-50 text-slate-500 rounded-md border-none font-bold text-[10px] uppercase">
+        {/* Footer / Tags */}
+        <div className="mt-20 pt-10 border-t border-slate-100">
+             <div className="flex flex-wrap gap-2 mb-8">
+                {post.category && (
+                    <Badge variant="secondary" className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 text-sm font-normal rounded-full transition-colors cursor-pointer">
+                        {post.category.name}
+                    </Badge>
+                )}
+                {post.metaKeywords ? post.metaKeywords.split(',').map((kw: string, i: number) => (
+                   <Badge key={i} variant="secondary" className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 text-sm font-normal rounded-full transition-colors cursor-pointer">
                      {kw.trim()}
                    </Badge>
-                 ))}
-              </div>
-           </div>
-           
-           <Button className="rounded-2xl h-12 px-8 font-bold gap-2">
-              <Share2 size={18} />
-              Share Article
-           </Button>
-        </footer>
-      </article>
-    </div>
+                 )) : null}
+             </div>
+        </div>
+      </div>
+    </article>
   );
 }

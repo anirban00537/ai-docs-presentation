@@ -6,7 +6,7 @@ const request = axios.create({
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
-    apisecretkeycheck: process.env.NEXT_PUBLIC_API_SECRET_KEY,
+    apisecretkeycheck: process.env.NEXT_PUBLIC_API_SECRET,
   },
 });
 
