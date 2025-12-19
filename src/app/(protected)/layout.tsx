@@ -5,6 +5,5 @@ export default function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // return <AuthCheckProvider>{children}</AuthCheckProvider>;
-  return <>{children}</>;
+  return <AuthCheckProvider>{children}</AuthCheckProvider>;
 }
