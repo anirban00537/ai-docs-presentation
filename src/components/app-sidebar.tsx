@@ -22,7 +22,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useAppSelector } from "@/store/hooks";
 import { selectUser } from "@/store/slices/userSlice";
 import { useSignOut } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -277,13 +279,14 @@ export function AppSidebar() {
                    </div>
                  </div>
                  
-                <AppleButton
-                  variant="primary"
+                <Button
+                  variant="default"
                   size="sm"
                   className="w-full justify-center h-9 text-xs font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30"
                 >
                   Upgrade to Pro
-                </AppleButton>
+                </Button>
+
               </div>
             </div>
 
