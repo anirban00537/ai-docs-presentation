@@ -189,7 +189,7 @@ const MediaCard = ({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded-lg hover:bg-white/50 transition-colors">
+              <button >
                 <IconDots size={16} className="text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>

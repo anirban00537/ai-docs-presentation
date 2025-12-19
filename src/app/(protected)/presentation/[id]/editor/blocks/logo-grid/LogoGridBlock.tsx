@@ -139,7 +139,6 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
             <div className="absolute inset-0 opacity-0 group-hover/logo:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
               <button 
                 onClick={(e) => { e.stopPropagation(); removeLogo(index); }}
-                className="p-1.5 rounded-lg transition-all hover:bg-red-500/10"
                 style={{ color: "#ef4444" }}
               >
                 <IconTrash size={14} />

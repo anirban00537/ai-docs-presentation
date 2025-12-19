@@ -125,7 +125,6 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
               <button 
                 onClick={() => removeImage(img.id)}
-                className="p-2 rounded-full transition-all hover:scale-110"
                 style={{
                   backgroundColor: "rgba(255,255,255,0.9)",
                   color: "#ef4444",

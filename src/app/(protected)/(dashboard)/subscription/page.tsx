@@ -272,7 +272,7 @@ export default function SubscriptionPage() {
                         <AlertDialogTrigger asChild>
                           <Button 
                             variant="ghost" 
-                            className="w-full h-13 rounded-2xl text-red-500/70 hover:text-red-600 hover:bg-red-50/50 transition-all font-semibold text-sm"
+                          
                           >
                             Terminate Membership
                           </Button>
