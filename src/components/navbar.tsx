@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { AppleButton } from "@/components/apple-button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
@@ -82,36 +82,36 @@ export function Navbar() {
                 </ul>
               </div>
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                <AppleButton
+                <Button
                   asChild
-                  variant="tertiary"
+                  variant="outline"
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
                   <Link href="#">
                     <span className="text-black">Login</span>
                   </Link>
-                </AppleButton>
-                <AppleButton
+                </Button>
+                <Button
                   asChild
-                  variant="primary"
+                  variant="default"
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
                   <Link href="#">
                     <span className="text-white">Sign Up</span>
                   </Link>
-                </AppleButton>
-                <AppleButton
+                </Button>
+                <Button
                   asChild
-                  variant="primary"
+                  variant="default"
                   size="sm"
                   className={cn(isScrolled ? "lg:inline-flex" : "hidden")}
                 >
                   <Link href="#">
                     <span className="text-white">Start Researching</span>
                   </Link>
-                </AppleButton>
+                </Button>
               </div>
             </div>
           </div>

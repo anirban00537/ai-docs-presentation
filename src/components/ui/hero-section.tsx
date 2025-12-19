@@ -4,7 +4,8 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 import { TimelineContent } from "@/components/ui/timeline-animation";
-import { AppleButton } from "@/components/apple-button";
+import { Button } from "@/components/ui/button";
+
 import { useRef } from "react";
 import Link from "next/link";
 
@@ -159,21 +160,23 @@ function Others1() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
           >
             <Link href="/home">
-              <AppleButton
-                variant="primary"
+              <Button
+                variant="default"
                 size="lg"
                 className="w-full sm:w-auto px-8 py-6 text-base"
               >
                 Get Started
-              </AppleButton>
+              </Button>
+
             </Link>
-            <AppleButton
-              variant="tertiary"
+            <Button
+              variant="outline"
               size="lg"
               className="w-full sm:w-auto px-8 py-6 text-black"
             >
               Learn More
-            </AppleButton>
+            </Button>
+
           </TimelineContent>
         </article>
 

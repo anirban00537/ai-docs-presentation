@@ -4,7 +4,8 @@ import * as React from "react";
 import { Send, Loader2 } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { AppleButton } from "@/components/apple-button";
+import { Button } from "@/components/ui/button";
+
 import { useCreatePresentationFromPrompt } from "@/hooks/use-presentation";
 import { toast } from "sonner";
 
@@ -448,9 +449,9 @@ export function PromptBox() {
             className="pr-4 pt-2 self-start md:self-center md:pt-0 z-10"
             style={{ transform: "translateZ(10px)" }}
           >
-            <AppleButton
+            <Button
                 type="submit"
-              variant="primary"
+              variant="default"
               size="sm"
                 disabled={!prompt.trim() || createFromPromptMutation.isPending}
               className="p-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed group/btn relative"
@@ -470,7 +471,8 @@ export function PromptBox() {
                 style={{ transform: "translateZ(20px)" }}
               />
                 )}
-            </AppleButton>
+            </Button>
+
           </div>
           </form>
         </div>

@@ -119,7 +119,6 @@ export default function SubscriptionPage() {
             variant="outline"
             onClick={handleSync}
             disabled={syncMutation.isPending}
-            className="rounded-2xl h-12 px-6 bg-white/40 backdrop-blur-md border border-white/60 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] text-sm font-semibold text-slate-600"
           >
             <IconRefresh
               className={cn("mr-2 h-4 w-4 text-primary/70", syncMutation.isPending && "animate-spin")}
@@ -307,7 +306,7 @@ export default function SubscriptionPage() {
                   </div>
                   <p className="text-lg font-semibold text-foreground/80 tracking-tight">No active membership</p>
                   <p className="text-sm text-muted-foreground/60 mt-1.5 max-w-[180px] leading-relaxed">Unlock pro features and more credits today.</p>
-                  <Button onClick={() => window.location.href = '/pricing'} className="mt-8 rounded-2xl px-10 h-12 bg-slate-900 text-sm font-semibold">Explore Plans</Button>
+                  <Button onClick={() => window.location.href = '/pricing'} >Explore Plans</Button>
                 </div>
               )}
             </div>

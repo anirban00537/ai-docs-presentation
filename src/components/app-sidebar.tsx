@@ -32,7 +32,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AppleButton } from "./apple-button";
 
 // Navigation items
 const navItems = [

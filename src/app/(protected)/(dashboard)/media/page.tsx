@@ -297,7 +297,6 @@ const EmptyState = ({ onUpload }: { onUpload: () => void }) => (
     </p>
     <Button
       onClick={onUpload}
-      className="rounded-xl px-6"
     >
       <IconUpload size={18} className="mr-2" />
       Upload Media
@@ -530,7 +529,8 @@ export default function MediaPage() {
           <Button
             onClick={handleUpload}
             disabled={uploadMutation.isPending}
-            className="rounded-2xl h-12 px-6 shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all font-semibold"
+            variant="default"
+        
           >
             {uploadMutation.isPending ? (
               <IconLoader2 size={18} className="mr-2 animate-spin" />

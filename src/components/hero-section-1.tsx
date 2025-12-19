@@ -4,7 +4,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Variants } from "framer-motion";
 
-import { AppleButton } from "@/components/apple-button";
+import { Button } from "@/components/ui/button";
+
 import { AnimatedGroup } from "@/components/ui/animated-group";
 
 const transitionVariants: { item: Variants } = {
@@ -86,10 +87,10 @@ export function HeroSection() {
               </div>
 
               <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-center">
-                <AppleButton
+                <Button
                   asChild
                   size="lg"
-                  variant="primary"
+                  variant="default"
                   className="rounded-xl px-8 text-base"
                 >
                   <Link href="/home">
@@ -98,7 +99,8 @@ export function HeroSection() {
                       <ArrowRight className="h-4 w-4 text-white" />
                     </span>
                   </Link>
-                </AppleButton>
+                </Button>
+
               </div>
             </AnimatedGroup>
 

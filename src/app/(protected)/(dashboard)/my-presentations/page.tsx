@@ -96,7 +96,8 @@ export default function MyPresentationsPage() {
           >
             <Button
               onClick={() => router.push("/home")}
-              className="gap-2 h-12 px-6 rounded-2xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all font-semibold"
+              variant="default"
+             
             >
               <IconPlus size={18} />
               New Project

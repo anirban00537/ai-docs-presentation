@@ -4,7 +4,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Variants } from "framer-motion";
 
-import { AppleButton } from "@/components/apple-button";
+import { Button } from "@/components/ui/button";
+
 import { AnimatedGroup } from "@/components/ui/animated-group";
 
 const transitionVariants: { item: Variants } = {
@@ -52,10 +53,10 @@ export function CTASection() {
             create stunning presentations.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <AppleButton
+            <Button
               asChild
               size="lg"
-              variant="primary"
+              variant="default"
               className="rounded-xl px-8 text-base"
             >
               <Link href="/presentation">
@@ -64,8 +65,9 @@ export function CTASection() {
                   <ArrowRight className="h-4 w-4 text-white" />
                 </span>
               </Link>
-            </AppleButton>
-            <AppleButton
+            </Button>
+
+            <Button
               asChild
               size="lg"
               variant="ghost"
@@ -74,7 +76,8 @@ export function CTASection() {
               <Link href="#link">
                 <span className="text-black">Watch Demo</span>
               </Link>
-            </AppleButton>
+            </Button>
+
           </div>
         </AnimatedGroup>
       </div>

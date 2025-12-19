@@ -6,7 +6,7 @@ import { Variants } from "framer-motion";
 import { useProducts } from "@/hooks/use-pricing";
 import { formatPrice, getRecurringText } from "@/services/pricing";
 
-import { AppleButton } from "@/components/apple-button";
+import { Button } from "@/components/ui/button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 
 const transitionVariants: { item: Variants } = {
@@ -201,10 +201,10 @@ export function PricingSection() {
                 </ul>
 
                 <div className="mt-8">
-                  <AppleButton
+                  <Button
                     asChild
                     size="lg"
-                    variant={plan.popular ? "primary" : "ghost"}
+                    variant={plan.popular ? "default" : "outline"}
                     className={`w-full rounded-xl ${
                       plan.popular
                         ? "px-8"
@@ -219,7 +219,7 @@ export function PricingSection() {
                         )}
                       </span>
                     </Link>
-                  </AppleButton>
+                  </Button>
                 </div>
               </div>
             </AnimatedGroup>
