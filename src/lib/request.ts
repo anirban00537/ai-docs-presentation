@@ -3,6 +3,7 @@ import Cookie from "js-cookie";
 
 const request = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -11,11 +12,6 @@ const request = axios.create({
 });
 
 request.interceptors.request.use((config: any) => {
-  const token = Cookie.get("token");
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
   return config;
 });
 request.interceptors.response.use((response: any) => {
