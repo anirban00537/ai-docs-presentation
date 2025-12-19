@@ -45,9 +45,7 @@ const getInitials = (name?: string, email?: string) => {
 };
 
 const formatName = (user: any) => {
-  if (user?.first_name || user?.last_name) {
-    return [user?.first_name, user?.last_name].filter(Boolean).join(" ");
-  }
+  if (user?.name) return user.name;
   if (user?.user_name) return user.user_name;
   if (user?.email) return user.email.split("@")[0];
   return "User";
@@ -79,9 +77,9 @@ export function NavUser() {
               }}
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                {user?.photo ? (
+                {user?.image ? (
                   <AvatarImage
-                    src={user.photo}
+                    src={user.image}
                     alt={primaryName}
                     className="rounded-lg object-cover"
                   />
@@ -120,9 +118,9 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  {user?.photo ? (
+                  {user?.image ? (
                     <AvatarImage
-                      src={user.photo}
+                      src={user.image}
                       alt={primaryName}
                       className="rounded-lg object-cover"
                     />

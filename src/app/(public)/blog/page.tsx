@@ -81,8 +81,8 @@ export default async function BlogPage() {
 
                       <div className="mt-auto pt-6 border-t border-slate-100 flex items-center gap-3">
                          <div className="w-8 h-8 rounded-full bg-slate-100 overflow-hidden ring-2 ring-white shadow-sm">
-                            {post.author.photo ? (
-                              <img src={post.author.photo} alt="" className="w-full h-full object-cover" />
+                            {post.author.image ? (
+                              <img src={post.author.image} alt="" className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-200">
                                 <User size={14} />
@@ -90,7 +90,7 @@ export default async function BlogPage() {
                             )}
                           </div>
                           <span className="text-sm font-bold text-slate-700">
-                            {post.author.first_name} {post.author.last_name}
+                            {post.author.name}
                           </span>
                       </div>
                     </div>

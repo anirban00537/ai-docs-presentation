@@ -88,18 +88,19 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Author Section */}
         <div className="flex items-center gap-4 pb-8 border-b border-slate-100 mb-10">
           <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden flex-shrink-0">
-            {post.author.photo ? (
-              <img src={post.author.photo} alt={post.author.first_name} className="w-full h-full object-cover" />
+            {post.author.image ? (
+              <img src={post.author.image} alt={post.author.name} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary/60 text-white font-bold text-lg">
-                {post.author.first_name?.[0]}{post.author.last_name?.[0]}
+                {post.author.name?.[0]}
               </div>
             )}
           </div>
           <div className="flex-1">
             <p className="font-semibold text-slate-900">
-              {post.author.first_name} {post.author.last_name}
+              {post.author.name}
             </p>
+
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <span>{format(new Date(post.publishedAt), "MMMM d, yyyy")}</span>
               <span>•</span>
@@ -148,18 +149,19 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="mt-12 p-8 bg-slate-50 rounded-2xl">
           <div className="flex items-start gap-5">
             <div className="w-16 h-16 rounded-full bg-slate-100 overflow-hidden flex-shrink-0">
-              {post.author.photo ? (
-                <img src={post.author.photo} alt={post.author.first_name} className="w-full h-full object-cover" />
+              {post.author.image ? (
+                <img src={post.author.image} alt={post.author.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary/60 text-white font-bold text-xl">
-                  {post.author.first_name?.[0]}{post.author.last_name?.[0]}
+                  {post.author.name?.[0]}
                 </div>
               )}
             </div>
             <div className="flex-1">
               <p className="text-lg font-bold text-slate-900 mb-1">
-                {post.author.first_name} {post.author.last_name}
+                {post.author.name}
               </p>
+
               <p className="text-slate-500 text-sm leading-relaxed">
                 Sharing insights on AI, productivity, and modern storytelling. Thanks for reading!
               </p>

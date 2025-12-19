@@ -57,13 +57,12 @@ const getInitials = (name?: string, email?: string) => {
 };
 
 const formatName = (user: any) => {
-  if (user?.first_name || user?.last_name) {
-    return [user?.first_name, user?.last_name].filter(Boolean).join(" ");
-  }
+  if (user?.name) return user.name;
   if (user?.user_name) return user.user_name;
   if (user?.email) return user.email.split("@")[0];
   return "User";
 };
+
 
 // App Sidebar Component
 export function AppSidebar() {
@@ -296,13 +295,14 @@ export function AppSidebar() {
                     className="w-full group flex items-center gap-3 p-2 rounded-xl transition-all duration-200 hover:bg-white/50 outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
                   >
                     <Avatar className="h-10 w-10 rounded-xl shadow-sm border border-white/50 ring-2 ring-white/20 group-hover:ring-white/40 transition-all">
-                      {user?.photo ? (
+                      {user?.image ? (
                         <AvatarImage
-                          src={user.photo}
+                          src={user.image}
                           alt={primaryName}
                           className="rounded-xl object-cover"
                         />
                       ) : null}
+
                       <AvatarFallback className="rounded-xl bg-gradient-to-tr from-primary/10 to-primary/5 text-primary text-xs font-bold">
                         {userInitials}
                       </AvatarFallback>
