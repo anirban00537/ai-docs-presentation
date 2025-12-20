@@ -6,35 +6,41 @@ import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 
 // Google Fonts CDN mapping
 const GOOGLE_FONTS_CDN: Record<string, string> = {
+  // Sans Serif
+  "Albert Sans": "Albert+Sans:wght@100;200;300;400;500;600;700;800;900",
+  Figtree: "Figtree:wght@300;400;500;600;700;800;900",
+  Geist: "Geist:wght@100;200;300;400;500;600;700;800;900",
+  "Instrument Sans": "Instrument+Sans:wght@400;500;600;700",
   Inter: "Inter:wght@100;200;300;400;500;600;700;800;900",
-  Poppins: "Poppins:wght@100;200;300;400;500;600;700;800;900",
-  Roboto: "Roboto:wght@100;300;400;500;700;900",
+  Manrope: "Manrope:wght@200;300;400;500;600;700;800",
   "Open Sans": "Open+Sans:wght@300;400;500;600;700;800",
+  Outfit: "Outfit:wght@100;200;300;400;500;600;700;800;900",
+  Poppins: "Poppins:wght@100;200;300;400;500;600;700;800;900",
+  Questrial: "Questrial",
+  "Rethink Sans": "Rethink+Sans:wght@400;500;600;700;800",
+  "Roboto Condensed": "Roboto+Condensed:wght@300;400;700",
+  Sora: "Sora:wght@100;200;300;400;500;600;700;800",
+  "Space Grotesk": "Space+Grotesk:wght@300;400;500;600;700",
+  
+  // Serif
+  "DM Serif Display": "DM+Serif+Display",
+  "EB Garamond": "EB+Garamond:wght@400;500;600;700;800",
+  "Fanwood Text": "Fanwood+Text",
+  Fraunces: "Fraunces:wght@100;200;300;400;500;600;700;800;900",
+  "Hedvig Letters Serif": "Hedvig+Letters+Serif",
+  "Instrument Serif": "Instrument+Serif",
+  "Cactus Classical Serif": "Cactus+Classical+Serif",
+  "Crimson Text": "Crimson+Text:wght@400;600;700",
+
+  // Legacy/Backwards compatibility
+  "Playfair Display": "Playfair+Display:wght@400;500;600;700;800;900",
+  Lora: "Lora:wght@400;500;600;700",
   Montserrat: "Montserrat:wght@100;200;300;400;500;600;700;800;900",
   Lato: "Lato:wght@100;300;400;700;900",
-  "Playfair Display": "Playfair+Display:wght@400;500;600;700;800;900",
-  Merriweather: "Merriweather:wght@300;400;700;900",
   Raleway: "Raleway:wght@100;200;300;400;500;600;700;800;900",
-  Ubuntu: "Ubuntu:wght@300;400;500;700",
-  "Great Vibes": "Great+Vibes",
-  "Dancing Script": "Dancing+Script:wght@400;500;600;700",
-  Caveat: "Caveat:wght@400;500;600;700",
-  "Abril Fatface": "Abril+Fatface",
-  Lora: "Lora:wght@400;500;600;700",
-  "Space Grotesk": "Space+Grotesk:wght@300;400;500;600;700",
-  Outfit: "Outfit:wght@100;200;300;400;500;600;700;800;900",
-  "DM Sans": "DM+Sans:opsz,wght@9..40,100;9..40,200;9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900",
-  "Plus Jakarta Sans": "Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800",
-  Manrope: "Manrope:wght@200;300;400;500;600;700;800",
-  "Work Sans": "Work+Sans:wght@100;200;300;400;500;600;700;800;900",
-  Sora: "Sora:wght@100;200;300;400;500;600;700;800",
-  Geist: "Geist:wght@100;200;300;400;500;600;700;800;900",
-  "Clash Display": "Clash+Display:wght@200;300;400;500;600;700",
   "JetBrains Mono": "JetBrains+Mono:wght@100;200;300;400;500;600;700;800",
   Nunito: "Nunito:wght@200;300;400;500;600;700;800;900",
   "Source Sans Pro": "Source+Sans+Pro:wght@200;300;400;600;700;900",
-  "Cormorant Garamond": "Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700",
-  "Geist Mono": "Geist+Mono:wght@100;200;300;400;500;600;700;800;900",
 };
 
 export const GoogleFontsLoader: React.FC = () => {
@@ -70,4 +76,3 @@ export const GoogleFontsLoader: React.FC = () => {
 
   return null;
 };
-

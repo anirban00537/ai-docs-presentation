@@ -10,6 +10,7 @@ import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAdminThemes } from "@/services/themes";
 import { applyCardStylePreset } from "@/lib/editor/card-styles";
+import { GOOGLE_FONTS } from "@/lib/constants";
 
 interface ThemePanelProps {
   isOpen: boolean;
@@ -325,23 +326,57 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                   </div>
 
                   {/* Card Design Pattern */}
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 block" style={{ color: isDark ? "#fff" : "#000" }}>Background Pattern</label>
-                    <div className="grid grid-cols-3 gap-2">
-                       {["none", "gaussian", "fractal", "fluid", "prism", "beams", "aurora", "nebula", "ether", "lumina", "horizon", "pulse", "vortex", "quanta", "strata", "mirage"].map((pattern) => (
-                         <button
-                           key={pattern}
-                           onClick={() => updateThemeProperty({ cardDesignPattern: pattern as any })}
-                           className={`py-2.5 px-3 text-[10px] capitalize rounded-xl border transition-all ${
-                             currentTheme.cardDesignPattern === pattern
-                               ? "bg-primary/10 border-primary text-primary font-bold shadow-sm"
-                               : "border-transparent bg-neutral-500/5 opacity-70 hover:opacity-100"
-                           }`}
-                           style={{ color: currentTheme.cardDesignPattern === pattern ? "inherit" : (isDark ? "#fff" : "#000") }}
-                         >
-                           {pattern}
-                         </button>
-                       ))}
+                    <div className="relative group">
+                      <select
+                        value={currentTheme.cardDesignPattern || "none"}
+                        onChange={(e) => updateThemeProperty({ cardDesignPattern: e.target.value as any })}
+                        className={`w-full py-2.5 px-4 text-[12px] appearance-none rounded-xl border transition-all cursor-pointer outline-none ${
+                          isDark 
+                            ? "bg-neutral-900 border-white/10 text-white hover:border-white/20" 
+                            : "bg-white border-black/5 text-black hover:border-black/10"
+                        }`}
+                      >
+                        {["none", "gaussian", "fractal", "fluid", "prism", "beams", "aurora", "nebula", "ether", "lumina", "horizon", "pulse", "vortex", "quanta", "strata", "mirage"].map((pattern) => (
+                          <option key={pattern} value={pattern}>
+                            {pattern.charAt(0).toUpperCase() + pattern.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                      <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity`}>
+                        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Typography Selection */}
+                  <div className="space-y-2">
+                    <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 block" style={{ color: isDark ? "#fff" : "#000" }}>Typography</label>
+                    <div className="relative group">
+                      <select
+                        value={currentTheme.fontFamily || "Inter"}
+                        onChange={(e) => updateThemeProperty({ fontFamily: e.target.value })}
+                        className={`w-full py-2.5 px-4 text-[12px] appearance-none rounded-xl border transition-all cursor-pointer outline-none ${
+                          isDark 
+                            ? "bg-neutral-900 border-white/10 text-white hover:border-white/20" 
+                            : "bg-white border-black/5 text-black hover:border-black/10"
+                        }`}
+                        style={{ fontFamily: currentTheme.fontFamily }}
+                      >
+                        {GOOGLE_FONTS.map((font) => (
+                          <option key={font} value={font} style={{ fontFamily: font }}>
+                            {font}
+                          </option>
+                        ))}
+                      </select>
+                      <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity`}>
+                        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
                     </div>
                   </div>
 
