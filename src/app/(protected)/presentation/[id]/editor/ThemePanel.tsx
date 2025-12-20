@@ -328,10 +328,10 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                   <div className="space-y-3">
                     <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 block" style={{ color: isDark ? "#fff" : "#000" }}>Background Pattern</label>
                     <div className="grid grid-cols-3 gap-2">
-                       {["none", "dots", "grid", "mesh", "glass", "waves"].map((pattern) => (
+                       {["none", "gaussian", "fractal", "fluid", "prism", "beams", "aurora", "nebula", "ether", "lumina", "horizon"].map((pattern) => (
                          <button
                            key={pattern}
-                           onClick={() => updateThemeProperty({ cardDesignPattern: pattern })}
+                           onClick={() => updateThemeProperty({ cardDesignPattern: pattern as any })}
                            className={`py-2.5 px-3 text-[10px] capitalize rounded-xl border transition-all ${
                              currentTheme.cardDesignPattern === pattern
                                ? "bg-primary/10 border-primary text-primary font-bold shadow-sm"

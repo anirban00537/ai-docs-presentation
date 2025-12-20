@@ -81,20 +81,28 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
     if (!pattern || pattern === "none") return null;
 
     const secondaryColors = theme.secondaryColors || [];
-    const color1 = secondaryColors[0] || theme.primary;
-    const color2 = secondaryColors[1] || theme.primary;
 
     switch (pattern) {
-      case "dots":
-        return <Patterns.Dots color={theme.primary} id={slideId || "default"} />;
-      case "grid":
-        return <Patterns.Grid color={theme.primary} id={slideId || "default"} />;
-      case "mesh":
-        return <Patterns.Mesh primary={theme.primary} color1={color1} color2={color2} />;
-      case "waves":
-        return <Patterns.Waves color={theme.primary} />;
-      case "glass":
-        return <Patterns.Glass color={theme.primary} />;
+      case "gaussian":
+        return <Patterns.Gaussian primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "fractal":
+        return <Patterns.Fractal primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "fluid":
+        return <Patterns.Fluid primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "prism":
+        return <Patterns.Prism primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "beams":
+        return <Patterns.Beams color={theme.primary} />;
+      case "aurora":
+        return <Patterns.Aurora primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "nebula":
+        return <Patterns.Nebula primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "ether":
+        return <Patterns.Ether primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "lumina":
+        return <Patterns.Lumina primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "horizon":
+        return <Patterns.Horizon primary={theme.primary} secondary={theme.secondaryColors} />;
       default:
         return null;
     }
