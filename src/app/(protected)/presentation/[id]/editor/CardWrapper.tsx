@@ -55,9 +55,6 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
     // Use granular properties from theme with fallbacks
     const borderRadius = theme.cardBorderRadius || "12px";
     const boxShadow = theme.cardBoxShadow || (isDark ? "0 4px 20px rgba(0, 0, 0, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.08)");
-    const borderWidth = theme.cardBorderWidth || "1px";
-    const borderStyle = theme.cardBorderStyle || "solid";
-    const borderColor = theme.cardBorderColor || `${primaryColor}15`;
     const backdropBlur = theme.cardBackdropBlur || "0px";
     const opacity = theme.cardOpacity !== undefined ? theme.cardOpacity : 1;
 
@@ -66,7 +63,7 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
       backgroundColor: style.backgroundColor || (opacity < 1 ? `rgba(${isDark ? '0, 0, 0' : '255, 255, 255'}, ${opacity})` : theme.cardBackground),
       borderRadius,
       boxShadow: style.boxShadow || boxShadow,
-      border: style.border || `${borderWidth} ${borderStyle} ${borderColor}`,
+      border: "none",
       backdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
       WebkitBackdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
     };
