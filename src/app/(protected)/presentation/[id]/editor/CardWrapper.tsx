@@ -103,6 +103,16 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
         return <Patterns.Lumina primary={theme.primary} secondary={theme.secondaryColors} />;
       case "horizon":
         return <Patterns.Horizon primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "pulse":
+        return <Patterns.Pulse color={theme.primary} />;
+      case "vortex":
+        return <Patterns.Vortex primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "quanta":
+        return <Patterns.Quanta color={theme.primary} />;
+      case "strata":
+        return <Patterns.Strata primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "mirage":
+        return <Patterns.Mirage color={theme.primary} />;
       default:
         return null;
     }

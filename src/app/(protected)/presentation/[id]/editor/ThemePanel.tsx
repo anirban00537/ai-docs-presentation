@@ -328,7 +328,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                   <div className="space-y-3">
                     <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 block" style={{ color: isDark ? "#fff" : "#000" }}>Background Pattern</label>
                     <div className="grid grid-cols-3 gap-2">
-                       {["none", "gaussian", "fractal", "fluid", "prism", "beams", "aurora", "nebula", "ether", "lumina", "horizon"].map((pattern) => (
+                       {["none", "gaussian", "fractal", "fluid", "prism", "beams", "aurora", "nebula", "ether", "lumina", "horizon", "pulse", "vortex", "quanta", "strata", "mirage"].map((pattern) => (
                          <button
                            key={pattern}
                            onClick={() => updateThemeProperty({ cardDesignPattern: pattern as any })}

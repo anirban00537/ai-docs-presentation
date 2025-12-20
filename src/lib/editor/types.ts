@@ -26,7 +26,7 @@ export interface Theme {
   themeType?: "light" | "dark";
 
   // Card customization
-  cardDesignPattern?: "none" | "gaussian" | "fractal" | "fluid" | "prism" | "beams" | "aurora" | "nebula" | "ether" | "lumina" | "horizon";
+  cardDesignPattern?: "none" | "gaussian" | "fractal" | "fluid" | "prism" | "beams" | "aurora" | "nebula" | "ether" | "lumina" | "horizon" | "pulse" | "vortex" | "quanta" | "strata" | "mirage";
   cardBorderColor?: string;
   // Granular Style Properties
   cardBorderRadius?: string;

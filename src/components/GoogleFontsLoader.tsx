@@ -31,6 +31,10 @@ const GOOGLE_FONTS_CDN: Record<string, string> = {
   Geist: "Geist:wght@100;200;300;400;500;600;700;800;900",
   "Clash Display": "Clash+Display:wght@200;300;400;500;600;700",
   "JetBrains Mono": "JetBrains+Mono:wght@100;200;300;400;500;600;700;800",
+  Nunito: "Nunito:wght@200;300;400;500;600;700;800;900",
+  "Source Sans Pro": "Source+Sans+Pro:wght@200;300;400;600;700;900",
+  "Cormorant Garamond": "Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700",
+  "Geist Mono": "Geist+Mono:wght@100;200;300;400;500;600;700;800;900",
 };
 
 export const GoogleFontsLoader: React.FC = () => {
