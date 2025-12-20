@@ -92,7 +92,7 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
       case "prism":
         return <Patterns.Prism primary={theme.primary} secondary={theme.secondaryColors} />;
       case "beams":
-        return <Patterns.Beams color={theme.primary} />;
+        return <Patterns.Beams primary={theme.primary} secondary={theme.secondaryColors} />;
       case "aurora":
         return <Patterns.Aurora primary={theme.primary} secondary={theme.secondaryColors} />;
       case "nebula":
@@ -104,15 +104,15 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
       case "horizon":
         return <Patterns.Horizon primary={theme.primary} secondary={theme.secondaryColors} />;
       case "pulse":
-        return <Patterns.Pulse color={theme.primary} />;
+        return <Patterns.Pulse primary={theme.primary} secondary={theme.secondaryColors} />;
       case "vortex":
         return <Patterns.Vortex primary={theme.primary} secondary={theme.secondaryColors} />;
-      case "quanta":
-        return <Patterns.Quanta color={theme.primary} />;
-      case "strata":
-        return <Patterns.Strata primary={theme.primary} secondary={theme.secondaryColors} />;
-      case "mirage":
-        return <Patterns.Mirage color={theme.primary} />;
+      case "echo":
+        return <Patterns.Echo primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "apex":
+        return <Patterns.Apex primary={theme.primary} secondary={theme.secondaryColors} />;
+      case "arch":
+        return <Patterns.Arch primary={theme.primary} secondary={theme.secondaryColors} />;
       default:
         return null;
     }

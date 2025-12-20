@@ -8,6 +8,9 @@ interface FluidProps {
 export const Fluid: React.FC<FluidProps> = ({ primary, secondary = [] }) => {
   const color1 = secondary[0] || primary;
   const color2 = secondary[1] || primary;
+  const color3 = secondary[2] || primary;
+  const color4 = secondary[3] || primary;
+  const color5 = secondary[4] || primary;
 
   return (
     <svg 
@@ -33,15 +36,21 @@ export const Fluid: React.FC<FluidProps> = ({ primary, secondary = [] }) => {
         fill={color2} 
         opacity="0.25"
       />
+      <path 
+        d="M 500 600 Q 750 400 1000 600 Z" 
+        fill={color3} 
+        opacity="0.15"
+      />
       
       {/* Subtle highlight edge */}
       <path 
         d="M -100 300 C 150 150, 350 450, 600 300 S 850 150, 1100 300" 
         fill="none" 
-        stroke={primary} 
+        stroke={color4} 
         strokeWidth="1.5" 
         opacity="0.5" 
       />
+      <circle cx="900" cy="100" r="100" fill={color5} opacity="0.1" />
     </svg>
   );
 };

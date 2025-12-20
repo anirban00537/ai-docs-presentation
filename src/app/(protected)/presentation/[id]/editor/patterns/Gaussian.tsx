@@ -8,6 +8,9 @@ interface GaussianProps {
 export const Gaussian: React.FC<GaussianProps> = ({ primary, secondary = [] }) => {
   const color1 = secondary[0] || primary;
   const color2 = secondary[1] || primary;
+  const color3 = secondary[2] || primary;
+  const color4 = secondary[3] || primary;
+  const color5 = secondary[4] || primary;
 
   return (
     <svg 
@@ -25,11 +28,13 @@ export const Gaussian: React.FC<GaussianProps> = ({ primary, secondary = [] }) =
       <circle cx="950" cy="50" r="250" fill={primary} filter="url(#blur)" opacity="0.4" />
       <circle cx="50" cy="550" r="300" fill={color1} filter="url(#blur)" opacity="0.35" />
       <circle cx="800" cy="500" r="200" fill={color2} filter="url(#blur)" opacity="0.25" />
+      <circle cx="200" cy="100" r="150" fill={color3} filter="url(#blur)" opacity="0.2" />
+      <circle cx="500" cy="300" r="180" fill={color4} filter="url(#blur)" opacity="0.15" />
       
       {/* Light sweep sweep */}
       <rect 
         x="-200" y="250" width="1400" height="60" 
-        fill={primary} 
+        fill={color5} 
         filter="url(#blur)" 
         transform="rotate(-12, 500, 300)" 
         opacity="0.2"

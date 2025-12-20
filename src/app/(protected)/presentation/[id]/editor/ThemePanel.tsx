@@ -338,7 +338,7 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                             : "bg-white border-black/5 text-black hover:border-black/10"
                         }`}
                       >
-                        {["none", "gaussian", "fractal", "fluid", "prism", "beams", "aurora", "nebula", "ether", "lumina", "horizon", "pulse", "vortex", "quanta", "strata", "mirage"].map((pattern) => (
+                        {["none", "gaussian", "fractal", "fluid", "prism", "beams", "aurora", "nebula", "ether", "lumina", "horizon", "pulse", "vortex", "echo", "apex", "arch"].map((pattern) => (
                           <option key={pattern} value={pattern}>
                             {pattern.charAt(0).toUpperCase() + pattern.slice(1)}
                           </option>
