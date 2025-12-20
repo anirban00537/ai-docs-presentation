@@ -28,6 +28,7 @@ export interface Theme {
   // Card customization
   cardDesignPattern?: "none" | "gaussian" | "fractal" | "fluid" | "prism" | "beams" | "aurora" | "nebula" | "ether" | "lumina" | "horizon" | "pulse" | "vortex" | "echo" | "apex" | "arch";
   cardDesignPatternOpacity?: number; // 0 to 1
+  borderColor?: string;
   // Granular Style Properties
   cardBorderRadius?: string;
   cardBoxShadow?: string;
