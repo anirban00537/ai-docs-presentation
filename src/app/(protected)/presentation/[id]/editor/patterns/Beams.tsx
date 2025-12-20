@@ -10,31 +10,38 @@ export const Beams: React.FC<BeamsProps> = ({ primary, secondary = [] }) => {
   const color2 = secondary[1] || primary;
   const color3 = secondary[2] || primary;
   const color4 = secondary[3] || primary;
-  const color5 = secondary[4] || primary;
+
+  const id = React.useId().replace(/:/g, "");
 
   return (
     <svg 
       viewBox="0 0 1000 600" 
-      preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full opacity-[0.7] pointer-events-none"
+      preserveAspectRatio="xMidYMid slice"
+      className="absolute inset-0 w-full h-full opacity-[0.4] pointer-events-none mix-blend-overlay"
     >
       <defs>
-        <linearGradient id="beam-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={primary} stopOpacity="0.8" />
-          <stop offset="100%" stopColor={primary} stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="beam-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={color1} stopOpacity="0.8" />
-          <stop offset="100%" stopColor={color1} stopOpacity="0" />
+        <linearGradient id={`${id}-beam-fade`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0" />
+          <stop offset="50%" stopColor="currentColor" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <g transform="rotate(-15, 1000, 0)">
-        <rect x="700" y="-100" width="40" height="1000" fill="url(#beam-grad-1)" opacity="0.8" />
-        <rect x="800" y="-100" width="20" height="1000" fill="url(#beam-grad-2)" opacity="0.6" />
-        <rect x="900" y="-100" width="60" height="1000" fill={color2} opacity="0.5" />
-        <rect x="600" y="-100" width="10" height="1000" fill={color3} opacity="0.4" />
-        <rect x="500" y="-100" width="30" height="1000" fill={color4} opacity="0.3" />
-        <rect x="400" y="-100" width="15" height="1000" fill={color5} opacity="0.2" />
+
+      <g transform="rotate(-30, 500, 300)">
+        {/* Light Ray 1 */}
+        <polygon points="400,-200 600,-200 550,800 450,800" fill={primary} opacity="0.15" />
+        
+        {/* Light Ray 2 */}
+        <polygon points="700,-200 800,-200 780,800 720,800" fill={color1} opacity="0.12" />
+        
+        {/* Light Ray 3 */}
+        <polygon points="200,-200 250,-200 240,800 210,800" fill={color2} opacity="0.1" />
+        
+        {/* Light Ray 4 (Wide) */}
+        <polygon points="0,-200 100,-200 80,800 20,800" fill={color3} opacity="0.08" />
+
+        {/* Faintest ambient ray */}
+        <polygon points="850,-200 1000,-200 950,800 880,800" fill={color4} opacity="0.05" />
       </g>
     </svg>
   );

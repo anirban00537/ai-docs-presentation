@@ -10,24 +10,51 @@ export const Apex: React.FC<ApexProps> = ({ primary, secondary = [] }) => {
   const color2 = secondary[1] || primary;
   const color3 = secondary[2] || primary;
   const color4 = secondary[3] || primary;
-  const color5 = secondary[4] || primary;
+
+  // Generate a unique ID for gradients to avoid conflicts if multiple patterns exist
+  const id = React.useId().replace(/:/g, ""); 
 
   return (
     <svg 
       viewBox="0 0 1000 600" 
-      preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full opacity-[0.6] pointer-events-none"
+      preserveAspectRatio="xMidYMid slice"
+      className="absolute inset-0 w-full h-full opacity-[0.6] pointer-events-none mix-blend-overlay"
     >
-      <g strokeWidth="2" opacity="0.8">
-        {/* Rising Triangles from Bottom Center */}
-        <path d="M 500 450 L 600 600 L 400 600 Z" fill="none" stroke={primary} />
-        <path d="M 500 300 L 700 600 L 300 600 Z" fill="none" stroke={color1} strokeDasharray="10 5" />
-        <path d="M 500 150 L 800 600 L 200 600 Z" fill="none" stroke={color2} />
-        <path d="M 500 0 L 900 600 L 100 600 Z" fill="none" stroke={color3} opacity="0.6" />
+      <defs>
+        <linearGradient id={`${id}-grad-primary`} x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor={primary} stopOpacity="1" />
+          <stop offset="100%" stopColor={primary} stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${id}-grad-1`} x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor={color1} stopOpacity="1" />
+          <stop offset="100%" stopColor={color1} stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${id}-grad-2`} x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor={color2} stopOpacity="0.8" />
+          <stop offset="100%" stopColor={color2} stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${id}-grad-fill`} x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor={primary} stopOpacity="0.1" />
+          <stop offset="100%" stopColor={primary} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+
+      <g transform="translate(100, 50)">
+        {/* Main Base Triangle */}
+        <path 
+          d="M 800 600 L 400 600 L 600 200 Z" 
+          fill={`url(#${id}-grad-fill)`}
+          stroke="none"
+        />
+
+        {/* Structural Lines - Fading Upwards */}
+        <path d="M 850 600 L 600 100 L 350 600" fill="none" stroke={`url(#${id}-grad-primary)`} strokeWidth="2" />
+        <path d="M 950 600 L 600 0 L 250 600" fill="none" stroke={`url(#${id}-grad-1)`} strokeWidth="1.5" opacity="0.8" />
+        <path d="M 750 600 L 600 300 L 450 600" fill="none" stroke={`url(#${id}-grad-2)`} strokeWidth="1" opacity="0.6" />
         
-        {/* Backdrop faint triangles */}
-        <path d="M 200 600 L 500 100 L 800 600" fill="none" stroke={color4} strokeWidth="1" opacity="0.2" />
-        <path d="M 0 600 L 500 -100 L 1000 600" fill="none" stroke={color5} strokeWidth="1" opacity="0.1" />
+        {/* Background Echoes */}
+        <path d="M 1050 600 L 600 -100 L 150 600" fill="none" stroke={color3} strokeWidth="0.5" opacity="0.3" />
+        <path d="M 1150 600 L 600 -200 L 50 600" fill="none" stroke={color4} strokeWidth="0.5" opacity="0.15" />
       </g>
     </svg>
   );

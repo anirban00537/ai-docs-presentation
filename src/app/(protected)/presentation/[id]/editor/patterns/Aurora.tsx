@@ -10,36 +10,39 @@ export const Aurora: React.FC<AuroraProps> = ({ primary, secondary = [] }) => {
   const color2 = secondary[1] || primary;
   const color3 = secondary[2] || primary;
   const color4 = secondary[3] || primary;
-  const color5 = secondary[4] || primary;
+
+  const id = React.useId().replace(/:/g, "");
 
   return (
     <svg 
       viewBox="0 0 1000 600" 
-      preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full opacity-[0.55] pointer-events-none"
+      preserveAspectRatio="xMidYMid slice"
+      className="absolute inset-0 w-full h-full opacity-[0.6] pointer-events-none mix-blend-screen"
     >
       <defs>
-        <filter id="aurora-blur" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="60" />
+        <filter id={`${id}-aurora-blur`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="50" />
         </filter>
+        <linearGradient id={`${id}-aurora-mesh`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={primary} stopOpacity="0.4" />
+            <stop offset="50%" stopColor={color1} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={color2} stopOpacity="0.2" />
+        </linearGradient>
       </defs>
       
-      <g filter="url(#aurora-blur)">
-        <ellipse cx="200" cy="600" rx="400" ry="200" fill={primary} opacity="0.5" />
-        <ellipse cx="800" cy="0" rx="500" ry="300" fill={color1} opacity="0.4" />
-        <ellipse cx="500" cy="300" rx="300" ry="150" fill={color2} opacity="0.3" />
-        <ellipse cx="100" cy="100" rx="200" ry="100" fill={color3} opacity="0.2" />
-        <ellipse cx="900" cy="500" rx="250" ry="150" fill={color4} opacity="0.25" />
+      <g filter={`url(#${id}-aurora-blur)`}>
+        {/* Horizontal Stretched Bands */}
+        <ellipse cx="500" cy="100" rx="600" ry="100" fill={primary} opacity="0.3" transform="rotate(-5, 500, 100)" />
+        <ellipse cx="200" cy="500" rx="700" ry="120" fill={color1} opacity="0.25" transform="rotate(2, 500, 500)" />
+        <ellipse cx="800" cy="400" rx="500" ry="150" fill={color2} opacity="0.2" transform="rotate(-3, 800, 300)" />
+        
+        {/* Deep ambient wash */}
+        <rect x="-200" y="200" width="1400" height="300" fill={`url(#${id}-aurora-mesh)`} opacity="0.15" transform="rotate(10, 500, 300)" />
+        
+        {/* Subtle highlight */}
+        <ellipse cx="300" cy="200" rx="300" ry="80" fill={color3} opacity="0.2" transform="rotate(5, 500, 200)" />
+        <ellipse cx="700" cy="500" rx="300" ry="80" fill={color4} opacity="0.15" transform="rotate(-2, 500, 200)" />
       </g>
-      
-      {/* Moving line effect */}
-      <path 
-        d="M -100 500 Q 250 400 500 500 T 1100 500" 
-        stroke={color5} 
-        strokeWidth="2" 
-        fill="none" 
-        opacity="0.4" 
-      />
     </svg>
   );
 };

@@ -9,48 +9,46 @@ export const Fluid: React.FC<FluidProps> = ({ primary, secondary = [] }) => {
   const color1 = secondary[0] || primary;
   const color2 = secondary[1] || primary;
   const color3 = secondary[2] || primary;
-  const color4 = secondary[3] || primary;
-  const color5 = secondary[4] || primary;
+
+  const id = React.useId().replace(/:/g, "");
 
   return (
     <svg 
       viewBox="0 0 1000 600" 
       preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full opacity-[0.5] pointer-events-none"
+      className="absolute inset-0 w-full h-full opacity-[0.4] pointer-events-none"
     >
       <defs>
-        <linearGradient id="fluid-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={primary} stopOpacity="0.5" />
-          <stop offset="100%" stopColor={color1} stopOpacity="0" />
+        <linearGradient id={`${id}-fluid-1`} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor={primary} stopOpacity="0.6" />
+          <stop offset="100%" stopColor={color1} stopOpacity="0.6" />
+        </linearGradient>
+        <linearGradient id={`${id}-fluid-2`} x1="100%" y1="0%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor={color2} stopOpacity="0.4" />
+          <stop offset="100%" stopColor={color3} stopOpacity="0.4" />
         </linearGradient>
       </defs>
       
-      {/* Smooth, organic liquid shapes */}
+      {/* Background Deep Wave */}
       <path 
-        d="M -100 300 C 150 150, 350 450, 600 300 S 850 150, 1100 300 V 600 H -100 Z" 
-        fill="url(#fluid-grad-1)" 
-        opacity="0.6"
+        d="M 0 400 Q 250 250 500 400 T 1000 400 L 1000 600 L 0 600 Z" 
+        fill={color1} 
+        opacity="0.2"
       />
+
+      {/* Mid Layer - Complex Bezier */}
       <path 
-        d="M -100 400 C 200 250, 400 550, 700 400 S 900 250, 1100 400 V 600 H -100 Z" 
-        fill={color2} 
-        opacity="0.25"
-      />
-      <path 
-        d="M 500 600 Q 750 400 1000 600 Z" 
-        fill={color3} 
-        opacity="0.15"
+        d="M 0 500 C 300 400, 400 600, 700 400 S 1100 300, 1100 500 L 1100 600 L 0 600 Z" 
+        fill={`url(#${id}-fluid-2)`}
+        opacity="0.3" 
       />
       
-      {/* Subtle highlight edge */}
+      {/* Top Layer - Liquid Metal Flow */}
       <path 
-        d="M -100 300 C 150 150, 350 450, 600 300 S 850 150, 1100 300" 
-        fill="none" 
-        stroke={color4} 
-        strokeWidth="1.5" 
+        d="M 0 550 C 200 500, 500 350, 800 500 S 1000 550, 1000 600 L 0 600 Z" 
+        fill={`url(#${id}-fluid-1)`}
         opacity="0.5" 
       />
-      <circle cx="900" cy="100" r="100" fill={color5} opacity="0.1" />
     </svg>
   );
 };

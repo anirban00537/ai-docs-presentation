@@ -10,7 +10,8 @@ export const Gaussian: React.FC<GaussianProps> = ({ primary, secondary = [] }) =
   const color2 = secondary[1] || primary;
   const color3 = secondary[2] || primary;
   const color4 = secondary[3] || primary;
-  const color5 = secondary[4] || primary;
+
+  const id = React.useId().replace(/:/g, "");
 
   return (
     <svg 
@@ -19,26 +20,33 @@ export const Gaussian: React.FC<GaussianProps> = ({ primary, secondary = [] }) =
       className="absolute inset-0 w-full h-full opacity-[0.5] pointer-events-none"
     >
       <defs>
-        <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="80" />
+        <filter id={`${id}-heavy-blur`} x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="100" />
+        </filter>
+        <filter id={`${id}-noise`}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" stitchTiles="stitch" />
+          <feColorMatrix type="saturate" values="0" />
+          <feComponentTransfer>
+             <feFuncA type="linear" slope="0.1" /> 
+          </feComponentTransfer>
         </filter>
       </defs>
       
-      {/* Soft overlapping orbs - refined opacities */}
-      <circle cx="950" cy="50" r="250" fill={primary} filter="url(#blur)" opacity="0.4" />
-      <circle cx="50" cy="550" r="300" fill={color1} filter="url(#blur)" opacity="0.35" />
-      <circle cx="800" cy="500" r="200" fill={color2} filter="url(#blur)" opacity="0.25" />
-      <circle cx="200" cy="100" r="150" fill={color3} filter="url(#blur)" opacity="0.2" />
-      <circle cx="500" cy="300" r="180" fill={color4} filter="url(#blur)" opacity="0.15" />
-      
-      {/* Light sweep sweep */}
-      <rect 
-        x="-200" y="250" width="1400" height="60" 
-        fill={color5} 
-        filter="url(#blur)" 
-        transform="rotate(-12, 500, 300)" 
-        opacity="0.2"
-      />
+      {/* Texture Overlay */}
+      <rect width="100%" height="100%" filter={`url(#${id}-noise)`} opacity="0.4" />
+
+      <g filter={`url(#${id}-heavy-blur)`}>
+        {/* Deformed blobs instead of circles */}
+        <path d="M 100 0 Q 400 200 600 0 L 0 0 Z" fill={primary} opacity="0.6" />
+        <path d="M 800 600 Q 500 300 300 600 Z" fill={color1} opacity="0.5" />
+        
+        {/* Central wash */}
+        <ellipse cx="500" cy="300" rx="600" ry="400" fill={color2} opacity="0.2" transform="rotate(20, 500, 300)" />
+        
+        {/* Corner bleeds */}
+        <circle cx="0" cy="600" r="300" fill={color3} opacity="0.4" />
+        <circle cx="1000" cy="0" r="300" fill={color4} opacity="0.4" />
+      </g>
     </svg>
   );
 };

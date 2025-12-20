@@ -10,27 +10,37 @@ export const Nebula: React.FC<NebulaProps> = ({ primary, secondary = [] }) => {
   const color2 = secondary[1] || primary;
   const color3 = secondary[2] || primary;
   const color4 = secondary[3] || primary;
-  const color5 = secondary[4] || primary;
+
+  const id = React.useId().replace(/:/g, "");
 
   return (
     <svg 
       viewBox="0 0 1000 600" 
-      preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full opacity-[0.55] pointer-events-none"
+      preserveAspectRatio="xMidYMid slice"
+      className="absolute inset-0 w-full h-full opacity-[0.6] pointer-events-none"
     >
       <defs>
-        <filter id="nebula-blur" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="100" />
+        <filter id={`${id}-nebula-cloud`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="60" />
+        </filter>
+        <filter id={`${id}-nebula-core`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="30" />
         </filter>
       </defs>
       
-      <g filter="url(#nebula-blur)">
-        <circle cx="500" cy="300" r="400" fill={primary} opacity="0.45" />
-        <circle cx="900" cy="100" r="300" fill={color1} opacity="0.55" />
-        <circle cx="100" cy="500" r="250" fill={color2} opacity="0.35" />
-        <circle cx="300" cy="100" r="150" fill={color3} opacity="0.25" />
-        <circle cx="800" cy="500" r="200" fill={color4} opacity="0.3" />
-        <circle cx="100" cy="50" r="100" fill={color5} opacity="0.2" />
+      {/* Cluster Formation - Diagonal (Bottom-Left to Top-Right) */}
+      <g filter={`url(#${id}-nebula-cloud)`}>
+        {/* Large faint halos */}
+        <circle cx="200" cy="500" r="350" fill={primary} opacity="0.3" />
+        <circle cx="500" cy="300" r="300" fill={color1} opacity="0.25" />
+        <circle cx="800" cy="100" r="350" fill={color2} opacity="0.2" />
+      </g>
+      
+      <g filter={`url(#${id}-nebula-core)`}>
+        {/* Denser Cores */}
+        <circle cx="250" cy="450" r="100" fill={primary} opacity="0.4" />
+        <circle cx="550" cy="250" r="80" fill={color3} opacity="0.3" />
+        <circle cx="750" cy="150" r="120" fill={color4} opacity="0.25" />
       </g>
     </svg>
   );
