@@ -24,12 +24,10 @@ export const ComparisonOldNewLayout = {
       { 
         name: createParagraphContent("Legacy Process"), 
         price: createParagraphContent("High Friction"), 
-        highlighted: false 
       }, 
       { 
         name: createParagraphContent("Our Solution"), 
         price: createParagraphContent("Seamless"), 
-        highlighted: true 
       }
     ];
     table.rows = [

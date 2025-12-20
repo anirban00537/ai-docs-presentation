@@ -27,17 +27,14 @@ export const ComparisonLayout = {
       {
         name: createParagraphContent("Basic"),
         price: createParagraphContent("$0/mo"),
-        highlighted: false,
       },
       {
         name: createParagraphContent("Pro"),
         price: createParagraphContent("$49/mo"),
-        highlighted: true,
       },
       {
         name: createParagraphContent("Enterprise"),
         price: createParagraphContent("Custom"),
-        highlighted: false,
       },
     ];
     comparison.rows = [

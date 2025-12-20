@@ -41,7 +41,6 @@ export const PricingLayout = {
     plan2.planName = createHeadingDoc("Startup");
     plan2.price = createHeadingDoc("$99/mo");
     plan2.buttonLabel = "Scale Up";
-    plan2.isRecommended = true;
     plan2.features = [
         { text: createParagraphContent("For growing teams"), included: true },
         { text: createParagraphContent("1M API Calls/mo"), included: true },

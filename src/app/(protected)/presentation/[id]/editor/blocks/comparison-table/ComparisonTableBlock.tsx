@@ -129,7 +129,6 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
       {
         name: createParagraphContent("New Plan"),
         price: createParagraphContent("$0"),
-        highlighted: false,
       },
     ];
     const newRows = rows.map((row) => ({
@@ -220,25 +219,10 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                     key={colIndex}
                     className="p-4 text-center relative group min-w-[160px]"
                     style={{
-                      backgroundColor: col.highlighted
-                        ? `${theme.primary}08`
-                        : "transparent",
                       borderBottom: `1px solid ${theme.primary}10`,
                     }}
                   >
-                    {col.highlighted && (
-                      <div className="absolute top-2 left-1/2 -translate-x-1/2">
-                        <span
-                          className="text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                          style={{
-                            backgroundColor: theme.primary,
-                            color: "#ffffff",
-                          }}
-                        >
-                          Popular
-                        </span>
-                      </div>
-                    )}
+
 
                     <button
                       onClick={(e) => {
@@ -253,9 +237,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                     </button>
 
                     <div
-                      className={`${
-                        col.highlighted ? "mt-4" : "mt-1"
-                      } space-y-1`}
+                      className="mt-1 space-y-1"
                     >
                       <div className="flex justify-center">
                         <ProseMirrorEditor
@@ -328,9 +310,6 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                       key={colIndex}
                       className="p-4 text-center"
                       style={{
-                        backgroundColor: columns[colIndex]?.highlighted
-                          ? `${theme.primary}05`
-                          : "transparent",
                         borderBottom: `1px solid ${theme.primary}08`,
                       }}
                     >

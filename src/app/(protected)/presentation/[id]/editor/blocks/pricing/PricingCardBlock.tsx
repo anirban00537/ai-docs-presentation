@@ -40,9 +40,8 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
 }) => {
   const content =
     (block.content as PricingCardContent) || createPricingCardContent();
-  const { isRecommended, buttonLabel, features } = content;
+  const { buttonLabel, features } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [tempIsRecommended, setTempIsRecommended] = useState(isRecommended);
   const [tempButtonLabel, setTempButtonLabel] = useState(buttonLabel);
   const isDark = theme.themeType === "dark";
 
@@ -99,7 +98,6 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   };
 
   const handleOpenEdit = () => {
-    setTempIsRecommended(isRecommended);
     setTempButtonLabel(buttonLabel);
     setIsEditOpen(true);
   };
@@ -107,7 +105,6 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   const handleSave = () => {
     onUpdate({
       ...content,
-      isRecommended: tempIsRecommended,
       buttonLabel: tempButtonLabel,
     });
     setIsEditOpen(false);
@@ -123,21 +120,9 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
     >
       <CommonCard
         theme={theme}
-        className={`w-full h-full p-6 ${isRecommended ? "scale-[1.02] z-10" : ""}`}
-        style={isRecommended ? { border: `2px solid ${theme.primary}` } : {}}
+        className="w-full h-full p-6"
       >
         <div className="w-full h-full flex flex-col relative transition-all">
-          {/* Recommended Badge */}
-          {isRecommended && (
-            <div
-              className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider text-white flex items-center gap-1"
-              style={{ backgroundColor: theme.primary }}
-            >
-              <IconStar size={10} className="fill-current" />
-              Popular
-            </div>
-          )}
-
           {/* Header */}
           <div
             className="text-center mb-5 pb-5"
@@ -226,10 +211,8 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
           <button
             className="w-full py-2.5 rounded-xl font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
             style={{
-              backgroundColor: isRecommended
-                ? theme.primary
-                : `${theme.primary}15`,
-              color: isRecommended ? "#fff" : theme.primary,
+              backgroundColor: `${theme.primary}15`,
+              color: theme.primary,
             }}
             onClick={handleOpenEdit}
           >
@@ -262,15 +245,6 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="flex items-center justify-between">
-              <Label style={{ color: isDark ? "#fff" : "#000" }}>
-                Highlight as Popular
-              </Label>
-              <Switch
-                checked={tempIsRecommended}
-                onCheckedChange={setTempIsRecommended}
-              />
-            </div>
             <div className="space-y-2">
               <Label style={{ color: isDark ? "#fff" : "#000" }}>
                 Button Label

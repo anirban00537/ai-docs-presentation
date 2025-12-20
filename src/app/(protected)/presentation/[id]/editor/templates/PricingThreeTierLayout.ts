@@ -28,7 +28,6 @@ export const PricingThreeTierLayout: LayoutTemplate = {
                 { text: "Advanced security", included: false },
                 { text: "Dedicated account manager", included: false },
             ],
-            recommended: false,
             btn: "Get Started Free"
         },
         {
@@ -41,7 +40,6 @@ export const PricingThreeTierLayout: LayoutTemplate = {
                 { text: "SSO & Audit logs", included: true },
                 { text: "Dedicated account manager", included: false },
             ],
-            recommended: true,
             btn: "Start Free Trial"
         },
         {
@@ -54,7 +52,6 @@ export const PricingThreeTierLayout: LayoutTemplate = {
                 { text: "Advanced security & compliance", included: true },
                 { text: "Dedicated account manager", included: true },
             ],
-            recommended: false,
             btn: "Contact Sales"
         }
     ].map((tier) => {
@@ -65,7 +62,6 @@ export const PricingThreeTierLayout: LayoutTemplate = {
           text: createParagraphContent(f.text),
           included: f.included
       }));
-      plan.isRecommended = tier.recommended;
       plan.buttonLabel = tier.btn;
       return plan;
     });

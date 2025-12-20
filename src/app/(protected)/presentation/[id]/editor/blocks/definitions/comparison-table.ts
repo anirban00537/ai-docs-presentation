@@ -4,7 +4,6 @@ import { createParagraphContent } from "./common";
 export interface ComparisonColumn {
   name: ProseMirrorDocument;
   price?: ProseMirrorDocument;
-  highlighted?: boolean;
 }
 
 export interface ComparisonRow {
@@ -24,17 +23,14 @@ export const createComparisonTableContent = (): ComparisonTableContent => ({
     {
       name: createParagraphContent("Starter"),
       price: createParagraphContent("Free"),
-      highlighted: false,
     },
     {
       name: createParagraphContent("Professional"),
       price: createParagraphContent("$29/mo"),
-      highlighted: true,
     },
     {
       name: createParagraphContent("Enterprise"),
       price: createParagraphContent("Custom"),
-      highlighted: false,
     },
   ],
   rows: [
@@ -115,7 +111,6 @@ export const normalizeComparisonTableContent = (
             ? normalizeToMarkdown(col.price)
             : createParagraphContent("")
           : undefined,
-        highlighted: col.highlighted ?? false,
       })),
       rows: incoming.rows.map((row) => ({
         feature: isMarkdownFormat(row.feature)

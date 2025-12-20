@@ -9,7 +9,6 @@ export interface PricingCardContent {
   planName: ProseMirrorDocument;
   price: ProseMirrorDocument;
   features: PricingFeature[];
-  isRecommended: boolean;
   buttonLabel: string;
 }
 
@@ -21,7 +20,6 @@ export const createPricingCardContent = (): PricingCardContent => ({
     { text: createParagraphContent(), included: true },
     { text: createParagraphContent(), included: false },
   ],
-  isRecommended: false,
   buttonLabel: "Choose Plan",
 });
 
@@ -35,7 +33,6 @@ export const normalizePricingCardContent = (content: any): PricingCardContent =>
           included: f?.included ?? true,
         }))
       : [],
-    isRecommended: content?.isRecommended ?? false,
     buttonLabel: content?.buttonLabel ?? "Choose Plan",
   };
 };

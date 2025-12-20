@@ -112,7 +112,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
           )}
 
           {/* Timeline Steps */}
-          <div className="relative pl-4">
+          <div className="relative">
             {/* Vertical Line */}
             <div
               className="absolute left-[19px] top-3 bottom-6 w-0.5"
