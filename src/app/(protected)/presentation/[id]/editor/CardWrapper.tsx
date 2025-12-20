@@ -130,7 +130,9 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
         className="absolute inset-0 overflow-hidden pointer-events-none" 
         style={{ borderRadius }}
       >
-        {renderPattern()}
+        <div style={{ opacity: theme.cardDesignPatternOpacity ?? 1 }} className="absolute inset-0">
+          {renderPattern()}
+        </div>
         
         {/* Film Grain / Noise Overlay */}
         {(theme.cardNoiseOpacity ?? 0) > 0 && (

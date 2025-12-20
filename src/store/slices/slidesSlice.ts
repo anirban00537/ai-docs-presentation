@@ -45,6 +45,7 @@ export const DEFAULT_THEME: Theme = {
   cardBorderWidth: "1px",
   cardBorderStyle: "solid",
   cardBackdropBlur: "0px",
+  cardDesignPatternOpacity: 1,
   cardOpacity: 1,
 };
 const initialTheme: Theme = DEFAULT_THEME;

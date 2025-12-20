@@ -350,6 +350,20 @@ export const ThemePanel: React.FC<ThemePanelProps> = ({ isOpen, onClose }) => {
                         </svg>
                       </div>
                     </div>
+                    
+                    {currentTheme.cardDesignPattern && currentTheme.cardDesignPattern !== "none" && (
+                      <div className="pt-2 px-1">
+                        <SliderControl 
+                          label="Pattern Intensity"
+                          value={currentTheme.cardDesignPatternOpacity !== undefined ? Math.round(currentTheme.cardDesignPatternOpacity * 100) : 100}
+                          onChange={(val) => updateThemeProperty({ cardDesignPatternOpacity: val / 100 })}
+                          min={0}
+                          max={100}
+                          unit="%"
+                          isDark={isDark}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Typography Selection */}

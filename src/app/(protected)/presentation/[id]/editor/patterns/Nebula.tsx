@@ -12,7 +12,7 @@ export const Nebula: React.FC<NebulaProps> = ({ primary, secondary = [] }) => {
     <svg 
       viewBox="0 0 1000 600" 
       preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full opacity-[0.35] pointer-events-none"
+      className="absolute inset-0 w-full h-full opacity-[0.55] pointer-events-none"
     >
       <defs>
         <filter id="nebula-blur" x="-50%" y="-50%" width="200%" height="200%">
@@ -21,9 +21,9 @@ export const Nebula: React.FC<NebulaProps> = ({ primary, secondary = [] }) => {
       </defs>
       
       <g filter="url(#nebula-blur)">
-        <circle cx="500" cy="300" r="400" fill={primary} opacity="0.3" />
-        <circle cx="900" cy="100" r="300" fill={color1} opacity="0.4" />
-        <circle cx="100" cy="500" r="250" fill={color1} opacity="0.2" />
+        <circle cx="500" cy="300" r="400" fill={primary} opacity="0.45" />
+        <circle cx="900" cy="100" r="300" fill={color1} opacity="0.55" />
+        <circle cx="100" cy="500" r="250" fill={color1} opacity="0.35" />
       </g>
     </svg>
   );

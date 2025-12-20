@@ -13,7 +13,7 @@ export const Aurora: React.FC<AuroraProps> = ({ primary, secondary = [] }) => {
     <svg 
       viewBox="0 0 1000 600" 
       preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full opacity-[0.3] pointer-events-none"
+      className="absolute inset-0 w-full h-full opacity-[0.55] pointer-events-none"
     >
       <defs>
         <filter id="aurora-blur" x="-50%" y="-50%" width="200%" height="200%">
@@ -22,9 +22,9 @@ export const Aurora: React.FC<AuroraProps> = ({ primary, secondary = [] }) => {
       </defs>
       
       <g filter="url(#aurora-blur)">
-        <ellipse cx="200" cy="600" rx="400" ry="200" fill={primary} opacity="0.4" />
-        <ellipse cx="800" cy="0" rx="500" ry="300" fill={color1} opacity="0.3" />
-        <ellipse cx="500" cy="300" rx="300" ry="150" fill={color2} opacity="0.2" />
+        <ellipse cx="200" cy="600" rx="400" ry="200" fill={primary} opacity="0.5" />
+        <ellipse cx="800" cy="0" rx="500" ry="300" fill={color1} opacity="0.4" />
+        <ellipse cx="500" cy="300" rx="300" ry="150" fill={color2} opacity="0.3" />
       </g>
       
       {/* Moving line effect */}
@@ -33,7 +33,7 @@ export const Aurora: React.FC<AuroraProps> = ({ primary, secondary = [] }) => {
         stroke={primary} 
         strokeWidth="2" 
         fill="none" 
-        opacity="0.2" 
+        opacity="0.4" 
       />
     </svg>
   );
