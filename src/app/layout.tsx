@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import Script from "next/script";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -71,6 +72,11 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className={`${poppins.variable} font-sans antialiased h-full`}>
         <Providers>{children}</Providers>
+        <Script
+          src="https://u11.butterfast.com/script.js"
+          data-website-id="209eb502-c264-4656-be5b-83dfaa534736"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
