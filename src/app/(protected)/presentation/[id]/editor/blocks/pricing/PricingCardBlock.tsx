@@ -4,9 +4,9 @@ import type { Block, Theme } from "@/types/presentation";
 import {
   createPricingCardContent,
   type PricingCardContent,
-} from "../definitions/pricing-card";
+} from "../definitions";
 import { IconCheck, IconX, IconStar, IconTrash } from "@tabler/icons-react";
-import { createParagraphContent } from "@/types/presentation";
+
 import { BlockWrapper } from "../BlockWrapper";
 import {
   Dialog,
@@ -87,13 +87,13 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
       ...content,
       features: [
         ...content.features,
-        { text: createParagraphContent(), included: true },
+        { text: "", included: true },
       ],
     });
   };
 
   const removeFeature = (index: number) => {
-    const newFeatures = content.features.filter((_, i) => i !== index);
+    const newFeatures = content.features.filter((_: any, i: number) => i !== index);
     onUpdate({ ...content, features: newFeatures });
   };
 
@@ -154,9 +154,8 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
             </div>
           </div>
 
-          {/* Features List */}
           <div className="flex-1 space-y-3 mb-6">
-            {features.map((feature, index) => (
+            {features.map((feature: any, index: number) => (
               <div
                 key={index}
                 className="flex items-start gap-3 group/feature relative"

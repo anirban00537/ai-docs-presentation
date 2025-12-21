@@ -5,7 +5,6 @@ import {
   createNumberCardContent,
 } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const FeatureLayout = {
   id: "feature-layout",

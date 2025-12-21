@@ -4,7 +4,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { BlockRenderer } from "./blocks/BlockRenderer";
 import { BlockActionBar } from "./BlockActionBar";
 import { useBlockFocus } from "./BlockFocusContext";
-import type { Block } from "@/types/presentation";
+import type { Block, BlockType } from "@/types/presentation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectTheme,
@@ -122,7 +122,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   }, [dispatch, slideId, rowId, block.id, setFocusedBlock]);
 
   const handleTransform = useCallback(
-    (newType: string) => {
+    (newType: BlockType) => {
       dispatch(transformBlock({ slideId, rowId, blockId: block.id, newType }));
     },
     [dispatch, slideId, rowId, block.id]

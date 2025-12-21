@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createFeatureListContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const FeatureShowcaseLayout = {
   id: "feature-showcase-layout",
@@ -22,18 +21,18 @@ export const FeatureShowcaseLayout = {
     features.features = [
       {
         icon: "🚀",
-        title: createParagraphContent("Deploy Anywhere"),
-        description: createParagraphContent("One-click deployment to AWS, GCP, Azure, or your own metal. We abstract the complexity."),
+        title: "Deploy Anywhere",
+        description: "One-click deployment to AWS, GCP, Azure, or your own metal. We abstract the complexity.",
       },
       {
         icon: "🔒",
-        title: createParagraphContent("Bank-Grade Security"),
-        description: createParagraphContent("End-to-end encryption, role-based access control, and comprehensive audit logs built-in."),
+        title: "Bank-Grade Security",
+        description: "End-to-end encryption, role-based access control, and comprehensive audit logs built-in.",
       },
       {
         icon: "🎨",
-        title: createParagraphContent("Pixel-Perfect Design"),
-        description: createParagraphContent("A component library that looks stunning out of the box, fully customizable to your brand."),
+        title: "Pixel-Perfect Design",
+        description: "A component library that looks stunning out of the box, fully customizable to your brand.",
       },
     ];
     features.layout = "grid";

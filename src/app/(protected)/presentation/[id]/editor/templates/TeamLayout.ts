@@ -5,7 +5,7 @@ import {
   createTeamCardContent,
 } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent, getDefaultHeadingContent } from "@/types/presentation";
+import { getDefaultHeadingContent } from "@/types/presentation";
 
 const createHeading = (text: string, level = 1) => {
   const hashes = "#".repeat(level);
@@ -28,18 +28,18 @@ export const TeamLayout = {
     // Row 2: Three Team Cards
     const member1 = createTeamCardContent();
     member1.name = createHeading("Dr. Elena Foster");
-    member1.role = createParagraphContent("Chief Technology Officer");
-    member1.description = createParagraphContent("PhD in Distributed Systems. Formerly Principal Architect at CloudCorp.");
+    member1.role = "Chief Technology Officer";
+    member1.description = "PhD in Distributed Systems. Formerly Principal Architect at CloudCorp.";
 
     const member2 = createTeamCardContent();
     member2.name = createHeading("James Wu");
-    member2.role = createParagraphContent("Head of Product");
-    member2.description = createParagraphContent("leading product vision and strategy. Previously at StartupX.");
+    member2.role = "Head of Product";
+    member2.description = "leading product vision and strategy. Previously at StartupX.";
 
     const member3 = createTeamCardContent();
     member3.name = createHeading("Sarah Jenkins");
-    member3.role = createParagraphContent("VP of Sales");
-    member3.description = createParagraphContent("Driving growth and customer success. 15 years in Enterprise SaaS.");
+    member3.role = "VP of Sales";
+    member3.description = "Driving growth and customer success. 15 years in Enterprise SaaS.";
 
     return [
       {

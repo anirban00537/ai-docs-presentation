@@ -1,5 +1,5 @@
 import type { ComparisonTableContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import {
   normalizeToMarkdown,
   isLegacyProseMirrorFormat,
@@ -10,65 +10,65 @@ export const createComparisonTableContent = (): ComparisonTableContent => ({
   type: "comparison-table",
   columns: [
     {
-      name: createParagraphContent("Starter"),
-      price: createParagraphContent("Free"),
+      name: "Starter",
+      price: "Free",
     },
     {
-      name: createParagraphContent("Professional"),
-      price: createParagraphContent("$29/mo"),
+      name: "Professional",
+      price: "$29/mo",
     },
     {
-      name: createParagraphContent("Enterprise"),
-      price: createParagraphContent("Custom"),
+      name: "Enterprise",
+      price: "Custom",
     },
   ],
   rows: [
     {
-      feature: createParagraphContent("Team Members"),
+      feature: "Team Members",
       values: [
-        createParagraphContent("Up to 3"),
-        createParagraphContent("Up to 20"),
-        createParagraphContent("Unlimited"),
+        "Up to 3",
+        "Up to 20",
+        "Unlimited",
       ],
     },
     {
-      feature: createParagraphContent("Active Projects"),
+      feature: "Active Projects",
       values: [
-        createParagraphContent("1"),
-        createParagraphContent("Unlimited"),
-        createParagraphContent("Unlimited"),
+        "1",
+        "Unlimited",
+        "Unlimited",
       ],
     },
     {
-      feature: createParagraphContent("Storage"),
+      feature: "Storage",
       values: [
-        createParagraphContent("5GB"),
-        createParagraphContent("100GB"),
-        createParagraphContent("Unlimited"),
+        "5GB",
+        "100GB",
+        "Unlimited",
       ],
     },
     {
-      feature: createParagraphContent("Analytics"),
+      feature: "Analytics",
       values: [false, true, true],
     },
     {
-      feature: createParagraphContent("Custom Domain"),
+      feature: "Custom Domain",
       values: [false, true, true],
     },
     {
-      feature: createParagraphContent("SSO & Advanced Security"),
+      feature: "SSO & Advanced Security",
       values: [false, false, true],
     },
     {
-      feature: createParagraphContent("API Access"),
+      feature: "API Access",
       values: [false, "Basic", "Full Access"],
     },
     {
-      feature: createParagraphContent("Support Priority"),
+      feature: "Support Priority",
       values: [
-        createParagraphContent("Community"),
-        createParagraphContent("Email"),
-        createParagraphContent("24/7 Dedicated"),
+        "Community",
+        "Email",
+        "24/7 Dedicated",
       ],
     },
   ],
@@ -86,13 +86,13 @@ export const normalizeComparisonTableContent = (
           ? col.name
           : isLegacyProseMirrorFormat(col.name)
           ? normalizeToMarkdown(col.name)
-          : createParagraphContent("Plan"),
+          : "Plan",
         price: col.price
           ? isMarkdownFormat(col.price)
             ? col.price
             : isLegacyProseMirrorFormat(col.price)
             ? normalizeToMarkdown(col.price)
-            : createParagraphContent("")
+            : ""
           : undefined,
       })),
       rows: incoming.rows.map((row) => ({
@@ -100,7 +100,7 @@ export const normalizeComparisonTableContent = (
           ? row.feature
           : isLegacyProseMirrorFormat(row.feature)
           ? normalizeToMarkdown(row.feature)
-          : createParagraphContent("Feature"),
+          : "Feature",
         values: (row.values || []).map((val: any) => {
           // Handle values that might be legacy ProseMirrorDocuments
           if (typeof val === "boolean" || typeof val === "string") {

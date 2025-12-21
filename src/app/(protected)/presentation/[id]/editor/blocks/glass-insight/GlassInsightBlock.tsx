@@ -4,7 +4,7 @@ import type { Block, Theme } from "@/types/presentation";
 import {
   type GlassInsightContent,
   createGlassInsightContent,
-} from "../definitions/glass-insight";
+} from "../definitions";
 import EmojiPicker from "emoji-picker-react";
 import {
   Popover,

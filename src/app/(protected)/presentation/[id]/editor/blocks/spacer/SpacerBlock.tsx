@@ -1,6 +1,6 @@
 import React from "react";
 import type { Block, Theme } from "@/types/presentation";
-import { type SpacerContent } from "../definitions/spacer";
+import { type SpacerContent } from "@/types/presentation"; // spacer";
 
 interface SpacerBlockProps {
   block: Block;

@@ -1,10 +1,6 @@
 // ProseMirrorDocument is a Markdown string
 export type ProseMirrorDocument = string;
 
-export const createParagraphContent = (text: string = ""): ProseMirrorDocument => {
-  return text || "";
-};
-
 export const withAlpha = (color: string, opacity: number): string => {
   if (color.startsWith("#")) {
     const r = parseInt(color.slice(1, 3), 16);

@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createFAQContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const FAQLayout = {
   id: "faq-layout",
@@ -21,23 +20,23 @@ export const FAQLayout = {
     const faq = createFAQContent();
     faq.items = [
       {
-        question: createParagraphContent("How secure is the platform?"),
-        answer: createParagraphContent("We are SOC2 Type II, ISO 27001, and GDPR compliant. All data is encrypted at rest and in transit."),
+        question: "How secure is the platform?",
+        answer: "We are SOC2 Type II, ISO 27001, and GDPR compliant. All data is encrypted at rest and in transit.",
         expanded: false,
       },
       {
-        question: createParagraphContent("Can we self-host?"),
-        answer: createParagraphContent("Yes! We offer on-premise deployment via Docker or Kubernetes for our Enterprise customers."),
+        question: "Can we self-host?",
+        answer: "Yes! We offer on-premise deployment via Docker or Kubernetes for our Enterprise customers.",
         expanded: false,
       },
       {
-        question: createParagraphContent("What kind of support is included?"),
-        answer: createParagraphContent("All plans include community support. Pro plans get email priority, and Enterprise gets 24/7 dedicated phone support."),
+        question: "What kind of support is included?",
+        answer: "All plans include community support. Pro plans get email priority, and Enterprise gets 24/7 dedicated phone support.",
         expanded: false,
       },
       {
-        question: createParagraphContent("Do you offer a free trial?"),
-        answer: createParagraphContent("Yes, you can try our Pro plan free for 14 days. No credit card required."),
+        question: "Do you offer a free trial?",
+        answer: "Yes, you can try our Pro plan free for 14 days. No credit card required.",
         expanded: false,
       },
     ];

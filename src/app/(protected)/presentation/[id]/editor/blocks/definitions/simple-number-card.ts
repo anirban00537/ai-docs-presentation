@@ -1,5 +1,5 @@
 import { SimpleNumberCardContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 

@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
-import { createParagraphContent } from "@/types/presentation";
+
 import EmojiPicker from "emoji-picker-react";
 import {
   Popover,
@@ -103,7 +103,7 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
       badges: [
         ...badges,
         {
-          title: createParagraphContent("New Achievement"),
+          title: "New Achievement",
           icon: "🎖️",
           date: new Date().getFullYear().toString(),
         },

@@ -20,7 +20,7 @@ import {
 } from "@/store/slices/slidesSlice";
 import { useAppDispatch } from "@/store/hooks";
 import { LayoutPickerModal } from "./LayoutPickerModal";
-import type { LayoutTemplate } from "./layoutTemplates";
+import type { LayoutTemplate } from "@/types/presentation";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
 

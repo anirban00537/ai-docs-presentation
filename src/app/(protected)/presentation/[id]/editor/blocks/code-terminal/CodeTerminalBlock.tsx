@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import type { Block, Theme } from "@/types/presentation";
-import { type CodeTerminalContent } from "../definitions/code-terminal";
+import { type CodeTerminalContent } from "@/types/presentation"; // code-terminal";
 
 interface CodeTerminalBlockProps {
   block: Block;

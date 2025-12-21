@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createQuoteContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const QuoteLayout = {
   id: "quote-layout",
@@ -19,14 +18,14 @@ export const QuoteLayout = {
 
     // Row 2: Centered Quote
     const quote1 = createQuoteContent();
-    quote1.quote = createParagraphContent("“The best way to predict the future is to create it.”");
-    quote1.author = createParagraphContent("Peter Drucker");
+    quote1.quote = "“The best way to predict the future is to create it.”";
+    quote1.author = "Peter Drucker";
     quote1.style = "centered";
 
     // Row 3: Pull Quote Style
     const quote2 = createQuoteContent();
-    quote2.quote = createParagraphContent("“Culture eats strategy for breakfast.”");
-    quote2.author = createParagraphContent("Peter Drucker");
+    quote2.quote = "“Culture eats strategy for breakfast.”";
+    quote2.author = "Peter Drucker";
     quote2.style = "left-aligned";
 
     return [

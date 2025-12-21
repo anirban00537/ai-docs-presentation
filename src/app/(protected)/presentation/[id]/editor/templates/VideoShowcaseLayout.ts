@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createVideoContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const VideoShowcaseLayout = {
   id: "video-showcase-layout",
@@ -21,7 +20,7 @@ export const VideoShowcaseLayout = {
     const video = createVideoContent();
     video.source = "youtube";
     video.url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Placeholder, but valid URL structure
-    video.title = createParagraphContent("Keynote 2024 Highlights");
+    video.title = "Keynote 2024 Highlights";
 
     return [
       {

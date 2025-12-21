@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import type { Block, Theme } from "@/types/presentation";
-import { type PulseMetricContent } from "../definitions/pulse-metric";
+import { type PulseMetricContent } from "@/types/presentation"; // pulse-metric";
 import {
   AreaChart,
   Area,

@@ -6,7 +6,6 @@ import {
   createCtaContent,
 } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const DocIntroLayout = {
   id: "doc-intro-layout",
@@ -26,29 +25,29 @@ export const DocIntroLayout = {
     sections.features = [
       {
         icon: "🎯",
-        title: createParagraphContent("Strategic Vision"),
-        description: createParagraphContent("To become the market leader in automated workflows by delivering a zero-touch experience for enterprise clients by Q4."),
+        title: "Strategic Vision",
+        description: "To become the market leader in automated workflows by delivering a zero-touch experience for enterprise clients by Q4.",
       },
       {
         icon: "🗺️",
-        title: createParagraphContent("Scope & Deliverables"),
-        description: createParagraphContent("Includes the core platform rebuild, new API gateway, and the customer migration wizard. Out of scope: Legacy mobile app updates."),
+        title: "Scope & Deliverables",
+        description: "Includes the core platform rebuild, new API gateway, and the customer migration wizard. Out of scope: Legacy mobile app updates.",
       },
       {
         icon: "📅",
-        title: createParagraphContent("Timeline & Milestones"),
-        description: createParagraphContent("Phase 1 (Planning): June 1-15. Phase 2 (Dev): June 15 - Aug 15. Phase 3 (QA/Launch): Aug 15 - Sept 1."),
+        title: "Timeline & Milestones",
+        description: "Phase 1 (Planning: June 1-15. Phase 2 (Dev): June 15 - Aug 15. Phase 3 (QA/Launch): Aug 15 - Sept 1.",
       },
       {
         icon: "📊",
-        title: createParagraphContent("Success Metrics"),
-        description: createParagraphContent("Targeting 99.99% uptime, <100ms API latency, and a 20% increase in user retention post-migration."),
+        title: "Success Metrics",
+        description: "Targeting 99.99% uptime, <100ms API latency, and a 20% increase in user retention post-migration.",
       },
     ];
 
     const cta = createCtaContent();
-    cta.heading = createParagraphContent("Ready to proceed?");
-    cta.body = createParagraphContent("Please review the attached technical appendix before signing off on the budget allocation.");
+    cta.heading = "Ready to proceed?";
+    cta.body = "Please review the attached technical appendix before signing off on the budget allocation.";
     cta.buttonLabel = "Approve Project Charter";
 
     return [

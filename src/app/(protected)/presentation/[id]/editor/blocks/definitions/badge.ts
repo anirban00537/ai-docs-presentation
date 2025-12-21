@@ -1,5 +1,5 @@
 import type { BadgeContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import {
   normalizeToMarkdown,
   isLegacyProseMirrorFormat,
@@ -11,14 +11,14 @@ export const createBadgeContent = (): BadgeContent => ({
   badges: [
     {
       icon: "🏆",
-      title: createParagraphContent("Best Product 2024"),
-      issuer: createParagraphContent("Tech Awards"),
+      title: "Best Product 2024",
+      issuer: "Tech Awards",
       date: "2024",
     },
     {
       icon: "⭐",
-      title: createParagraphContent("Top Rated"),
-      issuer: createParagraphContent("Industry Leaders"),
+      title: "Top Rated",
+      issuer: "Industry Leaders",
       date: "2024",
     },
   ],
@@ -36,7 +36,7 @@ export const normalizeBadgeContent = (content: any): BadgeContent => {
           ? badge.title
           : isLegacyProseMirrorFormat(badge.title)
           ? normalizeToMarkdown(badge.title)
-          : createParagraphContent("Award Title"),
+          : "Award Title",
         description: badge.description
           ? isMarkdownFormat(badge.description)
             ? badge.description

@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import type { Row, Block } from "@/types/presentation";
-import type { LayoutTemplate } from "../layoutTemplates";
+import type { LayoutTemplate } from "@/types/presentation";
 import { BLOCK_TYPES } from "../blocks/definitions";
 
 export const SummaryLayout: LayoutTemplate = {

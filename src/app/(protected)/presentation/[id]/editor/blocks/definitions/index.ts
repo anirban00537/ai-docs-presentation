@@ -1,85 +1,61 @@
-// Common exports
+import { BlockType, BlockContent, BLOCK_TYPES, getDefaultHeadingContent } from "@/types/presentation";
+
+// Export everything from types
 export * from "@/types/presentation";
-import { BlockType, BlockContent } from "@/types/presentation";
 
-// Block type exports
-export * from "./simple-number-card";
-export * from "./code-terminal";
-export * from "./pulse-metric";
-export * from "./glass-insight";
-export * from "./spacer";
-export * from "./number-card";
-export * from "./testimonial";
-export * from "./cta";
-export * from "./quote";
-export * from "./timeline";
-export * from "./team-card";
-export * from "./pricing-card";
-export * from "./image-gallery";
-export * from "./image";
-export * from "./stats-counter";
-export * from "./feature-list";
-export * from "./comparison-table";
-export * from "./faq";
-export * from "./logo-grid";
-export * from "./video";
-export * from "./code";
-export * from "./progress-bar";
-export * from "./social-proof";
-export * from "./badge";
+// Individual block definitions
+import { createNumberCardContent, normalizeNumberCardContent, getDefaultNumberCardEditorContent } from "./number-card";
+import { createTestimonialContent, normalizeTestimonialContent } from "./testimonial";
+import { createCtaContent, normalizeCtaContent } from "./cta";
+import { createQuoteContent, normalizeQuoteContent } from "./quote";
+import { createTimelineContent, normalizeTimelineContent } from "./timeline";
+import { createTeamCardContent, normalizeTeamCardContent } from "./team-card";
+import { createPricingCardContent, normalizePricingCardContent } from "./pricing-card";
+import { createImageGalleryContent, normalizeImageGalleryContent } from "./image-gallery";
+import { createImageContent, normalizeImageContent } from "./image";
+import { createStatsCounterContent, normalizeStatsCounterContent } from "./stats-counter";
+import { createFeatureListContent, normalizeFeatureListContent } from "./feature-list";
+import { createComparisonTableContent, normalizeComparisonTableContent } from "./comparison-table";
+import { createFAQContent, normalizeFAQContent } from "./faq";
+import { createLogoGridContent, normalizeLogoGridContent } from "./logo-grid";
+import { createVideoContent, normalizeVideoContent } from "./video";
+import { createCodeContent, normalizeCodeContent } from "./code";
+import { createProgressBarContent, normalizeProgressBarContent } from "./progress-bar";
+import { createSocialProofContent, normalizeSocialProofContent } from "./social-proof";
+import { createBadgeContent, normalizeBadgeContent } from "./badge";
+import { createSimpleNumberCardContent, normalizeSimpleNumberCardContent } from "./simple-number-card";
+import { createCodeTerminalContent, normalizeCodeTerminalContent } from "./code-terminal";
+import { createPulseMetricContent, normalizePulseMetricContent } from "./pulse-metric";
+import { createGlassInsightContent, normalizeGlassInsightContent } from "./glass-insight";
+import { createSpacerContent, normalizeSpacerContent } from "./spacer";
 
-// Factory functions
-import { getDefaultHeadingContent } from "@/types/presentation";
-import { createNumberCardContent } from "./number-card";
-import { createTestimonialContent } from "./testimonial";
-import { createCtaContent } from "./cta";
-import { createQuoteContent } from "./quote";
-import { createTimelineContent } from "./timeline";
-import { createTeamCardContent } from "./team-card";
-import { createPricingCardContent } from "./pricing-card";
-import { createImageGalleryContent } from "./image-gallery";
-import { createImageContent } from "./image";
-import { createStatsCounterContent } from "./stats-counter";
-import { createFeatureListContent } from "./feature-list";
-import { createComparisonTableContent } from "./comparison-table";
-import { createFAQContent } from "./faq";
-import { createLogoGridContent } from "./logo-grid";
-import { createVideoContent } from "./video";
-import { createCodeContent } from "./code";
-import { createProgressBarContent } from "./progress-bar";
-import { createSocialProofContent } from "./social-proof";
-import { createBadgeContent } from "./badge";
-import { createSimpleNumberCardContent } from "./simple-number-card";
-import { createCodeTerminalContent } from "./code-terminal";
-import { createPulseMetricContent } from "./pulse-metric";
-import { createGlassInsightContent } from "./glass-insight";
-import { BLOCK_TYPES } from "@/types/presentation";
-
-// Normalization functions
-import { normalizeNumberCardContent } from "./number-card";
-import { normalizeTestimonialContent } from "./testimonial";
-import { normalizeCtaContent } from "./cta";
-import { normalizeQuoteContent } from "./quote";
-import { normalizeTimelineContent } from "./timeline";
-import { normalizeTeamCardContent } from "./team-card";
-import { normalizePricingCardContent } from "./pricing-card";
-import { normalizeImageGalleryContent } from "./image-gallery";
-import { normalizeImageContent } from "./image";
-import { normalizeStatsCounterContent } from "./stats-counter";
-import { normalizeFeatureListContent } from "./feature-list";
-import { normalizeComparisonTableContent } from "./comparison-table";
-import { normalizeFAQContent } from "./faq";
-import { normalizeLogoGridContent } from "./logo-grid";
-import { normalizeVideoContent } from "./video";
-import { normalizeCodeContent } from "./code";
-import { normalizeProgressBarContent } from "./progress-bar";
-import { normalizeSocialProofContent } from "./social-proof";
-import { normalizeBadgeContent } from "./badge";
-import { normalizeSimpleNumberCardContent } from "./simple-number-card";
-import { normalizeCodeTerminalContent } from "./code-terminal";
-import { normalizePulseMetricContent } from "./pulse-metric";
-import { normalizeGlassInsightContent } from "./glass-insight";
-
+// Re-export factories and normalizers
+export {
+  createNumberCardContent, normalizeNumberCardContent, getDefaultNumberCardEditorContent,
+  createTestimonialContent, normalizeTestimonialContent,
+  createCtaContent, normalizeCtaContent,
+  createQuoteContent, normalizeQuoteContent,
+  createTimelineContent, normalizeTimelineContent,
+  createTeamCardContent, normalizeTeamCardContent,
+  createPricingCardContent, normalizePricingCardContent,
+  createImageGalleryContent, normalizeImageGalleryContent,
+  createImageContent, normalizeImageContent,
+  createStatsCounterContent, normalizeStatsCounterContent,
+  createFeatureListContent, normalizeFeatureListContent,
+  createComparisonTableContent, normalizeComparisonTableContent,
+  createFAQContent, normalizeFAQContent,
+  createLogoGridContent, normalizeLogoGridContent,
+  createVideoContent, normalizeVideoContent,
+  createCodeContent, normalizeCodeContent,
+  createProgressBarContent, normalizeProgressBarContent,
+  createSocialProofContent, normalizeSocialProofContent,
+  createBadgeContent, normalizeBadgeContent,
+  createSimpleNumberCardContent, normalizeSimpleNumberCardContent,
+  createCodeTerminalContent, normalizeCodeTerminalContent,
+  createPulseMetricContent, normalizePulseMetricContent,
+  createGlassInsightContent, normalizeGlassInsightContent,
+  createSpacerContent, normalizeSpacerContent,
+};
 
 import {
   normalizeToMarkdown,
@@ -137,6 +113,8 @@ export const createBlockContentForType = (
       return createPulseMetricContent();
     case BLOCK_TYPES.GLASS_INSIGHT:
       return createGlassInsightContent();
+    case BLOCK_TYPES.SPACER:
+      return createSpacerContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return getDefaultHeadingContent();
@@ -194,17 +172,14 @@ export const normalizeBlockContent = (
       return normalizePulseMetricContent(content);
     case BLOCK_TYPES.GLASS_INSIGHT:
       return normalizeGlassInsightContent(content);
+    case BLOCK_TYPES.SPACER:
+      return normalizeSpacerContent(content);
     default:
-      // Default to prose content (prosemirror blocks)
-      // Handle both Markdown string (new format) and legacy JSON object
       if (isMarkdownFormat(content)) {
-        // Already in Markdown format
         return content;
       } else if (isLegacyProseMirrorFormat(content)) {
-        // Legacy JSON format - convert to Markdown
         return normalizeToMarkdown(content);
       }
-      // Invalid or empty content - return default
       return getDefaultHeadingContent();
   }
 };

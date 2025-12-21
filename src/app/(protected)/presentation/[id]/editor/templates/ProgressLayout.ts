@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createProgressBarContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const ProgressLayout = {
   id: "progress-layout",
@@ -21,22 +20,22 @@ export const ProgressLayout = {
     const progress = createProgressBarContent();
     progress.items = [
       {
-        label: createParagraphContent("Database Migration"),
+        label: "Database Migration",
         value: 92,
         color: "#3b82f6",
       },
       {
-        label: createParagraphContent("Frontend Refactor"),
+        label: "Frontend Refactor",
         value: 68,
         color: "#10b981",
       },
       {
-        label: createParagraphContent("Legacy Decommission"),
+        label: "Legacy Decommission",
         value: 45,
         color: "#f59e0b",
       },
       {
-        label: createParagraphContent("Team Training"),
+        label: "Team Training",
         value: 15,
         color: "#8b5cf6",
       },

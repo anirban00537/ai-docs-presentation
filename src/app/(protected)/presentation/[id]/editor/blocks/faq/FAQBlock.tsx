@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { createParagraphContent } from "@/types/presentation";
+
 import {
   Select,
   SelectContent,
@@ -87,8 +87,8 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
       items: [
         ...items,
         {
-          question: createParagraphContent("New Question"),
-          answer: createParagraphContent("New Answer"),
+          question: "New Question",
+          answer: "New Answer",
           expanded: true,
         },
       ],

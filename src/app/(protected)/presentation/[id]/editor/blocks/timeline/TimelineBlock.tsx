@@ -8,7 +8,6 @@ import {
 } from "../definitions";
 import { TimelineStepComponent } from "./TimelineStep";
 import { BlockWrapper } from "../BlockWrapper";
-import { createParagraphContent } from "@/types/presentation";
 
 interface TimelineBlockProps {
   block: Block;
@@ -83,8 +82,8 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
       steps: [
         ...steps,
         {
-          title: createParagraphContent("New Step"),
-          description: createParagraphContent("Description for the new step"),
+          title: "New Step",
+          description: "Description for the new step",
           icon: "📌",
         },
       ],

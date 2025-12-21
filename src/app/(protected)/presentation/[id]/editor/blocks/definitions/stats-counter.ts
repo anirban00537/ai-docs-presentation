@@ -1,5 +1,5 @@
 import type { StatsCounterContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
@@ -11,13 +11,13 @@ export const createStatsCounterContent = (): StatsCounterContent => ({
   stats: [
     {
       value: 10000,
-      label: createParagraphContent("Active Users"),
+      label: "Active Users",
       icon: "👥",
       suffix: "+",
     },
     {
       value: 99,
-      label: createParagraphContent("Uptime"),
+      label: "Uptime",
       icon: "⚡",
       suffix: "%",
     },
@@ -39,7 +39,7 @@ export const normalizeStatsCounterContent = (
           ? stat.label
           : isLegacyProseMirrorFormat(stat.label)
           ? normalizeToMarkdown(stat.label)
-          : createParagraphContent("Label"),
+          : "Label",
         icon: stat.icon ?? "",
         prefix: stat.prefix ?? "",
         suffix: stat.suffix ?? "",

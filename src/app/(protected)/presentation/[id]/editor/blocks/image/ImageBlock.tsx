@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from "react";
 import type { Block, Theme } from "@/types/presentation";
-import { type ImageContent } from "../definitions/image";
+import { type ImageContent } from "@/types/presentation"; // image";
 import { IconPhoto, IconExternalLink } from "@tabler/icons-react";
 import { X, Search, Upload, Loader2, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";

@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createLogoGridContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const PartnersLayout = {
   id: "partners-layout",
@@ -21,27 +20,27 @@ export const PartnersLayout = {
     const logos = createLogoGridContent();
     logos.logos = [
       {
-        name: createParagraphContent("Acme Corp"),
+        name: "Acme Corp",
         link: "https://example.com",
       },
       {
-        name: createParagraphContent("Globex"),
+        name: "Globex",
         link: "https://example.com",
       },
       {
-        name: createParagraphContent("Initech"),
+        name: "Initech",
         link: "https://example.com",
       },
       {
-        name: createParagraphContent("Soylent"),
+        name: "Soylent",
         link: "https://example.com",
       },
       {
-        name: createParagraphContent("Umbrella"),
+        name: "Umbrella",
         link: "https://example.com",
       },
       {
-        name: createParagraphContent("Cyberdyne"),
+        name: "Cyberdyne",
         link: "https://example.com",
       },
     ];

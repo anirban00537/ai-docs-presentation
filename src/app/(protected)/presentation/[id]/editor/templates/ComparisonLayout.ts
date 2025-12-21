@@ -5,7 +5,6 @@ import {
   createComparisonTableContent,
 } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const ComparisonLayout = {
   id: "comparison-layout",
@@ -25,37 +24,37 @@ export const ComparisonLayout = {
     const comparison = createComparisonTableContent();
     comparison.columns = [
       {
-        name: createParagraphContent("Basic"),
-        price: createParagraphContent("$0/mo"),
+        name: "Basic",
+        price: "$0/mo",
       },
       {
-        name: createParagraphContent("Pro"),
-        price: createParagraphContent("$49/mo"),
+        name: "Pro",
+        price: "$49/mo",
       },
       {
-        name: createParagraphContent("Enterprise"),
-        price: createParagraphContent("Custom"),
+        name: "Enterprise",
+        price: "Custom",
       },
     ];
     comparison.rows = [
       {
-        feature: createParagraphContent("Team Members"),
+        feature: "Team Members",
         values: ["Up to 3", "Up to 20", "Unlimited"],
       },
       {
-        feature: createParagraphContent("Cloud Storage"),
+        feature: "Cloud Storage",
         values: ["10GB", "1TB", "Unlimited"],
       },
       {
-        feature: createParagraphContent("API Access"),
+        feature: "API Access",
         values: ["Limit: 1k/day", "Limit: 50k/day", "Unlimited"],
       },
       {
-        feature: createParagraphContent("SLA Guarantee"),
+        feature: "SLA Guarantee",
         values: [false, "99.9%", "99.99% + Credits"],
       },
       {
-        feature: createParagraphContent("Support"),
+        feature: "Support",
         values: ["Community", "Email (4hr)", "24/7 Phone"],
       },
     ];

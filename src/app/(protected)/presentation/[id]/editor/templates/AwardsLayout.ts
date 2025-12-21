@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createBadgeContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const AwardsLayout = {
   id: "awards-layout",
@@ -22,20 +21,20 @@ export const AwardsLayout = {
     badges.badges = [
       {
         icon: "🏆",
-        title: createParagraphContent("Innovation of the Year"),
-        issuer: createParagraphContent("Gartner Magic Quadrant"),
+        title: "Innovation of the Year",
+        issuer: "Gartner Magic Quadrant",
         date: "2024",
       },
       {
         icon: "⭐",
-        title: createParagraphContent("Leader in Enterprise"),
-        issuer: createParagraphContent("G2 Crowd"),
+        title: "Leader in Enterprise",
+        issuer: "G2 Crowd",
         date: "2024",
       },
       {
         icon: "🎖️",
-        title: createParagraphContent("Best Security Solution"),
-        issuer: createParagraphContent("TechCrunch Disrupt"),
+        title: "Best Security Solution",
+        issuer: "TechCrunch Disrupt",
         date: "2023",
       },
     ];

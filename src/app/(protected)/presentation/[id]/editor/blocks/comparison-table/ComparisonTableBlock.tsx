@@ -7,7 +7,6 @@ import {
 } from "../definitions";
 import { IconCheck, IconX, IconTrash, IconPlus } from "@tabler/icons-react";
 import { BlockWrapper } from "../BlockWrapper";
-import { createParagraphContent } from "@/types/presentation";
 
 interface ComparisonTableBlockProps {
   block: Block;
@@ -94,10 +93,10 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
           blockId={`${block.id}-value-${rowIndex}-${colIndex}`}
           value={
             typeof value === "string"
-              ? createParagraphContent(value)
+              ? value
               : typeof value === "object" && value !== null
               ? value
-              : createParagraphContent("")
+              : ""
           }
           onChange={(newContent) =>
             handleValueChange(rowIndex, colIndex, newContent)
@@ -127,13 +126,13 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
     const newColumns = [
       ...columns,
       {
-        name: createParagraphContent("New Plan"),
-        price: createParagraphContent("$0"),
+        name: "New Plan",
+        price: "$0",
       },
     ];
     const newRows = rows.map((row) => ({
       ...row,
-      values: [...row.values, createParagraphContent("Value")],
+      values: [...row.values, "Value"],
     }));
     onUpdate({ ...content, columns: newColumns, rows: newRows });
   }, [columns, rows, content, onUpdate]);
@@ -142,8 +141,8 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
     const newRows = [
       ...rows,
       {
-        feature: createParagraphContent("New Feature"),
-        values: columns.map(() => createParagraphContent("Value")),
+        feature: "New Feature",
+        values: columns.map(() => "Value"),
       },
     ];
     onUpdate({ ...content, rows: newRows });
@@ -222,7 +221,6 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
                       borderBottom: `1px solid ${theme.primary}10`,
                     }}
                   >
-
 
                     <button
                       onClick={(e) => {

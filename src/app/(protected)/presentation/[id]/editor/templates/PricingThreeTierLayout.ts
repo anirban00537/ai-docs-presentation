@@ -1,9 +1,8 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import type { LayoutTemplate } from "../layoutTemplates";
+import type { LayoutTemplate } from "@/types/presentation";
 import { BLOCK_TYPES, createPricingCardContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const PricingThreeTierLayout: LayoutTemplate = {
   id: "pricing-three-tier-layout",
@@ -56,10 +55,10 @@ export const PricingThreeTierLayout: LayoutTemplate = {
         }
     ].map((tier) => {
       const plan = createPricingCardContent();
-      plan.planName = createParagraphContent(tier.name);
-      plan.price = createParagraphContent(tier.price);
+      plan.planName = tier.name;
+      plan.price = tier.price;
       plan.features = tier.features.map(f => ({
-          text: createParagraphContent(f.text),
+          text: f.text,
           included: f.included
       }));
       plan.buttonLabel = tier.btn;

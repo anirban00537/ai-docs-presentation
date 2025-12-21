@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createStatsCounterContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const StatsLayout = {
   id: "stats-layout",
@@ -22,19 +21,19 @@ export const StatsLayout = {
     stats.stats = [
       {
         value: 50000,
-        label: createParagraphContent("Requests / Sec"),
+        label: "Requests / Sec",
         icon: "⚡",
         suffix: "+",
       },
       {
         value: 35,
-        label: createParagraphContent("Global Regions"),
+        label: "Global Regions",
         icon: "🌍",
         suffix: "",
       },
       {
         value: 99,
-        label: createParagraphContent("Uptime Guarantee"),
+        label: "Uptime Guarantee",
         icon: "🛡️",
         suffix: ".99%",
       },

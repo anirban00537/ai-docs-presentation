@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
-import { createParagraphContent } from "@/types/presentation";
+
 import EmojiPicker from "emoji-picker-react";
 import {
   Popover,
@@ -125,7 +125,7 @@ export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
         ...stats,
         {
           value: 100,
-          label: createParagraphContent("New Stat"),
+          label: "New Stat",
           icon: "🚀",
           prefix: "",
           suffix: "+",

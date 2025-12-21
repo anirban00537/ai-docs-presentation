@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createFeatureListContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const DiscoveryInsightsLayout = {
   id: "discovery-insights-layout",
@@ -22,31 +21,23 @@ export const DiscoveryInsightsLayout = {
     insights.features = [
       {
         icon: "🧩",
-        title: createParagraphContent("Fragmentation Fatigue"),
-        description: createParagraphContent(
-          "Teams are overwhelmed by using 4+ different tools for the same process. There is a strong desire for consolidation."
-        ),
+        title: "Fragmentation Fatigue",
+        description: "Teams are overwhelmed by using 4+ different tools for the same process. There is a strong desire for consolidation.",
       },
       {
         icon: "⚡",
-        title: createParagraphContent("Speed vs. Quality"),
-        description: createParagraphContent(
-          "Current processes force a trade-off. Stakeholders want 'zero-compromise' velocity without sacrificing review standards."
-        ),
+        title: "Speed vs. Quality",
+        description: "Current processes force a trade-off. Stakeholders want 'zero-compromise' velocity without sacrificing review standards.",
       },
       {
         icon: "🔒",
-        title: createParagraphContent("Security & Compliance"),
-        description: createParagraphContent(
-          "With recent reg changes, manual compliance checks are becoming a major risk factor and bottleneck."
-        ),
+        title: "Security & Compliance",
+        description: "With recent reg changes, manual compliance checks are becoming a major risk factor and bottleneck.",
       },
       {
         icon: "📱",
-        title: createParagraphContent("Mobile Access"),
-        description: createParagraphContent(
-          "Field agents feel disconnected. A mobile-first experience is required to bring them into the digital loop."
-        ),
+        title: "Mobile Access",
+        description: "Field agents feel disconnected. A mobile-first experience is required to bring them into the digital loop.",
       },
     ];
 

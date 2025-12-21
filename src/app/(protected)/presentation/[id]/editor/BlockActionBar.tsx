@@ -11,7 +11,7 @@ import {
   IconGripVertical,
 } from "@tabler/icons-react";
 import { BlockTransformMenu } from "./BlockTransformMenu";
-import type { Block } from "@/types/presentation";
+import type { Block, BlockType } from "@/types/presentation";
 
 interface BlockActionBarProps {
   block: Block;
@@ -20,7 +20,7 @@ interface BlockActionBarProps {
   onDelete: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
-  onTransform: (newType: string) => void;
+  onTransform: (newType: BlockType) => void;
   canMoveUp: boolean;
   canMoveDown: boolean;
   dragHandleProps?: Record<string, any>;

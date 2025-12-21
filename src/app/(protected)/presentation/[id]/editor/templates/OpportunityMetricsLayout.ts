@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createStatsCounterContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const OpportunityMetricsLayout = {
   id: "opportunity-metrics-layout",
@@ -20,19 +19,19 @@ export const OpportunityMetricsLayout = {
     stats.stats = [
       {
         value: 125,
-        label: createParagraphContent("Total Addressable Market"),
+        label: "Total Addressable Market",
         suffix: "B",
         icon: "🌍",
       },
       {
         value: 42,
-        label: createParagraphContent("Year-over-Year Growth"),
+        label: "Year-over-Year Growth",
         suffix: "%",
         icon: "📈",
       },
       {
         value: 10,
-        label: createParagraphContent("Active Early Adopters"),
+        label: "Active Early Adopters",
         suffix: "k+",
         icon: "🚀",
       },

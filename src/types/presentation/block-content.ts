@@ -25,6 +25,7 @@ export interface CodeContent {
   code: string;
   language?: string;
   showLineNumbers?: boolean;
+  theme?: "light" | "dark";
 }
 
 export interface ComparisonColumn {
@@ -73,6 +74,7 @@ export interface FeatureListContent {
   type: "feature-list";
   features: FeatureItem[];
   layout: "grid" | "list";
+  columns?: 2 | 3 | 4;
 }
 
 export interface GlassInsightContent {
@@ -169,7 +171,7 @@ export interface QuoteContent {
   type: "quote";
   quote: ProseMirrorDocument;
   author: ProseMirrorDocument;
-  style?: "centered" | "minimal";
+  style?: "centered" | "minimal" | "left-aligned";
 }
 
 export interface SimpleNumberCardContent {

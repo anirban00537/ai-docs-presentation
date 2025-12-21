@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createQuoteContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const ProblemTwoQuotesLayout = {
   id: "problem-two-quotes-layout",
@@ -17,12 +16,12 @@ export const ProblemTwoQuotesLayout = {
     };
 
     const quote1 = createQuoteContent();
-    quote1.quote = createParagraphContent("“I spend half my day copy-pasting data between three different tools just to get my job done.”");
-    quote1.author = createParagraphContent("Senior Account Executive");
+    quote1.quote = "“I spend half my day copy-pasting data between three different tools just to get my job done.”";
+    quote1.author = "Senior Account Executive";
 
     const quote2 = createQuoteContent();
-    quote2.quote = createParagraphContent("“I can't give the board a reliable forecast because the data is always 48 hours old.”");
-    quote2.author = createParagraphContent("VP of Sales Operations");
+    quote2.quote = "“I can't give the board a reliable forecast because the data is always 48 hours old.”";
+    quote2.author = "VP of Sales Operations";
 
     return [
       {

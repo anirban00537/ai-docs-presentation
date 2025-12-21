@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createTimelineContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const ProcessLayout = {
   id: "process-layout",
@@ -19,26 +18,26 @@ export const ProcessLayout = {
 
     // Row 2: Timeline
     const timeline = createTimelineContent();
-    timeline.title = createParagraphContent("The 4-Step Agile Flow");
+    timeline.title = "The 4-Step Agile Flow";
     timeline.steps = [
       {
-        title: createParagraphContent("Discovery & Audit"),
-        description: createParagraphContent("We interview key stakeholders and audit existing infrastructure to identify gaps and opportunities."),
+        title: "Discovery & Audit",
+        description: "We interview key stakeholders and audit existing infrastructure to identify gaps and opportunities.",
         icon: "🔍",
       },
       {
-        title: createParagraphContent("Architecture & Design"),
-        description: createParagraphContent("We create a comprehensive blueprint, including technical specs, UI/UX mocks, and a data migration plan."),
+        title: "Architecture & Design",
+        description: "We create a comprehensive blueprint, including technical specs, UI/UX mocks, and a data migration plan.",
         icon: "📐",
       },
       {
-        title: createParagraphContent("Development & QA"),
-        description: createParagraphContent("Our engineers build in two-week sprints, with continuous integration and automated testing at every step."),
+        title: "Development & QA",
+        description: "Our engineers build in two-week sprints, with continuous integration and automated testing at every step.",
         icon: "💻",
       },
       {
-        title: createParagraphContent("Launch & Optimization"),
-        description: createParagraphContent("We execute a phased rollout, monitoring performance metrics and gathering user feedback for immediate iteration."),
+        title: "Launch & Optimization",
+        description: "We execute a phased rollout, monitoring performance metrics and gathering user feedback for immediate iteration.",
         icon: "🚀",
       },
     ];

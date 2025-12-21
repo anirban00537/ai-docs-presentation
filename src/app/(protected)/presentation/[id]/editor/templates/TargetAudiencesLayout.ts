@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createFeatureListContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const TargetAudiencesLayout = {
   id: "target-audiences-layout",
@@ -20,23 +19,23 @@ export const TargetAudiencesLayout = {
     audiences.features = [
       {
         icon: "💻",
-        title: createParagraphContent("Engineering Leads"),
-        description: createParagraphContent("Eliminate boilerplate code and reduce technical debt with our standardized SDKs and APIs."),
+        title: "Engineering Leads",
+        description: "Eliminate boilerplate code and reduce technical debt with our standardized SDKs and APIs.",
       },
       {
         icon: "🚀",
-        title: createParagraphContent("Product Managers"),
-        description: createParagraphContent("Accelerate time-to-market by 2x. Ship features, not infrastructure, and iterate based on real user data."),
+        title: "Product Managers",
+        description: "Accelerate time-to-market by 2x. Ship features, not infrastructure, and iterate based on real user data.",
       },
       {
         icon: "💰",
-        title: createParagraphContent("Sales Leaders"),
-        description: createParagraphContent("Unblock deals faster by passing security reviews instantly with our pre-certified compliance module."),
+        title: "Sales Leaders",
+        description: "Unblock deals faster by passing security reviews instantly with our pre-certified compliance module.",
       },
       {
         icon: "👔",
-        title: createParagraphContent("C-Suite"),
-        description: createParagraphContent("Gain real-time visibility into ROI and operational efficiency across the entire global portfolio."),
+        title: "C-Suite",
+        description: "Gain real-time visibility into ROI and operational efficiency across the entire global portfolio.",
       },
     ];
     audiences.layout = "grid";

@@ -5,7 +5,6 @@ import {
   createComparisonTableContent,
 } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const ComparisonOldNewLayout = {
   id: "comparison-old-new-layout",
@@ -22,48 +21,48 @@ export const ComparisonOldNewLayout = {
     const table = createComparisonTableContent();
     table.columns = [
       { 
-        name: createParagraphContent("Legacy Process"), 
-        price: createParagraphContent("High Friction"), 
+        name: "Legacy Process", 
+        price: "High Friction", 
       }, 
       { 
-        name: createParagraphContent("Our Solution"), 
-        price: createParagraphContent("Seamless"), 
+        name: "Our Solution", 
+        price: "Seamless", 
       }
     ];
     table.rows = [
       {
-        feature: createParagraphContent("Data Entry"),
+        feature: "Data Entry",
         values: [
-            createParagraphContent("Manual, error-prone entry across multiple systems."),
-            createParagraphContent("Automated sync with 99.9% accuracy.")
+            "Manual, error-prone entry across multiple systems.",
+            "Automated sync with 99.9% accuracy."
         ],
       },
       {
-        feature: createParagraphContent("Collaboration"),
+        feature: "Collaboration",
         values: [
-            createParagraphContent("Siloed emails and disjointed feedback loops."),
-            createParagraphContent("Real-time commenting in a unified workspace.")
+            "Siloed emails and disjointed feedback loops.",
+            "Real-time commenting in a unified workspace."
         ],
       },
       {
-        feature: createParagraphContent("Visibility"),
+        feature: "Visibility",
         values: [
-            createParagraphContent("Opaque status updates requiring meetings."),
-            createParagraphContent("Live dashboards transparent to all stakeholders.")
+            "Opaque status updates requiring meetings.",
+            "Live dashboards transparent to all stakeholders."
         ],
       },
       {
-        feature: createParagraphContent("Scalability"),
+        feature: "Scalability",
         values: [
-             createParagraphContent("Requires linear headcount growth."),
-             createParagraphContent("Elastic infrastructure that grows with you.")
+             "Requires linear headcount growth.",
+             "Elastic infrastructure that grows with you."
         ],
       },
        {
-        feature: createParagraphContent("Compliance"),
+        feature: "Compliance",
         values: [
-             createParagraphContent("Reactive audits and potential liability."),
-             createParagraphContent("Proactive, automated policy enforcement.")
+             "Reactive audits and potential liability.",
+             "Proactive, automated policy enforcement."
         ],
       },
     ];

@@ -5,7 +5,6 @@ import {
   createPricingCardContent,
 } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 const createHeadingDoc = (text: string, level = 3) => {
   const hashes = "#".repeat(level);
@@ -31,10 +30,10 @@ export const PricingLayout = {
     plan1.price = createHeadingDoc("$15/mo");
     plan1.buttonLabel = "Start Building";
     plan1.features = [
-        { text: createParagraphContent("For personal projects"), included: true },
-        { text: createParagraphContent("5k API Calls/mo"), included: true },
-        { text: createParagraphContent("Community Support"), included: true },
-        { text: createParagraphContent("SLA"), included: false },
+        { text: "For personal projects", included: true },
+        { text: "5k API Calls/mo", included: true },
+        { text: "Community Support", included: true },
+        { text: "SLA", included: false },
     ];
 
     const plan2 = createPricingCardContent();
@@ -42,10 +41,10 @@ export const PricingLayout = {
     plan2.price = createHeadingDoc("$99/mo");
     plan2.buttonLabel = "Scale Up";
     plan2.features = [
-        { text: createParagraphContent("For growing teams"), included: true },
-        { text: createParagraphContent("1M API Calls/mo"), included: true },
-        { text: createParagraphContent("Email Support"), included: true },
-        { text: createParagraphContent("99.9% SLA"), included: true },
+        { text: "For growing teams", included: true },
+        { text: "1M API Calls/mo", included: true },
+        { text: "Email Support", included: true },
+        { text: "99.9% SLA", included: true },
     ];
 
     const plan3 = createPricingCardContent();
@@ -53,12 +52,11 @@ export const PricingLayout = {
     plan3.price = createHeadingDoc("$299/mo");
     plan3.buttonLabel = "Contact Sales";
     plan3.features = [
-        { text: createParagraphContent("For high volume"), included: true },
-        { text: createParagraphContent("Unlimited Calls"), included: true },
-        { text: createParagraphContent("24/7 Phone Support"), included: true },
-        { text: createParagraphContent("Dedicated Manager"), included: true },
+        { text: "For high volume", included: true },
+        { text: "Unlimited Calls", included: true },
+        { text: "24/7 Phone Support", included: true },
+        { text: "Dedicated Manager", included: true },
     ];
-
 
     return [
       {

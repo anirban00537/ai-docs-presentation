@@ -3,7 +3,7 @@ import type { Block, Theme } from "@/types/presentation";
 import {
   type ImageGalleryContent,
   type GalleryImage,
-} from "../definitions/image-gallery";
+} from "@/types/presentation"; // image-gallery";
 import { IconPhoto, IconTrash, IconPlus, IconColumns2, IconColumns3, IconLayoutGrid } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 

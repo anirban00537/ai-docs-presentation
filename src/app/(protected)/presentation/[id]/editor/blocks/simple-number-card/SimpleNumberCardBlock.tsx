@@ -4,7 +4,7 @@ import type { Block, Theme } from "@/types/presentation";
 import {
   type SimpleNumberCardContent,
   createSimpleNumberCardContent,
-} from "../definitions/simple-number-card";
+} from "../definitions";
 
 interface SimpleNumberCardBlockProps {
   block: Block;

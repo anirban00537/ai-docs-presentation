@@ -5,7 +5,6 @@ import {
   createTestimonialContent,
 } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const TestimonialLayout = {
   id: "testimonial-layout",
@@ -22,19 +21,19 @@ export const TestimonialLayout = {
 
     // Row 2: Three Testimonials
     const testimonial1 = createTestimonialContent();
-    testimonial1.quote = createParagraphContent("The best developer experience I've ever seen. It just works.");
-    testimonial1.name = createParagraphContent("Alex Rivera");
-    testimonial1.role = createParagraphContent("Senior Engineer, Stripe");
+    testimonial1.quote = "The best developer experience I've ever seen. It just works.";
+    testimonial1.name = "Alex Rivera";
+    testimonial1.role = "Senior Engineer, Stripe";
 
     const testimonial2 = createTestimonialContent();
-    testimonial2.quote = createParagraphContent("Saved us months of development time. The ROI is immediate.");
-    testimonial2.name = createParagraphContent("Samantha Chen");
-    testimonial2.role = createParagraphContent("CTO, Vercel");
+    testimonial2.quote = "Saved us months of development time. The ROI is immediate.";
+    testimonial2.name = "Samantha Chen";
+    testimonial2.role = "CTO, Vercel";
 
     const testimonial3 = createTestimonialContent();
-    testimonial3.quote = createParagraphContent("Documentation is incredible, and the support is even better.");
-    testimonial3.name = createParagraphContent("Jordan Smith");
-    testimonial3.role = createParagraphContent("Staff Engineer, Linear");
+    testimonial3.quote = "Documentation is incredible, and the support is even better.";
+    testimonial3.name = "Jordan Smith";
+    testimonial3.role = "Staff Engineer, Linear";
 
     return [
       {

@@ -1,5 +1,4 @@
 import { SocialProofContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const createSocialProofContent = (): SocialProofContent => ({
   type: "social-proof",

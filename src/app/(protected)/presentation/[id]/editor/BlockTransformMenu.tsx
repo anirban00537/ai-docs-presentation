@@ -12,12 +12,13 @@ import {
   IconTimeline,
   IconCheck,
 } from "@tabler/icons-react";
+import type { BlockType } from "@/types/presentation";
 
 interface BlockTransformMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (type: string) => void;
-  currentType: string;
+  onSelect: (type: BlockType) => void;
+  currentType: BlockType | string;
   anchorRef: React.RefObject<HTMLButtonElement | null>;
 }
 

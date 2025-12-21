@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
-import { createParagraphContent } from "@/types/presentation";
 
 interface ProgressBarBlockProps {
   block: Block;
@@ -117,7 +116,7 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
       items: [
         ...items,
         {
-          label: createParagraphContent("New Skill"),
+          label: "New Skill",
           value: 50,
           color: theme.primary,
         },

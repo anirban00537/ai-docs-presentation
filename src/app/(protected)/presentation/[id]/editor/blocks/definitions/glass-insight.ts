@@ -1,5 +1,5 @@
 import type { GlassInsightContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
@@ -12,7 +12,7 @@ export const createGlassInsightContent = (
 ): GlassInsightContent => ({
   type: "glass-insight",
   icon,
-  editorContent: createParagraphContent(text),
+  editorContent: text,
 });
 
 export const normalizeGlassInsightContent = (

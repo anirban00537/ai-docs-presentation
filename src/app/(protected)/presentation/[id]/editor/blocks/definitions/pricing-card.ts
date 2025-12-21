@@ -1,18 +1,13 @@
-import { 
-  PricingCardContent, 
-  ProseMirrorDocument, 
-  getDefaultHeadingContent, 
-  createParagraphContent 
-} from "@/types/presentation";
+import { PricingCardContent, ProseMirrorDocument, getDefaultHeadingContent } from "@/types/presentation";
 
 export const createPricingCardContent = (): PricingCardContent => ({
   type: "pricing-card",
   planName: getDefaultHeadingContent(),
   price: getDefaultHeadingContent(),
   features: [
-    { text: createParagraphContent(), included: true },
-    { text: createParagraphContent(), included: true },
-    { text: createParagraphContent(), included: false },
+    { text: "", included: true },
+    { text: "", included: true },
+    { text: "", included: false },
   ],
   buttonLabel: "Choose Plan",
 });
@@ -24,7 +19,7 @@ export const normalizePricingCardContent = (content: any): PricingCardContent =>
     price: content?.price ?? getDefaultHeadingContent(),
     features: Array.isArray(content?.features) 
       ? content.features.map((f: any) => ({
-          text: f?.text ?? createParagraphContent(),
+          text: f?.text ?? "",
           included: f?.included ?? true,
         }))
       : [],

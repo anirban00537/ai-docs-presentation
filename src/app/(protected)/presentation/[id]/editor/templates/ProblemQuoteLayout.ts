@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createQuoteContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const ProblemQuoteLayout = {
   id: "problem-quote-layout",
@@ -17,10 +16,8 @@ export const ProblemQuoteLayout = {
     };
 
     const quote = createQuoteContent();
-    quote.quote = createParagraphContent(
-      "“It takes us 3 weeks to close the monthly books. In today's market, that delay is simply unsustainable. We are flying blind.”"
-    );
-    quote.author = createParagraphContent("CFO, Global Retailer");
+    quote.quote = "“It takes us 3 weeks to close the monthly books. In today's market, that delay is simply unsustainable. We are flying blind.”";
+    quote.author = "CFO, Global Retailer";
 
     return [
       {

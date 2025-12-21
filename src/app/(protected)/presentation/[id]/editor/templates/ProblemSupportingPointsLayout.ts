@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createFeatureListContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const ProblemSupportingPointsLayout = {
   id: "problem-supporting-points-layout",
@@ -20,17 +19,13 @@ export const ProblemSupportingPointsLayout = {
     features.features = [
       {
         icon: "🐌",
-        title: createParagraphContent("Velocity Drag"),
-        description: createParagraphContent(
-          "Every new feature requires weeks of manual regression testing, killing momentum and delaying time-to-revenue."
-        ),
+        title: "Velocity Drag",
+        description: "Every new feature requires weeks of manual regression testing, killing momentum and delaying time-to-revenue.",
       },
       {
         icon: "💸",
-        title: createParagraphContent("Cost of Maintenance"),
-        description: createParagraphContent(
-          "80% of engineering budget is spent keeping the lights on, leaving only 20% for actual value creation."
-        ),
+        title: "Cost of Maintenance",
+        description: "80% of engineering budget is spent keeping the lights on, leaving only 20% for actual value creation.",
       },
     ];
     features.layout = "grid";

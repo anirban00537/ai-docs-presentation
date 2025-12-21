@@ -1,5 +1,5 @@
 import type { TestimonialContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
@@ -8,7 +8,7 @@ import {
 
 export const createTestimonialContent = (): TestimonialContent => ({
   type: "testimonial",
-  quote: createParagraphContent(),
+  quote: "",
   name: "Jane Doe",
   role: "Product Manager",
   avatar: "",

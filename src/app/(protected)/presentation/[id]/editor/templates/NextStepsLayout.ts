@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createTimelineContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const NextStepsLayout = {
   id: "next-steps-layout",
@@ -20,23 +19,23 @@ export const NextStepsLayout = {
     timeline.title = undefined;
     timeline.steps = [
       {
-        title: createParagraphContent("Week 1: Kickoff & Strategy"),
-        description: createParagraphContent("Align stakeholders, define success metrics, and finalise technical requirements. Delivery: Project Charter."),
+        title: "Week 1: Kickoff & Strategy",
+        description: "Align stakeholders, define success metrics, and finalise technical requirements. Delivery: Project Charter.",
         icon: "🏁",
       },
       {
-        title: createParagraphContent("Week 2: Integration & Setup"),
-        description: createParagraphContent("Connect data sources, configure RBAC, and set up the sandbox environment. Delivery: Functional Sandbox."),
+        title: "Week 2: Integration & Setup",
+        description: "Connect data sources, configure RBAC, and set up the sandbox environment. Delivery: Functional Sandbox.",
         icon: "🔌",
       },
       {
-        title: createParagraphContent("Week 3: Training & UAT"),
-        description: createParagraphContent("Train power users and conduct User Acceptance Testing. Gather feedback and refine. Delivery: UAT Sign-off."),
+        title: "Week 3: Training & UAT",
+        description: "Train power users and conduct User Acceptance Testing. Gather feedback and refine. Delivery: UAT Sign-off.",
         icon: "👨‍🏫",
       },
       {
-        title: createParagraphContent("Week 4: Go Live!"),
-        description: createParagraphContent("Full production launch, post-launch hypercare support, and celebration. Delivery: Live System."),
+        title: "Week 4: Go Live!",
+        description: "Full production launch, post-launch hypercare support, and celebration. Delivery: Live System.",
         icon: "🚀",
       },
     ];

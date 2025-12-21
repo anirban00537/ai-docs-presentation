@@ -1,5 +1,5 @@
 import type { FAQContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
@@ -10,17 +10,13 @@ export const createFAQContent = (): FAQContent => ({
   type: "faq",
   items: [
     {
-      question: createParagraphContent("How does it work?"),
-      answer: createParagraphContent(
-        "It's simple and straightforward. Just follow the steps outlined in our documentation."
-      ),
+      question: "How does it work?",
+      answer: "It's simple and straightforward. Just follow the steps outlined in our documentation.",
       expanded: false,
     },
     {
-      question: createParagraphContent("What are the pricing plans?"),
-      answer: createParagraphContent(
-        "We offer flexible pricing plans to suit your needs. Check our pricing page for details."
-      ),
+      question: "What are the pricing plans?",
+      answer: "We offer flexible pricing plans to suit your needs. Check our pricing page for details.",
       expanded: false,
     },
   ],
@@ -37,12 +33,12 @@ export const normalizeFAQContent = (content: any): FAQContent => {
           ? item.question
           : isLegacyProseMirrorFormat(item.question)
           ? normalizeToMarkdown(item.question)
-          : createParagraphContent("Question?"),
+          : "Question?",
         answer: isMarkdownFormat(item.answer)
           ? item.answer
           : isLegacyProseMirrorFormat(item.answer)
           ? normalizeToMarkdown(item.answer)
-          : createParagraphContent("Answer here..."),
+          : "Answer here...",
         expanded: item.expanded ?? false,
       })),
       style: incoming.style ?? "accordion",

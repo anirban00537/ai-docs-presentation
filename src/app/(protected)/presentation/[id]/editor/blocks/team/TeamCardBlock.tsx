@@ -4,7 +4,7 @@ import type { Block, Theme } from "@/types/presentation";
 import {
   createTeamCardContent,
   type TeamCardContent,
-} from "../definitions/team-card";
+} from "../definitions";
 import {
   IconUser,
   IconBrandLinkedin,

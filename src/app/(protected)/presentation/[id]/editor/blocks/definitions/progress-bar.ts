@@ -1,5 +1,5 @@
 import type { ProgressBarContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
@@ -10,12 +10,12 @@ export const createProgressBarContent = (): ProgressBarContent => ({
   type: "progress-bar",
   items: [
     {
-      label: createParagraphContent("Design"),
+      label: "Design",
       value: 85,
       color: "#3b82f6",
     },
     {
-      label: createParagraphContent("Development"),
+      label: "Development",
       value: 60,
       color: "#10b981",
     },
@@ -36,7 +36,7 @@ export const normalizeProgressBarContent = (
           ? item.label
           : isLegacyProseMirrorFormat(item.label)
           ? normalizeToMarkdown(item.label)
-          : createParagraphContent("Label"),
+          : "Label",
         value: Math.min(100, Math.max(0, item.value ?? 0)),
         color: item.color,
       })),

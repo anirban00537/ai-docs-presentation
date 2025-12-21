@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createFeatureListContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const ServicesListLayout = {
   id: "services-list-layout",
@@ -20,33 +19,33 @@ export const ServicesListLayout = {
     features.features = [
       {
         icon: "🧭",
-        title: createParagraphContent("Strategic Advisory"),
-        description: createParagraphContent("Expert guidance on roadmap planning, digital transformation strategy, and change management."),
+        title: "Strategic Advisory",
+        description: "Expert guidance on roadmap planning, digital transformation strategy, and change management.",
       },
       {
         icon: "⚙️",
-        title: createParagraphContent("Seamless Integration"),
-        description: createParagraphContent("Pre-built connectors for Salesforce, SAP, and legacy mainframes. We handle the plumbing."),
+        title: "Seamless Integration",
+        description: "Pre-built connectors for Salesforce, SAP, and legacy mainframes. We handle the plumbing.",
       },
       {
         icon: "📊",
-        title: createParagraphContent("Data Optimization"),
-        description: createParagraphContent("Cleanse, enrich, and structure your data to unlock actionable insights from day one."),
+        title: "Data Optimization",
+        description: "Cleanse, enrich, and structure your data to unlock actionable insights from day one.",
       },
       {
         icon: "🔒",
-        title: createParagraphContent("Enterprise Security"),
-        description: createParagraphContent("SOC2 Type II compliant, SSO ready, and fully auditable access logs for your compliance team."),
+        title: "Enterprise Security",
+        description: "SOC2 Type II compliant, SSO ready, and fully auditable access logs for your compliance team.",
       },
       {
         icon: "🎨",
-        title: createParagraphContent("Custom Development"),
-        description: createParagraphContent("Need something unique? Our solutions engineering team builds bespoke modules to fit your niche."),
+        title: "Custom Development",
+        description: "Need something unique? Our solutions engineering team builds bespoke modules to fit your niche.",
       },
       {
         icon: "🤝",
-        title: createParagraphContent("24/7 Dedicated Support"),
-        description: createParagraphContent("Round-the-clock access to senior engineers, not just a helpdesk script. We are your partners."),
+        title: "24/7 Dedicated Support",
+        description: "Round-the-clock access to senior engineers, not just a helpdesk script. We are your partners.",
       },
     ];
     features.layout = "grid";

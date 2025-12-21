@@ -6,7 +6,6 @@ import {
   createTestimonialContent,
 } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
 
 export const CustomerStoriesLayout = {
   id: "customer-stories-layout",
@@ -24,31 +23,31 @@ export const CustomerStoriesLayout = {
     timeline.title = undefined;
     timeline.steps = [
       {
-        title: createParagraphContent("The Challenge"),
-        description: createParagraphContent("Acme Corp faced fragmented data across 12 regions, leading to a 2-week delay in monthly reporting and strategic blind spots."),
+        title: "The Challenge",
+        description: "Acme Corp faced fragmented data across 12 regions, leading to a 2-week delay in monthly reporting and strategic blind spots.",
         icon: "🔥",
       },
       {
-        title: createParagraphContent("The Solution"),
-        description: createParagraphContent("They unified their data pipeline using our Enterprise Connect platform, creating a single source of truth for all regional KPIs."),
+        title: "The Solution",
+        description: "They unified their data pipeline using our Enterprise Connect platform, creating a single source of truth for all regional KPIs.",
         icon: "💡",
       },
       {
-        title: createParagraphContent("Implementation"),
-        description: createParagraphContent("Deployed in just 6 weeks with zero downtime. 500+ users onboarded with role-based access control."),
+        title: "Implementation",
+        description: "Deployed in just 6 weeks with zero downtime. 500+ users onboarded with role-based access control.",
         icon: "🚀",
       },
       {
-        title: createParagraphContent("The Outcome"),
-        description: createParagraphContent("Real-time visibility into global ops. 30% OpEx reduction and 4x faster decision-making cycles."),
+        title: "The Outcome",
+        description: "Real-time visibility into global ops. 30% OpEx reduction and 4x faster decision-making cycles.",
         icon: "📈",
       },
     ];
 
     const testimonial = createTestimonialContent();
-    testimonial.quote = createParagraphContent("“This transformation wasn't just about software; it was about giving our leaders the confidence to move fast. best investment we made this year.”");
-    testimonial.name = createParagraphContent("Elena K.");
-    testimonial.role = createParagraphContent("Global VP of Operations, Acme Corp");
+    testimonial.quote = "“This transformation wasn't just about software; it was about giving our leaders the confidence to move fast. best investment we made this year.”";
+    testimonial.name = "Elena K.";
+    testimonial.role = "Global VP of Operations, Acme Corp";
     testimonial.avatar = "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=faces";
 
     return [

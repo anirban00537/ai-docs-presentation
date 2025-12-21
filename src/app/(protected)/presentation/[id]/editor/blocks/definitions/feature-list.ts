@@ -1,5 +1,5 @@
 import type { FeatureListContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
@@ -11,17 +11,13 @@ export const createFeatureListContent = (): FeatureListContent => ({
   features: [
     {
       icon: "🚀",
-      title: createParagraphContent("Fast Performance"),
-      description: createParagraphContent(
-        "Lightning fast performance with optimized code"
-      ),
+      title: "Fast Performance",
+      description: "Lightning fast performance with optimized code",
     },
     {
       icon: "🔒",
-      title: createParagraphContent("Secure"),
-      description: createParagraphContent(
-        "Enterprise-grade security and encryption"
-      ),
+      title: "Secure",
+      description: "Enterprise-grade security and encryption",
     },
   ],
   layout: "grid",
@@ -40,14 +36,15 @@ export const normalizeFeatureListContent = (
           ? feature.title
           : isLegacyProseMirrorFormat(feature.title)
           ? normalizeToMarkdown(feature.title)
-          : createParagraphContent("Feature Title"),
+          : "Feature Title",
         description: isMarkdownFormat(feature.description)
           ? feature.description
           : isLegacyProseMirrorFormat(feature.description)
           ? normalizeToMarkdown(feature.description)
-          : createParagraphContent("Feature description"),
+          : "Feature description",
       })),
       layout: incoming.layout ?? "grid",
+      columns: incoming.columns,
     };
   }
   return createFeatureListContent();

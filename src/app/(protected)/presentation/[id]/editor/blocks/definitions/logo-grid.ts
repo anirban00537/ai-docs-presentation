@@ -1,5 +1,5 @@
 import type { LogoGridContent, ProseMirrorDocument } from "@/types/presentation";
-import { createParagraphContent } from "@/types/presentation";
+
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
@@ -10,15 +10,15 @@ export const createLogoGridContent = (): LogoGridContent => ({
   type: "logo-grid",
   logos: [
     {
-      name: createParagraphContent("Company 1"),
+      name: "Company 1",
       link: "https://example.com",
     },
     {
-      name: createParagraphContent("Company 2"),
+      name: "Company 2",
       link: "https://example.com",
     },
     {
-      name: createParagraphContent("Company 3"),
+      name: "Company 3",
       link: "https://example.com",
     },
   ],
@@ -37,7 +37,7 @@ export const normalizeLogoGridContent = (content: any): LogoGridContent => {
           ? logo.name
           : isLegacyProseMirrorFormat(logo.name)
           ? normalizeToMarkdown(logo.name)
-          : createParagraphContent("Company"),
+          : "Company",
         link: logo.link,
       })),
       columns: incoming.columns ?? 4,

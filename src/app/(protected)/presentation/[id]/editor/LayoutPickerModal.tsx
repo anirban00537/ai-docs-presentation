@@ -9,8 +9,8 @@ import {
 import {
   layoutTemplates,
   layoutIconsMap,
-  type LayoutTemplate,
 } from "./layoutTemplates";
+import type { LayoutTemplate } from "@/types/presentation";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { motion, AnimatePresence } from "framer-motion";

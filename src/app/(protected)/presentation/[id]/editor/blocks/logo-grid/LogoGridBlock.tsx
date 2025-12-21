@@ -23,7 +23,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IconTrash, IconPlus, IconPhoto, IconLink } from "@tabler/icons-react";
-import { createParagraphContent } from "@/types/presentation";
 
 interface LogoGridBlockProps {
   block: Block;
@@ -74,7 +73,7 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
   const addLogo = () => {
     onUpdate({
       ...content,
-      logos: [...logos, { name: createParagraphContent("New Partner"), link: "" }],
+      logos: [...logos, { name: "New Partner", link: "" }],
     });
   };
 
