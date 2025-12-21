@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["nodejs_24"]
+nixPkgs = ["nodejs_22"]
 
 [phases.install]
 cmds = ["npm install --legacy-peer-deps"]
@@ -7,5 +7,9 @@ cmds = ["npm install --legacy-peer-deps"]
 [phases.build]
 cmds = ["npm run build"]
 
+[variables]
+NIXPACKS_NODE_VERSION = "22"
+NODE_ENV = "production"
+
 [start]
-cmd = "npm start" 
+cmd = "npm start"
