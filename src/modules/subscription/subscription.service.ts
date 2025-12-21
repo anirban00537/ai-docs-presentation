@@ -17,6 +17,10 @@ import { ResponseModel } from 'src/shared/models/response.model';
 import { SubscriptionResponseDto } from './dto/subscription-response.dto';
 import { CreditBalanceResponseDto } from './dto/credit-balance-response.dto';
 import { SubscriptionStatusDto } from './dto/subscription-status.dto';
+import {
+  FeatureResponseDto,
+  BenefitResponseDto,
+} from './dto/feature-response.dto';
 
 @Injectable()
 export class SubscriptionService {
@@ -40,10 +44,30 @@ export class SubscriptionService {
       const creditBalance = await this.creditService.getCreditBalance(user.id);
 
       const now = new Date();
-      const isSubscriptionValid = 
-        subscription && 
-        (['active', 'trialing'].includes(subscription.status) || 
-         (subscription.status === 'canceled' && subscription.currentPeriodEnd && new Date(subscription.currentPeriodEnd) > now));
+      const isSubscriptionValid =
+        subscription &&
+        (['active', 'trialing'].includes(subscription.status) ||
+          (subscription.status === 'canceled' &&
+            subscription.currentPeriodEnd &&
+            new Date(subscription.currentPeriodEnd) > now));
+
+      // Fetch product features if subscription has a productId
+      let features: FeatureResponseDto | null = null;
+      if (subscription?.productId && this.polarService.isConfigured()) {
+        try {
+          const product = await this.polarService.getProduct(
+            subscription.productId,
+          );
+          if (product) {
+            features = this.extractFeaturesFromProduct(product);
+          }
+        } catch (error) {
+          this.logger.warn(
+            `Failed to fetch product features for product ${subscription.productId}:`,
+            error,
+          );
+        }
+      }
 
       const status: SubscriptionStatusDto = {
         subscription: subscription
@@ -54,13 +78,51 @@ export class SubscriptionService {
           : null,
         isActive: !!isSubscriptionValid,
         hasCredits:
-          creditBalance !== null &&
-          creditBalance.remainingCredits > 0,
+          creditBalance !== null && creditBalance.remainingCredits > 0,
+        features,
       };
 
       return successResponse(
         'Subscription status retrieved successfully',
         status,
+      );
+    } catch (error) {
+      return processException(error);
+    }
+  }
+
+  /**
+   * Get subscription features for a user
+   */
+  async getSubscriptionFeatures(user: User): Promise<ResponseModel> {
+    try {
+      const subscription = await this.prisma.subscription.findUnique({
+        where: { userId: user.id },
+      });
+
+      if (!subscription?.productId) {
+        return successResponse('No active subscription found', {
+          features: null,
+          message: 'User does not have an active subscription',
+        });
+      }
+
+      if (!this.polarService.isConfigured()) {
+        return errorResponse('Polar.sh is not configured');
+      }
+
+      const product = await this.polarService.getProduct(
+        subscription.productId,
+      );
+      if (!product) {
+        return errorResponse('Product not found');
+      }
+
+      const features = this.extractFeaturesFromProduct(product);
+
+      return successResponse(
+        'Subscription features retrieved successfully',
+        features,
       );
     } catch (error) {
       return processException(error);
@@ -84,40 +146,62 @@ export class SubscriptionService {
       );
 
       if (!customer) {
-        this.logger.error(`Sync error: Failed to find or create Polar customer for user ${user.id} (${user.email})`);
+        this.logger.error(
+          `Sync error: Failed to find or create Polar customer for user ${user.id} (${user.email})`,
+        );
         return errorResponse('Failed to create/get customer in Polar.sh');
       }
 
-      this.logger.log(`Syncing subscription for user ${user.id} (Polar Customer: ${customer.id})`);
+      this.logger.log(
+        `Syncing subscription for user ${user.id} (Polar Customer: ${customer.id})`,
+      );
 
       // Get active subscriptions
       const subscriptionsResponse =
         await this.polarService.getCustomerSubscriptions(customer.id);
-      
-      this.logger.debug(`Polar sync: Found ${JSON.stringify(subscriptionsResponse)} subscriptions for customer ${customer.id}`);
 
-      // Polar SDK returns a paginated response with items array, 
+      this.logger.debug(
+        `Polar sync: Found ${JSON.stringify(subscriptionsResponse)} subscriptions for customer ${customer.id}`,
+      );
+
+      // Polar SDK returns a paginated response with items array,
       // sometimes under .result.items depending on version/method
       let activeSubscription = null;
       if (subscriptionsResponse) {
-        const items = (subscriptionsResponse as any).result?.items || 
-                      (subscriptionsResponse as any).items || [];
-        
+        const items =
+          (subscriptionsResponse as any).result?.items ||
+          (subscriptionsResponse as any).items ||
+          [];
+
         // Find the "best" subscription. Order of preference: active > trialing > cancelling > past_due
         const priority = ['active', 'trialing', 'cancelling', 'past_due'];
-        const validSubs = items.filter((sub: any) => priority.includes(sub.status) || (sub.status === 'canceled' && new Date(sub.current_period_end) > new Date()));
-        
-        this.logger.log(`Found ${items.length} total subscriptions, ${validSubs.length} valid subscriptions for user ${user.id}`);
-        
-        activeSubscription = validSubs.sort((a: any, b: any) => priority.indexOf(a.status) - priority.indexOf(b.status))[0];
-        
+        const validSubs = items.filter(
+          (sub: any) =>
+            priority.includes(sub.status) ||
+            (sub.status === 'canceled' &&
+              new Date(sub.current_period_end) > new Date()),
+        );
+
+        this.logger.log(
+          `Found ${items.length} total subscriptions, ${validSubs.length} valid subscriptions for user ${user.id}`,
+        );
+
+        activeSubscription = validSubs.sort(
+          (a: any, b: any) =>
+            priority.indexOf(a.status) - priority.indexOf(b.status),
+        )[0];
+
         if (activeSubscription) {
-          this.logger.log(`Selected active subscription ${activeSubscription.id} with status ${activeSubscription.status}`);
+          this.logger.log(
+            `Selected active subscription ${activeSubscription.id} with status ${activeSubscription.status}`,
+          );
         }
       }
 
       if (!activeSubscription) {
-        this.logger.warn(`No active subscription found for user ${user.id} in Polar.sh`);
+        this.logger.warn(
+          `No active subscription found for user ${user.id} in Polar.sh`,
+        );
         // No active subscription, mark as inactive in local DB
         await this.prisma.subscription.upsert({
           where: { userId: user.id },
@@ -133,7 +217,9 @@ export class SubscriptionService {
         });
 
         // Reset credits to 10 for inactive users
-        this.logger.log(`Resetting credits to 10 for user ${user.id} due to inactive subscription`);
+        this.logger.log(
+          `Resetting credits to 10 for user ${user.id} due to inactive subscription`,
+        );
         await this.creditService.updateMonthlyLimit(user.id, 10);
 
         return successResponse('Subscription synced successfully', {
@@ -143,12 +229,26 @@ export class SubscriptionService {
 
       // Update or create subscription record
       // Safely extract fields whether they are camelCase (SDK) or snake_case (API)
-      const currentPeriodStart = activeSubscription.currentPeriodStart || activeSubscription.current_period_start;
-      const currentPeriodEnd = activeSubscription.currentPeriodEnd || activeSubscription.current_period_end;
-      const cancelAtPeriodEnd = activeSubscription.cancelAtPeriodEnd ?? activeSubscription.cancel_at_period_end ?? false;
-      const canceledAt = activeSubscription.canceledAt || activeSubscription.canceled_at;
-      const productId = activeSubscription.productId || activeSubscription.product?.id || activeSubscription.product_id;
-      const priceId = activeSubscription.priceId || activeSubscription.price?.id || activeSubscription.price_id;
+      const currentPeriodStart =
+        activeSubscription.currentPeriodStart ||
+        activeSubscription.current_period_start;
+      const currentPeriodEnd =
+        activeSubscription.currentPeriodEnd ||
+        activeSubscription.current_period_end;
+      const cancelAtPeriodEnd =
+        activeSubscription.cancelAtPeriodEnd ??
+        activeSubscription.cancel_at_period_end ??
+        false;
+      const canceledAt =
+        activeSubscription.canceledAt || activeSubscription.canceled_at;
+      const productId =
+        activeSubscription.productId ||
+        activeSubscription.product?.id ||
+        activeSubscription.product_id;
+      const priceId =
+        activeSubscription.priceId ||
+        activeSubscription.price?.id ||
+        activeSubscription.price_id;
 
       const subscription = await this.prisma.subscription.upsert({
         where: { userId: user.id },
@@ -159,8 +259,12 @@ export class SubscriptionService {
           status: activeSubscription.status,
           productId: productId,
           priceId: priceId,
-          currentPeriodStart: currentPeriodStart ? new Date(currentPeriodStart) : null,
-          currentPeriodEnd: currentPeriodEnd ? new Date(currentPeriodEnd) : null,
+          currentPeriodStart: currentPeriodStart
+            ? new Date(currentPeriodStart)
+            : null,
+          currentPeriodEnd: currentPeriodEnd
+            ? new Date(currentPeriodEnd)
+            : null,
           cancelAtPeriodEnd: cancelAtPeriodEnd,
           canceledAt: canceledAt ? new Date(canceledAt) : null,
           metadata: activeSubscription.metadata || {},
@@ -171,8 +275,12 @@ export class SubscriptionService {
           status: activeSubscription.status,
           productId: productId,
           priceId: priceId,
-          currentPeriodStart: currentPeriodStart ? new Date(currentPeriodStart) : null,
-          currentPeriodEnd: currentPeriodEnd ? new Date(currentPeriodEnd) : null,
+          currentPeriodStart: currentPeriodStart
+            ? new Date(currentPeriodStart)
+            : null,
+          currentPeriodEnd: currentPeriodEnd
+            ? new Date(currentPeriodEnd)
+            : null,
           cancelAtPeriodEnd: cancelAtPeriodEnd,
           canceledAt: canceledAt ? new Date(canceledAt) : null,
           metadata: activeSubscription.metadata || {},
@@ -298,8 +406,10 @@ export class SubscriptionService {
    */
   private async handleSubscriptionUpdate(data: any): Promise<void> {
     const polarSubscriptionId = data.id;
-    this.logger.log(`Handling subscription update for Polar ID: ${polarSubscriptionId}`);
-    
+    this.logger.log(
+      `Handling subscription update for Polar ID: ${polarSubscriptionId}`,
+    );
+
     let subscription = await this.prisma.subscription.findUnique({
       where: { polarSubscriptionId },
     });
@@ -333,7 +443,9 @@ export class SubscriptionService {
         return;
       }
 
-      this.logger.log(`Found matching user ${user.id} for Polar subscription ${polarSubscriptionId}`);
+      this.logger.log(
+        `Found matching user ${user.id} for Polar subscription ${polarSubscriptionId}`,
+      );
 
       // Create or update subscription record (use upsert to handle existing subscriptions)
       subscription = await this.prisma.subscription.upsert({
@@ -392,12 +504,16 @@ export class SubscriptionService {
     // Update existing subscription
     const previousStatus = subscription.status;
     const previousProductId = subscription.productId;
-    const previousPeriodStart = subscription.currentPeriodStart ? new Date(subscription.currentPeriodStart).getTime() : 0;
-    
+    const previousPeriodStart = subscription.currentPeriodStart
+      ? new Date(subscription.currentPeriodStart).getTime()
+      : 0;
+
     // Extract new values for comparison
     const newStatus = data.status;
     const newProductId = data.product_id || data.product?.id;
-    const newPeriodStart = data.current_period_start ? new Date(data.current_period_start).getTime() : 0;
+    const newPeriodStart = data.current_period_start
+      ? new Date(data.current_period_start).getTime()
+      : 0;
 
     await this.prisma.subscription.update({
       where: { polarSubscriptionId },
@@ -405,8 +521,12 @@ export class SubscriptionService {
         status: newStatus,
         productId: newProductId,
         priceId: data.price_id || data.price?.id,
-        currentPeriodStart: data.current_period_start ? new Date(data.current_period_start) : null,
-        currentPeriodEnd: data.current_period_end ? new Date(data.current_period_end) : null,
+        currentPeriodStart: data.current_period_start
+          ? new Date(data.current_period_start)
+          : null,
+        currentPeriodEnd: data.current_period_end
+          ? new Date(data.current_period_end)
+          : null,
         cancelAtPeriodEnd: data.cancel_at_period_end || false,
         canceledAt: data.canceled_at ? new Date(data.canceled_at) : null,
         metadata: data.metadata || {},
@@ -414,26 +534,46 @@ export class SubscriptionService {
     });
 
     // --- RENEWAL & PLAN CHANGE LOGIC ---
-    
+
     // 1. Renewal: Period Start moved forward
-    const isRenewal = newPeriodStart > previousPeriodStart && (newStatus === 'active' || newStatus === 'trialing');
-    
+    const isRenewal =
+      newPeriodStart > previousPeriodStart &&
+      (newStatus === 'active' || newStatus === 'trialing');
+
     // 2. Plan Change: Product ID is different
-    const isPlanChange = newProductId !== previousProductId && (newStatus === 'active' || newStatus === 'trialing');
-    
+    const isPlanChange =
+      newProductId !== previousProductId &&
+      (newStatus === 'active' || newStatus === 'trialing');
+
     // 3. Reactivation: Status changed from inactive/past_due to active
-    const isReactivation = (newStatus === 'active' || newStatus === 'trialing') && 
-                          (previousStatus !== 'active' && previousStatus !== 'trialing');
+    const isReactivation =
+      (newStatus === 'active' || newStatus === 'trialing') &&
+      previousStatus !== 'active' &&
+      previousStatus !== 'trialing';
 
     if (isRenewal || isPlanChange || isReactivation) {
-      if (isRenewal) this.logger.log(`Subscription RENEWAL detected for user ${subscription.userId}. Resetting credits.`);
-      if (isPlanChange) this.logger.log(`Subscription PLAN CHANGE detected for user ${subscription.userId}. Updating limit.`);
-      if (isReactivation) this.logger.log(`Subscription REACTIVATION detected for user ${subscription.userId}. Resetting credits.`);
+      if (isRenewal)
+        this.logger.log(
+          `Subscription RENEWAL detected for user ${subscription.userId}. Resetting credits.`,
+        );
+      if (isPlanChange)
+        this.logger.log(
+          `Subscription PLAN CHANGE detected for user ${subscription.userId}. Updating limit.`,
+        );
+      if (isReactivation)
+        this.logger.log(
+          `Subscription REACTIVATION detected for user ${subscription.userId}. Resetting credits.`,
+        );
 
       const monthlyLimit = this.getMonthlyCreditLimit(newProductId, data);
-      await this.creditService.updateMonthlyLimit(subscription.userId, monthlyLimit);
+      await this.creditService.updateMonthlyLimit(
+        subscription.userId,
+        monthlyLimit,
+      );
     } else {
-      this.logger.debug(`Minor subscription update for user ${subscription.userId} (No credit reset required)`);
+      this.logger.debug(
+        `Minor subscription update for user ${subscription.userId} (No credit reset required)`,
+      );
     }
   }
 
@@ -442,15 +582,19 @@ export class SubscriptionService {
    */
   private async handleSubscriptionCanceled(data: any): Promise<void> {
     const polarSubscriptionId = data.id;
-    this.logger.log(`Handling subscription CANCELED/REVOKED: ${polarSubscriptionId}`);
-    
+    this.logger.log(
+      `Handling subscription CANCELED/REVOKED: ${polarSubscriptionId}`,
+    );
+
     // Find the subscription to get the userId
     const subscription = await this.prisma.subscription.findUnique({
       where: { polarSubscriptionId },
     });
 
     if (subscription?.userId) {
-      this.logger.log(`Subscription ${polarSubscriptionId} ended for user ${subscription.userId}. Resetting credits to 10.`);
+      this.logger.log(
+        `Subscription ${polarSubscriptionId} ended for user ${subscription.userId}. Resetting credits to 10.`,
+      );
       await this.creditService.updateMonthlyLimit(subscription.userId, 10);
     }
 
@@ -473,7 +617,9 @@ export class SubscriptionService {
   ): Promise<void> {
     // Handle customer updates if needed
     if (isDeleted) {
-      this.logger.log(`CUSTOMER DELETED: ${data.id}. Marking associated subscriptions as inactive.`);
+      this.logger.log(
+        `CUSTOMER DELETED: ${data.id}. Marking associated subscriptions as inactive.`,
+      );
       // Find subscription for this customer and mark as inactive
       const polarCustomerId = data.id;
       if (polarCustomerId) {
@@ -594,36 +740,167 @@ export class SubscriptionService {
   }
 
   /**
+   * Extract features from Polar product data
+   */
+  private extractFeaturesFromProduct(product: any): FeatureResponseDto {
+    const productAny = product as any;
+
+    // Extract benefits - handle both camelCase and snake_case
+    const benefits: BenefitResponseDto[] = (
+      product.benefits ||
+      productAny.benefits ||
+      []
+    ).map((benefit: any) => {
+      const benefitAny = benefit as any;
+      return {
+        id: benefit.id || benefitAny.id,
+        type: benefit.type || benefitAny.type,
+        description: benefit.description || benefitAny.description,
+        selectable: benefit.selectable ?? benefitAny.selectable ?? true,
+        metadata: benefit.metadata || benefitAny.metadata || {},
+        properties: benefit.properties || benefitAny.properties || {},
+      };
+    });
+
+    // Extract metadata
+    const metadata = product.metadata || productAny.metadata || {};
+
+    // Build feature list from benefits and metadata
+    const features: string[] = [];
+
+    // Add benefit descriptions as features
+    benefits.forEach((benefit) => {
+      if (benefit.description) {
+        features.push(benefit.description);
+      }
+    });
+
+    // Add metadata-based features
+    if (metadata.ai_credits) {
+      features.push(`${metadata.ai_credits} AI Credits per month`);
+    }
+    if (metadata.max_slides) {
+      features.push(`Up to ${metadata.max_slides} Slides per presentation`);
+    }
+    if (metadata.max_presentations || metadata.presentations) {
+      features.push(
+        `Up to ${metadata.max_presentations || metadata.presentations} Presentations`,
+      );
+    }
+    if (
+      metadata.beautiful_ai_images === 'true' ||
+      metadata.ai_images === 'true'
+    ) {
+      features.push('Beautiful AI-Generated Images');
+    }
+    if (metadata.white_label === 'true' || metadata.no_branding === 'true') {
+      features.push('White Label / No Branding');
+    }
+    if (metadata.unlimited_access || metadata.unlimited) {
+      features.push('Unlimited Access');
+    }
+    if (metadata.priority_support || metadata.priority_support === 'true') {
+      features.push('Priority Support');
+    }
+    if (metadata.advanced_features || metadata.advanced === 'true') {
+      features.push('Advanced Features');
+    }
+    if (metadata.api_access || metadata.api === 'true') {
+      features.push('API Access');
+    }
+    if (metadata.custom_templates || metadata.templates) {
+      features.push('Custom Templates');
+    }
+    if (metadata.export_formats) {
+      features.push(`Export Formats: ${metadata.export_formats}`);
+    }
+    if (metadata.storage_gb || metadata.storage) {
+      features.push(`${metadata.storage_gb || metadata.storage} GB Storage`);
+    }
+    if (metadata.collaboration || metadata.team_size) {
+      features.push(
+        `Team Collaboration (${metadata.team_size || 'Unlimited'} members)`,
+      );
+    }
+    if (metadata.branding && metadata.white_label !== 'true') {
+      features.push('Custom Branding');
+    }
+    if (metadata.analytics || metadata.analytics === 'true') {
+      features.push('Advanced Analytics');
+    }
+    if (metadata.webhooks || metadata.webhooks === 'true') {
+      features.push('Webhook Integration');
+    }
+    if (metadata.sso || metadata.single_sign_on) {
+      features.push('Single Sign-On (SSO)');
+    }
+    if (metadata.backup || metadata.backups) {
+      features.push('Automated Backups');
+    }
+    if (metadata.version_history) {
+      features.push(`Version History (${metadata.version_history} versions)`);
+    }
+    if (metadata.plan_name) {
+      features.push(
+        `${metadata.plan_name.charAt(0).toUpperCase() + metadata.plan_name.slice(1)} Plan`,
+      );
+    }
+
+    return {
+      productId: product.id,
+      productName: product.name || productAny.name,
+      productDescription: product.description || productAny.description,
+      benefits,
+      metadata,
+      features: features.length > 0 ? features : undefined,
+    };
+  }
+
+  /**
    * Get monthly credit limit based on product ID or metadata
    * prioritized metadata from Polar.sh
    */
   private getMonthlyCreditLimit(productId?: string, data?: any): number {
-    // 1. Try to get limit from metadata (Recommended)
     // Polar puts metadata either in the root data or under product
-    const metadata = data?.product?.metadata || data?.metadata || {};
-    const metadataLimit = metadata.ai_credits;
+    const metadata = data?.metadata || data?.product?.metadata || {};
+    let metadataLimit = metadata.ai_credits;
+
+    // Direct check if metadata property exists on the object passed
+    if (!metadataLimit && (data as any).metadata?.ai_credits) {
+      metadataLimit = (data as any).metadata.ai_credits;
+    }
 
     if (metadataLimit) {
       const parsed = parseInt(String(metadataLimit), 10);
-      if (!isNaN(parsed)) {
-        this.logger.log(`CREDIT ASSIGNMENT [METADATA]: Assigning ${parsed} credits to user from product ${productId}`);
+      if (!isNaN(parsed) && parsed > 0) {
+        this.logger.log(
+          `CREDIT ASSIGNMENT [METADATA]: Assigning ${parsed} credits to user from product ${productId}`,
+        );
         return parsed;
       }
     }
 
     // 2. Fallback to hardcoded limits - configure these based on your Polar.sh products
     const limits: Record<string, number> = {
-      // Default: 3000 credits for the $10 package
+      // Go Plan: 3000 credits for the $10 package
       'b0d421eb-615c-4ef8-9053-1a8449afbcc0': 3000,
+      // Plus Plan: 10000 credits for the $20 package
+      '308587ed-b4a0-469b-bfbc-89713a380bb3': 10000,
+      // Pro Plan: 50000 credits for the $50 package
+      'ecbe461f-0b80-486c-9ee1-5943b55922d3': 50000,
     };
 
     const limit = limits[productId || ''] || 0;
     if (limit > 0) {
-      this.logger.log(`CREDIT ASSIGNMENT [FALLBACK]: Assigning ${limit} hardcoded credits for product ${productId}`);
+      this.logger.log(
+        `CREDIT ASSIGNMENT [FALLBACK]: Assigning ${limit} hardcoded credits for product ${productId}`,
+      );
     } else {
-      this.logger.warn(`CREDIT ASSIGNMENT [NONE]: No limit found for product ${productId} in metadata or fallbacks`);
+      this.logger.warn(
+        `CREDIT ASSIGNMENT [NONE]: No limit found for product ${productId} in metadata or fallbacks`,
+      );
     }
-    
+
     return limit;
   }
 
@@ -633,7 +910,7 @@ export class SubscriptionService {
   async getCreditBalance(user: User): Promise<ResponseModel> {
     try {
       const balance = await this.creditService.getCreditBalance(user.id);
-      
+
       // Simplify the response for the user
       const simplifiedBalance = {
         id: balance.id,
@@ -649,7 +926,10 @@ export class SubscriptionService {
         updatedAt: balance.updatedAt,
       };
 
-      return successResponse('Credit balance retrieved successfully', simplifiedBalance);
+      return successResponse(
+        'Credit balance retrieved successfully',
+        simplifiedBalance,
+      );
     } catch (error) {
       return processException(error);
     }
@@ -671,7 +951,7 @@ export class SubscriptionService {
         description,
         presentationId,
       );
-      
+
       return this.getCreditBalance(user);
     } catch (error) {
       return processException(error);
@@ -682,6 +962,7 @@ export class SubscriptionService {
    * Get available products/pricing plans
    */
   async getProducts(): Promise<ResponseModel> {
+    this.logger.log('Fetching products from Polar.sh...');
     try {
       if (!this.polarService.isConfigured()) {
         return errorResponse('Polar.sh is not configured');
@@ -772,6 +1053,21 @@ export class SubscriptionService {
             metadata: price.metadata || {},
           }));
 
+          // Extract benefits
+          const benefits: BenefitResponseDto[] = (product.benefits || []).map(
+            (benefit: any) => ({
+              id: benefit.id,
+              type: benefit.type,
+              description: benefit.description,
+              selectable: benefit.selectable ?? true,
+              metadata: benefit.metadata || {},
+              properties: benefit.properties || {},
+            }),
+          );
+
+          // Extract features
+          const features = this.extractFeaturesFromProduct(product);
+
           return {
             id: product.id,
             name: product.name,
@@ -784,7 +1080,9 @@ export class SubscriptionService {
               product.recurring_interval_count ||
               1,
             prices,
+            benefits,
             metadata: product.metadata || {},
+            features: features.features,
             createdAt: product.createdAt || product.created_at,
             updatedAt:
               (product as any).updatedAt ||
@@ -792,12 +1090,40 @@ export class SubscriptionService {
               product.createdAt ||
               product.created_at,
             // Add credit limit based on product metadata or configuration
-            monthlyCreditLimit: this.getMonthlyCreditLimit(product.id),
+            monthlyCreditLimit: this.getMonthlyCreditLimit(product.id, product),
           };
         }),
       );
 
-      return successResponse('Products retrieved successfully', products);
+      // Sort products by price (lowest first)
+      if (products.length > 0) {
+        products.sort((a, b) => {
+          // Find minimum price for each product
+          const getMinPrice = (p: any) => {
+            if (!p.prices || p.prices.length === 0) return 999999;
+            return Math.min(...p.prices.map((pr: any) => pr.priceAmount || 0));
+          };
+
+          const priceA = getMinPrice(a);
+          const priceB = getMinPrice(b);
+
+          if (priceA !== priceB) {
+            return priceA - priceB;
+          }
+
+          // Fallback to name if prices are equal
+          return (a.name || '').localeCompare(b.name || '');
+        });
+
+        this.logger.log(
+          `Products sorted by price. Order: ${products.map((p) => `${p.name} ($${(p.prices?.[0]?.priceAmount || 0) / 100})`).join(', ')}`,
+        );
+      }
+
+      return successResponse(
+        `Products retrieved successfully (${new Date().toISOString()})`,
+        products,
+      );
     } catch (error) {
       return processException(error);
     }
@@ -829,6 +1155,22 @@ export class SubscriptionService {
 
       // Cast to any to access both camelCase and snake_case properties
       const productAny = product as any;
+
+      // Extract benefits
+      const benefits: BenefitResponseDto[] = (
+        (product as any).benefits || []
+      ).map((benefit: any) => ({
+        id: benefit.id,
+        type: benefit.type,
+        description: benefit.description,
+        selectable: benefit.selectable ?? true,
+        metadata: benefit.metadata || {},
+        properties: benefit.properties || {},
+      }));
+
+      // Extract features
+      const features = this.extractFeaturesFromProduct(product);
+
       const productData = {
         id: product.id,
         name: product.name,
@@ -841,7 +1183,9 @@ export class SubscriptionService {
           productAny.recurring_interval_count ||
           1,
         prices,
+        benefits,
         metadata: product.metadata || {},
+        features: features.features,
         createdAt: product.createdAt || productAny.created_at,
         updatedAt:
           productAny.updatedAt ||

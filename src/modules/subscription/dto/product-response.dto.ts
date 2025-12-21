@@ -1,4 +1,5 @@
 import { IsString, IsNumber, IsBoolean, IsOptional, IsArray, IsObject } from 'class-validator';
+import { BenefitResponseDto } from './feature-response.dto';
 
 export class PriceResponseDto {
   @IsString()
@@ -52,9 +53,17 @@ export class ProductResponseDto {
   @IsOptional()
   prices?: PriceResponseDto[];
 
+  @IsArray()
+  @IsOptional()
+  benefits?: BenefitResponseDto[];
+
   @IsObject()
   @IsOptional()
   metadata?: Record<string, any>;
+
+  @IsArray()
+  @IsOptional()
+  features?: string[]; // Extracted feature list from benefits and metadata
 
   @IsString()
   @IsOptional()
@@ -63,5 +72,9 @@ export class ProductResponseDto {
   @IsString()
   @IsOptional()
   updatedAt?: string;
+
+  @IsNumber()
+  @IsOptional()
+  monthlyCreditLimit?: number;
 }
 

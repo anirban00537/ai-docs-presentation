@@ -132,7 +132,8 @@ export class PolarService implements OnModuleInit {
       });
 
       // Handle both paginated and direct array responses
-      const items = (response as any).result?.items || (response as any).items || [];
+      const items =
+        (response as any).result?.items || (response as any).items || [];
       return items.find(
         (c: any) => c.email.toLowerCase() === email.toLowerCase(),
       );
@@ -315,6 +316,7 @@ export class PolarService implements OnModuleInit {
       const response = await client.products.list({
         organizationId,
         isArchived: false,
+        // Note: Sorting is handled client-side in getProducts() method
       });
       return response;
     } catch (error: any) {
@@ -379,6 +381,46 @@ export class PolarService implements OnModuleInit {
       return response;
     } catch (error: any) {
       this.logger.error(`Failed to create checkout: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a product
+   */
+  async createProduct(productData: any) {
+    if (!this.isConfigured()) return null;
+
+    try {
+      const client = this.getClient();
+      const response = await client.products.create(productData);
+      return response;
+    } catch (error: any) {
+      this.logger.error(`Failed to create product: ${error.message}`);
+      if (error.body) {
+        this.logger.error(`Error body: ${error.body}`);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Update product benefits
+   */
+  async updateProductBenefits(productId: string, benefitIds: string[]) {
+    if (!this.isConfigured()) return null;
+
+    try {
+      const client = this.getClient();
+      const response = await client.products.updateBenefits({
+        id: productId,
+        productBenefitsUpdate: {
+          benefits: benefitIds,
+        },
+      });
+      return response;
+    } catch (error: any) {
+      this.logger.error(`Failed to update product benefits: ${error.message}`);
       throw error;
     }
   }
