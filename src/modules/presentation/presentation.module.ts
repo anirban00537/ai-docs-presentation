@@ -4,7 +4,6 @@ import { PresentationController } from './presentation.controller';
 import { PromptPresentationAIService } from './prompt-presentation-ai.service';
 import { OutlineService } from './outline.service';
 import { PrismaModule } from '../prisma/prisma.module';
-import { SchemaRegistry } from './schema-core/registry';
 import { SubscriptionModule } from '../subscription/subscription.module';
 
 @Module({
@@ -14,13 +13,11 @@ import { SubscriptionModule } from '../subscription/subscription.module';
     PresentationService,
     PromptPresentationAIService,
     OutlineService,
-    SchemaRegistry,
   ],
   exports: [
     PresentationService,
     PromptPresentationAIService,
     OutlineService,
-    SchemaRegistry,
   ],
 })
 export class PresentationModule {}

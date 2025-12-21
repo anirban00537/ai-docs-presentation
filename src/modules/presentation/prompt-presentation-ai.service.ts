@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import { OpenRouter } from '@openrouter/sdk';
 import { ConfigService } from '@nestjs/config';
-import { SchemaRegistry } from './schema-core/registry';
 import { AiUsageService } from '../subscription/services/ai-usage.service';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
 
@@ -15,7 +14,6 @@ export class PromptPresentationAIService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
-    private readonly schemaRegistry: SchemaRegistry,
     private readonly aiUsageService: AiUsageService,
   ) {
     const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
@@ -79,10 +77,6 @@ export class PromptPresentationAIService {
     }>;
     const title = outline.title || 'Untitled Presentation';
 
-    // Initialize schema registry if not already initialized
-    if (this.schemaRegistry.getSchemaCount() === 0) {
-      await this.schemaRegistry.initialize();
-    }
 
     yield JSON.stringify({
       type: 'start',
@@ -98,17 +92,20 @@ export class PromptPresentationAIService {
 
       let templateRows: any[] = [];
 
-      // Get schema from registry
+      // Get layout from database
       if (schemaId) {
-        const schema = this.schemaRegistry.getSchemaById(schemaId);
-        if (schema) {
-          templateRows = schema.rows;
+        const layout = await this.prisma.layout.findUnique({
+          where: { id: schemaId },
+        });
+
+        if (layout && layout.data && (layout.data as any).rows) {
+          templateRows = (layout.data as any).rows;
           this.logger.debug(
-            `Using schema ${schemaId} with ${templateRows.length} rows`,
+            `Using layout ${schemaId} with ${templateRows.length} rows`,
           );
         } else {
           this.logger.error(
-            `Schema ${schemaId} not found. Please ensure schemas are generated.`,
+            `Layout ${schemaId} not found or has no row data.`,
           );
           // Continue with empty templateRows - the LLM will generate a basic structure
         }

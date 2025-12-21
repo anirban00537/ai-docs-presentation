@@ -11,15 +11,14 @@ import { CreateFromPromptDto } from './dto/create-from-prompt.dto';
 import { OpenRouter } from '@openrouter/sdk';
 import { ConfigService } from '@nestjs/config';
 import { PresentationService } from './presentation.service';
-import { SchemaRegistry } from './schema-core/registry';
 import { CreditService } from '../subscription/services/credit.service';
 import { AiUsageService } from '../subscription/services/ai-usage.service';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
 
 interface OutlineItem {
   content: string;
-  schemaId?: string; // Changed from layoutId to schemaId
-  layoutId?: string; // Keep for backward compatibility
+  layoutId?: string;
+  schemaId?: string; // Keep for backward compatibility
 }
 
 interface OutlineResponse {
@@ -38,7 +37,6 @@ export class OutlineService {
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly presentationService: PresentationService,
-    private readonly schemaRegistry: SchemaRegistry,
     private readonly creditService: CreditService,
     private readonly aiUsageService: AiUsageService,
   ) {
@@ -130,28 +128,33 @@ export class OutlineService {
           // Update status to generating
           await this.updateOutlineStatus(id, 'generating');
 
-          // Initialize schema registry if not already initialized
-          if (this.schemaRegistry.getSchemaCount() === 0) {
-            await this.schemaRegistry.initialize();
-          }
-
-          // Fetch all schemas from registry
-          const allSchemasInfo = this.schemaRegistry.getAllSchemaMetadata();
-
-          if (allSchemasInfo.length === 0) {
+          // Fetch all layouts from the database
+          const allLayouts = await this.prisma.layout.findMany({
+            where: {
+              isAdmin: true,
+              deletedAt: null,
+            },
+            select: {
+              id: true,
+              name: true,
+              description: true,
+            },
+          });
+          
+          if (allLayouts.length === 0) {
             throw new Error(
-              'No schemas available. Please run generate-all-schemas.ts to create schema files.',
+              'No layouts available in the database. Please run simple-layout-seed.ts.',
             );
           }
 
-          // Filter to only include id, name, and description
-          const schemasInfo = allSchemasInfo.map((schema) => ({
-            id: schema.id,
-            name: schema.name,
-            description: schema.description,
+          // Format layouts info for the prompt
+          const layoutsInfo = allLayouts.map((layout) => ({
+            id: layout.id,
+            name: layout.name,
+            description: layout.description,
           }));
-          console.log(schemasInfo, 'schemasInfo=>>>>>>');
-          this.logger.debug(schemasInfo, 'schemasInfo=>>>>>>');
+          
+          this.logger.debug(`Found ${layoutsInfo.length} layouts for outline generation`);
 
           // Make API call to generate outline
           const response = await this.openRouter.chat.send({
@@ -164,30 +167,30 @@ export class OutlineService {
 User Prompt:
 ${userPrompt}
 
-Available Schemas (each schema has id, name, and description):
-${JSON.stringify(schemasInfo, null, 2)}
+Available Layouts (each layout has id, name, and description):
+${JSON.stringify(layoutsInfo, null, 2)}
 
-⚠️ CRITICAL: SCHEMA VARIETY REQUIREMENT ⚠️
-You MUST use DIFFERENT schemas for each slide. DO NOT reuse the same schemaId for multiple slides.
-Each of the ${numberOfSlides} slides MUST have a UNIQUE schemaId from the available schemas list above.
-Repeating the same schema across multiple slides is INCORRECT and will result in a poor presentation.
+⚠️ CRITICAL: LAYOUT VARIETY REQUIREMENT ⚠️
+You MUST use DIFFERENT layouts for each slide. DO NOT reuse the same layoutId for multiple slides.
+Each of the ${numberOfSlides} slides MUST have a UNIQUE layoutId from the available layouts list above.
+Repeating the same layout across multiple slides is INCORRECT and will result in a poor presentation.
 
 FIRST SLIDE REQUIREMENT:
-The FIRST slide (outlines[0]) MUST use an introduction/title/hero layout schema. Look for schemas with names/descriptions that indicate they are designed for title pages, introductions, hero sections, or opening slides. This is mandatory.
+The FIRST slide (outlines[0]) MUST use an introduction/title/hero layout. Look for layouts with names/descriptions that indicate they are designed for title pages, introductions, hero sections, or opening slides. This is mandatory.
 
-SCHEMA SELECTION PROCESS:
+LAYOUT SELECTION PROCESS:
 For each slide, follow these steps:
-1. Review all available schemas above, paying close attention to each schema's "name" and "description"
-2. For the FIRST slide only: Select an introduction/title/hero layout schema from the available schemas
-3. For subsequent slides: Identify which schema's purpose best matches the content you're planning for that specific slide
-4. Select a DIFFERENT schema than you've already used for previous slides
-5. Ensure the schemaId you choose exactly matches one of the "id" values from the available schemas list (case-sensitive)
+1. Review all available layouts above, paying close attention to each layout's "name" and "description"
+2. For the FIRST slide only: Select an introduction/title/hero layout from the available layouts
+3. For subsequent slides: Identify which layout's purpose best matches the content you're planning for that specific slide
+4. Select a DIFFERENT layout than you've already used for previous slides
+5. Ensure the layoutId you choose exactly matches one of the "id" values from the available layouts list (case-sensitive)
 
 IMPORTANT RULES:
-- The FIRST slide MUST use an introduction/title/hero layout schema - this is mandatory
-- Each slide MUST have a unique schemaId - no duplicates allowed across all ${numberOfSlides} slides
-- Match the schema's description to the slide's content purpose
-- If you have multiple slides with similar content (e.g., multiple features), you MUST still use different schemas that are appropriate for that content type
+- The FIRST slide MUST use an introduction/title/hero layout - this is mandatory
+- Each slide MUST have a unique layoutId - no duplicates allowed across all ${numberOfSlides} slides
+- Match the layout's description to the slide's content purpose
+- If you have multiple slides with similar content (e.g., multiple features), you MUST still use different layouts that are appropriate for that content type
 - Visual variety is essential for an engaging presentation - using the same layout repeatedly is incorrect
 
 For each outline item, generate markdown content that includes:
@@ -196,9 +199,9 @@ For each outline item, generate markdown content that includes:
 
 Generate exactly ${numberOfSlides} outline items. Each item must have:
 - A "content" field containing the markdown-formatted content for that slide section
-- A "schemaId" field with a UNIQUE id (case-sensitive) from the available schemas list that best matches this slide's content type and purpose
+- A "layoutId" field with a UNIQUE id (case-sensitive) from the available layouts list that best matches this slide's content type and purpose
 
-REMINDER: Every single slide must have a DIFFERENT schemaId. No exceptions.`,
+REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
               },
             ],
             responseFormat: {
@@ -226,13 +229,13 @@ REMINDER: Every single slide must have a DIFFERENT schemaId. No exceptions.`,
                             description:
                               'Markdown-formatted content for this slide section. Should include a heading (# Title) and bullet points (-) for details.',
                           },
-                          schemaId: {
+                          layoutId: {
                             type: 'string',
                             description:
-                              'The ID of the most appropriate schema from the available schemas list for this specific slide. CRITICAL: Each slide must have a UNIQUE schemaId - do not reuse the same schemaId for multiple slides. All schemaIds in the outlines array must be different from each other.',
+                              'The ID of the most appropriate layout from the available layouts list for this specific slide. CRITICAL: Each slide must have a UNIQUE layoutId - do not reuse the same layoutId for multiple slides. All layoutIds in the outlines array must be different from each other.',
                           },
                         },
-                        required: ['content', 'schemaId'],
+                        required: ['content', 'layoutId'],
                         additionalProperties: false,
                       },
                     },
@@ -266,18 +269,16 @@ REMINDER: Every single slide must have a DIFFERENT schemaId. No exceptions.`,
           // Parse the response
           const outlineData: OutlineResponse = JSON.parse(content);
 
-          // Save to database (schemaId is now in each outline item)
-          // Convert schemaId to the format expected by the database
-          const outlinesWithSchemaId = outlineData.outlines.map((item) => ({
+          // Save to database
+          const outlinesWithLayoutId = outlineData.outlines.map((item) => ({
             content: item.content,
-            schemaId: item.schemaId,
-            // Keep layoutId for backward compatibility if schemaId is not present
-            layoutId: (item as any).layoutId || item.schemaId,
+            layoutId: item.layoutId,
+            schemaId: item.layoutId, // Map for backward compatibility if needed
           }));
 
           await this.updateOutlineStatus(id, 'completed', {
             title: outlineData.title,
-            outlines: outlinesWithSchemaId,
+            outlines: outlinesWithLayoutId,
           });
 
           // Deduct 1 credit for successful AI outline generation

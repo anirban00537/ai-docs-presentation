@@ -12,6 +12,7 @@ import { AdminFinanceController } from './controllers/admin-finance.controller';
 import { AdminMediaController } from './controllers/admin-media.controller';
 import { AdminSystemController } from './controllers/admin-system.controller';
 import { AdminProductsController } from './controllers/admin-products.controller';
+import { AdminLayoutsController } from './controllers/admin-layouts.controller';
 
 // Services
 import { AdminAnalyticsService } from './services/admin-analytics.service';
@@ -23,6 +24,7 @@ import { AdminFinanceService } from './services/admin-finance.service';
 import { AdminMediaService } from './services/admin-media.service';
 import { AdminSystemService } from './services/admin-system.service';
 import { AdminProductsService } from './services/admin-products.service';
+import { AdminLayoutsService } from './services/admin-layouts.service';
 
 @Module({
   imports: [PrismaModule, SubscriptionModule],
@@ -36,6 +38,7 @@ import { AdminProductsService } from './services/admin-products.service';
     AdminMediaController,
     AdminSystemController,
     AdminProductsController,
+    AdminLayoutsController,
   ],
   providers: [
     AdminAnalyticsService,
@@ -47,6 +50,7 @@ import { AdminProductsService } from './services/admin-products.service';
     AdminMediaService,
     AdminSystemService,
     AdminProductsService,
+    AdminLayoutsService,
   ],
   exports: [
     AdminAnalyticsService,
@@ -58,6 +62,7 @@ import { AdminProductsService } from './services/admin-products.service';
     AdminMediaService,
     AdminSystemService,
     AdminProductsService,
+    AdminLayoutsService,
   ],
 })
 export class AdminModule {}
