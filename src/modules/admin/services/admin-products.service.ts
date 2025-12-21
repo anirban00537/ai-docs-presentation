@@ -52,6 +52,11 @@ export class AdminProductsService {
       // Extract features using subscription service helper
       const features = this.subscriptionService.extractFeaturesFromProduct(product);
 
+      // Log metadata to help debug - ensure all fields are returned
+      const productMetadata = product.metadata || {};
+      this.logger.log(`Product ${id} metadata keys: ${Object.keys(productMetadata).join(', ')}`);
+      this.logger.log(`Product ${id} full metadata: ${JSON.stringify(productMetadata)}`);
+
       return successResponse('Product retrieved successfully', {
         id: product.id,
         name: product.name,
@@ -183,6 +188,10 @@ export class AdminProductsService {
 
       const client = this.polarService.getClient();
 
+      // Get current product to preserve existing metadata
+      const currentProduct = await client.products.get({ id });
+      const existingMetadata = currentProduct.metadata || {};
+
       // Prepare update data
       const updateData: any = {};
 
@@ -202,7 +211,11 @@ export class AdminProductsService {
         updateData.recurringIntervalCount = updateProductDto.recurringIntervalCount;
       }
       if (updateProductDto.metadata !== undefined) {
-        updateData.metadata = updateProductDto.metadata;
+        // Merge new metadata with existing metadata to preserve all fields
+        updateData.metadata = {
+          ...existingMetadata,
+          ...updateProductDto.metadata,
+        };
       }
 
       // Update product
@@ -235,6 +248,11 @@ export class AdminProductsService {
       // Fetch updated product to return complete data
       const updatedProduct = await client.products.get({ id });
 
+      // Extract features using subscription service helper
+      const features = this.subscriptionService.extractFeaturesFromProduct(updatedProduct);
+
+      this.logger.log(`Product ${id} metadata after update: ${JSON.stringify(updatedProduct.metadata || {})}`);
+
       return successResponse('Product updated successfully', {
         id: updatedProduct.id,
         name: updatedProduct.name,
@@ -259,6 +277,7 @@ export class AdminProductsService {
           properties: benefit.properties || {},
         })),
         metadata: updatedProduct.metadata || {},
+        features: features.features || [],
         createdAt: updatedProduct.createdAt,
         updatedAt: (updatedProduct as any).updatedAt || updatedProduct.createdAt,
       });

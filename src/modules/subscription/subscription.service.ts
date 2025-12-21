@@ -775,76 +775,128 @@ export class SubscriptionService {
       }
     });
 
-    // Add metadata-based features
-    if (metadata.ai_credits) {
-      features.push(`${metadata.ai_credits} AI Credits per month`);
-    }
-    if (metadata.max_slides) {
-      features.push(`Up to ${metadata.max_slides} Slides per presentation`);
-    }
-    if (metadata.max_presentations || metadata.presentations) {
-      features.push(
-        `Up to ${metadata.max_presentations || metadata.presentations} Presentations`,
-      );
-    }
-    if (
-      metadata.beautiful_ai_images === 'true' ||
-      metadata.ai_images === 'true'
-    ) {
-      features.push('Beautiful AI-Generated Images');
-    }
-    if (metadata.white_label === 'true' || metadata.no_branding === 'true') {
-      features.push('White Label / No Branding');
-    }
-    if (metadata.unlimited_access || metadata.unlimited) {
-      features.push('Unlimited Access');
-    }
-    if (metadata.priority_support || metadata.priority_support === 'true') {
-      features.push('Priority Support');
-    }
-    if (metadata.advanced_features || metadata.advanced === 'true') {
-      features.push('Advanced Features');
-    }
-    if (metadata.api_access || metadata.api === 'true') {
-      features.push('API Access');
-    }
-    if (metadata.custom_templates || metadata.templates) {
-      features.push('Custom Templates');
-    }
-    if (metadata.export_formats) {
-      features.push(`Export Formats: ${metadata.export_formats}`);
-    }
-    if (metadata.storage_gb || metadata.storage) {
-      features.push(`${metadata.storage_gb || metadata.storage} GB Storage`);
-    }
-    if (metadata.collaboration || metadata.team_size) {
-      features.push(
-        `Team Collaboration (${metadata.team_size || 'Unlimited'} members)`,
-      );
-    }
-    if (metadata.branding && metadata.white_label !== 'true') {
-      features.push('Custom Branding');
-    }
-    if (metadata.analytics || metadata.analytics === 'true') {
-      features.push('Advanced Analytics');
-    }
-    if (metadata.webhooks || metadata.webhooks === 'true') {
-      features.push('Webhook Integration');
-    }
-    if (metadata.sso || metadata.single_sign_on) {
-      features.push('Single Sign-On (SSO)');
-    }
-    if (metadata.backup || metadata.backups) {
-      features.push('Automated Backups');
-    }
-    if (metadata.version_history) {
-      features.push(`Version History (${metadata.version_history} versions)`);
-    }
-    if (metadata.plan_name) {
-      features.push(
-        `${metadata.plan_name.charAt(0).toUpperCase() + metadata.plan_name.slice(1)} Plan`,
-      );
-    }
+    // Define known metadata keys with custom formatting
+    const knownMetadataFormatters: Record<string, (value: any) => string> = {
+      ai_credits: (v) => `${v} AI Credits per month`,
+      max_slides: (v) => `Up to ${v} Slides per presentation`,
+      max_presentations: (v) => `Up to ${v} Presentations`,
+      presentations: (v) => `Up to ${v} Presentations`,
+      beautiful_ai_images: (v) =>
+        v === 'true' || v === true ? 'Beautiful AI-Generated Images' : '',
+      ai_images: (v) =>
+        v === 'true' || v === true ? 'Beautiful AI-Generated Images' : '',
+      white_label: (v) =>
+        v === 'true' || v === true ? 'White Label / No Branding' : '',
+      no_branding: (v) =>
+        v === 'true' || v === true ? 'White Label / No Branding' : '',
+      unlimited_access: (v) =>
+        v === 'true' || v === true || v ? 'Unlimited Access' : '',
+      unlimited: (v) =>
+        v === 'true' || v === true || v ? 'Unlimited Access' : '',
+      priority_support: (v) =>
+        v === 'true' || v === true || v ? 'Priority Support' : '',
+      advanced_features: (v) =>
+        v === 'true' || v === true || v ? 'Advanced Features' : '',
+      advanced: (v) =>
+        v === 'true' || v === true || v ? 'Advanced Features' : '',
+      api_access: (v) => (v === 'true' || v === true || v ? 'API Access' : ''),
+      api: (v) => (v === 'true' || v === true || v ? 'API Access' : ''),
+      custom_templates: (v) =>
+        v === 'true' || v === true || v ? 'Custom Templates' : '',
+      templates: (v) =>
+        v === 'true' || v === true || v ? 'Custom Templates' : '',
+      export_formats: (v) => `Export Formats: ${v}`,
+      storage_gb: (v) => `${v} GB Storage`,
+      storage: (v) => `${v} GB Storage`,
+      team_size: (v) => `Team Collaboration (${v || 'Unlimited'} members)`,
+      collaboration: (v) =>
+        v === 'true' || v === true || v
+          ? `Team Collaboration (${metadata.team_size || 'Unlimited'} members)`
+          : '',
+      branding: (v) =>
+        v && metadata.white_label !== 'true' ? 'Custom Branding' : '',
+      analytics: (v) =>
+        v === 'true' || v === true || v ? 'Advanced Analytics' : '',
+      webhooks: (v) =>
+        v === 'true' || v === true || v ? 'Webhook Integration' : '',
+      sso: (v) =>
+        v === 'true' || v === true || v ? 'Single Sign-On (SSO)' : '',
+      single_sign_on: (v) =>
+        v === 'true' || v === true || v ? 'Single Sign-On (SSO)' : '',
+      backup: (v) =>
+        v === 'true' || v === true || v ? 'Automated Backups' : '',
+      backups: (v) =>
+        v === 'true' || v === true || v ? 'Automated Backups' : '',
+      version_history: (v) => `Version History (${v} versions)`,
+      plan_name: (v) =>
+        `${String(v).charAt(0).toUpperCase() + String(v).slice(1)} Plan`,
+    };
+
+    // Track features to avoid duplicates
+    const featureSet = new Set<string>();
+
+    // Process all metadata fields dynamically
+    Object.entries(metadata).forEach(([key, value]) => {
+      // Skip empty values
+      if (value === null || value === undefined || value === '') {
+        return;
+      }
+
+      // Use known formatter if available
+      if (knownMetadataFormatters[key]) {
+        const formatted = knownMetadataFormatters[key](value);
+        if (formatted && !featureSet.has(formatted)) {
+          features.push(formatted);
+          featureSet.add(formatted);
+        }
+        // Continue to process even if we have a formatter, to handle aliases
+        // But skip if this is an alias that would produce duplicate output
+        // (e.g., ai_images and beautiful_ai_images both produce same output)
+        return;
+      }
+
+      // For unknown metadata keys, create a human-readable feature
+      // Convert snake_case to Title Case and format the value
+      const formattedKey = key
+        .split('_')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      // Format value based on type
+      let formattedValue: string;
+      if (value === 'true' || value === true) {
+        formattedValue = formattedKey;
+      } else if (value === 'false' || value === false) {
+        // Skip false values
+        return;
+      } else if (typeof value === 'number') {
+        formattedValue = `${formattedKey}: ${value}`;
+      } else {
+        // For string values, check if it's a numeric string
+        const stringValue = String(value);
+        const trimmed = stringValue.trim();
+        if (
+          trimmed !== '' &&
+          !isNaN(Number(trimmed)) &&
+          !isNaN(parseFloat(trimmed))
+        ) {
+          // It's a numeric string, format as number
+          formattedValue = `${formattedKey}: ${Number(trimmed)}`;
+        } else {
+          // Regular string value
+          formattedValue = `${formattedKey}: ${trimmed}`;
+        }
+      }
+
+      // Only add if not already in the set (avoid duplicates)
+      if (formattedValue && !featureSet.has(formattedValue)) {
+        features.push(formattedValue);
+        featureSet.add(formattedValue);
+      }
+    });
+
+    // Remove duplicates from features array (in case of any edge cases)
+    const uniqueFeatures = Array.from(new Set(features));
 
     return {
       productId: product.id,
@@ -852,7 +904,7 @@ export class SubscriptionService {
       productDescription: product.description || productAny.description,
       benefits,
       metadata,
-      features: features.length > 0 ? features : undefined,
+      features: uniqueFeatures.length > 0 ? uniqueFeatures : undefined,
     };
   }
 
