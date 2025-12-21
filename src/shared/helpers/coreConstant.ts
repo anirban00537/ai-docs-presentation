@@ -1,0 +1,73 @@
+export const coreConstant = {
+  USER_ROLE_ADMIN: 1,
+  USER_ROLE_USER: 2,
+  COMMON_PASSWORD: 'r4abbit5onthe4moo333456300^33%%%%%',
+  STATUS_INACTIVE: 0,
+  STATUS_ACTIVE: 1,
+  STATUS_PENDING: 2,
+  IS_VERIFIED: 1,
+  IS_NOT_VERIFIED: 0,
+  VERIFICATION_TYPE_EMAIL: 1,
+  FILE_DESTINATION: 'public/uploads',
+  MAX_IMAGE_SIZE: 500 * 1024 * 1024, // 500MB
+
+  NOTE_TYPE: {
+    PDF: 'pdf',
+    YOUTUBE: 'youtube',
+    AUDIO: 'audio',
+  },
+  MIME_TYPE: {
+    YOUTUBE: 'video/youtube',
+    PDF: 'application/pdf',
+    AUDIO_MP3: 'audio/mpeg',
+    AUDIO_WAV: 'audio/wav',
+  },
+  DEFAULT_TAGS: {
+    PDF: ['pdf', 'auto-generated'],
+    YOUTUBE: ['youtube', 'auto-generated'],
+    AUDIO: ['audio', 'auto-generated'],
+    AUTO_GENERATED: 'auto-generated',
+  },
+  DIFFICULTY: {
+    BEGINNER: 'beginner',
+    INTERMEDIATE: 'intermediate',
+    ADVANCED: 'advanced',
+  },
+  STREAM_EVENT: {
+    CHAT: 'chat',
+    SCREEN_GENERATE: 'screen_generate',
+    SCREEN_UPDATE: 'screen_update',
+    SCREEN_DELETE: 'screen_delete',
+  } as const,
+
+  // Post Status
+  POST_STATUS: {
+    DRAFT: 0,
+    SCHEDULED: 1,
+    PUBLISHED: 2,
+    FAILED: 3,
+  },
+
+  VERIFICATION: {
+    VERIFIED: 1,
+    NOT_VERIFIED: 0,
+  },
+
+  AI_MODELS: {
+    OUTLINE: {
+      NAME: 'x-ai/grok-4.1-fast',
+      PRICING: { prompt: 0.20, completion: 0.50 }, // $ per 1M tokens
+    },
+    SLIDES: {
+      NAME: 'openai/gpt-oss-120b',
+      PRICING: { prompt: 0.039, completion: 0.19 },
+    },
+    IMAGE: {
+      NAME: 'black-forest-labs/flux-1.1-pro',
+      COST_PER_IMAGE: 0.04, // Actual USD cost
+    },
+    DEFAULT: {
+      PRICING: { prompt: 10.0, completion: 30.0 },
+    }
+  },
+};

@@ -1,0 +1,486 @@
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { User } from '@prisma/client';
+import {
+  successResponse,
+  processException,
+} from 'src/shared/helpers/functions';
+import { ResponseModel } from 'src/shared/models/response.model';
+import { CreateOutlineDto, UpdateOutlineDto } from './dto/create-outline.dto';
+import { CreateFromPromptDto } from './dto/create-from-prompt.dto';
+import { OpenRouter } from '@openrouter/sdk';
+import { ConfigService } from '@nestjs/config';
+import { PresentationService } from './presentation.service';
+import { SchemaRegistry } from './schema-core/registry';
+import { CreditService } from '../subscription/services/credit.service';
+import { AiUsageService } from '../subscription/services/ai-usage.service';
+import { coreConstant } from 'src/shared/helpers/coreConstant';
+
+interface OutlineItem {
+  content: string;
+  schemaId?: string; // Changed from layoutId to schemaId
+  layoutId?: string; // Keep for backward compatibility
+}
+
+interface OutlineResponse {
+  title: string;
+  outlines: OutlineItem[];
+}
+
+@Injectable()
+export class OutlineService {
+  private readonly logger = new Logger(OutlineService.name);
+  private readonly generatingOutlines = new Set<string>(); // Track outlines currently being generated
+  private openRouter: OpenRouter;
+  private readonly MODEL_NAME = coreConstant.AI_MODELS.OUTLINE.NAME;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+    private readonly presentationService: PresentationService,
+    private readonly schemaRegistry: SchemaRegistry,
+    private readonly creditService: CreditService,
+    private readonly aiUsageService: AiUsageService,
+  ) {
+    const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
+    if (!apiKey) {
+      this.logger.error(
+        'OPENROUTER_API_KEY is not set in environment variables.',
+      );
+    } else {
+      try {
+        this.openRouter = new OpenRouter({
+          apiKey: apiKey,
+        });
+        this.logger.log('OpenRouter SDK initialized');
+      } catch (error) {
+        this.logger.error('Failed to initialize OpenRouter SDK:', error);
+      }
+    }
+  }
+
+  async createOutline(
+    user: User,
+    payload: CreateOutlineDto,
+  ): Promise<ResponseModel> {
+    try {
+      const outline = await this.prisma.outline.create({
+        data: {
+          userId: user.id,
+          prompt: payload.prompt,
+          numberOfSlides: payload.numberOfSlides,
+          status: 'generating',
+        },
+      });
+
+      return successResponse('Outline created successfully', {
+        id: outline.id,
+      });
+    } catch (error: any) {
+      this.logger.error('Error creating outline:', error);
+      return processException(error);
+    }
+  }
+
+  async getOutline(id: string, user: User): Promise<ResponseModel> {
+    try {
+      const outline = await this.prisma.outline.findFirst({
+        where: {
+          id,
+          userId: user.id,
+        },
+      });
+
+      if (!outline) {
+        return processException(new Error('Outline not found'));
+      }
+
+      // Check if outlines array exists and has items
+      const hasOutlines =
+        outline.outlines &&
+        Array.isArray(outline.outlines) &&
+        outline.outlines.length > 0;
+
+      // If no outlines exist and status is generating, auto-generate
+      // But only if not already generating (prevent infinite loops)
+      if (
+        !hasOutlines &&
+        outline.status === 'generating' &&
+        !this.generatingOutlines.has(id)
+      ) {
+        this.generatingOutlines.add(id);
+        this.logger.log(
+          `No outlines found for outline ${id}, auto-generating...`,
+        );
+        try {
+          if (!this.openRouter) {
+            throw new Error('OpenRouter service is not initialized');
+          }
+
+          // Check if user has enough credits to generate outline
+          // 1 credit for outline generation
+          const hasCredits = await this.creditService.hasEnoughCredits(user.id, 1);
+          if (!hasCredits) {
+            throw new BadRequestException('Insufficient credits to generate presentation outline.');
+          }
+
+          const userPrompt = outline.prompt;
+          const numberOfSlides = outline.numberOfSlides;
+
+          // Update status to generating
+          await this.updateOutlineStatus(id, 'generating');
+
+          // Initialize schema registry if not already initialized
+          if (this.schemaRegistry.getSchemaCount() === 0) {
+            await this.schemaRegistry.initialize();
+          }
+
+          // Fetch all schemas from registry
+          const allSchemasInfo = this.schemaRegistry.getAllSchemaMetadata();
+
+          if (allSchemasInfo.length === 0) {
+            throw new Error(
+              'No schemas available. Please run generate-all-schemas.ts to create schema files.',
+            );
+          }
+
+          // Filter to only include id, name, and description
+          const schemasInfo = allSchemasInfo.map((schema) => ({
+            id: schema.id,
+            name: schema.name,
+            description: schema.description,
+          }));
+          console.log(schemasInfo, 'schemasInfo=>>>>>>');
+          this.logger.debug(schemasInfo, 'schemasInfo=>>>>>>');
+
+          // Make API call to generate outline
+          const response = await this.openRouter.chat.send({
+            model: this.MODEL_NAME,
+            messages: [
+              {
+                role: 'user',
+                content: `Analyze the following prompt and generate a comprehensive presentation outline with exactly ${numberOfSlides} slides. If the prompt contains numbered items or an outline structure, use that as a starting point. Otherwise, create a logical outline based on the topic.
+
+User Prompt:
+${userPrompt}
+
+Available Schemas (each schema has id, name, and description):
+${JSON.stringify(schemasInfo, null, 2)}
+
+⚠️ CRITICAL: SCHEMA VARIETY REQUIREMENT ⚠️
+You MUST use DIFFERENT schemas for each slide. DO NOT reuse the same schemaId for multiple slides.
+Each of the ${numberOfSlides} slides MUST have a UNIQUE schemaId from the available schemas list above.
+Repeating the same schema across multiple slides is INCORRECT and will result in a poor presentation.
+
+FIRST SLIDE REQUIREMENT:
+The FIRST slide (outlines[0]) MUST use an introduction/title/hero layout schema. Look for schemas with names/descriptions that indicate they are designed for title pages, introductions, hero sections, or opening slides. This is mandatory.
+
+SCHEMA SELECTION PROCESS:
+For each slide, follow these steps:
+1. Review all available schemas above, paying close attention to each schema's "name" and "description"
+2. For the FIRST slide only: Select an introduction/title/hero layout schema from the available schemas
+3. For subsequent slides: Identify which schema's purpose best matches the content you're planning for that specific slide
+4. Select a DIFFERENT schema than you've already used for previous slides
+5. Ensure the schemaId you choose exactly matches one of the "id" values from the available schemas list (case-sensitive)
+
+IMPORTANT RULES:
+- The FIRST slide MUST use an introduction/title/hero layout schema - this is mandatory
+- Each slide MUST have a unique schemaId - no duplicates allowed across all ${numberOfSlides} slides
+- Match the schema's description to the slide's content purpose
+- If you have multiple slides with similar content (e.g., multiple features), you MUST still use different schemas that are appropriate for that content type
+- Visual variety is essential for an engaging presentation - using the same layout repeatedly is incorrect
+
+For each outline item, generate markdown content that includes:
+- A heading with "# Section Title"
+- Bullet points (-) for details/sub-items
+
+Generate exactly ${numberOfSlides} outline items. Each item must have:
+- A "content" field containing the markdown-formatted content for that slide section
+- A "schemaId" field with a UNIQUE id (case-sensitive) from the available schemas list that best matches this slide's content type and purpose
+
+REMINDER: Every single slide must have a DIFFERENT schemaId. No exceptions.`,
+              },
+            ],
+            responseFormat: {
+              type: 'json_schema',
+              jsonSchema: {
+                name: 'presentation_outline',
+                strict: true,
+                schema: {
+                  type: 'object',
+                  properties: {
+                    title: {
+                      type: 'string',
+                      description: 'The main title of the presentation',
+                    },
+                    outlines: {
+                      type: 'array',
+                      description: `Array of exactly ${numberOfSlides} outline items, each representing one slide`,
+                      minItems: numberOfSlides,
+                      maxItems: numberOfSlides,
+                      items: {
+                        type: 'object',
+                        properties: {
+                          content: {
+                            type: 'string',
+                            description:
+                              'Markdown-formatted content for this slide section. Should include a heading (# Title) and bullet points (-) for details.',
+                          },
+                          schemaId: {
+                            type: 'string',
+                            description:
+                              'The ID of the most appropriate schema from the available schemas list for this specific slide. CRITICAL: Each slide must have a UNIQUE schemaId - do not reuse the same schemaId for multiple slides. All schemaIds in the outlines array must be different from each other.',
+                          },
+                        },
+                        required: ['content', 'schemaId'],
+                        additionalProperties: false,
+                      },
+                    },
+                  },
+                  required: ['title', 'outlines'],
+                  additionalProperties: false,
+                },
+              },
+            },
+            stream: false,
+          });
+
+          const content = response.choices[0]?.message?.content;
+          
+          // Log tech usage
+          if (response.usage) {
+            await this.aiUsageService.logUsage({
+              userId: user.id,
+              modelName: this.MODEL_NAME,
+              inputTokens: (response.usage as any).promptTokens || (response.usage as any).prompt_tokens,
+              outputTokens: (response.usage as any).completionTokens || (response.usage as any).completion_tokens,
+              type: 'outline',
+              outlineId: id
+            });
+          }
+
+          if (!content || typeof content !== 'string') {
+            throw new Error('Invalid response format from OpenRouter');
+          }
+
+          // Parse the response
+          const outlineData: OutlineResponse = JSON.parse(content);
+
+          // Save to database (schemaId is now in each outline item)
+          // Convert schemaId to the format expected by the database
+          const outlinesWithSchemaId = outlineData.outlines.map((item) => ({
+            content: item.content,
+            schemaId: item.schemaId,
+            // Keep layoutId for backward compatibility if schemaId is not present
+            layoutId: (item as any).layoutId || item.schemaId,
+          }));
+
+          await this.updateOutlineStatus(id, 'completed', {
+            title: outlineData.title,
+            outlines: outlinesWithSchemaId,
+          });
+
+          // Deduct 1 credit for successful AI outline generation
+          try {
+            await this.creditService.useCredits(
+              user.id,
+              1,
+              `Generated AI outline for presentation ${outline.title || id}`,
+              outline.presentationId || undefined,
+            );
+          } catch (creditError) {
+            this.logger.error('Failed to deduct credit for outline generation:', creditError);
+          }
+
+          this.logger.log(
+            `Outline ${id} saved successfully with ${outlineData.outlines.length} outline items`,
+          );
+
+          // Update presentation title if presentationId exists
+          if (outline.presentationId) {
+            try {
+              await this.presentationService.updateTitle(
+                outline.presentationId,
+                user,
+                { title: outlineData.title },
+              );
+              this.logger.log(
+                `Updated presentation ${outline.presentationId} title to: ${outlineData.title}`,
+              );
+            } catch (error: any) {
+              this.logger.error(
+                `Failed to update presentation title: ${error.message}`,
+              );
+              // Don't throw - outline generation succeeded, title update is secondary
+            }
+          }
+
+          this.generatingOutlines.delete(id);
+
+          // Refetch outline after generation
+          const updatedOutline = await this.prisma.outline.findFirst({
+            where: {
+              id,
+              userId: user.id,
+            },
+          });
+          return successResponse(
+            'Outline fetched and generated successfully',
+            updatedOutline,
+          );
+        } catch (genError: any) {
+          this.generatingOutlines.delete(id);
+          this.logger.error(`Error auto-generating outline ${id}:`, genError);
+          await this.updateOutlineStatus(id, 'failed');
+          // Return original outline even if generation failed
+          return successResponse('Outline fetched successfully', outline);
+        }
+      }
+
+      return successResponse('Outline fetched successfully', outline);
+    } catch (error: any) {
+      this.logger.error('Error fetching outline:', error);
+      return processException(error);
+    }
+  }
+
+  async getOutlineByPresentationId(
+    presentationId: string,
+    user: User,
+  ): Promise<any> {
+    try {
+      const outline = await this.prisma.outline.findFirst({
+        where: {
+          presentationId,
+          userId: user.id,
+        },
+      });
+
+      return outline;
+    } catch (error: any) {
+      this.logger.error('Error getting outline by presentation ID:', error);
+      return null;
+    }
+  }
+
+  async updateOutline(
+    id: string,
+    user: User,
+    payload: UpdateOutlineDto,
+  ): Promise<ResponseModel> {
+    try {
+      const outline = await this.prisma.outline.findFirst({
+        where: {
+          id,
+          userId: user.id,
+        },
+      });
+
+      if (!outline) {
+        return processException(new Error('Outline not found'));
+      }
+
+      const updatedOutline = await this.prisma.outline.update({
+        where: { id },
+        data: {
+          ...(payload.title && { title: payload.title }),
+          ...(payload.outlines && { outlines: payload.outlines as any }),
+          status: 'completed',
+        },
+      });
+
+      return successResponse('Outline updated successfully', updatedOutline);
+    } catch (error: any) {
+      this.logger.error('Error updating outline:', error);
+      return processException(error);
+    }
+  }
+
+  async updateOutlineStatus(
+    id: string,
+    status: 'generating' | 'completed' | 'failed',
+    data?: {
+      title?: string;
+      outlines?: Array<{
+        content: string;
+        schemaId?: string;
+        layoutId?: string;
+      }>;
+    },
+  ): Promise<void> {
+    try {
+      const updateData: any = {
+        status,
+      };
+
+      // Always update these fields if provided (even if they're empty strings or null)
+      if (data?.title !== undefined) {
+        updateData.title = data.title;
+      }
+      if (data?.outlines !== undefined) {
+        updateData.outlines = data.outlines as any;
+      }
+
+      await this.prisma.outline.update({
+        where: { id },
+        data: updateData,
+      });
+
+      this.logger.log(
+        `Outline ${id} updated with status: ${status}${data?.outlines ? `, ${data.outlines.length} outline items` : ''}`,
+      );
+    } catch (error: any) {
+      this.logger.error('Error updating outline status:', error);
+      throw error; // Re-throw to allow caller to handle
+    }
+  }
+
+  async savePrompt(
+    user: User,
+    payload: CreateOutlineDto,
+  ): Promise<ResponseModel> {
+    try {
+      // Use a transaction to ensure both outline and presentation are created and linked atomically
+      const result = await this.prisma.$transaction(async (tx) => {
+        // Create outline first
+        const outline = await tx.outline.create({
+          data: {
+            userId: user.id,
+            prompt: payload.prompt,
+            numberOfSlides: payload.numberOfSlides,
+            status: 'generating',
+          },
+        });
+
+        // Create presentation
+        const presentation = await tx.presentation.create({
+          data: {
+            userId: user.id,
+            ownerId: user.id,
+            title: 'Untitled Presentation',
+          },
+        });
+
+        // Link outline to presentation
+        const updatedOutline = await tx.outline.update({
+          where: { id: outline.id },
+          data: { presentationId: presentation.id },
+        });
+
+        return {
+          id: updatedOutline.id,
+          presentationId: updatedOutline.presentationId,
+        };
+      });
+
+      // Return outline with presentationId included
+      return successResponse('Outline and presentation created successfully', {
+        id: result.id,
+        presentationId: result.presentationId,
+      });
+    } catch (error: any) {
+      this.logger.error('Error in savePrompt:', error);
+      return processException(error);
+    }
+  }
+}
