@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../prisma/prisma.module';
+import { SubscriptionModule } from '../subscription/subscription.module';
 
 // Controllers
 import { AdminAnalyticsController } from './controllers/admin-analytics.controller';
@@ -10,6 +11,7 @@ import { AdminPresentationsController } from './controllers/admin-presentations.
 import { AdminFinanceController } from './controllers/admin-finance.controller';
 import { AdminMediaController } from './controllers/admin-media.controller';
 import { AdminSystemController } from './controllers/admin-system.controller';
+import { AdminProductsController } from './controllers/admin-products.controller';
 
 // Services
 import { AdminAnalyticsService } from './services/admin-analytics.service';
@@ -20,9 +22,10 @@ import { AdminPresentationsService } from './services/admin-presentations.servic
 import { AdminFinanceService } from './services/admin-finance.service';
 import { AdminMediaService } from './services/admin-media.service';
 import { AdminSystemService } from './services/admin-system.service';
+import { AdminProductsService } from './services/admin-products.service';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, SubscriptionModule],
   controllers: [
     AdminAnalyticsController,
     AdminUsersController,
@@ -32,6 +35,7 @@ import { AdminSystemService } from './services/admin-system.service';
     AdminFinanceController,
     AdminMediaController,
     AdminSystemController,
+    AdminProductsController,
   ],
   providers: [
     AdminAnalyticsService,
@@ -42,6 +46,7 @@ import { AdminSystemService } from './services/admin-system.service';
     AdminFinanceService,
     AdminMediaService,
     AdminSystemService,
+    AdminProductsService,
   ],
   exports: [
     AdminAnalyticsService,
@@ -52,6 +57,7 @@ import { AdminSystemService } from './services/admin-system.service';
     AdminFinanceService,
     AdminMediaService,
     AdminSystemService,
+    AdminProductsService,
   ],
 })
 export class AdminModule {}

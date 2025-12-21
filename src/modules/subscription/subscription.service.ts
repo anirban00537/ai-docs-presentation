@@ -742,7 +742,7 @@ export class SubscriptionService {
   /**
    * Extract features from Polar product data
    */
-  private extractFeaturesFromProduct(product: any): FeatureResponseDto {
+  extractFeaturesFromProduct(product: any): FeatureResponseDto {
     const productAny = product as any;
 
     // Extract benefits - handle both camelCase and snake_case
