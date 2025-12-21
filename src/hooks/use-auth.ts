@@ -15,7 +15,7 @@ export const useAuth = () => {
       try {
         await authClient.signIn.social({
           provider: "google",
-          callbackURL: "http://localhost:3000/home",
+          callbackURL: `${window.location.origin}/home`,
         });
       } catch (error: unknown) {
         console.error("Google login error:", error);
