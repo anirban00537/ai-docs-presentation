@@ -1,5 +1,5 @@
 [phases.setup]
-nixpkgs = ['nodejs_24']
+nixPkgs = ["nodejs_22"]
 
 [phases.install]
 cmds = ['npm install --legacy-peer-deps']
@@ -11,4 +11,7 @@ cmds = ['npm run build']
 cmd = 'npm run start:prod'
 
 [variables]
-NODE_ENV = "production" 
+NIXPACKS_NODE_VERSION = "22"
+NODE_ENV = "production"
+# Optimized for memory efficiency during build/start
+NODE_OPTIONS = "--max-old-space-size=1024"
