@@ -47,13 +47,14 @@ export function PricingCard({
     product.metadata?.max_slides ||
     product.metadata?.maxSlides;
 
-  // Get features from product.features or extract from benefits
+  // Get features from product.features (dynamically extracted from all metadata)
+  // Fallback to benefits if features array is not available
   const features =
-    product.features ||
-    (product.benefits
-      ?.map((b) => b.description)
-      .filter(Boolean) as string[]) ||
-    [];
+    product.features && product.features.length > 0
+      ? product.features
+      : (product.benefits
+          ?.map((b) => b.description)
+          .filter(Boolean) as string[]) || [];
 
   const handleClick = () => {
     if (isCurrentPlan) {
@@ -197,17 +198,17 @@ export function PricingCard({
                 isCurrentPlan
                   ? "bg-white/50 hover:bg-white/80 text-slate-600 border border-white/60 shadow-none"
                   : isPopular
-                    ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
-                    : "bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/10"
+                  ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+                  : "bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/10"
               )}
             >
               {loading
                 ? "Loading..."
                 : isCurrentPlan
-                  ? "Current Plan"
-                  : primaryPrice
-                    ? cta || `Choose ${product.name}`
-                    : "Contact for Quote"}
+                ? "Current Plan"
+                : primaryPrice
+                ? cta || `Choose ${product.name}`
+                : "Contact for Quote"}
             </Button>
           )}
         </div>
@@ -217,4 +218,3 @@ export function PricingCard({
 
   return cardContent;
 }
-
