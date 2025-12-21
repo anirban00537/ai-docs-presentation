@@ -120,19 +120,73 @@ export class PolarService implements OnModuleInit {
   }
 
   /**
+   * Get customer by email
+   */
+  async getCustomerByEmail(email: string) {
+    if (!this.isConfigured()) return null;
+
+    try {
+      const client = this.getClient();
+      const response = await client.customers.list({
+        email,
+      });
+
+      // Handle both paginated and direct array responses
+      const items = (response as any).result?.items || (response as any).items || [];
+      return items.find(
+        (c: any) => c.email.toLowerCase() === email.toLowerCase(),
+      );
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to get customer by email: ${error?.message || 'Unknown error'}`,
+      );
+      return null;
+    }
+  }
+
+  /**
    * Create or get customer in Polar
    */
   async createOrGetCustomer(userId: string, email: string, name?: string) {
     if (!this.isConfigured()) return null;
 
     try {
-      // Try to get existing customer
-      const existing = await this.getCustomerByExternalId(userId);
-      if (existing) {
-        return existing;
+      // 1. Try to get existing customer by external ID (preferred)
+      const existingByExternalId = await this.getCustomerByExternalId(userId);
+      if (existingByExternalId) {
+        return existingByExternalId;
       }
 
-      // Create new customer
+      // 2. Try to get existing customer by email
+      const existingByEmail = await this.getCustomerByEmail(email);
+      if (existingByEmail) {
+        this.logger.log(
+          `Found existing Polar customer by email: ${email} (ID: ${existingByEmail.id})`,
+        );
+
+        // If it doesn't have an external ID, try to update it to link it
+        if (!existingByEmail.externalId && !existingByEmail.external_id) {
+          try {
+            const client = this.getClient();
+            await client.customers.update({
+              id: existingByEmail.id,
+              customerUpdate: {
+                externalId: userId,
+              },
+            });
+            this.logger.log(
+              `Linked existing Polar customer ${existingByEmail.id} to user ${userId}`,
+            );
+          } catch (updateError: any) {
+            this.logger.warn(
+              `Failed to link existing customer ${existingByEmail.id} to user ${userId}: ${updateError.message}`,
+            );
+          }
+        }
+        return existingByEmail;
+      }
+
+      // 3. Create new customer if not found by external ID or email
       const client = this.getClient();
       const response = await client.customers.create({
         email,
@@ -141,8 +195,24 @@ export class PolarService implements OnModuleInit {
       });
 
       return response;
-    } catch (error) {
+    } catch (error: any) {
+      // If we still get a "customer already exists" error (e.g. race condition), log it clearly
+      const isConflict =
+        error?.message?.includes('already exists') ||
+        error?.body?.includes('already exists');
+
+      if (isConflict) {
+        this.logger.warn(
+          `Email conflict during customer creation for ${email}. Attempting last-ditch fetch.`,
+        );
+        const lastDitch = await this.getCustomerByEmail(email);
+        if (lastDitch) return lastDitch;
+      }
+
       this.logger.error(`Failed to create/get customer: ${error.message}`);
+      if (error?.body) {
+        this.logger.error(`Error body: ${error.body}`);
+      }
       return null;
     }
   }
