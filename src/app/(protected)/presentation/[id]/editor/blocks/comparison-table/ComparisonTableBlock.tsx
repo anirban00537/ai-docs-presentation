@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import {
   createComparisonTableContent,
   type ComparisonTableContent,
 } from "../definitions";
 import { IconCheck, IconX, IconTrash, IconPlus } from "@tabler/icons-react";
 import { BlockWrapper } from "../BlockWrapper";
-import { createParagraphContent } from "../definitions/common";
+import { createParagraphContent } from "@/types/presentation";
 
 interface ComparisonTableBlockProps {
   block: Block;

@@ -1,18 +1,9 @@
-import type { ProseMirrorDocument } from "./common";
-
-export interface TimelineStep {
-  title: ProseMirrorDocument;
-  description: ProseMirrorDocument;
-  icon?: string;
-}
-
-export interface TimelineContent {
-  type: "timeline";
-  title?: ProseMirrorDocument;
-  steps: TimelineStep[];
-}
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+import type { TimelineContent, ProseMirrorDocument } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createTimelineContent = (): TimelineContent => ({
   type: "timeline",
@@ -69,4 +60,3 @@ export const normalizeTimelineContent = (content: any): TimelineContent => {
   }
   return createTimelineContent();
 };
-

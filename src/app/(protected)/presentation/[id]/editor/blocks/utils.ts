@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Row } from "@/lib/editor/types";
+import { Row } from "@/types/presentation";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

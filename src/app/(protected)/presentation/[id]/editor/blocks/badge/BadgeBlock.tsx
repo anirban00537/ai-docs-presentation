@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import { createBadgeContent, type BadgeContent } from "../definitions";
 import { BlockWrapper } from "../BlockWrapper";
 import {
@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
-import { createParagraphContent } from "../definitions/common";
+import { createParagraphContent } from "@/types/presentation";
 import EmojiPicker from "emoji-picker-react";
 import {
   Popover,

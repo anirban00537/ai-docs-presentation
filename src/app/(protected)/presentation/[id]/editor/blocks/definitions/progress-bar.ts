@@ -1,18 +1,10 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface ProgressItem {
-  label: ProseMirrorDocument;
-  value: number;
-  color?: string;
-}
-
-export interface ProgressBarContent {
-  type: "progress-bar";
-  items: ProgressItem[];
-  showPercentage?: boolean;
-  animated?: boolean;
-}
+import type { ProgressBarContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createProgressBarContent = (): ProgressBarContent => ({
   type: "progress-bar",
@@ -31,8 +23,6 @@ export const createProgressBarContent = (): ProgressBarContent => ({
   showPercentage: true,
   animated: true,
 });
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeProgressBarContent = (
   content: any

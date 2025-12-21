@@ -1,18 +1,12 @@
-import { ProseMirrorDocument, getDefaultHeadingContent, createParagraphContent } from "./common";
-
-export interface PricingFeature {
-  text: ProseMirrorDocument;
-  included: boolean;
-}
-
-export interface PricingCardContent {
-  planName: ProseMirrorDocument;
-  price: ProseMirrorDocument;
-  features: PricingFeature[];
-  buttonLabel: string;
-}
+import { 
+  PricingCardContent, 
+  ProseMirrorDocument, 
+  getDefaultHeadingContent, 
+  createParagraphContent 
+} from "@/types/presentation";
 
 export const createPricingCardContent = (): PricingCardContent => ({
+  type: "pricing-card",
   planName: getDefaultHeadingContent(),
   price: getDefaultHeadingContent(),
   features: [
@@ -25,6 +19,7 @@ export const createPricingCardContent = (): PricingCardContent => ({
 
 export const normalizePricingCardContent = (content: any): PricingCardContent => {
   return {
+    type: "pricing-card",
     planName: content?.planName ?? getDefaultHeadingContent(),
     price: content?.price ?? getDefaultHeadingContent(),
     features: Array.isArray(content?.features) 

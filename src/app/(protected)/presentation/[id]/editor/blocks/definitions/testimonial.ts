@@ -1,15 +1,10 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface TestimonialContent {
-  type: "testimonial";
-  quote: ProseMirrorDocument;
-  name: ProseMirrorDocument;
-  role: ProseMirrorDocument;
-  avatar?: string;
-}
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+import type { TestimonialContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createTestimonialContent = (): TestimonialContent => ({
   type: "testimonial",

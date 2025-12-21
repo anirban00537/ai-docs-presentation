@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import {
   getDefaultNumberCardEditorContent,
   type NumberCardContent,

@@ -1,12 +1,9 @@
-import type { ProseMirrorDocument } from "./common";
-
-export interface NumberCardContent {
-  type: "number-card";
-  icon?: string;
-  number?: number;
-  size?: "small" | "medium" | "large";
-  editorContent: ProseMirrorDocument;
-}
+import { NumberCardContent, ProseMirrorDocument } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const getDefaultNumberCardEditorContent = (): ProseMirrorDocument =>
   "### Title\n\nDescription";
@@ -18,12 +15,6 @@ export const createNumberCardContent = (): NumberCardContent => ({
   size: "medium",
   editorContent: getDefaultNumberCardEditorContent(),
 });
-
-import {
-  normalizeToMarkdown,
-  isLegacyProseMirrorFormat,
-  isMarkdownFormat,
-} from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeNumberCardContent = (content: any): NumberCardContent => {
   const incoming = content as NumberCardContent | undefined;

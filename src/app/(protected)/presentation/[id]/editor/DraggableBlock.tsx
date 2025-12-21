@@ -4,7 +4,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { BlockRenderer } from "./blocks/BlockRenderer";
 import { BlockActionBar } from "./BlockActionBar";
 import { useBlockFocus } from "./BlockFocusContext";
-import type { Block } from "@/lib/editor/types";
+import type { Block } from "@/types/presentation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectTheme,

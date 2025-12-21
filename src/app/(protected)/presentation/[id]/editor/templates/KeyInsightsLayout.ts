@@ -1,4 +1,4 @@
-import { Row, Block } from "@/lib/editor/types";
+import { Row, Block } from "@/types/presentation";
 import type { LayoutTemplate } from "../layoutTemplates";
 import { BLOCK_TYPES, createGlassInsightContent } from "../blocks/definitions";
 import { nanoid } from "@reduxjs/toolkit";

@@ -1,18 +1,10 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface FeatureItem {
-  icon: string;
-  title: ProseMirrorDocument;
-  description: ProseMirrorDocument;
-}
-
-export interface FeatureListContent {
-  type: "feature-list";
-  features: FeatureItem[];
-  layout: "grid" | "list";
-  columns?: 2 | 3 | 4;
-}
+import type { FeatureListContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createFeatureListContent = (): FeatureListContent => ({
   type: "feature-list",
@@ -33,10 +25,7 @@ export const createFeatureListContent = (): FeatureListContent => ({
     },
   ],
   layout: "grid",
-  columns: 2,
 });
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeFeatureListContent = (
   content: any
@@ -59,7 +48,6 @@ export const normalizeFeatureListContent = (
           : createParagraphContent("Feature description"),
       })),
       layout: incoming.layout ?? "grid",
-      columns: incoming.columns ?? 2,
     };
   }
   return createFeatureListContent();

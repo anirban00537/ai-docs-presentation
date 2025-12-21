@@ -1,17 +1,10 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface FAQItem {
-  question: ProseMirrorDocument;
-  answer: ProseMirrorDocument;
-  expanded?: boolean;
-}
-
-export interface FAQContent {
-  type: "faq";
-  items: FAQItem[];
-  style: "accordion" | "tabs";
-}
+import type { FAQContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createFAQContent = (): FAQContent => ({
   type: "faq",
@@ -33,8 +26,6 @@ export const createFAQContent = (): FAQContent => ({
   ],
   style: "accordion",
 });
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeFAQContent = (content: any): FAQContent => {
   const incoming = content as FAQContent | undefined;

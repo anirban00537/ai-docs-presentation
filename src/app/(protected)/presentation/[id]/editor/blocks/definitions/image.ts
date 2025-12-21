@@ -1,17 +1,7 @@
-export interface ImageContent {
-  url: string;
-  alt?: string;
-  caption?: string;
-  width?: number;
-  height?: number;
-  attribution?: {
-    name: string;
-    link: string;
-  };
-  objectFit?: "cover" | "contain" | "fill";
-}
+import { ImageContent } from "@/types/presentation";
 
 export const createImageContent = (url: string = "", alt?: string, attribution?: { name: string; link: string }): ImageContent => ({
+  type: "image",
   url,
   alt: alt || "",
   caption: "",
@@ -21,6 +11,7 @@ export const createImageContent = (url: string = "", alt?: string, attribution?:
 
 export const normalizeImageContent = (content: any): ImageContent => {
   return {
+    type: "image",
     url: typeof content?.url === "string" ? content.url : "",
     alt: typeof content?.alt === "string" ? content.alt : "",
     caption: typeof content?.caption === "string" ? content.caption : "",

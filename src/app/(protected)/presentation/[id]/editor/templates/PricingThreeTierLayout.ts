@@ -1,9 +1,9 @@
 import { nanoid } from "nanoid";
-import type { Row } from "@/lib/editor/types";
+import type { Row } from "@/types/presentation";
 import type { LayoutTemplate } from "../layoutTemplates";
 import { BLOCK_TYPES, createPricingCardContent } from "../blocks/definitions";
-import type { Block } from "@/lib/editor/types";
-import { createParagraphContent } from "../blocks/definitions/common";
+import type { Block } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
 
 export const PricingThreeTierLayout: LayoutTemplate = {
   id: "pricing-three-tier-layout",

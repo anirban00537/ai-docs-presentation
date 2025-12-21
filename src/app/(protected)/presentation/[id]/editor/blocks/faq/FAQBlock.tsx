@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import { createFAQContent, type FAQContent } from "../definitions";
 import { IconChevronDown, IconTrash, IconPlus } from "@tabler/icons-react";
 import { BlockWrapper } from "../BlockWrapper";
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { createParagraphContent } from "../definitions/common";
+import { createParagraphContent } from "@/types/presentation";
 import {
   Select,
   SelectContent,

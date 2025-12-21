@@ -1,21 +1,10 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface StatItem {
-  value: number;
-  label: ProseMirrorDocument;
-  icon?: string;
-  prefix?: string;
-  suffix?: string;
-  color?: string;
-}
-
-export interface StatsCounterContent {
-  type: "stats-counter";
-  stats: StatItem[];
-  layout: "horizontal" | "vertical" | "grid";
-  columns?: 2 | 3 | 4;
-}
+import type { StatsCounterContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createStatsCounterContent = (): StatsCounterContent => ({
   type: "stats-counter",
@@ -36,8 +25,6 @@ export const createStatsCounterContent = (): StatsCounterContent => ({
   layout: "horizontal",
   columns: 2,
 });
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeStatsCounterContent = (
   content: any

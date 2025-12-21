@@ -1,18 +1,10 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface LogoItem {
-  image?: string;
-  name: ProseMirrorDocument;
-  link?: string;
-}
-
-export interface LogoGridContent {
-  type: "logo-grid";
-  logos: LogoItem[];
-  columns: 3 | 4 | 5 | 6;
-  grayscale?: boolean;
-}
+import type { LogoGridContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createLogoGridContent = (): LogoGridContent => ({
   type: "logo-grid",
@@ -33,12 +25,6 @@ export const createLogoGridContent = (): LogoGridContent => ({
   columns: 4,
   grayscale: true,
 });
-
-import {
-  normalizeToMarkdown,
-  isLegacyProseMirrorFormat,
-  isMarkdownFormat,
-} from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeLogoGridContent = (content: any): LogoGridContent => {
   const incoming = content as LogoGridContent | undefined;

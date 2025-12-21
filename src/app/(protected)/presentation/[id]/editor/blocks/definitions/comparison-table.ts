@@ -1,21 +1,10 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface ComparisonColumn {
-  name: ProseMirrorDocument;
-  price?: ProseMirrorDocument;
-}
-
-export interface ComparisonRow {
-  feature: ProseMirrorDocument;
-  values: (boolean | string | ProseMirrorDocument)[];
-}
-
-export interface ComparisonTableContent {
-  type: "comparison-table";
-  columns: ComparisonColumn[];
-  rows: ComparisonRow[];
-}
+import type { ComparisonTableContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
+import {
+  normalizeToMarkdown,
+  isLegacyProseMirrorFormat,
+  isMarkdownFormat,
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createComparisonTableContent = (): ComparisonTableContent => ({
   type: "comparison-table",
@@ -84,12 +73,6 @@ export const createComparisonTableContent = (): ComparisonTableContent => ({
     },
   ],
 });
-
-import {
-  normalizeToMarkdown,
-  isLegacyProseMirrorFormat,
-  isMarkdownFormat,
-} from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeComparisonTableContent = (
   content: any

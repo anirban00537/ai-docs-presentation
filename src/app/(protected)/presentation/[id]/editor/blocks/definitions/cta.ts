@@ -1,13 +1,9 @@
-import type { ProseMirrorDocument } from "./common";
-
-export interface CtaContent {
-  type: "cta";
-  heading: ProseMirrorDocument;
-  body: ProseMirrorDocument;
-  buttonLabel: string;
-}
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+import { CtaContent, ProseMirrorDocument } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createCtaContent = (): CtaContent => ({
   type: "cta",
@@ -36,8 +32,8 @@ export const normalizeCtaContent = (content: any): CtaContent => {
       heading,
       body,
       buttonLabel: incoming.buttonLabel ?? "Get started",
+      buttonLink: incoming.buttonLink,
     };
   }
   return createCtaContent();
 };
-

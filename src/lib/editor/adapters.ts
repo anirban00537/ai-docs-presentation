@@ -1,4 +1,4 @@
-import type { Slide as ReduxSlide, Block, Row } from "@/lib/editor/types";
+import type { Slide as ReduxSlide, Block, Row } from "@/types/presentation";
 import {
   normalizeToMarkdown,
   isLegacyProseMirrorFormat,

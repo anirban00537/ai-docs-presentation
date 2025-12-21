@@ -1,4 +1,4 @@
-import type { Row } from "@/lib/editor/types";
+import type { Row, LayoutTemplate } from "@/types/presentation";
 import type { Icon } from "@tabler/icons-react";
 import {
   IconTarget,
@@ -76,14 +76,6 @@ import { SummaryLayout } from "./templates/SummaryLayout";
 import { MetricDashboardLayout } from "./templates/MetricDashboardLayout";
 import { TechnicalWalkthroughLayout } from "./templates/TechnicalWalkthroughLayout";
 import { KeyInsightsLayout } from "./templates/KeyInsightsLayout";
-
-export interface LayoutTemplate {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  getRows: () => Row[];
-}
 
 // JSON mapping of layout IDs to Tabler icon components
 export const layoutIconsMap: Record<string, Icon> = {

@@ -1,14 +1,9 @@
-import type { ProseMirrorDocument } from "./common";
-
-export interface VideoContent {
-  type: "video";
-  source: "youtube" | "vimeo" | "custom";
-  url: string;
-  thumbnail?: string;
-  autoplay?: boolean;
-  loop?: boolean;
-  title?: ProseMirrorDocument;
-}
+import type { VideoContent, ProseMirrorDocument } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createVideoContent = (): VideoContent => ({
   type: "video",
@@ -18,8 +13,6 @@ export const createVideoContent = (): VideoContent => ({
   autoplay: false,
   loop: false,
 });
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeVideoContent = (content: any): VideoContent => {
   const incoming = content as VideoContent | undefined;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import {
   createProgressBarContent,
   type ProgressBarContent,
@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
-import { createParagraphContent } from "../definitions/common";
+import { createParagraphContent } from "@/types/presentation";
 
 interface ProgressBarBlockProps {
   block: Block;

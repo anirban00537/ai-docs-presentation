@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import type { Block, Row, Slide } from "@/lib/editor/types";
+import type { Block, Row, Slide } from "@/types/presentation";
 import {
   BLOCK_TYPES,
   MAX_BLOCKS_PER_ROW,

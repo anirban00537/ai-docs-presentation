@@ -1,19 +1,10 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface BadgeItem {
-  icon?: string;
-  title: ProseMirrorDocument;
-  description?: ProseMirrorDocument;
-  issuer?: ProseMirrorDocument;
-  date?: string;
-}
-
-export interface BadgeContent {
-  type: "badge";
-  badges: BadgeItem[];
-  layout: "grid" | "list";
-}
+import type { BadgeContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
+import {
+  normalizeToMarkdown,
+  isLegacyProseMirrorFormat,
+  isMarkdownFormat,
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createBadgeContent = (): BadgeContent => ({
   type: "badge",
@@ -33,12 +24,6 @@ export const createBadgeContent = (): BadgeContent => ({
   ],
   layout: "grid",
 });
-
-import {
-  normalizeToMarkdown,
-  isLegacyProseMirrorFormat,
-  isMarkdownFormat,
-} from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeBadgeContent = (content: any): BadgeContent => {
   const incoming = content as BadgeContent | undefined;

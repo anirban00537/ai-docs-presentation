@@ -1,6 +1,6 @@
 import React from "react";
 import { IconSettings, IconPlus } from "@tabler/icons-react";
-import type { Theme } from "@/lib/editor/types";
+import type { Theme } from "@/types/presentation";
 
 interface BlockWrapperProps {
   children: React.ReactNode;

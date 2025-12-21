@@ -1,5 +1,5 @@
 import React from "react";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import {
   type ImageGalleryContent,
   type GalleryImage,

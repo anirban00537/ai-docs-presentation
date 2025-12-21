@@ -1,16 +1,18 @@
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 import undoable, { excludeAction, StateWithHistory } from "redux-undo";
 import type { RootState } from "@/store";
-import type {
+import {
   Block,
+  BlockType,
+  BlockContent,
   PresentationInfo,
   Row,
   Slide,
   Theme,
-} from "@/lib/editor/types";
-import {
   BLOCK_TYPES,
   MAX_BLOCKS_PER_ROW,
+} from "@/types/presentation";
+import {
   createBlockContentForType,
   createNumberCardContent,
 } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
@@ -556,7 +558,7 @@ const slidesSlice = createSlice({
         slideId: string;
         rowId: string;
         blockId: string;
-        newType: string;
+        newType: BlockType;
       }>
     ) => {
       const { slideId, rowId, blockId, newType } = action.payload;

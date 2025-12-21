@@ -1,7 +1,4 @@
-export interface SpacerContent {
-  type: "spacer";
-  height: number;
-}
+import { SpacerContent } from "@/types/presentation";
 
 export const createSpacerContent = (height: number = 64): SpacerContent => ({
   type: "spacer",

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import { type ImageContent } from "../definitions/image";
 import { IconPhoto, IconExternalLink } from "@tabler/icons-react";
 import { X, Search, Upload, Loader2, Heart } from "lucide-react";

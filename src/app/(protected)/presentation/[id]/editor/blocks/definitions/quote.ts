@@ -1,13 +1,9 @@
-import type { ProseMirrorDocument } from "./common";
-
-export interface QuoteContent {
-  type: "quote";
-  quote: ProseMirrorDocument;
-  author: ProseMirrorDocument;
-  style?: "centered" | "left-aligned";
-}
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
+import { QuoteContent, ProseMirrorDocument } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createQuoteContent = (): QuoteContent => ({
   type: "quote",
@@ -40,4 +36,3 @@ export const normalizeQuoteContent = (content: any): QuoteContent => {
   }
   return createQuoteContent();
 };
-

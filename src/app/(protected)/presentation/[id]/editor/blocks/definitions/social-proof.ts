@@ -1,19 +1,5 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface SocialPlatform {
-  platform: "twitter" | "linkedin" | "facebook" | "instagram" | "youtube";
-  followers: string;
-  link?: string;
-}
-
-export interface SocialProofContent {
-  type: "social-proof";
-  platforms: SocialPlatform[];
-  showRatings?: boolean;
-  rating?: number;
-  reviewCount?: string;
-}
+import { SocialProofContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
 
 export const createSocialProofContent = (): SocialProofContent => ({
   type: "social-proof",

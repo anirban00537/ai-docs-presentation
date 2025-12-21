@@ -1,10 +1,4 @@
-export interface PulseMetricContent {
-  type: "pulse-metric";
-  value: string;
-  label: string;
-  trend: "up" | "down" | "neutral";
-  sparklineType?: "smooth" | "step" | "linear" | "bars";
-}
+import { PulseMetricContent } from "@/types/presentation";
 
 export const createPulseMetricContent = (
   value: string = "+125%",

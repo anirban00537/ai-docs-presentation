@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import type { Row, Block } from "@/lib/editor/types";
+import type { Row, Block } from "@/types/presentation";
 import type { LayoutTemplate } from "../layoutTemplates";
 import { BLOCK_TYPES } from "../blocks/definitions";
 

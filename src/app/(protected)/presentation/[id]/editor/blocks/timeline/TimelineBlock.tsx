@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import {
   createTimelineContent,
   type TimelineContent,
@@ -8,7 +8,7 @@ import {
 } from "../definitions";
 import { TimelineStepComponent } from "./TimelineStep";
 import { BlockWrapper } from "../BlockWrapper";
-import { createParagraphContent } from "../definitions/common";
+import { createParagraphContent } from "@/types/presentation";
 
 interface TimelineBlockProps {
   block: Block;

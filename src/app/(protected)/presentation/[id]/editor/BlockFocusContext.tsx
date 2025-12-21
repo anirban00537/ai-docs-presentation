@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { selectSlides } from "@/store/slices/slidesSlice";
-import type { Block, Row, Slide } from "@/lib/editor/types";
+import type { Block, Row, Slide } from "@/types/presentation";
 
 interface BlockPosition {
   slideId: string;

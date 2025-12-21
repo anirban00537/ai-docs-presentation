@@ -1,12 +1,12 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import {
   createPricingCardContent,
   type PricingCardContent,
 } from "../definitions/pricing-card";
 import { IconCheck, IconX, IconStar, IconTrash } from "@tabler/icons-react";
-import { createParagraphContent } from "../definitions/common";
+import { createParagraphContent } from "@/types/presentation";
 import { BlockWrapper } from "../BlockWrapper";
 import {
   Dialog,

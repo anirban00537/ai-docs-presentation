@@ -1,10 +1,5 @@
-export interface CodeContent {
-  type: "code";
-  language: string;
-  code: string;
-  showLineNumbers?: boolean;
-  theme?: "light" | "dark";
-}
+import { CodeContent } from "@/types/presentation";
+
 
 export const createCodeContent = (): CodeContent => ({
   type: "code",

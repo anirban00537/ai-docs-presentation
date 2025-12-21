@@ -1,11 +1,10 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface GlassInsightContent {
-  type: "glass-insight";
-  icon: string;
-  editorContent: ProseMirrorDocument;
-}
+import type { GlassInsightContent, ProseMirrorDocument } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
+import { 
+  normalizeToMarkdown, 
+  isLegacyProseMirrorFormat, 
+  isMarkdownFormat 
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createGlassInsightContent = (
   icon: string = "💡",
@@ -15,8 +14,6 @@ export const createGlassInsightContent = (
   icon,
   editorContent: createParagraphContent(text),
 });
-
-import { normalizeToMarkdown, isLegacyProseMirrorFormat, isMarkdownFormat } from "@/lib/markdown/prosemirror-converter";
 
 export const normalizeGlassInsightContent = (
   content: any

@@ -1,5 +1,5 @@
 import React from "react";
-import type { Theme } from "@/lib/editor/types";
+import type { Theme } from "@/types/presentation";
 import { CardWrapper } from "../CardWrapper";
 
 interface CommonCardProps {

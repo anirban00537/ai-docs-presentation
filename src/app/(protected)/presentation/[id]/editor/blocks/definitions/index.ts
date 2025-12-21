@@ -1,5 +1,6 @@
 // Common exports
-export * from "./common";
+export * from "@/types/presentation";
+import { BlockType, BlockContent } from "@/types/presentation";
 
 // Block type exports
 export * from "./simple-number-card";
@@ -27,40 +28,8 @@ export * from "./progress-bar";
 export * from "./social-proof";
 export * from "./badge";
 
-// Type unions
-import type { ProseMirrorDocument } from "./common";
-import {
-  normalizeToMarkdown,
-  isLegacyProseMirrorFormat,
-  isMarkdownFormat,
-} from "@/lib/markdown/prosemirror-converter";
-import type { NumberCardContent } from "./number-card";
-import type { TestimonialContent } from "./testimonial";
-import type { CtaContent } from "./cta";
-import type { QuoteContent } from "./quote";
-import type { TimelineContent } from "./timeline";
-import type { TeamCardContent } from "./team-card";
-import type { PricingCardContent } from "./pricing-card";
-import type { ImageGalleryContent } from "./image-gallery";
-import type { ImageContent } from "./image";
-import type { StatsCounterContent } from "./stats-counter";
-import type { FeatureListContent } from "./feature-list";
-import type { ComparisonTableContent } from "./comparison-table";
-import type { FAQContent } from "./faq";
-import type { LogoGridContent } from "./logo-grid";
-import type { VideoContent } from "./video";
-import type { CodeContent } from "./code";
-import type { ProgressBarContent } from "./progress-bar";
-import type { SocialProofContent } from "./social-proof";
-import type { BadgeContent } from "./badge";
-import type { SimpleNumberCardContent } from "./simple-number-card";
-import type { CodeTerminalContent } from "./code-terminal";
-import type { PulseMetricContent } from "./pulse-metric";
-import type { GlassInsightContent } from "./glass-insight";
-import type { BlockType } from "./common";
-
 // Factory functions
-import { getDefaultHeadingContent } from "./common";
+import { getDefaultHeadingContent } from "@/types/presentation";
 import { createNumberCardContent } from "./number-card";
 import { createTestimonialContent } from "./testimonial";
 import { createCtaContent } from "./cta";
@@ -84,7 +53,7 @@ import { createSimpleNumberCardContent } from "./simple-number-card";
 import { createCodeTerminalContent } from "./code-terminal";
 import { createPulseMetricContent } from "./pulse-metric";
 import { createGlassInsightContent } from "./glass-insight";
-import { BLOCK_TYPES } from "./common";
+import { BLOCK_TYPES } from "@/types/presentation";
 
 // Normalization functions
 import { normalizeNumberCardContent } from "./number-card";
@@ -111,31 +80,12 @@ import { normalizeCodeTerminalContent } from "./code-terminal";
 import { normalizePulseMetricContent } from "./pulse-metric";
 import { normalizeGlassInsightContent } from "./glass-insight";
 
-export type BlockContent =
-  | ProseMirrorDocument
-  | NumberCardContent
-  | TestimonialContent
-  | CtaContent
-  | QuoteContent
-  | TimelineContent
-  | TeamCardContent
-  | PricingCardContent
-  | ImageGalleryContent
-  | ImageContent
-  | StatsCounterContent
-  | FeatureListContent
-  | ComparisonTableContent
-  | FAQContent
-  | LogoGridContent
-  | VideoContent
-  | CodeContent
-  | ProgressBarContent
-  | SocialProofContent
-  | BadgeContent
-  | SimpleNumberCardContent
-  | CodeTerminalContent
-  | PulseMetricContent
-  | GlassInsightContent;
+
+import {
+  normalizeToMarkdown,
+  isLegacyProseMirrorFormat,
+  isMarkdownFormat,
+} from "@/lib/markdown/prosemirror-converter";
 
 export const createBlockContentForType = (
   type: BlockType | undefined

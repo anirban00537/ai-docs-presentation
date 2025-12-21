@@ -11,7 +11,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import type { Block, Slide } from "@/lib/editor/types";
+import type { Block, Slide } from "@/types/presentation";
 import type { EditorCommandBus } from "@/lib/editor/commands";
 
 interface UseEditorDndParams {

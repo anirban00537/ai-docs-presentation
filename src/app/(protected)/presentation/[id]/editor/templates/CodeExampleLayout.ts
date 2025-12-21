@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
-import type { Row } from "@/lib/editor/types";
+import type { Row } from "@/types/presentation";
 import { BLOCK_TYPES, createCodeContent } from "../blocks/definitions";
-import type { Block } from "@/lib/editor/types";
+import type { Block } from "@/types/presentation";
 
 export const CodeExampleLayout = {
   id: "code-example-layout",

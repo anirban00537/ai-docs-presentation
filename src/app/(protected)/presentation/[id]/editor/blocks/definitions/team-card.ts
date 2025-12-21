@@ -1,18 +1,12 @@
-import { ProseMirrorDocument, getDefaultHeadingContent, createParagraphContent } from "./common";
-
-export interface TeamCardContent {
-  name: ProseMirrorDocument;
-  role: ProseMirrorDocument;
-  description?: ProseMirrorDocument;
-  avatar?: string;
-  socials?: {
-    linkedin?: string;
-    twitter?: string;
-    website?: string;
-  };
-}
+import { 
+  TeamCardContent, 
+  ProseMirrorDocument, 
+  getDefaultHeadingContent, 
+  createParagraphContent 
+} from "@/types/presentation";
 
 export const createTeamCardContent = (): TeamCardContent => ({
+  type: "team-card",
   name: getDefaultHeadingContent(),
   role: createParagraphContent(),
   description: createParagraphContent(),
@@ -22,6 +16,7 @@ export const createTeamCardContent = (): TeamCardContent => ({
 
 export const normalizeTeamCardContent = (content: any): TeamCardContent => {
   return {
+    type: "team-card",
     name: content?.name ?? getDefaultHeadingContent(),
     role: content?.role ?? createParagraphContent(),
     description: content?.description ?? createParagraphContent(),

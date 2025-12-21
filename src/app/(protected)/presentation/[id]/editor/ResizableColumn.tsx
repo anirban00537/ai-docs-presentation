@@ -3,7 +3,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { DraggableBlock } from "./DraggableBlock";
 import { useBlockFocus } from "./BlockFocusContext";
-import type { Block } from "@/lib/editor/types";
+import type { Block } from "@/types/presentation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME, deleteBlock, type Theme } from "@/store/slices/slidesSlice";
 import { IconTrash, IconGripHorizontal } from "@tabler/icons-react";

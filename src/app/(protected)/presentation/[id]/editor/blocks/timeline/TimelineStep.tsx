@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { TimelineStep as TimelineStepType } from "../definitions";
 import { createTimelineContent } from "../definitions";
-import type { Theme } from "@/lib/editor/types";
+import type { Theme } from "@/types/presentation";
 import EmojiPicker from "emoji-picker-react";
 import {
   Popover,

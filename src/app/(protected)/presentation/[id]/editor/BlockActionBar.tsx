@@ -11,7 +11,7 @@ import {
   IconGripVertical,
 } from "@tabler/icons-react";
 import { BlockTransformMenu } from "./BlockTransformMenu";
-import type { Block } from "@/lib/editor/types";
+import type { Block } from "@/types/presentation";
 
 interface BlockActionBarProps {
   block: Block;

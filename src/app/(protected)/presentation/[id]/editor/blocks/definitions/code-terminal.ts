@@ -1,11 +1,4 @@
-import type { ProseMirrorDocument } from "./common";
-import { createParagraphContent } from "./common";
-
-export interface CodeTerminalContent {
-  type: "code-terminal";
-  command: string;
-  output: string;
-}
+import { CodeTerminalContent } from "@/types/presentation";
 
 export const createCodeTerminalContent = (
   command: string = "npm install butterfast",

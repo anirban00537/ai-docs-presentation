@@ -1,12 +1,12 @@
 import { nanoid } from "nanoid";
-import type { Row } from "@/lib/editor/types";
+import type { Row } from "@/types/presentation";
 import {
   BLOCK_TYPES,
   createFeatureListContent,
   createCtaContent,
 } from "../blocks/definitions";
-import type { Block } from "@/lib/editor/types";
-import { createParagraphContent } from "../blocks/definitions/common";
+import type { Block } from "@/types/presentation";
+import { createParagraphContent } from "@/types/presentation";
 
 export const DocIntroLayout = {
   id: "doc-intro-layout",

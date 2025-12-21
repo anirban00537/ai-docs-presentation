@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/lib/editor/types";
+import type { Block, Theme } from "@/types/presentation";
 import { createVideoContent, type VideoContent } from "../definitions";
 import { IconVideo, IconPlayerPlay } from "@tabler/icons-react";
 import { BlockWrapper } from "../BlockWrapper";
