@@ -15,6 +15,15 @@ export interface Price {
   metadata?: Record<string, any>;
 }
 
+export interface Benefit {
+  id: string;
+  type?: string;
+  description?: string;
+  selectable?: boolean;
+  metadata?: Record<string, any>;
+  properties?: Record<string, any>;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -23,7 +32,9 @@ export interface Product {
   recurringInterval?: string; // day, week, month, year
   recurringIntervalCount?: number;
   prices?: Price[];
+  benefits?: Benefit[];
   metadata?: Record<string, any>;
+  features?: string[]; // Extracted feature list from benefits and metadata
   createdAt?: string;
   updatedAt?: string;
   monthlyCreditLimit?: number;
