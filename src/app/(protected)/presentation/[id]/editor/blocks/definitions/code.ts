@@ -1,5 +1,4 @@
-import { CodeContent } from "@/types/presentation";
-
+import { CodeContentSchema, type CodeContent } from "@/types/presentation";
 
 export const createCodeContent = (): CodeContent => ({
   type: "code",
@@ -12,15 +11,10 @@ export const createCodeContent = (): CodeContent => ({
 });
 
 export const normalizeCodeContent = (content: any): CodeContent => {
-  const incoming = content as CodeContent | undefined;
-  if (incoming) {
-    return {
-      type: "code",
-      language: incoming.language ?? "javascript",
-      code: incoming.code ?? "",
-      showLineNumbers: incoming.showLineNumbers ?? true,
-      theme: incoming.theme ?? "light",
-    };
+  const result = CodeContentSchema.safeParse(content);
+  if (result.success) {
+    return result.data;
   }
+  
   return createCodeContent();
 };

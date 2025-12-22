@@ -1,9 +1,8 @@
-import type { StatsCounterContent, ProseMirrorDocument } from "@/types/presentation";
+import { StatsCounterContentSchema, type StatsCounterContent } from "@/types/presentation";
 
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createStatsCounterContent = (): StatsCounterContent => ({
@@ -29,25 +28,28 @@ export const createStatsCounterContent = (): StatsCounterContent => ({
 export const normalizeStatsCounterContent = (
   content: any
 ): StatsCounterContent => {
-  const incoming = content as StatsCounterContent | undefined;
-  if (incoming?.stats && Array.isArray(incoming.stats)) {
-    return {
-      type: "stats-counter",
-      stats: incoming.stats.map((stat) => ({
-        value: stat.value ?? 0,
-        label: isMarkdownFormat(stat.label)
-          ? stat.label
-          : isLegacyProseMirrorFormat(stat.label)
+  if (!content || typeof content !== "object") return createStatsCounterContent();
+
+  const stats = Array.isArray(content.stats)
+    ? content.stats.map((stat: any) => ({
+        ...stat,
+        label: isLegacyProseMirrorFormat(stat.label)
           ? normalizeToMarkdown(stat.label)
+          : typeof stat.label === "string"
+          ? stat.label
           : "Label",
-        icon: stat.icon ?? "",
-        prefix: stat.prefix ?? "",
-        suffix: stat.suffix ?? "",
-        color: stat.color,
-      })),
-      layout: incoming.layout ?? "horizontal",
-      columns: incoming.columns ?? 2,
-    };
+        value: typeof stat.value === "number" ? stat.value : 0,
+      }))
+    : [];
+
+  const result = StatsCounterContentSchema.safeParse({
+    ...content,
+    stats,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createStatsCounterContent();
 };

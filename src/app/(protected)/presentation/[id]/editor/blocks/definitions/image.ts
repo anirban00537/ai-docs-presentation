@@ -1,4 +1,4 @@
-import { ImageContent } from "@/types/presentation";
+import { ImageContentSchema, type ImageContent } from "@/types/presentation";
 
 export const createImageContent = (url: string = "", alt?: string, attribution?: { name: string; link: string }): ImageContent => ({
   type: "image",
@@ -10,6 +10,11 @@ export const createImageContent = (url: string = "", alt?: string, attribution?:
 });
 
 export const normalizeImageContent = (content: any): ImageContent => {
+  const result = ImageContentSchema.safeParse(content);
+  if (result.success) {
+    return result.data;
+  }
+  
   return {
     type: "image",
     url: typeof content?.url === "string" ? content.url : "",
@@ -19,8 +24,8 @@ export const normalizeImageContent = (content: any): ImageContent => {
     height: typeof content?.height === "number" ? content.height : undefined,
     objectFit: ["cover", "contain", "fill"].includes(content?.objectFit) ? content.objectFit : "cover",
     attribution: content?.attribution ? {
-      name: typeof content.attribution.name === "string" ? content.attribution.name : "",
-      link: typeof content.attribution.link === "string" ? content.attribution.link : "",
+      name: typeof content.attribution.name === "string" ? content.attribution.name : "Unsplash",
+      link: typeof content.attribution.link === "string" ? content.attribution.link : "https://unsplash.com",
     } : undefined,
   };
 };

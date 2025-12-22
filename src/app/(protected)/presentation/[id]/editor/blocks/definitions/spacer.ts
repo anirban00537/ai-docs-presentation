@@ -1,4 +1,4 @@
-import { SpacerContent } from "@/types/presentation";
+import { SpacerContentSchema, type SpacerContent } from "@/types/presentation";
 
 export const createSpacerContent = (height: number = 64): SpacerContent => ({
   type: "spacer",
@@ -6,9 +6,9 @@ export const createSpacerContent = (height: number = 64): SpacerContent => ({
 });
 
 export const normalizeSpacerContent = (content: any): SpacerContent => {
-  const incoming = content as SpacerContent | undefined;
-  return {
-    type: "spacer",
-    height: typeof incoming?.height === "number" ? incoming.height : 64,
-  };
+  const result = SpacerContentSchema.safeParse(content);
+  if (result.success) {
+    return result.data;
+  }
+  return createSpacerContent(content?.height);
 };

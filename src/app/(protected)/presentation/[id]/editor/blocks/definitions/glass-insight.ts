@@ -1,9 +1,8 @@
-import type { GlassInsightContent, ProseMirrorDocument } from "@/types/presentation";
+import { GlassInsightContentSchema, type GlassInsightContent } from "@/types/presentation";
 
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createGlassInsightContent = (
@@ -18,19 +17,22 @@ export const createGlassInsightContent = (
 export const normalizeGlassInsightContent = (
   content: any
 ): GlassInsightContent => {
-  const incoming = content as GlassInsightContent | undefined;
-  if (incoming?.editorContent) {
-    const editorContent = isMarkdownFormat(incoming.editorContent)
-      ? incoming.editorContent
-      : isLegacyProseMirrorFormat(incoming.editorContent)
-      ? normalizeToMarkdown(incoming.editorContent)
-      : createGlassInsightContent().editorContent;
-    
-    return {
-      type: "glass-insight",
-      icon: incoming.icon ?? "💡",
-      editorContent,
-    };
+  if (!content || typeof content !== "object") return createGlassInsightContent();
+
+  const editorContent = isLegacyProseMirrorFormat(content.editorContent)
+    ? normalizeToMarkdown(content.editorContent)
+    : typeof content.editorContent === "string"
+    ? content.editorContent
+    : createGlassInsightContent().editorContent;
+  
+  const result = GlassInsightContentSchema.safeParse({
+    ...content,
+    editorContent,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createGlassInsightContent();
 };

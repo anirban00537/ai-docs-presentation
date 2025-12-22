@@ -1,8 +1,7 @@
-import type { TimelineContent, ProseMirrorDocument } from "@/types/presentation";
+import { TimelineContentSchema, type TimelineContent } from "@/types/presentation";
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createTimelineContent = (): TimelineContent => ({
@@ -28,35 +27,39 @@ export const createTimelineContent = (): TimelineContent => ({
 });
 
 export const normalizeTimelineContent = (content: any): TimelineContent => {
-  const incoming = content as TimelineContent | undefined;
-  if (incoming && Array.isArray(incoming.steps)) {
-    const title = incoming.title
-      ? (isMarkdownFormat(incoming.title)
-          ? incoming.title
-          : isLegacyProseMirrorFormat(incoming.title)
-          ? normalizeToMarkdown(incoming.title)
-          : undefined)
-      : undefined;
-    
-    const defaultStep = createTimelineContent().steps[0];
-    
-    return {
-      type: "timeline",
-      title,
-      steps: incoming.steps.map((step) => ({
-        title: isMarkdownFormat(step.title)
-          ? step.title
-          : isLegacyProseMirrorFormat(step.title)
+  if (!content || typeof content !== "object") return createTimelineContent();
+
+  const title = isLegacyProseMirrorFormat(content.title)
+    ? normalizeToMarkdown(content.title)
+    : typeof content.title === "string"
+    ? content.title
+    : undefined;
+  
+  const steps = Array.isArray(content.steps)
+    ? content.steps.map((step: any) => ({
+        ...step,
+        title: isLegacyProseMirrorFormat(step.title)
           ? normalizeToMarkdown(step.title)
-          : defaultStep.title,
-        description: isMarkdownFormat(step.description)
-          ? step.description
-          : isLegacyProseMirrorFormat(step.description)
+          : typeof step.title === "string"
+          ? step.title
+          : "Step Title",
+        description: isLegacyProseMirrorFormat(step.description)
           ? normalizeToMarkdown(step.description)
-          : defaultStep.description,
-        icon: step.icon ?? "",
-      })),
-    };
+          : typeof step.description === "string"
+          ? step.description
+          : "Step Description",
+      }))
+    : [];
+
+  const result = TimelineContentSchema.safeParse({
+    ...content,
+    title,
+    steps,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createTimelineContent();
 };

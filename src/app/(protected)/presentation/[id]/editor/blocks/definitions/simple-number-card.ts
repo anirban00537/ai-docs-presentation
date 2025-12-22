@@ -1,9 +1,8 @@
-import { SimpleNumberCardContent, ProseMirrorDocument } from "@/types/presentation";
+import { SimpleNumberCardContentSchema, type SimpleNumberCardContent } from "@/types/presentation";
 
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createSimpleNumberCardContent = (
@@ -19,19 +18,22 @@ export const createSimpleNumberCardContent = (
 export const normalizeSimpleNumberCardContent = (
   content: any
 ): SimpleNumberCardContent => {
-  const incoming = content as SimpleNumberCardContent | undefined;
-  if (incoming?.editorContent) {
-    const editorContent = isMarkdownFormat(incoming.editorContent)
-      ? incoming.editorContent
-      : isLegacyProseMirrorFormat(incoming.editorContent)
-      ? normalizeToMarkdown(incoming.editorContent)
-      : createSimpleNumberCardContent().editorContent;
-    
-    return {
-      type: "simple-number-card",
-      number: incoming.number ?? 1,
-      editorContent,
-    };
+  if (!content || typeof content !== "object") return createSimpleNumberCardContent();
+
+  const editorContent = isLegacyProseMirrorFormat(content.editorContent)
+    ? normalizeToMarkdown(content.editorContent)
+    : typeof content.editorContent === "string"
+    ? content.editorContent
+    : createSimpleNumberCardContent().editorContent;
+  
+  const result = SimpleNumberCardContentSchema.safeParse({
+    ...content,
+    editorContent,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createSimpleNumberCardContent();
 };

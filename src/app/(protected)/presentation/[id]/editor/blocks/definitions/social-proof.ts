@@ -1,4 +1,4 @@
-import { SocialProofContent, ProseMirrorDocument } from "@/types/presentation";
+import { SocialProofContentSchema, type SocialProofContent } from "@/types/presentation";
 
 export const createSocialProofContent = (): SocialProofContent => ({
   type: "social-proof",
@@ -22,19 +22,10 @@ export const createSocialProofContent = (): SocialProofContent => ({
 export const normalizeSocialProofContent = (
   content: any
 ): SocialProofContent => {
-  const incoming = content as SocialProofContent | undefined;
-  if (incoming?.platforms && Array.isArray(incoming.platforms)) {
-    return {
-      type: "social-proof",
-      platforms: incoming.platforms.map((platform) => ({
-        platform: platform.platform ?? "twitter",
-        followers: platform.followers ?? "0",
-        link: platform.link,
-      })),
-      showRatings: incoming.showRatings ?? false,
-      rating: incoming.rating,
-      reviewCount: incoming.reviewCount,
-    };
+  const result = SocialProofContentSchema.safeParse(content);
+  if (result.success) {
+    return result.data;
   }
+  
   return createSocialProofContent();
 };

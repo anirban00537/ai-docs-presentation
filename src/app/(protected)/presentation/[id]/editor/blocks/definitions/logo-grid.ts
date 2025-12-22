@@ -1,9 +1,8 @@
-import type { LogoGridContent, ProseMirrorDocument } from "@/types/presentation";
+import { LogoGridContentSchema, type LogoGridContent } from "@/types/presentation";
 
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createLogoGridContent = (): LogoGridContent => ({
@@ -27,22 +26,27 @@ export const createLogoGridContent = (): LogoGridContent => ({
 });
 
 export const normalizeLogoGridContent = (content: any): LogoGridContent => {
-  const incoming = content as LogoGridContent | undefined;
-  if (incoming?.logos && Array.isArray(incoming.logos)) {
-    return {
-      type: "logo-grid",
-      logos: incoming.logos.map((logo) => ({
-        image: logo.image,
-        name: isMarkdownFormat(logo.name)
-          ? logo.name
-          : isLegacyProseMirrorFormat(logo.name)
+  if (!content || typeof content !== "object") return createLogoGridContent();
+
+  const logos = Array.isArray(content.logos)
+    ? content.logos.map((logo: any) => ({
+        ...logo,
+        name: isLegacyProseMirrorFormat(logo.name)
           ? normalizeToMarkdown(logo.name)
+          : typeof logo.name === "string"
+          ? logo.name
           : "Company",
-        link: logo.link,
-      })),
-      columns: incoming.columns ?? 4,
-      grayscale: incoming.grayscale ?? true,
-    };
+      }))
+    : [];
+
+  const result = LogoGridContentSchema.safeParse({
+    ...content,
+    logos,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createLogoGridContent();
 };

@@ -1,4 +1,4 @@
-import { PulseMetricContent } from "@/types/presentation";
+import { PulseMetricContentSchema, type PulseMetricContent } from "@/types/presentation";
 
 export const createPulseMetricContent = (
   value: string = "+125%",
@@ -14,12 +14,10 @@ export const createPulseMetricContent = (
 export const normalizePulseMetricContent = (
   content: any
 ): PulseMetricContent => {
-  const incoming = content as PulseMetricContent | undefined;
-  return {
-    type: "pulse-metric",
-    value: incoming?.value ?? "+125%",
-    label: incoming?.label ?? "Revenue Growth",
-    trend: incoming?.trend ?? "up",
-    sparklineType: incoming?.sparklineType ?? "smooth",
-  };
+  const result = PulseMetricContentSchema.safeParse(content);
+  if (result.success) {
+    return result.data;
+  }
+  
+  return createPulseMetricContent(content?.value, content?.label);
 };

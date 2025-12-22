@@ -1,8 +1,7 @@
-import { CtaContent, ProseMirrorDocument } from "@/types/presentation";
+import { CtaContentSchema, type CtaContent } from "@/types/presentation";
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createCtaContent = (): CtaContent => ({
@@ -13,27 +12,29 @@ export const createCtaContent = (): CtaContent => ({
 });
 
 export const normalizeCtaContent = (content: any): CtaContent => {
-  const incoming = content as CtaContent | undefined;
-  if (incoming) {
-    const heading = isMarkdownFormat(incoming.heading)
-      ? incoming.heading
-      : isLegacyProseMirrorFormat(incoming.heading)
-      ? normalizeToMarkdown(incoming.heading)
-      : createCtaContent().heading;
-    
-    const body = isMarkdownFormat(incoming.body)
-      ? incoming.body
-      : isLegacyProseMirrorFormat(incoming.body)
-      ? normalizeToMarkdown(incoming.body)
-      : createCtaContent().body;
-    
-    return {
-      type: "cta",
-      heading,
-      body,
-      buttonLabel: incoming.buttonLabel ?? "Get started",
-      buttonLink: incoming.buttonLink,
-    };
+  if (!content || typeof content !== "object") return createCtaContent();
+
+  const heading = isLegacyProseMirrorFormat(content.heading)
+    ? normalizeToMarkdown(content.heading)
+    : typeof content.heading === "string"
+    ? content.heading
+    : createCtaContent().heading;
+  
+  const body = isLegacyProseMirrorFormat(content.body)
+    ? normalizeToMarkdown(content.body)
+    : typeof content.body === "string"
+    ? content.body
+    : createCtaContent().body;
+  
+  const result = CtaContentSchema.safeParse({
+    ...content,
+    heading,
+    body,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createCtaContent();
 };

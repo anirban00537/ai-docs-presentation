@@ -1,9 +1,8 @@
-import type { ComparisonTableContent, ProseMirrorDocument } from "@/types/presentation";
+import { ComparisonTableContentSchema, type ComparisonTableContent } from "@/types/presentation";
 
 import {
   normalizeToMarkdown,
   isLegacyProseMirrorFormat,
-  isMarkdownFormat,
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createComparisonTableContent = (): ComparisonTableContent => ({
@@ -77,46 +76,48 @@ export const createComparisonTableContent = (): ComparisonTableContent => ({
 export const normalizeComparisonTableContent = (
   content: any
 ): ComparisonTableContent => {
-  const incoming = content as ComparisonTableContent | undefined;
-  if (incoming?.columns && incoming?.rows) {
-    return {
-      type: "comparison-table",
-      columns: incoming.columns.map((col) => ({
-        name: isMarkdownFormat(col.name)
-          ? col.name
-          : isLegacyProseMirrorFormat(col.name)
+  if (!content || typeof content !== "object") return createComparisonTableContent();
+
+  const columns = Array.isArray(content.columns)
+    ? content.columns.map((col: any) => ({
+        ...col,
+        name: isLegacyProseMirrorFormat(col.name)
           ? normalizeToMarkdown(col.name)
+          : typeof col.name === "string"
+          ? col.name
           : "Plan",
-        price: col.price
-          ? isMarkdownFormat(col.price)
-            ? col.price
-            : isLegacyProseMirrorFormat(col.price)
-            ? normalizeToMarkdown(col.price)
-            : ""
-          : undefined,
-      })),
-      rows: incoming.rows.map((row) => ({
-        feature: isMarkdownFormat(row.feature)
-          ? row.feature
-          : isLegacyProseMirrorFormat(row.feature)
+        price: isLegacyProseMirrorFormat(col.price)
+          ? normalizeToMarkdown(col.price)
+          : col.price,
+      }))
+    : [];
+
+  const rows = Array.isArray(content.rows)
+    ? content.rows.map((row: any) => ({
+        ...row,
+        feature: isLegacyProseMirrorFormat(row.feature)
           ? normalizeToMarkdown(row.feature)
+          : typeof row.feature === "string"
+          ? row.feature
           : "Feature",
         values: (row.values || []).map((val: any) => {
-          // Handle values that might be legacy ProseMirrorDocuments
-          if (typeof val === "boolean" || typeof val === "string") {
-            return val;
-          }
-          // If it's a ProseMirrorDocument (legacy or new), normalize it
-          if (isMarkdownFormat(val)) {
-            return val;
-          }
           if (isLegacyProseMirrorFormat(val)) {
             return normalizeToMarkdown(val);
           }
           return val;
         }),
-      })),
-    };
+      }))
+    : [];
+
+  const result = ComparisonTableContentSchema.safeParse({
+    ...content,
+    columns,
+    rows,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createComparisonTableContent();
 };

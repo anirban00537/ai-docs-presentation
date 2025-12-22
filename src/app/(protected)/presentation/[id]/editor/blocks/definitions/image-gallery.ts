@@ -1,4 +1,4 @@
-import { ImageGalleryContent } from "@/types/presentation";
+import { ImageGalleryContentSchema, type ImageGalleryContent } from "@/types/presentation";
 
 export const createImageGalleryContent = (): ImageGalleryContent => ({
   type: "image-gallery",
@@ -8,10 +8,15 @@ export const createImageGalleryContent = (): ImageGalleryContent => ({
 });
 
 export const normalizeImageGalleryContent = (content: any): ImageGalleryContent => {
+  const result = ImageGalleryContentSchema.safeParse(content);
+  if (result.success) {
+    return result.data;
+  }
+  
   return {
     type: "image-gallery",
     images: Array.isArray(content?.images) ? content.images : [],
     layout: content?.layout === "grid" ? "grid" : "masonry",
-    columns: [2, 3, 4].includes(content?.columns) ? content.columns : 3,
+    columns: (content?.columns >= 2 && content?.columns <= 4) ? content.columns : 3,
   };
 };

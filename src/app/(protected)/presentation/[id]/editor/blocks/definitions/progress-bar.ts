@@ -1,9 +1,8 @@
-import type { ProgressBarContent, ProseMirrorDocument } from "@/types/presentation";
+import { ProgressBarContentSchema, type ProgressBarContent } from "@/types/presentation";
 
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createProgressBarContent = (): ProgressBarContent => ({
@@ -27,22 +26,28 @@ export const createProgressBarContent = (): ProgressBarContent => ({
 export const normalizeProgressBarContent = (
   content: any
 ): ProgressBarContent => {
-  const incoming = content as ProgressBarContent | undefined;
-  if (incoming?.items && Array.isArray(incoming.items)) {
-    return {
-      type: "progress-bar",
-      items: incoming.items.map((item) => ({
-        label: isMarkdownFormat(item.label)
-          ? item.label
-          : isLegacyProseMirrorFormat(item.label)
+  if (!content || typeof content !== "object") return createProgressBarContent();
+
+  const items = Array.isArray(content.items)
+    ? content.items.map((item: any) => ({
+        ...item,
+        label: isLegacyProseMirrorFormat(item.label)
           ? normalizeToMarkdown(item.label)
+          : typeof item.label === "string"
+          ? item.label
           : "Label",
-        value: Math.min(100, Math.max(0, item.value ?? 0)),
-        color: item.color,
-      })),
-      showPercentage: incoming.showPercentage ?? true,
-      animated: incoming.animated ?? true,
-    };
+        value: typeof item.value === "number" ? Math.min(100, Math.max(0, item.value)) : 0,
+      }))
+    : [];
+
+  const result = ProgressBarContentSchema.safeParse({
+    ...content,
+    items,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createProgressBarContent();
 };

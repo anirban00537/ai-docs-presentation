@@ -1,8 +1,7 @@
-import { NumberCardContent, ProseMirrorDocument } from "@/types/presentation";
+import { NumberCardContentSchema, type NumberCardContent, type ProseMirrorDocument } from "@/types/presentation";
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const getDefaultNumberCardEditorContent = (): ProseMirrorDocument =>
@@ -17,22 +16,22 @@ export const createNumberCardContent = (): NumberCardContent => ({
 });
 
 export const normalizeNumberCardContent = (content: any): NumberCardContent => {
-  const incoming = content as NumberCardContent | undefined;
-  if (incoming?.editorContent) {
-    // Handle both Markdown string and legacy JSON
-    const editorContent = isMarkdownFormat(incoming.editorContent)
-      ? incoming.editorContent
-      : isLegacyProseMirrorFormat(incoming.editorContent)
-      ? normalizeToMarkdown(incoming.editorContent)
-      : getDefaultNumberCardEditorContent();
+  if (!content || typeof content !== "object") return createNumberCardContent();
 
-    return {
-      type: "number-card",
-      icon: incoming.icon ?? "",
-      number: incoming.number ?? 1,
-      size: incoming.size ?? "medium",
-      editorContent,
-    };
+  const editorContent = isLegacyProseMirrorFormat(content.editorContent)
+    ? normalizeToMarkdown(content.editorContent)
+    : typeof content.editorContent === "string"
+    ? content.editorContent
+    : getDefaultNumberCardEditorContent();
+
+  const result = NumberCardContentSchema.safeParse({
+    ...content,
+    editorContent,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createNumberCardContent();
 };

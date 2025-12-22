@@ -1,9 +1,8 @@
-import type { FeatureListContent, ProseMirrorDocument } from "@/types/presentation";
+import { FeatureListContentSchema, type FeatureListContent } from "@/types/presentation";
 
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createFeatureListContent = (): FeatureListContent => ({
@@ -26,26 +25,33 @@ export const createFeatureListContent = (): FeatureListContent => ({
 export const normalizeFeatureListContent = (
   content: any
 ): FeatureListContent => {
-  const incoming = content as FeatureListContent | undefined;
-  if (incoming?.features && Array.isArray(incoming.features)) {
-    return {
-      type: "feature-list",
-      features: incoming.features.map((feature) => ({
-        icon: feature.icon ?? "✨",
-        title: isMarkdownFormat(feature.title)
-          ? feature.title
-          : isLegacyProseMirrorFormat(feature.title)
+  if (!content || typeof content !== "object") return createFeatureListContent();
+
+  const features = Array.isArray(content.features)
+    ? content.features.map((feature: any) => ({
+        ...feature,
+        title: isLegacyProseMirrorFormat(feature.title)
           ? normalizeToMarkdown(feature.title)
+          : typeof feature.title === "string"
+          ? feature.title
           : "Feature Title",
-        description: isMarkdownFormat(feature.description)
-          ? feature.description
-          : isLegacyProseMirrorFormat(feature.description)
+        description: isLegacyProseMirrorFormat(feature.description)
           ? normalizeToMarkdown(feature.description)
+          : typeof feature.description === "string"
+          ? feature.description
           : "Feature description",
-      })),
-      layout: incoming.layout ?? "grid",
-      columns: incoming.columns,
-    };
+        icon: typeof feature.icon === "string" ? feature.icon : "✨",
+      }))
+    : [];
+
+  const result = FeatureListContentSchema.safeParse({
+    ...content,
+    features,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createFeatureListContent();
 };

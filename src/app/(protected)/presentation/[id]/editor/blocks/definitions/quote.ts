@@ -1,8 +1,7 @@
-import { QuoteContent, ProseMirrorDocument } from "@/types/presentation";
+import { QuoteContentSchema, type QuoteContent } from "@/types/presentation";
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createQuoteContent = (): QuoteContent => ({
@@ -13,26 +12,29 @@ export const createQuoteContent = (): QuoteContent => ({
 });
 
 export const normalizeQuoteContent = (content: any): QuoteContent => {
-  const incoming = content as QuoteContent | undefined;
-  if (incoming) {
-    const quote = isMarkdownFormat(incoming.quote)
-      ? incoming.quote
-      : isLegacyProseMirrorFormat(incoming.quote)
-      ? normalizeToMarkdown(incoming.quote)
-      : createQuoteContent().quote;
-    
-    const author = isMarkdownFormat(incoming.author)
-      ? incoming.author
-      : isLegacyProseMirrorFormat(incoming.author)
-      ? normalizeToMarkdown(incoming.author)
-      : createQuoteContent().author;
-    
-    return {
-      type: "quote",
-      quote,
-      author,
-      style: incoming.style ?? "centered",
-    };
+  if (!content || typeof content !== "object") return createQuoteContent();
+
+  const quote = isLegacyProseMirrorFormat(content.quote)
+    ? normalizeToMarkdown(content.quote)
+    : typeof content.quote === "string"
+    ? content.quote
+    : createQuoteContent().quote;
+  
+  const author = isLegacyProseMirrorFormat(content.author)
+    ? normalizeToMarkdown(content.author)
+    : typeof content.author === "string"
+    ? content.author
+    : createQuoteContent().author;
+  
+  const result = QuoteContentSchema.safeParse({
+    ...content,
+    quote,
+    author,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createQuoteContent();
 };

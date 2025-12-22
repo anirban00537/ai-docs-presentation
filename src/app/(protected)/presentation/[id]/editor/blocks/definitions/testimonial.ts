@@ -1,14 +1,13 @@
-import type { TestimonialContent, ProseMirrorDocument } from "@/types/presentation";
+import { TestimonialContentSchema, type TestimonialContent } from "@/types/presentation";
 
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createTestimonialContent = (): TestimonialContent => ({
   type: "testimonial",
-  quote: "",
+  quote: "This is a great testimonial from our customer.",
   name: "Jane Doe",
   role: "Product Manager",
   avatar: "",
@@ -17,33 +16,36 @@ export const createTestimonialContent = (): TestimonialContent => ({
 export const normalizeTestimonialContent = (
   content: any
 ): TestimonialContent => {
-  const incoming = content as TestimonialContent | undefined;
-  if (incoming) {
-    const quote = isMarkdownFormat(incoming.quote)
-      ? incoming.quote
-      : isLegacyProseMirrorFormat(incoming.quote)
-      ? normalizeToMarkdown(incoming.quote)
-      : createTestimonialContent().quote;
-    
-    const name = isMarkdownFormat(incoming.name)
-      ? incoming.name
-      : isLegacyProseMirrorFormat(incoming.name)
-      ? normalizeToMarkdown(incoming.name)
-      : createTestimonialContent().name;
-    
-    const role = isMarkdownFormat(incoming.role)
-      ? incoming.role
-      : isLegacyProseMirrorFormat(incoming.role)
-      ? normalizeToMarkdown(incoming.role)
-      : createTestimonialContent().role;
-    
-    return {
-      type: "testimonial",
-      quote,
-      name,
-      role,
-      avatar: incoming.avatar ?? "",
-    };
+  if (!content || typeof content !== "object") return createTestimonialContent();
+
+  const quote = isLegacyProseMirrorFormat(content.quote)
+    ? normalizeToMarkdown(content.quote)
+    : typeof content.quote === "string"
+    ? content.quote
+    : createTestimonialContent().quote;
+  
+  const name = isLegacyProseMirrorFormat(content.name)
+    ? normalizeToMarkdown(content.name)
+    : typeof content.name === "string"
+    ? content.name
+    : createTestimonialContent().name;
+  
+  const role = isLegacyProseMirrorFormat(content.role)
+    ? normalizeToMarkdown(content.role)
+    : typeof content.role === "string"
+    ? content.role
+    : createTestimonialContent().role;
+  
+  const result = TestimonialContentSchema.safeParse({
+    ...content,
+    quote,
+    name,
+    role,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createTestimonialContent();
 };

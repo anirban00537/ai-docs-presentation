@@ -1,4 +1,4 @@
-import { CodeTerminalContent } from "@/types/presentation";
+import { CodeTerminalContentSchema, type CodeTerminalContent } from "@/types/presentation";
 
 export const createCodeTerminalContent = (
   command: string = "npm install butterfast",
@@ -12,10 +12,9 @@ export const createCodeTerminalContent = (
 export const normalizeCodeTerminalContent = (
   content: any
 ): CodeTerminalContent => {
-  const incoming = content as CodeTerminalContent | undefined;
-  return {
-    type: "code-terminal",
-    command: incoming?.command ?? "npm install butterfast",
-    output: incoming?.output ?? "✨ Success! Added 32 packages in 0.5s",
-  };
+  const result = CodeTerminalContentSchema.safeParse(content);
+  if (result.success) {
+    return result.data;
+  }
+  return createCodeTerminalContent(content?.command, content?.output);
 };

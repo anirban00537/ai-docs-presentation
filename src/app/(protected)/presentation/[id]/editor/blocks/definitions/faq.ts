@@ -1,9 +1,8 @@
-import type { FAQContent, ProseMirrorDocument } from "@/types/presentation";
+import { FAQContentSchema, type FAQContent } from "@/types/presentation";
 
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createFAQContent = (): FAQContent => ({
@@ -24,25 +23,32 @@ export const createFAQContent = (): FAQContent => ({
 });
 
 export const normalizeFAQContent = (content: any): FAQContent => {
-  const incoming = content as FAQContent | undefined;
-  if (incoming?.items && Array.isArray(incoming.items)) {
-    return {
-      type: "faq",
-      items: incoming.items.map((item) => ({
-        question: isMarkdownFormat(item.question)
-          ? item.question
-          : isLegacyProseMirrorFormat(item.question)
+  if (!content || typeof content !== "object") return createFAQContent();
+
+  const items = Array.isArray(content.items)
+    ? content.items.map((item: any) => ({
+        ...item,
+        question: isLegacyProseMirrorFormat(item.question)
           ? normalizeToMarkdown(item.question)
+          : typeof item.question === "string"
+          ? item.question
           : "Question?",
-        answer: isMarkdownFormat(item.answer)
-          ? item.answer
-          : isLegacyProseMirrorFormat(item.answer)
+        answer: isLegacyProseMirrorFormat(item.answer)
           ? normalizeToMarkdown(item.answer)
+          : typeof item.answer === "string"
+          ? item.answer
           : "Answer here...",
-        expanded: item.expanded ?? false,
-      })),
-      style: incoming.style ?? "accordion",
-    };
+      }))
+    : [];
+
+  const result = FAQContentSchema.safeParse({
+    ...content,
+    items,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createFAQContent();
 };

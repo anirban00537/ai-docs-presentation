@@ -1,39 +1,35 @@
-import type { VideoContent, ProseMirrorDocument } from "@/types/presentation";
+import { VideoContentSchema, type VideoContent } from "@/types/presentation";
 import { 
   normalizeToMarkdown, 
   isLegacyProseMirrorFormat, 
-  isMarkdownFormat 
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createVideoContent = (): VideoContent => ({
   type: "video",
   source: "youtube",
-  url: "",
+  url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   thumbnail: "",
   autoplay: false,
   loop: false,
 });
 
 export const normalizeVideoContent = (content: any): VideoContent => {
-  const incoming = content as VideoContent | undefined;
-  if (incoming) {
-    const title = incoming.title
-      ? (isMarkdownFormat(incoming.title)
-          ? incoming.title
-          : isLegacyProseMirrorFormat(incoming.title)
-          ? normalizeToMarkdown(incoming.title)
-          : undefined)
-      : undefined;
-    
-    return {
-      type: "video",
-      source: incoming.source ?? "youtube",
-      url: incoming.url ?? "",
-      thumbnail: incoming.thumbnail,
-      autoplay: incoming.autoplay ?? false,
-      loop: incoming.loop ?? false,
-      title,
-    };
+  if (!content || typeof content !== "object") return createVideoContent();
+
+  const title = isLegacyProseMirrorFormat(content.title)
+    ? normalizeToMarkdown(content.title)
+    : typeof content.title === "string"
+    ? content.title
+    : undefined;
+  
+  const result = VideoContentSchema.safeParse({
+    ...content,
+    title,
+  });
+
+  if (result.success) {
+    return result.data;
   }
+
   return createVideoContent();
 };
