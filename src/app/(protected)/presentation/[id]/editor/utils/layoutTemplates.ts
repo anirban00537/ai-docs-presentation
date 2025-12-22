@@ -39,6 +39,17 @@ import {
   IconChecklist,
   IconTerminal2,
   IconHeading,
+  // New icons for accent templates
+  IconDeviceLaptop,
+  IconUserHeart,
+  IconReportAnalytics,
+  IconStar,
+  IconMoodSad,
+  IconScreenShare,
+  IconCalendarEvent,
+  IconBuildingFactory,
+  IconBuildingSkyscraper,
+  IconMapPin,
 } from "@tabler/icons-react";
 import { FeatureLayout } from "../templates/FeatureLayout";
 import { IntroductionLayout } from "../templates/IntroductionLayout";
@@ -76,6 +87,19 @@ import { SummaryLayout } from "../templates/SummaryLayout";
 import { MetricDashboardLayout } from "../templates/MetricDashboardLayout";
 import { TechnicalWalkthroughLayout } from "../templates/TechnicalWalkthroughLayout";
 import { KeyInsightsLayout } from "../templates/KeyInsightsLayout";
+
+// New Accent Image Templates
+import { HeroProductLayout } from "../templates/HeroProductLayout";
+import { FounderStoryLayout } from "../templates/FounderStoryLayout";
+import { CaseStudyHeroLayout } from "../templates/CaseStudyHeroLayout";
+import { TeamSpotlightLayout } from "../templates/TeamSpotlightLayout";
+import { ProblemVisualLayout } from "../templates/ProblemVisualLayout";
+import { ProductDemoLayout } from "../templates/ProductDemoLayout";
+import { EventAnnouncementLayout } from "../templates/EventAnnouncementLayout";
+import { IndustryFocusLayout } from "../templates/IndustryFocusLayout";
+import { ContextualTestimonialLayout } from "../templates/ContextualTestimonialLayout";
+import { OfficeLocationLayout } from "../templates/OfficeLocationLayout";
+import { CustomerJourneyLayout } from "../templates/CustomerJourneyLayout";
 
 // JSON mapping of layout IDs to Tabler icon components
 export const layoutIconsMap: Record<string, Icon> = {
@@ -120,9 +144,34 @@ export const layoutIconsMap: Record<string, Icon> = {
   "technical-walkthrough": IconTerminal2,
   introduction: IconHeading,
   "key-insights": IconBulb,
+  // Accent Image Template Icons
+  "hero-product-layout": IconRocket,
+  "founder-story-layout": IconUserHeart,
+  "case-study-hero-layout": IconReportAnalytics,
+  "team-spotlight-layout": IconStar,
+  "problem-visual-layout": IconMoodSad,
+  "product-demo-layout": IconScreenShare,
+  "event-announcement-layout": IconCalendarEvent,
+  "industry-focus-layout": IconBuildingFactory,
+  "contextual-testimonial-layout": IconMessageCircle,
+  "office-location-layout": IconBuildingSkyscraper,
+  "customer-journey-layout": IconMapPin,
 };
 
 export const layoutTemplates: LayoutTemplate[] = [
+  // New Accent Image Templates (Featured at top)
+  HeroProductLayout,
+  ProductDemoLayout,
+  CaseStudyHeroLayout,
+  FounderStoryLayout,
+  TeamSpotlightLayout,
+  ProblemVisualLayout,
+  EventAnnouncementLayout,
+  IndustryFocusLayout,
+  ContextualTestimonialLayout,
+  OfficeLocationLayout,
+  CustomerJourneyLayout,
+  // Original Templates
   FeatureLayout,
   TeamLayout,
   PricingLayout,

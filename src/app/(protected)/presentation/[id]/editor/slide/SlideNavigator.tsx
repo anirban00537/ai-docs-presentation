@@ -66,7 +66,11 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
       activeSlideId !== previousActiveSlideIdRef.current
     ) {
       const rows = pendingLayout.getRows();
-      dispatch(replaceSlideWithLayout({ slideId: activeSlideId, rows }));
+      dispatch(replaceSlideWithLayout({ 
+        slideId: activeSlideId, 
+        rows,
+        accent: pendingLayout.accent 
+      }));
       setTimeout(() => setPendingLayout(null), 0);
     }
     previousActiveSlideIdRef.current = activeSlideId;

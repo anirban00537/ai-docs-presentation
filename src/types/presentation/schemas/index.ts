@@ -124,6 +124,8 @@ export type LayoutTemplate = {
   description: string;
   icon: string | any;
   getRows: () => Row[];
+  /** Optional accent configuration for the slide */
+  accent?: SlideAccent;
 };
 
 export type BlockContent = z.infer<typeof BlockContentSchema>;

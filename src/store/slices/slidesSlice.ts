@@ -305,11 +305,15 @@ const slidesSlice = createSlice({
     },
     replaceSlideWithLayout: (
       state,
-      action: PayloadAction<{ slideId: string; rows: Row[] }>
+      action: PayloadAction<{ slideId: string; rows: Row[]; accent?: SlideAccent }>
     ) => {
       const slide = state.slides.find((s) => s.id === action.payload.slideId);
       if (slide) {
         slide.rows = action.payload.rows;
+        // Apply accent if provided by template
+        if (action.payload.accent) {
+          slide.accent = action.payload.accent;
+        }
         state.activeSlideId = slide.id;
       }
     },

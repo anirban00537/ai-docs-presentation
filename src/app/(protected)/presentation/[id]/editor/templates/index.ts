@@ -6,21 +6,29 @@
 
 // Import all templates
 import { AwardsLayout } from "./AwardsLayout";
+import { CaseStudyHeroLayout } from "./CaseStudyHeroLayout";
 import { CodeExampleLayout } from "./CodeExampleLayout";
 import { ComparisonLayout } from "./ComparisonLayout";
 import { ComparisonOldNewLayout } from "./ComparisonOldNewLayout";
+import { ContextualTestimonialLayout } from "./ContextualTestimonialLayout";
+import { CustomerJourneyLayout } from "./CustomerJourneyLayout";
 import { CustomerQuotesLayout } from "./CustomerQuotesLayout";
 import { CustomerStoriesLayout } from "./CustomerStoriesLayout";
 import { DiscoveryInsightsLayout } from "./DiscoveryInsightsLayout";
 import { DocIntroLayout } from "./DocIntroLayout";
+import { EventAnnouncementLayout } from "./EventAnnouncementLayout";
 import { FAQLayout } from "./FAQLayout";
 import { FeatureLayout } from "./FeatureLayout";
 import { FeatureShowcaseLayout } from "./FeatureShowcaseLayout";
+import { FounderStoryLayout } from "./FounderStoryLayout";
 import { GalleryLayout } from "./GalleryLayout";
+import { HeroProductLayout } from "./HeroProductLayout";
+import { IndustryFocusLayout } from "./IndustryFocusLayout";
 import { IntroductionLayout } from "./IntroductionLayout";
 import { KeyInsightsLayout } from "./KeyInsightsLayout";
 import { MetricDashboardLayout } from "./MetricDashboardLayout";
 import { NextStepsLayout } from "./NextStepsLayout";
+import { OfficeLocationLayout } from "./OfficeLocationLayout";
 import { OpportunityMetricsLayout } from "./OpportunityMetricsLayout";
 import { PartnersLayout } from "./PartnersLayout";
 import { PricingLayout } from "./PricingLayout";
@@ -29,7 +37,9 @@ import { ProblemImageLayout } from "./ProblemImageLayout";
 import { ProblemQuoteLayout } from "./ProblemQuoteLayout";
 import { ProblemSupportingPointsLayout } from "./ProblemSupportingPointsLayout";
 import { ProblemTwoQuotesLayout } from "./ProblemTwoQuotesLayout";
+import { ProblemVisualLayout } from "./ProblemVisualLayout";
 import { ProcessLayout } from "./ProcessLayout";
+import { ProductDemoLayout } from "./ProductDemoLayout";
 import { ProgressLayout } from "./ProgressLayout";
 import { QuoteLayout } from "./QuoteLayout";
 import { ServicesListLayout } from "./ServicesListLayout";
@@ -38,6 +48,7 @@ import { StatsLayout } from "./StatsLayout";
 import { SummaryLayout } from "./SummaryLayout";
 import { TargetAudiencesLayout } from "./TargetAudiencesLayout";
 import { TeamLayout } from "./TeamLayout";
+import { TeamSpotlightLayout } from "./TeamSpotlightLayout";
 import { TechnicalWalkthroughLayout } from "./TechnicalWalkthroughLayout";
 import { TestimonialLayout } from "./TestimonialLayout";
 import { VideoShowcaseLayout } from "./VideoShowcaseLayout";
@@ -48,21 +59,29 @@ import type { TemplateCategory, TemplateMetadata } from "./template-utils";
 // Re-export all templates for direct import
 export {
   AwardsLayout,
+  CaseStudyHeroLayout,
   CodeExampleLayout,
   ComparisonLayout,
   ComparisonOldNewLayout,
+  ContextualTestimonialLayout,
+  CustomerJourneyLayout,
   CustomerQuotesLayout,
   CustomerStoriesLayout,
   DiscoveryInsightsLayout,
   DocIntroLayout,
+  EventAnnouncementLayout,
   FAQLayout,
   FeatureLayout,
   FeatureShowcaseLayout,
+  FounderStoryLayout,
   GalleryLayout,
+  HeroProductLayout,
+  IndustryFocusLayout,
   IntroductionLayout,
   KeyInsightsLayout,
   MetricDashboardLayout,
   NextStepsLayout,
+  OfficeLocationLayout,
   OpportunityMetricsLayout,
   PartnersLayout,
   PricingLayout,
@@ -71,7 +90,9 @@ export {
   ProblemQuoteLayout,
   ProblemSupportingPointsLayout,
   ProblemTwoQuotesLayout,
+  ProblemVisualLayout,
   ProcessLayout,
+  ProductDemoLayout,
   ProgressLayout,
   QuoteLayout,
   ServicesListLayout,
@@ -80,6 +101,7 @@ export {
   SummaryLayout,
   TargetAudiencesLayout,
   TeamLayout,
+  TeamSpotlightLayout,
   TechnicalWalkthroughLayout,
   TestimonialLayout,
   VideoShowcaseLayout,
@@ -552,6 +574,143 @@ export const TEMPLATE_REGISTRY: TemplateRegistryEntry[] = [
       keywords: ["next-steps", "cta", "action", "closing"],
       featured: true,
       useCases: ["Closing slides", "Call-to-action pages"],
+    },
+  },
+
+  // NEW: Accent Image Templates
+  {
+    template: HeroProductLayout,
+    metadata: {
+      id: "hero-product-layout",
+      name: "Hero Product Showcase",
+      description: "Product showcase with large image accent",
+      icon: "🚀",
+      category: "content",
+      keywords: ["hero", "product", "showcase", "accent", "image"],
+      featured: true,
+      useCases: ["Product launches", "Feature highlights"],
+    },
+  },
+  {
+    template: FounderStoryLayout,
+    metadata: {
+      id: "founder-story-layout",
+      name: "Founder Story",
+      description: "Executive profile with portrait accent",
+      icon: "👤",
+      category: "team",
+      keywords: ["founder", "story", "portrait", "executive", "about"],
+      useCases: ["About us", "Origin stories", "Speaker intros"],
+    },
+  },
+  {
+    template: CaseStudyHeroLayout,
+    metadata: {
+      id: "case-study-hero-layout",
+      name: "Case Study Hero",
+      description: "Success story with visual proof",
+      icon: "📈",
+      category: "social-proof",
+      keywords: ["case-study", "success", "customer", "proof"],
+      featured: true,
+      useCases: ["Case studies", "Success stories"],
+    },
+  },
+  {
+    template: TeamSpotlightLayout,
+    metadata: {
+      id: "team-spotlight-layout",
+      name: "Team Spotlight",
+      description: "Individual team member with large portrait",
+      icon: "⭐",
+      category: "team",
+      keywords: ["team", "spotlight", "portrait", "leader"],
+      useCases: ["Leadership pages", "Speaker intros"],
+    },
+  },
+  {
+    template: ProblemVisualLayout,
+    metadata: {
+      id: "problem-visual-layout",
+      name: "Problem Visual",
+      description: "Problem statement with impactful visual banner",
+      icon: "😰",
+      category: "content",
+      keywords: ["problem", "visual", "pain", "challenge"],
+      useCases: ["Problem slides", "Pain point visualization"],
+    },
+  },
+  {
+    template: ProductDemoLayout,
+    metadata: {
+      id: "product-demo-layout",
+      name: "Product Demo",
+      description: "Screenshot showcase with feature highlights",
+      icon: "💻",
+      category: "content",
+      keywords: ["product", "demo", "screenshot", "features"],
+      featured: true,
+      useCases: ["Product demos", "Feature walkthroughs"],
+    },
+  },
+  {
+    template: EventAnnouncementLayout,
+    metadata: {
+      id: "event-announcement-layout",
+      name: "Event Announcement",
+      description: "Event promo with atmospheric background",
+      icon: "🎪",
+      category: "content",
+      keywords: ["event", "conference", "webinar", "announcement"],
+      useCases: ["Event announcements", "Webinar invites"],
+    },
+  },
+  {
+    template: IndustryFocusLayout,
+    metadata: {
+      id: "industry-focus-layout",
+      name: "Industry Focus",
+      description: "Market analysis with industry visual",
+      icon: "🏭",
+      category: "data",
+      keywords: ["industry", "market", "vertical", "analysis"],
+      useCases: ["Market analysis", "Industry focus slides"],
+    },
+  },
+  {
+    template: ContextualTestimonialLayout,
+    metadata: {
+      id: "contextual-testimonial-layout",
+      name: "Contextual Testimonial",
+      description: "Testimonial with customer context visual",
+      icon: "💬",
+      category: "social-proof",
+      keywords: ["testimonial", "customer", "context", "visual"],
+      useCases: ["Social proof", "Customer stories"],
+    },
+  },
+  {
+    template: OfficeLocationLayout,
+    metadata: {
+      id: "office-location-layout",
+      name: "Office Location",
+      description: "Company location with office visual",
+      icon: "🏢",
+      category: "team",
+      keywords: ["office", "location", "company", "workspace"],
+      useCases: ["Company overview", "Recruitment"],
+    },
+  },
+  {
+    template: CustomerJourneyLayout,
+    metadata: {
+      id: "customer-journey-layout",
+      name: "Customer Journey",
+      description: "Journey visualization with visual banner",
+      icon: "🗺️",
+      category: "content",
+      keywords: ["journey", "customer", "flow", "process"],
+      useCases: ["UX presentations", "Journey mapping"],
     },
   },
 ];

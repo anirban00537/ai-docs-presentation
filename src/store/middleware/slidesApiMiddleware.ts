@@ -21,6 +21,8 @@ const convertReduxSlideToApi = (reduxSlide: Slide): any => {
   return {
     data: {
       rows: reduxSlide.rows,
+      // Include accent if present (for accent image templates)
+      ...(reduxSlide.accent && { accent: reduxSlide.accent }),
     },
   };
 };
@@ -175,11 +177,18 @@ export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
 
               // Convert API Slide format to Redux Slide format
               // Preserve current rows if they exist (template may have been applied)
+              // Also preserve accent if template had one
               const serverSlide: Slide = {
                 id: response.data.id,
                 rows: currentSlide?.rows?.length
                   ? currentSlide.rows // Use current rows if template was applied
                   : response.data.data?.rows || [], // Otherwise use server rows
+                // Preserve accent from template if it exists, or use server accent
+                ...(currentSlide?.accent 
+                  ? { accent: currentSlide.accent }
+                  : response.data.data?.accent 
+                    ? { accent: response.data.data.accent }
+                    : {}),
               };
 
               // Replace client-side slide with server-side slide
