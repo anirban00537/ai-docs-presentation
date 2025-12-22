@@ -1,35 +1,47 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, memo, useCallback, lazy, Suspense } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { ContentRow } from "../layout/ContentRow";
-import type { Slide } from "@/store/slices/slidesSlice";
+import type { Slide, Theme } from "@/store/slices/slidesSlice";
+import type { BlockContent } from "@/types/presentation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectTheme,
   DEFAULT_THEME,
-  type Theme,
 } from "@/store/slices/slidesSlice";
 import { SlideToolbar } from "./SlideToolbar";
 import { SlideFrame } from "./SlideFrame";
-import { setSlideAccentSize, toggleSlideAccent, updateSlideAccent } from "@/store/slices/slidesSlice";
-import { ImagePickerModal, type SelectedImage } from "../panels/ImagePickerModal";
+import { setSlideAccentSize, updateSlideAccent } from "@/store/slices/slidesSlice";
+import type { SelectedImage } from "../panels/ImagePickerModal";
 
-const DragStateBridge: React.FC<{
+// Lazy load the heavy ImagePickerModal
+const ImagePickerModal = lazy(() => 
+  import("../panels/ImagePickerModal").then(mod => ({ default: mod.ImagePickerModal }))
+);
+
+const DragStateBridge = memo(function DragStateBridge({
+  onDragChange,
+}: {
   onDragChange: (dragging: boolean) => void;
-}> = ({ onDragChange }) => {
+}) {
   useDndMonitor({
     onDragStart: () => onDragChange(true),
     onDragEnd: () => onDragChange(false),
     onDragCancel: () => onDragChange(false),
   });
   return null;
-};
+});
 
-const InsertDropZone: React.FC<{
+const InsertDropZone = memo(function InsertDropZone({
+  slideId,
+  insertIndex,
+  themePrimary,
+  isActive,
+}: {
   slideId: string;
   insertIndex: number;
   themePrimary: string;
   isActive: boolean;
-}> = ({ slideId, insertIndex, themePrimary, isActive }) => {
+}) {
   const { setNodeRef, isOver } = useDroppable({
     id: `row-insert-${slideId}-${insertIndex}`,
     data: {
@@ -45,6 +57,7 @@ const InsertDropZone: React.FC<{
     <div
       ref={setNodeRef}
       className="relative h-6 flex items-center justify-center"
+      aria-label={`Drop zone at position ${insertIndex + 1}`}
     >
       {isOver && (
         <div
@@ -63,11 +76,11 @@ const InsertDropZone: React.FC<{
       )}
     </div>
   );
-};
+});
 
 interface SlideContainerProps {
   slide: Slide;
-  onUpdateBlock: (slideId: string, blockId: string, content: any) => void;
+  onUpdateBlock: (slideId: string, blockId: string, content: BlockContent) => void;
   onDeleteRow: (slideId: string, rowId: string) => void;
   onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
   onAddRowAtTop: (slideId: string) => void;
@@ -83,7 +96,7 @@ interface SlideContainerProps {
   theme?: Theme;
 }
 
-export const SlideContainer: React.FC<SlideContainerProps> = ({
+export const SlideContainer = memo(function SlideContainer({
   slide,
   onUpdateBlock,
   onDeleteRow,
@@ -95,7 +108,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({
   readOnly = false,
   fullWidth = false,
   theme: themeProp,
-}) => {
+}: SlideContainerProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isImagePickerOpen, setIsImagePickerOpen] = useState(false);
@@ -106,18 +119,19 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({
 
   const dragActive = enableDragHints ? isDragging : false;
 
-  const handleAccentImageSelect = (image: SelectedImage) => {
+  const handleAccentImageSelect = useCallback((image: SelectedImage) => {
     dispatch(updateSlideAccent({ 
       slideId: slide.id, 
       update: { url: image.url } 
     }));
     setIsImagePickerOpen(false);
-  };
+  }, [dispatch, slide.id]);
 
   const accentControls = (
     <button
       onClick={() => setIsImagePickerOpen(true)}
       className="absolute inset-0 m-auto w-fit h-fit px-4 py-2 bg-white/90 dark:bg-black/90 backdrop-blur-md rounded-full text-sm font-medium opacity-0 group-hover/accent:opacity-100 transition-all hover:scale-105 shadow-xl border border-black/5 dark:border-white/5"
+      aria-label="Change accent image"
     >
       Change Image
     </button>
@@ -210,14 +224,16 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({
       </SlideFrame>
 
       {!readOnly && (
-        <ImagePickerModal
-          isOpen={isImagePickerOpen}
-          onClose={() => setIsImagePickerOpen(false)}
-          onSelect={handleAccentImageSelect}
-          theme={theme}
-        />
+        <Suspense fallback={null}>
+          <ImagePickerModal
+            isOpen={isImagePickerOpen}
+            onClose={() => setIsImagePickerOpen(false)}
+            onSelect={handleAccentImageSelect}
+            theme={theme}
+          />
+        </Suspense>
       )}
     </>
   );
-};
+});
 

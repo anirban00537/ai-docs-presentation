@@ -1,6 +1,6 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
   createTeamCardContent,
   type TeamCardContent,
@@ -12,6 +12,9 @@ import {
   IconWorld,
   IconUpload,
 } from "@tabler/icons-react";
+import { CommonCard } from "../CommonCard";
+
+type SocialPlatform = "linkedin" | "twitter" | "website";
 
 interface TeamCardBlockProps {
   block: Block;
@@ -22,15 +25,13 @@ interface TeamCardBlockProps {
   isEditable?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
-
-export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
+export const TeamCardBlock = memo(function TeamCardBlock({
   block,
   onUpdate,
   theme,
   isEditable = true,
   readOnly = false,
-}) => {
+}: TeamCardBlockProps) {
   const content = block.content as TeamCardContent;
 
   const nameDoc = useMemo(() => {
@@ -46,21 +47,21 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
   }, [content]);
 
   const handleNameChange = useCallback(
-    (newDoc: any) => {
+    (newDoc: ProseMirrorDocument) => {
       onUpdate({ ...content, name: newDoc });
     },
     [content, onUpdate]
   );
 
   const handleRoleChange = useCallback(
-    (newDoc: any) => {
+    (newDoc: ProseMirrorDocument) => {
       onUpdate({ ...content, role: newDoc });
     },
     [content, onUpdate]
   );
 
   const handleDescriptionChange = useCallback(
-    (newDoc: any) => {
+    (newDoc: ProseMirrorDocument) => {
       onUpdate({ ...content, description: newDoc });
     },
     [content, onUpdate]
@@ -74,7 +75,7 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
     }
   };
 
-  const handleSocialClick = (platform: "linkedin" | "twitter" | "website") => {
+  const handleSocialClick = useCallback((platform: SocialPlatform) => {
     if (readOnly) return;
     const url = prompt(
       `Enter ${platform} URL:`,
@@ -86,7 +87,7 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
         socials: { ...content.socials, [platform]: url },
       });
     }
-  };
+  }, [content, onUpdate, readOnly]);
 
   return (
     <CommonCard theme={theme} className="w-full h-full p-6">
@@ -176,7 +177,7 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
           ].map(({ key, icon: Icon }) => (
             <button
               key={key}
-              onClick={!readOnly ? () => handleSocialClick(key as any) : undefined}
+              onClick={!readOnly ? () => handleSocialClick(key as SocialPlatform) : undefined}
               className={`p-2 rounded-lg transition-all ${!readOnly ? 'hover:scale-105 cursor-pointer' : ''}`}
               title={key.charAt(0).toUpperCase() + key.slice(1)}
               style={{
@@ -198,4 +199,4 @@ export const TeamCardBlock: React.FC<TeamCardBlockProps> = ({
       </div>
     </CommonCard>
   );
-};
+});

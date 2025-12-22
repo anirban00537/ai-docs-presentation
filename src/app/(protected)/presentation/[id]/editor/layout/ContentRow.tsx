@@ -1,7 +1,8 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, memo, useMemo } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { BlockColumn } from "./BlockColumn";
 import type { Row } from "@/store/slices/slidesSlice";
+import type { BlockContent } from "@/types/presentation";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME, type Theme } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
@@ -29,7 +30,7 @@ interface ContentRowProps {
   totalRowsInSlide: number;
   isDragging?: boolean;
   enableDragHints?: boolean;
-  onUpdateBlock: (blockId: string, content: any) => void;
+  onUpdateBlock: (blockId: string, content: BlockContent) => void;
   onDeleteRow: (rowId: string) => void;
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   onUpdateColumnWidths: (rowId: string, columnWidths: number[]) => void;
@@ -39,7 +40,7 @@ interface ContentRowProps {
   theme?: Theme;
 }
 
-export const ContentRow: React.FC<ContentRowProps> = ({
+export const ContentRow = memo(function ContentRow({
   row,
   slideId,
   rowIndex,
@@ -53,7 +54,7 @@ export const ContentRow: React.FC<ContentRowProps> = ({
   rowCount,
   readOnly = false,
   theme: themeProp,
-}) => {
+}: ContentRowProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isAnyDragActive, setIsAnyDragActive] = useState(false);
@@ -100,9 +101,10 @@ export const ContentRow: React.FC<ContentRowProps> = ({
     }
   }, [row.columnWidths, row.blocks.length, row.blocks, localWidths.length]);
 
-  const gridTemplateColumns = localWidths
-    .map((width) => `${width}fr`)
-    .join(" ");
+  const gridTemplateColumns = useMemo(
+    () => localWidths.map((width) => `${width}fr`).join(" "),
+    [localWidths]
+  );
 
   const handleResize = useCallback((index: number, deltaX: number) => {
     if (!rowContainerRef.current) return;
@@ -244,6 +246,9 @@ export const ContentRow: React.FC<ContentRowProps> = ({
             className="w-4 h-full flex items-center justify-center opacity-0 group-hover/row:opacity-40 hover:opacity-100 transition-all"
             style={{ color: isDark ? "#fff" : "#000" }}
             title="Row options"
+            aria-label="Row options menu"
+            aria-haspopup="true"
+            aria-expanded={isMenuOpen}
           >
             <svg width="3" height="12" viewBox="0 0 3 12" fill="currentColor">
               <circle cx="1.5" cy="1.5" r="1.5" />
@@ -274,6 +279,7 @@ export const ContentRow: React.FC<ContentRowProps> = ({
                   disabled={rowCount <= 1}
                   className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition-colors disabled:opacity-30"
                   style={{ color: "#ef4444" }}
+                  aria-label="Delete row"
                 >
                   <IconTrash size={14} />
                   Delete
@@ -331,5 +337,5 @@ export const ContentRow: React.FC<ContentRowProps> = ({
       </div>
     </div>
   );
-};
+});
 

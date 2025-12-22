@@ -1,8 +1,8 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect, memo } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { BlockContainer } from "../block/BlockContainer";
-import type { Block } from "@/types/presentation";
+import type { Block, BlockContent } from "@/types/presentation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME, deleteBlock, type Theme } from "@/store/slices/slidesSlice";
 import { IconGripHorizontal } from "@tabler/icons-react";
@@ -16,7 +16,7 @@ interface BlockColumnProps {
   totalBlocksInRow: number;
   rowIndex: number;
   totalRowsInSlide: number;
-  onUpdate: (blockId: string, content: any) => void;
+  onUpdate: (blockId: string, content: BlockContent) => void;
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   isLastBlock: boolean;
   canAddColumn: boolean;
@@ -29,7 +29,7 @@ interface BlockColumnProps {
   theme?: Theme;
 }
 
-export const BlockColumn: React.FC<BlockColumnProps> = ({
+export const BlockColumn = memo(function BlockColumn({
   block,
   slideId,
   rowId,
@@ -47,7 +47,7 @@ export const BlockColumn: React.FC<BlockColumnProps> = ({
   onResizeEnd,
   readOnly = false,
   theme: themeProp,
-}) => {
+}: BlockColumnProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isBorderHovered, setIsBorderHovered] = useState(false);
   const borderResizeRef = useRef<HTMLDivElement>(null);
@@ -157,6 +157,9 @@ export const BlockColumn: React.FC<BlockColumnProps> = ({
                 backgroundColor: isDark ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)",
                 color: isDark ? "#000" : "#fff",
               }}
+              role="button"
+              aria-label={`Drag handle for block ${index + 1}`}
+              aria-roledescription="Draggable block handle"
               onPointerDown={(e) => {
                 handleStartRef.current = { x: e.clientX, y: e.clientY };
                 wasDraggingRef.current = false;
@@ -220,6 +223,9 @@ export const BlockColumn: React.FC<BlockColumnProps> = ({
             onMouseDown={handleBorderMouseDown}
             onMouseEnter={() => setIsBorderHovered(true)}
             onMouseLeave={() => setIsBorderHovered(false)}
+            role="separator"
+            aria-orientation="vertical"
+            aria-label={`Resize handle between column ${index + 1} and ${index + 2}`}
           >
             {/* Larger hit area */}
             <div className="absolute inset-0 -mx-2" />
@@ -228,5 +234,5 @@ export const BlockColumn: React.FC<BlockColumnProps> = ({
       </div>
     </div>
   );
-};
+});
 

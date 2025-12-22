@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import type { Block, Theme } from "@/types/presentation";
-import { type PulseMetricContent } from "@/types/presentation"; // pulse-metric";
+import { type PulseMetricContent } from "@/types/presentation";
 import {
   AreaChart,
   Area,
@@ -14,6 +14,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { IconSettings, IconTrendingUp, IconTrendingDown, IconMinus } from "@tabler/icons-react";
+import { CommonCard } from "../CommonCard";
+
+// Type definitions for pulse metric options
+type TrendType = "up" | "down" | "neutral";
+type SparklineType = "smooth" | "step" | "linear" | "bars";
 
 interface PulseMetricBlockProps {
   block: Block;
@@ -22,14 +27,12 @@ interface PulseMetricBlockProps {
   readOnly?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
-
-export const PulseMetricBlock: React.FC<PulseMetricBlockProps> = ({
+export const PulseMetricBlock = memo(function PulseMetricBlock({
   block,
   onUpdate,
   theme,
   readOnly = false,
-}) => {
+}: PulseMetricBlockProps) {
   const content = block.content as PulseMetricContent;
   const { value, label, trend, sparklineType = "smooth" } = content;
   const isDark = theme.themeType === "dark";
@@ -60,15 +63,15 @@ export const PulseMetricBlock: React.FC<PulseMetricBlockProps> = ({
     [content, onUpdate, readOnly]
   );
 
-  const handleTrendChange = (newTrend: "up" | "down" | "neutral") => {
+  const handleTrendChange = useCallback((newTrend: TrendType) => {
     if (readOnly) return;
     onUpdate({ ...content, trend: newTrend });
-  };
+  }, [content, onUpdate, readOnly]);
 
-  const handleTypeChange = (newType: "smooth" | "step" | "linear" | "bars") => {
+  const handleTypeChange = useCallback((newType: SparklineType) => {
     if (readOnly) return;
     onUpdate({ ...content, sparklineType: newType });
-  };
+  }, [content, onUpdate, readOnly]);
 
   const chartColor = useMemo(() => {
     if (trend === "up") return "#22c55e";
@@ -178,7 +181,7 @@ export const PulseMetricBlock: React.FC<PulseMetricBlockProps> = ({
                       ].map(({ val, icon: Icon }) => (
                         <button
                           key={val}
-                          onClick={() => handleTrendChange(val as any)}
+                          onClick={() => handleTrendChange(val as TrendType)}
                           className="flex-1 p-2 rounded-md flex justify-center transition-all"
                           style={{
                             backgroundColor: trend === val ? `${theme.primary}20` : "transparent",
@@ -202,7 +205,7 @@ export const PulseMetricBlock: React.FC<PulseMetricBlockProps> = ({
                       {["smooth", "linear", "step", "bars"].map((type) => (
                         <button
                           key={type}
-                          onClick={() => handleTypeChange(type as any)}
+                          onClick={() => handleTypeChange(type as SparklineType)}
                           className="px-2 py-1.5 text-[10px] font-medium rounded-lg capitalize transition-all"
                           style={{
                             backgroundColor: sparklineType === type ? `${theme.primary}20` : (isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"),
@@ -264,4 +267,4 @@ export const PulseMetricBlock: React.FC<PulseMetricBlockProps> = ({
       </div>
     </CommonCard>
   );
-};
+});

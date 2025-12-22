@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef, memo } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectTheme,
@@ -12,12 +12,27 @@ import { getAdminThemes } from "@/services/themes";
 import { applyCardStylePreset } from "@/lib/editor/card-styles";
 import { GOOGLE_FONTS } from "@/lib/constants";
 
+// Pattern options as a const array for type safety
+const PATTERN_OPTIONS = [
+  "none", "gaussian", "fractal", "fluid", "prism", "beams", 
+  "aurora", "nebula", "ether", "lumina", "horizon", "pulse", 
+  "vortex", "echo", "apex", "arch"
+] as const;
+
+type PatternOption = typeof PATTERN_OPTIONS[number];
+
 interface ThemeSelectorPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, onClose }) => {
+// API theme response type
+interface ApiTheme {
+  name?: string;
+  themeData?: Theme;
+}
+
+export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onClose }: ThemeSelectorPanelProps) {
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = currentTheme.themeType === "dark";
@@ -37,7 +52,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
           Array.isArray(response.data.list)
         ) {
           const themePalettes = response.data.list
-            .map((theme: any) => {
+            .map((theme: ApiTheme) => {
               const themeDataObj = (theme.themeData as Theme) || {};
               const themeData: Theme = {
                 ...DEFAULT_THEME,
@@ -84,9 +99,31 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
     dispatch(setTheme(selectedTheme));
   };
 
-  const updateThemeProperty = (updates: Partial<Theme>) => {
+  // Debounced theme update for high-frequency changes (sliders)
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const updateThemeProperty = useCallback((updates: Partial<Theme>) => {
     dispatch(setTheme({ ...currentTheme, ...updates }));
-  };
+  }, [dispatch, currentTheme]);
+
+  // Debounced version for slider changes
+  const debouncedUpdateThemeProperty = useCallback((updates: Partial<Theme>) => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    debounceTimeoutRef.current = setTimeout(() => {
+      dispatch(setTheme({ ...currentTheme, ...updates }));
+    }, 50); // 50ms debounce for smooth slider updates
+  }, [dispatch, currentTheme]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const isThemeActive = (paletteTheme: Theme) => {
     return (
@@ -110,7 +147,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
     { id: "capsule", label: "Capsule", desc: "Rounded corners with playful blocks" },
   ];
 
-  const SliderControl = ({ 
+  const SliderControl = memo(function SliderControl({ 
     label, 
     value, 
     onChange, 
@@ -128,23 +165,37 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
     step?: number, 
     unit?: string,
     isDark: boolean
-  }) => (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <label className="text-[10px] font-bold opacity-50 uppercase tracking-wider" style={{ color: isDark ? "#fff" : "#000" }}>{label}</label>
-        <div className="px-1.5 py-0.5 rounded bg-neutral-500/10 text-[10px] font-mono opacity-80" style={{ color: isDark ? "#fff" : "#000" }}>{value}{unit}</div>
+  }) {
+    return (
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <label 
+            className="text-[10px] font-bold opacity-50 uppercase tracking-wider" 
+            style={{ color: isDark ? "#fff" : "#000" }}
+            id={`slider-label-${label.replace(/\s+/g, '-').toLowerCase()}`}
+          >
+            {label}
+          </label>
+          <div className="px-1.5 py-0.5 rounded bg-neutral-500/10 text-[10px] font-mono opacity-80" style={{ color: isDark ? "#fff" : "#000" }}>
+            {value}{unit}
+          </div>
+        </div>
+        <input 
+          type="range" 
+          min={min} 
+          max={max} 
+          step={step} 
+          value={value} 
+          onChange={(e) => onChange(parseFloat(e.target.value))}
+          className="w-full h-1.5 bg-neutral-500/10 rounded-lg appearance-none cursor-pointer accent-primary border-none outline-none" 
+          aria-labelledby={`slider-label-${label.replace(/\s+/g, '-').toLowerCase()}`}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={value}
+        />
       </div>
-      <input 
-        type="range" 
-        min={min} 
-        max={max} 
-        step={step} 
-        value={value} 
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full h-1.5 bg-neutral-500/10 rounded-lg appearance-none cursor-pointer accent-primary border-none outline-none" 
-      />
-    </div>
-  );
+    );
+  });
 
   const parsePx = (val: string | undefined, fallback = 0): number => {
     if (!val) return fallback;
@@ -206,6 +257,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
                   onClick={onClose}
                   className="p-1.5 rounded-lg transition-all opacity-50 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
                   style={{ color: isDark ? "#fff" : "#000" }}
+                  aria-label="Close theme panel"
                 >
                   <X size={16} />
                 </button>
@@ -331,14 +383,15 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
                     <div className="relative group">
                       <select
                         value={currentTheme.cardDesignPattern || "none"}
-                        onChange={(e) => updateThemeProperty({ cardDesignPattern: e.target.value as any })}
+                        onChange={(e) => updateThemeProperty({ cardDesignPattern: e.target.value as PatternOption })}
                         className={`w-full py-2.5 px-4 text-[12px] appearance-none rounded-xl border transition-all cursor-pointer outline-none ${
                           isDark 
                             ? "bg-neutral-900 border-white/10 text-white hover:border-white/20" 
                             : "bg-white border-black/5 text-black hover:border-black/10"
                         }`}
+                        aria-label="Select background pattern"
                       >
-                        {["none", "gaussian", "fractal", "fluid", "prism", "beams", "aurora", "nebula", "ether", "lumina", "horizon", "pulse", "vortex", "echo", "apex", "arch"].map((pattern) => (
+                        {PATTERN_OPTIONS.map((pattern) => (
                           <option key={pattern} value={pattern}>
                             {pattern.charAt(0).toUpperCase() + pattern.slice(1)}
                           </option>
@@ -356,7 +409,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
                         <SliderControl 
                           label="Pattern Intensity"
                           value={currentTheme.cardDesignPatternOpacity !== undefined ? Math.round(currentTheme.cardDesignPatternOpacity * 100) : 100}
-                          onChange={(val) => updateThemeProperty({ cardDesignPatternOpacity: val / 100 })}
+                          onChange={(val) => debouncedUpdateThemeProperty({ cardDesignPatternOpacity: val / 100 })}
                           min={0}
                           max={100}
                           unit="%"
@@ -401,7 +454,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
                       <SliderControl 
                         label="Roundness"
                         value={parsePx(currentTheme.cardBorderRadius, 12)}
-                        onChange={(val) => updateThemeProperty({ cardBorderRadius: `${val}px` })}
+                        onChange={(val) => debouncedUpdateThemeProperty({ cardBorderRadius: `${val}px` })}
                         max={60}
                         unit="px"
                         isDark={isDark}
@@ -410,7 +463,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
                       <SliderControl 
                         label="Transparency"
                         value={currentTheme.cardOpacity !== undefined ? Math.round(currentTheme.cardOpacity * 100) : 100}
-                        onChange={(val) => updateThemeProperty({ cardOpacity: val / 100 })}
+                        onChange={(val) => debouncedUpdateThemeProperty({ cardOpacity: val / 100 })}
                         min={0}
                         max={100}
                         unit="%"
@@ -420,7 +473,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
                       <SliderControl 
                         label="Backdrop Blur"
                         value={parsePx(currentTheme.cardBackdropBlur, 0)}
-                        onChange={(val) => updateThemeProperty({ cardBackdropBlur: `${val}px` })}
+                        onChange={(val) => debouncedUpdateThemeProperty({ cardBackdropBlur: `${val}px` })}
                         max={20}
                         unit="px"
                         isDark={isDark}
@@ -429,7 +482,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
                       <SliderControl 
                         label="Border Width"
                         value={parsePx(currentTheme.cardBorderWidth, 1)}
-                        onChange={(val) => updateThemeProperty({ cardBorderWidth: `${val}px` })}
+                        onChange={(val) => debouncedUpdateThemeProperty({ cardBorderWidth: `${val}px` })}
                         max={5}
                         unit="px"
                         isDark={isDark}
@@ -438,7 +491,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
                       <SliderControl 
                         label="Grain Intensity"
                         value={currentTheme.cardNoiseOpacity !== undefined ? Math.round(currentTheme.cardNoiseOpacity * 100) : 0}
-                        onChange={(val) => updateThemeProperty({ cardNoiseOpacity: val / 100 })}
+                        onChange={(val) => debouncedUpdateThemeProperty({ cardNoiseOpacity: val / 100 })}
                         min={0}
                         max={40}
                         unit="%"
@@ -448,7 +501,7 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
                       <SliderControl 
                         label="Vignette"
                         value={currentTheme.cardVignetteOpacity !== undefined ? Math.round(currentTheme.cardVignetteOpacity * 100) : 0}
-                        onChange={(val) => updateThemeProperty({ cardVignetteOpacity: val / 100 })}
+                        onChange={(val) => debouncedUpdateThemeProperty({ cardVignetteOpacity: val / 100 })}
                         min={0}
                         max={60}
                         unit="%"
@@ -464,4 +517,4 @@ export const ThemeSelectorPanel: React.FC<ThemeSelectorPanelProps> = ({ isOpen, 
       )}
     </AnimatePresence>
   );
-};
+});
