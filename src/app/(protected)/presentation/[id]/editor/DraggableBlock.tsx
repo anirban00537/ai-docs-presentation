@@ -4,18 +4,15 @@ import { CSS } from "@dnd-kit/utilities";
 import { BlockRenderer } from "./blocks/BlockRenderer";
 import { BlockActionBar } from "./BlockActionBar";
 import { useBlockFocus } from "./BlockFocusContext";
-import type { Block, BlockType } from "@/types/presentation";
+import type { Block } from "@/types/presentation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectTheme,
   DEFAULT_THEME,
   duplicateBlock,
   deleteBlock,
-  transformBlock,
-  reorderBlocksInRow,
   type Theme,
 } from "@/store/slices/slidesSlice";
-import { IconPlus } from "@tabler/icons-react";
 
 interface DraggableBlockProps {
   block: Block;
@@ -57,8 +54,8 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
   const reduxTheme = useAppSelector(selectTheme);
   const theme = themeProp || reduxTheme || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
-  const { focusedBlockId, setFocusedBlock } = useBlockFocus();
-  const isFocused = focusedBlockId === block.id;
+  const { focusedBlockId, focusedSlideId, setFocusedBlock } = useBlockFocus();
+  const isFocused = focusedBlockId === block.id && focusedSlideId === slideId;
 
   const {
     attributes,
@@ -85,11 +82,15 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
       if (
         readOnly ||
         target.closest(".ProseMirror") ||
-        target.closest("[data-block-action-bar]")
+        target.closest("[data-block-action-bar]") ||
+        target.closest("[data-transform-menu]")
       ) {
         return;
       }
-      setFocusedBlock(block.id);
+      
+      e.preventDefault();
+      e.stopPropagation();
+      setFocusedBlock(slideId, block.id);
     },
     [block.id, setFocusedBlock, readOnly]
   );
@@ -104,7 +105,7 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
         !(e.target as HTMLElement).closest("[data-block-action-bar]") &&
         !(e.target as HTMLElement).closest("[data-transform-menu]")
       ) {
-        setFocusedBlock(null);
+        setFocusedBlock(null, null);
       }
     };
 
@@ -118,51 +119,9 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
 
   const handleDelete = useCallback(() => {
     dispatch(deleteBlock({ slideId, rowId, blockId: block.id }));
-    setFocusedBlock(null);
+    setFocusedBlock(null, null);
   }, [dispatch, slideId, rowId, block.id, setFocusedBlock]);
 
-  const handleTransform = useCallback(
-    (newType: BlockType) => {
-      dispatch(transformBlock({ slideId, rowId, blockId: block.id, newType }));
-    },
-    [dispatch, slideId, rowId, block.id]
-  );
-
-  const handleMoveUp = useCallback(() => {
-    if (rowIndex === 0 && blockIndex === 0) return;
-    if (blockIndex > 0) {
-      dispatch(
-        reorderBlocksInRow({
-          slideId,
-          rowId,
-          oldIndex: blockIndex,
-          newIndex: blockIndex - 1,
-        })
-      );
-    }
-  }, [dispatch, slideId, rowId, blockIndex, rowIndex]);
-
-  const handleMoveDown = useCallback(() => {
-    if (
-      rowIndex === totalRowsInSlide - 1 &&
-      blockIndex === totalBlocksInRow - 1
-    )
-      return;
-
-    if (blockIndex < totalBlocksInRow - 1) {
-      dispatch(
-        reorderBlocksInRow({
-          slideId,
-          rowId,
-          oldIndex: blockIndex,
-          newIndex: blockIndex + 1,
-        })
-      );
-    }
-  }, [dispatch, slideId, rowId, blockIndex, totalBlocksInRow, rowIndex, totalRowsInSlide]);
-
-  const canMoveUp = blockIndex > 0;
-  const canMoveDown = blockIndex < totalBlocksInRow - 1;
 
   return (
     <div
@@ -190,57 +149,12 @@ export const DraggableBlock: React.FC<DraggableBlockProps> = ({
         {/* Block Action Bar */}
         {!readOnly && (
           <BlockActionBar
-            block={block}
-            isVisible={isFocused || isHovered}
+            isVisible={isFocused}
             onDuplicate={handleDuplicate}
             onDelete={handleDelete}
-            onMoveUp={handleMoveUp}
-            onMoveDown={handleMoveDown}
-            onTransform={handleTransform}
-            canMoveUp={canMoveUp}
-            canMoveDown={canMoveDown}
-            dragHandleProps={!hideDragHandle ? { ...attributes, ...listeners } : undefined}
+            onAddColumn={() => onAddColumn(rowId, block.id)}
+            canAddColumn={isLastBlock && canAddColumn}
           />
-        )}
-
-        {/* Drag Handle - Minimal */}
-        {!hideDragHandle && !isFocused && !readOnly && (
-          <div
-            {...attributes}
-            {...listeners}
-            className="absolute -left-1 top-1/2 -translate-y-1/2 w-3 h-6 cursor-grab opacity-0 group-hover/block:opacity-40 hover:opacity-100 flex items-center justify-center transition-all z-10"
-            style={{ color: isDark ? "#fff" : "#000" }}
-          >
-            <svg width="4" height="10" viewBox="0 0 4 10" fill="currentColor">
-              <circle cx="1" cy="1" r="1" />
-              <circle cx="3" cy="1" r="1" />
-              <circle cx="1" cy="5" r="1" />
-              <circle cx="3" cy="5" r="1" />
-              <circle cx="1" cy="9" r="1" />
-              <circle cx="3" cy="9" r="1" />
-            </svg>
-          </div>
-        )}
-
-        {/* Add Column Button - Minimal */}
-        {isLastBlock && canAddColumn && !readOnly && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddColumn(rowId, block.id);
-            }}
-            className="absolute -right-2.5 top-1/2 -translate-y-1/2 opacity-0 group-hover/row:opacity-100 transition-all z-20"
-          >
-            <div
-              className="w-5 h-5 rounded-full flex items-center justify-center transition-all hover:scale-110"
-              style={{
-                backgroundColor: `${theme.primary}20`,
-                color: theme.primary,
-              }}
-            >
-              <IconPlus size={12} stroke={2.5} />
-            </div>
-          </button>
         )}
 
         {/* Block Renderer */}

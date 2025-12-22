@@ -21,8 +21,9 @@ interface BlockPosition {
 
 interface BlockFocusContextValue {
   focusedBlockId: string | null;
+  focusedSlideId: string | null;
   focusedPosition: BlockPosition | null;
-  setFocusedBlock: (blockId: string | null) => void;
+  setFocusedBlock: (slideId: string | null, blockId: string | null) => void;
   navigateUp: () => void;
   navigateDown: () => void;
   navigateLeft: () => void;
@@ -39,6 +40,7 @@ const BlockFocusContext = createContext<BlockFocusContextValue | null>(null);
 // Default no-op context for components rendered outside the provider (e.g., mini previews)
 const noOpContext: BlockFocusContextValue = {
   focusedBlockId: null,
+  focusedSlideId: null,
   focusedPosition: null,
   setFocusedBlock: () => {},
   navigateUp: () => {},
@@ -71,6 +73,7 @@ export const BlockFocusProvider: React.FC<BlockFocusProviderProps> = ({
   onNavigate,
 }) => {
   const slides = useAppSelector(selectSlides);
+  const [focusedSlideId, setFocusedSlideId] = useState<string | null>(null);
   const [focusedBlockId, setFocusedBlockId] = useState<string | null>(null);
 
   // Build a flat list of all block positions for navigation
@@ -95,10 +98,10 @@ export const BlockFocusProvider: React.FC<BlockFocusProviderProps> = ({
 
   // Get current focused position
   const focusedPosition = useMemo((): BlockPosition | null => {
-    if (!focusedBlockId) return null;
+    if (!focusedBlockId || !focusedSlideId) return null;
     const positions = getAllBlockPositions();
-    return positions.find((p) => p.blockId === focusedBlockId) || null;
-  }, [focusedBlockId, getAllBlockPositions]);
+    return positions.find((p) => p.blockId === focusedBlockId && p.slideId === focusedSlideId) || null;
+  }, [focusedBlockId, focusedSlideId, getAllBlockPositions]);
 
   // Navigation capabilities
   const navigationState = useMemo(() => {
@@ -125,7 +128,8 @@ export const BlockFocusProvider: React.FC<BlockFocusProviderProps> = ({
     };
   }, [focusedPosition, slides]);
 
-  const setFocusedBlock = useCallback((blockId: string | null) => {
+  const setFocusedBlock = useCallback((slideId: string | null, blockId: string | null) => {
+    setFocusedSlideId(slideId);
     setFocusedBlockId(blockId);
   }, []);
 
@@ -278,6 +282,7 @@ export const BlockFocusProvider: React.FC<BlockFocusProviderProps> = ({
 
   const value = useMemo<BlockFocusContextValue>(
     () => ({
+      focusedSlideId,
       focusedBlockId,
       focusedPosition,
       setFocusedBlock,

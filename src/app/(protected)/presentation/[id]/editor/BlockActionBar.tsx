@@ -1,132 +1,63 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import {
   IconTrash,
   IconCopy,
-  IconTransform,
-  IconArrowUp,
-  IconArrowDown,
-  IconGripVertical,
+  IconPlus,
 } from "@tabler/icons-react";
-import { BlockTransformMenu } from "./BlockTransformMenu";
-import type { Block, BlockType } from "@/types/presentation";
+import { type Block } from "@/types/presentation";
 
 interface BlockActionBarProps {
-  block: Block;
   isVisible: boolean;
   onDuplicate: () => void;
   onDelete: () => void;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
-  onTransform: (newType: BlockType) => void;
-  canMoveUp: boolean;
-  canMoveDown: boolean;
-  dragHandleProps?: Record<string, any>;
+  onAddColumn?: () => void;
+  canAddColumn?: boolean;
 }
 
 export const BlockActionBar: React.FC<BlockActionBarProps> = ({
-  block,
   isVisible,
   onDuplicate,
   onDelete,
-  onMoveUp,
-  onMoveDown,
-  onTransform,
-  canMoveUp,
-  canMoveDown,
-  dragHandleProps,
+  onAddColumn,
+  canAddColumn,
 }) => {
-  const [isTransformMenuOpen, setIsTransformMenuOpen] = useState(false);
-  const transformButtonRef = useRef<HTMLButtonElement>(null);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
 
-  const buttonClass = "p-1 rounded-md transition-all flex items-center justify-center";
+  const buttonClass = "w-8 h-8 rounded-lg transition-all flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10";
 
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 6 }}
-          transition={{ duration: 0.12 }}
-          className="absolute -top-10 left-1/2 -translate-x-1/2 z-50"
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.2, ease: "circOut" }}
+          className="absolute top-0 right-0 translate-x-[calc(100%+8px)] z-[100]"
           data-block-action-bar
         >
           <div
-            className="flex items-center gap-0.5 px-1 py-0.5 rounded-lg"
+            className="flex flex-col items-center gap-1 p-1 rounded-xl shadow-xl border border-black/5 dark:border-white/10"
             style={{
               backgroundColor: isDark ? "rgba(30,30,35,0.95)" : "rgba(255,255,255,0.98)",
-              backdropFilter: "blur(12px)",
+              backdropFilter: "blur(16px)",
             }}
           >
-            {/* Drag Handle */}
-            <button
-              {...dragHandleProps}
-              className={`${buttonClass} cursor-grab active:cursor-grabbing`}
-              style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.4)" }}
-              title="Drag to move"
-            >
-              <IconGripVertical size={14} />
-            </button>
-
-            <div
-              className="w-px h-3 mx-0.5"
-              style={{ backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)" }}
-            />
-
-            {/* Move Up */}
-            <button
-              onClick={onMoveUp}
-              disabled={!canMoveUp}
-              className={buttonClass}
-              style={{
-                color: !canMoveUp
-                  ? (isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)")
-                  : (isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"),
-              }}
-              title="Move up"
-            >
-              <IconArrowUp size={14} />
-            </button>
-
-            {/* Move Down */}
-            <button
-              onClick={onMoveDown}
-              disabled={!canMoveDown}
-              className={buttonClass}
-              style={{
-                color: !canMoveDown
-                  ? (isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)")
-                  : (isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"),
-              }}
-              title="Move down"
-            >
-              <IconArrowDown size={14} />
-            </button>
-
-            <div
-              className="w-px h-3 mx-0.5"
-              style={{ backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)" }}
-            />
-
-            {/* Transform */}
-            <button
-              ref={transformButtonRef}
-              onClick={() => setIsTransformMenuOpen(!isTransformMenuOpen)}
-              className={buttonClass}
-              style={{
-                color: isTransformMenuOpen
-                  ? theme.primary
-                  : (isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)"),
-              }}
-              title="Change type"
-            >
-              <IconTransform size={14} />
-            </button>
+            {/* Add Column (Contextual) */}
+            {canAddColumn && onAddColumn && (
+              <button
+                onClick={onAddColumn}
+                className={buttonClass}
+                style={{ color: theme.primary }}
+                title="Add Column"
+              >
+                <IconPlus size={16} stroke={2.5} />
+              </button>
+            )}
 
             {/* Duplicate */}
             <button
@@ -135,8 +66,10 @@ export const BlockActionBar: React.FC<BlockActionBarProps> = ({
               style={{ color: isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)" }}
               title="Duplicate"
             >
-              <IconCopy size={14} />
+              <IconCopy size={16} />
             </button>
+
+            <div className="w-4 h-px bg-black/5 dark:bg-white/5 mx-auto" />
 
             {/* Delete */}
             <button
@@ -145,21 +78,9 @@ export const BlockActionBar: React.FC<BlockActionBarProps> = ({
               style={{ color: "#ef4444" }}
               title="Delete"
             >
-              <IconTrash size={14} />
+              <IconTrash size={16} />
             </button>
           </div>
-
-          {/* Transform Menu */}
-          <BlockTransformMenu
-            isOpen={isTransformMenuOpen}
-            onClose={() => setIsTransformMenuOpen(false)}
-            onSelect={(type) => {
-              onTransform(type);
-              setIsTransformMenuOpen(false);
-            }}
-            currentType={block.type || "prosemirror"}
-            anchorRef={transformButtonRef}
-          />
         </motion.div>
       )}
     </AnimatePresence>

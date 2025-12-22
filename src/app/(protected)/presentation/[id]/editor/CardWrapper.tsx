@@ -220,17 +220,17 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
         }`}
         style={{ 
           borderRadius, 
-          overflow: "hidden",
           minHeight: fullWidth ? "100vh" : "100%" 
         }}
       >
         {accent && !isBackground && (
           <div 
-            className="relative flex-shrink-0 overflow-hidden group/accent" 
+            className="relative flex-shrink-0 group/accent z-0" 
             style={{ 
               width: isVertical ? "100%" : `${localAccentSize}%`,
               height: isVertical ? `${localAccentSize}%` : "auto",
-              minHeight: isVertical ? "200px" : "auto"
+              minHeight: isVertical ? "200px" : "auto",
+              overflow: "hidden", 
             }}
           >
             <img 
@@ -242,33 +242,24 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
             
             {!readOnly && accentControls}
 
-            {/* Resize Handle */}
+            {/* Resize Handle - Subtle Ghost Line */}
             {!readOnly && (
               <div
                 onMouseDown={handleAccentResizeStart}
-                className={`absolute z-50 transition-all group/resize bg-transparent hover:bg-primary/10 ${
-                  isResizingAccent ? "opacity-100 bg-primary/20" : "opacity-0 group-hover/accent:opacity-100"
-                } ${
+                className={`absolute z-50 transition-all duration-300 ${
                   isVertical 
-                    ? `left-0 w-full h-2 cursor-row-resize ${accent.position === "top" ? "bottom-0" : "top-0"}`
-                    : `top-0 w-2 h-full cursor-col-resize ${accent.position === "left" ? "right-0" : "left-0"}`
+                    ? `left-0 w-full h-[1px] cursor-row-resize ${accent.position === "top" ? "bottom-0" : "top-0"}`
+                    : `top-0 w-[1px] h-full cursor-col-resize ${accent.position === "left" ? "right-0" : "left-0"}`
+                } ${
+                  isResizingAccent ? "opacity-100 scale-[2]" : "opacity-0 group-hover/accent:opacity-30 hover:opacity-100"
                 }`}
+                style={{ backgroundColor: theme.primary }}
               >
+                {/* Visual indicator dot - only on hover/active */}
                 <div 
-                  className={`absolute transition-all rounded-full bg-primary/40 group-hover/resize:bg-primary ${
-                    isResizingAccent ? "bg-primary" : ""
-                  } ${
-                    isVertical 
-                      ? "left-1/2 -translate-x-1/2 w-12 h-1.5"
-                      : "top-1/2 -translate-y-1/2 w-1.5 h-12"
+                  className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-primary bg-white transition-all ${
+                    isResizingAccent ? "scale-100 opacity-100" : "scale-0 opacity-0 group-hover/accent:scale-100 group-hover/accent:opacity-100"
                   }`}
-                  style={{ 
-                    top: isVertical ? (accent.position === "top" ? "auto" : "50%") : "50%",
-                    bottom: isVertical ? (accent.position === "top" ? "50%" : "auto") : "auto",
-                    left: isVertical ? "50%" : (accent.position === "left" ? "auto" : "50%"),
-                    right: isVertical ? "auto" : (accent.position === "left" ? "50%" : "auto"),
-                    transform: "translate(-50%, -50%)"
-                  }}
                 />
               </div>
             )}
@@ -276,7 +267,7 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
         )}
 
         {/* Content Area */}
-        <div className={`relative flex-1 flex flex-col justify-center ${isBackground ? "z-20" : ""}`}>
+        <div className={`relative flex-1 flex flex-col justify-center z-10 ${isBackground ? "z-20" : ""}`}>
           {/* Background Controls (Special case since image is in bg layer) */}
           {isBackground && !readOnly && (
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none group/accent-bg">

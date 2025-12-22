@@ -6,7 +6,7 @@ import { useBlockFocus } from "./BlockFocusContext";
 import type { Block } from "@/types/presentation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME, deleteBlock, type Theme } from "@/store/slices/slidesSlice";
-import { IconTrash, IconGripHorizontal } from "@tabler/icons-react";
+import { IconGripHorizontal } from "@tabler/icons-react";
 
 interface ResizableColumnProps {
   block: Block;
@@ -50,7 +50,6 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isBorderHovered, setIsBorderHovered] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const borderResizeRef = useRef<HTMLDivElement>(null);
   const lastXRef = useRef<number>(0);
   const reduxTheme = useAppSelector(selectTheme);
@@ -128,10 +127,6 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
     };
   }, []);
 
-  const handleDelete = () => {
-    dispatch(deleteBlock({ slideId, rowId, blockId: block.id }));
-    setIsMenuOpen(false);
-  };
 
   return (
     <div
@@ -181,8 +176,7 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
                   if (dist < 5) {
                     e.preventDefault();
                     e.stopPropagation();
-                    setFocusedBlock(block.id);
-                    setIsMenuOpen(true);
+                    setFocusedBlock(slideId, block.id);
                   }
                 }
                 handleStartRef.current = null;
@@ -190,32 +184,6 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
             >
               <IconGripHorizontal size={10} />
             </div>
-
-            {/* Delete Menu */}
-            {isMenuOpen && (
-              <>
-                <div
-                  className="fixed inset-0 z-30"
-                  onClick={() => setIsMenuOpen(false)}
-                />
-                <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-1 z-40 rounded-lg py-1 min-w-[100px]"
-                  style={{
-                    backgroundColor: isDark ? "rgba(30,30,35,0.98)" : "rgba(255,255,255,0.98)",
-                    backdropFilter: "blur(12px)",
-                  }}
-                >
-                  <button
-                    onClick={handleDelete}
-                    className="w-full px-3 py-1.5 text-left text-sm flex items-center gap-2 transition-colors"
-                    style={{ color: "#ef4444" }}
-                  >
-                    <IconTrash size={14} />
-                    Delete
-                  </button>
-                </div>
-              </>
-            )}
           </div>
         )}
 
@@ -240,10 +208,10 @@ export const ResizableColumn: React.FC<ResizableColumnProps> = ({
         {!isLastBlock && !readOnly && (
           <div
             ref={borderResizeRef}
-            className={`absolute right-0 top-0 bottom-0 w-1 cursor-col-resize z-20 transition-all duration-200 ${
+            className={`absolute right-0 top-0 bottom-0 w-[1px] cursor-col-resize z-20 transition-all duration-300 ${
               isBorderHovered || isResizing
-                ? "opacity-100"
-                : "opacity-0 group-hover/row:opacity-60"
+                ? "opacity-100 scale-x-[3]"
+                : "opacity-0 group-hover/row:opacity-20"
             }`}
             style={{
               transform: "translateX(50%)",
