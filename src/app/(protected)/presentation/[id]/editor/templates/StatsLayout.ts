@@ -1,21 +1,29 @@
-import { nanoid } from "nanoid";
-import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createStatsCounterContent } from "../blocks/definitions";
-import type { Block } from "@/types/presentation";
+/**
+ * Stats Layout Template
+ * Showcase key metrics with animated counters.
+ * 
+ * @example
+ * Used for: Performance reports, Impact showcases, KPI displays
+ */
 
-export const StatsLayout = {
+import { nanoid } from "nanoid";
+import type { Row, LayoutTemplate } from "@/types/presentation";
+import { BLOCK_TYPES, createStatsCounterContent } from "../blocks/definitions";
+import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from "./template-utils";
+
+export const StatsLayout: LayoutTemplate = {
   id: "stats-layout",
   name: "Statistics Dashboard",
   description: "Showcase key metrics with animated counters",
   icon: "📊",
   getRows: (): Row[] => {
     // Row 1: Section Title
-    const headerBlock: Block = {
-      id: nanoid(),
-      type: BLOCK_TYPES.PROSEMIRROR,
-      content:
-        '<h2 style="text-align: center">By The Numbers</h2>\n\n<p style="text-align: center">Scale, speed, and reliability you can trust.</p>',
-    };
+    const headerBlock = createProseMirrorBlock(
+      createSectionHeader(
+        "By The Numbers",
+        "Scale, speed, and reliability you can trust."
+      )
+    );
 
     // Row 2: Stats Counter
     const stats = createStatsCounterContent();
@@ -49,9 +57,7 @@ export const StatsLayout = {
       },
       {
         id: nanoid(),
-        blocks: [
-          { id: nanoid(), type: BLOCK_TYPES.STATS_COUNTER, content: stats },
-        ],
+        blocks: [createTypedBlock(BLOCK_TYPES.STATS_COUNTER, stats)],
       },
     ];
   },

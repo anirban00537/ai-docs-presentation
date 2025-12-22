@@ -1,68 +1,72 @@
-import { Row, Block } from "@/types/presentation";
-import type { LayoutTemplate } from "@/types/presentation";
+/**
+ * Metric Dashboard Layout Template
+ * High-level KPI overview with pulse charts and insights.
+ * 
+ * @example
+ * Used for: Executive reports, Performance reviews, Quarterly updates
+ */
+
+import { nanoid } from "nanoid";
+import type { Row, LayoutTemplate } from "@/types/presentation";
 import {
   BLOCK_TYPES,
   createPulseMetricContent,
   createGlassInsightContent,
 } from "../blocks/definitions";
-import { nanoid } from "@reduxjs/toolkit";
+import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from "./template-utils";
 
 export const MetricDashboardLayout: LayoutTemplate = {
   id: "metric-dashboard",
   name: "Growth Metrics Dashboard",
   description: "High-level KPI overview with pulse charts",
   icon: "ChartBar",
-  getRows: (): Row[] => [
-    {
-      id: nanoid(),
-      blocks: [
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.PROSEMIRROR,
-          content: '<p style="text-align: center">Q3 Performance Overview</p>',
-        } as Block,
-      ],
-    },
-    {
-      id: nanoid(),
-      blocks: [
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.PULSE_METRIC,
-          content: createPulseMetricContent("+127%", "Revenue Growth"),
-        } as Block,
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.PULSE_METRIC,
-          content: createPulseMetricContent("+84k", "New Active Users"),
-        } as Block,
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.PULSE_METRIC,
-          content: createPulseMetricContent("-12%", "Churn Rate"),
-        } as Block,
-      ],
-    },
-    {
-      id: nanoid(),
-      blocks: [
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.GLASS_INSIGHT,
-          content: createGlassInsightContent(
-            "🚀",
-            "Our growth velocity has accelerated significantly this quarter, driven largely by the new enterprise tier adoption."
+  getRows: (): Row[] => {
+    // Row 1: Header
+    const headerBlock = createProseMirrorBlock(
+      createSectionHeader("Q3 Performance Overview")
+    );
+
+    return [
+      {
+        id: nanoid(),
+        blocks: [headerBlock],
+      },
+      {
+        id: nanoid(),
+        blocks: [
+          createTypedBlock(
+            BLOCK_TYPES.PULSE_METRIC,
+            createPulseMetricContent("+127%", "Revenue Growth")
           ),
-        } as Block,
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.GLASS_INSIGHT,
-          content: createGlassInsightContent(
-            "📉",
-            "Churn reduction initiatives are working. We've seen a 12% drop in cancellations after implementing the new onboarding flow."
+          createTypedBlock(
+            BLOCK_TYPES.PULSE_METRIC,
+            createPulseMetricContent("+84k", "New Active Users")
           ),
-        } as Block,
-      ],
-    },
-  ],
+          createTypedBlock(
+            BLOCK_TYPES.PULSE_METRIC,
+            createPulseMetricContent("-12%", "Churn Rate")
+          ),
+        ],
+      },
+      {
+        id: nanoid(),
+        blocks: [
+          createTypedBlock(
+            BLOCK_TYPES.GLASS_INSIGHT,
+            createGlassInsightContent(
+              "🚀",
+              "Our growth velocity has accelerated significantly this quarter, driven largely by the new enterprise tier adoption."
+            )
+          ),
+          createTypedBlock(
+            BLOCK_TYPES.GLASS_INSIGHT,
+            createGlassInsightContent(
+              "📉",
+              "Churn reduction initiatives are working. We've seen a 12% drop in cancellations after implementing the new onboarding flow."
+            )
+          ),
+        ],
+      },
+    ];
+  },
 };

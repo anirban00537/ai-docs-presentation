@@ -1,71 +1,76 @@
-import { Row, Block } from "@/types/presentation";
-import type { LayoutTemplate } from "@/types/presentation";
+/**
+ * Technical Walkthrough Layout Template
+ * Step-by-step guide with code terminals.
+ * 
+ * @example
+ * Used for: Developer docs, Integration guides, Technical tutorials
+ */
+
+import { nanoid } from "nanoid";
+import type { Row, LayoutTemplate } from "@/types/presentation";
 import {
   BLOCK_TYPES,
   createCodeTerminalContent,
   createSimpleNumberCardContent,
 } from "../blocks/definitions";
-import { nanoid } from "@reduxjs/toolkit";
+import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from "./template-utils";
 
 export const TechnicalWalkthroughLayout: LayoutTemplate = {
   id: "technical-walkthrough",
   name: "Developer Integration",
   description: "Step-by-step guide with code terminals",
   icon: "Terminal",
-  getRows: (): Row[] => [
-    {
-      id: nanoid(),
-      blocks: [
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.PROSEMIRROR,
-          content: '<p style="text-align: center">Quick Start Guide</p>',
-        } as Block,
-      ],
-    },
-    {
-      id: nanoid(),
-      blocks: [
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
-          content: createSimpleNumberCardContent(
-            1,
-            "Install Package",
-            "Get started by installing the core library from npm. This includes all necessary dependencies for the standard setup."
+  getRows: (): Row[] => {
+    // Row 1: Header
+    const headerBlock = createProseMirrorBlock(
+      createSectionHeader("Quick Start Guide")
+    );
+
+    return [
+      {
+        id: nanoid(),
+        blocks: [headerBlock],
+      },
+      {
+        id: nanoid(),
+        blocks: [
+          createTypedBlock(
+            BLOCK_TYPES.SIMPLE_NUMBER_CARD,
+            createSimpleNumberCardContent(
+              1,
+              "Install Package",
+              "Get started by installing the core library from npm. This includes all necessary dependencies for the standard setup."
+            )
           ),
-        } as Block,
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.CODE_TERMINAL,
-          content: createCodeTerminalContent(
-            "npm install @butterfast/core",
-            "Added 24 packages in 1.2s"
+          createTypedBlock(
+            BLOCK_TYPES.CODE_TERMINAL,
+            createCodeTerminalContent(
+              "npm install @butterfast/core",
+              "Added 24 packages in 1.2s"
+            )
           ),
-        } as Block,
-      ],
-    },
-    {
-      id: nanoid(),
-      blocks: [
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
-          content: createSimpleNumberCardContent(
-            2,
-            "Initialize SDK",
-            "Initialize the client with your API key. You can find this key in your dashboard settings under 'API Credentials'."
+        ],
+      },
+      {
+        id: nanoid(),
+        blocks: [
+          createTypedBlock(
+            BLOCK_TYPES.SIMPLE_NUMBER_CARD,
+            createSimpleNumberCardContent(
+              2,
+              "Initialize SDK",
+              "Initialize the client with your API key. You can find this key in your dashboard settings under 'API Credentials'."
+            )
           ),
-        } as Block,
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.CODE_TERMINAL,
-          content: createCodeTerminalContent(
-            "npx butterfast init",
-            "✅ Config file created at ./butterfast.json"
+          createTypedBlock(
+            BLOCK_TYPES.CODE_TERMINAL,
+            createCodeTerminalContent(
+              "npx butterfast init",
+              "✅ Config file created at ./butterfast.json"
+            )
           ),
-        } as Block,
-      ],
-    },
-  ],
+        ],
+      },
+    ];
+  },
 };

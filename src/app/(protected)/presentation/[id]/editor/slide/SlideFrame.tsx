@@ -223,7 +223,7 @@ export const SlideFrame: React.FC<SlideFrameProps> = ({
           minHeight: fullWidth ? "100vh" : "100%" 
         }}
       >
-        {accent && !isBackground && (
+        {accent && accent.url && !isBackground && (
           <div 
             className="relative flex-shrink-0 group/accent z-0" 
             style={{ 
@@ -237,11 +237,13 @@ export const SlideFrame: React.FC<SlideFrameProps> = ({
               borderBottomRightRadius: (accent.position === "right" || accent.position === "bottom") ? borderRadius : "0",
             }}
           >
-            <img 
-              src={accent.url} 
-              alt="Accent" 
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            {accent.url && (
+              <img 
+                src={accent.url} 
+                alt="Accent" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            )}
             <div className="absolute inset-0 bg-black/10 transition-opacity opacity-0 group-hover/accent:opacity-100" />
             
             {!readOnly && accentControls}

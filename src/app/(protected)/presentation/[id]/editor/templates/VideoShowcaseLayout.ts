@@ -1,26 +1,35 @@
-import { nanoid } from "nanoid";
-import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createVideoContent } from "../blocks/definitions";
-import type { Block } from "@/types/presentation";
+/**
+ * Video Showcase Layout Template
+ * Embed videos to showcase your product or content.
+ * 
+ * @example
+ * Used for: Product demos, Video content, Keynote highlights
+ */
 
-export const VideoShowcaseLayout = {
+import { nanoid } from "nanoid";
+import type { Row, LayoutTemplate } from "@/types/presentation";
+import { BLOCK_TYPES, createVideoContent } from "../blocks/definitions";
+import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from "./template-utils";
+
+export const VideoShowcaseLayout: LayoutTemplate = {
   id: "video-showcase-layout",
   name: "Video Showcase",
   description: "Embed videos to showcase your product",
   icon: "🎥",
   getRows: (): Row[] => {
     // Row 1: Section Title
-    const headerBlock: Block = {
-      id: nanoid(),
-      type: BLOCK_TYPES.PROSEMIRROR,
-      content:
-        '<h2 style="text-align: center">The Future of Work</h2>\n\n<p style="text-align: center">A 2-minute overview of where we are going next.</p>',
-    };
+    const headerBlock = createProseMirrorBlock(
+      createSectionHeader(
+        "The Future of Work",
+        "A 2-minute overview of where we are going next."
+      )
+    );
 
     // Row 2: Video Block
     const video = createVideoContent();
     video.source = "youtube";
-    video.url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Placeholder, but valid URL structure
+    // Using a placeholder pattern - replace with actual video URL
+    video.url = "https://www.youtube.com/watch?v=YOUR_VIDEO_ID";
     video.title = "Keynote 2024 Highlights";
 
     return [
@@ -30,7 +39,7 @@ export const VideoShowcaseLayout = {
       },
       {
         id: nanoid(),
-        blocks: [{ id: nanoid(), type: BLOCK_TYPES.VIDEO, content: video }],
+        blocks: [createTypedBlock(BLOCK_TYPES.VIDEO, video)],
       },
     ];
   },

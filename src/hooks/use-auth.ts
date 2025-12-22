@@ -4,7 +4,31 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser, clearUser } from "@/store/slices/userSlice";
 import { authClient } from "@/lib/auth-client";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+
+/**
+ * Serializes user data by converting Date objects to ISO strings.
+ * This ensures Redux state remains serializable.
+ */
+function serializeUser(user: Record<string, unknown>): Record<string, unknown> {
+  const serialized: Record<string, unknown> = {};
+  
+  for (const [key, value] of Object.entries(user)) {
+    if (value instanceof Date) {
+      serialized[key] = value.toISOString();
+    } else if (value && typeof value === 'object' && 'toISOString' in value) {
+      // Handle date-like objects (e.g., from some ORMs)
+      serialized[key] = (value as { toISOString: () => string }).toISOString();
+    } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+      // Recursively serialize nested objects
+      serialized[key] = serializeUser(value as Record<string, unknown>);
+    } else {
+      serialized[key] = value;
+    }
+  }
+  
+  return serialized;
+}
 
 export const useAuth = () => {
   const dispatch = useAppDispatch();
@@ -36,13 +60,19 @@ export const useProfile = () => {
   const dispatch = useAppDispatch();
   const { data: session, isPending, error } = authClient.useSession();
 
+  // Memoize serialized user to avoid unnecessary re-renders
+  const serializedUser = useMemo(() => {
+    if (!session?.user) return null;
+    return serializeUser(session.user as Record<string, unknown>);
+  }, [session?.user]);
+
   useEffect(() => {
-    if (session?.user) {
-      dispatch(setUser(session.user as any));
+    if (serializedUser) {
+      dispatch(setUser(serializedUser as Parameters<typeof setUser>[0]));
     } else if (!isPending && !session) {
       dispatch(clearUser());
     }
-  }, [session, isPending, dispatch]);
+  }, [serializedUser, isPending, session, dispatch]);
 
   return {
     data: session?.user,

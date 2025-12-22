@@ -1,11 +1,23 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/store";
 
+/**
+ * User type with serializable fields.
+ * Date fields are stored as ISO strings for Redux compatibility.
+ */
 export type User = {
   id: string;
   email: string;
+  name?: string;
   user_name?: string;
-  [key: string]: any;
+  image?: string | null;
+  emailVerified?: boolean;
+  /** ISO date string */
+  createdAt?: string;
+  /** ISO date string */
+  updatedAt?: string;
+  /** Allow additional string-keyed properties with serializable values */
+  [key: string]: string | boolean | number | null | undefined;
 };
 
 type UserState = {
@@ -46,4 +58,3 @@ export const selectIsAuthenticated = (state: RootState) =>
 export const selectUserLoading = (state: RootState) => state.user.isLoading;
 
 export default userSlice.reducer;
-

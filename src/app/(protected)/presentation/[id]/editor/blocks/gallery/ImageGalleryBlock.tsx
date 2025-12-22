@@ -106,7 +106,7 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
           gridTemplateColumns: `repeat(${columns}, 1fr)`,
         }}
       >
-        {images.map((img) => (
+        {images.filter(img => img.url).map((img) => (
           <CommonCard 
             key={img.id} 
             theme={theme}

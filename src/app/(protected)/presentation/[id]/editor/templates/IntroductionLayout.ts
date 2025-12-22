@@ -1,44 +1,57 @@
+/**
+ * Introduction Layout Template
+ * Big title with small subtitle - perfect for opening slides.
+ * 
+ * @example
+ * Used for: Opening slides, Section dividers, Title pages
+ */
+
 import { nanoid } from "nanoid";
-import { Row, Block } from "@/types/presentation";
-import type { LayoutTemplate } from "@/types/presentation";
+import type { Row, Block, LayoutTemplate } from "@/types/presentation";
 import { BLOCK_TYPES, createSpacerContent } from "../blocks/definitions";
+import { createSectionHeader, createProseMirrorBlock } from "./template-utils";
 
 export const IntroductionLayout: LayoutTemplate = {
   id: "introduction",
   name: "Introduction",
   description: "Big title with small subtitle",
   icon: "Heading",
-  getRows: (): Row[] => [
-    {
-      id: nanoid(),
-      blocks: [
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.SPACER,
-          content: createSpacerContent(120),
-        } as Block,
-      ],
-    },
-    {
-      id: nanoid(),
-      blocks: [
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.PROSEMIRROR,
-          content:
-            '<h1 style="text-align: center">User Research Findings for Product Development</h1>\n\n<p style="text-align: center">Key insights, pain points, and actionable recommendations from our recent research study</p>',
-        } as Block,
-      ],
-    },
-    {
-      id: nanoid(),
-      blocks: [
-        {
-          id: nanoid(),
-          type: BLOCK_TYPES.SPACER,
-          content: createSpacerContent(120),
-        } as Block,
-      ],
-    },
-  ],
+  getRows: (): Row[] => {
+    const spacerContent = createSpacerContent(120);
+    
+    const titleBlock = createProseMirrorBlock(
+      createSectionHeader(
+        "User Research Findings for Product Development",
+        "Key insights, pain points, and actionable recommendations from our recent research study",
+        1
+      )
+    );
+
+    return [
+      {
+        id: nanoid(),
+        blocks: [
+          {
+            id: nanoid(),
+            type: BLOCK_TYPES.SPACER,
+            content: spacerContent,
+          },
+        ],
+      },
+      {
+        id: nanoid(),
+        blocks: [titleBlock],
+      },
+      {
+        id: nanoid(),
+        blocks: [
+          {
+            id: nanoid(),
+            type: BLOCK_TYPES.SPACER,
+            content: spacerContent,
+          },
+        ],
+      },
+    ];
+  },
 };

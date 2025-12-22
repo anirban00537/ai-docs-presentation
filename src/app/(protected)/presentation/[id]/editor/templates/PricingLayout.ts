@@ -1,31 +1,34 @@
+/**
+ * Pricing Layout Template
+ * Compare plans with clear features and pricing.
+ * 
+ * @example
+ * Used for: Pricing pages, Plan comparisons, Subscription tiers
+ */
+
 import { nanoid } from "nanoid";
-import type { Row } from "@/types/presentation";
+import type { Row, LayoutTemplate } from "@/types/presentation";
 import { BLOCK_TYPES, createPricingCardContent } from "../blocks/definitions";
-import type { Block } from "@/types/presentation";
+import { createProseMirrorBlock, createSectionHeader, createHeadingDoc, createTypedBlock } from "./template-utils";
 
-const createHeadingDoc = (text: string, level = 3) => {
-  const hashes = "#".repeat(level);
-  return `${hashes} ${text}`;
-};
-
-export const PricingLayout = {
+export const PricingLayout: LayoutTemplate = {
   id: "pricing-layout",
   name: "Pricing Plans",
   description: "Compare plans with clear features",
   icon: "🏷️",
   getRows: (): Row[] => {
     // Row 1: Section Title
-    const headerBlock: Block = {
-      id: nanoid(),
-      type: BLOCK_TYPES.PROSEMIRROR,
-      content:
-        '<h2 style="text-align: center">Simple, Transparent Pricing</h2>\n\n<p style="text-align: center">No hidden fees. Cancel anytime.</p>',
-    };
+    const headerBlock = createProseMirrorBlock(
+      createSectionHeader(
+        "Simple, Transparent Pricing",
+        "No hidden fees. Cancel anytime."
+      )
+    );
 
     // Row 2: Three Pricing Cards
     const plan1 = createPricingCardContent();
-    plan1.planName = createHeadingDoc("Developer");
-    plan1.price = createHeadingDoc("$15/mo");
+    plan1.planName = createHeadingDoc("Developer", 3);
+    plan1.price = createHeadingDoc("$15/mo", 3);
     plan1.buttonLabel = "Start Building";
     plan1.features = [
       { text: "For personal projects", included: true },
@@ -35,8 +38,8 @@ export const PricingLayout = {
     ];
 
     const plan2 = createPricingCardContent();
-    plan2.planName = createHeadingDoc("Startup");
-    plan2.price = createHeadingDoc("$99/mo");
+    plan2.planName = createHeadingDoc("Startup", 3);
+    plan2.price = createHeadingDoc("$99/mo", 3);
     plan2.buttonLabel = "Scale Up";
     plan2.features = [
       { text: "For growing teams", included: true },
@@ -46,8 +49,8 @@ export const PricingLayout = {
     ];
 
     const plan3 = createPricingCardContent();
-    plan3.planName = createHeadingDoc("Business");
-    plan3.price = createHeadingDoc("$299/mo");
+    plan3.planName = createHeadingDoc("Business", 3);
+    plan3.price = createHeadingDoc("$299/mo", 3);
     plan3.buttonLabel = "Contact Sales";
     plan3.features = [
       { text: "For high volume", included: true },
@@ -64,9 +67,9 @@ export const PricingLayout = {
       {
         id: nanoid(),
         blocks: [
-          { id: nanoid(), type: BLOCK_TYPES.PRICING_CARD, content: plan1 },
-          { id: nanoid(), type: BLOCK_TYPES.PRICING_CARD, content: plan2 },
-          { id: nanoid(), type: BLOCK_TYPES.PRICING_CARD, content: plan3 },
+          createTypedBlock(BLOCK_TYPES.PRICING_CARD, plan1),
+          createTypedBlock(BLOCK_TYPES.PRICING_CARD, plan2),
+          createTypedBlock(BLOCK_TYPES.PRICING_CARD, plan3),
         ],
       },
     ];

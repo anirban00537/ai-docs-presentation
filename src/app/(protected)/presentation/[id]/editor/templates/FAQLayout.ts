@@ -1,21 +1,29 @@
-import { nanoid } from "nanoid";
-import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createFAQContent } from "../blocks/definitions";
-import type { Block } from "@/types/presentation";
+/**
+ * FAQ Layout Template
+ * Answer common questions with expandable accordion sections.
+ * 
+ * @example
+ * Used for: Support sections, Product FAQs, Help pages
+ */
 
-export const FAQLayout = {
+import { nanoid } from "nanoid";
+import type { Row, LayoutTemplate } from "@/types/presentation";
+import { BLOCK_TYPES, createFAQContent } from "../blocks/definitions";
+import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from "./template-utils";
+
+export const FAQLayout: LayoutTemplate = {
   id: "faq-layout",
   name: "FAQ Section",
   description: "Answer common questions with expandable sections",
   icon: "❓",
   getRows: (): Row[] => {
     // Row 1: Section Title
-    const headerBlock: Block = {
-      id: nanoid(),
-      type: BLOCK_TYPES.PROSEMIRROR,
-      content:
-        '<h2 style="text-align: center">Frequently Asked Questions</h2>\n\n<p style="text-align: center">Everything you need to know about security, deployment, and billing.</p>',
-    };
+    const headerBlock = createProseMirrorBlock(
+      createSectionHeader(
+        "Frequently Asked Questions",
+        "Everything you need to know about security, deployment, and billing."
+      )
+    );
 
     // Row 2: FAQ Block
     const faq = createFAQContent();
@@ -54,7 +62,7 @@ export const FAQLayout = {
       },
       {
         id: nanoid(),
-        blocks: [{ id: nanoid(), type: BLOCK_TYPES.FAQ, content: faq }],
+        blocks: [createTypedBlock(BLOCK_TYPES.FAQ, faq)],
       },
     ];
   },
