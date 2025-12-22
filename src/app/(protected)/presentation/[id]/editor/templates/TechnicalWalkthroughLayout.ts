@@ -4,7 +4,7 @@ import {
   BLOCK_TYPES,
   createCodeTerminalContent,
   createSimpleNumberCardContent,
-} from "../block/blocks/definitions";
+} from "../blocks/definitions";
 import { nanoid } from "@reduxjs/toolkit";
 
 export const TechnicalWalkthroughLayout: LayoutTemplate = {

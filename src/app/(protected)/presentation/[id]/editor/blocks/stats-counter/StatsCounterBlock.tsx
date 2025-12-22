@@ -5,7 +5,7 @@ import {
   createStatsCounterContent,
   type StatsCounterContent,
 } from "../definitions";
-import { BlockWrapper } from "../../BlockWrapper";
+import { BlockWrapper } from "../../block/BlockWrapper";
 import {
   Dialog,
   DialogContent,

@@ -4,7 +4,7 @@ import {
   BLOCK_TYPES,
   createPulseMetricContent,
   createGlassInsightContent,
-} from "../block/blocks/definitions";
+} from "../blocks/definitions";
 import { nanoid } from "@reduxjs/toolkit";
 
 export const MetricDashboardLayout: LayoutTemplate = {

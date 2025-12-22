@@ -1,9 +1,6 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import {
-  BLOCK_TYPES,
-  createImageGalleryContent,
-} from "../block/blocks/definitions";
+import { BLOCK_TYPES, createImageGalleryContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const ProblemImageLayout = {

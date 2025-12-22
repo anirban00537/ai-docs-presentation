@@ -7,7 +7,7 @@ import {
 } from "../definitions";
 import { IconCheck, IconX, IconStar, IconTrash } from "@tabler/icons-react";
 
-import { BlockWrapper } from "../../BlockWrapper";
+import { BlockWrapper } from "../../block/BlockWrapper";
 import {
   Dialog,
   DialogContent,

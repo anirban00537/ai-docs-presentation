@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/types/presentation";
 import { createBadgeContent, type BadgeContent } from "../definitions";
-import { BlockWrapper } from "../../BlockWrapper";
+import { BlockWrapper } from "../../block/BlockWrapper";
 import {
   Dialog,
   DialogContent,

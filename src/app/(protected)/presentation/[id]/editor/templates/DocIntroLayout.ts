@@ -4,7 +4,7 @@ import {
   BLOCK_TYPES,
   createFeatureListContent,
   createCtaContent,
-} from "../block/blocks/definitions";
+} from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const DocIntroLayout = {

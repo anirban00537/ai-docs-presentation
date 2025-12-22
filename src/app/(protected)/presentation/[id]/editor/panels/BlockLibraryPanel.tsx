@@ -5,7 +5,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BLOCK_TYPES } from "../block/blocks/definitions";
+import { BLOCK_TYPES } from "../blocks/definitions";
 import {
   IconFileText,
   IconHash,
@@ -229,8 +229,8 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
           <div
             className="relative w-[380px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: isDark 
-                ? "rgba(30, 30, 40, 0.5)" 
+              backgroundColor: isDark
+                ? "rgba(30, 30, 40, 0.5)"
                 : "rgba(255, 255, 255, 0.5)",
               backdropFilter: "blur(32px) saturate(200%)",
               WebkitBackdropFilter: "blur(32px) saturate(200%)",
@@ -250,7 +250,7 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
             }}
           >
             {/* Glass shine overlay */}
-            <div 
+            <div
               className="absolute inset-0 pointer-events-none rounded-2xl"
               style={{
                 background: isDark
@@ -277,7 +277,11 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
             </div>
 
             {/* Blocks Grid */}
-            <div className={`relative flex-1 overflow-y-auto px-3 pb-3 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}>
+            <div
+              className={`relative flex-1 overflow-y-auto px-3 pb-3 ${
+                isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+              }`}
+            >
               <p
                 className="text-[11px] font-medium mb-2 px-1 opacity-50"
                 style={{ color: isDark ? "#fff" : "#000" }}
@@ -302,4 +306,3 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
     </AnimatePresence>
   );
 };
-

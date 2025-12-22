@@ -1,6 +1,6 @@
 import React from "react";
 import type { Theme } from "@/types/presentation";
-import { SlideFrame } from "../../slide/SlideFrame";
+import { SlideFrame } from "../slide/SlideFrame";
 
 interface CommonCardProps {
   theme: Theme;

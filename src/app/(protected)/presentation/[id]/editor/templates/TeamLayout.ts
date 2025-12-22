@@ -3,7 +3,7 @@ import type { Row } from "@/types/presentation";
 import {
   BLOCK_TYPES,
   createTeamCardContent,
-} from "../block/blocks/definitions";
+} from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
 import { getDefaultHeadingContent } from "@/types/presentation";
 

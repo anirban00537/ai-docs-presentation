@@ -1,6 +1,6 @@
 import React from "react";
 import type { Block, Theme } from "@/types/presentation";
-import { normalizeBlock, resolveBlockComponent } from "./blocks/registry";
+import { normalizeBlock, resolveBlockComponent } from "../blocks/registry";
 
 interface BlockRendererProps {
   block: Block;

@@ -52,5 +52,5 @@ export { layoutTemplates, layoutIconsMap } from "./utils/layoutTemplates";
 export { NumberCardIcon } from "./icons/layout-icons";
 
 // Export block components (keep as-is)
-export { ProseMirrorBlock } from "./block/blocks/prosemirror/ProseMirrorBlock";
-export { NumberCardBlock } from "./block/blocks/number-card/NumberCardBlock";
+export { ProseMirrorBlock } from "./blocks/prosemirror/ProseMirrorBlock";
+export { NumberCardBlock } from "./blocks/number-card/NumberCardBlock";

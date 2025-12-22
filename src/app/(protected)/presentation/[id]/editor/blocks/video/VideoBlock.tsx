@@ -3,7 +3,6 @@ import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/types/presentation";
 import { createVideoContent, type VideoContent } from "../definitions";
 import { IconVideo, IconPlayerPlay } from "@tabler/icons-react";
-import { BlockWrapper } from "../../BlockWrapper";
 import { CommonCard } from "../CommonCard";
 import {
   Dialog,
@@ -24,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BlockWrapper } from "../../block/BlockWrapper";
 
 interface VideoBlockProps {
   block: Block;

@@ -16,13 +16,13 @@ import {
 import {
   createBlockContentForType,
   createNumberCardContent,
-} from "@/app/(protected)/presentation/[id]/editor/block/blocks/definitions";
+} from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
 import {
   createBlockInstance,
   createRow,
   createRowWithColumns,
   createSlide,
-} from "@/app/(protected)/presentation/[id]/editor/block/blocks/factories";
+} from "@/app/(protected)/presentation/[id]/editor/blocks/factories";
 
 export interface SlidesState {
   slides: Slide[];

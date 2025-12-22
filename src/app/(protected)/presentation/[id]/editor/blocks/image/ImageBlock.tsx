@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import type { Block, Theme } from "@/types/presentation";
 import { type ImageContent } from "@/types/presentation";
 import { IconPhoto, IconExternalLink } from "@tabler/icons-react";
-import { ImagePickerModal, type SelectedImage } from "../../../panels/ImagePickerModal";
 import { CommonCard } from "../CommonCard";
+import {
+  ImagePickerModal,
+  type SelectedImage,
+} from "../../panels/ImagePickerModal";
 
 interface ImageBlockProps {
   block: Block;

@@ -4,7 +4,7 @@ import {
   BLOCK_TYPES,
   createTimelineContent,
   createTestimonialContent,
-} from "../block/blocks/definitions";
+} from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const CustomerStoriesLayout = {

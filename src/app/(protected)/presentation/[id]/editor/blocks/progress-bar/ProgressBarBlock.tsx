@@ -5,7 +5,7 @@ import {
   createProgressBarContent,
   type ProgressBarContent,
 } from "../definitions";
-import { BlockWrapper } from "../../BlockWrapper";
+import { BlockWrapper } from "../../block/BlockWrapper";
 import {
   Dialog,
   DialogContent,

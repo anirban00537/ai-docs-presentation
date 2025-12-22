@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import type { Block, Theme } from "@/types/presentation";
 import { createCodeContent, type CodeContent } from "../definitions";
 import { IconCopy, IconCheck } from "@tabler/icons-react";
-import { BlockWrapper } from "../../BlockWrapper";
+import { BlockWrapper } from "../../block/BlockWrapper";
 import {
   Dialog,
   DialogContent,

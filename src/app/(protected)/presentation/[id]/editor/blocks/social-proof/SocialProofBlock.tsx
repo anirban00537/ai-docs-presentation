@@ -14,7 +14,7 @@ import {
   IconTrash,
   IconPlus,
 } from "@tabler/icons-react";
-import { BlockWrapper } from "../../BlockWrapper";
+import { BlockWrapper } from "../../block/BlockWrapper";
 import { CommonCard } from "../CommonCard";
 import {
   Dialog,

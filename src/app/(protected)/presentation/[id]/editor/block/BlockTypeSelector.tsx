@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
-import { BLOCK_TYPES } from "./blocks/definitions";
+import { BLOCK_TYPES } from "../blocks/definitions";
 import {
   IconFileText,
   IconHash,

@@ -6,7 +6,7 @@ import {
   type ComparisonTableContent,
 } from "../definitions";
 import { IconCheck, IconX, IconTrash, IconPlus } from "@tabler/icons-react";
-import { BlockWrapper } from "../../BlockWrapper";
+import { BlockWrapper } from "../../block/BlockWrapper";
 
 interface ComparisonTableBlockProps {
   block: Block;

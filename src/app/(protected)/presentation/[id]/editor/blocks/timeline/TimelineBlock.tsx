@@ -7,7 +7,7 @@ import {
   type TimelineStep,
 } from "../definitions";
 import { TimelineStepComponent } from "./TimelineStep";
-import { BlockWrapper } from "../../BlockWrapper";
+import { BlockWrapper } from "../../block/BlockWrapper";
 
 interface TimelineBlockProps {
   block: Block;

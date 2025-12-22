@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createFAQContent } from "../block/blocks/definitions";
+import { BLOCK_TYPES, createFAQContent } from "../blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const FAQLayout = {
