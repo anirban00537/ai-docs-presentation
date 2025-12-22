@@ -1,22 +1,9 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState } from "react";
 import type { Block, Theme } from "@/types/presentation";
-import { type ImageContent } from "@/types/presentation"; // image";
+import { type ImageContent } from "@/types/presentation";
 import { IconPhoto, IconExternalLink } from "@tabler/icons-react";
-import { X, Search, Upload, Loader2, Heart } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
-import {
-  useSearchUnsplashPhotos,
-  useRandomUnsplashPhotos,
-  useListMedia,
-  useUploadMedia,
-  useTrackUnsplashDownload,
-} from "@/hooks/use-images";
-import type { UnsplashPhoto, MediaItem } from "@/services/images";
+import { ImagePickerModal, type SelectedImage } from "../../components/ImagePickerModal";
+import { CommonCard } from "../CommonCard";
 
 interface ImageBlockProps {
   block: Block;
@@ -26,8 +13,6 @@ interface ImageBlockProps {
   readOnly?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
-
 export const ImageBlock: React.FC<ImageBlockProps> = ({
   block,
   onUpdate,
@@ -36,110 +21,19 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
 }) => {
   const content = block.content as ImageContent;
   const { url, alt, caption, objectFit = "cover", attribution } = content;
-  const isDark = theme.themeType === "dark";
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"unsplash" | "uploads">("unsplash");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  // Unsplash queries
-  const { data: searchResults, isLoading: isSearching } = useSearchUnsplashPhotos(
-    { query: debouncedQuery, perPage: 30 },
-    activeTab === "unsplash" && debouncedQuery.length > 0
-  );
-  
-  const { data: randomPhotos, isLoading: isLoadingRandom } = useRandomUnsplashPhotos(
-    { count: 30 },
-    activeTab === "unsplash" && debouncedQuery.length === 0
-  );
-
-  // User uploads query
-  const { data: userMedia, isLoading: isLoadingMedia } = useListMedia(
-    { perPage: 50 }
-  );
-
-  // Mutations
-  const uploadMedia = useUploadMedia();
-  const trackDownload = useTrackUnsplashDownload();
-
-  const unsplashPhotos = debouncedQuery 
-    ? (searchResults?.data?.results || []) 
-    : (Array.isArray(randomPhotos?.data) ? randomPhotos.data : []);
-  const userPhotos = userMedia?.data?.list || [];
-
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchQuery(value);
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-    debounceRef.current = setTimeout(() => {
-      setDebouncedQuery(value);
-    }, 500);
-  }, []);
-
-  const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const result = await uploadMedia.mutateAsync({
-        file,
-        name: file.name,
-      });
-      
-      if (result.data) {
-        onUpdate({
-          ...content,
-          url: result.data.url,
-          alt: file.name,
-          attribution: undefined,
-        });
-        setIsModalOpen(false);
-      }
-    } catch (error) {
-      console.error("Failed to upload image:", error);
-    }
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  }, [content, onUpdate, uploadMedia]);
-
-  const handleSelectUnsplashPhoto = useCallback(async (photo: UnsplashPhoto) => {
-    // Track download for Unsplash attribution compliance
-    try {
-      await trackDownload.mutateAsync({ downloadLocation: photo.links.downloadLocation });
-    } catch (error) {
-      console.error("Failed to track download:", error);
-    }
-
+  const handleImageSelect = (image: SelectedImage) => {
     onUpdate({
       ...content,
-      url: photo.urls.regular,
-      alt: photo.altDescription || "",
-      attribution: {
-        name: photo.user.name,
-        link: `https://unsplash.com/@${photo.user.username}?utm_source=butterfast&utm_medium=referral`,
-      },
+      url: image.url,
+      alt: image.alt || "",
+      attribution: image.attribution,
     });
     setIsModalOpen(false);
-  }, [content, onUpdate, trackDownload]);
-
-  const handleSelectUserMedia = useCallback((media: MediaItem) => {
-    onUpdate({
-      ...content,
-      url: media.url,
-      alt: media.name,
-      attribution: undefined,
-    });
-    setIsModalOpen(false);
-  }, [content, onUpdate]);
+  };
 
   const handleCaptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (readOnly) return;
@@ -177,28 +71,14 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
           </span>
         </CommonCard>
 
-        {/* Image Picker Modal */}
-        <ImagePickerModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          isDark={isDark}
-          theme={theme}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          isSearching={isSearching}
-          isLoadingRandom={isLoadingRandom}
-          isLoadingMedia={isLoadingMedia}
-          unsplashPhotos={unsplashPhotos}
-          userPhotos={userPhotos}
-          debouncedQuery={debouncedQuery}
-          onSelectUnsplashPhoto={handleSelectUnsplashPhoto}
-          onSelectUserMedia={handleSelectUserMedia}
-          onFileUpload={handleFileUpload}
-          fileInputRef={fileInputRef}
-          isUploading={uploadMedia.isPending}
-        />
+        {!readOnly && (
+          <ImagePickerModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onSelect={handleImageSelect}
+            theme={theme}
+          />
+        )}
       </>
     );
   }
@@ -303,360 +183,14 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
         )}
       </CommonCard>
 
-      {/* Image Picker Modal */}
-      <ImagePickerModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        isDark={isDark}
-        theme={theme}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        isSearching={isSearching}
-        isLoadingRandom={isLoadingRandom}
-        isLoadingMedia={isLoadingMedia}
-        unsplashPhotos={unsplashPhotos}
-        userPhotos={userPhotos}
-        debouncedQuery={debouncedQuery}
-        onSelectUnsplashPhoto={handleSelectUnsplashPhoto}
-        onSelectUserMedia={handleSelectUserMedia}
-        onFileUpload={handleFileUpload}
-        fileInputRef={fileInputRef}
-        isUploading={uploadMedia.isPending}
-      />
-    </>
-  );
-};
-
-// Separate Modal Component for Image Picking
-interface ImagePickerModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  isDark: boolean;
-  theme: Theme;
-  activeTab: "unsplash" | "uploads";
-  setActiveTab: (tab: "unsplash" | "uploads") => void;
-  searchQuery: string;
-  onSearchChange: (value: string) => void;
-  isSearching: boolean;
-  isLoadingRandom: boolean;
-  isLoadingMedia: boolean;
-  unsplashPhotos: UnsplashPhoto[];
-  userPhotos: MediaItem[];
-  debouncedQuery: string;
-  onSelectUnsplashPhoto: (photo: UnsplashPhoto) => void;
-  onSelectUserMedia: (media: MediaItem) => void;
-  onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  fileInputRef: React.RefObject<HTMLInputElement | null>;
-  isUploading: boolean;
-}
-
-const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
-  isOpen,
-  onClose,
-  isDark,
-  theme,
-  activeTab,
-  setActiveTab,
-  searchQuery,
-  onSearchChange,
-  isSearching,
-  isLoadingRandom,
-  isLoadingMedia,
-  unsplashPhotos,
-  userPhotos,
-  debouncedQuery,
-  onSelectUnsplashPhoto,
-  onSelectUserMedia,
-  onFileUpload,
-  fileInputRef,
-  isUploading,
-}) => {
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
-        className="p-0 overflow-hidden border-0"
-        style={{
-          backgroundColor: isDark 
-            ? "rgba(25, 25, 30, 0.95)" 
-            : "rgba(255, 255, 255, 0.95)",
-          backdropFilter: "blur(40px) saturate(180%)",
-          WebkitBackdropFilter: "blur(40px) saturate(180%)",
-          boxShadow: isDark
-            ? "0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.1) inset"
-            : "0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255,255,255,0.8) inset",
-          maxWidth: "540px",
-          maxHeight: "80vh",
-        }}
-      >
-        {/* Glass shine overlay */}
-        <div 
-          className="absolute inset-0 pointer-events-none rounded-2xl"
-          style={{
-            background: isDark
-              ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.02) 100%)"
-              : "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
-          }}
+      {!readOnly && (
+        <ImagePickerModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSelect={handleImageSelect}
+          theme={theme}
         />
-
-        <div className="relative flex flex-col h-full max-h-[80vh]">
-          {/* Header */}
-          <div 
-            className="relative flex items-center justify-between px-5 py-4 border-b shrink-0"
-            style={{ 
-              borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
-            }}
-          >
-            <h3 
-              className="text-base font-semibold"
-              style={{ color: isDark ? "#fff" : "#000" }}
-            >
-              Choose Image
-            </h3>
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-lg transition-all hover:scale-105"
-              style={{
-                backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)",
-                color: isDark ? "#fff" : "#000",
-              }}
-            >
-              <X size={16} />
-            </button>
-          </div>
-
-          {/* Tabs */}
-          <div 
-            className="relative px-5 py-3 border-b shrink-0"
-            style={{ 
-              borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
-            }}
-          >
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "unsplash" | "uploads")}>
-              <TabsList 
-                className="w-full p-1 rounded-lg"
-                style={{
-                  backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
-                }}
-              >
-                <TabsTrigger 
-                  value="unsplash" 
-                  className="flex-1 text-xs font-medium data-[state=active]:shadow-sm"
-                  style={{
-                    color: activeTab === "unsplash" ? theme.primary : (isDark ? "#999" : "#666"),
-                    backgroundColor: activeTab === "unsplash" 
-                      ? (isDark ? "rgba(255,255,255,0.1)" : "#fff") 
-                      : "transparent",
-                  }}
-                >
-                  Unsplash
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="uploads" 
-                  className="flex-1 text-xs font-medium data-[state=active]:shadow-sm"
-                  style={{
-                    color: activeTab === "uploads" ? theme.primary : (isDark ? "#999" : "#666"),
-                    backgroundColor: activeTab === "uploads" 
-                      ? (isDark ? "rgba(255,255,255,0.1)" : "#fff") 
-                      : "transparent",
-                  }}
-                >
-                  My Uploads
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-
-            {/* Upload button for uploads tab */}
-            {activeTab === "uploads" && (
-              <div className="mt-3">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={onFileUpload}
-                  className="hidden"
-                />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-medium transition-all disabled:opacity-50"
-                  style={{
-                    backgroundColor: `${theme.primary}15`,
-                    color: theme.primary,
-                  }}
-                >
-                  {isUploading ? (
-                    <Loader2 size={14} className="animate-spin" />
-                  ) : (
-                    <Upload size={14} />
-                  )}
-                  {isUploading ? "Uploading..." : "Upload Image"}
-                </button>
-              </div>
-            )}
-
-            {/* Search for Unsplash */}
-            {activeTab === "unsplash" && (
-              <div className="mt-3 relative">
-                <Search 
-                  size={14} 
-                  className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40"
-                  style={{ color: isDark ? "#fff" : "#000" }}
-                />
-                <Input
-                  value={searchQuery}
-                  onChange={(e) => onSearchChange(e.target.value)}
-                  placeholder="Search photos..."
-                  className="pl-9 h-9 text-xs border-0"
-                  style={{
-                    backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
-                    color: isDark ? "#fff" : "#000",
-                  }}
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Content */}
-          <div 
-            className="relative flex-1 overflow-y-auto px-5 py-4"
-            style={{
-              maxHeight: "400px",
-            }}
-          >
-            {/* Loading States */}
-            {(isSearching || isLoadingRandom || isLoadingMedia) && (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 
-                  size={24} 
-                  className="animate-spin opacity-50"
-                  style={{ color: theme.primary }}
-                />
-              </div>
-            )}
-
-            {/* Unsplash Images */}
-            {activeTab === "unsplash" && !isSearching && !isLoadingRandom && (
-              <>
-                {unsplashPhotos.length === 0 && debouncedQuery ? (
-                  <div className="flex items-center justify-center py-12">
-                    <span 
-                      className="text-xs opacity-50"
-                      style={{ color: isDark ? "#fff" : "#000" }}
-                    >
-                      No images found for &quot;{debouncedQuery}&quot;
-                    </span>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-2">
-                    {unsplashPhotos.map((photo) => (
-                      <button
-                        key={photo.id}
-                        onClick={() => onSelectUnsplashPhoto(photo)}
-                        className="relative aspect-square rounded-lg overflow-hidden group transition-all hover:ring-2"
-                        style={{
-                          // @ts-expect-error CSS custom properties
-                          "--tw-ring-color": theme.primary,
-                        }}
-                      >
-                        <img
-                          src={photo.urls.small}
-                          alt={photo.altDescription || "Unsplash photo"}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                          loading="lazy"
-                        />
-                        {/* Hover overlay */}
-                        <div 
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1.5"
-                          style={{
-                            background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)",
-                          }}
-                        >
-                          <span className="text-white text-[9px] truncate">
-                            {photo.user.name}
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* User Uploads */}
-            {activeTab === "uploads" && !isLoadingMedia && (
-              <>
-                {userPhotos.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-12 gap-2">
-                    <Upload 
-                      size={32} 
-                      className="opacity-20"
-                      style={{ color: isDark ? "#fff" : "#000" }}
-                    />
-                    <span 
-                      className="text-xs opacity-50"
-                      style={{ color: isDark ? "#fff" : "#000" }}
-                    >
-                      No uploads yet
-                    </span>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-2">
-                    {userPhotos.map((media) => (
-                      <button
-                        key={media.id}
-                        onClick={() => onSelectUserMedia(media)}
-                        className="relative aspect-square rounded-lg overflow-hidden group transition-all hover:ring-2"
-                        style={{
-                          // @ts-expect-error CSS custom properties
-                          "--tw-ring-color": theme.primary,
-                        }}
-                      >
-                        <img
-                          src={media.url}
-                          alt={media.name}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                          loading="lazy"
-                        />
-                        {/* Favorite indicator */}
-                        {media.isFavorite && (
-                          <div className="absolute top-1.5 right-1.5">
-                            <Heart 
-                              size={12} 
-                              className="text-red-500 fill-red-500"
-                            />
-                          </div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Unsplash Attribution */}
-          {activeTab === "unsplash" && (
-            <div 
-              className="relative px-5 py-3 text-center border-t shrink-0"
-              style={{ 
-                borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
-              }}
-            >
-              <a
-                href="https://unsplash.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[10px] opacity-40 hover:opacity-70 transition-opacity"
-                style={{ color: isDark ? "#fff" : "#000" }}
-              >
-                Photos provided by Unsplash
-              </a>
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
+      )}
+    </>
   );
 };

@@ -51,6 +51,7 @@ import {
   SlideSchema,
   PresentationInfoSchema,
   BlockTypeSchema,
+  SlideAccentSchema,
 } from "./core";
 
 import { ThemeSchema, CardDesignPatternSchema } from "./theme";
@@ -136,6 +137,7 @@ export type Block<T = BlockContent> = {
 
 export type Row = z.infer<typeof RowSchema>;
 export type Slide = z.infer<typeof SlideSchema>;
+export type SlideAccent = z.infer<typeof SlideAccentSchema>;
 export type PresentationInfo = z.infer<typeof PresentationInfoSchema>;
 
 export type Theme = z.infer<typeof ThemeSchema>;

@@ -8,6 +8,7 @@ import {
   PresentationInfo,
   Row,
   Slide,
+  SlideAccent,
   Theme,
   BLOCK_TYPES,
   MAX_BLOCKS_PER_ROW,
@@ -616,6 +617,45 @@ const slidesSlice = createSlice({
         slide.rows.push(createRow());
       }
     },
+    // Slide Accent actions
+    toggleSlideAccent: (state, action: PayloadAction<{ slideId: string }>) => {
+      const slide = state.slides.find((s) => s.id === action.payload.slideId);
+      if (!slide) return;
+
+      if (slide.accent) {
+        delete slide.accent;
+      } else {
+        slide.accent = {
+          position: "left",
+          size: 40,
+          url: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
+        };
+      }
+    },
+    updateSlideAccent: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        update: { 
+          url?: string; 
+          position?: "left" | "right" | "top" | "bottom" | "background" 
+        };
+      }>
+    ) => {
+      const slide = state.slides.find((s) => s.id === action.payload.slideId);
+      if (!slide || !slide.accent) return;
+
+      slide.accent = { ...slide.accent, ...action.payload.update };
+    },
+    setSlideAccentSize: (
+      state,
+      action: PayloadAction<{ slideId: string; size: number }>
+    ) => {
+      const slide = state.slides.find((s) => s.id === action.payload.slideId);
+      if (!slide || !slide.accent) return;
+
+      slide.accent.size = Math.max(5, Math.min(100, action.payload.size));
+    },
   },
 });
 
@@ -648,9 +688,12 @@ export const {
   resetTheme,
   setPresentation,
   updatePresentationTitle,
+  toggleSlideAccent,
+  updateSlideAccent,
+  setSlideAccentSize,
 } = slidesSlice.actions;
 
-export type { Block, Row, Slide, Theme, PresentationInfo };
+export type { Block, Row, Slide, Theme, PresentationInfo, SlideAccent };
 
 // --- Undoable Reducer ---
 // Wrap the reducer with redux-undo for undo/redo functionality

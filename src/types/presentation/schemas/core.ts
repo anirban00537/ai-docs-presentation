@@ -45,9 +45,16 @@ export const RowSchema = z.object({
   columnWidths: z.array(z.number()).optional(),
 });
 
+export const SlideAccentSchema = z.object({
+  url: z.string().optional(),
+  position: z.enum(["left", "right", "top", "bottom", "background"]),
+  size: z.number().min(5).max(100), // width/height percentage, or opacity for background
+});
+
 export const SlideSchema = z.object({
   id: z.string(),
   rows: z.array(RowSchema),
+  accent: SlideAccentSchema.optional(),
 });
 
 export const PresentationInfoSchema = z.object({
