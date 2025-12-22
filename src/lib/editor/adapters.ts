@@ -50,6 +50,7 @@ export const convertApiSlideToRedux = (apiSlide: any): ReduxSlide => {
   return {
     id: apiSlide.id,
     rows,
+    accent: apiSlide.data?.accent,
   };
 };
 
@@ -60,5 +61,6 @@ export const convertApiSlideToRedux = (apiSlide: any): ReduxSlide => {
 export const convertReduxSlideToApi = (reduxSlide: ReduxSlide): any => ({
   data: {
     rows: reduxSlide.rows,
+    accent: reduxSlide.accent,
   },
 });

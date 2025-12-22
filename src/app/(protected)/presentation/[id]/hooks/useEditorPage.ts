@@ -254,6 +254,7 @@ export const useEditorPage = ({
                       content: block.content,
                     })),
                   })),
+                  accent: chunk.data.accent,
                 };
                 const currentSlides = slidesRef.current;
                 dispatch(setSlides([...currentSlides, slide]));
@@ -329,6 +330,7 @@ export const useEditorPage = ({
                   content: block.content,
                 })),
               })),
+              accent: chunk.data.accent,
             };
             const currentSlides = slidesRef.current;
             dispatch(setSlides([...currentSlides, slide]));
