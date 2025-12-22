@@ -1,16 +1,12 @@
-import React, { useCallback } from "react";
+import React, { useCallback, memo, useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
   createFeatureListContent,
   type FeatureListContent,
 } from "../definitions";
-import EmojiPicker from "emoji-picker-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { EmojiPickerTrigger } from "../../ui/LazyEmojiPicker";
+import { CommonCard } from "../CommonCard";
 
 interface FeatureListBlockProps {
   block: Block;
@@ -20,14 +16,78 @@ interface FeatureListBlockProps {
   readOnly?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
+/**
+ * Memoized feature item component
+ */
+const FeatureItem = memo(function FeatureItem({
+  feature,
+  index,
+  blockId,
+  theme,
+  onIconChange,
+  onTitleChange,
+  onDescriptionChange,
+  readOnly,
+}: {
+  feature: { icon: string; title: ProseMirrorDocument; description: ProseMirrorDocument };
+  index: number;
+  blockId: string;
+  theme: Theme;
+  onIconChange: (index: number, emoji: string) => void;
+  onTitleChange: (index: number, newContent: ProseMirrorDocument) => void;
+  onDescriptionChange: (index: number, newContent: ProseMirrorDocument) => void;
+  readOnly: boolean;
+}) {
+  return (
+    <CommonCard theme={theme} className="flex gap-4 p-5">
+      {/* Icon */}
+      <div className="flex-shrink-0">
+        <EmojiPickerTrigger
+          icon={feature.icon || "✨"}
+          onEmojiSelect={(emoji) => onIconChange(index, emoji)}
+          disabled={readOnly}
+          size="lg"
+          backgroundColor={`${theme.primary}15`}
+        />
+      </div>
 
-export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="mb-1.5">
+          <ProseMirrorEditor
+            key={`${blockId}-title-${index}`}
+            blockId={`${blockId}-title-${index}`}
+            value={feature.title}
+            onChange={(newContent) => onTitleChange(index, newContent)}
+            placeholder="Feature Title"
+            className="text-base font-semibold leading-tight"
+            theme={theme}
+            readOnly={readOnly}
+          />
+        </div>
+        <div>
+          <ProseMirrorEditor
+            key={`${blockId}-desc-${index}`}
+            blockId={`${blockId}-desc-${index}`}
+            value={feature.description}
+            onChange={(newContent) => onDescriptionChange(index, newContent)}
+            placeholder="Feature description"
+            className="text-sm opacity-60 leading-relaxed"
+            theme={theme}
+            readOnly={readOnly}
+          />
+        </div>
+      </div>
+    </CommonCard>
+  );
+});
+
+export const FeatureListBlock = memo(function FeatureListBlock({
   block,
   onUpdate,
   theme,
   readOnly = false,
-}) => {
+}: FeatureListBlockProps) {
   const content =
     (block.content as FeatureListContent) ?? createFeatureListContent();
   const { features, layout, columns = 2 } = content;
@@ -43,7 +103,7 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
   );
 
   const handleTitleChange = useCallback(
-    (index: number, newContent: any) => {
+    (index: number, newContent: ProseMirrorDocument) => {
       if (readOnly) return;
       const newFeatures = [...features];
       newFeatures[index] = { ...newFeatures[index], title: newContent };
@@ -53,7 +113,7 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
   );
 
   const handleDescriptionChange = useCallback(
-    (index: number, newContent: any) => {
+    (index: number, newContent: ProseMirrorDocument) => {
       if (readOnly) return;
       const newFeatures = [...features];
       newFeatures[index] = { ...newFeatures[index], description: newContent };
@@ -62,81 +122,29 @@ export const FeatureListBlock: React.FC<FeatureListBlockProps> = ({
     [features, content, onUpdate, readOnly]
   );
 
-  const gridClass =
-    layout === "grid"
-      ? `grid gap-4 ${
-          columns === 2
-            ? "grid-cols-2"
-            : columns === 3
-            ? "grid-cols-3"
-            : "grid-cols-4"
-        }`
-      : "flex flex-col gap-3";
+  const gridClass = useMemo(() => {
+    if (layout === "grid") {
+      const colClass = columns === 2 ? "grid-cols-2" : columns === 3 ? "grid-cols-3" : "grid-cols-4";
+      return `grid gap-4 ${colClass}`;
+    }
+    return "flex flex-col gap-3";
+  }, [layout, columns]);
 
   return (
     <div className={`${gridClass} w-full`}>
       {features.map((feature, index) => (
-        <CommonCard key={index} theme={theme} className="flex gap-4 p-5">
-          {/* Icon */}
-          <div className="flex-shrink-0">
-            {!readOnly ? (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-105 cursor-pointer outline-none relative z-20"
-                    style={{
-                      backgroundColor: `${theme.primary}15`,
-                    }}
-                    title="Change icon"
-                  >
-                    {feature.icon || "✨"}
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 border-none shadow-xl">
-                  <EmojiPicker onEmojiClick={(emoji) => handleIconChange(index, emoji.emoji)} />
-                </PopoverContent>
-              </Popover>
-            ) : (
-              <div
-                className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                style={{
-                  backgroundColor: `${theme.primary}15`,
-                }}
-              >
-                {feature.icon || "✨"}
-              </div>
-            )}
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <div className="mb-1.5">
-              <ProseMirrorEditor
-                key={`${block.id}-title-${index}`}
-                blockId={`${block.id}-title-${index}`}
-                value={feature.title}
-                onChange={(newContent) => handleTitleChange(index, newContent)}
-                placeholder="Feature Title"
-                className="text-base font-semibold leading-tight"
-                theme={theme}
-                readOnly={readOnly}
-              />
-            </div>
-            <div>
-              <ProseMirrorEditor
-                key={`${block.id}-desc-${index}`}
-                blockId={`${block.id}-desc-${index}`}
-                value={feature.description}
-                onChange={(newContent) => handleDescriptionChange(index, newContent)}
-                placeholder="Feature description"
-                className="text-sm opacity-60 leading-relaxed"
-                theme={theme}
-                readOnly={readOnly}
-              />
-            </div>
-          </div>
-        </CommonCard>
+        <FeatureItem
+          key={index}
+          feature={feature}
+          index={index}
+          blockId={block.id}
+          theme={theme}
+          onIconChange={handleIconChange}
+          onTitleChange={handleTitleChange}
+          onDescriptionChange={handleDescriptionChange}
+          readOnly={readOnly}
+        />
       ))}
     </div>
   );
-};
+});

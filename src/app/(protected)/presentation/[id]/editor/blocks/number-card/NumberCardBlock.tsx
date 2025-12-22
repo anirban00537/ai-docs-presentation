@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
   getDefaultNumberCardEditorContent,
   type NumberCardContent,
 } from "../definitions";
+import { CommonCard } from "../CommonCard";
 
 interface NumberCardBlockProps {
   block: Block;
@@ -14,15 +15,13 @@ interface NumberCardBlockProps {
   readOnly?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
-
-export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
+export const NumberCardBlock = memo(function NumberCardBlock({
   block,
   onUpdate,
   theme,
   placeholder,
   readOnly = false,
-}) => {
+}: NumberCardBlockProps) {
   const content = block.content as NumberCardContent;
   const number = content?.number ?? 1;
   const icon = content?.icon ?? "";
@@ -95,4 +94,4 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
       </div>
     </CommonCard>
   );
-};
+});

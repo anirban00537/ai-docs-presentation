@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme, ProseMirrorDocument, PricingFeature } from "@/types/presentation";
 import {
@@ -31,13 +31,13 @@ interface PricingCardBlockProps {
   isEditable?: boolean;
 }
 
-export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
+export const PricingCardBlock = memo(function PricingCardBlock({
   block,
   onUpdate,
   theme,
   isEditable = true,
   readOnly = false,
-}) => {
+}: PricingCardBlockProps) {
   const content =
     (block.content as PricingCardContent) || createPricingCardContent();
   const { buttonLabel, features } = content;
@@ -268,4 +268,4 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
       </Dialog>
     </BlockWrapper>
   );
-};
+});

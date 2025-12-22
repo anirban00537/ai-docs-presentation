@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme, BlockContent } from "@/types/presentation";
 import { isProseMirrorDocument } from "@/types/presentation";
@@ -11,17 +11,17 @@ interface ProseMirrorBlockProps {
   readOnly?: boolean;
 }
 
-export const ProseMirrorBlock: React.FC<ProseMirrorBlockProps> = ({
+export const ProseMirrorBlock = memo(function ProseMirrorBlock({
   block,
   onUpdate,
   placeholder = "Type '/' for commands",
   readOnly,
   theme,
-}) => {
+}: ProseMirrorBlockProps) {
   // The onUpdate expects BlockContent, and ProseMirrorDocument (string) is valid BlockContent
-  const handleChange = (content: string) => {
+  const handleChange = useCallback((content: string) => {
     onUpdate(content);
-  };
+  }, [onUpdate]);
 
   // Use type guard to safely get string content, or fallback to empty string
   const value = isProseMirrorDocument(block.content) ? block.content : "";
@@ -40,4 +40,4 @@ export const ProseMirrorBlock: React.FC<ProseMirrorBlockProps> = ({
       />
     </div>
   );
-};
+});

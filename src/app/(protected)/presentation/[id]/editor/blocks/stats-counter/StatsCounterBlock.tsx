@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef, memo, useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
   createStatsCounterContent,
   type StatsCounterContent,
@@ -25,13 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
-
-import EmojiPicker from "emoji-picker-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { EmojiPickerTrigger } from "../../ui/LazyEmojiPicker";
+import { CommonCard } from "../CommonCard";
 
 interface StatsCounterBlockProps {
   block: Block;
@@ -41,63 +36,146 @@ interface StatsCounterBlockProps {
   readOnly?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
+/**
+ * Custom hook for animating numbers using requestAnimationFrame
+ * Uses a single animation loop for all values instead of multiple setIntervals
+ */
+function useAnimatedValues(targetValues: number[], duration: number = 2000): number[] {
+  const [animatedValues, setAnimatedValues] = useState<number[]>(() => 
+    targetValues.map(() => 0)
+  );
+  const startTimeRef = useRef<number | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const prevTargetValuesRef = useRef<number[]>(targetValues);
 
-export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
+  useEffect(() => {
+    // Reset animation if target values changed
+    const targetsChanged = targetValues.length !== prevTargetValuesRef.current.length ||
+      targetValues.some((v, i) => v !== prevTargetValuesRef.current[i]);
+    
+    if (targetsChanged) {
+      prevTargetValuesRef.current = targetValues;
+      startTimeRef.current = null;
+    }
+
+    const animate = (timestamp: number) => {
+      if (startTimeRef.current === null) {
+        startTimeRef.current = timestamp;
+      }
+
+      const elapsed = timestamp - startTimeRef.current;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function for smooth animation (ease-out cubic)
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+      const newValues = targetValues.map((target) => 
+        Math.round(target * easedProgress)
+      );
+
+      setAnimatedValues(newValues);
+
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [targetValues, duration]);
+
+  return animatedValues;
+}
+
+/**
+ * Memoized stat item component to prevent unnecessary re-renders
+ */
+const StatItem = memo(function StatItem({
+  stat,
+  index,
+  blockId,
+  theme,
+  animatedValue,
+  onLabelChange,
+  onIconChange,
+  readOnly,
+}: {
+  stat: { value: number; label: ProseMirrorDocument; icon?: string; prefix?: string; suffix?: string; color?: string };
+  index: number;
+  blockId: string;
+  theme: Theme;
+  animatedValue: number;
+  onLabelChange: (index: number, newContent: ProseMirrorDocument) => void;
+  onIconChange: (index: number, emoji: string) => void;
+  readOnly?: boolean;
+}) {
+  return (
+    <CommonCard theme={theme} className="flex-1 min-w-[160px] p-5">
+      <div className="group flex flex-col items-center gap-2 relative transition-all">
+        {/* Icon */}
+        <div className="mb-1 relative z-20">
+          <EmojiPickerTrigger
+            icon={stat.icon || "📊"}
+            onEmojiSelect={(emoji) => onIconChange(index, emoji)}
+            disabled={readOnly}
+            size="lg"
+            title="Change icon"
+          />
+        </div>
+
+        {/* Value */}
+        <div
+          className="text-3xl font-bold transition-colors"
+          style={{ color: stat.color || theme.primary }}
+        >
+          {stat.prefix}
+          {animatedValue.toLocaleString()}
+          {stat.suffix}
+        </div>
+
+        {/* Label */}
+        <div className="min-h-[1.5rem] w-full">
+          <ProseMirrorEditor
+            key={`${blockId}-label-${index}`}
+            blockId={`${blockId}-label-${index}`}
+            value={stat.label}
+            onChange={(newContent) => onLabelChange(index, newContent)}
+            placeholder="Label"
+            className="text-center text-xs font-medium opacity-60"
+            theme={theme}
+            readOnly={readOnly}
+          />
+        </div>
+      </div>
+    </CommonCard>
+  );
+});
+
+export const StatsCounterBlock = memo(function StatsCounterBlock({
   block,
   onUpdate,
   theme,
-}) => {
+  readOnly = false,
+}: StatsCounterBlockProps) {
   const content =
     (block.content as StatsCounterContent) ?? createStatsCounterContent();
   const { stats, layout, columns = 2 } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [tempLayout, setTempLayout] = useState<
-    "horizontal" | "vertical" | "grid"
-  >(layout);
+  const [tempLayout, setTempLayout] = useState<"horizontal" | "vertical" | "grid">(layout);
   const [tempColumns, setTempColumns] = useState(columns.toString());
   const isDark = theme.themeType === "dark";
 
-  const [animatedValues, setAnimatedValues] = useState<number[]>(
-    stats.map(() => 0)
-  );
-
-  useEffect(() => {
-    const duration = 2000;
-    const steps = 60;
-    const stepDuration = duration / steps;
-    const intervals: NodeJS.Timeout[] = [];
-
-    stats.forEach((stat, index) => {
-      let currentStep = 0;
-      const increment = stat.value / steps;
-
-      const interval = setInterval(() => {
-        currentStep++;
-        setAnimatedValues((prev) => {
-          const newValues = [...prev];
-          newValues[index] = Math.min(
-            Math.round(increment * currentStep),
-            stat.value
-          );
-          return newValues;
-        });
-
-        if (currentStep >= steps) {
-          clearInterval(interval);
-        }
-      }, stepDuration);
-
-      intervals.push(interval);
-    });
-
-    return () => {
-      intervals.forEach((interval) => clearInterval(interval));
-    };
-  }, [stats]);
+  // Extract target values for animation
+  const targetValues = useMemo(() => stats.map(s => s.value), [stats]);
+  const animatedValues = useAnimatedValues(targetValues);
 
   const handleLabelChange = useCallback(
-    (index: number, newContent: any) => {
+    (index: number, newContent: ProseMirrorDocument) => {
       const newStats = [...stats];
       newStats[index] = { ...newStats[index], label: newContent };
       onUpdate({ ...content, stats: newStats });
@@ -105,22 +183,31 @@ export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
     [stats, content, onUpdate]
   );
 
-  const handleOpenEdit = () => {
+  const handleIconChange = useCallback(
+    (index: number, emoji: string) => {
+      const newStats = [...stats];
+      newStats[index] = { ...newStats[index], icon: emoji };
+      onUpdate({ ...content, stats: newStats });
+    },
+    [stats, content, onUpdate]
+  );
+
+  const handleOpenEdit = useCallback(() => {
     setTempLayout(layout);
     setTempColumns(columns.toString());
     setIsEditOpen(true);
-  };
+  }, [layout, columns]);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     onUpdate({
       ...content,
       layout: tempLayout,
       columns: parseInt(tempColumns) as 2 | 3 | 4,
     });
     setIsEditOpen(false);
-  };
+  }, [content, onUpdate, tempLayout, tempColumns]);
 
-  const addStat = () => {
+  const addStat = useCallback(() => {
     onUpdate({
       ...content,
       stats: [
@@ -134,89 +221,42 @@ export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
         },
       ],
     });
-  };
+  }, [content, stats, onUpdate]);
 
-  const removeStat = (index: number) => {
+  const removeStat = useCallback((index: number) => {
     const newStats = stats.filter((_, i) => i !== index);
     onUpdate({ ...content, stats: newStats });
-  };
+  }, [content, stats, onUpdate]);
 
-  const updateStatField = (index: number, field: string, value: any) => {
+  const updateStatField = useCallback((index: number, field: string, value: string | number) => {
     const newStats = [...stats];
     newStats[index] = { ...newStats[index], [field]: value };
     onUpdate({ ...content, stats: newStats });
-  };
+  }, [content, stats, onUpdate]);
 
-  const gridClass =
-    layout === "grid"
-      ? `grid gap-4 ${
-          columns === 2
-            ? "grid-cols-2"
-            : columns === 3
-            ? "grid-cols-3"
-            : "grid-cols-4"
-        }`
-      : layout === "vertical"
-      ? "flex flex-col gap-4"
-      : "flex flex-row gap-4 flex-wrap";
+  const gridClass = useMemo(() => {
+    if (layout === "grid") {
+      const colClass = columns === 2 ? "grid-cols-2" : columns === 3 ? "grid-cols-3" : "grid-cols-4";
+      return `grid gap-4 ${colClass}`;
+    }
+    return layout === "vertical" ? "flex flex-col gap-4" : "flex flex-row gap-4 flex-wrap";
+  }, [layout, columns]);
 
   return (
-    <BlockWrapper onEdit={handleOpenEdit} onAdd={addStat} theme={theme}>
+    <BlockWrapper onEdit={readOnly ? undefined : handleOpenEdit} onAdd={readOnly ? undefined : addStat} theme={theme}>
       <div className={`${gridClass} w-full`}>
         {stats.map((stat, index) => (
-          <CommonCard
+          <StatItem
             key={index}
+            stat={stat}
+            index={index}
+            blockId={block.id}
             theme={theme}
-            className="flex-1 min-w-[160px] p-5"
-          >
-            <div className="group flex flex-col items-center gap-2 relative transition-all">
-              {/* Icon */}
-              <div className="mb-1 relative z-20">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button
-                      className="text-3xl transition-all hover:scale-110 cursor-pointer outline-none"
-                      title="Change icon"
-                    >
-                      {stat.icon || "📊"}
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 border-none shadow-xl">
-                    <EmojiPicker
-                      onEmojiClick={(emoji) =>
-                        updateStatField(index, "icon", emoji.emoji)
-                      }
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              {/* Value */}
-              <div
-                className="text-3xl font-bold transition-colors"
-                style={{ color: stat.color || theme.primary }}
-              >
-                {stat.prefix}
-                {animatedValues[index]?.toLocaleString()}
-                {stat.suffix}
-              </div>
-
-              {/* Label */}
-              <div className="min-h-[1.5rem] w-full">
-                <ProseMirrorEditor
-                  key={`${block.id}-label-${index}`}
-                  blockId={`${block.id}-label-${index}`}
-                  value={stat.label}
-                  onChange={(newContent) =>
-                    handleLabelChange(index, newContent)
-                  }
-                  placeholder="Label"
-                  className="text-center text-xs font-medium opacity-60"
-                  theme={theme}
-                />
-              </div>
-            </div>
-          </CommonCard>
+            animatedValue={animatedValues[index] ?? 0}
+            onLabelChange={handleLabelChange}
+            onIconChange={handleIconChange}
+            readOnly={readOnly}
+          />
         ))}
       </div>
 
@@ -251,7 +291,7 @@ export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
                 </Label>
                 <Select
                   value={tempLayout}
-                  onValueChange={(v: any) => setTempLayout(v)}
+                  onValueChange={(v: "horizontal" | "vertical" | "grid") => setTempLayout(v)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -413,4 +453,4 @@ export const StatsCounterBlock: React.FC<StatsCounterBlockProps> = ({
       </Dialog>
     </BlockWrapper>
   );
-};
+});

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
@@ -28,13 +28,13 @@ interface TestimonialBlockProps {
 
 import { CommonCard } from "../CommonCard";
 
-export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
+export const TestimonialBlock = memo(function TestimonialBlock({
   block,
   onUpdate,
   theme,
   placeholder,
   readOnly = false,
-}) => {
+}: TestimonialBlockProps) {
   const content =
     (block.content as TestimonialContent) ?? createTestimonialContent();
   const { avatar } = content;
@@ -257,4 +257,4 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
       </Dialog>
     </BlockWrapper>
   );
-};
+});

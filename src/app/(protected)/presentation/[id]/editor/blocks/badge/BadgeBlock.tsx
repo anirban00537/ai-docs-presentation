@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, memo, useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import { createBadgeContent, type BadgeContent } from "../definitions";
@@ -20,14 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { IconTrash, IconPlus } from "@tabler/icons-react";
-
-import EmojiPicker from "emoji-picker-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { IconTrash } from "@tabler/icons-react";
+import { EmojiPickerTrigger } from "../../ui/LazyEmojiPicker";
+import { CommonCard } from "../CommonCard";
 
 interface BadgeBlockProps {
   block: Block;
@@ -37,14 +32,12 @@ interface BadgeBlockProps {
   readOnly?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
-
-export const BadgeBlock: React.FC<BadgeBlockProps> = ({
+export const BadgeBlock = memo(function BadgeBlock({
   block,
   onUpdate,
   theme,
   readOnly = false,
-}) => {
+}: BadgeBlockProps) {
   const content = (block.content as BadgeContent) ?? createBadgeContent();
   const { badges, layout } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -111,13 +104,15 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
     });
   };
 
-  const removeBadge = (index: number) => {
+  const removeBadge = useCallback((index: number) => {
     const newBadges = badges.filter((_, i) => i !== index);
     onUpdate({ ...content, badges: newBadges });
-  };
+  }, [badges, content, onUpdate]);
 
-  const gridClass =
-    layout === "grid" ? "grid grid-cols-2 gap-4" : "flex flex-col gap-3";
+  const gridClass = useMemo(() => 
+    layout === "grid" ? "grid grid-cols-2 gap-4" : "flex flex-col gap-3",
+    [layout]
+  );
 
   return (
     <BlockWrapper
@@ -145,33 +140,13 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
             )}
 
             {/* Icon */}
-            {!readOnly ? (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-105 cursor-pointer"
-                    style={{ backgroundColor: `${theme.primary}15` }}
-                    title="Change icon"
-                  >
-                    {badge.icon || "🏆"}
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 border-none shadow-xl">
-                  <EmojiPicker
-                    onEmojiClick={(emoji) =>
-                      handleIconChange(index, emoji.emoji)
-                    }
-                  />
-                </PopoverContent>
-              </Popover>
-            ) : (
-              <div
-                className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                style={{ backgroundColor: `${theme.primary}15` }}
-              >
-                {badge.icon || "🏆"}
-              </div>
-            )}
+            <EmojiPickerTrigger
+              icon={badge.icon || "🏆"}
+              onEmojiSelect={(emoji) => handleIconChange(index, emoji)}
+              disabled={readOnly}
+              size="lg"
+              backgroundColor={`${theme.primary}15`}
+            />
 
             {/* Content */}
             <div className="flex-1 min-w-0 py-0.5">
@@ -289,4 +264,4 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
       </Dialog>
     </BlockWrapper>
   );
-};
+});

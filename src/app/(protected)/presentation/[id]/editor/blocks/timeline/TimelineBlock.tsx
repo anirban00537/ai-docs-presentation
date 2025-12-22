@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
@@ -8,6 +8,7 @@ import {
 } from "../definitions";
 import { TimelineStepComponent } from "./TimelineStep";
 import { BlockWrapper } from "../../block/BlockWrapper";
+import { CommonCard } from "../CommonCard";
 
 interface TimelineBlockProps {
   block: Block;
@@ -17,15 +18,13 @@ interface TimelineBlockProps {
   readOnly?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
-
-export const TimelineBlock: React.FC<TimelineBlockProps> = ({
+export const TimelineBlock = memo(function TimelineBlock({
   block,
   onUpdate,
   theme,
   placeholder,
   readOnly = false,
-}) => {
+}: TimelineBlockProps) {
   const content = block.content as TimelineContent;
   const steps = content?.steps ?? createTimelineContent().steps;
   const title = content?.title ?? undefined;
@@ -145,4 +144,4 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
       </CommonCard>
     </BlockWrapper>
   );
-};
+});

@@ -1,16 +1,12 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
   type GlassInsightContent,
   createGlassInsightContent,
 } from "../definitions";
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { EmojiPickerTrigger } from "../../ui/LazyEmojiPicker";
+import { CommonCard } from "../CommonCard";
 
 interface GlassInsightBlockProps {
   block: Block;
@@ -20,18 +16,15 @@ interface GlassInsightBlockProps {
   readOnly?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
-
-export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
+export const GlassInsightBlock = memo(function GlassInsightBlock({
   block,
   onUpdate,
   theme,
   placeholder,
   readOnly = false,
-}) => {
+}: GlassInsightBlockProps) {
   const content = block.content as GlassInsightContent;
   const icon = content?.icon ?? "💡";
-  const isDark = theme.themeType === "dark";
 
   const editorContent = useMemo(() => {
     return content?.editorContent ?? createGlassInsightContent().editorContent;
@@ -45,8 +38,8 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
   );
 
   const handleIconChange = useCallback(
-    (emojiObject: EmojiClickData) => {
-      onUpdate({ ...content, icon: emojiObject.emoji });
+    (emoji: string) => {
+      onUpdate({ ...content, icon: emoji });
     },
     [content, onUpdate]
   );
@@ -58,29 +51,15 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
     >
       <div className="relative h-full w-full transition-all">
         {/* Floating Icon */}
-        {!readOnly ? (
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                className="absolute top-0 right-0 text-5xl transition-all hover:scale-110 cursor-pointer outline-none z-20"
-                style={{ opacity: 0.7 }}
-                title="Change icon"
-              >
-                {icon}
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 border-none shadow-xl">
-              <EmojiPicker onEmojiClick={handleIconChange} />
-            </PopoverContent>
-          </Popover>
-        ) : (
-          <div
-            className="absolute top-0 right-0 text-5xl z-20"
-            style={{ opacity: 0.7 }}
-          >
-            {icon}
-          </div>
-        )}
+        <div className="absolute top-0 right-0 z-20" style={{ opacity: 0.7 }}>
+          <EmojiPickerTrigger
+            icon={icon}
+            onEmojiSelect={handleIconChange}
+            disabled={readOnly}
+            size="xl"
+            className="bg-transparent"
+          />
+        </div>
 
         {/* Content Area */}
         <div className="relative z-10 flex flex-col h-full justify-center">
@@ -108,4 +87,4 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
       </div>
     </CommonCard>
   );
-};
+});
