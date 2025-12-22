@@ -14,30 +14,32 @@ import { createTypedBlock } from "./template-utils";
 export const CustomerJourneyLayout: LayoutTemplate = {
   id: "customer-journey-layout",
   name: "Customer Journey",
-  description: "Journey visualization with visual banner",
+  description: "End-to-end user journey visualization with banner",
   icon: "🗺️",
   accent: {
     position: "top",
-    size: 30,
-    url: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600",
+    size: 25, // Slimmer banner for cleaner look
+    url: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600", // Abstract gradient flow
   },
   getRows: (): Row[] => {
-    // Title - using markdown
+    // Title Section
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## The Customer Journey\n\nFrom discovery to advocacy in 5 key stages",
+      content: "# The Connected Customer Journey\n\nFrom first touch to brand advocacy: How we nurture relationships at every stage.",
     };
 
-    // Journey timeline
+    // Detailed Journey Timeline
     const timeline = createTimelineContent();
     timeline.steps = [
-      { icon: "🔍", title: "Discovery", description: "Customer finds us through search or referral" },
-      { icon: "📋", title: "Evaluation", description: "Compares options and reviews features" },
-      { icon: "💳", title: "Purchase", description: "Converts with smooth onboarding" },
-      { icon: "🎯", title: "Engagement", description: "Actively uses and explores features" },
-      { icon: "❤️", title: "Advocacy", description: "Becomes a champion and refers others" },
+      { icon: "🔍", title: "Discovery", description: "Organic Search & Social Media" },
+      { icon: "✨", title: "Activation", description: "Seamless Signup & Onboarding" },
+      { icon: "💎", title: "Value", description: "First 'Aha!' Moment in < 5 mins" },
+      { icon: "🔄", title: "Habit", description: "Weekly Active Usage Loop" },
+      { icon: "❤️", title: "Advocacy", description: "Referral & Community Leading" },
     ];
+    // Note: 'orientation' is not a property of TimelineContent schema, it renders vertical by default or controlled by block component logic if implemented later.
+    // Assuming default vertical list for now based on previous checks.
 
     return [
       {
@@ -48,6 +50,16 @@ export const CustomerJourneyLayout: LayoutTemplate = {
         id: nanoid(),
         blocks: [createTypedBlock(BLOCK_TYPES.TIMELINE, timeline)],
       },
+      {
+        id: nanoid(),
+        blocks: [
+          {
+            id: nanoid(),
+            type: BLOCK_TYPES.PROSEMIRROR,
+            content: "*\"The smooth transition from activation to value is our key differentiator.\"* — Product Team",
+          } as Block
+        ]
+      }
     ];
   },
 };

@@ -14,43 +14,43 @@ import { createTypedBlock } from "./template-utils";
 export const TeamSpotlightLayout: LayoutTemplate = {
   id: "team-spotlight-layout",
   name: "Team Spotlight",
-  description: "Individual team member with large portrait",
+  description: "Leadership profile with credentials and bio",
   icon: "⭐",
   accent: {
     position: "left",
-    size: 50,
-    url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800",
+    size: 45, // Slightly smaller to give text room
+    url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800", // Professional woman
   },
   getRows: (): Row[] => {
-    // Name and title - using markdown
+    // Name and Title Header
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "# Dr. Sarah Chen\n\n### Chief Technology Officer & Co-Founder",
+      content: "# Dr. Sarah Chen\n### Chief Technology Officer",
     };
 
-    // Bio - using markdown
+    // Professional Bio
     const bioBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "Stanford PhD in Machine Learning with 15+ years of experience building scalable AI systems. Previously led engineering at Google Brain and founded two successful startups.",
+      content: "Sarah leads our global engineering division, overseeing AI research and infrastructure. With a Ph.D. in Computer Science from Stanford and previous leadership roles at **SpaceX** and **DeepMind**, she brings unparalleled technical vision to our team.",
     };
 
-    // Achievements as badges
+    // Key Achievements/Skills Badges
     const badges = createBadgeContent();
     badges.badges = [
-      { title: "Stanford PhD", icon: "🎓" },
-      { title: "Ex-Google Brain", icon: "🧠" },
-      { title: "Forbes 30 Under 30", icon: "🏆" },
-      { title: "50+ Patents", icon: "📜" },
+      { title: "Ph.D. CS", icon: "🎓" },
+      { title: "AI Expert", icon: "🤖" },
+      { title: "Patents: 12", icon: "📜" },
+      { title: "Speaker", icon: "🎤" },
     ];
     badges.layout = "grid";
 
-    // Social links - using markdown
+    // Social/Contact Info
     const socialBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "**Connect:** LinkedIn · Twitter · GitHub",
+      content: "**Connect**\n\n[LinkedIn](https://linkedin.com) · [Twitter](https://twitter.com) · [ResearchGate](https://researchgate.net)",
     };
 
     return [

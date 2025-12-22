@@ -14,31 +14,32 @@ import { createTypedBlock } from "./template-utils";
 export const IndustryFocusLayout: LayoutTemplate = {
   id: "industry-focus-layout",
   name: "Industry Focus",
-  description: "Market analysis with industry visual",
+  description: "Deep dive market analysis with visual context",
   icon: "🏭",
   accent: {
     position: "right",
     size: 40,
-    url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800",
+    url: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800", // Fintech/Digital abstract
   },
   getRows: (): Row[] => {
-    // Industry title - using markdown
+    // Title & Context
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## Healthcare Industry\n\nTransforming patient care through digital innovation",
+      content: "# The Future of Digital Banking\n\nTraditional banking models are shifting. The next decade belongs to embedded finance and decentralized systems.",
     };
 
-    // Market metrics
-    const metric = createPulseMetricContent("$4.2T", "Market Size");
+    // Key Market Metric
+    const metric = createPulseMetricContent("$25T", "Projected Market Value by 2030");
     metric.trend = "up";
+    metric.sparklineType = "bars"; // Bar chart for variety
 
-    // Key trends
+    // Core Trends List
     const features = createFeatureListContent();
     features.features = [
-      { icon: "🤖", title: "AI Diagnostics", description: "70% faster detection" },
-      { icon: "📱", title: "Telemedicine", description: "3x adoption since 2020" },
-      { icon: "📊", title: "Digital Health", description: "$150B by 2025" },
+      { icon: "📱", title: "Neobank Adoption", description: "Expected to reach 45% of global population" },
+      { icon: "💳", title: "Embedded Finance", description: "Non-financial apps integrating payments" },
+      { icon: "⛓️", title: "Blockchain Infrastructure", description: "Reducing settlement times to near-zero" },
     ];
     features.layout = "list";
 

@@ -14,30 +14,37 @@ import { createTypedBlock } from "./template-utils";
 export const ProblemVisualLayout: LayoutTemplate = {
   id: "problem-visual-layout",
   name: "Problem Visual",
-  description: "Problem statement with impactful visual banner",
+  description: "Impactful problem statement emphasizing the cost of inaction",
   icon: "😰",
   accent: {
     position: "top",
-    size: 35,
-    url: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=1200",
+    size: 40,
+    url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600", // Chaotic/Busy work environment
   },
   getRows: (): Row[] => {
-    // Problem statement - using markdown with center alignment via HTML
+    // Main Problem Hook
     const problemBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "# 73% of Teams Struggle with Remote Collaboration\n\nThe hidden cost of disconnected workflows is crippling productivity across industries.",
+      content: "# The Hidden Cost of Disconnected Teams\n\nIn today's remote-first world, information silos are killing productivity. Teams are working harder, but achieving less.",
     };
 
-    // Stats showing the problem
+    // Supporting Stats - Quantifying the pain
     const stats = createStatsCounterContent();
     stats.stats = [
-      { value: 23, label: "Hours lost per week", icon: "⏱️", suffix: "" },
-      { value: 10, label: "K lost per employee", icon: "💰", prefix: "$" },
-      { value: 67, label: "Feel burned out", icon: "😓", suffix: "%" },
+      { value: 12, label: "Hours lost/week", icon: "⌛", suffix: "" },
+      { value: 450, label: "Billion lost/yr", icon: "📉", prefix: "$" },
+      { value: 85, label: "Employee Burnout", icon: "🔥", suffix: "%" },
     ];
     stats.layout = "horizontal";
     stats.columns = 3;
+
+    // Concluding insight
+    const insightBlock: Block = {
+      id: nanoid(),
+      type: BLOCK_TYPES.PROSEMIRROR,
+      content: "### The Reality\n\nWithout a unified operating system, knowledge workers spend **20% of their time** just looking for information. This is not sustainable.",
+    };
 
     return [
       {
@@ -47,6 +54,10 @@ export const ProblemVisualLayout: LayoutTemplate = {
       {
         id: nanoid(),
         blocks: [createTypedBlock(BLOCK_TYPES.STATS_COUNTER, stats)],
+      },
+      {
+        id: nanoid(),
+        blocks: [insightBlock],
       },
     ];
   },

@@ -14,38 +14,40 @@ import { createTypedBlock } from "./template-utils";
 export const HeroProductLayout: LayoutTemplate = {
   id: "hero-product-layout",
   name: "Hero Product Showcase",
-  description: "Product showcase with large image accent",
+  description: "High-impact product launch with visual focus",
   icon: "🚀",
   accent: {
     position: "left",
-    size: 45,
-    url: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800",
+    size: 50,
+    url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800", // Headphone product shot
   },
   getRows: (): Row[] => {
-    // Header section - using markdown
+    // Header section with compelling copy settings context
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "# Revolutionary Product\n\nThe future of productivity is here. Built for teams that demand excellence.",
+      content: "# SonicFlow Pro X\n\n### Experience Sound in Its Purest Form\n\nEngineered for audiophiles who demand perfection. The SonicFlow Pro X redefines wireless audio with industry-leading noise cancellation and a 60-hour battery life that keeps the music playing as long as you do.",
     };
 
-    // Feature list
+    // Feature list with detailed specs
     const features = createFeatureListContent();
     features.features = [
-      { icon: "⚡", title: "Lightning Fast", description: "50% faster than competitors" },
-      { icon: "🔒", title: "Enterprise Security", description: "SOC2 & ISO certified" },
-      { icon: "🔄", title: "Real-time Sync", description: "Instant collaboration" },
-      { icon: "📱", title: "Mobile First", description: "Works on any device" },
+      { icon: "🔇", title: "Active Noise Cancellation", description: "Blocks 99.7% of ambient noise" },
+      { icon: "🔋", title: "60-Hour Battery", description: "Fast charging: 5 mins = 5 hours" },
+      { icon: "🎧", title: "Lossless Audio", description: "High-fidelity aptX™ HD support" },
+      { icon: "🎙️", title: "Studio Mic Array", description: "Crystal clear calls anywhere" },
     ];
-    features.layout = "list";
+    features.layout = "grid"; // Grid looks more premium for features
+    features.columns = 2;
 
-    // CTA Badge
+    // Trust Badges/Awards
     const badge = createBadgeContent();
     badge.badges = [
-      { title: "Start Free Trial", icon: "🎯" },
-      { title: "Watch Demo", icon: "▶️" },
+      { title: "Best of CES 2024", icon: "🏆" },
+      { title: "Editor's Choice", icon: "⭐" },
+      { title: "Top Rated Design", icon: "🎨" },
     ];
-    badge.layout = "list";
+    badge.layout = "grid";
 
     return [
       {
@@ -60,6 +62,16 @@ export const HeroProductLayout: LayoutTemplate = {
         id: nanoid(),
         blocks: [createTypedBlock(BLOCK_TYPES.BADGE, badge)],
       },
+      {
+        id: nanoid(),
+        blocks: [
+          {
+            id: nanoid(),
+            type: BLOCK_TYPES.PROSEMIRROR,
+            content: "**Pre-order now for $299** · Shipping starts Jan 15",
+          } as Block
+        ]
+      }
     ];
   },
 };

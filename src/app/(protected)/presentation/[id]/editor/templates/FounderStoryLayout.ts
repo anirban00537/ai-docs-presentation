@@ -7,33 +7,43 @@
  */
 
 import { nanoid } from "nanoid";
-import type { Row, LayoutTemplate } from "@/types/presentation";
-import { BLOCK_TYPES, createTestimonialContent } from "../blocks/definitions";
+import type { Row, LayoutTemplate, Block } from "@/types/presentation";
+import { BLOCK_TYPES, createTestimonialContent, createTimelineContent } from "../blocks/definitions";
 import { createTypedBlock } from "./template-utils";
 
 export const FounderStoryLayout: LayoutTemplate = {
   id: "founder-story-layout",
   name: "Founder Story",
-  description: "Executive profile with portrait accent",
+  description: "Compelling executive profile with journey timeline",
   icon: "👤",
   accent: {
     position: "left",
-    size: 40,
-    url: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800",
+    size: 45,
+    url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800", // Professional portrait
   },
   getRows: (): Row[] => {
-    // Quote/Story
+    // Powerful Quote
     const testimonial = createTestimonialContent();
-    testimonial.quote = "We started with a simple mission: make work feel less like work. From a garage in Palo Alto to serving millions of users worldwide, our journey has been about believing in the impossible.";
-    testimonial.name = "Alex Chen";
-    testimonial.role = "Founder & CEO";
+    testimonial.quote = "We didn't just want to build software; we wanted to change how the world collaborates. Every line of code writes our future.";
+    testimonial.name = "Elena Rodriguez";
+    testimonial.role = "Founder & CEO, NexusStream";
+    testimonial.avatar = ""; // Use accent for image
 
-    // Additional context using markdown format
-    const contextBlock = {
+    // Prose Introduction
+    const bioBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "### The Journey\n\n**2018:** Founded in a garage\n\n**2020:** Series A, $12M raised\n\n**2022:** 1M+ active users\n\n**2024:** $100M ARR milestone",
+      content: "### A Visionary Leader\n\nWith over 15 years in Silicon Valley, Elena has led engineering teams at Google and Amazon. She founded NexusStream to solve the fragmentation of remote work tools.",
     };
+
+    // Milestone Timeline
+    const timeline = createTimelineContent();
+    timeline.steps = [
+      { icon: "💡", title: "2019", description: "Founded in Garage" },
+      { icon: "🚀", title: "2021", description: "Series A ($15M)" },
+      { icon: "🌍", title: "2023", description: "Global Expansion" },
+      { icon: "🦄", title: "2025", description: "Market Leader" },
+    ];
 
     return [
       {
@@ -42,7 +52,11 @@ export const FounderStoryLayout: LayoutTemplate = {
       },
       {
         id: nanoid(),
-        blocks: [contextBlock],
+        blocks: [bioBlock],
+      },
+      {
+        id: nanoid(),
+        blocks: [createTypedBlock(BLOCK_TYPES.TIMELINE, timeline)],
       },
     ];
   },

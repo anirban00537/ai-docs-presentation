@@ -14,42 +14,43 @@ import { createTypedBlock } from "./template-utils";
 export const EventAnnouncementLayout: LayoutTemplate = {
   id: "event-announcement-layout",
   name: "Event Announcement",
-  description: "Event promo with atmospheric background",
+  description: "High-energy event invitation with atmospheric background",
   icon: "🎪",
   accent: {
     position: "background",
-    size: 40, // opacity percentage
-    url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600",
+    size: 50, // Higher opacity for dramatic effect
+    url: "https://images.unsplash.com/photo-1505373877841-8d43f703fb1e?w=1600", // Dark concert/conference stage
   },
   getRows: (): Row[] => {
-    // Event title - using markdown
+    // Big Impact Title
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "# TechConf 2024\n\n### The Future of Innovation",
+      // Using centered HTML styling within the markdown block for specific layout control in this unique template
+      content: "# FutureTech Summit 2025\n\n### Where Innovation Meets Humanity",
     };
 
-    // Event details as badges
+    // Key Event Details
     const badges = createBadgeContent();
     badges.badges = [
-      { title: "December 12-15", icon: "📅" },
-      { title: "San Francisco", icon: "📍" },
-      { title: "5,000+ Attendees", icon: "👥" },
+      { title: "Nov 15-18", icon: "📅" },
+      { title: "Moscone Center, SF", icon: "📍" },
+      { title: "10,000+ Attendees", icon: "👥" },
     ];
     badges.layout = "grid";
 
-    // CTA - using markdown
-    const ctaBlock: Block = {
-      id: nanoid(),
-      type: BLOCK_TYPES.PROSEMIRROR,
-      content: "**Register Now - Early Bird Pricing →**",
-    };
-
-    // Speakers preview - using markdown
+    // Speaker Lineup Teaser
     const speakersBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "*Featuring speakers from Google, OpenAI, Microsoft, and more*",
+      content: "**Keynote Speakers:**\n\n*   **Satya Nadella** (Microsoft)\n*   **Sam Altman** (OpenAI)\n*   **Mira Murati** (OpenAI)\n\n*+ 50 more industry leaders*",
+    };
+
+    // Registration CTA
+    const ctaBlock: Block = {
+      id: nanoid(),
+      type: BLOCK_TYPES.PROSEMIRROR,
+      content: "### Early Bird Tickets Ending Soon\n\n[**Secure Your Spot →**](#)",
     };
 
     return [
@@ -63,11 +64,11 @@ export const EventAnnouncementLayout: LayoutTemplate = {
       },
       {
         id: nanoid(),
-        blocks: [ctaBlock],
+        blocks: [speakersBlock],
       },
       {
         id: nanoid(),
-        blocks: [speakersBlock],
+        blocks: [ctaBlock],
       },
     ];
   },

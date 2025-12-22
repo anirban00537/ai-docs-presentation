@@ -14,33 +14,33 @@ import { createTypedBlock } from "./template-utils";
 export const ContextualTestimonialLayout: LayoutTemplate = {
   id: "contextual-testimonial-layout",
   name: "Contextual Testimonial",
-  description: "Testimonial with customer context visual",
+  description: "Authentic customer feedback with visual context",
   icon: "💬",
   accent: {
     position: "right",
     size: 45,
-    url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800",
+    url: "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800", // Team collaborating/smiling
   },
   getRows: (): Row[] => {
-    // Quote
+    // Powerful Quote
     const testimonial = createTestimonialContent();
-    testimonial.quote = "The best investment we've made this year. The platform has completely transformed how our team collaborates. ROI was visible within the first month.";
-    testimonial.name = "Maria Garcia";
-    testimonial.role = "VP of Sales, Acme Inc";
+    testimonial.quote = "The ROI was immediate. We saved 20 hours per week per engineer, and our deployment frequency doubled. It's the tool we didn't know we needed until we had it.";
+    testimonial.name = "Marcus Johnson";
+    testimonial.role = "VP of Engineering, CloudScale";
 
-    // Rating - using markdown
+    // Trust Signals - Rating & Source
     const ratingBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "⭐⭐⭐⭐⭐ *5.0 rating on G2*",
+      content: "⭐⭐⭐⭐⭐\n\n**\"Best Developer Tool 2024\"** — *TechReview Weekly*",
     };
 
-    // Company logos
+    // Customer Logo validation
     const logos = createLogoGridContent();
     logos.logos = [
-      { name: "Featured in Forbes", image: "" },
-      { name: "TrustPilot Verified", image: "" },
-      { name: "G2 Leader", image: "" },
+      { name: "CloudScale", image: "" },
+      { name: "Forbes Tech Council", image: "" },
+      { name: "G2 High Performer", image: "" },
     ];
     logos.columns = 3;
 

@@ -14,36 +14,36 @@ import { createTypedBlock } from "./template-utils";
 export const OfficeLocationLayout: LayoutTemplate = {
   id: "office-location-layout",
   name: "Office Location",
-  description: "Company location with office visual",
+  description: "Showcase your workspace and company culture",
   icon: "🏢",
   accent: {
     position: "left",
-    size: 45,
-    url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800",
+    size: 50,
+    url: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800", // Modern bright office
   },
   getRows: (): Row[] => {
-    // Location title - using markdown
+    // Location Header
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## San Francisco HQ\n\n📍 500 Market Street, San Francisco, CA 94105",
+      content: "# San Francisco HQ\n\n**SoMa District**\n500 Howard Street, Suite 400\nSan Francisco, CA 94105",
     };
 
-    // Office stats
+    // Office Stats
     const stats = createStatsCounterContent();
     stats.stats = [
-      { value: 500, label: "Employees", icon: "👥" },
-      { value: 50, label: "K sq ft", icon: "🏢" },
-      { value: 3, label: "Cafeterias", icon: "☕" },
+      { value: 45, label: "K Sq Ft", icon: "📐", suffix: "" },
+      { value: 400, label: "Desks", icon: "🪑", suffix: "+" },
+      { value: 12, label: "Meeting Rooms", icon: "🤝", suffix: "" },
     ];
     stats.layout = "horizontal";
     stats.columns = 3;
 
-    // Amenities - using markdown
+    // Culture/Amenities & CTA
     const amenitiesBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "### Amenities\n\n🏋️ Fitness Center · 🍕 Free Meals · 🧘 Meditation Rooms · 🎮 Game Lounge\n\n**Take a Virtual Tour →**",
+      content: "### Built for Collaboration\n\nOur headquarters features open-plan workspaces, focus pods, a dedicated recording studio, and a rooftop garden for team events.\n\n[**Join the team →**](#) · *We are hiring!*",
     };
 
     return [

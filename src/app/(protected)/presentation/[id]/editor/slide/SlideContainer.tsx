@@ -174,7 +174,7 @@ export const SlideContainer = memo(function SlideContainer({
         <div 
           className={`relative ${fullWidth ? "w-full" : "flex-1"}`}
           style={{ 
-            padding: fullWidth ? "0" : "2rem 2.5rem",
+            padding: fullWidth ? "4rem 6rem" : "2rem 2.5rem",
           }}
         >
           <div className="flex flex-col gap-0 relative">

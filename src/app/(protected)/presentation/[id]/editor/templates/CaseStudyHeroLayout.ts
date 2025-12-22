@@ -14,31 +14,39 @@ import { createTypedBlock } from "./template-utils";
 export const CaseStudyHeroLayout: LayoutTemplate = {
   id: "case-study-hero-layout",
   name: "Case Study Hero",
-  description: "Success story with visual proof on the right",
+  description: "Impactful success story with metrics and proof",
   icon: "📈",
   accent: {
     position: "right",
-    size: 45,
-    url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800",
+    size: 50,
+    url: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600", // Meeting/Success context
   },
   getRows: (): Row[] => {
-    // Client logo
+    // Client Logo Area
     const logo = createLogoGridContent();
     logo.logos = [
-      { name: "Acme Corporation", image: "" },
+        { name: "Acme Corp", image: "" }, 
     ];
-    logo.columns = 3;
+    // We use a small grid just for the main client logo to give it presence
+    logo.columns = 3; 
 
-    // Hero metric
-    const metric = createPulseMetricContent("+312%", "Revenue Growth");
-    metric.trend = "up";
-    metric.sparklineType = "smooth";
-
-    // Story context - using markdown
+    // Main Story Header
     const storyBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "## How Acme Corp Tripled Revenue\n\nIn just 6 months, Acme Corporation transformed their sales operations, achieving record-breaking growth with our platform.\n\n*Read the full case study →*",
+      content: "# How Acme Corp Tripled Revenue\n\nAcme Corp was struggling with siloed data and slow reporting. By implementing our **DataSynergy Platform**, they unified their analytics stack in just 3 weeks.",
+    };
+
+    // Hero Metric - Highlighting the result
+    const metric = createPulseMetricContent("+312%", "Year-over-Year Revenue Growth");
+    metric.trend = "up";
+    metric.sparklineType = "smooth";
+
+    // Secondary Metrics/Key Results using markdown list
+    const resultsBlock: Block = {
+      id: nanoid(),
+      type: BLOCK_TYPES.PROSEMIRROR,
+      content: "### Key Outcomes\n\n*   **40% Reduction** in operational costs\n*   **2.5x Faster** time-to-market for new features\n*   **98% Employee Satisfaction** with the new tools\n\n[Read the full case study →](#)",
     };
 
     return [
@@ -48,11 +56,15 @@ export const CaseStudyHeroLayout: LayoutTemplate = {
       },
       {
         id: nanoid(),
+        blocks: [storyBlock],
+      },
+      {
+        id: nanoid(),
         blocks: [createTypedBlock(BLOCK_TYPES.PULSE_METRIC, metric)],
       },
       {
         id: nanoid(),
-        blocks: [storyBlock],
+        blocks: [resultsBlock],
       },
     ];
   },
