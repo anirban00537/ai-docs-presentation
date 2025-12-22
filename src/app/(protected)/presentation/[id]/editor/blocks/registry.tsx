@@ -1,6 +1,6 @@
 
 import React from "react";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, BlockContent } from "@/types/presentation";
 import {
   BLOCK_TYPES,
   type BlockType,
@@ -36,7 +36,7 @@ import { SpacerBlock } from "./spacer/SpacerBlock";
 
 export interface BlockRendererProps {
   block: Block;
-  onUpdate: (content: any) => void;
+  onUpdate: (content: BlockContent) => void;
   theme: Theme;
   placeholder?: string;
   readOnly?: boolean;
@@ -45,7 +45,7 @@ export interface BlockRendererProps {
 export interface BlockRegistryEntry {
   type: BlockType;
   component: React.ComponentType<BlockRendererProps>;
-  normalize: (content: any) => any;
+  normalize: (content: unknown) => BlockContent;
 }
 
 export const DEFAULT_BLOCK_TYPE = BLOCK_TYPES.PROSEMIRROR;

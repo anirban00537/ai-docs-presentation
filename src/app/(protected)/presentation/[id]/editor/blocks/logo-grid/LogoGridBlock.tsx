@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import { createLogoGridContent, type LogoGridContent } from "../definitions";
 import { BlockWrapper } from "../../block/BlockWrapper";
 import {
@@ -47,7 +47,7 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
   const isDark = theme.themeType === "dark";
 
   const handleNameChange = useCallback(
-    (index: number, newContent: any) => {
+    (index: number, newContent: ProseMirrorDocument) => {
       const newLogos = [...logos];
       newLogos[index] = { ...newLogos[index], name: newContent };
       onUpdate({ ...content, logos: newLogos });

@@ -1,11 +1,11 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument, PricingFeature } from "@/types/presentation";
 import {
   createPricingCardContent,
   type PricingCardContent,
 } from "../definitions";
-import { IconCheck, IconX, IconStar, IconTrash } from "@tabler/icons-react";
+import { IconCheck, IconX, IconTrash } from "@tabler/icons-react";
 
 import { BlockWrapper } from "../../block/BlockWrapper";
 import {
@@ -54,14 +54,14 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
   }, [content]);
 
   const handlePlanNameChange = useCallback(
-    (newDoc: any) => {
+    (newDoc: ProseMirrorDocument) => {
       onUpdate({ ...content, planName: newDoc });
     },
     [content, onUpdate]
   );
 
   const handlePriceChange = useCallback(
-    (newDoc: any) => {
+    (newDoc: ProseMirrorDocument) => {
       onUpdate({ ...content, price: newDoc });
     },
     [content, onUpdate]
@@ -76,7 +76,7 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
     onUpdate({ ...content, features: newFeatures });
   };
 
-  const updateFeatureText = (index: number, newDoc: any) => {
+  const updateFeatureText = (index: number, newDoc: ProseMirrorDocument) => {
     const newFeatures = [...content.features];
     newFeatures[index] = { ...newFeatures[index], text: newDoc };
     onUpdate({ ...content, features: newFeatures });
@@ -91,7 +91,7 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
 
   const removeFeature = (index: number) => {
     const newFeatures = content.features.filter(
-      (_: any, i: number) => i !== index
+      (_: PricingFeature, i: number) => i !== index
     );
     onUpdate({ ...content, features: newFeatures });
   };
@@ -151,7 +151,7 @@ export const PricingCardBlock: React.FC<PricingCardBlockProps> = ({
           </div>
 
           <div className="flex-1 space-y-3 mb-6">
-            {features.map((feature: any, index: number) => (
+            {features.map((feature: PricingFeature, index: number) => (
               <div
                 key={index}
                 className="flex items-start gap-3 group/feature relative"

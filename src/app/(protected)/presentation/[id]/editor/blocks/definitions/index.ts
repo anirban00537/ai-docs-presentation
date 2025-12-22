@@ -123,7 +123,7 @@ export const createBlockContentForType = (
 
 export const normalizeBlockContent = (
   type: BlockType | undefined,
-  content: any
+  content: unknown
 ): BlockContent => {
   switch (type) {
     case BLOCK_TYPES.NUMBER_CARD:

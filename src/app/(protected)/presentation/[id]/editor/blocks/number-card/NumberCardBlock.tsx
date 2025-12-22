@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
   getDefaultNumberCardEditorContent,
   type NumberCardContent,
@@ -32,7 +32,7 @@ export const NumberCardBlock: React.FC<NumberCardBlockProps> = ({
   }, [content?.editorContent]);
 
   const handleEditorChange = useCallback(
-    (newEditorContent: any) => {
+    (newEditorContent: ProseMirrorDocument) => {
       if (readOnly) return;
       const newContent: NumberCardContent = {
         type: "number-card",

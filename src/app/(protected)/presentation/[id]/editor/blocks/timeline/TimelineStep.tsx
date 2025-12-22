@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { TimelineStep as TimelineStepType } from "../definitions";
 import { createTimelineContent } from "../definitions";
-import type { Theme } from "@/types/presentation";
+import type { Theme, ProseMirrorDocument } from "@/types/presentation";
 import EmojiPicker from "emoji-picker-react";
 import {
   Popover,
@@ -15,8 +15,8 @@ interface TimelineStepProps {
   stepIndex: number;
   blockId: string;
   theme: Theme;
-  onTitleChange: (index: number, newDoc: any) => void;
-  onDescriptionChange: (index: number, newDoc: any) => void;
+  onTitleChange: (index: number, newDoc: ProseMirrorDocument) => void;
+  onDescriptionChange: (index: number, newDoc: ProseMirrorDocument) => void;
   onIconChange: (index: number, icon: string) => void;
   readOnly?: boolean;
 }

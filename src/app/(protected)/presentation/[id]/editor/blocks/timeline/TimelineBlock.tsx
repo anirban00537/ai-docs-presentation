@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
   createTimelineContent,
   type TimelineContent,
@@ -31,7 +31,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   const title = content?.title ?? undefined;
 
   const handleTitleChange = useCallback(
-    (newDoc: any) => {
+    (newDoc: ProseMirrorDocument) => {
       onUpdate({
         ...(content ?? createTimelineContent()),
         title: newDoc,
@@ -41,7 +41,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   );
 
   const handleStepTitleChange = useCallback(
-    (stepIndex: number, newDoc: any) => {
+    (stepIndex: number, newDoc: ProseMirrorDocument) => {
       const newSteps = [...steps];
       newSteps[stepIndex] = { ...newSteps[stepIndex], title: newDoc };
       onUpdate({
@@ -53,7 +53,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   );
 
   const handleStepDescriptionChange = useCallback(
-    (stepIndex: number, newDoc: any) => {
+    (stepIndex: number, newDoc: ProseMirrorDocument) => {
       const newSteps = [...steps];
       newSteps[stepIndex] = { ...newSteps[stepIndex], description: newDoc };
       onUpdate({

@@ -1,10 +1,11 @@
 import React from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, BlockContent } from "@/types/presentation";
+import { isProseMirrorDocument } from "@/types/presentation";
 
 interface ProseMirrorBlockProps {
   block: Block;
-  onUpdate: (content: any) => void;
+  onUpdate: (content: BlockContent) => void;
   placeholder?: string;
   theme?: Theme;
   readOnly?: boolean;
@@ -17,13 +18,21 @@ export const ProseMirrorBlock: React.FC<ProseMirrorBlockProps> = ({
   readOnly,
   theme,
 }) => {
+  // The onUpdate expects BlockContent, and ProseMirrorDocument (string) is valid BlockContent
+  const handleChange = (content: string) => {
+    onUpdate(content);
+  };
+
+  // Use type guard to safely get string content, or fallback to empty string
+  const value = isProseMirrorDocument(block.content) ? block.content : "";
+
   return (
     <div className="w-full h-full flex flex-col">
       <ProseMirrorEditor
         key={block.id}
         blockId={block.id}
-        value={block.content}
-        onChange={onUpdate}
+        value={value}
+        onChange={handleChange}
         placeholder={placeholder}
         className="flex-1"
         readOnly={readOnly}

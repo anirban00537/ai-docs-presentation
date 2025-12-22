@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
   type GlassInsightContent,
   createGlassInsightContent,
 } from "../definitions";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import {
   Popover,
   PopoverContent,
@@ -38,14 +38,14 @@ export const GlassInsightBlock: React.FC<GlassInsightBlockProps> = ({
   }, [content?.editorContent]);
 
   const handleEditorChange = useCallback(
-    (newEditorContent: any) => {
+    (newEditorContent: ProseMirrorDocument) => {
       onUpdate({ ...content, editorContent: newEditorContent });
     },
     [content, onUpdate]
   );
 
   const handleIconChange = useCallback(
-    (emojiObject: any) => {
+    (emojiObject: EmojiClickData) => {
       onUpdate({ ...content, icon: emojiObject.emoji });
     },
     [content, onUpdate]

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import { createBadgeContent, type BadgeContent } from "../definitions";
 import { BlockWrapper } from "../../block/BlockWrapper";
 import {
@@ -61,7 +61,7 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   );
 
   const handleTitleChange = useCallback(
-    (index: number, newContent: any) => {
+    (index: number, newContent: ProseMirrorDocument) => {
       const newBadges = [...badges];
       newBadges[index] = { ...newBadges[index], title: newContent };
       onUpdate({ ...content, badges: newBadges });
@@ -70,7 +70,7 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   );
 
   const handleDescriptionChange = useCallback(
-    (index: number, newContent: any) => {
+    (index: number, newContent: ProseMirrorDocument) => {
       const newBadges = [...badges];
       newBadges[index] = { ...newBadges[index], description: newContent };
       onUpdate({ ...content, badges: newBadges });
@@ -79,7 +79,7 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
   );
 
   const handleIssuerChange = useCallback(
-    (index: number, newContent: any) => {
+    (index: number, newContent: ProseMirrorDocument) => {
       const newBadges = [...badges];
       newBadges[index] = { ...newBadges[index], issuer: newContent };
       onUpdate({ ...content, badges: newBadges });
@@ -262,7 +262,7 @@ export const BadgeBlock: React.FC<BadgeBlockProps> = ({
               <Label style={{ color: isDark ? "#fff" : "#000" }}>Layout</Label>
               <Select
                 value={tempLayout}
-                onValueChange={(v: any) => setTempLayout(v)}
+                onValueChange={(v: "grid" | "list") => setTempLayout(v)}
               >
                 <SelectTrigger>
                   <SelectValue />

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import {
   createTestimonialContent,
   type TestimonialContent,
@@ -54,7 +54,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
     return content?.role ?? createTestimonialContent().role;
   }, [content]);
 
-  const extractText = (doc: any) => {
+  const extractText = (doc: ProseMirrorDocument | unknown): string => {
     // Handle Markdown string
     if (typeof doc === "string") {
       // Extract first letters from first two words
@@ -65,17 +65,18 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
       return words[0]?.[0] || "JD";
     }
     // Handle legacy JSON format
+    const docObj = doc as { content?: Array<{ content?: Array<{ text?: string }> }> } | null;
     return (
-      doc?.content
-        ?.flatMap((node: any) => node?.content || [])
-        ?.map((n: any) => n?.text || "")
+      docObj?.content
+        ?.flatMap((node) => node?.content || [])
+        ?.map((n) => n?.text || "")
         ?.join("")
         ?.trim() || "JD"
     );
   };
 
   const handleQuoteChange = useCallback(
-    (newDoc: any) => {
+    (newDoc: ProseMirrorDocument) => {
       onUpdate({
         ...(content ?? createTestimonialContent()),
         quote: newDoc,
@@ -85,7 +86,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
   );
 
   const handleNameChange = useCallback(
-    (newDoc: any) => {
+    (newDoc: ProseMirrorDocument) => {
       onUpdate({
         ...(content ?? createTestimonialContent()),
         name: newDoc,
@@ -95,7 +96,7 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
   );
 
   const handleRoleChange = useCallback(
-    (newDoc: any) => {
+    (newDoc: ProseMirrorDocument) => {
       onUpdate({
         ...(content ?? createTestimonialContent()),
         role: newDoc,

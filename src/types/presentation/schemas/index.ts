@@ -145,3 +145,4 @@ export type CardDesignPattern = z.infer<typeof CardDesignPatternSchema>;
 
 export { getDefaultHeadingContent, withAlpha } from "./blocks";
 export { BLOCK_TYPES, MAX_BLOCKS_PER_ROW } from "./core";
+export * from "../type-guards";
