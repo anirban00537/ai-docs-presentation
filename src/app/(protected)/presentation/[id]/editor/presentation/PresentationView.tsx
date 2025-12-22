@@ -50,7 +50,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
           ref={containerRef}
-          className={`fixed inset-0 z-[100] overflow-y-auto ${
+          className={`presentation-mode fixed inset-0 z-[100] overflow-y-auto ${
             isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
           }`}
           style={{

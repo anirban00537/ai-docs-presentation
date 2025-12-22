@@ -7,6 +7,8 @@ export const PROSEMIRROR_STYLES = `
   .ProseMirror:focus {
     outline: none;
   }
+  
+  /* Default fixed font sizes for editor mode */
   .ProseMirror h1 {
     font-size: 3rem;
     font-weight: 700;
@@ -30,6 +32,11 @@ export const PROSEMIRROR_STYLES = `
     font-weight: 600;
     line-height: 1.35;
     margin-bottom: 0.5rem;
+  }
+  .ProseMirror p,
+  .ProseMirror li {
+    font-size: 1rem;
+    line-height: 1.6;
   }
   .ProseMirror ul, .ProseMirror ol {
     padding-left: 1.5rem;
@@ -82,4 +89,50 @@ export const PROSEMIRROR_STYLES = `
     height: 0;
   }
 
+  /* Presentation mode: viewport-responsive font sizes */
+  .presentation-mode .ProseMirror h1 {
+    font-size: clamp(1.75rem, 3.2vw, 4.5rem);
+    margin-bottom: clamp(0.2rem, 0.4vw, 0.75rem);
+  }
+  .presentation-mode .ProseMirror h2 {
+    font-size: clamp(1.35rem, 2.4vw, 3.5rem);
+    margin-bottom: clamp(0.2rem, 0.35vw, 0.6rem);
+  }
+  .presentation-mode .ProseMirror h3 {
+    font-size: clamp(1.125rem, 2vw, 2.75rem);
+    margin-bottom: clamp(0.2rem, 0.3vw, 0.5rem);
+  }
+  .presentation-mode .ProseMirror h4 {
+    font-size: clamp(1rem, 1.6vw, 2.25rem);
+    margin-bottom: clamp(0.2rem, 0.25vw, 0.4rem);
+  }
+  .presentation-mode .ProseMirror p,
+  .presentation-mode .ProseMirror li {
+    font-size: clamp(0.8rem, 1.2vw, 1.75rem);
+  }
+  .presentation-mode .ProseMirror ul,
+  .presentation-mode .ProseMirror ol {
+    padding-left: clamp(0.875rem, 1.6vw, 2.5rem);
+    margin: clamp(0.2rem, 0.4vw, 0.75rem) 0;
+  }
+  .presentation-mode .ProseMirror li {
+    margin: clamp(0.1rem, 0.2vw, 0.4rem) 0;
+  }
+  .presentation-mode .ProseMirror blockquote {
+    border-left-width: clamp(2px, 0.2vw, 4px);
+    padding-left: clamp(0.625rem, 1.2vw, 1.5rem);
+    margin: clamp(0.2rem, 0.4vw, 0.75rem) 0;
+    font-size: clamp(0.8rem, 1.2vw, 1.75rem);
+  }
+  .presentation-mode .ProseMirror pre {
+    border-radius: clamp(0.2rem, 0.4vw, 0.75rem);
+    padding: clamp(0.4rem, 0.8vw, 1.25rem);
+    font-size: clamp(0.7rem, 1vw, 1.5rem);
+  }
+  .presentation-mode .ProseMirror code {
+    padding: clamp(0.05rem, 0.1vw, 0.2rem) clamp(0.1rem, 0.2vw, 0.4rem);
+    border-radius: clamp(0.1rem, 0.2vw, 0.4rem);
+    font-size: clamp(0.7rem, 1vw, 1.5rem);
+  }
 `;
+
