@@ -9,10 +9,12 @@ import {
   type Theme,
 } from "@/store/slices/slidesSlice";
 import { IconPlus, IconPhoto, IconTrash, IconLayoutSidebarRight, IconLayoutSidebar, IconLayoutNavbar, IconLayoutBottombar, IconWallpaper } from "@tabler/icons-react";
+import { SlideActionBar } from "./components/SlideActionBar";
 import { CardWrapper } from "./CardWrapper";
 import { setSlideAccentSize, toggleSlideAccent, updateSlideAccent } from "@/store/slices/slidesSlice";
 import { ImagePickerModal, type SelectedImage } from "./components/ImagePickerModal";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const DragStateBridge: React.FC<{
   onDragChange: (dragging: boolean) => void;
@@ -150,33 +152,16 @@ export const SlideCard: React.FC<SlideCardProps> = ({
           <DragStateBridge onDragChange={setIsDragging} />
         )}
 
-        {/* Slide Gutter - Unified Control Hub (Top Right) */}
+        {/* Slide Controls - Unified Hub (Top Left) */}
         {!readOnly && (
-          <div 
-            className={`absolute top-4 z-50 flex flex-col items-center gap-2 transition-all duration-500 ease-out ${
-              fullWidth ? "right-6" : "-right-14"
-            } ${
-              isHovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
-            }`}
-          >
-            <SlideSettings 
-              slide={slide} 
-              theme={theme} 
-              onOpenImagePicker={() => setIsImagePickerOpen(true)} 
-            />
-            
-            <div className="w-px h-4 bg-black/10 dark:bg-white/10 my-1" />
-
-            <Button
-              variant="ghost" 
-              size="icon"
-              onClick={() => onAddRowAtBottom(slide.id)}
-              className="h-9 w-9 rounded-xl bg-white/90 dark:bg-black/90 backdrop-blur-xl shadow-xl border border-black/5 dark:border-white/5 hover:scale-110 transition-all text-muted-foreground hover:text-primary group/addrow"
-              title="Add Row"
-            >
-              <IconPlus size={20} stroke={2.5} className="group-hover/addrow:rotate-90 transition-transform duration-300" />
-            </Button>
-          </div>
+          <SlideActionBar
+            slide={slide}
+            theme={theme}
+            isHovered={isHovered}
+            fullWidth={fullWidth}
+            onOpenImagePicker={() => setIsImagePickerOpen(true)}
+            onAddRow={() => onAddRowAtBottom(slide.id)}
+          />
         )}
 
         <div 

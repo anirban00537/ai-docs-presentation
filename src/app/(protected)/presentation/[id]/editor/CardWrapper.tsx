@@ -231,6 +231,10 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
               height: isVertical ? `${localAccentSize}%` : "auto",
               minHeight: isVertical ? "200px" : "auto",
               overflow: "hidden", 
+              borderTopLeftRadius: (accent.position === "left" || accent.position === "top") ? borderRadius : "0",
+              borderBottomLeftRadius: (accent.position === "left" || accent.position === "bottom") ? borderRadius : "0",
+              borderTopRightRadius: (accent.position === "right" || accent.position === "top") ? borderRadius : "0",
+              borderBottomRightRadius: (accent.position === "right" || accent.position === "bottom") ? borderRadius : "0",
             }}
           >
             <img 

@@ -8,6 +8,7 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import { type Block } from "@/types/presentation";
+import { cn } from "@/lib/utils";
 
 interface BlockActionBarProps {
   isVisible: boolean;
@@ -27,7 +28,10 @@ export const BlockActionBar: React.FC<BlockActionBarProps> = ({
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
 
-  const buttonClass = "w-8 h-8 rounded-lg transition-all flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10";
+  const buttonClass = cn(
+    "w-8 h-8 rounded-lg transition-all flex items-center justify-center hover:text-primary hover:bg-black/5 dark:hover:bg-white/10",
+    isDark ? "text-white/60" : "text-muted-foreground"
+  );
 
   return (
     <AnimatePresence>
@@ -41,10 +45,10 @@ export const BlockActionBar: React.FC<BlockActionBarProps> = ({
           data-block-action-bar
         >
           <div
-            className="flex flex-col items-center gap-1 p-1 rounded-xl shadow-xl border border-black/5 dark:border-white/10"
+            className="flex flex-col items-center gap-1 p-1 rounded-xl shadow-2xl border backdrop-blur-2xl"
             style={{
-              backgroundColor: isDark ? "rgba(30,30,35,0.95)" : "rgba(255,255,255,0.98)",
-              backdropFilter: "blur(16px)",
+              backgroundColor: isDark ? "rgba(0, 0, 0, 0.2)" : "rgba(255, 255, 255, 0.4)",
+              borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)",
             }}
           >
             {/* Add Column (Contextual) */}

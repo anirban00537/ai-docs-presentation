@@ -67,12 +67,25 @@ export const SlideSettings: React.FC<SlideSettingsProps> = ({
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-8 w-8 rounded-lg bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-sm border border-black/5 dark:border-white/5 hover:scale-110 transition-all pointer-events-auto"
+          className={cn(
+            "h-8 w-8 rounded-lg transition-all flex items-center justify-center hover:text-primary hover:bg-black/5 dark:hover:bg-white/10",
+            theme.themeType === "dark" ? "text-white/60" : "text-muted-foreground"
+          )}
         >
           <IconDotsVertical size={16} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0 overflow-hidden" align="end">
+      <PopoverContent 
+        className={cn(
+          "w-80 p-0 overflow-hidden shadow-2xl backdrop-blur-2xl border-none",
+          theme.themeType === "dark" ? "text-white" : "text-slate-900"
+        )}
+        align="start"
+        style={{
+          backgroundColor: theme.themeType === "dark" ? "rgba(20, 20, 25, 0.7)" : "rgba(255, 255, 255, 0.6)",
+          border: `1px solid ${theme.themeType === "dark" ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.05)"}`,
+        }}
+      >
         <div className="p-4 flex flex-col gap-4">
           {/* Layout Row */}
           <div className="flex items-center justify-between gap-2">
@@ -85,8 +98,11 @@ export const SlideSettings: React.FC<SlideSettingsProps> = ({
                 className={cn(
                   "h-12 w-12 rounded-xl transition-all border",
                   accent?.position === pos.id 
-                    ? "bg-primary/10 border-primary text-primary shadow-sm" 
-                    : "border-transparent text-muted-foreground hover:bg-muted"
+                    ? `bg-primary/20 border-primary text-primary shadow-sm` 
+                    : cn(
+                        "border-transparent hover:bg-black/5 dark:hover:bg-white/5",
+                        theme.themeType === "dark" ? "text-white/60" : "text-muted-foreground"
+                      )
                 )}
                 title={pos.label}
               >
@@ -102,7 +118,7 @@ export const SlideSettings: React.FC<SlideSettingsProps> = ({
             <div className="flex items-center gap-3">
               <div className={cn(
                 "w-8 h-8 rounded-lg flex items-center justify-center",
-                accent ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                accent ? "bg-primary/10 text-primary" : "bg-black/5 dark:bg-white/5 text-white/40 dark:text-white/40"
               )}>
                 <IconPhoto size={18} />
               </div>
@@ -133,19 +149,6 @@ export const SlideSettings: React.FC<SlideSettingsProps> = ({
             </div>
           </div>
 
-          {/* Card Color (Placeholder based on screenshot) */}
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
-                <IconWallpaper size={18} />
-              </div>
-              <span className="text-sm font-medium">Card color</span>
-            </div>
-            <Button variant="outline" size="sm" className="h-8 gap-2 px-3 rounded-full opacity-50 cursor-not-allowed">
-              <div className="w-4 h-4 rounded-md border border-black/10 shadow-sm" style={{ backgroundColor: theme.cardBackground }} />
-              <span className="text-xs font-semibold uppercase">Default</span>
-            </Button>
-          </div>
         </div>
       </PopoverContent>
     </Popover>
