@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { SlideCard } from "@/app/(protected)/presentation/[id]/editor/SlideCard";
+import { SlideContainer } from "@/app/(protected)/presentation/[id]/editor/slide/SlideContainer";
 import { Theme } from "@/store/slices/slidesSlice";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 
@@ -60,7 +60,7 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
             fontFamily: `${theme.fontFamily}, sans-serif`,
           }}
         >
-          <SlideCard
+          <SlideContainer
             slide={reduxSlide}
             onUpdateBlock={noop}
             onDeleteRow={noop}

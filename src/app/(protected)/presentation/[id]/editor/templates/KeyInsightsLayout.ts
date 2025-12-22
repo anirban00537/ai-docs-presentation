@@ -1,6 +1,9 @@
 import { Row, Block } from "@/types/presentation";
 import type { LayoutTemplate } from "@/types/presentation";
-import { BLOCK_TYPES, createGlassInsightContent } from "../blocks/definitions";
+import {
+  BLOCK_TYPES,
+  createGlassInsightContent,
+} from "../block/blocks/definitions";
 import { nanoid } from "@reduxjs/toolkit";
 
 export const KeyInsightsLayout: LayoutTemplate = {

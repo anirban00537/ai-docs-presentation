@@ -4,7 +4,7 @@ import {
   BLOCK_TYPES,
   createFeatureListContent,
   createCtaContent,
-} from "../blocks/definitions";
+} from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const DocIntroLayout = {
@@ -16,7 +16,8 @@ export const DocIntroLayout = {
     const intro: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h1 style=\"text-align: center\">Project Alpha: Executive Brief</h1>\n\n<p style=\"text-align: center\">This document outlines the strategic vision, scope, and implementation plan for the upcoming Q3 initiatives. Our goal is to align all stakeholders on the critical path to launch.</p>",
+      content:
+        '<h1 style="text-align: center">Project Alpha: Executive Brief</h1>\n\n<p style="text-align: center">This document outlines the strategic vision, scope, and implementation plan for the upcoming Q3 initiatives. Our goal is to align all stakeholders on the critical path to launch.</p>',
     };
 
     const sections = createFeatureListContent();
@@ -26,28 +27,33 @@ export const DocIntroLayout = {
       {
         icon: "🎯",
         title: "Strategic Vision",
-        description: "To become the market leader in automated workflows by delivering a zero-touch experience for enterprise clients by Q4.",
+        description:
+          "To become the market leader in automated workflows by delivering a zero-touch experience for enterprise clients by Q4.",
       },
       {
         icon: "🗺️",
         title: "Scope & Deliverables",
-        description: "Includes the core platform rebuild, new API gateway, and the customer migration wizard. Out of scope: Legacy mobile app updates.",
+        description:
+          "Includes the core platform rebuild, new API gateway, and the customer migration wizard. Out of scope: Legacy mobile app updates.",
       },
       {
         icon: "📅",
         title: "Timeline & Milestones",
-        description: "Phase 1 (Planning: June 1-15. Phase 2 (Dev): June 15 - Aug 15. Phase 3 (QA/Launch): Aug 15 - Sept 1.",
+        description:
+          "Phase 1 (Planning: June 1-15. Phase 2 (Dev): June 15 - Aug 15. Phase 3 (QA/Launch): Aug 15 - Sept 1.",
       },
       {
         icon: "📊",
         title: "Success Metrics",
-        description: "Targeting 99.99% uptime, <100ms API latency, and a 20% increase in user retention post-migration.",
+        description:
+          "Targeting 99.99% uptime, <100ms API latency, and a 20% increase in user retention post-migration.",
       },
     ];
 
     const cta = createCtaContent();
     cta.heading = "Ready to proceed?";
-    cta.body = "Please review the attached technical appendix before signing off on the budget allocation.";
+    cta.body =
+      "Please review the attached technical appendix before signing off on the budget allocation.";
     cta.buttonLabel = "Approve Project Charter";
 
     return [

@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createQuoteContent } from "../blocks/definitions";
+import { BLOCK_TYPES, createQuoteContent } from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const QuoteLayout = {
@@ -13,7 +13,7 @@ export const QuoteLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">Guiding Principles</h2>",
+      content: '<h2 style="text-align: center">Guiding Principles</h2>',
     };
 
     // Row 2: Centered Quote

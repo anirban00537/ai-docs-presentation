@@ -1,6 +1,9 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createStatsCounterContent } from "../blocks/definitions";
+import {
+  BLOCK_TYPES,
+  createStatsCounterContent,
+} from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const StatsLayout = {
@@ -13,7 +16,8 @@ export const StatsLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">By The Numbers</h2>\n\n<p style=\"text-align: center\">Scale, speed, and reliability you can trust.</p>",
+      content:
+        '<h2 style="text-align: center">By The Numbers</h2>\n\n<p style="text-align: center">Scale, speed, and reliability you can trust.</p>',
     };
 
     // Row 2: Stats Counter

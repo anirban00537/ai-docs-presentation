@@ -4,7 +4,7 @@ import {
   BLOCK_TYPES,
   createCodeTerminalContent,
   createSimpleNumberCardContent,
-} from "../blocks/definitions";
+} from "../block/blocks/definitions";
 import { nanoid } from "@reduxjs/toolkit";
 
 export const TechnicalWalkthroughLayout: LayoutTemplate = {
@@ -19,7 +19,7 @@ export const TechnicalWalkthroughLayout: LayoutTemplate = {
         {
           id: nanoid(),
           type: BLOCK_TYPES.PROSEMIRROR,
-          content: "<p style=\"text-align: center\">Quick Start Guide</p>",
+          content: '<p style="text-align: center">Quick Start Guide</p>',
         } as Block,
       ],
     },

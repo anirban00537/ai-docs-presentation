@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createVideoContent } from "../blocks/definitions";
+import { BLOCK_TYPES, createVideoContent } from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const VideoShowcaseLayout = {
@@ -13,7 +13,8 @@ export const VideoShowcaseLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">The Future of Work</h2>\n\n<p style=\"text-align: center\">A 2-minute overview of where we are going next.</p>",
+      content:
+        '<h2 style="text-align: center">The Future of Work</h2>\n\n<p style="text-align: center">A 2-minute overview of where we are going next.</p>',
     };
 
     // Row 2: Video Block

@@ -1,6 +1,9 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createFeatureListContent } from "../blocks/definitions";
+import {
+  BLOCK_TYPES,
+  createFeatureListContent,
+} from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const ServicesListLayout = {
@@ -12,7 +15,8 @@ export const ServicesListLayout = {
     const header: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">Comprehensive Capabilities</h2>\n\n<p style=\"text-align: center\">We don't just provide software. We provide the end-to-end partnership required for transformation.</p>",
+      content:
+        '<h2 style="text-align: center">Comprehensive Capabilities</h2>\n\n<p style="text-align: center">We don\'t just provide software. We provide the end-to-end partnership required for transformation.</p>',
     };
 
     const features = createFeatureListContent();
@@ -20,32 +24,38 @@ export const ServicesListLayout = {
       {
         icon: "🧭",
         title: "Strategic Advisory",
-        description: "Expert guidance on roadmap planning, digital transformation strategy, and change management.",
+        description:
+          "Expert guidance on roadmap planning, digital transformation strategy, and change management.",
       },
       {
         icon: "⚙️",
         title: "Seamless Integration",
-        description: "Pre-built connectors for Salesforce, SAP, and legacy mainframes. We handle the plumbing.",
+        description:
+          "Pre-built connectors for Salesforce, SAP, and legacy mainframes. We handle the plumbing.",
       },
       {
         icon: "📊",
         title: "Data Optimization",
-        description: "Cleanse, enrich, and structure your data to unlock actionable insights from day one.",
+        description:
+          "Cleanse, enrich, and structure your data to unlock actionable insights from day one.",
       },
       {
         icon: "🔒",
         title: "Enterprise Security",
-        description: "SOC2 Type II compliant, SSO ready, and fully auditable access logs for your compliance team.",
+        description:
+          "SOC2 Type II compliant, SSO ready, and fully auditable access logs for your compliance team.",
       },
       {
         icon: "🎨",
         title: "Custom Development",
-        description: "Need something unique? Our solutions engineering team builds bespoke modules to fit your niche.",
+        description:
+          "Need something unique? Our solutions engineering team builds bespoke modules to fit your niche.",
       },
       {
         icon: "🤝",
         title: "24/7 Dedicated Support",
-        description: "Round-the-clock access to senior engineers, not just a helpdesk script. We are your partners.",
+        description:
+          "Round-the-clock access to senior engineers, not just a helpdesk script. We are your partners.",
       },
     ];
     features.layout = "grid";

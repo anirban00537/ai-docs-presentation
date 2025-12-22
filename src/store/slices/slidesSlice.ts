@@ -16,13 +16,13 @@ import {
 import {
   createBlockContentForType,
   createNumberCardContent,
-} from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
+} from "@/app/(protected)/presentation/[id]/editor/block/blocks/definitions";
 import {
   createBlockInstance,
   createRow,
   createRowWithColumns,
   createSlide,
-} from "@/app/(protected)/presentation/[id]/editor/blocks/factories";
+} from "@/app/(protected)/presentation/[id]/editor/block/blocks/factories";
 
 export interface SlidesState {
   slides: Slide[];
@@ -181,8 +181,14 @@ const slidesSlice = createSlice({
         initialContent?: any;
       }>
     ) => {
-      const { slideId, rowId, afterBlockId, insertIndex, blockType, initialContent } =
-        action.payload;
+      const {
+        slideId,
+        rowId,
+        afterBlockId,
+        insertIndex,
+        blockType,
+        initialContent,
+      } = action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
       const row = slide.rows.find((r) => r.id === rowId);
@@ -266,10 +272,15 @@ const slidesSlice = createSlice({
         initialContent?: any;
       }>
     ) => {
-      const { slideId, columnCount, insertIndex, blockType, initialContent } = action.payload;
+      const { slideId, columnCount, insertIndex, blockType, initialContent } =
+        action.payload;
       const slide = state.slides.find((s) => s.id === slideId);
       if (!slide) return;
-      const newRow = createRowWithColumns(columnCount, blockType as any, initialContent);
+      const newRow = createRowWithColumns(
+        columnCount,
+        blockType as any,
+        initialContent
+      );
       const targetIndex = Math.max(0, Math.min(insertIndex, slide.rows.length));
       slide.rows.splice(targetIndex, 0, newRow);
     },
@@ -636,9 +647,9 @@ const slidesSlice = createSlice({
       state,
       action: PayloadAction<{
         slideId: string;
-        update: { 
-          url?: string; 
-          position?: "left" | "right" | "top" | "bottom" | "background" 
+        update: {
+          url?: string;
+          position?: "left" | "right" | "top" | "bottom" | "background";
         };
       }>
     ) => {
@@ -702,18 +713,18 @@ const undoableSlidesReducer = undoable(slidesSlice.reducer, {
   limit: 50, // Maximum number of undo steps
   filter: excludeAction([
     // Actions that shouldn't trigger undo history
-    'slides/setActiveSlide',
-    'slides/setTheme',
-    'slides/resetTheme',
-    'slides/setPresentation',
-    'slides/updatePresentationTitle',
-    'slides/setSlides', // Initial load shouldn't be undoable
-    'slides/replaceSlideWithServerData', // Server sync shouldn't be undoable
+    "slides/setActiveSlide",
+    "slides/setTheme",
+    "slides/resetTheme",
+    "slides/setPresentation",
+    "slides/updatePresentationTitle",
+    "slides/setSlides", // Initial load shouldn't be undoable
+    "slides/replaceSlideWithServerData", // Server sync shouldn't be undoable
   ]),
   // Group rapid updates together (e.g., typing)
   groupBy: (action) => {
     // Group block content updates by block ID to prevent every keystroke from being a separate undo step
-    if (action.type === 'slides/updateBlockContent') {
+    if (action.type === "slides/updateBlockContent") {
       const payload = action.payload as { blockId: string };
       return `updateBlockContent-${payload.blockId}`;
     }
@@ -733,15 +744,20 @@ export const selectSlides = (state: RootState) => state.slides.present.slides;
 export const selectActiveSlideId = (state: RootState) =>
   state.slides.present.activeSlideId;
 export const selectActiveSlide = (state: RootState) =>
-  state.slides.present.slides.find((s) => s.id === state.slides.present.activeSlideId) || null;
+  state.slides.present.slides.find(
+    (s) => s.id === state.slides.present.activeSlideId
+  ) || null;
 export const selectTheme = (state: RootState) => state.slides.present.theme;
 export const selectPresentation = (state: RootState) =>
   state.slides.present.presentation;
 
 // --- Undo/Redo Selectors ---
 export const selectCanUndo = (state: RootState) => state.slides.past.length > 0;
-export const selectCanRedo = (state: RootState) => state.slides.future.length > 0;
-export const selectUndoStackLength = (state: RootState) => state.slides.past.length;
-export const selectRedoStackLength = (state: RootState) => state.slides.future.length;
+export const selectCanRedo = (state: RootState) =>
+  state.slides.future.length > 0;
+export const selectUndoStackLength = (state: RootState) =>
+  state.slides.past.length;
+export const selectRedoStackLength = (state: RootState) =>
+  state.slides.future.length;
 
 export default undoableSlidesReducer;

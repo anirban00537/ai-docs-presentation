@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createQuoteContent } from "../blocks/definitions";
+import { BLOCK_TYPES, createQuoteContent } from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const ProblemTwoQuotesLayout = {
@@ -12,15 +12,18 @@ export const ProblemTwoQuotesLayout = {
     const intro: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">Frustration is Universal</h2>\n\n<p style=\"text-align: center\">From the front lines to the C-suite, the lack of visibility is causing paralysis.</p>",
+      content:
+        '<h2 style="text-align: center">Frustration is Universal</h2>\n\n<p style="text-align: center">From the front lines to the C-suite, the lack of visibility is causing paralysis.</p>',
     };
 
     const quote1 = createQuoteContent();
-    quote1.quote = "“I spend half my day copy-pasting data between three different tools just to get my job done.”";
+    quote1.quote =
+      "“I spend half my day copy-pasting data between three different tools just to get my job done.”";
     quote1.author = "Senior Account Executive";
 
     const quote2 = createQuoteContent();
-    quote2.quote = "“I can't give the board a reliable forecast because the data is always 48 hours old.”";
+    quote2.quote =
+      "“I can't give the board a reliable forecast because the data is always 48 hours old.”";
     quote2.author = "VP of Sales Operations";
 
     return [

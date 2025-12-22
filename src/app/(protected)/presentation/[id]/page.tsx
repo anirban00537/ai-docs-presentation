@@ -7,21 +7,21 @@ import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { motion } from "framer-motion";
 import {
-  SlideCard,
-  SlidesSidebar,
-  PresentationTopBar,
-  GeneratingIndicator,
-  PresentationMode,
-  BlockDragPreview,
+  SlideContainer,
+  SlideNavigator,
+  EditorHeader,
+  ProgressIndicator,
+  PresentationView,
+  DragPreview,
   EditorBackground,
+  BlockSelectionProvider,
+  ToolbarPanel,
 } from "@/app/(protected)/presentation/[id]/editor";
-import { BlockFocusProvider } from "@/app/(protected)/presentation/[id]/editor/BlockFocusContext";
-import { LoadingScreen } from "@/app/(protected)/presentation/[id]/editor/LoadingScreen";
+import { LoadingOverlay } from "@/app/(protected)/presentation/[id]/editor/ui/LoadingOverlay";
 import { useEditorPage } from "./hooks/useEditorPage";
 import { usePresentationMode } from "./hooks/usePresentationMode";
 import { useAppSelector } from "@/store/hooks";
 import { selectPresentation, selectActiveSlideId } from "@/store/slices/slidesSlice";
-import { FloatingSidebar } from "./editor/FloatingSidebar";
 import { useUndoRedoKeyboardShortcuts } from "@/app/(protected)/presentation/[id]/hooks/useUndoRedo";
 
 // --- Main Page Component ---
@@ -102,7 +102,7 @@ const PresentationEditorPage = () => {
     return (
       <>
         <GoogleFontsLoader />
-        <LoadingScreen isGenerating={false} progress={null} />
+        <LoadingOverlay isGenerating={false} progress={null} />
       </>
     );
   }
@@ -112,7 +112,7 @@ const PresentationEditorPage = () => {
       <GoogleFontsLoader />
 
       {/* Presentation Mode Overlay */}
-      <PresentationMode
+      <PresentationView
         isPresenting={isPresenting}
         slides={slides}
         currentSlideIndex={currentSlideIndex}
@@ -129,14 +129,14 @@ const PresentationEditorPage = () => {
         onUpdateColumnWidths={handleUpdateColumnWidths}
       />
 
-      <PresentationTopBar onPresentClick={startPresentation} />
+      <EditorHeader onPresentClick={startPresentation} />
       
       <EditorBackground theme={theme} />
 
       {/* Scrollable content container */}
       <div className="min-h-screen overflow-y-auto pt-16 relative">
         {/* Slides Sidebar */}
-        <SlidesSidebar
+        <SlideNavigator
           slides={slides.filter(
             (slide) => slide && slide.rows && Array.isArray(slide.rows)
           )}
@@ -157,9 +157,9 @@ const PresentationEditorPage = () => {
             onDragEnd={handleDragEnd}
           >
             {/* Block Focus Provider for keyboard navigation */}
-            <BlockFocusProvider>
+            <BlockSelectionProvider>
               {/* Blocks Panel needs to be inside DndContext for drag to work */}
-              <FloatingSidebar presentationId={presentationId} />
+              <ToolbarPanel presentationId={presentationId} />
 
               <div className="flex flex-col gap-16">
                 {slides
@@ -183,7 +183,7 @@ const PresentationEditorPage = () => {
                         {index + 1}
                       </div>
                       
-                      <SlideCard
+                      <SlideContainer
                         slide={slide}
                         onUpdateBlock={handleUpdateBlock}
                         onDeleteRow={handleDeleteRow}
@@ -195,7 +195,7 @@ const PresentationEditorPage = () => {
                     </motion.div>
                   ))}
               </div>
-            </BlockFocusProvider>
+            </BlockSelectionProvider>
 
             {/* Drag Overlay */}
             <DragOverlay
@@ -205,10 +205,10 @@ const PresentationEditorPage = () => {
               }}
             >
               {activeBlock && (
-                <BlockDragPreview block={activeBlock} theme={theme} />
+                <DragPreview block={activeBlock} theme={theme} />
               )}
               {isBlockDragging && draggingBlockType && (
-                <BlockDragPreview blockType={draggingBlockType} theme={theme} />
+                <DragPreview blockType={draggingBlockType} theme={theme} />
               )}
             </DragOverlay>
           </DndContext>
@@ -216,7 +216,7 @@ const PresentationEditorPage = () => {
       </div>
 
       {/* Generating Indicator */}
-      <GeneratingIndicator
+      <ProgressIndicator
         isGenerating={isGeneratingSlides}
         progress={slideGenerationProgress}
         theme={theme}

@@ -4,7 +4,7 @@ import {
   BLOCK_TYPES,
   createPulseMetricContent,
   createGlassInsightContent,
-} from "../blocks/definitions";
+} from "../block/blocks/definitions";
 import { nanoid } from "@reduxjs/toolkit";
 
 export const MetricDashboardLayout: LayoutTemplate = {
@@ -19,7 +19,7 @@ export const MetricDashboardLayout: LayoutTemplate = {
         {
           id: nanoid(),
           type: BLOCK_TYPES.PROSEMIRROR,
-          content: "<p style=\"text-align: center\">Q3 Performance Overview</p>",
+          content: '<p style="text-align: center">Q3 Performance Overview</p>',
         } as Block,
       ],
     },

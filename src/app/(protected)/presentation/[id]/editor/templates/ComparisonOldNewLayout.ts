@@ -3,7 +3,7 @@ import type { Row } from "@/types/presentation";
 import {
   BLOCK_TYPES,
   createComparisonTableContent,
-} from "../blocks/definitions";
+} from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const ComparisonOldNewLayout = {
@@ -15,54 +15,55 @@ export const ComparisonOldNewLayout = {
     const intro: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">Transforming the Workflow: Then vs. Now</h2>\n\n<p style=\"text-align: center\">The traditional approach is fraught with inefficiencies and manual bottlenecks. Our modern solution streamlines operations, reducing friction and accelerating time-to-market.</p>",
+      content:
+        '<h2 style="text-align: center">Transforming the Workflow: Then vs. Now</h2>\n\n<p style="text-align: center">The traditional approach is fraught with inefficiencies and manual bottlenecks. Our modern solution streamlines operations, reducing friction and accelerating time-to-market.</p>',
     };
 
     const table = createComparisonTableContent();
     table.columns = [
-      { 
-        name: "Legacy Process", 
-        price: "High Friction", 
-      }, 
-      { 
-        name: "Our Solution", 
-        price: "Seamless", 
-      }
+      {
+        name: "Legacy Process",
+        price: "High Friction",
+      },
+      {
+        name: "Our Solution",
+        price: "Seamless",
+      },
     ];
     table.rows = [
       {
         feature: "Data Entry",
         values: [
-            "Manual, error-prone entry across multiple systems.",
-            "Automated sync with 99.9% accuracy."
+          "Manual, error-prone entry across multiple systems.",
+          "Automated sync with 99.9% accuracy.",
         ],
       },
       {
         feature: "Collaboration",
         values: [
-            "Siloed emails and disjointed feedback loops.",
-            "Real-time commenting in a unified workspace."
+          "Siloed emails and disjointed feedback loops.",
+          "Real-time commenting in a unified workspace.",
         ],
       },
       {
         feature: "Visibility",
         values: [
-            "Opaque status updates requiring meetings.",
-            "Live dashboards transparent to all stakeholders."
+          "Opaque status updates requiring meetings.",
+          "Live dashboards transparent to all stakeholders.",
         ],
       },
       {
         feature: "Scalability",
         values: [
-             "Requires linear headcount growth.",
-             "Elastic infrastructure that grows with you."
+          "Requires linear headcount growth.",
+          "Elastic infrastructure that grows with you.",
         ],
       },
-       {
+      {
         feature: "Compliance",
         values: [
-             "Reactive audits and potential liability.",
-             "Proactive, automated policy enforcement."
+          "Reactive audits and potential liability.",
+          "Proactive, automated policy enforcement.",
         ],
       },
     ];

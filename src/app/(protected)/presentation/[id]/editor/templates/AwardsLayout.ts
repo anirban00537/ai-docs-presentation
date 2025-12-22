@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createBadgeContent } from "../blocks/definitions";
+import { BLOCK_TYPES, createBadgeContent } from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const AwardsLayout = {
@@ -13,7 +13,8 @@ export const AwardsLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">Recognized Excellence</h2>\n\n<p style=\"text-align: center\">We are proud to be backed by the industry's most respected organizations.</p>",
+      content:
+        '<h2 style="text-align: center">Recognized Excellence</h2>\n\n<p style="text-align: center">We are proud to be backed by the industry\'s most respected organizations.</p>',
     };
 
     // Row 2: Badges

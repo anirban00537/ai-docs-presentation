@@ -3,7 +3,7 @@ import type { Row } from "@/types/presentation";
 import {
   BLOCK_TYPES,
   createComparisonTableContent,
-} from "../blocks/definitions";
+} from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const ComparisonLayout = {

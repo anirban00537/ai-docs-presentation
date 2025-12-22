@@ -1,6 +1,9 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createFeatureListContent } from "../blocks/definitions";
+import {
+  BLOCK_TYPES,
+  createFeatureListContent,
+} from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const DiscoveryInsightsLayout = {
@@ -12,7 +15,8 @@ export const DiscoveryInsightsLayout = {
     const intro: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">Strategic Discovery: Key Themes</h2>\n\n<p style=\"text-align: center\">We spoke with 15 key stakeholders. Here is a synthesis of the critical challenges and opportunities identified.</p>",
+      content:
+        '<h2 style="text-align: center">Strategic Discovery: Key Themes</h2>\n\n<p style="text-align: center">We spoke with 15 key stakeholders. Here is a synthesis of the critical challenges and opportunities identified.</p>',
     };
 
     const insights = createFeatureListContent();
@@ -22,22 +26,26 @@ export const DiscoveryInsightsLayout = {
       {
         icon: "🧩",
         title: "Fragmentation Fatigue",
-        description: "Teams are overwhelmed by using 4+ different tools for the same process. There is a strong desire for consolidation.",
+        description:
+          "Teams are overwhelmed by using 4+ different tools for the same process. There is a strong desire for consolidation.",
       },
       {
         icon: "⚡",
         title: "Speed vs. Quality",
-        description: "Current processes force a trade-off. Stakeholders want 'zero-compromise' velocity without sacrificing review standards.",
+        description:
+          "Current processes force a trade-off. Stakeholders want 'zero-compromise' velocity without sacrificing review standards.",
       },
       {
         icon: "🔒",
         title: "Security & Compliance",
-        description: "With recent reg changes, manual compliance checks are becoming a major risk factor and bottleneck.",
+        description:
+          "With recent reg changes, manual compliance checks are becoming a major risk factor and bottleneck.",
       },
       {
         icon: "📱",
         title: "Mobile Access",
-        description: "Field agents feel disconnected. A mobile-first experience is required to bring them into the digital loop.",
+        description:
+          "Field agents feel disconnected. A mobile-first experience is required to bring them into the digital loop.",
       },
     ];
 

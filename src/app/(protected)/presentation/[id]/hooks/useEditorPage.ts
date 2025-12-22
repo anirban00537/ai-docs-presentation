@@ -12,7 +12,7 @@ import {
   setTheme,
 } from "@/store/slices/slidesSlice";
 import { setPresentationId } from "@/store/middleware/slidesApiMiddleware";
-import { detectRowBlockType } from "@/app/(protected)/presentation/[id]/editor/blocks/utils";
+import { detectRowBlockType } from "@/app/(protected)/presentation/[id]/editor/block/blocks/utils";
 import {
   convertApiSlideToRedux,
   convertReduxSlideToApi,
@@ -22,7 +22,10 @@ import {
   usePresentation,
   useCreatePresentation,
 } from "@/hooks/use-presentation";
-import { useGenerateAndCreateSlides, useOutline } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
+import {
+  useGenerateAndCreateSlides,
+  useOutline,
+} from "@/app/(protected)/presentation/[id]/hooks/use-outline";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 import { useEditorDnd } from "./useEditorDnd";
@@ -220,7 +223,7 @@ export const useEditorPage = ({
 
         // Note: Backend will also check credits, but we can show a better UX here
         // The backend will return an error if credits are insufficient
-        
+
         hasStartedGeneration.current = true;
         setIsGeneratingSlides(true);
         dispatch(setSlides([]));
@@ -265,10 +268,12 @@ export const useEditorPage = ({
                 setIsGeneratingSlides(false);
                 setSlideGenerationProgress(null);
                 const errorMessage = chunk.message || "Unknown error";
-                
+
                 // Check if it's a credit-related error
-                if (errorMessage.toLowerCase().includes("insufficient credits") || 
-                    errorMessage.toLowerCase().includes("credits")) {
+                if (
+                  errorMessage.toLowerCase().includes("insufficient credits") ||
+                  errorMessage.toLowerCase().includes("credits")
+                ) {
                   toast.error(errorMessage, {
                     action: {
                       label: "View Subscription",

@@ -4,7 +4,7 @@ import {
   isLegacyProseMirrorFormat,
   isMarkdownFormat,
 } from "@/lib/markdown/prosemirror-converter";
-import { BLOCK_TYPES } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
+import { BLOCK_TYPES } from "@/app/(protected)/presentation/[id]/editor/block/blocks/definitions";
 
 /**
  * Migrate a single block's content from legacy JSON to Markdown if needed

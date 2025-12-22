@@ -1,6 +1,9 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createStatsCounterContent } from "../blocks/definitions";
+import {
+  BLOCK_TYPES,
+  createStatsCounterContent,
+} from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const OpportunityMetricsLayout = {
@@ -12,7 +15,8 @@ export const OpportunityMetricsLayout = {
     const header: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">A Massive Untapped Opportunity</h2>\n\n<p style=\"text-align: center\">The market is shifting rapidly. We are positioned to capture a significant share of this emerging $100B+ ecosystem.</p>",
+      content:
+        '<h2 style="text-align: center">A Massive Untapped Opportunity</h2>\n\n<p style="text-align: center">The market is shifting rapidly. We are positioned to capture a significant share of this emerging $100B+ ecosystem.</p>',
     };
 
     const stats = createStatsCounterContent();

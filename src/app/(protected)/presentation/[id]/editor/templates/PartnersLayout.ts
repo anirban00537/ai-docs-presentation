@@ -1,6 +1,9 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createLogoGridContent } from "../blocks/definitions";
+import {
+  BLOCK_TYPES,
+  createLogoGridContent,
+} from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const PartnersLayout = {
@@ -13,7 +16,8 @@ export const PartnersLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">Trusted by Industry Leaders</h2>\n\n<p style=\"text-align: center\">Powering innovation at 500+ global enterprises.</p>",
+      content:
+        '<h2 style="text-align: center">Trusted by Industry Leaders</h2>\n\n<p style="text-align: center">Powering innovation at 500+ global enterprises.</p>',
     };
 
     // Row 2: Logo Grid

@@ -1,6 +1,9 @@
 import { nanoid } from "nanoid";
 import type { Row } from "@/types/presentation";
-import { BLOCK_TYPES, createProgressBarContent } from "../blocks/definitions";
+import {
+  BLOCK_TYPES,
+  createProgressBarContent,
+} from "../block/blocks/definitions";
 import type { Block } from "@/types/presentation";
 
 export const ProgressLayout = {
@@ -13,7 +16,8 @@ export const ProgressLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "<h2 style=\"text-align: center\">Q3 Migration Status</h2>\n\n<p style=\"text-align: center\">Current tracking against our core infrastructure goals.</p>",
+      content:
+        '<h2 style="text-align: center">Q3 Migration Status</h2>\n\n<p style="text-align: center">Current tracking against our core infrastructure goals.</p>',
     };
 
     // Row 2: Progress Bars

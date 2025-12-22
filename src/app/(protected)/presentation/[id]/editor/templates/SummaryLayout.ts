@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { Row, Block } from "@/types/presentation";
 import type { LayoutTemplate } from "@/types/presentation";
-import { BLOCK_TYPES } from "../blocks/definitions";
+import { BLOCK_TYPES } from "../block/blocks/definitions";
 
 export const SummaryLayout: LayoutTemplate = {
   id: "summary-layout",
@@ -15,7 +15,11 @@ export const SummaryLayout: LayoutTemplate = {
       content: '<h1 style="text-align: center">Summary</h1>',
     };
 
-    const createCard = (num: number, title: string, description: string): Block => {
+    const createCard = (
+      num: number,
+      title: string,
+      description: string
+    ): Block => {
       const editorContent = `**${title}**: ${description}`;
 
       return {
