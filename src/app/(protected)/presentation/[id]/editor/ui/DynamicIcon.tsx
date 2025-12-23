@@ -38,20 +38,19 @@ export const DynamicIcon: React.FC<DynamicIconProps> = ({
     );
   }
 
-  // Fallback to rendering as emoji or text
-  return (
-    <span
-      className={className}
-      style={{
-        fontSize: typeof size === "number" ? `${size}px` : size,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        lineHeight: 1,
-        ...style,
-      }}
-    >
-      {name}
-    </span>
-  );
+  // Fallback to a default icon if the specified icon is not found
+  const DefaultIcon = (Icons as any)["IconSparkles"] || (Icons as any)["IconStar"];
+
+  if (DefaultIcon) {
+    return (
+      <DefaultIcon
+        size={size}
+        stroke={stroke}
+        className={className}
+        style={style}
+      />
+    );
+  }
+
+  return null;
 };
