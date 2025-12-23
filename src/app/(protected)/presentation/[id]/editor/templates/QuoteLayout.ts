@@ -7,7 +7,7 @@ export const QuoteLayout = {
   id: "quote-layout",
   name: "Inspirational Quotes",
   description: "Share wisdom with elegant typography",
-  icon: "💭",
+  icon: "IconQuote",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock: Block = {

@@ -15,7 +15,7 @@ export const FAQLayout: LayoutTemplate = {
   id: "faq-layout",
   name: "FAQ Section",
   description: "Answer common questions with expandable sections",
-  icon: "❓",
+  icon: "IconQuestionMark",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock = createProseMirrorBlock(

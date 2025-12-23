@@ -15,7 +15,7 @@ export const OfficeLocationLayout: LayoutTemplate = {
   id: "office-location-layout",
   name: "Office Location",
   description: "Showcase your workspace and company culture",
-  icon: "🏢",
+  icon: "IconBuildingSkyscraper",
   accent: {
     position: "left",
     size: 50,
@@ -32,9 +32,9 @@ export const OfficeLocationLayout: LayoutTemplate = {
     // Office Stats
     const stats = createStatsCounterContent();
     stats.stats = [
-      { value: 45, label: "K Sq Ft", icon: "📐", suffix: "" },
-      { value: 400, label: "Desks", icon: "🪑", suffix: "+" },
-      { value: 12, label: "Meeting Rooms", icon: "🤝", suffix: "" },
+      { value: 45, label: "K Sq Ft", icon: "IconRulerMeasure", suffix: "" },
+      { value: 400, label: "Desks", icon: "IconArmchair", suffix: "+" },
+      { value: 12, label: "Meeting Rooms", icon: "IconUsers", suffix: "" },
     ];
     stats.layout = "horizontal";
     stats.columns = 3;

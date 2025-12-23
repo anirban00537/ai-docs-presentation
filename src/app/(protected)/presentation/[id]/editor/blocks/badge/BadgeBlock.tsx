@@ -21,7 +21,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IconTrash } from "@tabler/icons-react";
-import { EmojiPickerTrigger } from "../../ui/LazyEmojiPicker";
+import { UniversalIconPicker } from "../../ui/UniversalIconPicker";
+import { DynamicIcon } from "../../ui/DynamicIcon";
 import { CommonCard } from "../CommonCard";
 
 interface BadgeBlockProps {
@@ -97,7 +98,7 @@ export const BadgeBlock = memo(function BadgeBlock({
         ...badges,
         {
           title: "New Achievement",
-          icon: "🎖️",
+          icon: "IconTrophy",
           date: new Date().getFullYear().toString(),
         },
       ],
@@ -159,12 +160,13 @@ export const BadgeBlock = memo(function BadgeBlock({
                     backdropFilter: "blur(8px)"
                   }}
                 >
-                  <EmojiPickerTrigger
-                    icon={badge.icon || "🏆"}
-                    onEmojiSelect={(emoji) => handleIconChange(index, emoji)}
+                  <UniversalIconPicker
+                    value={badge.icon || "IconTrophy"}
+                    onChange={(icon) => handleIconChange(index, icon)}
+                    theme={theme}
                     disabled={readOnly}
                     size="xl"
-                    className="bg-transparent"
+                    className="bg-transparent border-none shadow-none"
                   />
                 </div>
               </div>

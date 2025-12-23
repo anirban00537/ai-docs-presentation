@@ -7,7 +7,7 @@ export const CustomerQuotesLayout = {
   id: "customer-quotes-layout",
   name: "Customer Quotes",
   description: "Multiple quotes from customers for social proof",
-  icon: "👍",
+  icon: "IconThumbUp",
   getRows: (): Row[] => {
     const header: Block = {
       id: nanoid(),

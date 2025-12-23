@@ -15,7 +15,7 @@ export const HeroProductLayout: LayoutTemplate = {
   id: "hero-product-layout",
   name: "Hero Product Showcase",
   description: "High-impact product launch with visual focus",
-  icon: "🚀",
+  icon: "IconRocket",
   accent: {
     position: "left",
     size: 50,
@@ -32,10 +32,10 @@ export const HeroProductLayout: LayoutTemplate = {
     // Feature list with detailed specs
     const features = createFeatureListContent();
     features.features = [
-      { icon: "🔇", title: "Active Noise Cancellation", description: "Blocks 99.7% of ambient noise" },
-      { icon: "🔋", title: "60-Hour Battery", description: "Fast charging: 5 mins = 5 hours" },
-      { icon: "🎧", title: "Lossless Audio", description: "High-fidelity aptX™ HD support" },
-      { icon: "🎙️", title: "Studio Mic Array", description: "Crystal clear calls anywhere" },
+      { icon: "IconVolumeOff", title: "Active Noise Cancellation", description: "Blocks 99.7% of ambient noise" },
+      { icon: "IconBattery", title: "60-Hour Battery", description: "Fast charging: 5 mins = 5 hours" },
+      { icon: "IconHeadphones", title: "Lossless Audio", description: "High-fidelity aptX™ HD support" },
+      { icon: "IconMicrophone", title: "Studio Mic Array", description: "Crystal clear calls anywhere" },
     ];
     features.layout = "grid"; // Grid looks more premium for features
     features.columns = 2;
@@ -43,9 +43,9 @@ export const HeroProductLayout: LayoutTemplate = {
     // Trust Badges/Awards
     const badge = createBadgeContent();
     badge.badges = [
-      { title: "Best of CES 2024", icon: "🏆" },
-      { title: "Editor's Choice", icon: "⭐" },
-      { title: "Top Rated Design", icon: "🎨" },
+      { title: "Best of CES 2024", icon: "IconTrophy" },
+      { title: "Editor's Choice", icon: "IconStar" },
+      { title: "Top Rated Design", icon: "IconPalette" },
     ];
     badge.layout = "grid";
 

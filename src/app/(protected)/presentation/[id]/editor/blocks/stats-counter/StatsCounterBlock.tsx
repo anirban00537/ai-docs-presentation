@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
-import { EmojiPickerTrigger } from "../../ui/LazyEmojiPicker";
+import { UniversalIconPicker } from "../../ui/UniversalIconPicker";
 import { CommonCard } from "../CommonCard";
 
 interface StatsCounterBlockProps {
@@ -131,18 +131,13 @@ const StatItem = memo(function StatItem({
 
         {/* Icon */}
         <div className="mb-2 relative z-20">
-          <EmojiPickerTrigger
-            icon={stat.icon || "📊"}
-            onEmojiSelect={(emoji) => onIconChange(index, emoji)}
+          <UniversalIconPicker
+            value={stat.icon || "IconChartBar"}
+            onChange={(emoji) => onIconChange(index, emoji)}
+            theme={theme}
             disabled={readOnly}
-            size="lg"
-            className="w-16 h-16 rounded-2xl text-4xl shadow-sm border flex items-center justify-center transition-all group-hover/stat:scale-110 group-hover/stat:rotate-3"
-            style={{ 
-              backgroundColor: `${theme.primary}10`,
-              borderColor: `${theme.primary}20`,
-              backdropFilter: "blur(8px)"
-            }}
-            title="Change icon"
+            size="xl"
+            className="bg-transparent border-none shadow-none"
           />
         </div>
 
@@ -233,7 +228,7 @@ export const StatsCounterBlock = memo(function StatsCounterBlock({
         {
           value: 100,
           label: "New Stat",
-          icon: "🚀",
+          icon: "IconRocket",
           prefix: "",
           suffix: "+",
         },

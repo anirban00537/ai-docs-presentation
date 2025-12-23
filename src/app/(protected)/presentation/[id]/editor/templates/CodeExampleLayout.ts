@@ -7,7 +7,7 @@ export const CodeExampleLayout = {
   id: "code-example-layout",
   name: "Code Example",
   description: "Showcase code snippets with syntax highlighting",
-  icon: "💻",
+  icon: "IconDeviceLaptop",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock: Block = {
@@ -33,7 +33,7 @@ const deployment = await client.deploy({
   monitoring: true
 });
 
-console.log(\`🚀 Deployed successfully at: \${deployment.url}\`);`;
+console.log(\`[DEPLOYED] Deployed successfully at: \${deployment.url}\`);`;
     code.showLineNumbers = true;
     code.theme = "dark";
 

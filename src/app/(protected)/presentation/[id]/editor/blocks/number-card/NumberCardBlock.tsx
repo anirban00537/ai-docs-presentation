@@ -5,6 +5,7 @@ import {
   getDefaultNumberCardEditorContent,
   type NumberCardContent,
 } from "../definitions";
+import { UniversalIconPicker } from "../../ui/UniversalIconPicker";
 import { CommonCard } from "../CommonCard";
 
 interface NumberCardBlockProps {
@@ -44,11 +45,11 @@ export const NumberCardBlock = memo(function NumberCardBlock({
   );
 
   const handleIconChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (newIcon: string) => {
       if (readOnly) return;
       onUpdate({
         ...content,
-        icon: e.target.value,
+        icon: newIcon,
       });
     },
     [content, onUpdate, readOnly]
@@ -117,16 +118,16 @@ export const NumberCardBlock = memo(function NumberCardBlock({
               boxShadow: `0 0 0 0 ${theme.primary}00`,
             }}
           >
-            <input
-              type="text"
-              value={icon || number}
-              onChange={icon ? handleIconChange : handleNumberChange}
-              className="no-spinner bg-transparent border-none outline-none text-center w-full font-bold px-1"
-              style={{
-                color: theme.primary,
-              }}
-              readOnly={readOnly}
-            />
+            <UniversalIconPicker
+              value={icon}
+              onChange={handleIconChange}
+              theme={theme}
+              disabled={readOnly}
+              size="xl"
+              className="bg-transparent border-none shadow-none"
+            >
+              {number}
+            </UniversalIconPicker>
           </div>
         </div>
 

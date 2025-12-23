@@ -63,6 +63,18 @@ export const TimelineBlock = memo(function TimelineBlock({
     [content, onUpdate, steps]
   );
 
+  const handleStepIconChange = useCallback(
+    (stepIndex: number, icon: string) => {
+      const newSteps = [...steps];
+      newSteps[stepIndex] = { ...newSteps[stepIndex], icon };
+      onUpdate({
+        ...(content ?? createTimelineContent()),
+        steps: newSteps,
+      });
+    },
+    [content, onUpdate, steps]
+  );
+
   const addStep = useCallback(() => {
     onUpdate({
       ...(content ?? createTimelineContent()),
@@ -137,6 +149,7 @@ export const TimelineBlock = memo(function TimelineBlock({
                   theme={theme}
                   onTitleChange={handleStepTitleChange}
                   onDescriptionChange={handleStepDescriptionChange}
+                  onIconChange={handleStepIconChange}
                   readOnly={readOnly}
                 />
               ))}

@@ -7,7 +7,7 @@ export const ProgressLayout = {
   id: "progress-layout",
   name: "Progress Indicators",
   description: "Show progress and achievements",
-  icon: "📈",
+  icon: "IconTrendingUp",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock: Block = {

@@ -8,7 +8,7 @@ export const PricingThreeTierLayout: LayoutTemplate = {
   id: "pricing-three-tier-layout",
   name: "Pricing - 3 Tier",
   description: "Three-tier pricing table with a highlighted plan",
-  icon: "💲",
+  icon: "IconCurrencyDollar",
   getRows: (): Row[] => {
     const header: Block = {
       id: nanoid(),

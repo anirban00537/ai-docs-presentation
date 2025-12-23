@@ -15,7 +15,7 @@ export const ProductDemoLayout: LayoutTemplate = {
   id: "product-demo-layout",
   name: "Product Demo",
   description: "Feature-rich product walkthrough with visual emphasis",
-  icon: "💻",
+  icon: "IconDeviceLaptop",
   accent: {
     position: "right",
     size: 55,
@@ -32,10 +32,10 @@ export const ProductDemoLayout: LayoutTemplate = {
     // Feature Highlights - detailed benefits
     const features = createFeatureListContent();
     features.features = [
-      { icon: "⚡", title: "Real-Time Insights", description: "Visualize streams of data with <50ms latency." },
-      { icon: "🧠", title: "Predictive AI", description: "Forecast trends before they happen." },
-      { icon: "🔗", title: "Universal Connectors", description: "Integrate with 200+ tools (Salesforce, Hubspot, etc)." },
-      { icon: "🛡️", title: "Enterprise Grade", description: "SSO, Audit Logs, and Role-Based Access Control." },
+      { icon: "IconBolt", title: "Real-Time Insights", description: "Visualize streams of data with <50ms latency." },
+      { icon: "IconBrain", title: "Predictive AI", description: "Forecast trends before they happen." },
+      { icon: "IconLink", title: "Universal Connectors", description: "Integrate with 200+ tools (Salesforce, Hubspot, etc)." },
+      { icon: "IconShieldCheck", title: "Enterprise Grade", description: "SSO, Audit Logs, and Role-Based Access Control." },
     ];
     features.layout = "list"; // List works best for detailed text
 

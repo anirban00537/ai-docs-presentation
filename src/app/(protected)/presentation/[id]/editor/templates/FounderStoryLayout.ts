@@ -15,7 +15,7 @@ export const FounderStoryLayout: LayoutTemplate = {
   id: "founder-story-layout",
   name: "Founder Story",
   description: "Compelling executive profile with journey timeline",
-  icon: "👤",
+  icon: "IconUser",
   accent: {
     position: "left",
     size: 45,
@@ -39,10 +39,10 @@ export const FounderStoryLayout: LayoutTemplate = {
     // Milestone Timeline
     const timeline = createTimelineContent();
     timeline.steps = [
-      { icon: "💡", title: "2019", description: "Founded in Garage" },
-      { icon: "🚀", title: "2021", description: "Series A ($15M)" },
-      { icon: "🌍", title: "2023", description: "Global Expansion" },
-      { icon: "🦄", title: "2025", description: "Market Leader" },
+      { icon: "IconLamp", title: "2019", description: "Founded in Garage" },
+      { icon: "IconRocket", title: "2021", description: "Series A ($15M)" },
+      { icon: "IconWorld", title: "2023", description: "Global Expansion" },
+      { icon: "IconTrophy", title: "2025", description: "Market Leader" },
     ];
 
     return [

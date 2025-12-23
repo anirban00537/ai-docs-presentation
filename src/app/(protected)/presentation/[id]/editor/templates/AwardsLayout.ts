@@ -7,7 +7,7 @@ export const AwardsLayout = {
   id: "awards-layout",
   name: "Awards & Recognition",
   description: "Showcase achievements and certifications",
-  icon: "🏆",
+  icon: "IconTrophy",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock: Block = {
@@ -21,19 +21,19 @@ export const AwardsLayout = {
     const badges = createBadgeContent();
     badges.badges = [
       {
-        icon: "🏆",
+        icon: "IconTrophy",
         title: "Innovation of the Year",
         issuer: "Gartner Magic Quadrant",
         date: "2024",
       },
       {
-        icon: "⭐",
+        icon: "IconStar",
         title: "Leader in Enterprise",
         issuer: "G2 Crowd",
         date: "2024",
       },
       {
-        icon: "🎖️",
+        icon: "IconDiamond",
         title: "Best Security Solution",
         issuer: "TechCrunch Disrupt",
         date: "2023",

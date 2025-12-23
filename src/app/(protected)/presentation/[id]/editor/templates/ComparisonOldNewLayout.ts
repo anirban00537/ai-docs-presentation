@@ -10,7 +10,7 @@ export const ComparisonOldNewLayout = {
   id: "comparison-old-new-layout",
   name: "Old vs New",
   description: "Compare the old way with the new way",
-  icon: "⚖️",
+  icon: "IconArrowsLeftRight",
   getRows: (): Row[] => {
     const intro: Block = {
       id: nanoid(),

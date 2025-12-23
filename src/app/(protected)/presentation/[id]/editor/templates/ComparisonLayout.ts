@@ -10,7 +10,7 @@ export const ComparisonLayout = {
   id: "comparison-layout",
   name: "Plan Comparison",
   description: "Compare pricing plans side-by-side",
-  icon: "⚖️",
+  icon: "IconArrowsLeftRight",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock: Block = {

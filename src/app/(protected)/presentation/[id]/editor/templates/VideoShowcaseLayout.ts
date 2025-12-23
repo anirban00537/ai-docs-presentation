@@ -15,7 +15,7 @@ export const VideoShowcaseLayout: LayoutTemplate = {
   id: "video-showcase-layout",
   name: "Video Showcase",
   description: "Embed videos to showcase your product",
-  icon: "🎥",
+  icon: "IconVideo",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock = createProseMirrorBlock(

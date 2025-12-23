@@ -15,7 +15,7 @@ export const StatsLayout: LayoutTemplate = {
   id: "stats-layout",
   name: "Statistics Dashboard",
   description: "Showcase key metrics with animated counters",
-  icon: "📊",
+  icon: "IconChartPie",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock = createProseMirrorBlock(
@@ -31,19 +31,19 @@ export const StatsLayout: LayoutTemplate = {
       {
         value: 50000,
         label: "Requests / Sec",
-        icon: "⚡",
+        icon: "IconZap",
         suffix: "+",
       },
       {
         value: 35,
         label: "Global Regions",
-        icon: "🌍",
+        icon: "IconWorld",
         suffix: "",
       },
       {
         value: 99,
         label: "Uptime Guarantee",
-        icon: "🛡️",
+        icon: "IconShieldCheck",
         suffix: ".99%",
       },
     ];

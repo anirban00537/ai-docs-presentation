@@ -6,7 +6,7 @@ import {
 } from "@/lib/markdown/prosemirror-converter";
 
 export const createGlassInsightContent = (
-  icon: string = "💡",
+  icon: string = "IconBolt",
   text: string = "This is a key takeaway or insight that you want your audience to remember."
 ): GlassInsightContent => ({
   type: "glass-insight",

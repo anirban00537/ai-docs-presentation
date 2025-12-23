@@ -5,7 +5,7 @@ import {
   createFeatureListContent,
   type FeatureListContent,
 } from "../definitions";
-import { EmojiPickerTrigger } from "../../ui/LazyEmojiPicker";
+import { UniversalIconPicker } from "../../ui/UniversalIconPicker";
 import { CommonCard } from "../CommonCard";
 
 interface FeatureListBlockProps {
@@ -63,12 +63,13 @@ const FeatureItem = memo(function FeatureItem({
               backdropFilter: "blur(8px)"
             }}
           >
-            <EmojiPickerTrigger
-              icon={feature.icon || "✨"}
-              onEmojiSelect={(emoji) => onIconChange(index, emoji)}
+            <UniversalIconPicker
+              value={feature.icon || "IconStar"}
+              onChange={(icon) => onIconChange(index, icon)}
+              theme={theme}
               disabled={readOnly}
               size="xl"
-              className="bg-transparent"
+              className="bg-transparent border-none shadow-none"
             />
           </div>
         </div>

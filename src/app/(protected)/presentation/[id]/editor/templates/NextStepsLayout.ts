@@ -7,7 +7,7 @@ export const NextStepsLayout = {
   id: "next-steps-layout",
   name: "Next Steps",
   description: "Outline the next three actions to take",
-  icon: "➡️",
+  icon: "IconArrowRight",
   getRows: (): Row[] => {
     const header: Block = {
       id: nanoid(),
@@ -23,25 +23,25 @@ export const NextStepsLayout = {
         title: "Week 1: Kickoff & Strategy",
         description:
           "Align stakeholders, define success metrics, and finalise technical requirements. Delivery: Project Charter.",
-        icon: "🏁",
+        icon: "IconFlagCheck",
       },
       {
         title: "Week 2: Integration & Setup",
         description:
           "Connect data sources, configure RBAC, and set up the sandbox environment. Delivery: Functional Sandbox.",
-        icon: "🔌",
+        icon: "IconPlugConnected",
       },
       {
         title: "Week 3: Training & UAT",
         description:
           "Train power users and conduct User Acceptance Testing. Gather feedback and refine. Delivery: UAT Sign-off.",
-        icon: "👨‍🏫",
+        icon: "IconPresentation",
       },
       {
         title: "Week 4: Go Live!",
         description:
           "Full production launch, post-launch hypercare support, and celebration. Delivery: Live System.",
-        icon: "🚀",
+        icon: "IconRocket",
       },
     ];
 

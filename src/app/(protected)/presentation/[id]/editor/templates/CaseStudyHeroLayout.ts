@@ -15,7 +15,7 @@ export const CaseStudyHeroLayout: LayoutTemplate = {
   id: "case-study-hero-layout",
   name: "Case Study Hero",
   description: "Impactful success story with metrics and proof",
-  icon: "📈",
+  icon: "IconChartLine",
   accent: {
     position: "right",
     size: 50,

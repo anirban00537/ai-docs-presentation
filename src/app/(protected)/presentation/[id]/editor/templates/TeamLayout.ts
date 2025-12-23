@@ -15,7 +15,7 @@ export const TeamLayout: LayoutTemplate = {
   id: "team-layout",
   name: "Meet the Team",
   description: "Introduce your team members with style",
-  icon: "👥",
+  icon: "IconUsersGroup",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock = createProseMirrorBlock(

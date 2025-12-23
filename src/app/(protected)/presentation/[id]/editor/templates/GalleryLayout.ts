@@ -7,7 +7,7 @@ export const GalleryLayout = {
   id: "gallery-layout",
   name: "Image Gallery",
   description: "Showcase multiple images in a beautiful grid",
-  icon: "🖼️",
+  icon: "IconPhoto",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock: Block = {

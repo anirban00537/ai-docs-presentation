@@ -11,8 +11,12 @@ interface TimelineStepProps {
   theme: Theme;
   onTitleChange: (index: number, newDoc: ProseMirrorDocument) => void;
   onDescriptionChange: (index: number, newDoc: ProseMirrorDocument) => void;
+  onIconChange: (index: number, icon: string) => void;
   readOnly?: boolean;
 }
+
+import { UniversalIconPicker } from "../../ui/UniversalIconPicker";
+import { DynamicIcon } from "../../ui/DynamicIcon";
 
 export const TimelineStepComponent = memo(function TimelineStepComponent({
   step,
@@ -21,6 +25,7 @@ export const TimelineStepComponent = memo(function TimelineStepComponent({
   theme,
   onTitleChange,
   onDescriptionChange,
+  onIconChange,
   readOnly = false,
 }: TimelineStepProps) {
   const stepContent = step ?? createTimelineContent().steps[0];
@@ -39,17 +44,16 @@ export const TimelineStepComponent = memo(function TimelineStepComponent({
     <div className="relative flex gap-6">
       {/* Step Number Badge */}
       <div className="relative z-20 shrink-0">
-        <div 
-          className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black transition-all border shadow-sm"
-          style={{ 
-            backgroundColor: `${theme.primary}10`,
-            borderColor: `${theme.primary}20`,
-            color: theme.primary,
-            backdropFilter: "blur(8px)"
-          }}
-        >
-          {stepIndex + 1}
-        </div>
+          <UniversalIconPicker
+            value={stepContent?.icon || ""}
+            onChange={(icon) => onIconChange(stepIndex, icon)}
+            theme={theme}
+            disabled={readOnly}
+            size="md"
+            className="w-10 h-10 border-none shadow-none"
+          >
+            {!stepContent?.icon && (stepIndex + 1)}
+          </UniversalIconPicker>
       </div>
 
       {/* Content */}

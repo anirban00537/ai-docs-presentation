@@ -7,7 +7,7 @@ export const FeatureShowcaseLayout = {
   id: "feature-showcase-layout",
   name: "Feature Showcase",
   description: "Highlight product features with icons",
-  icon: "✨",
+  icon: "IconRocket",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock: Block = {
@@ -21,19 +21,19 @@ export const FeatureShowcaseLayout = {
     const features = createFeatureListContent();
     features.features = [
       {
-        icon: "🚀",
+        icon: "IconCloudUpload",
         title: "Deploy Anywhere",
         description:
           "One-click deployment to AWS, GCP, Azure, or your own metal. We abstract the complexity.",
       },
       {
-        icon: "🔒",
+        icon: "IconLockCheck",
         title: "Bank-Grade Security",
         description:
           "End-to-end encryption, role-based access control, and comprehensive audit logs built-in.",
       },
       {
-        icon: "🎨",
+        icon: "IconPalette",
         title: "Pixel-Perfect Design",
         description:
           "A component library that looks stunning out of the box, fully customizable to your brand.",

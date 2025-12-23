@@ -7,7 +7,7 @@ export const PartnersLayout = {
   id: "partners-layout",
   name: "Partners & Clients",
   description: "Showcase your partners and clients",
-  icon: "🤝",
+  icon: "IconUsers",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock: Block = {

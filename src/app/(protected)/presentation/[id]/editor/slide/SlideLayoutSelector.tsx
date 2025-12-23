@@ -11,6 +11,7 @@ import {
   layoutIconsMap,
 } from "../utils/layoutTemplates";
 import type { LayoutTemplate } from "@/types/presentation";
+import { DynamicIcon } from "../ui/DynamicIcon";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { motion, AnimatePresence } from "framer-motion";
@@ -114,17 +115,11 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
                     color: theme.primary,
                   }}
                 >
-                  {(() => {
-                    const IconComponent = layoutIconsMap[template.id];
-                    if (IconComponent) {
-                      return <IconComponent size={24} stroke={1.5} />;
-                    }
-                    return (
-                      <span className="text-2xl">
-                        {typeof template.icon === "string" ? template.icon : "📄"}
-                      </span>
-                    );
-                  })()}
+                  <DynamicIcon 
+                    name={template.icon as string} 
+                    size={24} 
+                    stroke={2} 
+                  />
                 </div>
 
                 {/* Label */}

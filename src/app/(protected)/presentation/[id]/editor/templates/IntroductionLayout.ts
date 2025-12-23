@@ -15,7 +15,7 @@ export const IntroductionLayout: LayoutTemplate = {
   id: "introduction",
   name: "Introduction",
   description: "Big title with small subtitle",
-  icon: "Heading",
+  icon: "IconHandWave",
   getRows: (): Row[] => {
     const spacerContent = createSpacerContent(120);
     

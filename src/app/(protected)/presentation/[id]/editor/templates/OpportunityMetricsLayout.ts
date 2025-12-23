@@ -7,7 +7,7 @@ export const OpportunityMetricsLayout = {
   id: "opportunity-metrics-layout",
   name: "Opportunity Metrics",
   description: "Highlight the market or opportunity with three key metrics",
-  icon: "📈",
+  icon: "IconChartLine",
   getRows: (): Row[] => {
     const header: Block = {
       id: nanoid(),
@@ -22,19 +22,19 @@ export const OpportunityMetricsLayout = {
         value: 125,
         label: "Total Addressable Market",
         suffix: "B",
-        icon: "🌍",
+        icon: "IconWorld",
       },
       {
         value: 42,
         label: "Year-over-Year Growth",
         suffix: "%",
-        icon: "📈",
+        icon: "IconChartLine",
       },
       {
         value: 10,
         label: "Active Early Adopters",
         suffix: "k+",
-        icon: "🚀",
+        icon: "IconRocket",
       },
     ];
     stats.columns = 3;

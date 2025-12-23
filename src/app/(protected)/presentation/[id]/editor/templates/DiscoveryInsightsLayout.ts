@@ -7,7 +7,7 @@ export const DiscoveryInsightsLayout = {
   id: "discovery-insights-layout",
   name: "Discovery Call Insights",
   description: "Summarize key findings from discovery calls",
-  icon: "🔍",
+  icon: "IconSearch",
   getRows: (): Row[] => {
     const intro: Block = {
       id: nanoid(),
@@ -21,25 +21,25 @@ export const DiscoveryInsightsLayout = {
     insights.columns = 2; // 2x2 grid is often cleaner for 4 items with text
     insights.features = [
       {
-        icon: "🧩",
+        icon: "IconPuzzle",
         title: "Fragmentation Fatigue",
         description:
           "Teams are overwhelmed by using 4+ different tools for the same process. There is a strong desire for consolidation.",
       },
       {
-        icon: "⚡",
+        icon: "IconBolt",
         title: "Speed vs. Quality",
         description:
           "Current processes force a trade-off. Stakeholders want 'zero-compromise' velocity without sacrificing review standards.",
       },
       {
-        icon: "🔒",
+        icon: "IconLock",
         title: "Security & Compliance",
         description:
           "With recent reg changes, manual compliance checks are becoming a major risk factor and bottleneck.",
       },
       {
-        icon: "📱",
+        icon: "IconDeviceMobile",
         title: "Mobile Access",
         description:
           "Field agents feel disconnected. A mobile-first experience is required to bring them into the digital loop.",

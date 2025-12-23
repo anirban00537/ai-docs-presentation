@@ -15,7 +15,7 @@ export const TestimonialLayout: LayoutTemplate = {
   id: "testimonial-layout",
   name: "Testimonials",
   description: "Customer testimonials and reviews",
-  icon: "💬",
+  icon: "IconMessageChat",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock = createProseMirrorBlock(

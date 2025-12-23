@@ -2,7 +2,7 @@ import { CodeTerminalContentSchema, type CodeTerminalContent } from "@/types/pre
 
 export const createCodeTerminalContent = (
   command: string = "npm install butterfast",
-  output: string = "✨ Success! Added 32 packages in 0.5s"
+  output: string = "[DONE] Success! Added 32 packages in 0.5s"
 ): CodeTerminalContent => ({
   type: "code-terminal",
   command,

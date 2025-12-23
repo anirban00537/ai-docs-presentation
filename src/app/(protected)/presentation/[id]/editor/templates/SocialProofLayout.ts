@@ -7,7 +7,7 @@ export const SocialProofLayout = {
   id: "social-proof-layout",
   name: "Social Proof",
   description: "Display social media stats and ratings",
-  icon: "📱",
+  icon: "IconDeviceMobile",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock: Block = {

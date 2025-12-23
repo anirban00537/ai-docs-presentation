@@ -10,7 +10,7 @@ export const TargetAudiencesLayout = {
   id: "target-audiences-layout",
   name: "Target Audiences",
   description: "Highlight who this is for",
-  icon: "🎯",
+  icon: "IconTarget",
   getRows: (): Row[] => {
     const heading: Block = {
       id: nanoid(),
@@ -22,25 +22,25 @@ export const TargetAudiencesLayout = {
     const audiences = createFeatureListContent();
     audiences.features = [
       {
-        icon: "💻",
+        icon: "IconDeviceLaptop",
         title: "Engineering Leads",
         description:
           "Eliminate boilerplate code and reduce technical debt with our standardized SDKs and APIs.",
       },
       {
-        icon: "🚀",
+        icon: "IconRocket",
         title: "Product Managers",
         description:
           "Accelerate time-to-market by 2x. Ship features, not infrastructure, and iterate based on real user data.",
       },
       {
-        icon: "💰",
+        icon: "IconCash",
         title: "Sales Leaders",
         description:
           "Unblock deals faster by passing security reviews instantly with our pre-certified compliance module.",
       },
       {
-        icon: "👔",
+        icon: "IconBriefcase",
         title: "C-Suite",
         description:
           "Gain real-time visibility into ROI and operational efficiency across the entire global portfolio.",

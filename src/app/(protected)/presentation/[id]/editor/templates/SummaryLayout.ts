@@ -7,7 +7,7 @@ export const SummaryLayout: LayoutTemplate = {
   id: "summary-layout",
   name: "Summary",
   description: "Executive summary with key points organized in two columns.",
-  icon: "📋",
+  icon: "IconListCheck",
   getRows: (): Row[] => {
     const headerBlock: Block = {
       id: nanoid(),

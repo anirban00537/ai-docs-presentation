@@ -15,7 +15,7 @@ export const TeamSpotlightLayout: LayoutTemplate = {
   id: "team-spotlight-layout",
   name: "Team Spotlight",
   description: "Leadership profile with credentials and bio",
-  icon: "⭐",
+  icon: "IconStar",
   accent: {
     position: "left",
     size: 45, // Slightly smaller to give text room
@@ -39,10 +39,10 @@ export const TeamSpotlightLayout: LayoutTemplate = {
     // Key Achievements/Skills Badges
     const badges = createBadgeContent();
     badges.badges = [
-      { title: "Ph.D. CS", icon: "🎓" },
-      { title: "AI Expert", icon: "🤖" },
-      { title: "Patents: 12", icon: "📜" },
-      { title: "Speaker", icon: "🎤" },
+      { title: "Ph.D. CS", icon: "IconSchool" },
+      { title: "AI Expert", icon: "IconRobot" },
+      { title: "Patents: 12", icon: "IconScroll" },
+      { title: "Speaker", icon: "IconMicrophone" },
     ];
     badges.layout = "grid";
 

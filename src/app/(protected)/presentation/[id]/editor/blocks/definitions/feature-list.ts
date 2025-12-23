@@ -9,12 +9,12 @@ export const createFeatureListContent = (): FeatureListContent => ({
   type: "feature-list",
   features: [
     {
-      icon: "🚀",
+      icon: "IconRocket",
       title: "Fast Performance",
       description: "Lightning fast performance with optimized code",
     },
     {
-      icon: "🔒",
+      icon: "IconLock",
       title: "Secure",
       description: "Enterprise-grade security and encryption",
     },
@@ -40,7 +40,7 @@ export const normalizeFeatureListContent = (
           : typeof feature.description === "string"
           ? feature.description
           : "Feature description",
-        icon: typeof feature.icon === "string" ? feature.icon : "✨",
+        icon: typeof feature.icon === "string" ? feature.icon : "IconStar",
       }))
     : [];
 

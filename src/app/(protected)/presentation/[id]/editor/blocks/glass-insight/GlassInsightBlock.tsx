@@ -5,7 +5,7 @@ import {
   type GlassInsightContent,
   createGlassInsightContent,
 } from "../definitions";
-import { EmojiPickerTrigger } from "../../ui/LazyEmojiPicker";
+import { UniversalIconPicker } from "../../ui/UniversalIconPicker";
 import { CommonCard } from "../CommonCard";
 
 interface GlassInsightBlockProps {
@@ -24,7 +24,7 @@ export const GlassInsightBlock = memo(function GlassInsightBlock({
   readOnly = false,
 }: GlassInsightBlockProps) {
   const content = block.content as GlassInsightContent;
-  const icon = content?.icon ?? "💡";
+  const icon = content?.icon ?? "IconLightning";
 
   const editorContent = useMemo(() => {
     return content?.editorContent ?? createGlassInsightContent().editorContent;
@@ -69,12 +69,13 @@ export const GlassInsightBlock = memo(function GlassInsightBlock({
               backdropFilter: "blur(8px)"
             }}
           >
-            <EmojiPickerTrigger
-              icon={icon}
-              onEmojiSelect={handleIconChange}
+            <UniversalIconPicker
+              value={icon || "IconLightning"}
+              onChange={handleIconChange}
+              theme={theme}
               disabled={readOnly}
               size="xl"
-              className="bg-transparent"
+              className="bg-transparent border-none shadow-none"
             />
           </div>
         </div>

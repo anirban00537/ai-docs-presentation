@@ -15,7 +15,7 @@ export const EventAnnouncementLayout: LayoutTemplate = {
   id: "event-announcement-layout",
   name: "Event Announcement",
   description: "High-energy event invitation with atmospheric background",
-  icon: "🎪",
+  icon: "IconConfetti",
   accent: {
     position: "background",
     size: 50, // Higher opacity for dramatic effect
@@ -33,9 +33,9 @@ export const EventAnnouncementLayout: LayoutTemplate = {
     // Key Event Details
     const badges = createBadgeContent();
     badges.badges = [
-      { title: "Nov 15-18", icon: "📅" },
-      { title: "Moscone Center, SF", icon: "📍" },
-      { title: "10,000+ Attendees", icon: "👥" },
+      { title: "Nov 15-18", icon: "IconCalendar" },
+      { title: "Moscone Center, SF", icon: "IconMapPin" },
+      { title: "10,000+ Attendees", icon: "IconUsers" },
     ];
     badges.layout = "grid";
 

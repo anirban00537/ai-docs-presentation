@@ -15,7 +15,7 @@ export const CustomerJourneyLayout: LayoutTemplate = {
   id: "customer-journey-layout",
   name: "Customer Journey",
   description: "End-to-end user journey visualization with banner",
-  icon: "🗺️",
+  icon: "IconMapPin",
   accent: {
     position: "top",
     size: 25, // Slimmer banner for cleaner look
@@ -32,11 +32,11 @@ export const CustomerJourneyLayout: LayoutTemplate = {
     // Detailed Journey Timeline
     const timeline = createTimelineContent();
     timeline.steps = [
-      { icon: "🔍", title: "Discovery", description: "Organic Search & Social Media" },
-      { icon: "✨", title: "Activation", description: "Seamless Signup & Onboarding" },
-      { icon: "💎", title: "Value", description: "First 'Aha!' Moment in < 5 mins" },
-      { icon: "🔄", title: "Habit", description: "Weekly Active Usage Loop" },
-      { icon: "❤️", title: "Advocacy", description: "Referral & Community Leading" },
+      { icon: "IconSearch", title: "Discovery", description: "Organic Search & Social Media" },
+      { icon: "IconRocket", title: "Activation", description: "Seamless Signup & Onboarding" },
+      { icon: "IconDiamond", title: "Value", description: "First 'Aha!' Moment in < 5 mins" },
+      { icon: "IconRefresh", title: "Habit", description: "Weekly Active Usage Loop" },
+      { icon: "IconHeart", title: "Advocacy", description: "Referral & Community Leading" },
     ];
     // Note: 'orientation' is not a property of TimelineContent schema, it renders vertical by default or controlled by block component logic if implemented later.
     // Assuming default vertical list for now based on previous checks.

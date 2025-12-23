@@ -9,13 +9,13 @@ export const createBadgeContent = (): BadgeContent => ({
   type: "badge",
   badges: [
     {
-      icon: "🏆",
+      icon: "IconTrophy",
       title: "Best Product 2024",
       issuer: "Tech Awards",
       date: "2024",
     },
     {
-      icon: "⭐",
+      icon: "IconStar",
       title: "Top Rated",
       issuer: "Industry Leaders",
       date: "2024",

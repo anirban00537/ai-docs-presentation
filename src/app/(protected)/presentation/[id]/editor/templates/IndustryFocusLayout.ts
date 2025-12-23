@@ -15,7 +15,7 @@ export const IndustryFocusLayout: LayoutTemplate = {
   id: "industry-focus-layout",
   name: "Industry Focus",
   description: "Deep dive market analysis with visual context",
-  icon: "🏭",
+  icon: "IconBuildingFactory",
   accent: {
     position: "right",
     size: 40,
@@ -37,9 +37,9 @@ export const IndustryFocusLayout: LayoutTemplate = {
     // Core Trends List
     const features = createFeatureListContent();
     features.features = [
-      { icon: "📱", title: "Neobank Adoption", description: "Expected to reach 45% of global population" },
-      { icon: "💳", title: "Embedded Finance", description: "Non-financial apps integrating payments" },
-      { icon: "⛓️", title: "Blockchain Infrastructure", description: "Reducing settlement times to near-zero" },
+      { icon: "IconDeviceMobile", title: "Neobank Adoption", description: "Expected to reach 45% of global population" },
+      { icon: "IconCreditCard", title: "Embedded Finance", description: "Non-financial apps integrating payments" },
+      { icon: "IconLink", title: "Blockchain Infrastructure", description: "Reducing settlement times to near-zero" },
     ];
     features.layout = "list";
 

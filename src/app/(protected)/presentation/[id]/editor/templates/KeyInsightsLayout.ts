@@ -15,7 +15,7 @@ export const KeyInsightsLayout: LayoutTemplate = {
   id: "key-insights",
   name: "Strategic Takeaways",
   description: "Highlighted key points in glass cards",
-  icon: "Lightbulb",
+  icon: "IconBolt",
   getRows: (): Row[] => {
     // Row 1: Header
     const headerBlock = createProseMirrorBlock(
@@ -33,14 +33,14 @@ export const KeyInsightsLayout: LayoutTemplate = {
           createTypedBlock(
             BLOCK_TYPES.GLASS_INSIGHT,
             createGlassInsightContent(
-              "🎯",
+              "IconTarget",
               "Focus on product-led growth. By reducing friction in the signup process, we aim to capture 30% more varied user segments."
             )
           ),
           createTypedBlock(
             BLOCK_TYPES.GLASS_INSIGHT,
             createGlassInsightContent(
-              "🤝",
+              "IconUsers",
               "Strengthen partnership ecosystem. Collaborating with key industry players will unlock new distribution channels."
             )
           ),
@@ -52,14 +52,14 @@ export const KeyInsightsLayout: LayoutTemplate = {
           createTypedBlock(
             BLOCK_TYPES.GLASS_INSIGHT,
             createGlassInsightContent(
-              "💡",
+              "IconBrain",
               "Invest in AI-driven personalization. Tailoring the user experience based on behavior will drive higher retention."
             )
           ),
           createTypedBlock(
             BLOCK_TYPES.GLASS_INSIGHT,
             createGlassInsightContent(
-              "⚡️",
+              "IconActivity",
               "Accelerate technical debt repayment. Dedicating 20% of engineering time to refactoring will improve stability."
             )
           ),

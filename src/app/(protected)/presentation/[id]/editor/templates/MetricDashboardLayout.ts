@@ -19,7 +19,7 @@ export const MetricDashboardLayout: LayoutTemplate = {
   id: "metric-dashboard",
   name: "Growth Metrics Dashboard",
   description: "High-level KPI overview with pulse charts",
-  icon: "ChartBar",
+  icon: "IconChartBar",
   getRows: (): Row[] => {
     // Row 1: Header
     const headerBlock = createProseMirrorBlock(
@@ -54,14 +54,14 @@ export const MetricDashboardLayout: LayoutTemplate = {
           createTypedBlock(
             BLOCK_TYPES.GLASS_INSIGHT,
             createGlassInsightContent(
-              "🚀",
+              "IconRocket",
               "Our growth velocity has accelerated significantly this quarter, driven largely by the new enterprise tier adoption."
             )
           ),
           createTypedBlock(
             BLOCK_TYPES.GLASS_INSIGHT,
             createGlassInsightContent(
-              "📉",
+              "IconTrendingDown",
               "Churn reduction initiatives are working. We've seen a 12% drop in cancellations after implementing the new onboarding flow."
             )
           ),

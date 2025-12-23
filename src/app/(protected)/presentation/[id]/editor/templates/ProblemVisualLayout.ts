@@ -15,7 +15,7 @@ export const ProblemVisualLayout: LayoutTemplate = {
   id: "problem-visual-layout",
   name: "Problem Visual",
   description: "Impactful problem statement emphasizing the cost of inaction",
-  icon: "😰",
+  icon: "IconAlertTriangle",
   accent: {
     position: "top",
     size: 40,
@@ -32,9 +32,9 @@ export const ProblemVisualLayout: LayoutTemplate = {
     // Supporting Stats - Quantifying the pain
     const stats = createStatsCounterContent();
     stats.stats = [
-      { value: 12, label: "Hours lost/week", icon: "⌛", suffix: "" },
-      { value: 450, label: "Billion lost/yr", icon: "📉", prefix: "$" },
-      { value: 85, label: "Employee Burnout", icon: "🔥", suffix: "%" },
+      { value: 12, label: "Hours lost/week", icon: "IconHourglass", suffix: "" },
+      { value: 450, label: "Billion lost/yr", icon: "IconChartLine", prefix: "$" },
+      { value: 85, label: "Employee Burnout", icon: "IconFlame", suffix: "%" },
     ];
     stats.layout = "horizontal";
     stats.columns = 3;

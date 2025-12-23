@@ -11,7 +11,7 @@ export const CustomerStoriesLayout = {
   id: "customer-stories-layout",
   name: "Customer Stories",
   description: "Narrative of customer success with proof points",
-  icon: "📚",
+  icon: "IconBook",
   getRows: (): Row[] => {
     const header: Block = {
       id: nanoid(),
@@ -27,25 +27,25 @@ export const CustomerStoriesLayout = {
         title: "The Challenge",
         description:
           "Acme Corp faced fragmented data across 12 regions, leading to a 2-week delay in monthly reporting and strategic blind spots.",
-        icon: "🔥",
+        icon: "IconFlame",
       },
       {
         title: "The Solution",
         description:
           "They unified their data pipeline using our Enterprise Connect platform, creating a single source of truth for all regional KPIs.",
-        icon: "💡",
+        icon: "IconLamp",
       },
       {
         title: "Implementation",
         description:
           "Deployed in just 6 weeks with zero downtime. 500+ users onboarded with role-based access control.",
-        icon: "🚀",
+        icon: "IconRocket",
       },
       {
         title: "The Outcome",
         description:
           "Real-time visibility into global ops. 30% OpEx reduction and 4x faster decision-making cycles.",
-        icon: "📈",
+        icon: "IconChartLine",
       },
     ];
 

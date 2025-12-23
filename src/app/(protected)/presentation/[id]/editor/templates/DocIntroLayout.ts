@@ -11,7 +11,7 @@ export const DocIntroLayout = {
   id: "doc-intro-layout",
   name: "Document Intro",
   description: "Introductory page for docs or proposals",
-  icon: "📑",
+  icon: "IconFileText",
   getRows: (): Row[] => {
     const intro: Block = {
       id: nanoid(),
@@ -25,25 +25,25 @@ export const DocIntroLayout = {
     sections.columns = 2; // 2x2 grid for 4 items
     sections.features = [
       {
-        icon: "🎯",
+        icon: "IconTarget",
         title: "Strategic Vision",
         description:
           "To become the market leader in automated workflows by delivering a zero-touch experience for enterprise clients by Q4.",
       },
       {
-        icon: "🗺️",
+        icon: "IconMap",
         title: "Scope & Deliverables",
         description:
           "Includes the core platform rebuild, new API gateway, and the customer migration wizard. Out of scope: Legacy mobile app updates.",
       },
       {
-        icon: "📅",
+        icon: "IconCalendar",
         title: "Timeline & Milestones",
         description:
           "Phase 1 (Planning: June 1-15. Phase 2 (Dev): June 15 - Aug 15. Phase 3 (QA/Launch): Aug 15 - Sept 1.",
       },
       {
-        icon: "📊",
+        icon: "IconChartBar",
         title: "Success Metrics",
         description:
           "Targeting 99.99% uptime, <100ms API latency, and a 20% increase in user retention post-migration.",

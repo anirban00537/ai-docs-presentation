@@ -7,7 +7,7 @@ export const ProblemSupportingPointsLayout = {
   id: "problem-supporting-points-layout",
   name: "Problem + Supporting Points",
   description: "Problem statement with two reinforcing points",
-  icon: "📝",
+  icon: "IconNote",
   getRows: (): Row[] => {
     const statement: Block = {
       id: nanoid(),
@@ -19,13 +19,13 @@ export const ProblemSupportingPointsLayout = {
     const features = createFeatureListContent();
     features.features = [
       {
-        icon: "🐌",
+        icon: "IconBoltOff",
         title: "Velocity Drag",
         description:
           "Every new feature requires weeks of manual regression testing, killing momentum and delaying time-to-revenue.",
       },
       {
-        icon: "💸",
+        icon: "IconMoodDollar",
         title: "Cost of Maintenance",
         description:
           "80% of engineering budget is spent keeping the lights on, leaving only 20% for actual value creation.",

@@ -11,13 +11,13 @@ export const createStatsCounterContent = (): StatsCounterContent => ({
     {
       value: 10000,
       label: "Active Users",
-      icon: "👥",
+      icon: "IconUsers",
       suffix: "+",
     },
     {
       value: 99,
       label: "Uptime",
-      icon: "⚡",
+      icon: "IconActivity",
       suffix: "%",
     },
   ],

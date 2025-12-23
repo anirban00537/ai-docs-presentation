@@ -7,7 +7,7 @@ export const ProblemImageLayout = {
   id: "problem-image-layout",
   name: "Problem with Visual",
   description: "Problem statement paired with an illustrative image",
-  icon: "🖼️",
+  icon: "IconPhoto",
   getRows: (): Row[] => {
     const copy: Block = {
       id: nanoid(),

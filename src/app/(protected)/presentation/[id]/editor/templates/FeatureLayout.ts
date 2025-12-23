@@ -7,7 +7,7 @@ export const FeatureLayout = {
   id: "feature-layout",
   name: "Features Showcase",
   description: "Highlight key features with premium cards",
-  icon: "✨",
+  icon: "IconRocket",
   getRows: (): Row[] => {
     // Row 1: Section Title & Subtitle
     const headerBlock: Block = {

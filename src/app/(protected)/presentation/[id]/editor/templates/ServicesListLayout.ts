@@ -7,7 +7,7 @@ export const ServicesListLayout = {
   id: "services-list-layout",
   name: "Services List",
   description: "Grid of services or offerings",
-  icon: "🛠️",
+  icon: "IconTools",
   getRows: (): Row[] => {
     const header: Block = {
       id: nanoid(),
@@ -19,37 +19,37 @@ export const ServicesListLayout = {
     const features = createFeatureListContent();
     features.features = [
       {
-        icon: "🧭",
+        icon: "IconCompass",
         title: "Strategic Advisory",
         description:
           "Expert guidance on roadmap planning, digital transformation strategy, and change management.",
       },
       {
-        icon: "⚙️",
+        icon: "IconSettings",
         title: "Seamless Integration",
         description:
           "Pre-built connectors for Salesforce, SAP, and legacy mainframes. We handle the plumbing.",
       },
       {
-        icon: "📊",
+        icon: "IconChartBar",
         title: "Data Optimization",
         description:
           "Cleanse, enrich, and structure your data to unlock actionable insights from day one.",
       },
       {
-        icon: "🔒",
+        icon: "IconLockCheck",
         title: "Enterprise Security",
         description:
           "SOC2 Type II compliant, SSO ready, and fully auditable access logs for your compliance team.",
       },
       {
-        icon: "🎨",
+        icon: "IconPalette",
         title: "Custom Development",
         description:
           "Need something unique? Our solutions engineering team builds bespoke modules to fit your niche.",
       },
       {
-        icon: "🤝",
+        icon: "IconUsers",
         title: "24/7 Dedicated Support",
         description:
           "Round-the-clock access to senior engineers, not just a helpdesk script. We are your partners.",

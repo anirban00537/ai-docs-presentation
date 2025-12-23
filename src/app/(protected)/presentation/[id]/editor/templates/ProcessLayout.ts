@@ -7,7 +7,7 @@ export const ProcessLayout = {
   id: "process-layout",
   name: "Process & Timeline",
   description: "Visualize workflows with a step-by-step timeline",
-  icon: "⏱️",
+  icon: "IconSettings",
   getRows: (): Row[] => {
     // Row 1: Section Title & Subtitle
     const headerBlock: Block = {
@@ -22,21 +22,25 @@ export const ProcessLayout = {
     timeline.title = "The 4-Step Agile Flow";
     timeline.steps = [
       {
+        icon: "IconSearch",
         title: "Discovery & Audit",
         description:
           "We interview key stakeholders and audit existing infrastructure to identify gaps and opportunities.",
       },
       {
+        icon: "IconLayout",
         title: "Architecture & Design",
         description:
           "We create a comprehensive blueprint, including technical specs, UI/UX mocks, and a data migration plan.",
       },
       {
+        icon: "IconCode",
         title: "Development & QA",
         description:
           "Our engineers build in two-week sprints, with continuous integration and automated testing at every step.",
       },
       {
+        icon: "IconRocket",
         title: "Launch & Optimization",
         description:
           "We execute a phased rollout, monitoring performance metrics and gathering user feedback for immediate iteration.",

@@ -15,7 +15,7 @@ export const PricingLayout: LayoutTemplate = {
   id: "pricing-layout",
   name: "Pricing Plans",
   description: "Compare plans with clear features",
-  icon: "🏷️",
+  icon: "IconTag",
   getRows: (): Row[] => {
     // Row 1: Section Title
     const headerBlock = createProseMirrorBlock(

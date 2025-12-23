@@ -7,7 +7,7 @@ export const ProblemTwoQuotesLayout = {
   id: "problem-two-quotes-layout",
   name: "Problem + Two Quotes",
   description: "Problem statement reinforced by two user quotes",
-  icon: "🗣️",
+  icon: "IconMessages",
   getRows: (): Row[] => {
     const intro: Block = {
       id: nanoid(),

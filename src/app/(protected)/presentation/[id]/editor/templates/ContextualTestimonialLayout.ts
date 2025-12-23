@@ -15,7 +15,7 @@ export const ContextualTestimonialLayout: LayoutTemplate = {
   id: "contextual-testimonial-layout",
   name: "Contextual Testimonial",
   description: "Authentic customer feedback with visual context",
-  icon: "💬",
+  icon: "IconMessageChat",
   accent: {
     position: "right",
     size: 45,
@@ -32,7 +32,7 @@ export const ContextualTestimonialLayout: LayoutTemplate = {
     const ratingBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: "⭐⭐⭐⭐⭐\n\n**\"Best Developer Tool 2024\"** — *TechReview Weekly*",
+      content: "5/5 Stars\n\n**\"Best Developer Tool 2024\"** — *TechReview Weekly*",
     };
 
     // Customer Logo validation

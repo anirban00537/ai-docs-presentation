@@ -19,7 +19,7 @@ export const TechnicalWalkthroughLayout: LayoutTemplate = {
   id: "technical-walkthrough",
   name: "Developer Integration",
   description: "Step-by-step guide with code terminals",
-  icon: "Terminal",
+  icon: "IconTerminal",
   getRows: (): Row[] => {
     // Row 1: Header
     const headerBlock = createProseMirrorBlock(
@@ -66,7 +66,7 @@ export const TechnicalWalkthroughLayout: LayoutTemplate = {
             BLOCK_TYPES.CODE_TERMINAL,
             createCodeTerminalContent(
               "npx butterfast init",
-              "✅ Config file created at ./butterfast.json"
+              "[DONE] Config file created at ./butterfast.json"
             )
           ),
         ],
