@@ -32,8 +32,6 @@ interface LogoGridBlockProps {
   readOnly?: boolean;
 }
 
-import { CommonCard } from "../CommonCard";
-
 export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
   block,
   onUpdate,
@@ -94,73 +92,73 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
     onUpdate({ ...content, logos: newLogos });
   };
 
-  const gridClass =
-    columns === 3
-      ? "grid-cols-3"
-      : columns === 4
-      ? "grid-cols-4"
-      : columns === 5
-      ? "grid-cols-5"
-      : "grid-cols-6";
-
   return (
-    <BlockWrapper onEdit={handleOpenEdit} onAdd={addLogo} theme={theme}>
-      <div className={`grid ${gridClass} gap-8 w-full p-8`}>
-        {logos.map((logo, index) => (
-          <CommonCard
-            key={index}
-            theme={theme}
-            className="group/logo relative transition-all duration-300 hover:shadow-lg hover:scale-105"
+    <>
+      <BlockWrapper 
+        onEdit={handleOpenEdit} 
+        onAdd={addLogo} 
+        theme={theme} 
+        className="group/grid w-full h-full"
+      >
+        <div 
+          className="relative w-full p-8 md:p-12 overflow-hidden flex flex-col items-center justify-center min-h-[160px]"
+        >
+          {/* Subtle signature gradient blob */}
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-[0.03] blur-[100px] pointer-events-none transition-transform duration-1000 ease-out group-hover/grid:scale-125"
+            style={{ backgroundColor: theme.primary }}
+          />
+
+          <div 
+            className="grid gap-x-12 gap-y-10 relative z-10 w-full"
+            style={{
+              gridTemplateColumns: `repeat(auto-fit, minmax(min(100%, 180px), 1fr))`,
+              justifyItems: "center",
+              alignItems: "center"
+            }}
           >
-            <div 
-              className="flex flex-col items-center justify-center p-8 relative h-full w-full overflow-hidden aspect-square"
-              style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
-            >
-              {/* Minimal Gradient Background Blob */}
+            {logos.map((logo, index) => (
               <div
-                className="absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-[0.04] blur-xl pointer-events-none transition-transform duration-700 ease-out group-hover/logo:scale-150"
-                style={{ backgroundColor: theme.primary }}
-              />
-
-              {logo.image ? (
-                <img
-                  src={logo.image}
-                  alt=""
-                  className={`max-w-full max-h-12 object-contain transition-all duration-500 relative z-10 ${
-                    grayscale ? "grayscale group-hover/logo:grayscale-0" : ""
-                  }`}
-                />
-              ) : (
-                <div className="w-full relative z-10">
-                  <ProseMirrorEditor
-                    key={`${block.id}-logo-${index}`}
-                    blockId={`${block.id}-logo-${index}`}
-                    value={logo.name}
-                    onChange={(newContent) => handleNameChange(index, newContent)}
-                    placeholder="Company Name"
-                    className="text-center font-bold text-xs uppercase tracking-widest opacity-40 group-hover/logo:opacity-100 transition-opacity"
-                    theme={theme}
+                key={index}
+                className="group/logo relative flex items-center justify-center transition-all duration-500 hover:scale-110 active:scale-95 py-2 w-full max-w-[240px]"
+              >
+                {logo.image ? (
+                  <img
+                    src={logo.image}
+                    alt=""
+                    className={`max-w-full max-h-12 object-contain transition-all duration-700 ${
+                      grayscale ? "grayscale opacity-40 group-hover/logo:grayscale-0 group-hover/logo:opacity-100" : ""
+                    }`}
                   />
-                </div>
-              )}
+                ) : (
+                  <div className="w-full text-center" style={{ color: theme.headingColor }}>
+                    <ProseMirrorEditor
+                      key={`${block.id}-logo-${index}`}
+                      blockId={`${block.id}-logo-${index}`}
+                      value={logo.name}
+                      onChange={(newContent) => handleNameChange(index, newContent)}
+                      placeholder="Partner"
+                      className="font-black text-[11px] uppercase tracking-[0.3em] opacity-30 group-hover/logo:opacity-100 group-hover/logo:scale-105 transition-all duration-500"
+                      theme={theme}
+                    />
+                  </div>
+                )}
 
-              {/* Delete button (refined) */}
-              <div className="absolute top-2 right-2 opacity-0 group-hover/logo:opacity-100 transition-all z-20">
+                {/* Delete button */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     removeLogo(index);
                   }}
-                  className="p-2 rounded-xl hover:bg-red-500/10 transition-colors"
-                  style={{ color: "#ef4444" }}
+                  className="absolute -top-3 -right-3 p-2 opacity-0 group-hover/logo:opacity-100 transition-all text-red-500/50 hover:text-red-500 hover:scale-125 active:scale-90"
                 >
-                  <IconTrash size={16} />
+                  <IconTrash size={12} strokeWidth={2.5} />
                 </button>
               </div>
-            </div>
-          </CommonCard>
-        ))}
-      </div>
+            ))}
+          </div>
+        </div>
+      </BlockWrapper>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent
@@ -189,7 +187,7 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
             <div className="flex items-center gap-4">
               <div className="flex-1 space-y-2">
                 <Label style={{ color: isDark ? "#fff" : "#000" }}>
-                  Columns
+                  Columns (Desktop Preference)
                 </Label>
                 <Select value={tempColumns} onValueChange={setTempColumns}>
                   <SelectTrigger>
@@ -287,6 +285,6 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </BlockWrapper>
+    </>
   );
 };
