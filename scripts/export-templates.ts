@@ -9,80 +9,8 @@ import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
 
-// Import all templates
-import { FeatureLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/FeatureLayout";
-import { PricingLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/PricingLayout";
-import { TeamLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TeamLayout";
-import { StatsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/StatsLayout";
-import { TestimonialLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TestimonialLayout";
-import { ServicesListLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ServicesListLayout";
-import { SocialProofLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/SocialProofLayout";
-import { TargetAudiencesLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TargetAudiencesLayout";
-import { ProblemQuoteLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemQuoteLayout";
-import { ProblemSupportingPointsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemSupportingPointsLayout";
-import { ProblemTwoQuotesLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemTwoQuotesLayout";
-import { ProcessLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProcessLayout";
-import { ProgressLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProgressLayout";
-import { QuoteLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/QuoteLayout";
-import { OpportunityMetricsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/OpportunityMetricsLayout";
-import { PartnersLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/PartnersLayout";
-import { PricingThreeTierLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/PricingThreeTierLayout";
-import { ProblemImageLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ProblemImageLayout";
-import { FAQLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/FAQLayout";
-import { FeatureShowcaseLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/FeatureShowcaseLayout";
-import { GalleryLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/GalleryLayout";
-import { NextStepsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/NextStepsLayout";
-import { CustomerQuotesLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/CustomerQuotesLayout";
-import { CustomerStoriesLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/CustomerStoriesLayout";
-import { DiscoveryInsightsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/DiscoveryInsightsLayout";
-import { DocIntroLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/DocIntroLayout";
-import { ComparisonLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ComparisonLayout";
-import { ComparisonOldNewLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ComparisonOldNewLayout";
-import { CodeExampleLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/CodeExampleLayout";
-import { AwardsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/AwardsLayout";
-import { IntroductionLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/IntroductionLayout";
-import { KeyInsightsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/KeyInsightsLayout";
-import { MetricDashboardLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/MetricDashboardLayout";
-import { SummaryLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/SummaryLayout";
-import { TechnicalWalkthroughLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TechnicalWalkthroughLayout";
-
-const templates = [
-  FeatureLayout,
-  PricingLayout,
-  TeamLayout,
-  StatsLayout,
-  TestimonialLayout,
-  ServicesListLayout,
-  SocialProofLayout,
-  TargetAudiencesLayout,
-  ProblemQuoteLayout,
-  ProblemSupportingPointsLayout,
-  ProblemTwoQuotesLayout,
-  ProcessLayout,
-  ProgressLayout,
-  QuoteLayout,
-  OpportunityMetricsLayout,
-  PartnersLayout,
-  PricingThreeTierLayout,
-  ProblemImageLayout,
-  FAQLayout,
-  FeatureShowcaseLayout,
-  GalleryLayout,
-  NextStepsLayout,
-  CustomerQuotesLayout,
-  CustomerStoriesLayout,
-  DiscoveryInsightsLayout,
-  DocIntroLayout,
-  ComparisonLayout,
-  ComparisonOldNewLayout,
-  CodeExampleLayout,
-  AwardsLayout,
-  IntroductionLayout,
-  KeyInsightsLayout,
-  MetricDashboardLayout,
-  SummaryLayout,
-  TechnicalWalkthroughLayout,
-];
+// Import all templates from the central registry
+import { layoutTemplates } from "../src/app/(protected)/presentation/[id]/editor/utils/layoutTemplates";
 
 /**
  * Normalize IDs to be deterministic
@@ -107,7 +35,7 @@ async function main() {
 
   const exports: any[] = [];
 
-  for (const template of templates) {
+  for (const template of layoutTemplates) {
     try {
       const rows = template.getRows();
       const normalizedRows = normalizeRows(rows);
@@ -118,6 +46,7 @@ async function main() {
         description: template.description,
         icon: template.icon,
         rows: normalizedRows,
+        accent: (template as any).accent,
       };
 
       exports.push(templateData);

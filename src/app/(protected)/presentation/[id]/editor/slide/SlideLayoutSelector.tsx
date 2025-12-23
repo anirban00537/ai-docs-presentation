@@ -15,6 +15,9 @@ import { DynamicIcon } from "../ui/DynamicIcon";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAdminLayouts } from "@/hooks/use-layouts";
+import { layoutsService } from "@/services/layouts";
+import { toast } from "sonner";
 
 interface SlideLayoutSelectorProps {
   isOpen: boolean;
@@ -29,6 +32,49 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
 }) => {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
+
+  const { data: adminLayouts, isLoading, error } = useAdminLayouts();
+  const [isFetchingDetails, setIsFetchingDetails] = React.useState<string | null>(null);
+
+  // Combine local templates with admin layouts from DB
+  // We prioritize DB layouts but can fallback to local if needed
+  const displayLayouts = adminLayouts ? adminLayouts.map((l: any) => ({
+    id: l.id,
+    name: l.name,
+    description: l.description,
+    icon: l.icon,
+    dbId: l.id,
+  })) : layoutTemplates;
+
+  const handleSelect = async (template: any) => {
+    if (template.dbId) {
+      setIsFetchingDetails(template.id);
+      try {
+        const response = await layoutsService.getLayout(template.dbId);
+        if (response.success) {
+          const fullLayout = response.data;
+          // Transform DB layout to LayoutTemplate format
+          const formattedTemplate: LayoutTemplate = {
+            ...fullLayout.data,
+            id: fullLayout.id,
+            getRows: () => fullLayout.data.rows
+          };
+          onSelectLayout(formattedTemplate);
+          onClose();
+        } else {
+          toast.error("Failed to load layout details");
+        }
+      } catch (err) {
+        console.error("Failed to fetch layout details", err);
+        toast.error("Error connecting to server");
+      } finally {
+        setIsFetchingDetails(null);
+      }
+    } else {
+      onSelectLayout(template);
+      onClose();
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -79,26 +125,33 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
             className="text-sm mt-1 opacity-50"
             style={{ color: isDark ? "#fff" : "#000" }}
           >
-            Select a template for your new slide
+            {isLoading ? "Loading templates..." : "Select a template for your new slide"}
           </p>
         </DialogHeader>
 
         {/* Layouts Grid */}
         <div className={`relative px-6 pb-6 overflow-y-auto max-h-[calc(85vh-100px)] ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}>
+          {error && (
+            <div className="text-center py-10 text-red-500">
+              Failed to load templates. Showing local fallback.
+            </div>
+          )}
+          
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
-            {layoutTemplates.map((template, index) => (
+            {displayLayouts.map((template: any, index: number) => (
               <motion.button
                 key={template.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.02 }}
-                onClick={() => {
-                  onSelectLayout(template);
-                  onClose();
-                }}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all hover:scale-105"
+                onClick={() => handleSelect(template)}
+                disabled={isFetchingDetails !== null}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
+                  isFetchingDetails === template.id ? "scale-95 opacity-50" : "hover:scale-105"
+                }`}
                 style={{
                   backgroundColor: "transparent",
+                  cursor: isFetchingDetails ? "wait" : "pointer",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = `${theme.primary}15`;
