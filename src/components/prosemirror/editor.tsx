@@ -881,12 +881,22 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
     </div>
   );
 }, (prevProps, nextProps) => {
-  // Custom comparison for memo - only re-render if content or readOnly changes
-  // Theme changes are handled via CSS and don't need full re-render
+  // Custom comparison for memo - re-render when content, readOnly, or THEME COLORS change
+  // Theme colors must be compared to ensure text colors update when theme changes
+  const prevTheme = prevProps.theme;
+  const nextTheme = nextProps.theme;
+  
+  // Check if theme colors changed
+  const themeColorsEqual = 
+    prevTheme?.bodyColor === nextTheme?.bodyColor &&
+    prevTheme?.headingColor === nextTheme?.headingColor &&
+    prevTheme?.fontFamily === nextTheme?.fontFamily;
+  
   return prevProps.value === nextProps.value &&
          prevProps.readOnly === nextProps.readOnly &&
          prevProps.blockId === nextProps.blockId &&
-         prevProps.placeholder === nextProps.placeholder;
+         prevProps.placeholder === nextProps.placeholder &&
+         themeColorsEqual;
 });
 
 export default ProseMirrorEditor;
