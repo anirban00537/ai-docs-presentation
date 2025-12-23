@@ -82,7 +82,7 @@ export const NumberCardBlock = memo(function NumberCardBlock({
       className="h-full w-full transition-all duration-300 hover:shadow-md"
     >
       <div
-        className="flex flex-col gap-6 p-8 h-full w-full relative overflow-hidden"
+        className="flex flex-col gap-8 p-8 h-full w-full relative overflow-hidden"
         style={{ 
           color: theme.headingColor,
           borderRadius: theme.cardBorderRadius ?? "12px"
@@ -95,7 +95,7 @@ export const NumberCardBlock = memo(function NumberCardBlock({
         />
 
         {/* Header: Icon/Number */}
-        <div className="flex flex-col items-start gap-4 z-10">
+        <div className="z-10">
           <style>{`
             .no-spinner::-webkit-outer-spin-button,
             .no-spinner::-webkit-inner-spin-button {
@@ -131,7 +131,7 @@ export const NumberCardBlock = memo(function NumberCardBlock({
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0 z-10 mt-2">
+        <div className="flex-1 min-w-0 z-10">
           <ProseMirrorEditor
             key={block.id}
             blockId={block.id}
