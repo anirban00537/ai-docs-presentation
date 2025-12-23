@@ -93,7 +93,7 @@ export function PricingCard({
             : "border-0"
         )}
         style={{
-          backgroundColor: "color-mix(in srgb, var(--secondary) 35%, var(--card))",
+          backgroundColor: "color-mix(in srgb, var(--secondary) 25%, var(--card))",
           backdropFilter: "blur(28px) saturate(190%)",
           WebkitBackdropFilter: "blur(28px) saturate(190%)",
           border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
