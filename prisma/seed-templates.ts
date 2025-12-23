@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2025-12-23T10:39:56.812Z
+ * Generated: 2025-12-23T11:00:28.786Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -15,6 +15,877 @@ const prisma = new PrismaClient();
  * Template data for seeding the Layout table
  */
 const layoutTemplates = [
+    {
+      name: "Hero Product Showcase",
+      description: "High-impact product launch with visual focus",
+      data: {
+        "id": "hero-product-layout",
+        "name": "Hero Product Showcase",
+        "description": "High-impact product launch with visual focus",
+        "icon": "IconRocket",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "# SonicFlow Pro X\n\n### Experience Sound in Its Purest Form\n\nEngineered for audiophiles who demand perfection. The SonicFlow Pro X redefines wireless audio with industry-leading noise cancellation and a 60-hour battery life that keeps the music playing as long as you do."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "feature-list",
+                "content": {
+                  "type": "feature-list",
+                  "features": [
+                    {
+                      "icon": "IconVolumeOff",
+                      "title": "Active Noise Cancellation",
+                      "description": "Blocks 99.7% of ambient noise"
+                    },
+                    {
+                      "icon": "IconBattery",
+                      "title": "60-Hour Battery",
+                      "description": "Fast charging: 5 mins = 5 hours"
+                    },
+                    {
+                      "icon": "IconHeadphones",
+                      "title": "Lossless Audio",
+                      "description": "High-fidelity aptX™ HD support"
+                    },
+                    {
+                      "icon": "IconMicrophone",
+                      "title": "Studio Mic Array",
+                      "description": "Crystal clear calls anywhere"
+                    }
+                  ],
+                  "layout": "grid",
+                  "columns": 2
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "badge",
+                "content": {
+                  "type": "badge",
+                  "badges": [
+                    {
+                      "title": "Best of CES 2024",
+                      "icon": "IconTrophy"
+                    },
+                    {
+                      "title": "Editor's Choice",
+                      "icon": "IconStar"
+                    },
+                    {
+                      "title": "Top Rated Design",
+                      "icon": "IconPalette"
+                    }
+                  ],
+                  "layout": "grid"
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-3",
+            "blocks": [
+              {
+                "id": "block-3-0",
+                "type": "prosemirror",
+                "content": "**Pre-order now for $299** · Shipping starts Jan 15"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "left",
+          "size": 50,
+          "url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800"
+        }
+      },
+      type: "admin",
+      tags: ["hero-product"],
+      isAdmin: true,
+    },
+    {
+      name: "Product Demo",
+      description: "Feature-rich product walkthrough with visual emphasis",
+      data: {
+        "id": "product-demo-layout",
+        "name": "Product Demo",
+        "description": "Feature-rich product walkthrough with visual emphasis",
+        "icon": "IconDeviceLaptop",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "# Analytics That Drive Action\n\nStop guessing. Start knowing. Our AI-driven dashboard uncovers hidden patterns in your data, giving you the clarity to make bold decisions."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "feature-list",
+                "content": {
+                  "type": "feature-list",
+                  "features": [
+                    {
+                      "icon": "IconBolt",
+                      "title": "Real-Time Insights",
+                      "description": "Visualize streams of data with <50ms latency."
+                    },
+                    {
+                      "icon": "IconBrain",
+                      "title": "Predictive AI",
+                      "description": "Forecast trends before they happen."
+                    },
+                    {
+                      "icon": "IconLink",
+                      "title": "Universal Connectors",
+                      "description": "Integrate with 200+ tools (Salesforce, Hubspot, etc)."
+                    },
+                    {
+                      "icon": "IconShieldCheck",
+                      "title": "Enterprise Grade",
+                      "description": "SSO, Audit Logs, and Role-Based Access Control."
+                    }
+                  ],
+                  "layout": "list"
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "**Start your 14-day free trial** · No credit card required\n\n[Book a live demo →](#)"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "right",
+          "size": 55,
+          "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200"
+        }
+      },
+      type: "admin",
+      tags: ["product-demo"],
+      isAdmin: true,
+    },
+    {
+      name: "Case Study Hero",
+      description: "Impactful success story with metrics and proof",
+      data: {
+        "id": "case-study-hero-layout",
+        "name": "Case Study Hero",
+        "description": "Impactful success story with metrics and proof",
+        "icon": "IconChartLine",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "logo-grid",
+                "content": {
+                  "type": "logo-grid",
+                  "logos": [
+                    {
+                      "name": "Acme Corp",
+                      "image": ""
+                    }
+                  ],
+                  "columns": 3,
+                  "grayscale": true
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "# How Acme Corp Tripled Revenue\n\nAcme Corp was struggling with siloed data and slow reporting. By implementing our **DataSynergy Platform**, they unified their analytics stack in just 3 weeks."
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "pulse-metric",
+                "content": {
+                  "type": "pulse-metric",
+                  "value": "+312%",
+                  "label": "Year-over-Year Revenue Growth",
+                  "trend": "up",
+                  "sparklineType": "smooth"
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-3",
+            "blocks": [
+              {
+                "id": "block-3-0",
+                "type": "prosemirror",
+                "content": "### Key Outcomes\n\n*   **40% Reduction** in operational costs\n*   **2.5x Faster** time-to-market for new features\n*   **98% Employee Satisfaction** with the new tools\n\n[Read the full case study →](#)"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "right",
+          "size": 50,
+          "url": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600"
+        }
+      },
+      type: "admin",
+      tags: ["case-study-hero"],
+      isAdmin: true,
+    },
+    {
+      name: "Founder Story",
+      description: "Compelling executive profile with journey timeline",
+      data: {
+        "id": "founder-story-layout",
+        "name": "Founder Story",
+        "description": "Compelling executive profile with journey timeline",
+        "icon": "IconUser",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "testimonial",
+                "content": {
+                  "type": "testimonial",
+                  "quote": "We didn't just want to build software; we wanted to change how the world collaborates. Every line of code writes our future.",
+                  "name": "Elena Rodriguez",
+                  "role": "Founder & CEO, NexusStream",
+                  "avatar": ""
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "### A Visionary Leader\n\nWith over 15 years in Silicon Valley, Elena has led engineering teams at Google and Amazon. She founded NexusStream to solve the fragmentation of remote work tools."
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "timeline",
+                "content": {
+                  "type": "timeline",
+                  "title": "<h2 style=\"text-align: center\">Our Process</h2>",
+                  "steps": [
+                    {
+                      "icon": "IconLamp",
+                      "title": "2019",
+                      "description": "Founded in Garage"
+                    },
+                    {
+                      "icon": "IconRocket",
+                      "title": "2021",
+                      "description": "Series A ($15M)"
+                    },
+                    {
+                      "icon": "IconWorld",
+                      "title": "2023",
+                      "description": "Global Expansion"
+                    },
+                    {
+                      "icon": "IconTrophy",
+                      "title": "2025",
+                      "description": "Market Leader"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "left",
+          "size": 45,
+          "url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800"
+        }
+      },
+      type: "admin",
+      tags: ["founder-story"],
+      isAdmin: true,
+    },
+    {
+      name: "Team Spotlight",
+      description: "Leadership profile with credentials and bio",
+      data: {
+        "id": "team-spotlight-layout",
+        "name": "Team Spotlight",
+        "description": "Leadership profile with credentials and bio",
+        "icon": "IconStar",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "# Dr. Sarah Chen\n### Chief Technology Officer"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "Sarah leads our global engineering division, overseeing AI research and infrastructure. With a Ph.D. in Computer Science from Stanford and previous leadership roles at **SpaceX** and **DeepMind**, she brings unparalleled technical vision to our team."
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "badge",
+                "content": {
+                  "type": "badge",
+                  "badges": [
+                    {
+                      "title": "Ph.D. CS",
+                      "icon": "IconSchool"
+                    },
+                    {
+                      "title": "AI Expert",
+                      "icon": "IconRobot"
+                    },
+                    {
+                      "title": "Patents: 12",
+                      "icon": "IconScroll"
+                    },
+                    {
+                      "title": "Speaker",
+                      "icon": "IconMicrophone"
+                    }
+                  ],
+                  "layout": "grid"
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-3",
+            "blocks": [
+              {
+                "id": "block-3-0",
+                "type": "prosemirror",
+                "content": "**Connect**\n\n[LinkedIn](https://linkedin.com) · [Twitter](https://twitter.com) · [ResearchGate](https://researchgate.net)"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "left",
+          "size": 45,
+          "url": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800"
+        }
+      },
+      type: "admin",
+      tags: ["team-spotlight"],
+      isAdmin: true,
+    },
+    {
+      name: "Problem Visual",
+      description: "Impactful problem statement emphasizing the cost of inaction",
+      data: {
+        "id": "problem-visual-layout",
+        "name": "Problem Visual",
+        "description": "Impactful problem statement emphasizing the cost of inaction",
+        "icon": "IconAlertTriangle",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "# The Hidden Cost of Disconnected Teams\n\nIn today's remote-first world, information silos are killing productivity. Teams are working harder, but achieving less."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "stats-counter",
+                "content": {
+                  "type": "stats-counter",
+                  "stats": [
+                    {
+                      "value": 12,
+                      "label": "Hours lost/week",
+                      "icon": "IconHourglass",
+                      "suffix": ""
+                    },
+                    {
+                      "value": 450,
+                      "label": "Billion lost/yr",
+                      "icon": "IconChartLine",
+                      "prefix": "$"
+                    },
+                    {
+                      "value": 85,
+                      "label": "Employee Burnout",
+                      "icon": "IconFlame",
+                      "suffix": "%"
+                    }
+                  ],
+                  "layout": "horizontal",
+                  "columns": 3
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "### The Reality\n\nWithout a unified operating system, knowledge workers spend **20% of their time** just looking for information. This is not sustainable."
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "top",
+          "size": 40,
+          "url": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600"
+        }
+      },
+      type: "admin",
+      tags: ["problem-visual"],
+      isAdmin: true,
+    },
+    {
+      name: "Event Announcement",
+      description: "High-energy event invitation with atmospheric background",
+      data: {
+        "id": "event-announcement-layout",
+        "name": "Event Announcement",
+        "description": "High-energy event invitation with atmospheric background",
+        "icon": "IconConfetti",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "# FutureTech Summit 2025\n\n### Where Innovation Meets Humanity"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "badge",
+                "content": {
+                  "type": "badge",
+                  "badges": [
+                    {
+                      "title": "Nov 15-18",
+                      "icon": "IconCalendar"
+                    },
+                    {
+                      "title": "Moscone Center, SF",
+                      "icon": "IconMapPin"
+                    },
+                    {
+                      "title": "10,000+ Attendees",
+                      "icon": "IconUsers"
+                    }
+                  ],
+                  "layout": "grid"
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "**Keynote Speakers:**\n\n*   **Satya Nadella** (Microsoft)\n*   **Sam Altman** (OpenAI)\n*   **Mira Murati** (OpenAI)\n\n*+ 50 more industry leaders*"
+              }
+            ]
+          },
+          {
+            "id": "row-3",
+            "blocks": [
+              {
+                "id": "block-3-0",
+                "type": "prosemirror",
+                "content": "### Early Bird Tickets Ending Soon\n\n[**Secure Your Spot →**](#)"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "background",
+          "size": 50,
+          "url": "https://images.unsplash.com/photo-1505373877841-8d43f703fb1e?w=1600"
+        }
+      },
+      type: "admin",
+      tags: ["event-announcement"],
+      isAdmin: true,
+    },
+    {
+      name: "Industry Focus",
+      description: "Deep dive market analysis with visual context",
+      data: {
+        "id": "industry-focus-layout",
+        "name": "Industry Focus",
+        "description": "Deep dive market analysis with visual context",
+        "icon": "IconBuildingFactory",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "# The Future of Digital Banking\n\nTraditional banking models are shifting. The next decade belongs to embedded finance and decentralized systems."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "pulse-metric",
+                "content": {
+                  "type": "pulse-metric",
+                  "value": "$25T",
+                  "label": "Projected Market Value by 2030",
+                  "trend": "up",
+                  "sparklineType": "bars"
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "feature-list",
+                "content": {
+                  "type": "feature-list",
+                  "features": [
+                    {
+                      "icon": "IconDeviceMobile",
+                      "title": "Neobank Adoption",
+                      "description": "Expected to reach 45% of global population"
+                    },
+                    {
+                      "icon": "IconCreditCard",
+                      "title": "Embedded Finance",
+                      "description": "Non-financial apps integrating payments"
+                    },
+                    {
+                      "icon": "IconLink",
+                      "title": "Blockchain Infrastructure",
+                      "description": "Reducing settlement times to near-zero"
+                    }
+                  ],
+                  "layout": "list"
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "right",
+          "size": 40,
+          "url": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800"
+        }
+      },
+      type: "admin",
+      tags: ["industry-focus"],
+      isAdmin: true,
+    },
+    {
+      name: "Contextual Testimonial",
+      description: "Authentic customer feedback with visual context",
+      data: {
+        "id": "contextual-testimonial-layout",
+        "name": "Contextual Testimonial",
+        "description": "Authentic customer feedback with visual context",
+        "icon": "IconMessageChat",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "testimonial",
+                "content": {
+                  "type": "testimonial",
+                  "quote": "The ROI was immediate. We saved 20 hours per week per engineer, and our deployment frequency doubled. It's the tool we didn't know we needed until we had it.",
+                  "name": "Marcus Johnson",
+                  "role": "VP of Engineering, CloudScale",
+                  "avatar": ""
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "5/5 Stars\n\n**\"Best Developer Tool 2024\"** — *TechReview Weekly*"
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "logo-grid",
+                "content": {
+                  "type": "logo-grid",
+                  "logos": [
+                    {
+                      "name": "CloudScale",
+                      "image": ""
+                    },
+                    {
+                      "name": "Forbes Tech Council",
+                      "image": ""
+                    },
+                    {
+                      "name": "G2 High Performer",
+                      "image": ""
+                    }
+                  ],
+                  "columns": 3,
+                  "grayscale": true
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "right",
+          "size": 45,
+          "url": "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800"
+        }
+      },
+      type: "admin",
+      tags: ["contextual-testimonial"],
+      isAdmin: true,
+    },
+    {
+      name: "Office Location",
+      description: "Showcase your workspace and company culture",
+      data: {
+        "id": "office-location-layout",
+        "name": "Office Location",
+        "description": "Showcase your workspace and company culture",
+        "icon": "IconBuildingSkyscraper",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "# San Francisco HQ\n\n**SoMa District**\n500 Howard Street, Suite 400\nSan Francisco, CA 94105"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "stats-counter",
+                "content": {
+                  "type": "stats-counter",
+                  "stats": [
+                    {
+                      "value": 45,
+                      "label": "K Sq Ft",
+                      "icon": "IconRulerMeasure",
+                      "suffix": ""
+                    },
+                    {
+                      "value": 400,
+                      "label": "Desks",
+                      "icon": "IconArmchair",
+                      "suffix": "+"
+                    },
+                    {
+                      "value": 12,
+                      "label": "Meeting Rooms",
+                      "icon": "IconUsers",
+                      "suffix": ""
+                    }
+                  ],
+                  "layout": "horizontal",
+                  "columns": 3
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "### Built for Collaboration\n\nOur headquarters features open-plan workspaces, focus pods, a dedicated recording studio, and a rooftop garden for team events.\n\n[**Join the team →**](#) · *We are hiring!*"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "left",
+          "size": 50,
+          "url": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800"
+        }
+      },
+      type: "admin",
+      tags: ["office-location"],
+      isAdmin: true,
+    },
+    {
+      name: "Customer Journey",
+      description: "End-to-end user journey visualization with banner",
+      data: {
+        "id": "customer-journey-layout",
+        "name": "Customer Journey",
+        "description": "End-to-end user journey visualization with banner",
+        "icon": "IconMapPin",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "# The Connected Customer Journey\n\nFrom first touch to brand advocacy: How we nurture relationships at every stage."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "timeline",
+                "content": {
+                  "type": "timeline",
+                  "title": "<h2 style=\"text-align: center\">Our Process</h2>",
+                  "steps": [
+                    {
+                      "icon": "IconSearch",
+                      "title": "Discovery",
+                      "description": "Organic Search & Social Media"
+                    },
+                    {
+                      "icon": "IconRocket",
+                      "title": "Activation",
+                      "description": "Seamless Signup & Onboarding"
+                    },
+                    {
+                      "icon": "IconDiamond",
+                      "title": "Value",
+                      "description": "First 'Aha!' Moment in < 5 mins"
+                    },
+                    {
+                      "icon": "IconRefresh",
+                      "title": "Habit",
+                      "description": "Weekly Active Usage Loop"
+                    },
+                    {
+                      "icon": "IconHeart",
+                      "title": "Advocacy",
+                      "description": "Referral & Community Leading"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "*\"The smooth transition from activation to value is our key differentiator.\"* — Product Team"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "top",
+          "size": 25,
+          "url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600"
+        }
+      },
+      type: "admin",
+      tags: ["customer-journey"],
+      isAdmin: true,
+    },
     {
       name: "Features Showcase",
       description: "Highlight key features with premium cards",
@@ -76,6 +947,72 @@ const layoutTemplates = [
       },
       type: "admin",
       tags: ["feature"],
+      isAdmin: true,
+    },
+    {
+      name: "Meet the Team",
+      description: "Introduce your team members with style",
+      data: {
+        "id": "team-layout",
+        "name": "Meet the Team",
+        "description": "Introduce your team members with style",
+        "icon": "IconUsersGroup",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Meet The Builders</h2>\n\n<p style=\"text-align: center\">Obsessed with quality, craft, and user experience.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "team-card",
+                "content": {
+                  "type": "team-card",
+                  "name": "# Dr. Elena Foster",
+                  "role": "Chief Technology Officer",
+                  "description": "PhD in Distributed Systems. Formerly Principal Architect at CloudCorp.",
+                  "avatar": "",
+                  "socials": {}
+                }
+              },
+              {
+                "id": "block-1-1",
+                "type": "team-card",
+                "content": {
+                  "type": "team-card",
+                  "name": "# James Wu",
+                  "role": "Head of Product",
+                  "description": "Leading product vision and strategy. Previously at StartupX.",
+                  "avatar": "",
+                  "socials": {}
+                }
+              },
+              {
+                "id": "block-1-2",
+                "type": "team-card",
+                "content": {
+                  "type": "team-card",
+                  "name": "# Sarah Jenkins",
+                  "role": "VP of Sales",
+                  "description": "Driving growth and customer success. 15 years in Enterprise SaaS.",
+                  "avatar": "",
+                  "socials": {}
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["team"],
       isAdmin: true,
     },
     {
@@ -193,13 +1130,13 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
-      name: "Meet the Team",
-      description: "Introduce your team members with style",
+      name: "Image Gallery",
+      description: "Showcase multiple images in a beautiful grid",
       data: {
-        "id": "team-layout",
-        "name": "Meet the Team",
-        "description": "Introduce your team members with style",
-        "icon": "IconUsersGroup",
+        "id": "gallery-layout",
+        "name": "Image Gallery",
+        "description": "Showcase multiple images in a beautiful grid",
+        "icon": "IconPhoto",
         "rows": [
           {
             "id": "row-0",
@@ -207,7 +1144,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Meet The Builders</h2>\n\n<p style=\"text-align: center\">Obsessed with quality, craft, and user experience.</p>"
+                "content": "<h2 style=\"text-align: center\">Visualizing Success</h2>\n\n<p style=\"text-align: center\">A look at our recent high-impact deployments.</p>"
               }
             ]
           },
@@ -216,96 +1153,27 @@ const layoutTemplates = [
             "blocks": [
               {
                 "id": "block-1-0",
-                "type": "team-card",
+                "type": "image-gallery",
                 "content": {
-                  "type": "team-card",
-                  "name": "# Dr. Elena Foster",
-                  "role": "Chief Technology Officer",
-                  "description": "PhD in Distributed Systems. Formerly Principal Architect at CloudCorp.",
-                  "avatar": "",
-                  "socials": {}
-                }
-              },
-              {
-                "id": "block-1-1",
-                "type": "team-card",
-                "content": {
-                  "type": "team-card",
-                  "name": "# James Wu",
-                  "role": "Head of Product",
-                  "description": "Leading product vision and strategy. Previously at StartupX.",
-                  "avatar": "",
-                  "socials": {}
-                }
-              },
-              {
-                "id": "block-1-2",
-                "type": "team-card",
-                "content": {
-                  "type": "team-card",
-                  "name": "# Sarah Jenkins",
-                  "role": "VP of Sales",
-                  "description": "Driving growth and customer success. 15 years in Enterprise SaaS.",
-                  "avatar": "",
-                  "socials": {}
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["team"],
-      isAdmin: true,
-    },
-    {
-      name: "Statistics Dashboard",
-      description: "Showcase key metrics with animated counters",
-      data: {
-        "id": "stats-layout",
-        "name": "Statistics Dashboard",
-        "description": "Showcase key metrics with animated counters",
-        "icon": "IconChartPie",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">By The Numbers</h2>\n\n<p style=\"text-align: center\">Scale, speed, and reliability you can trust.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "stats-counter",
-                "content": {
-                  "type": "stats-counter",
-                  "stats": [
+                  "type": "image-gallery",
+                  "images": [
                     {
-                      "value": 50000,
-                      "label": "Requests / Sec",
-                      "icon": "IconZap",
-                      "suffix": "+"
+                      "id": "JXM0QSv8shLThDk4d4Sr6",
+                      "url": "",
+                      "caption": "Deployment Dashboard"
                     },
                     {
-                      "value": 35,
-                      "label": "Global Regions",
-                      "icon": "IconWorld",
-                      "suffix": ""
+                      "id": "S-j99GbU2BHV2JzOGh7fS",
+                      "url": "",
+                      "caption": "Real-time Analytics"
                     },
                     {
-                      "value": 99,
-                      "label": "Uptime Guarantee",
-                      "icon": "IconShieldCheck",
-                      "suffix": ".99%"
+                      "id": "mMLgJ1dYqhDsXs1lsvT3I",
+                      "url": "",
+                      "caption": "Mobile Experience"
                     }
                   ],
-                  "layout": "horizontal",
+                  "layout": "masonry",
                   "columns": 3
                 }
               }
@@ -314,7 +1182,7 @@ const layoutTemplates = [
         ]
       },
       type: "admin",
-      tags: ["stats"],
+      tags: ["gallery"],
       isAdmin: true,
     },
     {
@@ -381,13 +1249,13 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
-      name: "Services List",
-      description: "Grid of services or offerings",
+      name: "Inspirational Quotes",
+      description: "Share wisdom with elegant typography",
       data: {
-        "id": "services-list-layout",
-        "name": "Services List",
-        "description": "Grid of services or offerings",
-        "icon": "IconTools",
+        "id": "quote-layout",
+        "name": "Inspirational Quotes",
+        "description": "Share wisdom with elegant typography",
+        "icon": "IconQuote",
         "rows": [
           {
             "id": "row-0",
@@ -395,201 +1263,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Comprehensive Capabilities</h2>\n\n<p style=\"text-align: center\">We don't just provide software. We provide the end-to-end partnership required for transformation.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "feature-list",
-                "content": {
-                  "type": "feature-list",
-                  "features": [
-                    {
-                      "icon": "IconCompass",
-                      "title": "Strategic Advisory",
-                      "description": "Expert guidance on roadmap planning, digital transformation strategy, and change management."
-                    },
-                    {
-                      "icon": "IconSettings",
-                      "title": "Seamless Integration",
-                      "description": "Pre-built connectors for Salesforce, SAP, and legacy mainframes. We handle the plumbing."
-                    },
-                    {
-                      "icon": "IconChartBar",
-                      "title": "Data Optimization",
-                      "description": "Cleanse, enrich, and structure your data to unlock actionable insights from day one."
-                    },
-                    {
-                      "icon": "IconLockCheck",
-                      "title": "Enterprise Security",
-                      "description": "SOC2 Type II compliant, SSO ready, and fully auditable access logs for your compliance team."
-                    },
-                    {
-                      "icon": "IconPalette",
-                      "title": "Custom Development",
-                      "description": "Need something unique? Our solutions engineering team builds bespoke modules to fit your niche."
-                    },
-                    {
-                      "icon": "IconUsers",
-                      "title": "24/7 Dedicated Support",
-                      "description": "Round-the-clock access to senior engineers, not just a helpdesk script. We are your partners."
-                    }
-                  ],
-                  "layout": "grid",
-                  "columns": 3
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["services-list"],
-      isAdmin: true,
-    },
-    {
-      name: "Social Proof",
-      description: "Display social media stats and ratings",
-      data: {
-        "id": "social-proof-layout",
-        "name": "Social Proof",
-        "description": "Display social media stats and ratings",
-        "icon": "IconDeviceMobile",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">A Growing Movement</h2>\n\n<p style=\"text-align: center\">Join over 50,000 developers across the globe who trust us.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "social-proof",
-                "content": {
-                  "type": "social-proof",
-                  "platforms": [
-                    {
-                      "platform": "twitter",
-                      "followers": "25.2K",
-                      "link": "https://twitter.com/example"
-                    },
-                    {
-                      "platform": "linkedin",
-                      "followers": "18.4K",
-                      "link": "https://linkedin.com/company/example"
-                    },
-                    {
-                      "platform": "youtube",
-                      "followers": "7.1K",
-                      "link": "https://youtube.com/example"
-                    },
-                    {
-                      "platform": "instagram",
-                      "followers": "12K",
-                      "link": "https://instagram.com/example"
-                    }
-                  ],
-                  "showRatings": true,
-                  "rating": 4.9,
-                  "reviewCount": "2,300+ reviews"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["social-proof"],
-      isAdmin: true,
-    },
-    {
-      name: "Target Audiences",
-      description: "Highlight who this is for",
-      data: {
-        "id": "target-audiences-layout",
-        "name": "Target Audiences",
-        "description": "Highlight who this is for",
-        "icon": "IconTarget",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Who Wins With Us</h2>\n\n<p style=\"text-align: center\">We solve critical pain points for every level of the organization, ensuring alignment from day one.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "feature-list",
-                "content": {
-                  "type": "feature-list",
-                  "features": [
-                    {
-                      "icon": "IconDeviceLaptop",
-                      "title": "Engineering Leads",
-                      "description": "Eliminate boilerplate code and reduce technical debt with our standardized SDKs and APIs."
-                    },
-                    {
-                      "icon": "IconRocket",
-                      "title": "Product Managers",
-                      "description": "Accelerate time-to-market by 2x. Ship features, not infrastructure, and iterate based on real user data."
-                    },
-                    {
-                      "icon": "IconCash",
-                      "title": "Sales Leaders",
-                      "description": "Unblock deals faster by passing security reviews instantly with our pre-certified compliance module."
-                    },
-                    {
-                      "icon": "IconBriefcase",
-                      "title": "C-Suite",
-                      "description": "Gain real-time visibility into ROI and operational efficiency across the entire global portfolio."
-                    }
-                  ],
-                  "layout": "grid",
-                  "columns": 2
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["target-audiences"],
-      isAdmin: true,
-    },
-    {
-      name: "Problem + User Quote",
-      description: "Problem statement supported by a user quote",
-      data: {
-        "id": "problem-quote-layout",
-        "name": "Problem + User Quote",
-        "description": "Problem statement supported by a user quote",
-        "icon": "IconMessageChat",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">The Voice of the Customer</h2>\n\n<p style=\"text-align: center\">Our stakeholders are frustrated. They need a solution that works as fast as they do.</p>"
+                "content": "<h2 style=\"text-align: center\">Guiding Principles</h2>"
               }
             ]
           },
@@ -601,60 +1275,24 @@ const layoutTemplates = [
                 "type": "quote",
                 "content": {
                   "type": "quote",
-                  "quote": "“It takes us 3 weeks to close the monthly books. In today's market, that delay is simply unsustainable. We are flying blind.”",
-                  "author": "CFO, Global Retailer",
+                  "quote": "“The best way to predict the future is to create it.”",
+                  "author": "Peter Drucker",
                   "style": "centered"
                 }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["problem-quote"],
-      isAdmin: true,
-    },
-    {
-      name: "Problem + Supporting Points",
-      description: "Problem statement with two reinforcing points",
-      data: {
-        "id": "problem-supporting-points-layout",
-        "name": "Problem + Supporting Points",
-        "description": "Problem statement with two reinforcing points",
-        "icon": "IconNote",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">The Innovation Paradox</h2>\n\n<p style=\"text-align: center\">Organizations are desperate to innovate, but their legacy infrastructure is actively preventing them from moving forward.</p>"
               }
             ]
           },
           {
-            "id": "row-1",
+            "id": "row-2",
             "blocks": [
               {
-                "id": "block-1-0",
-                "type": "feature-list",
+                "id": "block-2-0",
+                "type": "quote",
                 "content": {
-                  "type": "feature-list",
-                  "features": [
-                    {
-                      "icon": "IconBoltOff",
-                      "title": "Velocity Drag",
-                      "description": "Every new feature requires weeks of manual regression testing, killing momentum and delaying time-to-revenue."
-                    },
-                    {
-                      "icon": "IconMoodDollar",
-                      "title": "Cost of Maintenance",
-                      "description": "80% of engineering budget is spent keeping the lights on, leaving only 20% for actual value creation."
-                    }
-                  ],
-                  "layout": "grid",
-                  "columns": 2
+                  "type": "quote",
+                  "quote": "“Culture eats strategy for breakfast.”",
+                  "author": "Peter Drucker",
+                  "style": "left-aligned"
                 }
               }
             ]
@@ -662,61 +1300,7 @@ const layoutTemplates = [
         ]
       },
       type: "admin",
-      tags: ["problem-supporting-points"],
-      isAdmin: true,
-    },
-    {
-      name: "Problem + Two Quotes",
-      description: "Problem statement reinforced by two user quotes",
-      data: {
-        "id": "problem-two-quotes-layout",
-        "name": "Problem + Two Quotes",
-        "description": "Problem statement reinforced by two user quotes",
-        "icon": "IconMessages",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Frustration is Universal</h2>\n\n<p style=\"text-align: center\">From the front lines to the C-suite, the lack of visibility is causing paralysis.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "quote",
-                "content": {
-                  "type": "quote",
-                  "quote": "“I spend half my day copy-pasting data between three different tools just to get my job done.”",
-                  "author": "Senior Account Executive",
-                  "style": "centered"
-                }
-              },
-              {
-                "id": "block-1-1",
-                "type": "quote",
-                "content": {
-                  "type": "quote",
-                  "quote": "“I can't give the board a reliable forecast because the data is always 48 hours old.”",
-                  "author": "VP of Sales Operations",
-                  "style": "centered"
-                }
-              }
-            ],
-            "columnWidths": [
-              1,
-              1
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["problem-two-quotes"],
+      tags: ["quote"],
       isAdmin: true,
     },
     {
@@ -780,13 +1364,13 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
-      name: "Progress Indicators",
-      description: "Show progress and achievements",
+      name: "Statistics Dashboard",
+      description: "Showcase key metrics with animated counters",
       data: {
-        "id": "progress-layout",
-        "name": "Progress Indicators",
-        "description": "Show progress and achievements",
-        "icon": "IconTrendingUp",
+        "id": "stats-layout",
+        "name": "Statistics Dashboard",
+        "description": "Showcase key metrics with animated counters",
+        "icon": "IconChartPie",
         "rows": [
           {
             "id": "row-0",
@@ -794,123 +1378,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Q3 Migration Status</h2>\n\n<p style=\"text-align: center\">Current tracking against our core infrastructure goals.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "progress-bar",
-                "content": {
-                  "type": "progress-bar",
-                  "items": [
-                    {
-                      "label": "Database Migration",
-                      "value": 92,
-                      "color": "#3b82f6"
-                    },
-                    {
-                      "label": "Frontend Refactor",
-                      "value": 68,
-                      "color": "#10b981"
-                    },
-                    {
-                      "label": "Legacy Decommission",
-                      "value": 45,
-                      "color": "#f59e0b"
-                    },
-                    {
-                      "label": "Team Training",
-                      "value": 15,
-                      "color": "#8b5cf6"
-                    }
-                  ],
-                  "showPercentage": true,
-                  "animated": true
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["progress"],
-      isAdmin: true,
-    },
-    {
-      name: "Inspirational Quotes",
-      description: "Share wisdom with elegant typography",
-      data: {
-        "id": "quote-layout",
-        "name": "Inspirational Quotes",
-        "description": "Share wisdom with elegant typography",
-        "icon": "IconQuote",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Guiding Principles</h2>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "quote",
-                "content": {
-                  "type": "quote",
-                  "quote": "“The best way to predict the future is to create it.”",
-                  "author": "Peter Drucker",
-                  "style": "centered"
-                }
-              }
-            ]
-          },
-          {
-            "id": "row-2",
-            "blocks": [
-              {
-                "id": "block-2-0",
-                "type": "quote",
-                "content": {
-                  "type": "quote",
-                  "quote": "“Culture eats strategy for breakfast.”",
-                  "author": "Peter Drucker",
-                  "style": "left-aligned"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["quote"],
-      isAdmin: true,
-    },
-    {
-      name: "Opportunity Metrics",
-      description: "Highlight the market or opportunity with three key metrics",
-      data: {
-        "id": "opportunity-metrics-layout",
-        "name": "Opportunity Metrics",
-        "description": "Highlight the market or opportunity with three key metrics",
-        "icon": "IconChartLine",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">A Massive Untapped Opportunity</h2>\n\n<p style=\"text-align: center\">The market is shifting rapidly. We are positioned to capture a significant share of this emerging $100B+ ecosystem.</p>"
+                "content": "<h2 style=\"text-align: center\">By The Numbers</h2>\n\n<p style=\"text-align: center\">Scale, speed, and reliability you can trust.</p>"
               }
             ]
           },
@@ -924,22 +1392,22 @@ const layoutTemplates = [
                   "type": "stats-counter",
                   "stats": [
                     {
-                      "value": 125,
-                      "label": "Total Addressable Market",
-                      "suffix": "B",
-                      "icon": "IconWorld"
+                      "value": 50000,
+                      "label": "Requests / Sec",
+                      "icon": "IconZap",
+                      "suffix": "+"
                     },
                     {
-                      "value": 42,
-                      "label": "Year-over-Year Growth",
-                      "suffix": "%",
-                      "icon": "IconChartLine"
+                      "value": 35,
+                      "label": "Global Regions",
+                      "icon": "IconWorld",
+                      "suffix": ""
                     },
                     {
-                      "value": 10,
-                      "label": "Active Early Adopters",
-                      "suffix": "k+",
-                      "icon": "IconRocket"
+                      "value": 99,
+                      "label": "Uptime Guarantee",
+                      "icon": "IconShieldCheck",
+                      "suffix": ".99%"
                     }
                   ],
                   "layout": "horizontal",
@@ -951,7 +1419,216 @@ const layoutTemplates = [
         ]
       },
       type: "admin",
-      tags: ["opportunity-metrics"],
+      tags: ["stats"],
+      isAdmin: true,
+    },
+    {
+      name: "Feature Showcase",
+      description: "Highlight product features with icons",
+      data: {
+        "id": "feature-showcase-layout",
+        "name": "Feature Showcase",
+        "description": "Highlight product features with icons",
+        "icon": "IconRocket",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">The Platform Advantage</h2>\n\n<p style=\"text-align: center\">Everything you need to build, scale, and manage your operations in one place.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "feature-list",
+                "content": {
+                  "type": "feature-list",
+                  "features": [
+                    {
+                      "icon": "IconCloudUpload",
+                      "title": "Deploy Anywhere",
+                      "description": "One-click deployment to AWS, GCP, Azure, or your own metal. We abstract the complexity."
+                    },
+                    {
+                      "icon": "IconLockCheck",
+                      "title": "Bank-Grade Security",
+                      "description": "End-to-end encryption, role-based access control, and comprehensive audit logs built-in."
+                    },
+                    {
+                      "icon": "IconPalette",
+                      "title": "Pixel-Perfect Design",
+                      "description": "A component library that looks stunning out of the box, fully customizable to your brand."
+                    }
+                  ],
+                  "layout": "grid",
+                  "columns": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["feature-showcase"],
+      isAdmin: true,
+    },
+    {
+      name: "Plan Comparison",
+      description: "Compare pricing plans side-by-side",
+      data: {
+        "id": "comparison-layout",
+        "name": "Plan Comparison",
+        "description": "Compare pricing plans side-by-side",
+        "icon": "IconArrowsLeftRight",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Find Your Perfect Fit</h2>\n\n<p style=\"text-align: center\">Simple, transparent pricing for teams of all sizes.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "comparison-table",
+                "content": {
+                  "type": "comparison-table",
+                  "columns": [
+                    {
+                      "name": "Basic",
+                      "price": "$0/mo"
+                    },
+                    {
+                      "name": "Pro",
+                      "price": "$49/mo"
+                    },
+                    {
+                      "name": "Enterprise",
+                      "price": "Custom"
+                    }
+                  ],
+                  "rows": [
+                    {
+                      "feature": "Team Members",
+                      "values": [
+                        "Up to 3",
+                        "Up to 20",
+                        "Unlimited"
+                      ]
+                    },
+                    {
+                      "feature": "Cloud Storage",
+                      "values": [
+                        "10GB",
+                        "1TB",
+                        "Unlimited"
+                      ]
+                    },
+                    {
+                      "feature": "API Access",
+                      "values": [
+                        "Limit: 1k/day",
+                        "Limit: 50k/day",
+                        "Unlimited"
+                      ]
+                    },
+                    {
+                      "feature": "SLA Guarantee",
+                      "values": [
+                        false,
+                        "99.9%",
+                        "99.99% + Credits"
+                      ]
+                    },
+                    {
+                      "feature": "Support",
+                      "values": [
+                        "Community",
+                        "Email (4hr)",
+                        "24/7 Phone"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["comparison"],
+      isAdmin: true,
+    },
+    {
+      name: "FAQ Section",
+      description: "Answer common questions with expandable sections",
+      data: {
+        "id": "faq-layout",
+        "name": "FAQ Section",
+        "description": "Answer common questions with expandable sections",
+        "icon": "IconQuestionMark",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Frequently Asked Questions</h2>\n\n<p style=\"text-align: center\">Everything you need to know about security, deployment, and billing.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "faq",
+                "content": {
+                  "type": "faq",
+                  "items": [
+                    {
+                      "question": "How secure is the platform?",
+                      "answer": "We are SOC2 Type II, ISO 27001, and GDPR compliant. All data is encrypted at rest and in transit.",
+                      "expanded": false
+                    },
+                    {
+                      "question": "Can we self-host?",
+                      "answer": "Yes! We offer on-premise deployment via Docker or Kubernetes for our Enterprise customers.",
+                      "expanded": false
+                    },
+                    {
+                      "question": "What kind of support is included?",
+                      "answer": "All plans include community support. Pro plans get email priority, and Enterprise gets 24/7 dedicated phone support.",
+                      "expanded": false
+                    },
+                    {
+                      "question": "Do you offer a free trial?",
+                      "answer": "Yes, you can try our Pro plan free for 14 days. No credit card required.",
+                      "expanded": false
+                    }
+                  ],
+                  "style": "accordion"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["faq"],
       isAdmin: true,
     },
     {
@@ -1017,6 +1694,612 @@ const layoutTemplates = [
       },
       type: "admin",
       tags: ["partners"],
+      isAdmin: true,
+    },
+    {
+      name: "Code Example",
+      description: "Showcase code snippets with syntax highlighting",
+      data: {
+        "id": "code-example-layout",
+        "name": "Code Example",
+        "description": "Showcase code snippets with syntax highlighting",
+        "icon": "IconDeviceLaptop",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Built for Developers</h2>\n\n<p style=\"text-align: center\">Integrate our full-featured SDK in less than 5 minutes.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "code",
+                "content": {
+                  "type": "code",
+                  "language": "javascript",
+                  "code": "import { Butterfast } from '@butterfast/sdk';\n\n// Initialize with your secure key\nconst client = new Butterfast(process.env.API_KEY);\n\n// Deploy scalable infrastructure instantly\nconst deployment = await client.deploy({\n  region: 'us-east-1',\n  scaling: 'auto',\n  security_level: 'strict',\n  monitoring: true\n});\n\nconsole.log(`[DEPLOYED] Deployed successfully at: ${deployment.url}`);",
+                  "showLineNumbers": true,
+                  "theme": "dark"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["code-example"],
+      isAdmin: true,
+    },
+    {
+      name: "Progress Indicators",
+      description: "Show progress and achievements",
+      data: {
+        "id": "progress-layout",
+        "name": "Progress Indicators",
+        "description": "Show progress and achievements",
+        "icon": "IconTrendingUp",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Q3 Migration Status</h2>\n\n<p style=\"text-align: center\">Current tracking against our core infrastructure goals.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "progress-bar",
+                "content": {
+                  "type": "progress-bar",
+                  "items": [
+                    {
+                      "label": "Database Migration",
+                      "value": 92,
+                      "color": "#3b82f6"
+                    },
+                    {
+                      "label": "Frontend Refactor",
+                      "value": 68,
+                      "color": "#10b981"
+                    },
+                    {
+                      "label": "Legacy Decommission",
+                      "value": 45,
+                      "color": "#f59e0b"
+                    },
+                    {
+                      "label": "Team Training",
+                      "value": 15,
+                      "color": "#8b5cf6"
+                    }
+                  ],
+                  "showPercentage": true,
+                  "animated": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["progress"],
+      isAdmin: true,
+    },
+    {
+      name: "Social Proof",
+      description: "Display social media stats and ratings",
+      data: {
+        "id": "social-proof-layout",
+        "name": "Social Proof",
+        "description": "Display social media stats and ratings",
+        "icon": "IconDeviceMobile",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">A Growing Movement</h2>\n\n<p style=\"text-align: center\">Join over 50,000 developers across the globe who trust us.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "social-proof",
+                "content": {
+                  "type": "social-proof",
+                  "platforms": [
+                    {
+                      "platform": "twitter",
+                      "followers": "25.2K",
+                      "link": "https://twitter.com/example"
+                    },
+                    {
+                      "platform": "linkedin",
+                      "followers": "18.4K",
+                      "link": "https://linkedin.com/company/example"
+                    },
+                    {
+                      "platform": "youtube",
+                      "followers": "7.1K",
+                      "link": "https://youtube.com/example"
+                    },
+                    {
+                      "platform": "instagram",
+                      "followers": "12K",
+                      "link": "https://instagram.com/example"
+                    }
+                  ],
+                  "showRatings": true,
+                  "rating": 4.9,
+                  "reviewCount": "2,300+ reviews"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["social-proof"],
+      isAdmin: true,
+    },
+    {
+      name: "Awards & Recognition",
+      description: "Showcase achievements and certifications",
+      data: {
+        "id": "awards-layout",
+        "name": "Awards & Recognition",
+        "description": "Showcase achievements and certifications",
+        "icon": "IconTrophy",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Recognized Excellence</h2>\n\n<p style=\"text-align: center\">We are proud to be backed by the industry's most respected organizations.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "badge",
+                "content": {
+                  "type": "badge",
+                  "badges": [
+                    {
+                      "icon": "IconTrophy",
+                      "title": "Innovation of the Year",
+                      "issuer": "Gartner Magic Quadrant",
+                      "date": "2024"
+                    },
+                    {
+                      "icon": "IconStar",
+                      "title": "Leader in Enterprise",
+                      "issuer": "G2 Crowd",
+                      "date": "2024"
+                    },
+                    {
+                      "icon": "IconDiamond",
+                      "title": "Best Security Solution",
+                      "issuer": "TechCrunch Disrupt",
+                      "date": "2023"
+                    }
+                  ],
+                  "layout": "grid"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["awards"],
+      isAdmin: true,
+    },
+    {
+      name: "Problem + Supporting Points",
+      description: "Problem statement with two reinforcing points",
+      data: {
+        "id": "problem-supporting-points-layout",
+        "name": "Problem + Supporting Points",
+        "description": "Problem statement with two reinforcing points",
+        "icon": "IconNote",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">The Innovation Paradox</h2>\n\n<p style=\"text-align: center\">Organizations are desperate to innovate, but their legacy infrastructure is actively preventing them from moving forward.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "feature-list",
+                "content": {
+                  "type": "feature-list",
+                  "features": [
+                    {
+                      "icon": "IconBoltOff",
+                      "title": "Velocity Drag",
+                      "description": "Every new feature requires weeks of manual regression testing, killing momentum and delaying time-to-revenue."
+                    },
+                    {
+                      "icon": "IconMoodDollar",
+                      "title": "Cost of Maintenance",
+                      "description": "80% of engineering budget is spent keeping the lights on, leaving only 20% for actual value creation."
+                    }
+                  ],
+                  "layout": "grid",
+                  "columns": 2
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["problem-supporting-points"],
+      isAdmin: true,
+    },
+    {
+      name: "Introduction",
+      description: "Big title with small subtitle",
+      data: {
+        "id": "introduction",
+        "name": "Introduction",
+        "description": "Big title with small subtitle",
+        "icon": "IconHandWave",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "spacer",
+                "content": {
+                  "type": "spacer",
+                  "height": 120
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "<h1 style=\"text-align: center\">User Research Findings for Product Development</h1>\n\n<p style=\"text-align: center\">Key insights, pain points, and actionable recommendations from our recent research study</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "spacer",
+                "content": {
+                  "type": "spacer",
+                  "height": 120
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["introduction"],
+      isAdmin: true,
+    },
+    {
+      name: "Opportunity Metrics",
+      description: "Highlight the market or opportunity with three key metrics",
+      data: {
+        "id": "opportunity-metrics-layout",
+        "name": "Opportunity Metrics",
+        "description": "Highlight the market or opportunity with three key metrics",
+        "icon": "IconChartLine",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">A Massive Untapped Opportunity</h2>\n\n<p style=\"text-align: center\">The market is shifting rapidly. We are positioned to capture a significant share of this emerging $100B+ ecosystem.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "stats-counter",
+                "content": {
+                  "type": "stats-counter",
+                  "stats": [
+                    {
+                      "value": 125,
+                      "label": "Total Addressable Market",
+                      "suffix": "B",
+                      "icon": "IconWorld"
+                    },
+                    {
+                      "value": 42,
+                      "label": "Year-over-Year Growth",
+                      "suffix": "%",
+                      "icon": "IconChartLine"
+                    },
+                    {
+                      "value": 10,
+                      "label": "Active Early Adopters",
+                      "suffix": "k+",
+                      "icon": "IconRocket"
+                    }
+                  ],
+                  "layout": "horizontal",
+                  "columns": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["opportunity-metrics"],
+      isAdmin: true,
+    },
+    {
+      name: "Discovery Call Insights",
+      description: "Summarize key findings from discovery calls",
+      data: {
+        "id": "discovery-insights-layout",
+        "name": "Discovery Call Insights",
+        "description": "Summarize key findings from discovery calls",
+        "icon": "IconSearch",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Strategic Discovery: Key Themes</h2>\n\n<p style=\"text-align: center\">We spoke with 15 key stakeholders. Here is a synthesis of the critical challenges and opportunities identified.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "feature-list",
+                "content": {
+                  "type": "feature-list",
+                  "features": [
+                    {
+                      "icon": "IconPuzzle",
+                      "title": "Fragmentation Fatigue",
+                      "description": "Teams are overwhelmed by using 4+ different tools for the same process. There is a strong desire for consolidation."
+                    },
+                    {
+                      "icon": "IconBolt",
+                      "title": "Speed vs. Quality",
+                      "description": "Current processes force a trade-off. Stakeholders want 'zero-compromise' velocity without sacrificing review standards."
+                    },
+                    {
+                      "icon": "IconLock",
+                      "title": "Security & Compliance",
+                      "description": "With recent reg changes, manual compliance checks are becoming a major risk factor and bottleneck."
+                    },
+                    {
+                      "icon": "IconDeviceMobile",
+                      "title": "Mobile Access",
+                      "description": "Field agents feel disconnected. A mobile-first experience is required to bring them into the digital loop."
+                    }
+                  ],
+                  "layout": "grid",
+                  "columns": 2
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["discovery-insights"],
+      isAdmin: true,
+    },
+    {
+      name: "Problem + User Quote",
+      description: "Problem statement supported by a user quote",
+      data: {
+        "id": "problem-quote-layout",
+        "name": "Problem + User Quote",
+        "description": "Problem statement supported by a user quote",
+        "icon": "IconMessageChat",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">The Voice of the Customer</h2>\n\n<p style=\"text-align: center\">Our stakeholders are frustrated. They need a solution that works as fast as they do.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "quote",
+                "content": {
+                  "type": "quote",
+                  "quote": "“It takes us 3 weeks to close the monthly books. In today's market, that delay is simply unsustainable. We are flying blind.”",
+                  "author": "CFO, Global Retailer",
+                  "style": "centered"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["problem-quote"],
+      isAdmin: true,
+    },
+    {
+      name: "Problem + Two Quotes",
+      description: "Problem statement reinforced by two user quotes",
+      data: {
+        "id": "problem-two-quotes-layout",
+        "name": "Problem + Two Quotes",
+        "description": "Problem statement reinforced by two user quotes",
+        "icon": "IconMessages",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Frustration is Universal</h2>\n\n<p style=\"text-align: center\">From the front lines to the C-suite, the lack of visibility is causing paralysis.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "quote",
+                "content": {
+                  "type": "quote",
+                  "quote": "“I spend half my day copy-pasting data between three different tools just to get my job done.”",
+                  "author": "Senior Account Executive",
+                  "style": "centered"
+                }
+              },
+              {
+                "id": "block-1-1",
+                "type": "quote",
+                "content": {
+                  "type": "quote",
+                  "quote": "“I can't give the board a reliable forecast because the data is always 48 hours old.”",
+                  "author": "VP of Sales Operations",
+                  "style": "centered"
+                }
+              }
+            ],
+            "columnWidths": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["problem-two-quotes"],
+      isAdmin: true,
+    },
+    {
+      name: "Customer Quotes",
+      description: "Multiple quotes from customers for social proof",
+      data: {
+        "id": "customer-quotes-layout",
+        "name": "Customer Quotes",
+        "description": "Multiple quotes from customers for social proof",
+        "icon": "IconThumbUp",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Trusted by Industry Leaders</h2>\n\n<p style=\"text-align: center\">Don't just take our word for it. Here's what the best in the business have to say about our impact.</p>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "testimonial",
+                "content": {
+                  "type": "testimonial",
+                  "quote": "“We deployed in under two weeks and saw an immediate 40% reduction in operational overhead. It's rare to find a tool that delivers on its promises so quickly.”",
+                  "name": "Sarah Chen",
+                  "role": "CTO, TechFlow",
+                  "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=faces"
+                }
+              },
+              {
+                "id": "block-1-1",
+                "type": "testimonial",
+                "content": {
+                  "type": "testimonial",
+                  "quote": "“The real-time collaboration features completely transformed how our distributed team works. We are faster, more aligned, and honestly, happier.”",
+                  "name": "Marcus Rodriguez",
+                  "role": "VP of Product, InnovateInc",
+                  "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=faces"
+                }
+              },
+              {
+                "id": "block-1-2",
+                "type": "testimonial",
+                "content": {
+                  "type": "testimonial",
+                  "quote": "“Before this, we were drowning in spreadsheets. Now, we have a clear, data-driven view of our entire pipeline. It's a game changer for our Q4 strategy.”",
+                  "name": "Emily Thorne",
+                  "role": "Director of Operations, Skyline",
+                  "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=faces"
+                }
+              }
+            ],
+            "columnWidths": [
+              1,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["customer-quotes"],
       isAdmin: true,
     },
     {
@@ -1151,356 +2434,6 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
-      name: "Problem with Visual",
-      description: "Problem statement paired with an illustrative image",
-      data: {
-        "id": "problem-image-layout",
-        "name": "Problem with Visual",
-        "description": "Problem statement paired with an illustrative image",
-        "icon": "IconPhoto",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Complexity is Killing Agility</h2>\n\n<p style=\"text-align: center\">Your teams are spending 40% of their time navigating bureaucratic red tape instead of shipping products.</p>\n\n<p style=\"text-align: center\">This visual represents the tangled web of dependencies currently slowing you down.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "image-gallery",
-                "content": {
-                  "type": "image-gallery",
-                  "images": [
-                    {
-                      "id": "lHGLcuzl9lCckXEWOc0Kx",
-                      "url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=60",
-                      "caption": "Visual diagram of a complex, tangled workflow process."
-                    },
-                    {
-                      "id": "81EMu6MPgCowxlTGFhbBr",
-                      "url": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop&q=60",
-                      "caption": "The impact of inefficiencies on timeline."
-                    }
-                  ],
-                  "layout": "masonry",
-                  "columns": 2
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["problem-image"],
-      isAdmin: true,
-    },
-    {
-      name: "FAQ Section",
-      description: "Answer common questions with expandable sections",
-      data: {
-        "id": "faq-layout",
-        "name": "FAQ Section",
-        "description": "Answer common questions with expandable sections",
-        "icon": "IconQuestionMark",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Frequently Asked Questions</h2>\n\n<p style=\"text-align: center\">Everything you need to know about security, deployment, and billing.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "faq",
-                "content": {
-                  "type": "faq",
-                  "items": [
-                    {
-                      "question": "How secure is the platform?",
-                      "answer": "We are SOC2 Type II, ISO 27001, and GDPR compliant. All data is encrypted at rest and in transit.",
-                      "expanded": false
-                    },
-                    {
-                      "question": "Can we self-host?",
-                      "answer": "Yes! We offer on-premise deployment via Docker or Kubernetes for our Enterprise customers.",
-                      "expanded": false
-                    },
-                    {
-                      "question": "What kind of support is included?",
-                      "answer": "All plans include community support. Pro plans get email priority, and Enterprise gets 24/7 dedicated phone support.",
-                      "expanded": false
-                    },
-                    {
-                      "question": "Do you offer a free trial?",
-                      "answer": "Yes, you can try our Pro plan free for 14 days. No credit card required.",
-                      "expanded": false
-                    }
-                  ],
-                  "style": "accordion"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["faq"],
-      isAdmin: true,
-    },
-    {
-      name: "Feature Showcase",
-      description: "Highlight product features with icons",
-      data: {
-        "id": "feature-showcase-layout",
-        "name": "Feature Showcase",
-        "description": "Highlight product features with icons",
-        "icon": "IconRocket",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">The Platform Advantage</h2>\n\n<p style=\"text-align: center\">Everything you need to build, scale, and manage your operations in one place.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "feature-list",
-                "content": {
-                  "type": "feature-list",
-                  "features": [
-                    {
-                      "icon": "IconCloudUpload",
-                      "title": "Deploy Anywhere",
-                      "description": "One-click deployment to AWS, GCP, Azure, or your own metal. We abstract the complexity."
-                    },
-                    {
-                      "icon": "IconLockCheck",
-                      "title": "Bank-Grade Security",
-                      "description": "End-to-end encryption, role-based access control, and comprehensive audit logs built-in."
-                    },
-                    {
-                      "icon": "IconPalette",
-                      "title": "Pixel-Perfect Design",
-                      "description": "A component library that looks stunning out of the box, fully customizable to your brand."
-                    }
-                  ],
-                  "layout": "grid",
-                  "columns": 3
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["feature-showcase"],
-      isAdmin: true,
-    },
-    {
-      name: "Image Gallery",
-      description: "Showcase multiple images in a beautiful grid",
-      data: {
-        "id": "gallery-layout",
-        "name": "Image Gallery",
-        "description": "Showcase multiple images in a beautiful grid",
-        "icon": "IconPhoto",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Visualizing Success</h2>\n\n<p style=\"text-align: center\">A look at our recent high-impact deployments.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "image-gallery",
-                "content": {
-                  "type": "image-gallery",
-                  "images": [
-                    {
-                      "id": "llEqawqOusszH4gBtSgCs",
-                      "url": "",
-                      "caption": "Deployment Dashboard"
-                    },
-                    {
-                      "id": "NlCCqoprZqmercdVaNMSZ",
-                      "url": "",
-                      "caption": "Real-time Analytics"
-                    },
-                    {
-                      "id": "QepoQLutTaPKKISxY0wEJ",
-                      "url": "",
-                      "caption": "Mobile Experience"
-                    }
-                  ],
-                  "layout": "masonry",
-                  "columns": 3
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["gallery"],
-      isAdmin: true,
-    },
-    {
-      name: "Next Steps",
-      description: "Outline the next three actions to take",
-      data: {
-        "id": "next-steps-layout",
-        "name": "Next Steps",
-        "description": "Outline the next three actions to take",
-        "icon": "IconArrowRight",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">The Path Forward</h2>\n\n<p style=\"text-align: center\">We are ready to move fast. Here is our proposed 30-day onboarding plan to get your team live and realizing value.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "timeline",
-                "content": {
-                  "type": "timeline",
-                  "steps": [
-                    {
-                      "title": "Week 1: Kickoff & Strategy",
-                      "description": "Align stakeholders, define success metrics, and finalise technical requirements. Delivery: Project Charter.",
-                      "icon": "IconFlagCheck"
-                    },
-                    {
-                      "title": "Week 2: Integration & Setup",
-                      "description": "Connect data sources, configure RBAC, and set up the sandbox environment. Delivery: Functional Sandbox.",
-                      "icon": "IconPlugConnected"
-                    },
-                    {
-                      "title": "Week 3: Training & UAT",
-                      "description": "Train power users and conduct User Acceptance Testing. Gather feedback and refine. Delivery: UAT Sign-off.",
-                      "icon": "IconPresentation"
-                    },
-                    {
-                      "title": "Week 4: Go Live!",
-                      "description": "Full production launch, post-launch hypercare support, and celebration. Delivery: Live System.",
-                      "icon": "IconRocket"
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["next-steps"],
-      isAdmin: true,
-    },
-    {
-      name: "Customer Quotes",
-      description: "Multiple quotes from customers for social proof",
-      data: {
-        "id": "customer-quotes-layout",
-        "name": "Customer Quotes",
-        "description": "Multiple quotes from customers for social proof",
-        "icon": "IconThumbUp",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Trusted by Industry Leaders</h2>\n\n<p style=\"text-align: center\">Don't just take our word for it. Here's what the best in the business have to say about our impact.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "testimonial",
-                "content": {
-                  "type": "testimonial",
-                  "quote": "“We deployed in under two weeks and saw an immediate 40% reduction in operational overhead. It's rare to find a tool that delivers on its promises so quickly.”",
-                  "name": "Sarah Chen",
-                  "role": "CTO, TechFlow",
-                  "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=faces"
-                }
-              },
-              {
-                "id": "block-1-1",
-                "type": "testimonial",
-                "content": {
-                  "type": "testimonial",
-                  "quote": "“The real-time collaboration features completely transformed how our distributed team works. We are faster, more aligned, and honestly, happier.”",
-                  "name": "Marcus Rodriguez",
-                  "role": "VP of Product, InnovateInc",
-                  "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=faces"
-                }
-              },
-              {
-                "id": "block-1-2",
-                "type": "testimonial",
-                "content": {
-                  "type": "testimonial",
-                  "quote": "“Before this, we were drowning in spreadsheets. Now, we have a clear, data-driven view of our entire pipeline. It's a game changer for our Q4 strategy.”",
-                  "name": "Emily Thorne",
-                  "role": "Director of Operations, Skyline",
-                  "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=faces"
-                }
-              }
-            ],
-            "columnWidths": [
-              1,
-              1,
-              1
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["customer-quotes"],
-      isAdmin: true,
-    },
-    {
       name: "Customer Stories",
       description: "Narrative of customer success with proof points",
       data: {
@@ -1576,13 +2509,13 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
-      name: "Discovery Call Insights",
-      description: "Summarize key findings from discovery calls",
+      name: "Services List",
+      description: "Grid of services or offerings",
       data: {
-        "id": "discovery-insights-layout",
-        "name": "Discovery Call Insights",
-        "description": "Summarize key findings from discovery calls",
-        "icon": "IconSearch",
+        "id": "services-list-layout",
+        "name": "Services List",
+        "description": "Grid of services or offerings",
+        "icon": "IconTools",
         "rows": [
           {
             "id": "row-0",
@@ -1590,7 +2523,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Strategic Discovery: Key Themes</h2>\n\n<p style=\"text-align: center\">We spoke with 15 key stakeholders. Here is a synthesis of the critical challenges and opportunities identified.</p>"
+                "content": "<h2 style=\"text-align: center\">Comprehensive Capabilities</h2>\n\n<p style=\"text-align: center\">We don't just provide software. We provide the end-to-end partnership required for transformation.</p>"
               }
             ]
           },
@@ -1604,28 +2537,38 @@ const layoutTemplates = [
                   "type": "feature-list",
                   "features": [
                     {
-                      "icon": "IconPuzzle",
-                      "title": "Fragmentation Fatigue",
-                      "description": "Teams are overwhelmed by using 4+ different tools for the same process. There is a strong desire for consolidation."
+                      "icon": "IconCompass",
+                      "title": "Strategic Advisory",
+                      "description": "Expert guidance on roadmap planning, digital transformation strategy, and change management."
                     },
                     {
-                      "icon": "IconBolt",
-                      "title": "Speed vs. Quality",
-                      "description": "Current processes force a trade-off. Stakeholders want 'zero-compromise' velocity without sacrificing review standards."
+                      "icon": "IconSettings",
+                      "title": "Seamless Integration",
+                      "description": "Pre-built connectors for Salesforce, SAP, and legacy mainframes. We handle the plumbing."
                     },
                     {
-                      "icon": "IconLock",
-                      "title": "Security & Compliance",
-                      "description": "With recent reg changes, manual compliance checks are becoming a major risk factor and bottleneck."
+                      "icon": "IconChartBar",
+                      "title": "Data Optimization",
+                      "description": "Cleanse, enrich, and structure your data to unlock actionable insights from day one."
                     },
                     {
-                      "icon": "IconDeviceMobile",
-                      "title": "Mobile Access",
-                      "description": "Field agents feel disconnected. A mobile-first experience is required to bring them into the digital loop."
+                      "icon": "IconLockCheck",
+                      "title": "Enterprise Security",
+                      "description": "SOC2 Type II compliant, SSO ready, and fully auditable access logs for your compliance team."
+                    },
+                    {
+                      "icon": "IconPalette",
+                      "title": "Custom Development",
+                      "description": "Need something unique? Our solutions engineering team builds bespoke modules to fit your niche."
+                    },
+                    {
+                      "icon": "IconUsers",
+                      "title": "24/7 Dedicated Support",
+                      "description": "Round-the-clock access to senior engineers, not just a helpdesk script. We are your partners."
                     }
                   ],
                   "layout": "grid",
-                  "columns": 2
+                  "columns": 3
                 }
               }
             ]
@@ -1633,7 +2576,7 @@ const layoutTemplates = [
         ]
       },
       type: "admin",
-      tags: ["discovery-insights"],
+      tags: ["services-list"],
       isAdmin: true,
     },
     {
@@ -1710,99 +2653,6 @@ const layoutTemplates = [
       },
       type: "admin",
       tags: ["doc-intro"],
-      isAdmin: true,
-    },
-    {
-      name: "Plan Comparison",
-      description: "Compare pricing plans side-by-side",
-      data: {
-        "id": "comparison-layout",
-        "name": "Plan Comparison",
-        "description": "Compare pricing plans side-by-side",
-        "icon": "IconArrowsLeftRight",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Find Your Perfect Fit</h2>\n\n<p style=\"text-align: center\">Simple, transparent pricing for teams of all sizes.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "comparison-table",
-                "content": {
-                  "type": "comparison-table",
-                  "columns": [
-                    {
-                      "name": "Basic",
-                      "price": "$0/mo"
-                    },
-                    {
-                      "name": "Pro",
-                      "price": "$49/mo"
-                    },
-                    {
-                      "name": "Enterprise",
-                      "price": "Custom"
-                    }
-                  ],
-                  "rows": [
-                    {
-                      "feature": "Team Members",
-                      "values": [
-                        "Up to 3",
-                        "Up to 20",
-                        "Unlimited"
-                      ]
-                    },
-                    {
-                      "feature": "Cloud Storage",
-                      "values": [
-                        "10GB",
-                        "1TB",
-                        "Unlimited"
-                      ]
-                    },
-                    {
-                      "feature": "API Access",
-                      "values": [
-                        "Limit: 1k/day",
-                        "Limit: 50k/day",
-                        "Unlimited"
-                      ]
-                    },
-                    {
-                      "feature": "SLA Guarantee",
-                      "values": [
-                        false,
-                        "99.9%",
-                        "99.99% + Credits"
-                      ]
-                    },
-                    {
-                      "feature": "Support",
-                      "values": [
-                        "Community",
-                        "Email (4hr)",
-                        "24/7 Phone"
-                      ]
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["comparison"],
       isAdmin: true,
     },
     {
@@ -1890,13 +2740,13 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
-      name: "Code Example",
-      description: "Showcase code snippets with syntax highlighting",
+      name: "Target Audiences",
+      description: "Highlight who this is for",
       data: {
-        "id": "code-example-layout",
-        "name": "Code Example",
-        "description": "Showcase code snippets with syntax highlighting",
-        "icon": "IconDeviceLaptop",
+        "id": "target-audiences-layout",
+        "name": "Target Audiences",
+        "description": "Highlight who this is for",
+        "icon": "IconTarget",
         "rows": [
           {
             "id": "row-0",
@@ -1904,7 +2754,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Built for Developers</h2>\n\n<p style=\"text-align: center\">Integrate our full-featured SDK in less than 5 minutes.</p>"
+                "content": "<h2 style=\"text-align: center\">Who Wins With Us</h2>\n\n<p style=\"text-align: center\">We solve critical pain points for every level of the organization, ensuring alignment from day one.</p>"
               }
             ]
           },
@@ -1913,71 +2763,33 @@ const layoutTemplates = [
             "blocks": [
               {
                 "id": "block-1-0",
-                "type": "code",
+                "type": "feature-list",
                 "content": {
-                  "type": "code",
-                  "language": "javascript",
-                  "code": "import { Butterfast } from '@butterfast/sdk';\n\n// Initialize with your secure key\nconst client = new Butterfast(process.env.API_KEY);\n\n// Deploy scalable infrastructure instantly\nconst deployment = await client.deploy({\n  region: 'us-east-1',\n  scaling: 'auto',\n  security_level: 'strict',\n  monitoring: true\n});\n\nconsole.log(`[DEPLOYED] Deployed successfully at: ${deployment.url}`);",
-                  "showLineNumbers": true,
-                  "theme": "dark"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["code-example"],
-      isAdmin: true,
-    },
-    {
-      name: "Awards & Recognition",
-      description: "Showcase achievements and certifications",
-      data: {
-        "id": "awards-layout",
-        "name": "Awards & Recognition",
-        "description": "Showcase achievements and certifications",
-        "icon": "IconTrophy",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Recognized Excellence</h2>\n\n<p style=\"text-align: center\">We are proud to be backed by the industry's most respected organizations.</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "badge",
-                "content": {
-                  "type": "badge",
-                  "badges": [
+                  "type": "feature-list",
+                  "features": [
                     {
-                      "icon": "IconTrophy",
-                      "title": "Innovation of the Year",
-                      "issuer": "Gartner Magic Quadrant",
-                      "date": "2024"
+                      "icon": "IconDeviceLaptop",
+                      "title": "Engineering Leads",
+                      "description": "Eliminate boilerplate code and reduce technical debt with our standardized SDKs and APIs."
                     },
                     {
-                      "icon": "IconStar",
-                      "title": "Leader in Enterprise",
-                      "issuer": "G2 Crowd",
-                      "date": "2024"
+                      "icon": "IconRocket",
+                      "title": "Product Managers",
+                      "description": "Accelerate time-to-market by 2x. Ship features, not infrastructure, and iterate based on real user data."
                     },
                     {
-                      "icon": "IconDiamond",
-                      "title": "Best Security Solution",
-                      "issuer": "TechCrunch Disrupt",
-                      "date": "2023"
+                      "icon": "IconCash",
+                      "title": "Sales Leaders",
+                      "description": "Unblock deals faster by passing security reviews instantly with our pre-certified compliance module."
+                    },
+                    {
+                      "icon": "IconBriefcase",
+                      "title": "C-Suite",
+                      "description": "Gain real-time visibility into ROI and operational efficiency across the entire global portfolio."
                     }
                   ],
-                  "layout": "grid"
+                  "layout": "grid",
+                  "columns": 2
                 }
               }
             ]
@@ -1985,28 +2797,25 @@ const layoutTemplates = [
         ]
       },
       type: "admin",
-      tags: ["awards"],
+      tags: ["target-audiences"],
       isAdmin: true,
     },
     {
-      name: "Introduction",
-      description: "Big title with small subtitle",
+      name: "Next Steps",
+      description: "Outline the next three actions to take",
       data: {
-        "id": "introduction",
-        "name": "Introduction",
-        "description": "Big title with small subtitle",
-        "icon": "IconHandWave",
+        "id": "next-steps-layout",
+        "name": "Next Steps",
+        "description": "Outline the next three actions to take",
+        "icon": "IconArrowRight",
         "rows": [
           {
             "id": "row-0",
             "blocks": [
               {
                 "id": "block-0-0",
-                "type": "spacer",
-                "content": {
-                  "type": "spacer",
-                  "height": 120
-                }
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">The Path Forward</h2>\n\n<p style=\"text-align: center\">We are ready to move fast. Here is our proposed 30-day onboarding plan to get your team live and realizing value.</p>"
               }
             ]
           },
@@ -2015,20 +2824,31 @@ const layoutTemplates = [
             "blocks": [
               {
                 "id": "block-1-0",
-                "type": "prosemirror",
-                "content": "<h1 style=\"text-align: center\">User Research Findings for Product Development</h1>\n\n<p style=\"text-align: center\">Key insights, pain points, and actionable recommendations from our recent research study</p>"
-              }
-            ]
-          },
-          {
-            "id": "row-2",
-            "blocks": [
-              {
-                "id": "block-2-0",
-                "type": "spacer",
+                "type": "timeline",
                 "content": {
-                  "type": "spacer",
-                  "height": 120
+                  "type": "timeline",
+                  "steps": [
+                    {
+                      "title": "Week 1: Kickoff & Strategy",
+                      "description": "Align stakeholders, define success metrics, and finalise technical requirements. Delivery: Project Charter.",
+                      "icon": "IconFlagCheck"
+                    },
+                    {
+                      "title": "Week 2: Integration & Setup",
+                      "description": "Connect data sources, configure RBAC, and set up the sandbox environment. Delivery: Functional Sandbox.",
+                      "icon": "IconPlugConnected"
+                    },
+                    {
+                      "title": "Week 3: Training & UAT",
+                      "description": "Train power users and conduct User Acceptance Testing. Gather feedback and refine. Delivery: UAT Sign-off.",
+                      "icon": "IconPresentation"
+                    },
+                    {
+                      "title": "Week 4: Go Live!",
+                      "description": "Full production launch, post-launch hypercare support, and celebration. Delivery: Live System.",
+                      "icon": "IconRocket"
+                    }
+                  ]
                 }
               }
             ]
@@ -2036,164 +2856,7 @@ const layoutTemplates = [
         ]
       },
       type: "admin",
-      tags: ["introduction"],
-      isAdmin: true,
-    },
-    {
-      name: "Strategic Takeaways",
-      description: "Highlighted key points in glass cards",
-      data: {
-        "id": "key-insights",
-        "name": "Strategic Takeaways",
-        "description": "Highlighted key points in glass cards",
-        "icon": "IconBolt",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Core Strategic Pillars</h2>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "glass-insight",
-                "content": {
-                  "type": "glass-insight",
-                  "icon": "IconTarget",
-                  "editorContent": "Focus on product-led growth. By reducing friction in the signup process, we aim to capture 30% more varied user segments."
-                }
-              },
-              {
-                "id": "block-1-1",
-                "type": "glass-insight",
-                "content": {
-                  "type": "glass-insight",
-                  "icon": "IconUsers",
-                  "editorContent": "Strengthen partnership ecosystem. Collaborating with key industry players will unlock new distribution channels."
-                }
-              }
-            ]
-          },
-          {
-            "id": "row-2",
-            "blocks": [
-              {
-                "id": "block-2-0",
-                "type": "glass-insight",
-                "content": {
-                  "type": "glass-insight",
-                  "icon": "IconBrain",
-                  "editorContent": "Invest in AI-driven personalization. Tailoring the user experience based on behavior will drive higher retention."
-                }
-              },
-              {
-                "id": "block-2-1",
-                "type": "glass-insight",
-                "content": {
-                  "type": "glass-insight",
-                  "icon": "IconActivity",
-                  "editorContent": "Accelerate technical debt repayment. Dedicating 20% of engineering time to refactoring will improve stability."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["key-insights"],
-      isAdmin: true,
-    },
-    {
-      name: "Growth Metrics Dashboard",
-      description: "High-level KPI overview with pulse charts",
-      data: {
-        "id": "metric-dashboard",
-        "name": "Growth Metrics Dashboard",
-        "description": "High-level KPI overview with pulse charts",
-        "icon": "IconChartBar",
-        "rows": [
-          {
-            "id": "row-0",
-            "blocks": [
-              {
-                "id": "block-0-0",
-                "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Q3 Performance Overview</h2>"
-              }
-            ]
-          },
-          {
-            "id": "row-1",
-            "blocks": [
-              {
-                "id": "block-1-0",
-                "type": "pulse-metric",
-                "content": {
-                  "type": "pulse-metric",
-                  "value": "+127%",
-                  "label": "Revenue Growth",
-                  "trend": "up",
-                  "sparklineType": "smooth"
-                }
-              },
-              {
-                "id": "block-1-1",
-                "type": "pulse-metric",
-                "content": {
-                  "type": "pulse-metric",
-                  "value": "+84k",
-                  "label": "New Active Users",
-                  "trend": "up",
-                  "sparklineType": "smooth"
-                }
-              },
-              {
-                "id": "block-1-2",
-                "type": "pulse-metric",
-                "content": {
-                  "type": "pulse-metric",
-                  "value": "-12%",
-                  "label": "Churn Rate",
-                  "trend": "up",
-                  "sparklineType": "smooth"
-                }
-              }
-            ]
-          },
-          {
-            "id": "row-2",
-            "blocks": [
-              {
-                "id": "block-2-0",
-                "type": "glass-insight",
-                "content": {
-                  "type": "glass-insight",
-                  "icon": "IconRocket",
-                  "editorContent": "Our growth velocity has accelerated significantly this quarter, driven largely by the new enterprise tier adoption."
-                }
-              },
-              {
-                "id": "block-2-1",
-                "type": "glass-insight",
-                "content": {
-                  "type": "glass-insight",
-                  "icon": "IconTrendingDown",
-                  "editorContent": "Churn reduction initiatives are working. We've seen a 12% drop in cancellations after implementing the new onboarding flow."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["metric-dashboard"],
+      tags: ["next-steps"],
       isAdmin: true,
     },
     {
@@ -2314,6 +2977,92 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
+      name: "Growth Metrics Dashboard",
+      description: "High-level KPI overview with pulse charts",
+      data: {
+        "id": "metric-dashboard",
+        "name": "Growth Metrics Dashboard",
+        "description": "High-level KPI overview with pulse charts",
+        "icon": "IconChartBar",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Q3 Performance Overview</h2>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "pulse-metric",
+                "content": {
+                  "type": "pulse-metric",
+                  "value": "+127%",
+                  "label": "Revenue Growth",
+                  "trend": "up",
+                  "sparklineType": "smooth"
+                }
+              },
+              {
+                "id": "block-1-1",
+                "type": "pulse-metric",
+                "content": {
+                  "type": "pulse-metric",
+                  "value": "+84k",
+                  "label": "New Active Users",
+                  "trend": "up",
+                  "sparklineType": "smooth"
+                }
+              },
+              {
+                "id": "block-1-2",
+                "type": "pulse-metric",
+                "content": {
+                  "type": "pulse-metric",
+                  "value": "-12%",
+                  "label": "Churn Rate",
+                  "trend": "up",
+                  "sparklineType": "smooth"
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "glass-insight",
+                "content": {
+                  "type": "glass-insight",
+                  "icon": "IconRocket",
+                  "editorContent": "Our growth velocity has accelerated significantly this quarter, driven largely by the new enterprise tier adoption."
+                }
+              },
+              {
+                "id": "block-2-1",
+                "type": "glass-insight",
+                "content": {
+                  "type": "glass-insight",
+                  "icon": "IconTrendingDown",
+                  "editorContent": "Churn reduction initiatives are working. We've seen a 12% drop in cancellations after implementing the new onboarding flow."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["metric-dashboard"],
+      isAdmin: true,
+    },
+    {
       name: "Developer Integration",
       description: "Step-by-step guide with code terminals",
       data: {
@@ -2383,6 +3132,77 @@ const layoutTemplates = [
       type: "admin",
       tags: ["technical-walkthrough"],
       isAdmin: true,
+    },
+    {
+      name: "Strategic Takeaways",
+      description: "Highlighted key points in glass cards",
+      data: {
+        "id": "key-insights",
+        "name": "Strategic Takeaways",
+        "description": "Highlighted key points in glass cards",
+        "icon": "IconBolt",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "<h2 style=\"text-align: center\">Core Strategic Pillars</h2>"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "glass-insight",
+                "content": {
+                  "type": "glass-insight",
+                  "icon": "IconTarget",
+                  "editorContent": "Focus on product-led growth. By reducing friction in the signup process, we aim to capture 30% more varied user segments."
+                }
+              },
+              {
+                "id": "block-1-1",
+                "type": "glass-insight",
+                "content": {
+                  "type": "glass-insight",
+                  "icon": "IconUsers",
+                  "editorContent": "Strengthen partnership ecosystem. Collaborating with key industry players will unlock new distribution channels."
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "glass-insight",
+                "content": {
+                  "type": "glass-insight",
+                  "icon": "IconBrain",
+                  "editorContent": "Invest in AI-driven personalization. Tailoring the user experience based on behavior will drive higher retention."
+                }
+              },
+              {
+                "id": "block-2-1",
+                "type": "glass-insight",
+                "content": {
+                  "type": "glass-insight",
+                  "icon": "IconActivity",
+                  "editorContent": "Accelerate technical debt repayment. Dedicating 20% of engineering time to refactoring will improve stability."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["key-insights"],
+      isAdmin: true,
     }
 ];
 
@@ -2412,7 +3232,6 @@ export async function seedTemplates(): Promise<void> {
 
 /**
  * Run as standalone script
- * Usage: npx tsx prisma/seed-templates.ts
  */
 async function main(): Promise<void> {
   try {
@@ -2425,9 +3244,8 @@ async function main(): Promise<void> {
   }
 }
 
-// Only run if this is the main module (CommonJS compatible)
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-if (require.main === module) {
+// Only run if this is the main module
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((error) => {
     console.error(error);
     process.exit(1);

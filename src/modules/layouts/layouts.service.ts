@@ -54,6 +54,65 @@ export class LayoutsService {
       return errorResponse('Failed to retrieve layouts', []);
     }
   }
+
+  async findAdminLayouts(): Promise<ResponseModel> {
+    try {
+      const layouts = await this.prisma.layout.findMany({
+        where: {
+          isAdmin: true,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          thumbnail: true,
+          data: true,
+        },
+        orderBy: [{ usageCount: 'desc' }, { createdAt: 'desc' }],
+      });
+
+      const processedLayouts = layouts.map((layout) => {
+        const data = layout.data as any;
+        return {
+          id: layout.id,
+          name: layout.name,
+          description: layout.description,
+          thumbnail: layout.thumbnail,
+          icon: data?.icon || 'IconLayout',
+        };
+      });
+
+      return successResponse(
+        'Admin layouts retrieved successfully',
+        processedLayouts,
+      );
+    } catch (error) {
+      console.error('Error retrieving admin layouts:', error);
+      return errorResponse('Failed to retrieve admin layouts', []);
+    }
+  }
+
+  async findOne(id: string): Promise<ResponseModel> {
+    try {
+      const layout = await this.prisma.layout.findFirst({
+        where: {
+          id,
+          deletedAt: null,
+        },
+      });
+
+      if (!layout) {
+        return errorResponse('Layout not found');
+      }
+
+      return successResponse('Layout retrieved successfully', layout);
+    } catch (error) {
+      console.error('Error retrieving layout:', error);
+      return errorResponse('Failed to retrieve layout');
+    }
+  }
+
   async remove(id: string, userId: string): Promise<ResponseModel> {
     try {
       // TODO: For testing - allow deleting any admin layout. Will verify userId ownership later

@@ -28,6 +28,17 @@ export class LayoutsController {
   findAll(@UserInfo() user: User) {
     return this.layoutsService.findAll(user.id);
   }
+
+  @Get('admin-list')
+  findAdminLayouts() {
+    return this.layoutsService.findAdminLayouts();
+  }
+
+  @Get(':id/get')
+  findOne(@Param('id') id: string) {
+    return this.layoutsService.findOne(id);
+  }
+
   @Delete(':id/delete')
   remove(@Param('id') id: string, @UserInfo() user: User) {
     return this.layoutsService.remove(id, user.id);
