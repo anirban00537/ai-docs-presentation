@@ -9,7 +9,7 @@ export const createTeamCardContent = (): TeamCardContent => ({
   name: getDefaultHeadingContent(),
   role: "Team Member",
   description: "Description about the team member.",
-  avatar: "",
+  avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format&fit=crop",
   socials: {},
 });
 
