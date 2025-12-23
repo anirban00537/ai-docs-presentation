@@ -131,12 +131,12 @@ export function AppSidebar() {
           
           {/* Header */}
           <div className="flex items-center justify-between p-6 pb-2">
-            <Link href="/home" className="flex items-center group">
+            <Link href="/" className="flex items-center group">
               <div className="relative transition-transform duration-300 group-hover:scale-105">
                 <Image
                   src="/logo.svg"
                   alt="Butterfast"
-                  width={140}
+                  width={190}
                   height={40}
                   priority
                   className="object-contain" // Ensure logo fits well
