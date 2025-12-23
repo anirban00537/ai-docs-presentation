@@ -57,36 +57,47 @@ export const NumberCardBlock = memo(function NumberCardBlock({
   }, [content?.size]);
 
   return (
-    <CommonCard theme={theme} className="p-6 h-full w-full">
-      <div className="flex flex-col gap-5 h-full w-full relative overflow-hidden transition-all" style={{ color: theme.headingColor }}>
-        {/* Number badge */}
-        <div className="flex items-start justify-between">
+    <CommonCard
+      theme={theme}
+      className="h-full w-full transition-all duration-300 hover:shadow-md"
+    >
+      <div
+        className="flex flex-col gap-6 p-8 h-full w-full relative overflow-hidden"
+        style={{ 
+          color: theme.headingColor,
+          borderRadius: theme.cardBorderRadius ?? "12px"
+        }}
+      >
+        {/* Minimal Gradient Background Blob */}
+        <div
+          className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover/card:scale-150"
+          style={{ backgroundColor: theme.primary }}
+        />
+
+        {/* Header: Icon/Number */}
+        <div className="flex flex-col items-start gap-4 z-10">
           <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold transition-all"
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl transition-all duration-300 group-hover/card:scale-105 group-hover/card:rotate-3 shadow-sm border"
             style={{
-              backgroundColor: theme.primary,
-              color: "#fff",
+              backgroundColor: `${theme.primary}15`,
+              borderColor: `${theme.primary}25`,
+              color: theme.primary,
+              backdropFilter: "blur(8px)",
             }}
           >
             {icon || number}
           </div>
-
-          {/* Decorative corner */}
-          <div
-            className="absolute -top-10 -right-10 w-28 h-28 rounded-full opacity-10 pointer-events-none"
-            style={{ backgroundColor: theme.primary }}
-          />
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0 z-10">
+        <div className="flex-1 min-w-0 z-10 mt-2">
           <ProseMirrorEditor
             key={block.id}
             blockId={block.id}
             value={editorContent}
             onChange={handleEditorChange}
             placeholder={placeholder ?? "Type '/' for commands"}
-            className={`${textSizeClass} leading-relaxed`}
+            className={`${textSizeClass} leading-relaxed tracking-tight`}
             readOnly={readOnly}
             theme={theme}
           />
