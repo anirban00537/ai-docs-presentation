@@ -15,7 +15,6 @@ import { PricingLayout } from "../src/app/(protected)/presentation/[id]/editor/t
 import { TeamLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TeamLayout";
 import { StatsLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/StatsLayout";
 import { TestimonialLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TestimonialLayout";
-import { VideoShowcaseLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/VideoShowcaseLayout";
 import { ServicesListLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/ServicesListLayout";
 import { SocialProofLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/SocialProofLayout";
 import { TargetAudiencesLayout } from "../src/app/(protected)/presentation/[id]/editor/templates/TargetAudiencesLayout";
@@ -53,7 +52,6 @@ const templates = [
   TeamLayout,
   StatsLayout,
   TestimonialLayout,
-  VideoShowcaseLayout,
   ServicesListLayout,
   SocialProofLayout,
   TargetAudiencesLayout,

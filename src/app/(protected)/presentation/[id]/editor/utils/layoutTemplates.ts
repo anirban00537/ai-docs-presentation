@@ -64,7 +64,6 @@ import { FeatureShowcaseLayout } from "../templates/FeatureShowcaseLayout";
 import { ComparisonLayout } from "../templates/ComparisonLayout";
 import { FAQLayout } from "../templates/FAQLayout";
 import { PartnersLayout } from "../templates/PartnersLayout";
-import { VideoShowcaseLayout } from "../templates/VideoShowcaseLayout";
 import { CodeExampleLayout } from "../templates/CodeExampleLayout";
 import { ProgressLayout } from "../templates/ProgressLayout";
 import { SocialProofLayout } from "../templates/SocialProofLayout";
@@ -184,7 +183,6 @@ export const layoutTemplates: LayoutTemplate[] = [
   ComparisonLayout,
   FAQLayout,
   PartnersLayout,
-  VideoShowcaseLayout,
   CodeExampleLayout,
   ProgressLayout,
   SocialProofLayout,

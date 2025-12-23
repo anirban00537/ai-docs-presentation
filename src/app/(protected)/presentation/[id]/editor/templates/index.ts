@@ -51,7 +51,6 @@ import { TeamLayout } from "./TeamLayout";
 import { TeamSpotlightLayout } from "./TeamSpotlightLayout";
 import { TechnicalWalkthroughLayout } from "./TechnicalWalkthroughLayout";
 import { TestimonialLayout } from "./TestimonialLayout";
-import { VideoShowcaseLayout } from "./VideoShowcaseLayout";
 
 import type { LayoutTemplate } from "@/types/presentation";
 import type { TemplateCategory, TemplateMetadata } from "./template-utils";
@@ -104,7 +103,6 @@ export {
   TeamSpotlightLayout,
   TechnicalWalkthroughLayout,
   TestimonialLayout,
-  VideoShowcaseLayout,
 };
 
 // Re-export utilities
@@ -513,18 +511,6 @@ export const TEMPLATE_REGISTRY: TemplateRegistryEntry[] = [
   },
 
   // Media Templates
-  {
-    template: VideoShowcaseLayout,
-    metadata: {
-      id: "video-showcase",
-      name: "Video Showcase",
-      description: "Embed videos to showcase your product",
-      icon: "IconPlayerPlay",
-      category: "media",
-      keywords: ["video", "media", "demo", "showcase"],
-      useCases: ["Product demos", "Video content"],
-    },
-  },
   {
     template: GalleryLayout,
     metadata: {
