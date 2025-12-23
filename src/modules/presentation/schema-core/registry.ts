@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
 import type { TemplateSchema, SchemaMetadata } from './types';
 
 /**
  * Schema Registry
- * Loads and caches template schemas from the schemas directory
+ * Loads and caches template schemas from the database (Layout table)
  */
 @Injectable()
 export class SchemaRegistry {
@@ -11,8 +12,10 @@ export class SchemaRegistry {
   private schemas: Map<string, TemplateSchema> = new Map();
   private isInitialized = false;
 
+  constructor(private readonly prisma: PrismaService) {}
+
   /**
-   * Initialize the registry by loading all schema files
+   * Initialize the registry by loading all layout templates from the database
    * This should be called once at application startup
    */
   async initialize(): Promise<void> {
@@ -21,19 +24,34 @@ export class SchemaRegistry {
     }
 
     try {
-      // Dynamically import all schema files
-      // Note: In production, you may need to use a different approach
-      // depending on how TypeScript compiles these files
-      const schemaModules = this.loadSchemaModules();
+      // Load all admin layout templates from database
+      const layouts = await this.prisma.layout.findMany({
+        where: {
+          isAdmin: true,
+          deletedAt: null,
+        },
+      });
 
-      for (const schema of schemaModules) {
+      for (const layout of layouts) {
+        const data = layout.data as any;
+        
+        // Convert layout to TemplateSchema format
+        const schema: TemplateSchema = {
+          id: data.id || layout.id,
+          name: data.name || layout.name,
+          description: data.description || layout.description || '',
+          icon: data.icon || 'IconLayout',
+          rows: data.rows || [],
+          tags: layout.tags || [],
+        };
+        
         this.schemas.set(schema.id, schema);
         this.logger.log(`Loaded schema: ${schema.id} - ${schema.name}`);
       }
 
       this.isInitialized = true;
       this.logger.log(
-        `Schema registry initialized with ${this.schemas.size} schemas`,
+        `Schema registry initialized with ${this.schemas.size} schemas from database`,
       );
     } catch (error: any) {
       this.logger.error('Failed to initialize schema registry:', error);
@@ -42,55 +60,13 @@ export class SchemaRegistry {
   }
 
   /**
-   * Load all schema modules dynamically
-   * Imports schemas from the generated index file
+   * Reload schemas from database
+   * Call this after seeding new templates
    */
-  private loadSchemaModules(): TemplateSchema[] {
-    const schemas: TemplateSchema[] = [];
-
-    try {
-      // Import all schemas from the generated index file in schemas directory
-      // Using require for better error handling in Node.js/NestJS
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const schemaIndex = require('../schemas/index');
-
-      // The index file exports schemaMap and individual schemas
-      // We can use the schemaMap to get all schemas
-      if (schemaIndex.schemaMap) {
-        for (const [, schema] of schemaIndex.schemaMap) {
-          schemas.push(schema);
-        }
-      } else {
-        // Fallback: try to get all exports that match the schema pattern
-        // This handles cases where schemaMap might not be available
-        const allExports = Object.values(schemaIndex);
-        for (const exportValue of allExports) {
-          if (
-            exportValue &&
-            typeof exportValue === 'object' &&
-            'id' in exportValue &&
-            'rows' in exportValue
-          ) {
-            schemas.push(exportValue as TemplateSchema);
-          }
-        }
-      }
-
-      return schemas;
-    } catch (error: any) {
-      this.logger.error('Error loading schema modules:', error);
-      // If index file doesn't exist, return empty array
-      // This allows the app to start even if schemas haven't been generated yet
-      if (
-        error.code === 'MODULE_NOT_FOUND' ||
-        error.message?.includes('Cannot find module')
-      ) {
-        this.logger.warn(
-          'Schema index file not found. Run generate-schemas.ts to create schemas.',
-        );
-      }
-      return [];
-    }
+  async reload(): Promise<void> {
+    this.schemas.clear();
+    this.isInitialized = false;
+    await this.initialize();
   }
 
   /**
@@ -153,4 +129,3 @@ export class SchemaRegistry {
     return this.schemas.size;
   }
 }
-
