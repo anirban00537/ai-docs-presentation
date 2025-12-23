@@ -116,18 +116,24 @@ const MediaCard = ({
       whileHover={{ y: -4 }}
       className="group relative rounded-2xl overflow-hidden"
       style={{
-        backgroundColor: "color-mix(in srgb, var(--card) 50%, transparent)",
+        backgroundColor: "color-mix(in srgb, var(--secondary) 40%, var(--card))",
         backdropFilter: "blur(20px) saturate(180%)",
         WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
         boxShadow: `
-          0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
-          0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-          0 4px 16px rgba(0, 0, 0, 0.06)
+          0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
+          0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
+          0 12px 32px -8px rgba(0, 0, 0, 0.08)
         `,
       }}
     >
       {/* Glass shine overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent pointer-events-none rounded-2xl z-10" />
+      <div 
+        className="absolute inset-0 pointer-events-none rounded-2xl z-10" 
+        style={{
+          background: "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 30%, transparent) 0%, transparent 50%)",
+        }}
+      />
 
       {/* Thumbnail */}
       <div 
@@ -139,6 +145,9 @@ const MediaCard = ({
             src={media.url}
             alt={media.name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            style={{
+              backgroundColor: "color-mix(in srgb, var(--secondary) 10%, transparent)",
+            }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -150,22 +159,32 @@ const MediaCard = ({
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2 z-20">
           <button
             onClick={handleCopyUrl}
-            className="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
+            className="p-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110"
+            style={{
+              backgroundColor: "color-mix(in srgb, var(--secondary) 30%, transparent)",
+            }}
           >
-            <IconCopy size={18} className="text-white" />
+            <IconCopy size={18} className="text-secondary-foreground" />
           </button>
           <button
             onClick={handleDownload}
-            className="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
+            className="p-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110"
+            style={{
+              backgroundColor: "color-mix(in srgb, var(--secondary) 30%, transparent)",
+            }}
           >
-            <IconDownload size={18} className="text-white" />
+            <IconDownload size={18} className="text-secondary-foreground" />
           </button>
         </div>
 
         {/* Favorite badge */}
         <button
           onClick={() => onToggleFavorite(media)}
-          className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors z-20"
+          className="absolute top-2 right-2 p-1.5 rounded-full backdrop-blur-sm transition-all duration-300 z-20 hover:scale-110"
+          style={{
+            backgroundColor: "color-mix(in srgb, var(--secondary) 80%, transparent)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          }}
         >
           {media.isFavorite ? (
             <IconHeartFilled size={16} className="text-red-500" />
@@ -589,8 +608,8 @@ export default function MediaPage() {
                 className={cn(
                   "px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
                   category === cat.value
-                    ? "bg-white shadow-sm text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                    ? "bg-secondary text-secondary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/20"
                 )}
               >
                 {cat.label}

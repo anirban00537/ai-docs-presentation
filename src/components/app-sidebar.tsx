@@ -115,15 +115,15 @@ export function AppSidebar() {
       >
         {/* Main Glass Container */}
         <div 
-          className="absolute inset-0 w-full h-full overflow-hidden border-r border-white/20"
+          className="absolute inset-0 w-full h-full overflow-hidden border-r border-secondary/20"
           style={{
-            background: "rgba(255, 255, 255, 0.65)", // Slightly more opaque for better readability
-            backdropFilter: "blur(50px) saturate(200%)", // Increased blur and saturation
+            background: "color-mix(in srgb, var(--secondary) 15%, var(--background))",
+            backdropFilter: "blur(50px) saturate(200%)",
             WebkitBackdropFilter: "blur(50px) saturate(200%)",
           }}
         >
           {/* Subtle noise texture or gradient for depth */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-secondary/10 to-transparent pointer-events-none" />
         </div>
 
         {/* Content wrapper */}
@@ -172,14 +172,14 @@ export function AppSidebar() {
                     className={cn(
                       "relative flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all duration-300 ease-out",
                       isActive 
-                        ? "bg-white/80 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] text-primary" 
-                        : "hover:bg-white/40 text-foreground/70 hover:text-foreground"
+                        ? "bg-secondary/60 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] text-primary" 
+                        : "hover:bg-secondary/30 text-foreground/70 hover:text-foreground"
                     )}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="active-nav-bg"
-                        className="absolute inset-0 bg-white/60 rounded-xl"
+                        className="absolute inset-0 bg-secondary/80 rounded-xl"
                         initial={false}
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                         style={{ backdropFilter: "blur(8px)" }}
@@ -236,8 +236,8 @@ export function AppSidebar() {
                   className={cn(
                     "flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl transition-all duration-200 group",
                     isActive 
-                      ? "bg-white/60 text-foreground font-medium" 
-                      : "hover:bg-white/30 text-foreground/70 hover:text-foreground"
+                      ? "bg-secondary text-foreground font-medium" 
+                      : "hover:bg-secondary/30 text-foreground/70 hover:text-foreground"
                   )}
                 >
                   <item.icon 
@@ -261,10 +261,10 @@ export function AppSidebar() {
               className="relative overflow-hidden rounded-2xl p-[1px] group"
             >
               <div 
-                className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/20 via-primary/5 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-500"
+                className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/30 via-secondary/20 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-500"
               />
                <div 
-                className="relative rounded-[15px] p-4 bg-white/40 backdrop-blur-md overflow-hidden"
+                className="relative rounded-[15px] p-4 bg-secondary/20 backdrop-blur-md overflow-hidden"
               >
                  <div className="flex items-start gap-4 mb-3">
                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary shadow-inner">
@@ -294,9 +294,9 @@ export function AppSidebar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="w-full group flex items-center gap-3 p-2 rounded-xl transition-all duration-200 hover:bg-white/50 outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+                    className="w-full group flex items-center gap-3 p-2 rounded-xl transition-all duration-200 hover:bg-secondary/40 outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
                   >
-                    <Avatar className="h-10 w-10 rounded-xl shadow-sm border border-white/50 ring-2 ring-white/20 group-hover:ring-white/40 transition-all">
+                    <Avatar className="h-10 w-10 rounded-xl shadow-sm border-secondary/30 ring-2 ring-secondary/20 group-hover:ring-secondary/40 transition-all">
                       {user?.image ? (
                         <AvatarImage
                           src={user.image}
@@ -305,7 +305,7 @@ export function AppSidebar() {
                         />
                       ) : null}
 
-                      <AvatarFallback className="rounded-xl bg-gradient-to-tr from-primary/10 to-primary/5 text-primary text-xs font-bold">
+                      <AvatarFallback className="rounded-xl bg-secondary/40 text-primary text-xs font-bold">
                         {userInitials}
                       </AvatarFallback>
                     </Avatar>
@@ -319,7 +319,7 @@ export function AppSidebar() {
                       </p>
                     </div>
                     
-                    <div className="bg-white/40 p-1.5 rounded-lg text-foreground/40 group-hover:text-foreground/70 group-hover:bg-white/80 transition-all">
+                    <div className="bg-secondary/30 p-1.5 rounded-lg text-foreground/40 group-hover:text-foreground/70 group-hover:bg-secondary/60 transition-all">
                          <IconSettings size={14} />
                     </div>
                   </button>
@@ -331,18 +331,18 @@ export function AppSidebar() {
                   sideOffset={16}
                   className="w-56 rounded-2xl border-0 p-1.5"
                   style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    backgroundColor: "color-mix(in srgb, var(--popover) 85%, var(--secondary))",
                     backdropFilter: "blur(20px) saturate(180%)",
                     WebkitBackdropFilter: "blur(20px) saturate(180%)",
                     boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.4) inset"
                   }}
                 >
-                   <div className="px-2 py-1.5 mb-1 bg-white/50 rounded-xl">
+                   <div className="px-2 py-1.5 mb-1 bg-secondary/20 rounded-xl">
                       <p className="text-xs font-medium text-foreground">{primaryName}</p>
                        <p className="text-[10px] text-muted-foreground truncate">{primaryEmail}</p>
                    </div>
                    
-                  <DropdownMenuItem className="rounded-lg cursor-pointer text-xs font-medium py-2 focus:bg-white/60 focus:text-primary">
+                  <DropdownMenuItem className="rounded-lg cursor-pointer text-xs font-medium py-2 focus:bg-secondary/40 focus:text-primary">
                     <IconSettings size={14} className="mr-2" />
                     Account Settings
                   </DropdownMenuItem>

@@ -191,7 +191,7 @@ export default function OutlinePage() {
             <div 
               className="rounded-2xl p-6"
               style={{
-                backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
+                backgroundColor: "color-mix(in srgb, var(--secondary) 10%, transparent)",
                 backdropFilter: "blur(24px) saturate(180%)",
                 WebkitBackdropFilter: "blur(24px) saturate(180%)",
                 boxShadow: `
@@ -210,7 +210,7 @@ export default function OutlinePage() {
                 key={i}
                 className="rounded-2xl p-6"
                 style={{
-                  backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
+                  backgroundColor: "color-mix(in srgb, var(--secondary) 10%, transparent)",
                   backdropFilter: "blur(24px) saturate(180%)",
                   WebkitBackdropFilter: "blur(24px) saturate(180%)",
                   boxShadow: `

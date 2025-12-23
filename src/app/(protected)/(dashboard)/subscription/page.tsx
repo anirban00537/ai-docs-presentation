@@ -137,17 +137,23 @@ export default function SubscriptionPage() {
             transition={{ delay: 0.1 }}
             className="relative flex flex-col p-9 rounded-[38px] overflow-hidden group"
             style={{
-              backgroundColor: "rgba(255, 255, 255, 0.4)",
+              backgroundColor: "color-mix(in srgb, var(--secondary) 15%, transparent)",
               backdropFilter: "blur(28px) saturate(190%)",
               WebkitBackdropFilter: "blur(28px) saturate(190%)",
-              boxShadow: "0 10px 40px -15px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.8) inset",
+              boxShadow: `
+                0 1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
+                0 -1px 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
+                1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
+                -1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
+                0 10px 40px -15px rgba(0, 0, 0, 0.04)
+              `,
             }}
           >
             {/* Glass shine overlay */}
             <div 
               className="absolute inset-x-0 top-0 h-1/2 pointer-events-none rounded-t-[38px]"
               style={{
-                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%)",
+                background: "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 40%, transparent) 0%, transparent 50%)",
               }}
             />
 
@@ -156,7 +162,7 @@ export default function SubscriptionPage() {
                 <div 
                   className="w-11 h-11 rounded-1.5xl flex items-center justify-center"
                   style={{
-                    backgroundColor: "rgba(139, 92, 246, 0.06)",
+                    backgroundColor: "color-mix(in srgb, var(--primary) 10%, transparent)",
                   }}
                 >
                   <IconSparkles size={20} className="text-primary/60" />
@@ -170,19 +176,19 @@ export default function SubscriptionPage() {
             </div>
 
             <div className="relative z-10 grid grid-cols-2 gap-5 pt-2">
-              <div className="p-5 rounded-2.5xl bg-white/20 border border-white/40">
+              <div className="p-5 rounded-2.5xl bg-secondary/10 border border-secondary/20">
                 <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Monthly Limit</p>
                 <p className="text-lg font-semibold text-foreground/80">{credits?.monthlyLimit?.toLocaleString() || 0}</p>
               </div>
-              <div className="p-5 rounded-2.5xl bg-white/20 border border-white/40">
+              <div className="p-5 rounded-2.5xl bg-secondary/10 border border-secondary/20">
                 <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Consumed</p>
                 <p className="text-lg font-semibold text-foreground/80">{credits?.monthlyUsed?.toLocaleString() || 0}</p>
               </div>
-              <div className="p-5 rounded-2.5xl bg-white/20 border border-white/40">
+              <div className="p-5 rounded-2.5xl bg-secondary/10 border border-secondary/20">
                 <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Free Batch</p>
                 <p className="text-lg font-semibold text-foreground/80">{(credits?.freeCredits || 0) - (credits?.freeCreditsUsed || 0)}</p>
               </div>
-              <div className="p-5 rounded-2.5xl bg-white/20 border border-white/40">
+              <div className="p-5 rounded-2.5xl bg-secondary/10 border border-secondary/20">
                 <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Paid Batch</p>
                 <p className="text-lg font-semibold text-foreground/80">{credits?.remainingCredits || 0}</p>
               </div>
@@ -208,10 +214,16 @@ export default function SubscriptionPage() {
             transition={{ delay: 0.2 }}
             className="relative flex flex-col p-9 rounded-[38px] overflow-hidden group"
             style={{
-              backgroundColor: "rgba(255, 255, 255, 0.4)",
+              backgroundColor: "color-mix(in srgb, var(--secondary) 15%, transparent)",
               backdropFilter: "blur(28px) saturate(190%)",
               WebkitBackdropFilter: "blur(28px) saturate(190%)",
-              boxShadow: "0 10px 40px -15px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.8) inset",
+              boxShadow: `
+                0 1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
+                0 -1px 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
+                1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
+                -1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
+                0 10px 40px -15px rgba(0, 0, 0, 0.04)
+              `,
             }}
           >
             {/* Glass shine overlay */}
@@ -227,7 +239,7 @@ export default function SubscriptionPage() {
                 <div 
                   className="w-11 h-11 rounded-1.5xl flex items-center justify-center"
                   style={{
-                    backgroundColor: "rgba(59, 130, 246, 0.06)",
+                    backgroundColor: "color-mix(in srgb, var(--chart-1) 10%, transparent)",
                   }}
                 >
                   <IconCreditCard size={20} className="text-blue-500/60" />
@@ -243,7 +255,7 @@ export default function SubscriptionPage() {
                   <div className="grid grid-cols-1 gap-8">
                     <div>
                       <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 mb-2.5">Subscription Identity</p>
-                      <div className="px-4 py-3 rounded-2xl bg-white/20 border border-white/40 font-mono text-[10px] text-foreground/50 truncate">
+                      <div className="px-4 py-3 rounded-2xl bg-secondary/10 border border-secondary/20 font-mono text-[10px] text-foreground/50 truncate">
                         {subscription.polarSubscriptionId || subscription.id}
                       </div>
                     </div>
@@ -320,10 +332,16 @@ export default function SubscriptionPage() {
           transition={{ delay: 0.3 }}
           className="relative px-9 py-7 rounded-[38px] overflow-hidden"
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.4)",
+            backgroundColor: "color-mix(in srgb, var(--secondary) 15%, transparent)",
             backdropFilter: "blur(28px) saturate(190%)",
             WebkitBackdropFilter: "blur(28px) saturate(190%)",
-            boxShadow: "0 10px 40px -15px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.8) inset",
+            boxShadow: `
+              0 1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
+              0 -1px 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
+              1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
+              -1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
+              0 10px 40px -15px rgba(0, 0, 0, 0.04)
+            `,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent pointer-events-none" />

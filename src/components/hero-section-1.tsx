@@ -34,7 +34,7 @@ export function HeroSection() {
       className="relative overflow-hidden bg-cover bg-center bg-no-repeat "
       style={{
         backgroundImage:
-          "url('https://images.unsplash.com/photo-1668853853439-923e013afff1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+          "linear-gradient(to bottom, color-mix(in srgb, var(--background) 80%, transparent), var(--background)), url('https://images.unsplash.com/photo-1668853853439-923e013afff1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -60,7 +60,7 @@ export function HeroSection() {
                   className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
                   style={{
                     background:
-                      "linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 30%, #3a3a3a 60%, #1f1f1f 100%)",
+                      "linear-gradient(180deg, var(--foreground) 0%, color-mix(in srgb, var(--foreground) 80%, var(--primary)) 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -74,7 +74,7 @@ export function HeroSection() {
                   className="text-balance text-base leading-relaxed sm:text-lg md:text-xl md:leading-relaxed"
                   style={{
                     background:
-                      "linear-gradient(180deg, #2a2a2a 0%, #3a3a3a 50%, #4a4a4a 100%)",
+                      "linear-gradient(180deg, var(--muted-foreground) 0%, var(--foreground) 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -109,7 +109,18 @@ export function HeroSection() {
               variants={transitionVariants}
               className="w-full max-w-5xl"
             >
-              <div className="relative w-full overflow-hidden rounded-2xl border border-white/80 bg-white/90 shadow-2xl shadow-yellow-200/30 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/90 dark:shadow-zinc-900/50">
+              <div 
+                className="relative w-full overflow-hidden rounded-[32px] border-0 backdrop-blur-xl"
+                style={{
+                  backgroundColor: "color-mix(in srgb, var(--secondary) 35%, var(--card))",
+                  border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
+                  boxShadow: `
+                    0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
+                    0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
+                    0 32px 64px -16px color-mix(in srgb, var(--primary) 15%, transparent)
+                  `,
+                }}
+              >
                 <div className="relative aspect-video w-full">
                   <iframe
                     src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&playlist=dQw4w9WgXcQ&controls=0&modestbranding=1&rel=0"
@@ -131,7 +142,7 @@ export function HeroSection() {
               className="mb-8 text-center text-xs font-medium tracking-wider"
               style={{
                 background:
-                  "linear-gradient(180deg, #2a2a2a 0%, #3a3a3a 50%, #4a4a4a 100%)",
+                  "linear-gradient(180deg, var(--muted-foreground) 0%, var(--foreground) 80%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",

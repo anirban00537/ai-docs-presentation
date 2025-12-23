@@ -98,9 +98,9 @@ function Others1() {
             target="_blank"
             timelineRef={timelineRef}
             customVariants={revealVariants}
-            className="flex w-fit mx-auto items-center gap-1 rounded-full bg-blue-600 border-4 border-blue-200 py-0.5 pl-0.5 pr-3 text-xs"
+            className="flex w-fit mx-auto items-center gap-1 rounded-full bg-primary border-4 border-primary/20 py-0.5 pl-0.5 pr-3 text-xs shadow-lg shadow-primary/10"
           >
-            <div className="rounded-full bg-[#fcfdff] px-2 py-1 text-xs text-black">
+            <div className="rounded-full bg-secondary px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
               New
             </div>
             <p className="text-white sm:text-base text-xs inline-block">
@@ -129,14 +129,14 @@ function Others1() {
             animationNum={3}
             timelineRef={timelineRef}
             customVariants={revealVariants}
-            className="2xl:text-7xl text-black xl:text-6xl sm:text-5xl text-4xl leading-[100%]"
+            className="2xl:text-7xl text-foreground xl:text-6xl sm:text-5xl text-4xl leading-[100%] tracking-tight"
           >
             Create Stunning{" "}
-            <span className="font-semibold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+            <span className="font-semibold bg-linear-to-r from-primary/80 to-primary bg-clip-text text-transparent">
               AI Powered
             </span>{" "}
             Presentations{" "}
-            <span className="font-semibold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+            <span className="font-semibold bg-linear-to-r from-primary/80 to-primary bg-clip-text text-transparent underline decoration-primary/20 underline-offset-8">
               Instantly
             </span>
           </TimelineContent>
@@ -146,10 +146,10 @@ function Others1() {
             animationNum={4}
             timelineRef={timelineRef}
             customVariants={revealVariants}
-            className="lg:text-xl text-black sm:text-lg text-sm max-w-2xl mx-auto"
+            className="lg:text-xl text-muted-foreground sm:text-lg text-sm max-w-2xl mx-auto font-medium"
           >
             Transform your ideas into professional presentations in seconds with
-            AI-powered design. Smart. Fast. Beautiful.
+            AI-powered design. <span className="text-secondary-foreground italic font-normal">Smart. Fast. Beautiful.</span>
           </TimelineContent>
 
           <TimelineContent
@@ -172,7 +172,7 @@ function Others1() {
             <Button
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto px-8 py-6 text-black"
+              className="w-full sm:w-auto px-8 py-6 text-foreground bg-secondary/20 border-secondary/30 hover:bg-secondary/40"
             >
               Learn More
             </Button>

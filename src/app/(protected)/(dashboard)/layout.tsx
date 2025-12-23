@@ -8,7 +8,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
       <div 
         className="fixed inset-0 pointer-events-none"
         style={{
-          background: "linear-gradient(135deg, var(--background) 0%, var(--sidebar) 100%)",
+          background: "linear-gradient(135deg, var(--secondary) 0%, color-mix(in srgb, var(--secondary) 15%, var(--background)) 50%, var(--secondary) 100%)",
           zIndex: 0,
         }}
       >

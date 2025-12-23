@@ -89,15 +89,19 @@ export function PricingCard({
         className={cn(
           "relative h-full flex flex-col p-8 rounded-[38px] transition-all duration-500 group",
           isPopular
-            ? "scale-[1.02] ring-1 ring-primary/10 shadow-xl shadow-primary/5"
-            : "border border-white/40"
+            ? "scale-[1.02] ring-1 ring-primary/20 shadow-xl shadow-primary/5"
+            : "border-0"
         )}
         style={{
-          backgroundColor: "rgba(255, 255, 255, 0.4)",
+          backgroundColor: "color-mix(in srgb, var(--secondary) 35%, var(--card))",
           backdropFilter: "blur(28px) saturate(190%)",
           WebkitBackdropFilter: "blur(28px) saturate(190%)",
-          boxShadow:
-            "0 10px 40px -15px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.8) inset",
+          border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
+          boxShadow: `
+            0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
+            0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
+            0 14px 48px -12px rgba(0, 0, 0, 0.08)
+          `,
         }}
       >
         {/* Glass shine overlay */}
@@ -105,7 +109,7 @@ export function PricingCard({
           className="absolute inset-x-0 top-0 h-1/2 pointer-events-none rounded-t-[38px]"
           style={{
             background:
-              "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%)",
+              "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 40%, transparent) 0%, transparent 50%)",
           }}
         />
 
@@ -115,14 +119,14 @@ export function PricingCard({
             className="w-11 h-11 rounded-1.5xl flex items-center justify-center mb-6"
             style={{
               backgroundColor: isPopular
-                ? "rgba(139, 92, 246, 0.08)"
-                : "rgba(100, 116, 139, 0.05)",
+                ? "color-mix(in srgb, var(--primary) 10%, transparent)"
+                : "color-mix(in srgb, var(--secondary) 20%, transparent)",
             }}
           >
             {isPopular ? (
               <IconSparkles size={20} className="text-primary/70" />
             ) : (
-              <IconRocket size={20} className="text-slate-400" />
+              <IconRocket size={20} className="text-secondary-foreground/60" />
             )}
           </div>
           <h3 className="text-xl font-semibold text-foreground tracking-tight">
@@ -159,8 +163,8 @@ export function PricingCard({
             <ul className="space-y-4">
               {features.map((feature: string, idx: number) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <div className="mt-1 w-4 h-4 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
-                    <IconCheck size={10} className="text-green-600/70" />
+                  <div className="mt-1 w-4 h-4 rounded-full bg-secondary/20 flex items-center justify-center shrink-0">
+                    <IconCheck size={10} className="text-secondary-foreground/70" />
                   </div>
                   <span className="text-sm text-foreground/70 font-medium leading-normal">
                     {feature}
@@ -184,7 +188,7 @@ export function PricingCard({
                 "w-full h-13 rounded-2xl text-sm font-semibold transition-all duration-300 transform active:scale-[0.97]",
                 isPopular
                   ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
-                  : "bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/10"
+                  : "bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-lg shadow-secondary/10"
               )}
             >
               <Link href={href}>{cta || "Get Started"}</Link>
@@ -196,10 +200,10 @@ export function PricingCard({
               className={cn(
                 "w-full h-13 rounded-2xl text-sm font-semibold transition-all duration-300 transform active:scale-[0.97]",
                 isCurrentPlan
-                  ? "bg-white/50 hover:bg-white/80 text-slate-600 border border-white/60 shadow-none"
+                  ? "bg-secondary/40 hover:bg-secondary/60 text-secondary-foreground border border-secondary/20 shadow-none"
                   : isPopular
                   ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
-                  : "bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/10"
+                  : "bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-lg shadow-secondary/10"
               )}
             >
               {loading

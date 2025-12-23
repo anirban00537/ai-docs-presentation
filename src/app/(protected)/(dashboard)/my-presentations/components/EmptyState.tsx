@@ -21,15 +21,13 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateClick }) => (
       animate={{ scale: [1, 1.03, 1] }}
       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       style={{
-        backgroundColor: "rgba(255, 255, 255, 0.4)",
+        backgroundColor: "color-mix(in srgb, var(--secondary) 15%, transparent)",
         backdropFilter: "blur(24px) saturate(180%)",
         WebkitBackdropFilter: "blur(24px) saturate(180%)",
         boxShadow: `
-          0 1px 0 0 rgba(255, 255, 255, 1) inset,
+          0 1px 0 0 color-mix(in srgb, var(--secondary) 25%, transparent) inset,
           0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-          1px 0 0 0 rgba(255, 255, 255, 0.8) inset,
-          -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
-          0 8px 32px rgba(139, 92, 246, 0.12),
+          0 8px 32px color-mix(in srgb, var(--primary) 12%, transparent),
           0 2px 8px rgba(0, 0, 0, 0.04)
         `,
       }}
@@ -42,11 +40,11 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateClick }) => (
         }}
       />
       
-      {/* Purple glow */}
+      {/* Primary glow */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.2) 0%, transparent 60%)",
+          background: "radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--primary) 20%, transparent) 0%, transparent 60%)",
         }}
       />
       
@@ -64,7 +62,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateClick }) => (
       onClick={onCreateClick}
       className="gap-2 px-6 h-11 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-[1.02]"
       style={{
-        boxShadow: "0 4px 16px rgba(139, 92, 246, 0.25)",
+        boxShadow: "0 4px 16px color-mix(in srgb, var(--primary) 25%, transparent)",
       }}
     >
       <IconPlus size={18} />

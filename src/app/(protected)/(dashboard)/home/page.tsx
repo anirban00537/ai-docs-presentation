@@ -59,16 +59,14 @@ const SuggestionCard: React.FC<{
       onClick={() => onClick(suggestion.prompt)}
       className="group relative flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-300 overflow-hidden"
       style={{
-        backgroundColor: "color-mix(in srgb, var(--card) 40%, transparent)",
+        backgroundColor: "color-mix(in srgb, var(--secondary) 35%, var(--card))",
         backdropFilter: "blur(24px) saturate(180%)",
         WebkitBackdropFilter: "blur(24px) saturate(180%)",
+        border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
         boxShadow: `
-          0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
-          0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-          1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-          -1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-          0 4px 16px rgba(0, 0, 0, 0.06),
-          0 1px 4px rgba(0, 0, 0, 0.03)
+          0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
+          0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
+          0 4px 16px rgba(0, 0, 0, 0.06)
         `,
       }}
     >
@@ -76,7 +74,7 @@ const SuggestionCard: React.FC<{
       <div 
         className="absolute inset-0 pointer-events-none rounded-xl"
         style={{
-          background: "linear-gradient(135deg, color-mix(in srgb, var(--card) 50%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--card) 20%, transparent) 100%)",
+          background: "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 40%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--secondary) 10%, transparent) 100%)",
         }}
       />
       

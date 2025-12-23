@@ -52,7 +52,10 @@ export default function PricingPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-[500px] rounded-3xl bg-card/20 animate-pulse border border-white/40 shadow-xl"
+              className="h-[500px] rounded-3xl animate-pulse border-0 shadow-xl"
+              style={{
+                backgroundColor: "color-mix(in srgb, var(--secondary) 15%, var(--card))",
+              }}
             />
           ))}
         </div>
@@ -97,13 +100,13 @@ export default function PricingPage() {
             className="flex justify-center"
           >
             <div
-              className="px-5 py-2 rounded-2xl flex items-center gap-2.5 border border-green-500/20 text-xs font-semibold text-green-600/90"
+              className="px-5 py-2 rounded-2xl flex items-center gap-2.5 border border-secondary/30 text-xs font-semibold text-secondary-foreground"
               style={{
-                backgroundColor: "rgba(34, 197, 94, 0.05)",
+                backgroundColor: "color-mix(in srgb, var(--secondary) 80%, transparent)",
                 backdropFilter: "blur(8px)",
               }}
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              <div className="w-1.5 h-1.5 rounded-full bg-secondary-foreground/60 animate-pulse" />
               Active Plan: {currentSubscription.productId || "Pro"}
             </div>
           </motion.div>

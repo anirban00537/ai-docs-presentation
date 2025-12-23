@@ -71,14 +71,13 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
         <div 
           className="relative overflow-hidden rounded-2xl transition-all duration-300 cursor-pointer"
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.35)",
+            backgroundColor: "color-mix(in srgb, var(--secondary) 35%, var(--card))",
             backdropFilter: "blur(24px) saturate(180%)",
             WebkitBackdropFilter: "blur(24px) saturate(180%)",
+            border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
             boxShadow: `
-              0 1px 0 0 rgba(255, 255, 255, 1) inset,
-              0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-              1px 0 0 0 rgba(255, 255, 255, 0.8) inset,
-              -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
+              0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
+              0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
               0 4px 16px rgba(0, 0, 0, 0.06),
               0 1px 4px rgba(0, 0, 0, 0.03)
             `,
@@ -88,7 +87,7 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
           <div 
             className="absolute inset-0 pointer-events-none rounded-2xl z-10"
             style={{
-              background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
+              background: "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 40%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--secondary) 10%, transparent) 100%)",
             }}
           />
 
@@ -136,7 +135,7 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
             <button
               className="p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-105"
               style={{
-                backgroundColor: "rgba(255, 255, 255, 0.85)",
+                backgroundColor: "color-mix(in srgb, var(--secondary) 85%, transparent)",
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
@@ -150,10 +149,11 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
             align="end"
             className="rounded-xl border-0"
             style={{
-              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              backgroundColor: "color-mix(in srgb, var(--popover) 90%, transparent)",
               backdropFilter: "blur(24px) saturate(180%)",
               WebkitBackdropFilter: "blur(24px) saturate(180%)",
               boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+              border: "1px solid color-mix(in srgb, var(--secondary) 30%, transparent)",
             }}
           >
             <DropdownMenuItem
