@@ -107,27 +107,31 @@ export class OutlineService {
         !this.generatingOutlines.has(id)
       ) {
         this.generatingOutlines.add(id);
-        this.logger.log(
-          `No outlines found for outline ${id}, auto-generating...`,
-        );
+        this.logger.log(`🚀 STARTING OUTLINE AUTO-GENERATION: ID ${id}`);
+        this.logger.log(`📝 User Prompt: "${outline.prompt.substring(0, 100)}${outline.prompt.length > 100 ? '...' : ''}"`);
+        
         try {
           if (!this.openRouter) {
             throw new Error('OpenRouter service is not initialized');
           }
 
+          this.logger.log(`💳 [Outline ${id}] Checking credits...`);
           // Check if user has enough credits to generate outline
           // 1 credit for outline generation
           const hasCredits = await this.creditService.hasEnoughCredits(user.id, 1);
           if (!hasCredits) {
+            this.logger.warn(`🚫 [Outline ${id}] Insufficient credits for user ${user.id}`);
             throw new BadRequestException('Insufficient credits to generate presentation outline.');
           }
 
           const userPrompt = outline.prompt;
           const numberOfSlides = outline.numberOfSlides;
 
-          // Update status to generating
+          this.logger.log(`⏳ [Outline ${id}] Setting status to "generating"...`);
+          // Update status to generating (redundant but safe)
           await this.updateOutlineStatus(id, 'generating');
 
+          this.logger.log(`🗄️ [Outline ${id}] Fetching admin layouts from DB...`);
           // Fetch all layouts from the database
           const allLayouts = await this.prisma.layout.findMany({
             where: {
@@ -154,9 +158,9 @@ export class OutlineService {
             description: layout.description,
           }));
           
-          this.logger.debug(`Found ${layoutsInfo.length} layouts for outline generation`);
+          this.logger.log(`📊 [Outline ${id}] Found ${layoutsInfo.length} layouts for selection.`);
 
-          // Make API call to generate outline
+          this.logger.log(`🤖 [Outline ${id}] Calling LLM for outline generation (Model: ${this.MODEL_NAME})...`);
           const response = await this.openRouter.chat.send({
             model: this.MODEL_NAME,
             messages: [
@@ -252,21 +256,27 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
           
           // Log tech usage
           if (response.usage) {
+            const inputTokens = (response.usage as any).promptTokens || (response.usage as any).prompt_tokens;
+            const outputTokens = (response.usage as any).completionTokens || (response.usage as any).completion_tokens;
+            this.logger.log(`📈 [Outline ${id}] AI Usage: ${inputTokens} in / ${outputTokens} out`);
+
             await this.aiUsageService.logUsage({
               userId: user.id,
               modelName: this.MODEL_NAME,
-              inputTokens: (response.usage as any).promptTokens || (response.usage as any).prompt_tokens,
-              outputTokens: (response.usage as any).completionTokens || (response.usage as any).completion_tokens,
+              inputTokens,
+              outputTokens,
               type: 'outline',
               outlineId: id
             });
           }
 
           if (!content || typeof content !== 'string') {
+            this.logger.error(`❌ [Outline ${id}] No response from AI service.`);
             throw new Error('Invalid response format from OpenRouter');
           }
 
           // Parse the response
+          this.logger.log(`🧪 [Outline ${id}] Parsing AI response...`);
           const outlineData: OutlineResponse = JSON.parse(content);
 
           // Save to database
@@ -276,6 +286,7 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
             schemaId: item.layoutId, // Map for backward compatibility if needed
           }));
 
+          this.logger.log(`💾 [Outline ${id}] Saving ${outlinesWithLayoutId.length} outline items to DB...`);
           await this.updateOutlineStatus(id, 'completed', {
             title: outlineData.title,
             outlines: outlinesWithLayoutId,
@@ -290,12 +301,10 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
               outline.presentationId || undefined,
             );
           } catch (creditError) {
-            this.logger.error('Failed to deduct credit for outline generation:', creditError);
+            this.logger.error(`❌ [Outline ${id}] Failed to deduct credit:`, creditError);
           }
 
-          this.logger.log(
-            `Outline ${id} saved successfully with ${outlineData.outlines.length} outline items`,
-          );
+          this.logger.log(`✅ [Outline ${id}] Generation completed: "${outlineData.title}"`);
 
           // Update presentation title if presentationId exists
           if (outline.presentationId) {
@@ -305,14 +314,9 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
                 user,
                 { title: outlineData.title },
               );
-              this.logger.log(
-                `Updated presentation ${outline.presentationId} title to: ${outlineData.title}`,
-              );
+              this.logger.log(`📝 [Outline ${id}] Updated presentation title: ${outlineData.title}`);
             } catch (error: any) {
-              this.logger.error(
-                `Failed to update presentation title: ${error.message}`,
-              );
-              // Don't throw - outline generation succeeded, title update is secondary
+              this.logger.error(`⚠️ [Outline ${id}] Failed to update presentation title: ${error.message}`);
             }
           }
 
@@ -331,7 +335,7 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
           );
         } catch (genError: any) {
           this.generatingOutlines.delete(id);
-          this.logger.error(`Error auto-generating outline ${id}:`, genError);
+          this.logger.error(`❌ [Outline ${id}] CRITICAL ERROR during auto-generation:`, genError);
           await this.updateOutlineStatus(id, 'failed');
           // Return original outline even if generation failed
           return successResponse('Outline fetched successfully', outline);
@@ -340,7 +344,7 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
 
       return successResponse('Outline fetched successfully', outline);
     } catch (error: any) {
-      this.logger.error('Error fetching outline:', error);
+      this.logger.error(`❌ Error in getOutline:`, error);
       return processException(error);
     }
   }

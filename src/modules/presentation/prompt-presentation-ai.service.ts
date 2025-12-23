@@ -4,17 +4,32 @@ import { User } from '@prisma/client';
 import { OpenRouter } from '@openrouter/sdk';
 import { ConfigService } from '@nestjs/config';
 import { AiUsageService } from '../subscription/services/ai-usage.service';
+import { ImagesService } from '../images/images.service';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
+
+interface ImageFieldInfo {
+  fieldPath: string;
+  fieldType: 'image' | 'accent' | 'avatar' | 'gallery';
+  searchQuery: string;
+  orientation: 'landscape' | 'portrait' | 'squarish';
+}
+
+interface ImageAnalysisResult {
+  hasImages: boolean;
+  imageFields: ImageFieldInfo[];
+}
 
 @Injectable()
 export class PromptPresentationAIService {
   private readonly logger = new Logger(PromptPresentationAIService.name);
   private openRouter: OpenRouter;
   private readonly MODEL_NAME = coreConstant.AI_MODELS.SLIDES.NAME;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly aiUsageService: AiUsageService,
+    private readonly imagesService: ImagesService,
   ) {
     const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
     if (!apiKey) {
@@ -31,6 +46,195 @@ export class PromptPresentationAIService {
         this.logger.error('Failed to initialize OpenRouter SDK:', error);
       }
     }
+  }
+
+  /**
+   * Analyze a layout schema to detect image fields and generate Unsplash search queries
+   * Uses structured JSON schema output for reliable parsing
+   */
+  private async analyzeLayoutForImages(
+    layoutData: any,
+    outlineContent: string,
+    presentationTitle: string,
+  ): Promise<ImageAnalysisResult> {
+    try {
+      const layoutJson = JSON.stringify(layoutData, null, 2);
+
+      const analysisPrompt = `Analyze this presentation slide layout schema and identify ALL image-related fields.
+
+LAYOUT SCHEMA:
+${layoutJson}
+
+SLIDE CONTENT (for context):
+${outlineContent}
+
+PRESENTATION TITLE: ${presentationTitle}
+
+Look for these types of image fields:
+1. **accent** - Top-level accent object with a "url" property (used for background/accent images)
+2. **image blocks** - Blocks with type "image" that have a "url" field in their content
+3. **avatar fields** - Fields named "avatar" or "profileImage" in testimonial/team blocks
+4. **gallery images** - Arrays of images in gallery blocks
+5. **logo images** - Logo grid items that have image URLs
+
+For each image field found, provide:
+- fieldPath: The JSON path to the URL field (e.g., "accent.url", "rows[0].blocks[0].content.url")
+- fieldType: One of "accent", "image", "avatar", "gallery"
+- searchQuery: A specific, descriptive Unsplash search query based on the slide content and field purpose
+- orientation: "landscape" for accent/banner images, "portrait" for avatars, "squarish" for general images
+
+IMPORTANT SEARCH QUERY GUIDELINES:
+- Make queries specific and contextual to the slide content
+- For accent images: Use atmospheric/abstract terms related to the topic
+- For avatars: Use "professional headshot portrait person"
+- For product images: Be specific about the product type
+- Avoid generic queries like "business" - be more specific
+
+If no image fields are found, return hasImages as false with an empty imageFields array.`;
+
+      const response = await this.openRouter.chat.send({
+        model: this.MODEL_NAME,
+        messages: [
+          {
+            role: 'user',
+            content: analysisPrompt,
+          },
+        ],
+        responseFormat: {
+          type: 'json_schema',
+          jsonSchema: {
+            name: 'image_analysis',
+            strict: true,
+            schema: {
+              type: 'object',
+              properties: {
+                hasImages: {
+                  type: 'boolean',
+                  description: 'Whether the layout has any image fields that need to be populated',
+                },
+                imageFields: {
+                  type: 'array',
+                  description: 'Array of image fields found in the layout',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      fieldPath: {
+                        type: 'string',
+                        description: 'The JSON path to the URL field (e.g., "accent.url", "rows[0].blocks[0].content.avatar")',
+                      },
+                      fieldType: {
+                        type: 'string',
+                        enum: ['accent', 'image', 'avatar', 'gallery'],
+                        description: 'The type of image field',
+                      },
+                      searchQuery: {
+                        type: 'string',
+                        description: 'A specific, descriptive Unsplash search query based on the slide content and field purpose',
+                      },
+                      orientation: {
+                        type: 'string',
+                        enum: ['landscape', 'portrait', 'squarish'],
+                        description: 'The preferred image orientation',
+                      },
+                    },
+                    required: ['fieldPath', 'fieldType', 'searchQuery', 'orientation'],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ['hasImages', 'imageFields'],
+              additionalProperties: false,
+            },
+          },
+        },
+        stream: false,
+      });
+
+      const content = response.choices[0]?.message?.content;
+
+      if (!content || typeof content !== 'string') {
+        this.logger.warn('Invalid response from image analysis');
+        return { hasImages: false, imageFields: [] };
+      }
+
+      const result: ImageAnalysisResult = JSON.parse(content);
+      
+      this.logger.debug(
+        `Image analysis result: ${result.hasImages ? result.imageFields.length : 0} image fields found`,
+      );
+
+      return result;
+    } catch (error) {
+      this.logger.error('Error analyzing layout for images:', error);
+      return { hasImages: false, imageFields: [] };
+    }
+  }
+
+  /**
+   * Fetch images from Unsplash for all detected image fields
+   */
+  private async fetchImagesForFields(
+    imageFields: ImageFieldInfo[],
+  ): Promise<Map<string, string>> {
+    const imageMap = new Map<string, string>();
+
+    for (const field of imageFields) {
+      try {
+        const imageUrl = await this.imagesService.searchUnsplashSimple(
+          field.searchQuery,
+          field.orientation,
+        );
+
+        if (imageUrl) {
+          imageMap.set(field.fieldPath, imageUrl);
+          this.logger.debug(
+            `Found image for "${field.fieldPath}": ${field.searchQuery}`,
+          );
+        } else {
+          this.logger.warn(
+            `No image found for "${field.fieldPath}" with query: ${field.searchQuery}`,
+          );
+        }
+      } catch (error) {
+        this.logger.error(`Error fetching image for ${field.fieldPath}:`, error);
+      }
+    }
+
+    return imageMap;
+  }
+
+  /**
+   * Build the image injection section for the slide generation prompt
+   */
+  private buildImageInjectionPrompt(
+    imageMap: Map<string, string>,
+    imageFields: ImageFieldInfo[],
+  ): string {
+    if (imageMap.size === 0) {
+      return '';
+    }
+
+    const imageInstructions = Array.from(imageMap.entries())
+      .map(([fieldPath, url]) => {
+        const field = imageFields.find((f) => f.fieldPath === fieldPath);
+        return `- Set "${fieldPath}" to: "${url}" (${field?.fieldType || 'image'})`;
+      })
+      .join('\n');
+
+    return `
+⚠️ IMAGE INJECTION INSTRUCTIONS (CRITICAL) ⚠️
+
+The following image URLs have been pre-fetched from Unsplash. You MUST include these exact URLs in the corresponding fields:
+
+${imageInstructions}
+
+HOW TO APPLY:
+1. For "accent.url" - Set the accent object's url property to the provided URL
+2. For "rows[X].blocks[Y].content.url" - Set the block's content url to the provided URL
+3. For avatar/profile fields - Set the avatar or profileImage field to the provided URL
+
+DO NOT change these URLs. Copy them exactly as provided above into the appropriate fields in your JSON output.
+`;
   }
 
   async *generateAndSaveSlidesFromPresentation(
@@ -73,10 +277,20 @@ export class PromptPresentationAIService {
     const outlineItems = outline.outlines as Array<{
       content: string;
       schemaId?: string;
-      layoutId?: string; // Keep for backward compatibility
+      layoutId?: string;
     }>;
     const title = outline.title || 'Untitled Presentation';
 
+    this.logger.log(
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+    );
+    this.logger.log(
+      `🚀 STARTING SLIDE GENERATION: Presentation "${title}" (${presentationId})`,
+    );
+    this.logger.log(`📊 Number of slides to generate: ${outlineItems.length}`);
+    this.logger.log(
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+    );
 
     yield JSON.stringify({
       type: 'start',
@@ -88,9 +302,15 @@ export class PromptPresentationAIService {
       const outlineItem = outlineItems[i];
       const slideNumber = i + 1;
       const totalSlides = outlineItems.length;
-      const schemaId = outlineItem.schemaId || outlineItem.layoutId; // Use schemaId, fallback to layoutId for backward compatibility
+      const schemaId = outlineItem.schemaId || outlineItem.layoutId;
+      const slideStartTime = Date.now();
+
+      this.logger.log(
+        `▶ [Slide ${slideNumber}/${totalSlides}] Starting generation...`,
+      );
 
       let templateRows: any[] = [];
+      let layoutData: any = null;
 
       // Get layout from database
       if (schemaId) {
@@ -99,15 +319,15 @@ export class PromptPresentationAIService {
         });
 
         if (layout && layout.data && (layout.data as any).rows) {
+          layoutData = layout.data;
           templateRows = (layout.data as any).rows;
-          this.logger.debug(
-            `Using layout ${schemaId} with ${templateRows.length} rows`,
+          this.logger.log(
+            `📄 [Slide ${slideNumber}] Layout found: "${layout.name}" (${schemaId})`,
           );
         } else {
-          this.logger.error(
-            `Layout ${schemaId} not found or has no row data.`,
+          this.logger.warn(
+            `⚠️ [Slide ${slideNumber}] Layout ${schemaId} not found or has no row data.`,
           );
-          // Continue with empty templateRows - the LLM will generate a basic structure
         }
       }
 
@@ -118,7 +338,65 @@ export class PromptPresentationAIService {
       });
 
       try {
-        // Build layout structure prompt - send only the rows structure
+        // ============================================
+        // STEP 1: Analyze layout for image fields
+        // ============================================
+        let imageInjectionPrompt = '';
+        
+        if (layoutData) {
+          this.logger.log(
+            `🔍 [Slide ${slideNumber}] Analyzing layout for image fields...`,
+          );
+
+          const imageAnalysis = await this.analyzeLayoutForImages(
+            layoutData,
+            outlineItem.content,
+            title,
+          );
+
+          if (imageAnalysis.hasImages && imageAnalysis.imageFields.length > 0) {
+            this.logger.log(
+              `✨ [Slide ${slideNumber}] AI detected ${imageAnalysis.imageFields.length} image fields.`,
+            );
+
+            // ============================================
+            // STEP 2: Fetch images from Unsplash
+            // ============================================
+            this.logger.log(
+              `🌐 [Slide ${slideNumber}] Fetching images from Unsplash...`,
+            );
+            const imageMap = await this.fetchImagesForFields(
+              imageAnalysis.imageFields,
+            );
+
+            if (imageMap.size > 0) {
+              // ============================================
+              // STEP 3: Build image injection prompt
+              // ============================================
+              imageInjectionPrompt = this.buildImageInjectionPrompt(
+                imageMap,
+                imageAnalysis.imageFields,
+              );
+
+              this.logger.log(
+                `📸 [Slide ${slideNumber}] Successfully mapped ${imageMap.size} images to layout.`,
+              );
+              imageMap.forEach((url, path) => {
+                this.logger.debug(`   ↳ ${path}: ${url}`);
+              });
+            } else {
+              this.logger.log(
+                `❓ [Slide ${slideNumber}] No matching images found on Unsplash.`,
+              );
+            }
+          } else {
+            this.logger.log(
+              `ℹ️ [Slide ${slideNumber}] No image fields found in this layout.`,
+            );
+          }
+        }
+
+        // Build layout structure prompt
         const layoutStructureSection = `
 
 LAYOUT STRUCTURE TEMPLATE (YOU MUST FOLLOW THIS EXACT STRUCTURE):
@@ -144,7 +422,7 @@ FORMATTING PRESERVATION (MOST CRITICAL):
 - DO NOT add any Markdown formatting that is not in the template
 - DO NOT change the formatting style - only replace the text content
 - For example: If template has "<h2 style="text-align: center">Title</h2>", you should have "<h2 style="text-align: center">Your New Title</h2>" - keep the exact same HTML structure
-- For example: If template has "## Title", you should have "## Your New Title" - keep the exact same Markdown format
+- For example: If template has "## Title", you should have "## New Title" - keep the exact same Markdown format
 - DO NOT add extra formatting like bold, italic, lists, etc. unless they exist in the template`;
 
         const slidePrompt = `You are generating slide ${slideNumber} of ${totalSlides} for a presentation titled "${title}".
@@ -152,6 +430,7 @@ FORMATTING PRESERVATION (MOST CRITICAL):
 OUTLINE CONTENT FOR THIS SLIDE (in markdown format):
 ${outlineItem.content}
 ${layoutStructureSection}
+${imageInjectionPrompt}
 
 ⚠️⚠️⚠️ CRITICAL: EXACT FORMATTING PRESERVATION - THIS IS THE MOST IMPORTANT RULE ⚠️⚠️⚠️
 
@@ -218,6 +497,10 @@ IMPORTANT:
 - Ensure valid JSON format
 - Structure MUST exactly match the template - same rows, same blocks per row, same IDs`;
 
+        this.logger.log(
+          `🤖 [Slide ${slideNumber}] Calling LLM for content generation...`,
+        );
+
         const response = await this.openRouter.chat.send({
           model: this.MODEL_NAME,
           messages: [
@@ -230,16 +513,27 @@ IMPORTANT:
         });
 
         const content = response.choices[0]?.message?.content;
-        
+
         // Log tech usage
         if (response.usage) {
+          const inputTokens =
+            (response.usage as any).promptTokens ||
+            (response.usage as any).prompt_tokens;
+          const outputTokens =
+            (response.usage as any).completionTokens ||
+            (response.usage as any).completion_tokens;
+
+          this.logger.log(
+            `📈 [Slide ${slideNumber}] AI Usage: ${inputTokens} in / ${outputTokens} out`,
+          );
+
           await this.aiUsageService.logUsage({
             userId: user.id,
             modelName: this.MODEL_NAME,
-            inputTokens: (response.usage as any).promptTokens || (response.usage as any).prompt_tokens,
-            outputTokens: (response.usage as any).completionTokens || (response.usage as any).completion_tokens,
+            inputTokens,
+            outputTokens,
             type: 'slide',
-            presentationId: presentationId
+            presentationId: presentationId,
           });
         }
 
@@ -272,7 +566,6 @@ IMPORTANT:
         } else if (slideData?.data) {
           slideData = { rows: slideData.data };
         } else if (!slideData?.rows && slideData) {
-          // If response doesn't have rows, try to use the data directly
           slideData = { rows: Array.isArray(slideData) ? slideData : [] };
         }
 
@@ -295,6 +588,11 @@ IMPORTANT:
           },
         });
 
+        const slideDuration = ((Date.now() - slideStartTime) / 1000).toFixed(2);
+        this.logger.log(
+          `✅ [Slide ${slideNumber}] Saved successfully! (ID: ${savedSlide.id}, Time: ${slideDuration}s)`,
+        );
+
         // Stream the slide data with the saved slide ID
         yield JSON.stringify({
           type: 'slide',
@@ -303,7 +601,10 @@ IMPORTANT:
           data: slideData,
         });
       } catch (error: any) {
-        this.logger.error(`Error generating slide ${slideNumber}:`, error);
+        this.logger.error(
+          `❌ [Slide ${slideNumber}] FAILED during generation:`,
+          error,
+        );
         yield JSON.stringify({
           type: 'slide-error',
           slideNumber,
@@ -311,6 +612,16 @@ IMPORTANT:
         });
       }
     }
+
+    this.logger.log(
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+    );
+    this.logger.log(
+      `🎉 COMPLETED SLIDE GENERATION for "${title}" (${presentationId})`,
+    );
+    this.logger.log(
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+    );
 
     yield JSON.stringify({
       type: 'complete',

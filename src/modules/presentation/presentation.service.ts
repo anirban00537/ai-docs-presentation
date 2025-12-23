@@ -13,9 +13,11 @@ import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
 import { CreateSlideDto } from './dto/create-slide.dto';
 import { UpdateSlideDto } from './dto/update-slide.dto';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class PresentationService {
+  private readonly logger = new Logger(PresentationService.name);
   constructor(private readonly prisma: PrismaService) {}
 
   async create(
@@ -36,6 +38,7 @@ export class PresentationService {
         },
       });
 
+      this.logger.log(`CREATE: Presentation "${presentation.title}" (${presentation.id}) for user ${user.id}`);
       return successResponse('Presentation created successfully', presentation);
     } catch (error) {
       processException(error);
@@ -187,6 +190,7 @@ export class PresentationService {
         },
       });
 
+      this.logger.log(`UPDATE TITLE: Presentation ${id} -> "${payload.title}"`);
       return successResponse(
         'Presentation title updated successfully',
         updatedPresentation,
@@ -306,6 +310,7 @@ export class PresentationService {
           },
         });
 
+        this.logger.log(`ADD SLIDE: Added slide to presentation ${presentationId} at order ${targetOrder}`);
         return slide;
       });
 

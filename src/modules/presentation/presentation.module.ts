@@ -5,9 +5,10 @@ import { PromptPresentationAIService } from './prompt-presentation-ai.service';
 import { OutlineService } from './outline.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
+import { ImagesModule } from '../images/images.module';
 
 @Module({
-  imports: [PrismaModule, SubscriptionModule],
+  imports: [PrismaModule, SubscriptionModule, ImagesModule],
   controllers: [PresentationController],
   providers: [
     PresentationService,
