@@ -39,43 +39,66 @@ const FeatureItem = memo(function FeatureItem({
   readOnly: boolean;
 }) {
   return (
-    <CommonCard theme={theme} className="flex gap-4 p-5">
-      {/* Icon */}
-      <div className="flex-shrink-0">
-        <EmojiPickerTrigger
-          icon={feature.icon || "✨"}
-          onEmojiSelect={(emoji) => onIconChange(index, emoji)}
-          disabled={readOnly}
-          size="lg"
-          backgroundColor={`${theme.primary}15`}
+    <CommonCard
+      theme={theme}
+      className="group/feature relative transition-all duration-300 hover:shadow-md h-full"
+    >
+      <div 
+        className="flex flex-col gap-6 p-8 relative h-full w-full overflow-hidden"
+        style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+      >
+        {/* Minimal Gradient Background Blob */}
+        <div
+          className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+          style={{ backgroundColor: theme.primary }}
         />
-      </div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="mb-1.5">
-          <ProseMirrorEditor
-            key={`${blockId}-title-${index}`}
-            blockId={`${blockId}-title-${index}`}
-            value={feature.title}
-            onChange={(newContent) => onTitleChange(index, newContent)}
-            placeholder="Feature Title"
-            className="text-base font-semibold leading-tight"
-            theme={theme}
-            readOnly={readOnly}
-          />
+        {/* Icon / Badge */}
+        <div className="z-10">
+          <div 
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl transition-all duration-300 border shadow-sm"
+            style={{ 
+              backgroundColor: `${theme.primary}10`,
+              borderColor: `${theme.primary}20`,
+              backdropFilter: "blur(8px)"
+            }}
+          >
+            <EmojiPickerTrigger
+              icon={feature.icon || "✨"}
+              onEmojiSelect={(emoji) => onIconChange(index, emoji)}
+              disabled={readOnly}
+              size="xl"
+              className="bg-transparent"
+            />
+          </div>
         </div>
-        <div>
-          <ProseMirrorEditor
-            key={`${blockId}-desc-${index}`}
-            blockId={`${blockId}-desc-${index}`}
-            value={feature.description}
-            onChange={(newContent) => onDescriptionChange(index, newContent)}
-            placeholder="Feature description"
-            className="text-sm opacity-60 leading-relaxed"
-            theme={theme}
-            readOnly={readOnly}
-          />
+
+        {/* Content Area */}
+        <div className="relative z-10 flex flex-col flex-1 min-w-0">
+          <div className="mb-2">
+            <ProseMirrorEditor
+              key={`${blockId}-title-${index}`}
+              blockId={`${blockId}-title-${index}`}
+              value={feature.title}
+              onChange={(newContent) => onTitleChange(index, newContent)}
+              placeholder="Feature Title"
+              className="text-lg font-bold tracking-tight leading-tight"
+              theme={theme}
+              readOnly={readOnly}
+            />
+          </div>
+          <div>
+            <ProseMirrorEditor
+              key={`${blockId}-desc-${index}`}
+              blockId={`${blockId}-desc-${index}`}
+              value={feature.description}
+              onChange={(newContent) => onDescriptionChange(index, newContent)}
+              placeholder="Feature description"
+              className="text-sm opacity-60 leading-relaxed tracking-normal"
+              theme={theme}
+              readOnly={readOnly}
+            />
+          </div>
         </div>
       </div>
     </CommonCard>
@@ -125,9 +148,9 @@ export const FeatureListBlock = memo(function FeatureListBlock({
   const gridClass = useMemo(() => {
     if (layout === "grid") {
       const colClass = columns === 2 ? "grid-cols-2" : columns === 3 ? "grid-cols-3" : "grid-cols-4";
-      return `grid gap-4 ${colClass}`;
+      return `grid gap-6 ${colClass}`;
     }
-    return "flex flex-col gap-3";
+    return "flex flex-col gap-4";
   }, [layout, columns]);
 
   return (

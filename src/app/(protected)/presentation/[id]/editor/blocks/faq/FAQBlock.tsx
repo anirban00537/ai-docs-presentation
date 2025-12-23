@@ -120,88 +120,106 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
       theme={theme}
       readOnly={readOnly}
     >
-      <div className="w-full flex flex-col gap-2">
+      <div className="w-full flex flex-col gap-4">
         {items.map((item, index) => {
           const isExpanded = expandedItems[index];
           return (
             <CommonCard
               key={index}
               theme={theme}
-              className="overflow-hidden relative group/item"
+              className="overflow-hidden relative group/item transition-all duration-300 hover:shadow-md"
             >
-              {/* Question header */}
-              <button
-                onClick={() => toggleItem(index)}
-                className="w-full px-5 py-4 flex items-center justify-between gap-4 text-left transition-all hover:opacity-80"
-                style={{ color: theme.headingColor }}
+              <div 
+                className="relative overflow-hidden" 
+                style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
               >
-                <div className="flex-1 min-w-0">
-                  <ProseMirrorEditor
-                    key={`${block.id}-question-${index}`}
-                    blockId={`${block.id}-question-${index}`}
-                    value={item.question}
-                    onChange={(newContent) =>
-                      handleQuestionChange(index, newContent)
-                    }
-                    placeholder="Question?"
-                    className="font-medium text-base"
-                    theme={theme}
-                    readOnly={readOnly}
-                  />
-                </div>
-                <motion.div
-                  animate={{ rotate: isExpanded ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                  style={{ color: theme.primary }}
-                >
-                  <IconChevronDown size={18} />
-                </motion.div>
-              </button>
+                {/* Minimal Gradient Background Blob */}
+                <div
+                  className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.03] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+                  style={{ backgroundColor: theme.primary }}
+                />
 
-              {/* Answer content */}
-              <AnimatePresence>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
-                  >
-                    <div
-                      className="px-5 pb-4"
-                      style={{ color: theme.bodyColor }}
-                    >
-                      <ProseMirrorEditor
-                        key={`${block.id}-answer-${index}`}
-                        blockId={`${block.id}-answer-${index}`}
-                        value={item.answer}
-                        onChange={(newContent) =>
-                          handleAnswerChange(index, newContent)
-                        }
-                        placeholder="Answer..."
-                        className="text-sm opacity-70 leading-relaxed"
-                        theme={theme}
-                        readOnly={readOnly}
-                      />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Delete button */}
-              {!readOnly && (
+                {/* Question header */}
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeItem(index);
-                  }}
-                  className="absolute top-4 right-12 z-10 opacity-0 group-hover/item:opacity-100 p-1.5 rounded-lg transition-all hover:bg-red-500/10"
-                  style={{ color: "#ef4444" }}
+                  onClick={() => toggleItem(index)}
+                  className="w-full px-8 py-6 flex items-center justify-between gap-6 text-left transition-all relative z-10"
+                  style={{ color: theme.headingColor }}
                 >
-                  <IconTrash size={14} />
+                  <div className="flex-1 min-w-0">
+                    <ProseMirrorEditor
+                      key={`${block.id}-question-${index}`}
+                      blockId={`${block.id}-question-${index}`}
+                      value={item.question}
+                      onChange={(newContent) =>
+                        handleQuestionChange(index, newContent)
+                      }
+                      placeholder="Question?"
+                      className="font-bold text-lg tracking-tight leading-tight"
+                      theme={theme}
+                      readOnly={readOnly}
+                    />
+                  </div>
+                  <motion.div
+                    animate={{ rotate: isExpanded ? 180 : 0 }}
+                    transition={{ duration: 0.3, ease: "circOut" }}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center border shadow-sm transition-colors"
+                    style={{ 
+                      color: theme.primary,
+                      backgroundColor: isExpanded ? `${theme.primary}15` : `${theme.primary}05`,
+                      borderColor: isExpanded ? `${theme.primary}25` : `${theme.primary}10`,
+                      backdropFilter: "blur(4px)"
+                    }}
+                  >
+                    <IconChevronDown size={20} strokeWidth={2.5} />
+                  </motion.div>
                 </button>
-              )}
+
+                {/* Answer content */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "circOut" }}
+                      className="overflow-hidden relative z-10"
+                    >
+                      <div
+                        className="px-8 pb-8 pt-2"
+                        style={{ color: theme.bodyColor }}
+                      >
+                        <div className="w-12 h-0.5 rounded-full mb-6" style={{ backgroundColor: theme.primary, opacity: 0.2 }} />
+                        <ProseMirrorEditor
+                          key={`${block.id}-answer-${index}`}
+                          blockId={`${block.id}-answer-${index}`}
+                          value={item.answer}
+                          onChange={(newContent) =>
+                            handleAnswerChange(index, newContent)
+                          }
+                          placeholder="Answer..."
+                          className="text-base opacity-70 leading-relaxed tracking-normal"
+                          theme={theme}
+                          readOnly={readOnly}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Delete button */}
+                {!readOnly && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeItem(index);
+                    }}
+                    className="absolute top-4 right-20 z-20 opacity-0 group-hover/item:opacity-100 p-2 rounded-xl transition-all hover:bg-red-500/10"
+                    style={{ color: "#ef4444" }}
+                  >
+                    <IconTrash size={16} />
+                  </button>
+                )}
+              </div>
             </CommonCard>
           );
         })}

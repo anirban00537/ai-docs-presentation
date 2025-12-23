@@ -120,19 +120,31 @@ export const TestimonialBlock = memo(function TestimonialBlock({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} theme={theme}>
-      <CommonCard theme={theme} className="w-full h-full p-6">
+      <CommonCard theme={theme} className="w-full h-full transition-all duration-300 hover:shadow-md">
         <div
-          className="group flex flex-col gap-5 relative overflow-hidden transition-all"
+          className="group flex flex-col gap-8 p-8 relative h-full w-full overflow-hidden"
           style={{
             color: theme.bodyColor || theme.headingColor,
+            borderRadius: theme.cardBorderRadius ?? "12px"
           }}
         >
-          {/* Quote mark */}
+          {/* Minimal Gradient Background Blob */}
           <div
-            className="absolute top-4 right-5 text-7xl leading-none opacity-10 font-serif select-none pointer-events-none"
-            style={{ color: theme.primary }}
+            className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+            style={{ backgroundColor: theme.primary }}
+          />
+
+          {/* Quote mark (Badge style) */}
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center text-4xl leading-none transition-all duration-300 border shadow-sm"
+            style={{ 
+              backgroundColor: `${theme.primary}10`,
+              borderColor: `${theme.primary}20`,
+              color: theme.primary,
+              backdropFilter: "blur(8px)"
+            }}
           >
-            &quot;
+             <span className="opacity-40">&quot;</span>
           </div>
 
           {/* Quote */}
@@ -143,7 +155,7 @@ export const TestimonialBlock = memo(function TestimonialBlock({
               value={quoteDoc}
               onChange={handleQuoteChange}
               placeholder={placeholder ?? "Add a testimonial..."}
-              className="text-lg italic font-medium leading-relaxed opacity-80"
+              className="text-xl italic font-medium leading-relaxed tracking-tight opacity-90"
               theme={theme}
               readOnly={readOnly}
             />
@@ -151,25 +163,29 @@ export const TestimonialBlock = memo(function TestimonialBlock({
 
           {/* Author */}
           <div
-            className="relative z-10 flex items-center gap-3 pt-4"
-            style={{ borderTop: `1px solid ${theme.primary}10` }}
+            className="relative z-10 flex items-center gap-4 pt-6"
+            style={{ borderTop: `1px solid ${theme.primary}15` }}
           >
             <div
               className={`shrink-0 ${!readOnly ? "cursor-pointer" : ""}`}
               onClick={!readOnly ? handleOpenEdit : undefined}
             >
               {avatar ? (
-                <img
-                  src={avatar}
-                  alt="Avatar"
-                  className="w-10 h-10 rounded-full object-cover transition-opacity hover:opacity-80"
-                />
+                <div className="p-0.5 rounded-full border border-black/5 dark:border-white/10 shadow-sm">
+                  <img
+                    src={avatar}
+                    alt="Avatar"
+                    className="w-12 h-12 rounded-full object-cover transition-opacity hover:opacity-80"
+                  />
+                </div>
               ) : (
                 <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-opacity hover:opacity-80"
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold transition-all border shadow-sm"
                   style={{
-                    backgroundColor: theme.primary,
-                    color: "#fff",
+                    backgroundColor: `${theme.primary}15`,
+                    borderColor: `${theme.primary}25`,
+                    color: theme.primary,
+                    backdropFilter: "blur(4px)"
                   }}
                 >
                   {extractText(nameDoc)
@@ -181,24 +197,26 @@ export const TestimonialBlock = memo(function TestimonialBlock({
               )}
             </div>
 
-            <div className="flex flex-col">
-              <ProseMirrorEditor
-                key={`${block.id}-name`}
-                blockId={`${block.id}-name`}
-                value={nameDoc}
-                onChange={handleNameChange}
-                placeholder="Name"
-                className="text-sm font-semibold"
-                theme={theme}
-                readOnly={readOnly}
-              />
+            <div className="flex flex-col min-w-0">
+              <div style={{ color: theme.headingColor }}>
+                <ProseMirrorEditor
+                  key={`${block.id}-name`}
+                  blockId={`${block.id}-name`}
+                  value={nameDoc}
+                  onChange={handleNameChange}
+                  placeholder="Name"
+                  className="text-base font-bold tracking-tight"
+                  theme={theme}
+                  readOnly={readOnly}
+                />
+              </div>
               <ProseMirrorEditor
                 key={`${block.id}-role`}
                 blockId={`${block.id}-role`}
                 value={roleDoc}
                 onChange={handleRoleChange}
                 placeholder="Role"
-                className="text-[11px] font-medium uppercase tracking-wide opacity-50"
+                className="text-[11px] font-semibold uppercase tracking-widest opacity-50"
                 theme={theme}
                 readOnly={readOnly}
               />

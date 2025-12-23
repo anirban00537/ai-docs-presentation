@@ -115,11 +115,12 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
     <BlockWrapper onEdit={handleOpenEdit} className="h-full" theme={theme}>
       <CommonCard
         theme={theme}
-        className="w-full overflow-hidden relative group h-full flex flex-col p-0 border-none"
+        className="w-full overflow-hidden relative group h-full flex flex-col border-none transition-all duration-300 hover:shadow-2xl"
+        style={{ borderRadius: "24px" }}
       >
         {embedUrl ? (
           <>
-            <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
+            <div className="relative w-full overflow-hidden" style={{ aspectRatio: "16/9" }}>
               <iframe
                 src={embedUrl}
                 className="w-full h-full"
@@ -128,18 +129,23 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
                 title="Video player"
               />
             </div>
-            {title && (
+            {(title || !isDark) && (
               <div
-                className="p-4"
-                style={{ backgroundColor: `${theme.primary}05` }}
+                className="p-6 relative overflow-hidden"
+                style={{ backgroundColor: isDark ? "rgba(30,30,35,0.5)" : "rgba(255,255,255,0.5)", backdropFilter: "blur(12px)" }}
               >
+                {/* Minimal Gradient Background Blob */}
+                <div
+                  className="absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-[0.03] blur-xl pointer-events-none"
+                  style={{ backgroundColor: theme.primary }}
+                />
                 <ProseMirrorEditor
                   key={`${block.id}-title`}
                   blockId={`${block.id}-title`}
                   value={title}
                   onChange={handleTitleChange}
                   placeholder="Video Title"
-                  className="text-base font-semibold"
+                  className="text-lg font-bold tracking-tight relative z-10"
                   theme={theme}
                 />
               </div>
@@ -147,30 +153,40 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
           </>
         ) : (
           <div
-            className="w-full h-full min-h-[240px] flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all"
+            className="w-full h-full min-h-[300px] flex flex-col items-center justify-center p-12 text-center cursor-pointer transition-all relative overflow-hidden group/empty"
             onClick={handleOpenEdit}
           >
+            {/* Minimal Gradient Background Blob */}
             <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
+              className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.05] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover/empty:scale-150"
+              style={{ backgroundColor: theme.primary }}
+            />
+            
+            <div
+              className="w-16 h-16 rounded-3xl flex items-center justify-center mb-6 transition-all border shadow-sm group-hover/empty:scale-110 group-hover/empty:rotate-3"
               style={{
-                backgroundColor: `${theme.primary}15`,
+                backgroundColor: `${theme.primary}10`,
+                borderColor: `${theme.primary}20`,
                 color: theme.primary,
+                backdropFilter: "blur(8px)"
               }}
             >
-              <IconPlayerPlay size={28} />
+              <IconPlayerPlay size={28} strokeWidth={2.5} />
             </div>
-            <h3
-              className="text-lg font-semibold mb-1"
-              style={{ color: theme.headingColor }}
-            >
-              Add Video
-            </h3>
-            <p
-              className="text-xs opacity-50 max-w-[200px] mx-auto"
-              style={{ color: theme.bodyColor }}
-            >
-              Embed from YouTube, Vimeo, or direct link
-            </p>
+            <div className="relative z-10">
+              <h3
+                className="text-xl font-bold mb-2 tracking-tight"
+                style={{ color: theme.headingColor }}
+              >
+                Add Video
+              </h3>
+              <p
+                className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 max-w-[200px] mx-auto"
+                style={{ color: theme.bodyColor }}
+              >
+                Embed from YouTube, Vimeo, or direct link
+              </p>
+            </div>
           </div>
         )}
 

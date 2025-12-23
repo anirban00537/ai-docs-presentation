@@ -56,22 +56,31 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
   return (
     <CommonCard
       theme={theme}
-      className={`w-full h-full p-6 ${
+      className={`w-full h-full transition-all duration-300 hover:shadow-md ${
         isCentered ? "items-center text-center" : "items-start text-left"
       }`}
-      style={{
-        borderLeft: isCentered ? "none" : `4px solid ${theme.primary}`,
-        background: isCentered ? undefined : "transparent",
-        boxShadow: isCentered ? undefined : "none",
-      }}
     >
-      <div className={`flex flex-col gap-4 relative w-full h-full ${isCentered ? "items-center" : "items-start"}`}>
-        {/* Decorative Quote Mark */}
+      <div 
+        className={`flex flex-col gap-8 p-10 relative w-full h-full overflow-hidden ${isCentered ? "items-center" : "items-start"}`}
+        style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+      >
+        {/* Minimal Gradient Background Blob */}
         <div
-          className="text-5xl leading-none font-serif select-none opacity-15"
-          style={{ color: theme.primary }}
+          className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+          style={{ backgroundColor: theme.primary }}
+        />
+
+        {/* Decorative Quote Mark (Badge style) */}
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center text-5xl leading-none transition-all duration-300 border shadow-sm"
+          style={{ 
+            backgroundColor: `${theme.primary}10`,
+            borderColor: `${theme.primary}20`,
+            color: theme.primary,
+            backdropFilter: "blur(8px)"
+          }}
         >
-          &quot;
+          <span className="opacity-30">&quot;</span>
         </div>
 
         {/* Quote Content */}
@@ -82,7 +91,7 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
             value={quoteDoc}
             onChange={handleQuoteChange}
             placeholder={placeholder ?? "Add an inspiring quote..."}
-            className="text-xl font-medium italic opacity-80 leading-relaxed"
+            className="text-2xl font-medium italic opacity-90 leading-relaxed tracking-tight"
             theme={theme}
             readOnly={readOnly}
           />
@@ -90,14 +99,14 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
 
         {/* Author */}
         <div
-          className={`relative z-10 flex items-center gap-3 mt-1 ${
+          className={`relative z-10 flex items-center gap-4 mt-2 ${
             isCentered ? "justify-center" : "justify-start"
           }`}
         >
           {isCentered && (
             <div
-              className="h-px w-5"
-              style={{ backgroundColor: theme.primary, opacity: 0.3 }}
+              className="h-px w-8"
+              style={{ backgroundColor: theme.primary, opacity: 0.2 }}
             />
           )}
           <ProseMirrorEditor
@@ -106,14 +115,14 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
             value={authorDoc}
             onChange={handleAuthorChange}
             placeholder="Author name"
-            className="text-xs font-medium tracking-wide uppercase opacity-50"
+            className="text-xs font-bold tracking-[0.2em] uppercase opacity-50"
             theme={theme}
             readOnly={readOnly}
           />
           {isCentered && (
             <div
-              className="h-px w-5"
-              style={{ backgroundColor: theme.primary, opacity: 0.3 }}
+              className="h-px w-8"
+              style={{ backgroundColor: theme.primary, opacity: 0.2 }}
             />
           )}
         </div>

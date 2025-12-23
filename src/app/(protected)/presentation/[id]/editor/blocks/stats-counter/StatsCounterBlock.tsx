@@ -115,22 +115,40 @@ const StatItem = memo(function StatItem({
   readOnly?: boolean;
 }) {
   return (
-    <CommonCard theme={theme} className="flex-1 min-w-[160px] p-5">
-      <div className="group flex flex-col items-center gap-2 relative transition-all">
+    <CommonCard 
+      theme={theme} 
+      className="flex-1 min-w-[200px] transition-all duration-300 hover:shadow-xl group/stat overflow-hidden"
+    >
+      <div 
+        className="p-10 relative flex flex-col items-center gap-4 transition-all"
+        style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+      >
+        {/* Minimal Gradient Background Blob */}
+        <div
+          className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover/stat:scale-150"
+          style={{ backgroundColor: theme.primary }}
+        />
+
         {/* Icon */}
-        <div className="mb-1 relative z-20">
+        <div className="mb-2 relative z-20">
           <EmojiPickerTrigger
             icon={stat.icon || "📊"}
             onEmojiSelect={(emoji) => onIconChange(index, emoji)}
             disabled={readOnly}
             size="lg"
+            className="w-16 h-16 rounded-2xl text-4xl shadow-sm border flex items-center justify-center transition-all group-hover/stat:scale-110 group-hover/stat:rotate-3"
+            style={{ 
+              backgroundColor: `${theme.primary}10`,
+              borderColor: `${theme.primary}20`,
+              backdropFilter: "blur(8px)"
+            }}
             title="Change icon"
           />
         </div>
 
         {/* Value */}
         <div
-          className="text-3xl font-bold transition-colors"
+          className="text-4xl font-black transition-colors tracking-tighter"
           style={{ color: stat.color || theme.primary }}
         >
           {stat.prefix}
@@ -146,7 +164,7 @@ const StatItem = memo(function StatItem({
             value={stat.label}
             onChange={(newContent) => onLabelChange(index, newContent)}
             placeholder="Label"
-            className="text-center text-xs font-medium opacity-60"
+            className="text-center text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 group-hover/stat:opacity-100 transition-opacity"
             theme={theme}
             readOnly={readOnly}
           />

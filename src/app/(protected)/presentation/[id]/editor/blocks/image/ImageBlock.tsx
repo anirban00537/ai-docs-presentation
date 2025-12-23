@@ -24,6 +24,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
 }) => {
   const content = block.content as ImageContent;
   const { url, alt, caption, objectFit = "cover", attribution } = content;
+  const isDark = theme.themeType === "dark";
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,17 +62,34 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
         <CommonCard
           theme={theme}
           onClick={openModal}
-          className={`w-full h-48 flex flex-col items-center justify-center gap-3 transition-all ${!readOnly ? 'cursor-pointer' : ''} border-dashed`}
+          className={`w-full h-64 flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:shadow-lg relative overflow-hidden group/empty ${!readOnly ? 'cursor-pointer' : ''}`}
           style={{
-            borderColor: `${theme.primary}30`,
+            borderRadius: "24px",
             color: theme.bodyColor,
-            borderWidth: '2px',
           }}
         >
-          <IconPhoto size={40} stroke={1.5} style={{ opacity: 0.4 }} />
-          <span className="text-sm font-medium opacity-50">
-            {readOnly ? "No image" : "Click to add image"}
-          </span>
+          {/* Minimal Gradient Background Blob */}
+          <div
+            className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.05] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover/empty:scale-150"
+            style={{ backgroundColor: theme.primary }}
+          />
+          <div className="w-16 h-16 rounded-3xl flex items-center justify-center border shadow-sm transition-all group-hover/empty:scale-110 group-hover/empty:rotate-3"
+            style={{ 
+              backgroundColor: `${theme.primary}10`,
+              borderColor: `${theme.primary}20`,
+              backdropFilter: "blur(8px)"
+            }}
+          >
+            <IconPhoto size={32} stroke={1.5} style={{ color: theme.primary }} />
+          </div>
+          <div className="text-center">
+            <span className="text-base font-bold tracking-tight block">
+              {readOnly ? "No image provided" : "Drop an image or click"}
+            </span>
+            {!readOnly && (
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-40">To add to your presentation</span>
+            )}
+          </div>
         </CommonCard>
 
         {!readOnly && (
@@ -90,11 +108,12 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
     <>
       <CommonCard 
         theme={theme}
-        className="w-full h-full flex flex-col gap-0 group/image relative p-0 overflow-hidden border-none"
+        className="w-full h-full flex flex-col gap-0 group/image relative p-0 overflow-hidden border-none transition-all duration-500 hover:shadow-2xl"
+        style={{ borderRadius: "24px" }}
       >
         {/* Image Container */}
         <div 
-          className="relative w-full flex-1 min-h-[200px]"
+          className="relative w-full flex-1 min-h-[300px] overflow-hidden"
           style={{
             backgroundColor: `${theme.primary}05`,
           }}
@@ -102,7 +121,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
           <img
             src={url}
             alt={alt || caption || "Image"}
-            className="w-full h-full transition-transform duration-500"
+            className="w-full h-full transition-transform duration-700 ease-out group-hover/image:scale-105"
             style={{
               objectFit: objectFit,
             }}
@@ -114,14 +133,15 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
           {/* Overlay Controls (only in edit mode) */}
           {!readOnly && (
             <div 
-              className="absolute inset-0 bg-black/0 group-hover/image:bg-black/30 transition-all flex items-center justify-center opacity-0 group-hover/image:opacity-100"
+              className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-all flex items-center justify-center opacity-0 group-hover/image:opacity-100 backdrop-blur-0 group-hover/image:backdrop-blur-[2px]"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={openModal}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
+                  className="px-4 py-2 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-xl border"
                   style={{
                     backgroundColor: "rgba(255,255,255,0.95)",
+                    borderColor: "rgba(255,255,255,0.2)",
                     color: "#000",
                   }}
                 >
@@ -129,9 +149,10 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
                 </button>
                 <button
                   onClick={toggleObjectFit}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
+                  className="px-4 py-2 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-xl border"
                   style={{
                     backgroundColor: "rgba(255,255,255,0.95)",
+                    borderColor: "rgba(255,255,255,0.2)",
                     color: "#000",
                   }}
                   title={`Current: ${objectFit}`}
@@ -143,29 +164,42 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
           )}
         </div>
 
-        {/* Caption Input */}
-        {!readOnly && (
-          <input
-            type="text"
-            value={caption || ""}
-            onChange={handleCaptionChange}
-            placeholder="Add a caption..."
-            className="w-full text-sm bg-transparent border-0 outline-none px-1 py-1 transition-all"
-            style={{
-              color: theme.bodyColor,
-              opacity: caption ? 1 : 0.5,
+        {/* Caption Section */}
+        {(caption || !readOnly) && (
+          <div 
+            className="p-6 relative z-10"
+            style={{ 
+              backgroundColor: isDark ? "rgba(30,30,35,0.5)" : "rgba(255,255,255,0.5)",
+              backdropFilter: "blur(12px)"
             }}
-          />
-        )}
-
-        {/* Caption Display (read only) */}
-        {readOnly && caption && (
-          <p
-            className="text-sm px-1 py-1"
-            style={{ color: theme.bodyColor, opacity: 0.8 }}
           >
-            {caption}
-          </p>
+            {/* Minimal Gradient Background Blob */}
+            <div
+              className="absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-[0.03] blur-xl pointer-events-none"
+              style={{ backgroundColor: theme.primary }}
+            />
+
+            {!readOnly ? (
+              <input
+                type="text"
+                value={caption || ""}
+                onChange={handleCaptionChange}
+                placeholder="Add a caption..."
+                className="w-full text-base font-bold bg-transparent border-0 outline-none transition-all tracking-tight leading-tight"
+                style={{
+                  color: theme.bodyColor,
+                  opacity: caption ? 0.9 : 0.4,
+                }}
+              />
+            ) : (
+              <p
+                className="text-base font-bold tracking-tight leading-tight opacity-90"
+                style={{ color: theme.bodyColor }}
+              >
+                {caption}
+              </p>
+            )}
+          </div>
         )}
 
         {/* Unsplash Attribution */}
@@ -174,14 +208,16 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
             href={attribution.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute bottom-2 right-2 text-[10px] px-2 py-1 rounded-md flex items-center gap-1 transition-all opacity-60 hover:opacity-100"
+            className="absolute bottom-4 right-4 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-xl flex items-center gap-2 transition-all opacity-0 group-hover/image:opacity-100 hover:scale-105"
             style={{
-              backgroundColor: "rgba(0,0,0,0.5)",
+              backgroundColor: "rgba(0,0,0,0.6)",
+              backdropFilter: "blur(8px)",
               color: "#fff",
+              border: "1px solid rgba(255,255,255,0.1)"
             }}
           >
             Photo by {attribution.name}
-            <IconExternalLink size={10} />
+            <IconExternalLink size={12} strokeWidth={2.5} />
           </a>
         )}
       </CommonCard>

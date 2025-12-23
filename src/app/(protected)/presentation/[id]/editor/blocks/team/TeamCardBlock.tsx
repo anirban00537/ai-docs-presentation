@@ -90,15 +90,25 @@ export const TeamCardBlock = memo(function TeamCardBlock({
   }, [content, onUpdate, readOnly]);
 
   return (
-    <CommonCard theme={theme} className="w-full h-full p-6">
-      <div className="w-full h-full flex flex-col items-center relative group transition-all">
+    <CommonCard theme={theme} className="w-full h-full transition-all duration-300 hover:shadow-md">
+      <div 
+        className="w-full h-full flex flex-col items-center gap-8 p-8 relative overflow-hidden"
+        style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+      >
+        {/* Minimal Gradient Background Blob */}
+        <div
+          className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+          style={{ backgroundColor: theme.primary }}
+        />
+
         {/* Avatar */}
-        <div className="relative mb-5">
+        <div className="relative z-10">
           <div
-            className={`w-24 h-24 rounded-full overflow-hidden flex items-center justify-center relative group/avatar ${!readOnly ? 'cursor-pointer hover:scale-105' : ''} transition-all`}
+            className={`w-28 h-28 rounded-3xl overflow-hidden flex items-center justify-center relative group/avatar ${!readOnly ? 'cursor-pointer hover:scale-105' : ''} transition-all duration-300 border shadow-md`}
             style={{
-              backgroundColor: `${theme.primary}15`,
-              border: `3px solid ${theme.primary}20`,
+              backgroundColor: `${theme.primary}10`,
+              borderColor: `${theme.primary}20`,
+              backdropFilter: "blur(8px)"
             }}
             onClick={!readOnly ? handleAvatarClick : undefined}
           >
@@ -110,22 +120,23 @@ export const TeamCardBlock = memo(function TeamCardBlock({
               />
             ) : (
               <IconUser
-                size={32}
-                style={{ color: theme.primary, opacity: 0.4 }}
+                size={40}
+                strokeWidth={1.5}
+                style={{ color: theme.primary, opacity: 0.5 }}
               />
             )}
 
             {/* Hover Overlay */}
             {!readOnly && (
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity rounded-full">
-                <IconUpload size={20} className="text-white" />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity">
+                <IconUpload size={24} className="text-white" />
               </div>
             )}
           </div>
         </div>
 
         {/* Name & Role */}
-        <div className="w-full text-center space-y-1 mb-3">
+        <div className="w-full text-center z-10">
           <div style={{ color: theme.headingColor }}>
             <ProseMirrorEditor
               key={`${block.id}-name`}
@@ -133,19 +144,19 @@ export const TeamCardBlock = memo(function TeamCardBlock({
               value={nameDoc}
               onChange={handleNameChange}
               placeholder="Team Member Name"
-              className="text-lg font-bold text-center"
+              className="text-xl font-bold text-center tracking-tight"
               theme={theme}
               readOnly={readOnly}
             />
           </div>
-          <div style={{ color: theme.primary }}>
+          <div style={{ color: theme.primary }} className="mt-1">
             <ProseMirrorEditor
               key={`${block.id}-role`}
               blockId={`${block.id}-role`}
               value={roleDoc}
               onChange={handleRoleChange}
               placeholder="Role / Title"
-              className="text-xs font-medium uppercase tracking-wider opacity-70 text-center"
+              className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-60 text-center"
               theme={theme}
               readOnly={readOnly}
             />
@@ -153,7 +164,7 @@ export const TeamCardBlock = memo(function TeamCardBlock({
         </div>
 
         {/* Description */}
-        <div className="w-full text-center mb-4 px-2">
+        <div className="w-full text-center px-4 z-10">
           <div style={{ color: theme.bodyColor }}>
             <ProseMirrorEditor
               key={`${block.id}-desc`}
@@ -161,7 +172,7 @@ export const TeamCardBlock = memo(function TeamCardBlock({
               value={descriptionDoc}
               onChange={handleDescriptionChange}
               placeholder="Short bio..."
-              className="text-sm leading-relaxed opacity-60 text-center"
+              className="text-sm leading-relaxed opacity-60 text-center tracking-normal"
               theme={theme}
               readOnly={readOnly}
             />
@@ -169,7 +180,7 @@ export const TeamCardBlock = memo(function TeamCardBlock({
         </div>
 
         {/* Social Links */}
-        <div className="flex items-center gap-2 mt-auto">
+        <div className="flex items-center gap-4 mt-auto z-10 pt-4" style={{ borderTop: `1px solid ${theme.primary}10` }}>
           {[
             { key: "linkedin", icon: IconBrandLinkedin },
             { key: "twitter", icon: IconBrandX },
@@ -178,7 +189,7 @@ export const TeamCardBlock = memo(function TeamCardBlock({
             <button
               key={key}
               onClick={!readOnly ? () => handleSocialClick(key as SocialPlatform) : undefined}
-              className={`p-2 rounded-lg transition-all ${!readOnly ? 'hover:scale-105 cursor-pointer' : ''}`}
+              className={`p-2.5 rounded-xl transition-all border ${!readOnly ? 'hover:scale-110 cursor-pointer shadow-sm' : ''}`}
               title={key.charAt(0).toUpperCase() + key.slice(1)}
               style={{
                 backgroundColor: content.socials?.[
@@ -186,13 +197,16 @@ export const TeamCardBlock = memo(function TeamCardBlock({
                 ]
                   ? `${theme.primary}15`
                   : "transparent",
+                borderColor: content.socials?.[key as keyof typeof content.socials]
+                  ? `${theme.primary}25`
+                  : "transparent",
                 color: theme.primary,
                 opacity: content.socials?.[key as keyof typeof content.socials]
                   ? 1
-                  : 0.3,
+                  : 0.25,
               }}
             >
-              <Icon size={18} />
+              <Icon size={20} />
             </button>
           ))}
         </div>

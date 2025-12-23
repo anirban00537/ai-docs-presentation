@@ -107,42 +107,50 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
     <BlockWrapper onEdit={handleOpenEdit} theme={theme}>
       <CommonCard
         theme={theme}
-        className="w-full overflow-hidden relative group p-0 border-none"
-        style={{
-          backgroundColor: isDark ? "#0d0d0d" : "#fafafa",
-          border: "none",
-          boxShadow: "none",
+        className="w-full overflow-hidden relative group h-full flex flex-col border-none transition-all duration-300 hover:shadow-2xl"
+        style={{ 
+          borderRadius: "24px",
+          backgroundColor: isDark ? "#08080a" : "#fafafa",
         }}
       >
         {/* Header */}
         <div
-          className="flex items-center justify-between px-4 py-2.5"
+          className="flex items-center justify-between px-6 py-4 relative overflow-hidden"
           style={{
-            backgroundColor: isDark ? "#1a1a1a" : "#f0f0f0",
+            backgroundColor: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)",
+            borderBottom: isDark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)",
           }}
         >
+          {/* Minimal Gradient Background Blob */}
           <div
-            className="text-xs font-mono font-medium uppercase tracking-wider opacity-50"
+            className="absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-[0.05] blur-xl pointer-events-none"
+            style={{ backgroundColor: theme.primary }}
+          />
+
+          <div
+            className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 relative z-10"
             style={{ color: isDark ? "#fff" : "#000" }}
           >
             {language}
           </div>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all hover:opacity-80"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] transition-all hover:scale-105 active:scale-95 relative z-10 border shadow-sm"
             style={{
-              backgroundColor: isDark ? "#252525" : "#e5e5e5",
+              backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.8)",
+              borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
               color: isDark ? "#fff" : "#000",
+              backdropFilter: "blur(8px)"
             }}
           >
             {copied ? (
               <>
-                <IconCheck size={14} />
+                <IconCheck size={14} strokeWidth={2.5} />
                 <span>Copied</span>
               </>
             ) : (
               <>
-                <IconCopy size={14} />
+                <IconCopy size={14} strokeWidth={2.5} />
                 <span>Copy</span>
               </>
             )}
@@ -150,18 +158,19 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         </div>
 
         {/* Code Area */}
-        <div className="relative overflow-x-auto">
-          <div className="flex">
+        <div className="relative overflow-x-auto flex-1">
+          <div className="flex h-full">
             {showLineNumbers && (
               <div
-                className="px-4 py-4 text-right select-none font-mono text-sm"
+                className="px-6 py-6 text-right select-none font-mono text-sm border-r"
                 style={{
-                  backgroundColor: isDark ? "#141414" : "#f5f5f5",
-                  color: isDark ? "#555" : "#aaa",
+                  backgroundColor: isDark ? "rgba(0,0,0,0.2)" : "rgba(0,0,0,0.02)",
+                  borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
+                  color: isDark ? "#444" : "#ccc",
                 }}
               >
                 {lines.map((_, i) => (
-                  <div key={i} className="leading-6">
+                  <div key={i} className="leading-7">
                     {i + 1}
                   </div>
                 ))}
@@ -170,10 +179,10 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
             <textarea
               value={code}
               onChange={handleCodeChange}
-              className="flex-1 px-4 py-4 font-mono text-sm leading-6 resize-none outline-none border-none bg-transparent"
+              className="flex-1 px-8 py-6 font-mono text-sm leading-7 resize-none outline-none border-none bg-transparent"
               style={{
-                color: isDark ? "#e5e5e5" : "#1a1a1a",
-                minHeight: `${Math.max(lines.length * 1.5, 6)}rem`,
+                color: isDark ? "#d1d5db" : "#1f2937",
+                minHeight: `${Math.max(lines.length * 1.75, 8)}rem`,
               }}
               rows={lines.length}
               spellCheck={false}

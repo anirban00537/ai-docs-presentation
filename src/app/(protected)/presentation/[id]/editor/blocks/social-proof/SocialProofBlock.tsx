@@ -118,74 +118,91 @@ export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addPlatform} theme={theme}>
-      <CommonCard theme={theme} className="w-full p-6 transition-all">
-        {/* Platforms */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          {platforms.map((platform, index) => {
-            const IconComponent = platformIcons[platform.platform];
-            return (
-              <a
-                key={index}
-                href={platform.link || undefined}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all hover:scale-105"
-                style={{
-                  backgroundColor: `${theme.primary}08`,
-                }}
-                onClick={(e) => {
-                  if (!platform.link) e.preventDefault();
-                }}
-              >
-                <IconComponent size={28} style={{ color: theme.primary }} />
-                <div
-                  className="text-xl font-bold"
+      <CommonCard 
+        theme={theme} 
+        className="w-full transition-all duration-300 hover:shadow-2xl group/social"
+      >
+        <div 
+          className="p-12 relative overflow-hidden h-full w-full flex flex-col items-center"
+          style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+        >
+          {/* Minimal Gradient Background Blob */}
+          <div
+            className="absolute -top-24 -right-24 w-48 h-48 rounded-full opacity-[0.04] blur-3xl pointer-events-none transition-transform duration-700 ease-out group-hover/social:scale-150"
+            style={{ backgroundColor: theme.primary }}
+          />
+
+          {/* Platforms */}
+          <div className="flex flex-wrap items-center justify-center gap-6 relative z-10 w-full">
+            {platforms.map((platform, index) => {
+              const IconComponent = platformIcons[platform.platform as keyof typeof platformIcons];
+              return (
+                <a
+                  key={index}
+                  href={platform.link || undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-3 p-6 rounded-2xl transition-all hover:scale-110 active:scale-95 shadow-sm border group/platform shrink-0 min-w-[120px]"
+                  style={{
+                    backgroundColor: `${theme.primary}05`,
+                    borderColor: `${theme.primary}10`,
+                    backdropFilter: "blur(4px)"
+                  }}
+                  onClick={(e) => {
+                    if (!platform.link) e.preventDefault();
+                  }}
+                >
+                  <IconComponent size={32} style={{ color: theme.primary }} className="group-hover/platform:scale-110 transition-transform" />
+                  <div
+                    className="text-2xl font-black tracking-tighter"
+                    style={{ color: theme.headingColor }}
+                  >
+                    {platform.followers}
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+
+          {/* Ratings */}
+          {showRatings && rating && (
+            <div
+              className="mt-10 pt-10 flex flex-col items-center gap-3 relative z-10 w-full"
+              style={{ borderTop: `2px solid ${theme.primary}10` }}
+            >
+              <div className="flex items-center gap-2">
+                {[...Array(5)].map((_, i) => (
+                  <IconStar
+                    key={i}
+                    size={24}
+                    strokeWidth={2}
+                    className={i < Math.floor(rating) ? "fill-current" : ""}
+                    style={{
+                      color:
+                        i < Math.floor(rating)
+                          ? theme.primary
+                          : `${theme.primary}30`,
+                    }}
+                  />
+                ))}
+                <span
+                  className="ml-3 text-2xl font-black tracking-tighter"
                   style={{ color: theme.headingColor }}
                 >
-                  {platform.followers}
-                </div>
-              </a>
-            );
-          })}
-        </div>
-
-        {/* Ratings */}
-        {showRatings && rating && (
-          <div
-            className="mt-6 pt-6 flex flex-col items-center gap-2"
-            style={{ borderTop: `1px solid ${theme.primary}10` }}
-          >
-            <div className="flex items-center gap-1.5">
-              {[...Array(5)].map((_, i) => (
-                <IconStar
-                  key={i}
-                  size={20}
-                  className={i < Math.floor(rating) ? "fill-current" : ""}
-                  style={{
-                    color:
-                      i < Math.floor(rating)
-                        ? theme.primary
-                        : `${theme.primary}30`,
-                  }}
-                />
-              ))}
-              <span
-                className="ml-2 text-lg font-bold"
-                style={{ color: theme.headingColor }}
-              >
-                {rating}
-              </span>
-            </div>
-            {reviewCount && (
-              <div
-                className="text-xs opacity-50"
-                style={{ color: theme.bodyColor }}
-              >
-                {reviewCount}
+                  {rating}
+                </span>
               </div>
-            )}
-          </div>
-        )}
+              {reviewCount && (
+                <div
+                  className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40"
+                  style={{ color: theme.bodyColor }}
+                >
+                  {reviewCount}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </CommonCard>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>

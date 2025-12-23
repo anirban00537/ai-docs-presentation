@@ -144,45 +144,62 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addItem} theme={theme}>
-      <div className="w-full flex flex-col gap-4">
+      <div className="w-full flex flex-col gap-6">
         {items.map((item, index) => (
-          <CommonCard key={index} theme={theme} className="group p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex-1 min-w-0 mr-4">
-                <ProseMirrorEditor
-                  key={`${block.id}-label-${index}`}
-                  blockId={`${block.id}-label-${index}`}
-                  value={item.label}
-                  onChange={(newContent) =>
-                    handleLabelChange(index, newContent)
-                  }
-                  placeholder="Label"
-                  className="font-medium text-sm"
-                  theme={theme}
+          <CommonCard 
+            key={index} 
+            theme={theme} 
+            className="group relative transition-all duration-300 hover:shadow-lg"
+          >
+            <div 
+              className="p-8 relative overflow-hidden h-full w-full"
+              style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+            >
+              {/* Minimal Gradient Background Blob */}
+              <div
+                className="absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-[0.03] blur-xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+                style={{ backgroundColor: theme.primary }}
+              />
+
+              <div className="flex items-center justify-between mb-5 relative z-10">
+                <div className="flex-1 min-w-0 mr-4">
+                  <ProseMirrorEditor
+                    key={`${block.id}-label-${index}`}
+                    blockId={`${block.id}-label-${index}`}
+                    value={item.label}
+                    onChange={(newContent) =>
+                      handleLabelChange(index, newContent)
+                    }
+                    placeholder="Label"
+                    className="font-bold text-lg tracking-tight"
+                    theme={theme}
+                  />
+                </div>
+                {showPercentage && (
+                  <div
+                    className="text-base font-black tracking-tighter shrink-0"
+                    style={{ color: item.color || theme.primary }}
+                  >
+                    {animatedValues[index]}%
+                  </div>
+                )}
+              </div>
+              
+              <div
+                className="w-full h-3 rounded-2xl overflow-hidden relative z-10 border shadow-inner"
+                style={{
+                  backgroundColor: `${theme.primary}05`,
+                  borderColor: `${theme.primary}10`,
+                }}
+              >
+                <div
+                  className="h-full rounded-full transition-all duration-1000 ease-out shadow-sm"
+                  style={{
+                    width: `${animatedValues[index]}%`,
+                    backgroundColor: item.color || theme.primary,
+                  }}
                 />
               </div>
-              {showPercentage && (
-                <div
-                  className="text-sm font-semibold shrink-0"
-                  style={{ color: item.color || theme.primary }}
-                >
-                  {animatedValues[index]}%
-                </div>
-              )}
-            </div>
-            <div
-              className="w-full h-1.5 rounded-full overflow-hidden"
-              style={{
-                backgroundColor: `${theme.primary}15`,
-              }}
-            >
-              <div
-                className="h-full rounded-full transition-all duration-1000 ease-out"
-                style={{
-                  width: `${animatedValues[index]}%`,
-                  backgroundColor: item.color || theme.primary,
-                }}
-              />
             </div>
           </CommonCard>
         ))}

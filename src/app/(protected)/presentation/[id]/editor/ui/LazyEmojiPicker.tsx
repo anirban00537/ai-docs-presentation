@@ -61,6 +61,8 @@ interface EmojiPickerTriggerProps {
   backgroundColor?: string;
   /** Title/tooltip for the button */
   title?: string;
+  /** Custom styles */
+  style?: React.CSSProperties;
 }
 
 const sizeClasses = {
@@ -82,6 +84,7 @@ export const EmojiPickerTrigger = memo(function EmojiPickerTrigger({
   size = "md",
   backgroundColor,
   title = "Change icon",
+  style,
 }: EmojiPickerTriggerProps) {
   const handleEmojiClick = (emojiData: EmojiClickData) => {
     onEmojiSelect(emojiData.emoji);
@@ -91,7 +94,7 @@ export const EmojiPickerTrigger = memo(function EmojiPickerTrigger({
     return (
       <div
         className={`${sizeClasses[size]} rounded-xl flex items-center justify-center ${className}`}
-        style={{ backgroundColor }}
+        style={{ backgroundColor, ...style }}
       >
         {icon}
       </div>
@@ -103,7 +106,7 @@ export const EmojiPickerTrigger = memo(function EmojiPickerTrigger({
       <PopoverTrigger asChild>
         <button
           className={`${sizeClasses[size]} rounded-xl flex items-center justify-center transition-all hover:scale-110 cursor-pointer outline-none ${className}`}
-          style={{ backgroundColor }}
+          style={{ backgroundColor, ...style }}
           title={title}
         >
           {icon}

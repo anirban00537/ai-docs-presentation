@@ -63,22 +63,32 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
   );
 
   return (
-    <CommonCard theme={theme} className="w-full h-full p-8">
+    <CommonCard 
+      theme={theme} 
+      className="w-full h-full transition-all duration-300 hover:shadow-md"
+    >
       <div
-        className="group relative flex flex-col gap-5 transition-all"
+        className="group relative h-full w-full p-10 flex flex-col gap-8 transition-all overflow-hidden"
         style={{
           color: theme.headingColor,
+          borderRadius: theme.cardBorderRadius ?? "12px"
         }}
       >
-        {/* Content */}
-        <div className="relative z-10 flex flex-col gap-3">
+        {/* Minimal Gradient Background Blob */}
+        <div
+          className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+          style={{ backgroundColor: theme.primary }}
+        />
+
+        {/* Content Area */}
+        <div className="relative z-10 flex flex-col gap-4">
           <ProseMirrorEditor
             key={`${block.id}-heading`}
             blockId={`${block.id}-heading`}
             value={headingDoc}
             onChange={handleHeadingChange}
             placeholder={placeholder ?? "Ready to get started?"}
-            className="text-2xl font-semibold tracking-tight leading-tight"
+            className="text-3xl font-bold tracking-tight leading-tight"
             theme={theme}
             readOnly={readOnly}
           />
@@ -89,30 +99,31 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
             value={bodyDoc}
             onChange={handleBodyChange}
             placeholder="Add a compelling description here..."
-            className="text-base opacity-60 leading-relaxed max-w-2xl"
+            className="text-base opacity-60 leading-relaxed max-w-2xl tracking-normal"
             theme={theme}
             readOnly={readOnly}
           />
         </div>
 
-        {/* Button */}
-        <div className="relative z-10 flex flex-wrap gap-4 items-center">
+        {/* Action Button */}
+        <div className="relative z-10 flex flex-wrap gap-4 items-center mt-auto">
           {isEditingLabel ? (
             <input
-              className="rounded-full px-5 py-2.5 text-sm font-medium min-w-[140px] focus:outline-none transition-all bg-transparent"
+              className="rounded-2xl px-6 py-3 text-sm font-bold min-w-[160px] focus:outline-none transition-all shadow-sm border"
               value={content?.buttonLabel ?? ""}
               onChange={(e) => handleFieldChange("buttonLabel", e.target.value)}
               onBlur={() => setIsEditingLabel(false)}
               autoFocus
               placeholder="Button label"
               style={{
-                border: `2px solid ${theme.primary}`,
+                backgroundColor: `${theme.primary}05`,
+                borderColor: theme.primary,
                 color: theme.primary,
               }}
             />
           ) : (
             <button
-              className="px-6 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95 flex items-center gap-2 hover:opacity-90"
+              className="px-8 py-3.5 rounded-2xl text-sm font-bold transition-all active:scale-95 flex items-center gap-3 hover:opacity-90 shadow-lg shadow-primary/10"
               style={{
                 backgroundColor: theme.primary,
                 color: "#ffffff",
@@ -120,17 +131,11 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
               onClick={() => setIsEditingLabel(true)}
               title="Click to edit label"
             >
-              {content?.buttonLabel || "Get started"}
-              <IconArrowRight size={16} />
+              <span className="tracking-tight">{content?.buttonLabel || "Get started"}</span>
+              <IconArrowRight size={18} strokeWidth={2.5} />
             </button>
           )}
         </div>
-
-        {/* Decorative gradient orb */}
-        <div
-          className="absolute -right-20 -bottom-20 w-64 h-64 rounded-full opacity-20 blur-3xl pointer-events-none"
-          style={{ backgroundColor: theme.primary }}
-        />
       </div>
     </CommonCard>
   );

@@ -3,7 +3,6 @@ import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { TimelineStep as TimelineStepType } from "../definitions";
 import { createTimelineContent } from "../definitions";
 import type { Theme, ProseMirrorDocument } from "@/types/presentation";
-import { EmojiPickerTrigger } from "../../ui/LazyEmojiPicker";
 
 interface TimelineStepProps {
   step: TimelineStepType;
@@ -12,7 +11,6 @@ interface TimelineStepProps {
   theme: Theme;
   onTitleChange: (index: number, newDoc: ProseMirrorDocument) => void;
   onDescriptionChange: (index: number, newDoc: ProseMirrorDocument) => void;
-  onIconChange: (index: number, icon: string) => void;
   readOnly?: boolean;
 }
 
@@ -23,7 +21,6 @@ export const TimelineStepComponent = memo(function TimelineStepComponent({
   theme,
   onTitleChange,
   onDescriptionChange,
-  onIconChange,
   readOnly = false,
 }: TimelineStepProps) {
   const stepContent = step ?? createTimelineContent().steps[0];
@@ -38,33 +35,34 @@ export const TimelineStepComponent = memo(function TimelineStepComponent({
     );
   }, [stepContent?.description]);
 
-  const icon = stepContent?.icon ?? "•";
-
   return (
-    <div className="relative flex gap-5">
-      {/* Step Marker */}
+    <div className="relative flex gap-6">
+      {/* Step Number Badge */}
       <div className="relative z-20 shrink-0">
-        <EmojiPickerTrigger
-          icon={icon}
-          onEmojiSelect={(emoji) => onIconChange(stepIndex, emoji)}
-          disabled={readOnly}
-          size="md"
-          backgroundColor={`${theme.primary}15`}
-          className="font-medium"
-        />
+        <div 
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black transition-all border shadow-sm"
+          style={{ 
+            backgroundColor: `${theme.primary}10`,
+            borderColor: `${theme.primary}20`,
+            color: theme.primary,
+            backdropFilter: "blur(8px)"
+          }}
+        >
+          {stepIndex + 1}
+        </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 pb-2 pt-1">
+      <div className="flex-1 pb-6 pt-1 group/content">
         {/* Step Title */}
-        <div className="mb-1">
+        <div className="mb-2">
           <ProseMirrorEditor
             key={`${blockId}-step-${stepIndex}-title`}
             blockId={`${blockId}-step-${stepIndex}-title`}
             value={titleDoc}
             onChange={(newDoc) => onTitleChange(stepIndex, newDoc)}
             placeholder={`Step ${stepIndex + 1} title`}
-            className="text-base font-semibold"
+            className="text-lg font-bold tracking-tight leading-tight group-hover/content:translate-x-1 transition-transform"
             theme={theme}
             readOnly={readOnly}
           />
@@ -78,7 +76,7 @@ export const TimelineStepComponent = memo(function TimelineStepComponent({
             value={descriptionDoc}
             onChange={(newDoc) => onDescriptionChange(stepIndex, newDoc)}
             placeholder={`Step ${stepIndex + 1} description`}
-            className="text-sm opacity-60"
+            className="text-sm opacity-60 leading-relaxed group-hover/content:translate-x-1 transition-transform duration-300"
             theme={theme}
             readOnly={readOnly}
           />

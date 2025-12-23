@@ -79,7 +79,6 @@ export const StatItemSchema = z.object({
 export const TimelineStepSchema = z.object({
   title: ProseMirrorDocumentSchema,
   description: ProseMirrorDocumentSchema,
-  icon: z.string().optional(),
 });
 
 // --- Block Content Schemas ---

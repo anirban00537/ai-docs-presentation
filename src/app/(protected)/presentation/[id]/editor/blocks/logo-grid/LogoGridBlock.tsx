@@ -105,46 +105,58 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} onAdd={addLogo} theme={theme}>
-      <div className={`grid ${gridClass} gap-4 w-full p-4`}>
+      <div className={`grid ${gridClass} gap-8 w-full p-8`}>
         {logos.map((logo, index) => (
           <CommonCard
             key={index}
             theme={theme}
-            className="group/logo flex flex-col items-center justify-center p-5 relative"
+            className="group/logo relative transition-all duration-300 hover:shadow-lg hover:scale-105"
           >
-            {logo.image ? (
-              <img
-                src={logo.image}
-                alt=""
-                className={`max-w-full max-h-12 object-contain transition-all duration-300 ${
-                  grayscale ? "grayscale group-hover/logo:grayscale-0" : ""
-                }`}
+            <div 
+              className="flex flex-col items-center justify-center p-8 relative h-full w-full overflow-hidden aspect-square"
+              style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+            >
+              {/* Minimal Gradient Background Blob */}
+              <div
+                className="absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-[0.04] blur-xl pointer-events-none transition-transform duration-700 ease-out group-hover/logo:scale-150"
+                style={{ backgroundColor: theme.primary }}
               />
-            ) : (
-              <div className="w-full">
-                <ProseMirrorEditor
-                  key={`${block.id}-logo-${index}`}
-                  blockId={`${block.id}-logo-${index}`}
-                  value={logo.name}
-                  onChange={(newContent) => handleNameChange(index, newContent)}
-                  placeholder="Company Name"
-                  className="text-center font-medium text-sm opacity-60"
-                  theme={theme}
-                />
-              </div>
-            )}
 
-            {/* Delete overlay */}
-            <div className="absolute inset-0 opacity-0 group-hover/logo:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeLogo(index);
-                }}
-                style={{ color: "#ef4444" }}
-              >
-                <IconTrash size={14} />
-              </button>
+              {logo.image ? (
+                <img
+                  src={logo.image}
+                  alt=""
+                  className={`max-w-full max-h-12 object-contain transition-all duration-500 relative z-10 ${
+                    grayscale ? "grayscale group-hover/logo:grayscale-0" : ""
+                  }`}
+                />
+              ) : (
+                <div className="w-full relative z-10">
+                  <ProseMirrorEditor
+                    key={`${block.id}-logo-${index}`}
+                    blockId={`${block.id}-logo-${index}`}
+                    value={logo.name}
+                    onChange={(newContent) => handleNameChange(index, newContent)}
+                    placeholder="Company Name"
+                    className="text-center font-bold text-xs uppercase tracking-widest opacity-40 group-hover/logo:opacity-100 transition-opacity"
+                    theme={theme}
+                  />
+                </div>
+              )}
+
+              {/* Delete button (refined) */}
+              <div className="absolute top-2 right-2 opacity-0 group-hover/logo:opacity-100 transition-all z-20">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeLogo(index);
+                  }}
+                  className="p-2 rounded-xl hover:bg-red-500/10 transition-colors"
+                  style={{ color: "#ef4444" }}
+                >
+                  <IconTrash size={16} />
+                </button>
+              </div>
             </div>
           </CommonCard>
         ))}

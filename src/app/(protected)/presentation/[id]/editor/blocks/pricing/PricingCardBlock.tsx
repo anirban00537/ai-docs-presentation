@@ -117,21 +117,33 @@ export const PricingCardBlock = memo(function PricingCardBlock({
       theme={theme}
       readOnly={readOnly}
     >
-      <CommonCard theme={theme} className="w-full h-full p-6">
-        <div className="w-full h-full flex flex-col relative transition-all">
+      <CommonCard 
+        theme={theme} 
+        className="w-full h-full transition-all duration-300 hover:shadow-xl"
+      >
+        <div 
+          className="w-full h-full flex flex-col relative p-10 overflow-hidden"
+          style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+        >
+          {/* Minimal Gradient Background Blob */}
+          <div
+            className="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+            style={{ backgroundColor: theme.primary }}
+          />
+
           {/* Header */}
           <div
-            className="text-center mb-5 pb-5"
-            style={{ borderBottom: `1px solid ${theme.primary}10` }}
+            className="text-center mb-8 pb-8 relative z-10"
+            style={{ borderBottom: `2px solid ${theme.primary}10` }}
           >
-            <div style={{ color: `${theme.headingColor}80` }}>
+            <div style={{ color: `${theme.headingColor}60` }}>
               <ProseMirrorEditor
                 key={`${block.id}-plan`}
                 blockId={`${block.id}-plan`}
                 value={planNameDoc}
                 onChange={handlePlanNameChange}
                 placeholder="Plan Name"
-                className="text-sm font-medium mb-1 text-center uppercase tracking-wide"
+                className="text-[11px] font-black mb-3 text-center uppercase tracking-[0.2em]"
                 theme={theme}
                 readOnly={readOnly}
               />
@@ -143,37 +155,41 @@ export const PricingCardBlock = memo(function PricingCardBlock({
                 value={priceDoc}
                 onChange={handlePriceChange}
                 placeholder="$0/mo"
-                className="text-3xl font-bold text-center"
+                className="text-4xl font-black text-center tracking-tighter"
                 theme={theme}
                 readOnly={readOnly}
               />
             </div>
           </div>
 
-          <div className="flex-1 space-y-3 mb-6">
+          <div className="flex-1 space-y-4 mb-10 relative z-10">
             {features.map((feature: PricingFeature, index: number) => (
               <div
                 key={index}
-                className="flex items-start gap-3 group/feature relative"
+                className="flex items-center gap-4 group/feature relative"
               >
                 <button
                   onClick={!readOnly ? () => toggleFeature(index) : undefined}
-                  className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all ${
-                    !readOnly ? "cursor-pointer" : ""
+                  className={`flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center transition-all border shadow-sm ${
+                    !readOnly ? "active:scale-95" : ""
                   }`}
                   style={{
                     backgroundColor: feature.included
-                      ? `${theme.primary}15`
-                      : `${theme.bodyColor}10`,
+                      ? `${theme.primary}10`
+                      : `${theme.primary}05`,
+                    borderColor: feature.included
+                      ? `${theme.primary}25`
+                      : `${theme.primary}10`,
                     color: feature.included
                       ? theme.primary
-                      : `${theme.bodyColor}40`,
+                      : `${theme.bodyColor}30`,
+                    backdropFilter: "blur(4px)"
                   }}
                 >
                   {feature.included ? (
-                    <IconCheck size={12} />
+                    <IconCheck size={14} strokeWidth={3} />
                   ) : (
-                    <IconX size={12} />
+                    <IconX size={14} strokeWidth={2.5} className="opacity-40" />
                   )}
                 </button>
                 <div className="flex-1" style={{ color: theme.bodyColor }}>
@@ -183,8 +199,8 @@ export const PricingCardBlock = memo(function PricingCardBlock({
                     value={feature.text}
                     onChange={(doc) => updateFeatureText(index, doc)}
                     placeholder="Feature description"
-                    className={`text-sm ${
-                      !feature.included && "line-through opacity-40"
+                    className={`text-base font-medium tracking-tight ${
+                      !feature.included && "line-through opacity-30"
                     }`}
                     theme={theme}
                     readOnly={readOnly}
@@ -193,11 +209,11 @@ export const PricingCardBlock = memo(function PricingCardBlock({
                 {!readOnly && (
                   <button
                     onClick={() => removeFeature(index)}
-                    className="opacity-0 group-hover/feature:opacity-100 p-1 rounded-lg transition-all hover:bg-red-500/10"
+                    className="opacity-0 group-hover/feature:opacity-100 p-2 rounded-xl transition-all hover:bg-red-500/10"
                     style={{ color: "#ef4444" }}
                     title="Remove Feature"
                   >
-                    <IconTrash size={12} />
+                    <IconTrash size={14} />
                   </button>
                 )}
               </div>
@@ -205,16 +221,19 @@ export const PricingCardBlock = memo(function PricingCardBlock({
           </div>
 
           {/* CTA Button */}
-          <button
-            className="w-full py-2.5 rounded-xl font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
-            style={{
-              backgroundColor: `${theme.primary}15`,
-              color: theme.primary,
-            }}
-            onClick={handleOpenEdit}
-          >
-            {buttonLabel}
-          </button>
+          <div className="mt-auto relative z-10">
+            <button
+              className="w-full py-4 rounded-2xl font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/10 border"
+              style={{
+                backgroundColor: theme.primary,
+                borderColor: `${theme.primary}20`,
+                color: "#ffffff",
+              }}
+              onClick={handleOpenEdit}
+            >
+              {buttonLabel}
+            </button>
+          </div>
         </div>
       </CommonCard>
 

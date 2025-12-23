@@ -110,7 +110,7 @@ export const BadgeBlock = memo(function BadgeBlock({
   }, [badges, content, onUpdate]);
 
   const gridClass = useMemo(() => 
-    layout === "grid" ? "grid grid-cols-2 gap-4" : "flex flex-col gap-3",
+    layout === "grid" ? "grid grid-cols-2 gap-6" : "flex flex-col gap-4",
     [layout]
   );
 
@@ -126,83 +126,105 @@ export const BadgeBlock = memo(function BadgeBlock({
           <CommonCard
             key={index}
             theme={theme}
-            className="group/badge flex gap-4 p-4 relative"
+            className="group/badge relative transition-all duration-300 hover:shadow-md h-full"
           >
-            {/* Delete button */}
-            {!readOnly && (
-              <button
-                onClick={() => removeBadge(index)}
-                className="absolute top-3 right-3 p-1.5 rounded-lg opacity-0 group-hover/badge:opacity-100 transition-all hover:bg-red-500/10"
-                style={{ color: "#ef4444" }}
-              >
-                <IconTrash size={14} />
-              </button>
-            )}
+            <div 
+              className="flex flex-col gap-6 p-8 relative h-full w-full overflow-hidden"
+              style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+            >
+              {/* Minimal Gradient Background Blob */}
+              <div
+                className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+                style={{ backgroundColor: theme.primary }}
+              />
 
-            {/* Icon */}
-            <EmojiPickerTrigger
-              icon={badge.icon || "🏆"}
-              onEmojiSelect={(emoji) => handleIconChange(index, emoji)}
-              disabled={readOnly}
-              size="lg"
-              backgroundColor={`${theme.primary}15`}
-            />
+              {/* Delete button */}
+              {!readOnly && (
+                <button
+                  onClick={() => removeBadge(index)}
+                  className="absolute top-4 right-4 z-20 p-2 rounded-xl opacity-0 group-hover/badge:opacity-100 transition-all hover:bg-red-500/10"
+                  style={{ color: "#ef4444" }}
+                >
+                  <IconTrash size={16} />
+                </button>
+              )}
 
-            {/* Content */}
-            <div className="flex-1 min-w-0 py-0.5">
-              <div className="mb-1">
-                <ProseMirrorEditor
-                  key={`${block.id}-title-${index}`}
-                  blockId={`${block.id}-title-${index}`}
-                  value={badge.title}
-                  onChange={(newContent) =>
-                    handleTitleChange(index, newContent)
-                  }
-                  placeholder="Award Title"
-                  className="text-base font-semibold leading-tight"
-                  theme={theme}
-                  readOnly={readOnly}
-                />
+              {/* Icon / Badge */}
+              <div className="z-10">
+                <div 
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl transition-all duration-300 border shadow-sm"
+                  style={{ 
+                    backgroundColor: `${theme.primary}10`,
+                    borderColor: `${theme.primary}20`,
+                    backdropFilter: "blur(8px)"
+                  }}
+                >
+                  <EmojiPickerTrigger
+                    icon={badge.icon || "🏆"}
+                    onEmojiSelect={(emoji) => handleIconChange(index, emoji)}
+                    disabled={readOnly}
+                    size="xl"
+                    className="bg-transparent"
+                  />
+                </div>
               </div>
-              {badge.description && (
+
+              {/* Content */}
+              <div className="flex-1 min-w-0 z-10">
                 <div className="mb-2">
                   <ProseMirrorEditor
-                    key={`${block.id}-desc-${index}`}
-                    blockId={`${block.id}-desc-${index}`}
-                    value={badge.description}
+                    key={`${block.id}-title-${index}`}
+                    blockId={`${block.id}-title-${index}`}
+                    value={badge.title}
                     onChange={(newContent) =>
-                      handleDescriptionChange(index, newContent)
+                      handleTitleChange(index, newContent)
                     }
-                    placeholder="Description"
-                    className="text-sm opacity-60 leading-relaxed"
+                    placeholder="Award Title"
+                    className="text-lg font-bold tracking-tight leading-tight"
                     theme={theme}
                     readOnly={readOnly}
                   />
                 </div>
-              )}
-              <div className="flex items-center gap-2 mt-1">
-                {badge.issuer && (
-                  <ProseMirrorEditor
-                    key={`${block.id}-issuer-${index}`}
-                    blockId={`${block.id}-issuer-${index}`}
-                    value={badge.issuer}
-                    onChange={(newContent) =>
-                      handleIssuerChange(index, newContent)
-                    }
-                    placeholder="Issuer"
-                    className="text-xs font-medium opacity-40 uppercase tracking-wide"
-                    theme={theme}
-                    readOnly={readOnly}
-                  />
+                {badge.description && (
+                  <div className="mb-4">
+                    <ProseMirrorEditor
+                      key={`${block.id}-desc-${index}`}
+                      blockId={`${block.id}-desc-${index}`}
+                      value={badge.description}
+                      onChange={(newContent) =>
+                        handleDescriptionChange(index, newContent)
+                      }
+                      placeholder="Description"
+                      className="text-sm opacity-60 leading-relaxed tracking-normal"
+                      theme={theme}
+                      readOnly={readOnly}
+                    />
+                  </div>
                 )}
-                {badge.date && (
-                  <span
-                    className="text-xs opacity-30"
-                    style={{ color: theme.bodyColor }}
-                  >
-                    • {badge.date}
-                  </span>
-                )}
+                <div className="flex items-center gap-2 mt-auto pt-4" style={{ borderTop: `1px solid ${theme.primary}10` }}>
+                  {badge.issuer && (
+                    <ProseMirrorEditor
+                      key={`${block.id}-issuer-${index}`}
+                      blockId={`${block.id}-issuer-${index}`}
+                      value={badge.issuer}
+                      onChange={(newContent) =>
+                        handleIssuerChange(index, newContent)
+                      }
+                      placeholder="Issuer"
+                      className="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]"
+                      theme={theme}
+                      readOnly={readOnly}
+                    />
+                  )}
+                  {badge.date && (
+                    <span
+                      className="text-[10px] opacity-30 font-bold"
+                      style={{ color: theme.bodyColor }}
+                    >
+                      • {badge.date}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </CommonCard>

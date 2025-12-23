@@ -63,18 +63,6 @@ export const TimelineBlock = memo(function TimelineBlock({
     [content, onUpdate, steps]
   );
 
-  const handleStepIconChange = useCallback(
-    (stepIndex: number, newIcon: string) => {
-      const newSteps = [...steps];
-      newSteps[stepIndex] = { ...newSteps[stepIndex], icon: newIcon };
-      onUpdate({
-        ...(content ?? createTimelineContent()),
-        steps: newSteps,
-      });
-    },
-    [content, onUpdate, steps]
-  );
-
   const addStep = useCallback(() => {
     onUpdate({
       ...(content ?? createTimelineContent()),
@@ -83,7 +71,6 @@ export const TimelineBlock = memo(function TimelineBlock({
         {
           title: "New Step",
           description: "Description for the new step",
-          icon: "📌",
         },
       ],
     });
@@ -95,20 +82,36 @@ export const TimelineBlock = memo(function TimelineBlock({
       theme={theme}
       readOnly={readOnly}
     >
-      <CommonCard theme={theme} className="w-full h-full p-6">
-        <div className="w-full h-full flex flex-col py-2">
+      <CommonCard 
+        theme={theme} 
+        className="w-full h-full transition-all duration-300 hover:shadow-xl"
+      >
+        <div 
+          className="w-full h-full flex flex-col p-12 relative overflow-hidden"
+          style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+        >
+          {/* Minimal Gradient Background Blob */}
+          <div
+            className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.03] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+            style={{ backgroundColor: theme.primary }}
+          />
+
           {/* Optional Title */}
           {title && (
-            <div className="mb-8 pl-2">
+            <div className="mb-12 relative z-10">
               <ProseMirrorEditor
                 key={`${block.id}-title`}
                 blockId={`${block.id}-title`}
                 value={title}
                 onChange={handleTitleChange}
                 placeholder="Timeline title"
-                className="text-xl font-bold tracking-tight"
+                className="text-2xl font-black tracking-tighter"
                 theme={theme}
                 readOnly={readOnly}
+              />
+              <div 
+                className="w-12 h-1 rounded-full mt-4"
+                style={{ backgroundColor: `${theme.primary}20` }}
               />
             </div>
           )}
@@ -134,7 +137,6 @@ export const TimelineBlock = memo(function TimelineBlock({
                   theme={theme}
                   onTitleChange={handleStepTitleChange}
                   onDescriptionChange={handleStepDescriptionChange}
-                  onIconChange={handleStepIconChange}
                   readOnly={readOnly}
                 />
               ))}

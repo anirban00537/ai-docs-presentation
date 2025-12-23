@@ -11,17 +11,14 @@ export const createTimelineContent = (): TimelineContent => ({
     {
       title: "Step 1: Planning",
       description: "Define objectives and requirements for your project.",
-      icon: "📋",
     },
     {
       title: "Step 2: Execution",
       description: "Implement and develop according to the plan.",
-      icon: "⚡",
     },
     {
       title: "Step 3: Delivery",
       description: "Launch and provide ongoing support and optimization.",
-      icon: "🚀",
     },
   ],
 });
@@ -37,7 +34,6 @@ export const normalizeTimelineContent = (content: any): TimelineContent => {
   
   const steps = Array.isArray(content.steps)
     ? content.steps.map((step: any) => ({
-        ...step,
         title: isLegacyProseMirrorFormat(step.title)
           ? normalizeToMarkdown(step.title)
           : typeof step.title === "string"

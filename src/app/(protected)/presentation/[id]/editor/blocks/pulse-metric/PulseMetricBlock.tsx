@@ -137,41 +137,54 @@ export const PulseMetricBlock = memo(function PulseMetricBlock({
   };
 
   return (
-    <CommonCard theme={theme} className="w-full h-full p-6">
-      <div className="relative flex flex-col justify-between h-full w-full overflow-hidden transition-all">
+    <CommonCard 
+      theme={theme} 
+      className="w-full h-full transition-all duration-300 hover:shadow-xl group"
+    >
+      <div 
+        className="relative flex flex-col justify-between h-full w-full p-10 overflow-hidden"
+        style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
+      >
+        {/* Minimal Gradient Background Blob */}
+        <div
+          className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.04] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover:scale-150"
+          style={{ backgroundColor: theme.primary }}
+        />
+
         {/* Settings Popover - hidden in readOnly mode */}
         {!readOnly && (
-          <div className="absolute top-0 right-0 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
             <Popover>
               <PopoverTrigger asChild>
                 <button
-                  className="p-1.5 rounded-lg transition-all hover:scale-105"
+                  className="p-2 rounded-xl transition-all hover:scale-105 border shadow-sm"
                   style={{
-                    backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+                    backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.8)",
+                    borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+                    backdropFilter: "blur(8px)",
                     color: theme.primary,
                   }}
                 >
-                  <IconSettings size={14} stroke={2} />
+                  <IconSettings size={16} stroke={2.5} />
                 </button>
               </PopoverTrigger>
               <PopoverContent
-                className="w-56 p-3 rounded-xl shadow-xl"
+                className="w-56 p-4 rounded-2xl shadow-2xl border-none"
                 style={{
                   backgroundColor: isDark ? "rgba(30,30,35,0.98)" : "rgba(255,255,255,0.98)",
                   backdropFilter: "blur(20px)",
-                  border: "none",
                 }}
               >
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-4">
                   <div className="space-y-2">
                     <label
-                      className="text-[10px] font-medium uppercase tracking-wider"
-                      style={{ color: isDark ? "#888" : "#666" }}
+                      className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 ml-1"
+                      style={{ color: isDark ? "#fff" : "#000" }}
                     >
                       Trend
                     </label>
                     <div
-                      className="flex gap-1 p-1 rounded-lg"
+                      className="flex gap-1 p-1 rounded-xl"
                       style={{ backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }}
                     >
                       {[
@@ -182,13 +195,13 @@ export const PulseMetricBlock = memo(function PulseMetricBlock({
                         <button
                           key={val}
                           onClick={() => handleTrendChange(val as TrendType)}
-                          className="flex-1 p-2 rounded-md flex justify-center transition-all"
+                          className="flex-1 p-2 rounded-lg flex justify-center transition-all"
                           style={{
                             backgroundColor: trend === val ? `${theme.primary}20` : "transparent",
                             color: trend === val ? theme.primary : (isDark ? "#888" : "#666"),
                           }}
                         >
-                          <Icon size={14} />
+                          <Icon size={16} />
                         </button>
                       ))}
                     </div>
@@ -196,19 +209,20 @@ export const PulseMetricBlock = memo(function PulseMetricBlock({
 
                   <div className="space-y-2">
                     <label
-                      className="text-[10px] font-medium uppercase tracking-wider"
-                      style={{ color: isDark ? "#888" : "#666" }}
+                      className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 ml-1"
+                      style={{ color: isDark ? "#fff" : "#000" }}
                     >
                       Style
                     </label>
-                    <div className="grid grid-cols-2 gap-1">
+                    <div className="grid grid-cols-2 gap-1.5">
                       {["smooth", "linear", "step", "bars"].map((type) => (
                         <button
                           key={type}
                           onClick={() => handleTypeChange(type as SparklineType)}
-                          className="px-2 py-1.5 text-[10px] font-medium rounded-lg capitalize transition-all"
+                          className="px-2 py-2 text-[10px] font-bold rounded-xl capitalize transition-all border"
                           style={{
-                            backgroundColor: sparklineType === type ? `${theme.primary}20` : (isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"),
+                            backgroundColor: sparklineType === type ? `${theme.primary}15` : "transparent",
+                            borderColor: sparklineType === type ? `${theme.primary}20` : (isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"),
                             color: sparklineType === type ? theme.primary : (isDark ? "#888" : "#666"),
                           }}
                         >
@@ -224,17 +238,17 @@ export const PulseMetricBlock = memo(function PulseMetricBlock({
         )}
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col gap-1 items-center justify-center text-center mt-2">
+        <div className="relative z-10 flex flex-col gap-2 items-center justify-center text-center mt-2 transition-transform duration-500 group-hover:scale-105">
           {readOnly ? (
             <>
               <div
-                className="text-4xl font-bold text-center"
+                className="text-5xl font-black text-center tracking-tighter leading-none"
                 style={{ color: theme.headingColor }}
               >
                 {value}
               </div>
               <div
-                className="text-xs font-medium text-center opacity-50 uppercase tracking-wider"
+                className="text-[10px] font-black text-center opacity-40 uppercase tracking-[0.2em]"
                 style={{ color: theme.headingColor }}
               >
                 {label}
@@ -245,7 +259,7 @@ export const PulseMetricBlock = memo(function PulseMetricBlock({
               <input
                 value={value}
                 onChange={handleValueChange}
-                className="bg-transparent border-none outline-none text-4xl font-bold text-center w-full"
+                className="bg-transparent border-none outline-none text-5xl font-black text-center w-full tracking-tighter leading-none"
                 style={{
                   color: theme.headingColor,
                 }}
@@ -253,7 +267,7 @@ export const PulseMetricBlock = memo(function PulseMetricBlock({
               <input
                 value={label}
                 onChange={handleLabelChange}
-                className="bg-transparent border-none outline-none text-xs font-medium text-center opacity-50 w-full uppercase tracking-wider"
+                className="bg-transparent border-none outline-none text-[10px] font-black text-center opacity-40 w-full uppercase tracking-[0.2em]"
                 style={{ color: theme.headingColor }}
               />
             </>
@@ -261,7 +275,7 @@ export const PulseMetricBlock = memo(function PulseMetricBlock({
         </div>
 
         {/* Chart */}
-        <div className="relative z-10 h-14 w-full mt-4 opacity-70">
+        <div className="relative z-10 h-16 w-full mt-6 opacity-80">
           {renderChart()}
         </div>
       </div>

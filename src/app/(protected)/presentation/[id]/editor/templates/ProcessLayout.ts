@@ -25,25 +25,21 @@ export const ProcessLayout = {
         title: "Discovery & Audit",
         description:
           "We interview key stakeholders and audit existing infrastructure to identify gaps and opportunities.",
-        icon: "🔍",
       },
       {
         title: "Architecture & Design",
         description:
           "We create a comprehensive blueprint, including technical specs, UI/UX mocks, and a data migration plan.",
-        icon: "📐",
       },
       {
         title: "Development & QA",
         description:
           "Our engineers build in two-week sprints, with continuous integration and automated testing at every step.",
-        icon: "💻",
       },
       {
         title: "Launch & Optimization",
         description:
           "We execute a phased rollout, monitoring performance metrics and gathering user feedback for immediate iteration.",
-        icon: "🚀",
       },
     ];
 

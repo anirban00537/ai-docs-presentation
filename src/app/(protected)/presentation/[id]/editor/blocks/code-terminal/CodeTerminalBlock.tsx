@@ -34,30 +34,38 @@ export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
   return (
     <CommonCard
       theme={theme}
-      className="flex flex-col w-full h-full overflow-hidden font-mono text-sm p-0 border-none"
+      className="flex flex-col w-full h-full overflow-hidden border-none transition-all duration-300 hover:shadow-2xl"
       style={{
-        backgroundColor: "#0d0d0d",
+        backgroundColor: "#08080a",
         color: "#e5e7eb",
+        borderRadius: "24px"
       }}
     >
-      {/* Terminal Header - Minimal */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-[#1a1a1a]">
-        <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-          <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+      {/* Terminal Header */}
+      <div className="flex items-center justify-between px-6 py-4 bg-white/5 border-bottom border-white/5 relative overflow-hidden">
+        {/* Minimal Gradient Background Blob */}
+        <div
+          className="absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-[0.05] blur-xl pointer-events-none"
+          style={{ backgroundColor: theme.primary }}
+        />
+
+        <div className="flex items-center gap-2 relative z-10">
+          <div className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-inner" />
+          <div className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-inner" />
+          <div className="w-3 h-3 rounded-full bg-[#27c93f] shadow-inner" />
         </div>
-        <div className="flex-1 text-center text-[10px] text-gray-500 font-sans uppercase tracking-wider">
-          terminal
+        <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 font-sans relative z-10">
+          Terminal
         </div>
+        <div className="w-12" /> {/* Spacer to balance dots */}
       </div>
 
       {/* Terminal Body */}
-      <div className="p-4 flex flex-col gap-3">
+      <div className="p-8 flex flex-col gap-4 relative flex-1 min-h-[200px]">
         {/* Command line */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 relative z-10">
           <span
-            className="select-none font-bold text-sm"
+            className="select-none font-black text-base"
             style={{ color: theme.primary }}
           >
             $
@@ -65,7 +73,7 @@ export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
           <input
             value={content.command}
             onChange={handleCommandChange}
-            className="flex-1 bg-transparent border-none outline-none font-mono text-[#e5e7eb] placeholder-gray-600"
+            className="flex-1 bg-transparent border-none outline-none font-mono text-base text-[#e5e7eb] placeholder-white/20"
             placeholder="npm install package"
             spellCheck={false}
           />
@@ -75,10 +83,10 @@ export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
         <textarea
           value={content.output}
           onChange={handleOutputChange}
-          rows={3}
-          className="w-full bg-transparent border-none outline-none font-mono text-[#888] resize-none placeholder-gray-700 leading-relaxed"
+          className="w-full bg-transparent border-none outline-none font-mono text-sm text-white/40 resize-none placeholder-white/10 leading-relaxed flex-1"
           placeholder="Command output..."
           spellCheck={false}
+          style={{ minHeight: "100px" }}
         />
       </div>
     </CommonCard>
