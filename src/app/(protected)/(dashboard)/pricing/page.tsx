@@ -52,7 +52,7 @@ export default function PricingPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-[500px] rounded-3xl bg-white/20 animate-pulse border border-white/40 shadow-xl"
+              className="h-[500px] rounded-3xl bg-card/20 animate-pulse border border-white/40 shadow-xl"
             />
           ))}
         </div>

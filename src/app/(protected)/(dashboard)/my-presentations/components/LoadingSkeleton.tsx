@@ -9,11 +9,11 @@ export const LoadingSkeleton: React.FC = () => (
     <div 
       className="fixed inset-0 pointer-events-none"
       style={{
-        background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
+        background: "linear-gradient(135deg, var(--background) 0%, var(--sidebar) 100%)",
         zIndex: 0,
       }}
     >
-      {/* Soft lavender blob - Top Left */}
+      {/* Soft primary blob - Top Left */}
       <div
         className="absolute"
         style={{
@@ -21,12 +21,12 @@ export const LoadingSkeleton: React.FC = () => (
           height: "60vh",
           top: "-20%",
           left: "-20%",
-          background: "radial-gradient(circle at center, rgba(196, 181, 253, 0.6) 0%, rgba(196, 181, 253, 0.25) 40%, transparent 70%)",
+          background: "radial-gradient(circle at center, color-mix(in srgb, var(--primary) 15%, transparent) 0%, transparent 70%)",
           filter: "blur(80px)",
         }}
       />
       
-      {/* Soft sky blue blob - Top Right */}
+      {/* Soft secondary blob - Top Right */}
       <div
         className="absolute"
         style={{
@@ -34,12 +34,12 @@ export const LoadingSkeleton: React.FC = () => (
           height: "55vh",
           top: "-15%",
           right: "-15%",
-          background: "radial-gradient(circle at center, rgba(147, 197, 253, 0.55) 0%, rgba(147, 197, 253, 0.2) 50%, transparent 70%)",
+          background: "radial-gradient(circle at center, color-mix(in srgb, var(--secondary) 20%, transparent) 0%, transparent 70%)",
           filter: "blur(90px)",
         }}
       />
       
-      {/* Soft rose blob - Left */}
+      {/* Soft accent blob - Left */}
       <div
         className="absolute"
         style={{
@@ -47,12 +47,12 @@ export const LoadingSkeleton: React.FC = () => (
           height: "60vh",
           top: "20%",
           left: "-15%",
-          background: "radial-gradient(ellipse at center, rgba(251, 207, 232, 0.6) 0%, rgba(251, 207, 232, 0.2) 50%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 20%, transparent) 0%, transparent 70%)",
           filter: "blur(100px)",
         }}
       />
       
-      {/* Soft mint blob - Right */}
+      {/* Soft chart-1 blob - Right */}
       <div
         className="absolute"
         style={{
@@ -60,7 +60,7 @@ export const LoadingSkeleton: React.FC = () => (
           height: "55vh",
           top: "30%",
           right: "-10%",
-          background: "radial-gradient(ellipse at center, rgba(167, 243, 208, 0.5) 0%, rgba(167, 243, 208, 0.15) 50%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, color-mix(in srgb, var(--chart-1) 10%, transparent) 0%, transparent 70%)",
           filter: "blur(100px)",
         }}
       />
@@ -73,16 +73,16 @@ export const LoadingSkeleton: React.FC = () => (
         <div>
           <div 
             className="h-9 w-56 rounded-xl mb-3 animate-pulse"
-            style={{ backgroundColor: "rgba(0,0,0,0.06)" }}
+            style={{ backgroundColor: "color-mix(in srgb, var(--foreground) 6%, transparent)" }}
           />
           <div 
             className="h-5 w-72 rounded-lg animate-pulse" 
-            style={{ backgroundColor: "rgba(0,0,0,0.04)" }}
+            style={{ backgroundColor: "color-mix(in srgb, var(--foreground) 4%, transparent)" }}
           />
         </div>
         <div 
           className="h-10 w-40 rounded-xl animate-pulse"
-          style={{ backgroundColor: "rgba(0,0,0,0.06)" }}
+          style={{ backgroundColor: "color-mix(in srgb, var(--foreground) 6%, transparent)" }}
         />
       </div>
 
@@ -96,12 +96,12 @@ export const LoadingSkeleton: React.FC = () => (
             transition={{ delay: i * 0.05 }}
             className="rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: "rgba(255, 255, 255, 0.35)",
+              backgroundColor: "color-mix(in srgb, var(--card) 40%, transparent)",
               backdropFilter: "blur(24px) saturate(180%)",
               WebkitBackdropFilter: "blur(24px) saturate(180%)",
               boxShadow: `
-                0 1px 0 0 rgba(255, 255, 255, 1) inset,
-                0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+                0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
+                0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
                 0 4px 16px rgba(0, 0, 0, 0.06)
               `,
             }}
@@ -110,22 +110,22 @@ export const LoadingSkeleton: React.FC = () => (
             <div 
               className="absolute inset-0 pointer-events-none rounded-2xl"
               style={{
-                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
+                background: "linear-gradient(135deg, color-mix(in srgb, var(--card) 50%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--card) 20%, transparent) 100%)",
               }}
             />
             
             <div 
               className="aspect-video animate-pulse"
-              style={{ backgroundColor: "rgba(0,0,0,0.04)" }}
+              style={{ backgroundColor: "color-mix(in srgb, var(--foreground) 4%, transparent)" }}
             />
             <div className="p-4">
               <div 
                 className="h-5 w-3/4 rounded-lg mb-3 animate-pulse" 
-                style={{ backgroundColor: "rgba(0,0,0,0.06)" }}
+                style={{ backgroundColor: "color-mix(in srgb, var(--foreground) 6%, transparent)" }}
               />
               <div 
                 className="h-4 w-1/2 rounded-lg animate-pulse"
-                style={{ backgroundColor: "rgba(0,0,0,0.04)" }}
+                style={{ backgroundColor: "color-mix(in srgb, var(--foreground) 4%, transparent)" }}
               />
             </div>
           </motion.div>

@@ -191,12 +191,12 @@ export default function OutlinePage() {
             <div 
               className="rounded-2xl p-6"
               style={{
-                backgroundColor: "rgba(255, 255, 255, 0.35)",
+                backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
                 backdropFilter: "blur(24px) saturate(180%)",
                 WebkitBackdropFilter: "blur(24px) saturate(180%)",
                 boxShadow: `
-                  0 1px 0 0 rgba(255, 255, 255, 1) inset,
-                  0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+                  0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
+                  0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
                   0 8px 32px rgba(0, 0, 0, 0.08)
                 `,
               }}
@@ -210,11 +210,11 @@ export default function OutlinePage() {
                 key={i}
                 className="rounded-2xl p-6"
                 style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.35)",
+                  backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
                   backdropFilter: "blur(24px) saturate(180%)",
                   WebkitBackdropFilter: "blur(24px) saturate(180%)",
                   boxShadow: `
-                    0 1px 0 0 rgba(255, 255, 255, 1) inset,
+                    0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
                     0 8px 32px rgba(0, 0, 0, 0.08)
                   `,
                 }}
@@ -309,12 +309,12 @@ export default function OutlinePage() {
           <div
             className="relative rounded-2xl p-4 z-20"
             style={{
-              backgroundColor: "rgba(255, 255, 255, 0.35)",
+              backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
               backdropFilter: "blur(24px) saturate(180%)",
               WebkitBackdropFilter: "blur(24px) saturate(180%)",
               boxShadow: `
-                0 1px 0 0 rgba(255, 255, 255, 1) inset,
-                0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+                0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
+                0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
                 0 4px 16px rgba(0, 0, 0, 0.06)
               `,
             }}
@@ -332,11 +332,11 @@ export default function OutlinePage() {
                 <div 
                   className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                   style={{
-                    backgroundColor: "rgba(139, 92, 246, 0.15)",
-                    boxShadow: "0 2px 8px rgba(139, 92, 246, 0.15)",
+                    backgroundColor: "color-mix(in srgb, var(--primary) 15%, transparent)",
+                    boxShadow: "0 2px 8px color-mix(in srgb, var(--primary) 15%, transparent)",
                   }}
                 >
-                  <IconPalette size={20} style={{ color: "#8B5CF6" }} />
+                  <IconPalette size={20} style={{ color: "var(--primary)" }} />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-foreground">Presentation Theme</h3>
@@ -469,14 +469,14 @@ export default function OutlinePage() {
             transition={{ delay: 0.1 }}
             className="relative rounded-2xl p-6 overflow-hidden"
             style={{
-              backgroundColor: "rgba(255, 255, 255, 0.35)",
+              backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
               backdropFilter: "blur(24px) saturate(180%)",
               WebkitBackdropFilter: "blur(24px) saturate(180%)",
               boxShadow: `
-                0 1px 0 0 rgba(255, 255, 255, 1) inset,
-                0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-                1px 0 0 0 rgba(255, 255, 255, 0.8) inset,
-                -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
+                0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
+                0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
+                1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
+                -1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
                 0 8px 32px rgba(0, 0, 0, 0.08),
                 0 2px 8px rgba(0, 0, 0, 0.04)
               `,
@@ -486,7 +486,7 @@ export default function OutlinePage() {
             <div 
               className="absolute inset-0 pointer-events-none rounded-2xl"
               style={{
-                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
+                background: "linear-gradient(135deg, color-mix(in srgb, var(--card) 50%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--card) 20%, transparent) 100%)",
               }}
             />
             
@@ -494,14 +494,14 @@ export default function OutlinePage() {
               <div 
                 className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
                 style={{
-                  backgroundColor: "rgba(139, 92, 246, 0.15)",
+                  backgroundColor: "color-mix(in srgb, var(--primary) 15%, transparent)",
                   boxShadow: `
-                    0 1px 0 0 rgba(255, 255, 255, 0.8) inset,
-                    0 4px 12px rgba(139, 92, 246, 0.15)
+                    0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
+                    0 4px 12px color-mix(in srgb, var(--primary) 15%, transparent)
                   `,
                 }}
               >
-                <IconFileText size={22} style={{ color: "#8B5CF6" }} />
+                <IconFileText size={22} style={{ color: "var(--primary)" }} />
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-sm font-semibold text-foreground mb-2">
@@ -563,14 +563,14 @@ export default function OutlinePage() {
             <div
               className="relative rounded-2xl p-6 overflow-hidden"
               style={{
-                backgroundColor: "rgba(255, 255, 255, 0.35)",
+                backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
                 backdropFilter: "blur(24px) saturate(180%)",
                 WebkitBackdropFilter: "blur(24px) saturate(180%)",
                 boxShadow: `
-                  0 1px 0 0 rgba(255, 255, 255, 1) inset,
-                  0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-                  1px 0 0 0 rgba(255, 255, 255, 0.8) inset,
-                  -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
+                  0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
+                  0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
+                  1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
+                  -1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
                   0 8px 32px rgba(0, 0, 0, 0.08),
                   0 2px 8px rgba(0, 0, 0, 0.04)
                 `,
@@ -580,7 +580,7 @@ export default function OutlinePage() {
               <div 
                 className="absolute inset-0 pointer-events-none rounded-2xl"
                 style={{
-                  background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
+                  background: "linear-gradient(135deg, color-mix(in srgb, var(--card) 50%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--card) 20%, transparent) 100%)",
                 }}
               />
               
@@ -609,10 +609,10 @@ export default function OutlinePage() {
                 variant="outline"
                 className="rounded-xl px-5 h-11 gap-2 transition-all duration-300 hover:scale-[1.02]"
                 style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.5)",
+                  backgroundColor: "color-mix(in srgb, var(--card) 50%, transparent)",
                   backdropFilter: "blur(12px)",
                   WebkitBackdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255, 255, 255, 0.8)",
+                  border: "1px solid color-mix(in srgb, var(--foreground) 20%, transparent)",
                   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
                 }}
               >
@@ -658,11 +658,11 @@ export default function OutlinePage() {
                 transition={{ delay: 0.1 * i }}
                 className="rounded-2xl p-6 animate-pulse"
                 style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.35)",
+                  backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
                   backdropFilter: "blur(24px) saturate(180%)",
                   WebkitBackdropFilter: "blur(24px) saturate(180%)",
                   boxShadow: `
-                    0 1px 0 0 rgba(255, 255, 255, 1) inset,
+                    0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
                     0 8px 32px rgba(0, 0, 0, 0.08)
                   `,
                 }}

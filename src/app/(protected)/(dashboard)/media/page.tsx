@@ -116,12 +116,12 @@ const MediaCard = ({
       whileHover={{ y: -4 }}
       className="group relative rounded-2xl overflow-hidden"
       style={{
-        backgroundColor: "rgba(255, 255, 255, 0.5)",
+        backgroundColor: "color-mix(in srgb, var(--card) 50%, transparent)",
         backdropFilter: "blur(20px) saturate(180%)",
         WebkitBackdropFilter: "blur(20px) saturate(180%)",
         boxShadow: `
-          0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
-          0 -1px 0 0 rgba(0, 0, 0, 0.03) inset,
+          0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
+          0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
           0 4px 16px rgba(0, 0, 0, 0.06)
         `,
       }}
@@ -197,7 +197,7 @@ const MediaCard = ({
               align="end"
               className="w-40 rounded-xl border-0"
               style={{
-                backgroundColor: "rgba(255, 255, 255, 0.85)",
+                backgroundColor: "color-mix(in srgb, var(--card) 85%, transparent)",
                 backdropFilter: "blur(24px) saturate(180%)",
                 WebkitBackdropFilter: "blur(24px) saturate(180%)",
                 boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
@@ -277,10 +277,10 @@ const EmptyState = ({ onUpload }: { onUpload: () => void }) => (
     <div
       className="relative w-24 h-24 rounded-3xl flex items-center justify-center mb-6"
       style={{
-        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        backgroundColor: "color-mix(in srgb, var(--card) 60%, transparent)",
         backdropFilter: "blur(20px)",
         boxShadow: `
-          0 1px 0 0 rgba(255, 255, 255, 1) inset,
+          0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
           0 8px 32px rgba(0, 0, 0, 0.08)
         `,
       }}
@@ -312,7 +312,7 @@ const LoadingSkeleton = () => (
         key={i}
         className="animate-pulse rounded-2xl overflow-hidden"
         style={{
-          backgroundColor: "rgba(255, 255, 255, 0.4)",
+          backgroundColor: "color-mix(in srgb, var(--card) 40%, transparent)",
         }}
       >
         <div className="aspect-square bg-muted/30" />
@@ -560,7 +560,7 @@ export default function MediaPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 rounded-xl border-0 h-11"
               style={{
-                backgroundColor: "rgba(255, 255, 255, 0.6)",
+                backgroundColor: "color-mix(in srgb, var(--card) 60%, transparent)",
                 backdropFilter: "blur(16px)",
               }}
             />
@@ -578,7 +578,7 @@ export default function MediaPage() {
           <div
             className="flex items-center gap-1 p-1 rounded-xl"
             style={{
-              backgroundColor: "rgba(255, 255, 255, 0.5)",
+              backgroundColor: "color-mix(in srgb, var(--card) 50%, transparent)",
               backdropFilter: "blur(16px)",
             }}
           >
@@ -619,7 +619,7 @@ export default function MediaPage() {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl border border-destructive/30 p-6 text-sm text-destructive"
             style={{
-              backgroundColor: "rgba(254, 202, 202, 0.3)",
+              backgroundColor: "color-mix(in srgb, var(--destructive) 10%, transparent)",
               backdropFilter: "blur(24px)",
             }}
           >
@@ -672,11 +672,11 @@ export default function MediaPage() {
         <DialogContent
           className="sm:max-w-md rounded-2xl border-0"
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            backgroundColor: "color-mix(in srgb, var(--card) 90%, transparent)",
             backdropFilter: "blur(24px) saturate(180%)",
             WebkitBackdropFilter: "blur(24px) saturate(180%)",
             boxShadow: `
-              0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+              0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
               0 25px 50px rgba(0, 0, 0, 0.15)
             `,
           }}
@@ -725,11 +725,11 @@ export default function MediaPage() {
         <AlertDialogContent
           className="rounded-2xl border-0"
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            backgroundColor: "color-mix(in srgb, var(--card) 90%, transparent)",
             backdropFilter: "blur(24px) saturate(180%)",
             WebkitBackdropFilter: "blur(24px) saturate(180%)",
             boxShadow: `
-              0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+              0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
               0 25px 50px rgba(0, 0, 0, 0.15)
             `,
           }}

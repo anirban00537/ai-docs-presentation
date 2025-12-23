@@ -130,11 +130,11 @@ export default function MyPresentationsPage() {
         <AlertDialogContent
           className="rounded-2xl border-0"
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            backgroundColor: "color-mix(in srgb, var(--card) 85%, transparent)",
             backdropFilter: "blur(24px) saturate(180%)",
             WebkitBackdropFilter: "blur(24px) saturate(180%)",
             boxShadow: `
-              0 1px 0 0 rgba(255, 255, 255, 1) inset,
+              0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
               0 25px 50px rgba(0, 0, 0, 0.15)
             `,
           }}

@@ -8,11 +8,11 @@ const layout = ({ children }: { children: React.ReactNode }) => {
       <div 
         className="fixed inset-0 pointer-events-none"
         style={{
-          background: "linear-gradient(135deg, #fdfbfb 0%, #f8f9ff 50%, #f5f7ff 100%)",
+          background: "linear-gradient(135deg, var(--background) 0%, var(--sidebar) 100%)",
           zIndex: 0,
         }}
       >
-        {/* Soft lavender blob - Top Left */}
+        {/* Soft primary blob - Top Left */}
         <div
           className="absolute"
           style={{
@@ -20,12 +20,12 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             height: "60vh",
             top: "-20%",
             left: "-20%",
-            background: "radial-gradient(circle at center, rgba(196, 181, 253, 0.6) 0%, rgba(196, 181, 253, 0.25) 40%, transparent 70%)",
+            background: "radial-gradient(circle at center, color-mix(in srgb, var(--primary) 15%, transparent) 0%, transparent 70%)",
             filter: "blur(80px)",
           }}
         />
         
-        {/* Soft sky blue blob - Top Right */}
+        {/* Soft secondary blob - Top Right */}
         <div
           className="absolute"
           style={{
@@ -33,12 +33,12 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             height: "55vh",
             top: "-15%",
             right: "-15%",
-            background: "radial-gradient(circle at center, rgba(147, 197, 253, 0.55) 0%, rgba(147, 197, 253, 0.2) 50%, transparent 70%)",
+            background: "radial-gradient(circle at center, color-mix(in srgb, var(--secondary) 20%, transparent) 0%, transparent 70%)",
             filter: "blur(90px)",
           }}
         />
         
-        {/* Soft rose blob - Left */}
+        {/* Soft accent blob - Left */}
         <div
           className="absolute"
           style={{
@@ -46,12 +46,12 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             height: "60vh",
             top: "20%",
             left: "-15%",
-            background: "radial-gradient(ellipse at center, rgba(251, 207, 232, 0.6) 0%, rgba(251, 207, 232, 0.2) 50%, transparent 70%)",
+            background: "radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 20%, transparent) 0%, transparent 70%)",
             filter: "blur(100px)",
           }}
         />
         
-        {/* Soft mint blob - Right */}
+        {/* Soft chart-1 blob - Right */}
         <div
           className="absolute"
           style={{
@@ -59,12 +59,12 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             height: "55vh",
             top: "30%",
             right: "-10%",
-            background: "radial-gradient(ellipse at center, rgba(167, 243, 208, 0.5) 0%, rgba(167, 243, 208, 0.15) 50%, transparent 70%)",
+            background: "radial-gradient(ellipse at center, color-mix(in srgb, var(--chart-1) 10%, transparent) 0%, transparent 70%)",
             filter: "blur(100px)",
           }}
         />
         
-        {/* Soft peach blob - Bottom Left */}
+        {/* Soft chart-2 blob - Bottom Left */}
         <div
           className="absolute"
           style={{
@@ -72,12 +72,12 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             height: "50vh",
             bottom: "-15%",
             left: "-10%",
-            background: "radial-gradient(circle at center, rgba(254, 215, 170, 0.55) 0%, rgba(254, 215, 170, 0.15) 50%, transparent 70%)",
+            background: "radial-gradient(circle at center, color-mix(in srgb, var(--chart-2) 10%, transparent) 0%, transparent 70%)",
             filter: "blur(90px)",
           }}
         />
         
-        {/* Soft lilac blob - Bottom Right */}
+        {/* Soft chart-3 blob - Bottom Right */}
         <div
           className="absolute"
           style={{
@@ -85,7 +85,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             height: "50vh",
             bottom: "-20%",
             right: "-15%",
-            background: "radial-gradient(circle at center, rgba(221, 214, 254, 0.6) 0%, rgba(196, 181, 253, 0.2) 50%, transparent 70%)",
+            background: "radial-gradient(circle at center, color-mix(in srgb, var(--chart-3) 10%, transparent) 0%, transparent 70%)",
             filter: "blur(100px)",
           }}
         />
@@ -99,7 +99,8 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            background: "radial-gradient(circle at center, rgba(255, 255, 255, 0.9) 0%, transparent 70%)",
+            background: "radial-gradient(circle at center, var(--background) 0%, transparent 70%)",
+            opacity: 0.5,
             filter: "blur(60px)",
           }}
         />

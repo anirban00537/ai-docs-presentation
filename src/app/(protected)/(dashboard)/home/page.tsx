@@ -17,28 +17,28 @@ const suggestions = [
     title: "AI Revolution",
     description: "How AI is transforming industries",
     prompt: "Create a presentation about how artificial intelligence is revolutionizing healthcare, education, and creative industries",
-    color: "#8B5CF6", // Purple
+    color: "var(--chart-1)", // Theme primary chart color
   },
   {
     icon: IconRocket,
     title: "Space Exploration",
     description: "Journey through the cosmos",
     prompt: "Create a presentation about recent breakthroughs in space exploration, Mars missions, and the future of interstellar travel",
-    color: "#3B82F6", // Blue
+    color: "var(--chart-2)", // Theme secondary chart color
   },
   {
     icon: IconLeaf,
     title: "Climate Solutions",
     description: "Saving our planet",
     prompt: "Create a presentation about innovative climate change solutions, renewable energy technologies, and sustainable living practices",
-    color: "#10B981", // Green
+    color: "var(--chart-3)", // Theme tertiary chart color
   },
   {
     icon: IconBooks,
     title: "Ancient Wonders",
     description: "Mysteries of history",
     prompt: "Create a presentation about the Seven Wonders of the Ancient World, their construction, and their historical significance",
-    color: "#F59E0B", // Amber
+    color: "var(--chart-4)", // Theme quaternary chart color
   },
 ];
 
@@ -59,14 +59,14 @@ const SuggestionCard: React.FC<{
       onClick={() => onClick(suggestion.prompt)}
       className="group relative flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-300 overflow-hidden"
       style={{
-        backgroundColor: "rgba(255, 255, 255, 0.35)",
+        backgroundColor: "color-mix(in srgb, var(--card) 40%, transparent)",
         backdropFilter: "blur(24px) saturate(180%)",
         WebkitBackdropFilter: "blur(24px) saturate(180%)",
         boxShadow: `
-          0 1px 0 0 rgba(255, 255, 255, 1) inset,
-          0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-          1px 0 0 0 rgba(255, 255, 255, 0.8) inset,
-          -1px 0 0 0 rgba(0, 0, 0, 0.03) inset,
+          0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
+          0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
+          1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
+          -1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
           0 4px 16px rgba(0, 0, 0, 0.06),
           0 1px 4px rgba(0, 0, 0, 0.03)
         `,
@@ -76,7 +76,7 @@ const SuggestionCard: React.FC<{
       <div 
         className="absolute inset-0 pointer-events-none rounded-xl"
         style={{
-          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
+          background: "linear-gradient(135deg, color-mix(in srgb, var(--card) 50%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--card) 20%, transparent) 100%)",
         }}
       />
       
@@ -84,15 +84,15 @@ const SuggestionCard: React.FC<{
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
-          background: `radial-gradient(circle at 0% 50%, ${suggestion.color}20 0%, transparent 60%)`,
+          background: `radial-gradient(circle at 0% 50%, color-mix(in srgb, ${suggestion.color} 20%, transparent) 0%, transparent 60%)`,
         }}
       />
 
       <div 
         className="relative w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
         style={{
-          backgroundColor: `${suggestion.color}15`,
-          boxShadow: `0 2px 8px ${suggestion.color}15`,
+          backgroundColor: `color-mix(in srgb, ${suggestion.color} 15%, transparent)`,
+          boxShadow: `0 2px 8px color-mix(in srgb, ${suggestion.color} 15%, transparent)`,
         }}
       >
         <Icon size={18} style={{ color: suggestion.color }} />

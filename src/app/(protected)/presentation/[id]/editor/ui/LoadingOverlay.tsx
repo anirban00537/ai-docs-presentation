@@ -14,13 +14,13 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   progress,
 }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0a0f]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-xl">
       {/* Animated background gradient */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute w-[600px] h-[600px] rounded-full blur-[120px] opacity-30"
           style={{
-            background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)",
+            background: "linear-gradient(135deg, var(--primary) 0%, var(--chart-1) 50%, var(--chart-2) 100%)",
             left: "20%",
             top: "20%",
           }}
@@ -38,7 +38,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
         <motion.div
           className="absolute w-[500px] h-[500px] rounded-full blur-[100px] opacity-20"
           style={{
-            background: "linear-gradient(135deg, #ec4899 0%, #f97316 100%)",
+            background: "linear-gradient(135deg, var(--chart-3) 0%, var(--chart-4) 100%)",
             right: "15%",
             bottom: "20%",
           }}
@@ -61,7 +61,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
         <div className="relative">
           {/* Outer ring */}
           <motion.div
-            className="w-20 h-20 rounded-full border-2 border-white/10"
+            className="w-20 h-20 rounded-full border-2 border-primary/20"
             animate={{ rotate: 360 }}
             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
           />
@@ -71,8 +71,8 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
             className="absolute inset-0 w-20 h-20 rounded-full"
             style={{
               border: "2px solid transparent",
-              borderTopColor: "#8b5cf6",
-              borderRightColor: "#8b5cf6",
+              borderTopColor: "var(--primary)",
+              borderRightColor: "var(--primary)",
             }}
             animate={{ rotate: 360 }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
@@ -86,7 +86,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
             >
               <IconLoader2 
                 size={28} 
-                className="text-white/80"
+                className="text-primary"
                 style={{ animation: "none" }}
               />
             </motion.div>
@@ -96,7 +96,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
         {/* Text */}
         <div className="flex flex-col items-center gap-3">
           <motion.h2
-            className="text-xl font-semibold text-white/90"
+            className="text-xl font-semibold text-foreground"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -113,16 +113,16 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
               transition={{ delay: 0.4 }}
             >
               <div className="flex items-center gap-2">
-                <span className="text-sm text-white/50">
+                <span className="text-sm text-foreground/50">
                   Slide {progress.current} of {progress.total}
                 </span>
               </div>
               {/* Progress bar */}
-              <div className="w-48 h-1 rounded-full bg-white/10 overflow-hidden">
+              <div className="w-48 h-1 rounded-full bg-primary/10 overflow-hidden">
                 <motion.div
                   className="h-full rounded-full"
                   style={{
-                    background: "linear-gradient(90deg, #8b5cf6, #a855f7)",
+                    background: "linear-gradient(90deg, var(--primary), var(--chart-1))",
                   }}
                   initial={{ width: 0 }}
                   animate={{ width: `${(progress.current / progress.total) * 100}%` }}
@@ -143,7 +143,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
               {[0, 1, 2].map((i) => (
                 <motion.div
                   key={i}
-                  className="w-1.5 h-1.5 rounded-full bg-white/40"
+                  className="w-1.5 h-1.5 rounded-full bg-primary/40"
                   animate={{
                     opacity: [0.3, 1, 0.3],
                     scale: [0.8, 1, 0.8],
