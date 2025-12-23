@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2025-12-23T11:00:28.786Z
+ * Generated: 2025-12-23T11:57:52.889Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -979,7 +979,7 @@ const layoutTemplates = [
                   "name": "# Dr. Elena Foster",
                   "role": "Chief Technology Officer",
                   "description": "PhD in Distributed Systems. Formerly Principal Architect at CloudCorp.",
-                  "avatar": "",
+                  "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format&fit=crop",
                   "socials": {}
                 }
               },
@@ -991,7 +991,7 @@ const layoutTemplates = [
                   "name": "# James Wu",
                   "role": "Head of Product",
                   "description": "Leading product vision and strategy. Previously at StartupX.",
-                  "avatar": "",
+                  "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format&fit=crop",
                   "socials": {}
                 }
               },
@@ -1003,7 +1003,7 @@ const layoutTemplates = [
                   "name": "# Sarah Jenkins",
                   "role": "VP of Sales",
                   "description": "Driving growth and customer success. 15 years in Enterprise SaaS.",
-                  "avatar": "",
+                  "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format&fit=crop",
                   "socials": {}
                 }
               }
@@ -1158,19 +1158,19 @@ const layoutTemplates = [
                   "type": "image-gallery",
                   "images": [
                     {
-                      "id": "JXM0QSv8shLThDk4d4Sr6",
-                      "url": "",
-                      "caption": "Deployment Dashboard"
+                      "id": "vpMy-UmKIrzpBYmJUSbTD",
+                      "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop",
+                      "caption": "Data Visualization"
                     },
                     {
-                      "id": "S-j99GbU2BHV2JzOGh7fS",
-                      "url": "",
-                      "caption": "Real-time Analytics"
+                      "id": "deoRw-WmP6KOGT1u1yg2T",
+                      "url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop",
+                      "caption": "Business Analytics"
                     },
                     {
-                      "id": "mMLgJ1dYqhDsXs1lsvT3I",
-                      "url": "",
-                      "caption": "Mobile Experience"
+                      "id": "Gw7uFTzSlhJwU3jWIPFCH",
+                      "url": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1000&auto=format&fit=crop",
+                      "caption": "System Monitoring"
                     }
                   ],
                   "layout": "masonry",
