@@ -30,19 +30,39 @@ export const NumberCardBlock = memo(function NumberCardBlock({
     return content?.editorContent ?? getDefaultNumberCardEditorContent();
   }, [content?.editorContent]);
 
+  const handleNumberChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (readOnly) return;
+      const val = parseInt(e.target.value, 10);
+      const newNumber = isNaN(val) ? 0 : val;
+      onUpdate({
+        ...content,
+        number: newNumber,
+      });
+    },
+    [content, onUpdate, readOnly]
+  );
+
+  const handleIconChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (readOnly) return;
+      onUpdate({
+        ...content,
+        icon: e.target.value,
+      });
+    },
+    [content, onUpdate, readOnly]
+  );
+
   const handleEditorChange = useCallback(
     (newEditorContent: ProseMirrorDocument) => {
       if (readOnly) return;
-      const newContent: NumberCardContent = {
-        type: "number-card",
-        icon,
-        number,
-        size: content?.size ?? "medium",
+      onUpdate({
+        ...content,
         editorContent: newEditorContent,
-      };
-      onUpdate(newContent);
+      });
     },
-    [icon, number, content?.size, onUpdate, readOnly]
+    [content, onUpdate, readOnly]
   );
 
   const textSizeClass = useMemo(() => {
@@ -76,16 +96,37 @@ export const NumberCardBlock = memo(function NumberCardBlock({
 
         {/* Header: Icon/Number */}
         <div className="flex flex-col items-start gap-4 z-10">
+          <style>{`
+            .no-spinner::-webkit-outer-spin-button,
+            .no-spinner::-webkit-inner-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
+            .no-spinner {
+              -moz-appearance: textfield;
+            }
+          `}</style>
           <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl transition-all duration-300 group-hover/card:scale-105 group-hover/card:rotate-3 shadow-sm border"
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl transition-all duration-300 group-hover/card:scale-105 group-hover/card:rotate-3 shadow-sm border focus-within:ring-2 focus-within:ring-offset-2"
             style={{
               backgroundColor: `${theme.primary}15`,
               borderColor: `${theme.primary}25`,
               color: theme.primary,
               backdropFilter: "blur(8px)",
+              // Use ring color from primary but lighter
+              boxShadow: `0 0 0 0 ${theme.primary}00`,
             }}
           >
-            {icon || number}
+            <input
+              type="text"
+              value={icon || number}
+              onChange={icon ? handleIconChange : handleNumberChange}
+              className="no-spinner bg-transparent border-none outline-none text-center w-full font-bold px-1"
+              style={{
+                color: theme.primary,
+              }}
+              readOnly={readOnly}
+            />
           </div>
         </div>
 

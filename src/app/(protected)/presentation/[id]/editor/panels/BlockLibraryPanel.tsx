@@ -49,7 +49,7 @@ const blockDefinitions = [
     type: BLOCK_TYPES.NUMBER_CARD,
     icon: <IconHash size={18} />,
     label: "Number Card",
-    description: "Icon, number, and description",
+    description: "Sequence number and description",
   },
   {
     type: BLOCK_TYPES.TESTIMONIAL,
