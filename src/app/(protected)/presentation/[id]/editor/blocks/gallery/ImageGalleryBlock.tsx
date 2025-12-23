@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import type { Block, Theme } from "@/types/presentation";
 import {
   type ImageGalleryContent,
@@ -18,12 +18,12 @@ interface ImageGalleryBlockProps {
 
 import { CommonCard } from "../CommonCard";
 
-export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
+export const ImageGalleryBlock = memo(function ImageGalleryBlock({
   block,
   onUpdate,
   theme,
   isEditable = true,
-}) => {
+}: ImageGalleryBlockProps) {
   const content = block.content as ImageGalleryContent;
   const images = content.images || [];
   const columns = content.columns || 3;
@@ -175,4 +175,4 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
       </div>
     </div>
   );
-};
+});

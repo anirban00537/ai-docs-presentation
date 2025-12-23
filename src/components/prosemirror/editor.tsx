@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  memo,
 } from "react";
 import { EditorState, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
@@ -24,7 +25,7 @@ import { createInputRules } from "./input-rules";
 import { SlashCommand, SLASH_COMMANDS } from "./commands";
 import { SlashMenu } from "./slash-menu";
 import { SelectionToolbar } from "./selection-toolbar";
-import { PROSEMIRROR_STYLES } from "./styles";
+import { injectBaseStyles } from "./styles";
 import { placeholderPlugin } from "./plugins/placeholder-plugin";
 import { ImageUrlModal } from "./plugins/image-plugin";
 import { useAppSelector } from "@/store/hooks";
@@ -59,7 +60,7 @@ type ProseMirrorEditorProps = {
   theme?: Theme;
 };
 
-export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
+export const ProseMirrorEditor = memo(function ProseMirrorEditor({
   value,
   onChange,
   readOnly = false,
@@ -67,13 +68,18 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   placeholder = "Type '/' for commands...",
   blockId,
   theme: themeProp,
-}) => {
+}: ProseMirrorEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   const isInternalChangeRef = useRef(false); // Track if change is from editor itself
   const reduxTheme = useAppSelector(selectTheme);
   const theme = themeProp || reduxTheme || DEFAULT_THEME;
+
+  // Inject base styles globally once
+  useEffect(() => {
+    injectBaseStyles();
+  }, []);
 
   // Generate unique ID for scoping styles - always unique to prevent conflicts when multiple slides have same blockId
   const editorIdRef = useRef<string>(
@@ -475,24 +481,38 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
                 ? align
                 : "left";
 
-              setSelectionToolbar({
-                visible: true,
-                position: {
-                  top: coords.top - editorRect.top,
-                  left:
-                    coords.left - editorRect.left + (to - from > 10 ? 50 : 0),
-                },
-                activeMarks,
-                activeAlignment,
+              setSelectionToolbar((prev) => {
+                // Only update if something actually changed
+                if (prev.visible && 
+                    prev.position.top === coords.top - editorRect.top &&
+                    prev.position.left === coords.left - editorRect.left + (to - from > 10 ? 50 : 0)) {
+                  return prev; // No change needed
+                }
+                return {
+                  visible: true,
+                  position: {
+                    top: coords.top - editorRect.top,
+                    left:
+                      coords.left - editorRect.left + (to - from > 10 ? 50 : 0),
+                  },
+                  activeMarks,
+                  activeAlignment,
+                };
               });
             }
           } catch {
             // Position calculation failed, hide toolbar
-            setSelectionToolbar((prev) => ({ ...prev, visible: false }));
+            setSelectionToolbar((prev) => {
+              if (!prev.visible) return prev; // Already hidden
+              return { ...prev, visible: false };
+            });
           }
         } else {
-          // No selection - hide toolbar
-          setSelectionToolbar((prev) => ({ ...prev, visible: false }));
+          // No selection - hide toolbar only if currently visible
+          setSelectionToolbar((prev) => {
+            if (!prev.visible) return prev; // Already hidden
+            return { ...prev, visible: false };
+          });
         }
 
         if (transaction.docChanged) {
@@ -762,11 +782,11 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
   }, []);
 
   // Generate dynamic styles based on theme, scoped to this editor instance
+  // NOTE: Base styles are injected globally once via injectBaseStyles()
   const dynamicStyles = useMemo(() => {
     const fontFamily = getFontFamily(theme.fontFamily || "Inter");
     const editorId = editorIdRef.current;
     return `
-      ${PROSEMIRROR_STYLES}
       [data-prosemirror-id="${editorId}"] .ProseMirror {
         color: ${theme.bodyColor} !important;
         font-family: ${fontFamily} !important;
@@ -810,18 +830,6 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
       [data-prosemirror-id="${editorId}"] .ProseMirror h4.is-empty::before {
         color: ${theme.bodyColor}80 !important;
       }
-      /* Image bottom cursor blinking animation */
-      @keyframes image-cursor-blink {
-        0%, 50% { opacity: 1; }
-        51%, 100% { opacity: 0; }
-      }
-      [data-prosemirror-id="${editorId}"] .image-bottom-cursor {
-        animation: image-cursor-blink 1s step-end infinite;
-      }
-      /* Image bottom area hover effect */
-      [data-prosemirror-id="${editorId}"] .prosemirror-image-wrapper .group:hover {
-        background-color: rgba(0, 0, 0, 0.02);
-      }
     `;
   }, [theme]);
 
@@ -860,16 +868,25 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({
               setSelectionToolbar((prev) => ({ ...prev, visible: false }))
             }
           />
-          <ImageUrlModal
-            open={imageModal.open}
-            onClose={handleImageModalClose}
-            onSubmit={handleImageUrlSubmit}
-            initialUrl={imageModal.currentSrc}
-          />
+          {imageModal.open && (
+            <ImageUrlModal
+              open={imageModal.open}
+              onClose={handleImageModalClose}
+              onSubmit={handleImageUrlSubmit}
+              initialUrl={imageModal.currentSrc}
+            />
+          )}
         </>
       )}
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison for memo - only re-render if content or readOnly changes
+  // Theme changes are handled via CSS and don't need full re-render
+  return prevProps.value === nextProps.value &&
+         prevProps.readOnly === nextProps.readOnly &&
+         prevProps.blockId === nextProps.blockId &&
+         prevProps.placeholder === nextProps.placeholder;
+});
 
 export default ProseMirrorEditor;

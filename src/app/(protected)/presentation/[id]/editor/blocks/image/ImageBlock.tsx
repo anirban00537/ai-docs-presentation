@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import type { Block, Theme } from "@/types/presentation";
 import { type ImageContent } from "@/types/presentation";
 import { IconPhoto, IconExternalLink } from "@tabler/icons-react";
@@ -16,12 +16,12 @@ interface ImageBlockProps {
   readOnly?: boolean;
 }
 
-export const ImageBlock: React.FC<ImageBlockProps> = ({
+export const ImageBlock = memo(function ImageBlock({
   block,
   onUpdate,
   theme,
   readOnly = false,
-}) => {
+}: ImageBlockProps) {
   const content = block.content as ImageContent;
   const { url, alt, caption, objectFit = "cover", attribution } = content;
   const isDark = theme.themeType === "dark";
@@ -232,4 +232,4 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
       )}
     </>
   );
-};
+});

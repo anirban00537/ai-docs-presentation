@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/types/presentation";
 import {
@@ -18,11 +18,11 @@ interface ComparisonTableBlockProps {
 
 import { CommonCard } from "../CommonCard";
 
-export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
+export const ComparisonTableBlock = memo(function ComparisonTableBlock({
   block,
   onUpdate,
   theme,
-}) => {
+}: ComparisonTableBlockProps) {
   const content =
     (block.content as ComparisonTableContent) ?? createComparisonTableContent();
   const { columns, rows } = content;
@@ -347,4 +347,4 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
       </CommonCard>
     </BlockWrapper>
   );
-};
+});

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
@@ -18,13 +18,13 @@ interface BlockToolbarProps {
   canAddColumn?: boolean;
 }
 
-export const BlockToolbar: React.FC<BlockToolbarProps> = ({
+export const BlockToolbar = memo(function BlockToolbar({
   isVisible,
   onDuplicate,
   onDelete,
   onAddColumn,
   canAddColumn,
-}) => {
+}: BlockToolbarProps) {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
 
@@ -89,5 +89,5 @@ export const BlockToolbar: React.FC<BlockToolbarProps> = ({
       )}
     </AnimatePresence>
   );
-};
+});
 

@@ -8,23 +8,13 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DynamicIcon } from "./DynamicIcon";
+import { DynamicIcon, AVAILABLE_ICON_NAMES } from "./DynamicIcon";
 import { IconSearch, IconIcons } from "@tabler/icons-react";
 import type { Theme } from "@/types/presentation";
 
-// Curated list of premium Tabler icons
-const CURATED_ICONS = [
-  "IconRocket", "IconStar", "IconHeart", "IconDiamond", "IconCrown", 
-  "IconBolt", "IconFlame", "IconLeaf", "IconSun", "IconMoon", 
-  "IconCircleCheck", "IconInfoCircle", "IconAlertCircle", "IconShieldCheck", "IconActivity", 
-  "IconChartBar", "IconChartPie", "IconTrophy", "IconTarget", "IconUsers", 
-  "IconBuildings", "IconCreditCard", "IconPresentation", "IconMail", "IconPhone", 
-  "IconMapPin", "IconCalendar", "IconClock", "IconBell", "IconSearch", 
-  "IconSettings", "IconTool", "IconDatabase", "IconCloud", "IconDeviceLaptop", 
-  "IconDeviceMobile", "IconFingerprint", "IconLock", "IconKey", "IconGift", 
-  "IconConfetti", "IconAppWindow", "IconLayout", "IconStack", "IconComponents", 
-  "IconTemplate", "IconPalette", "IconBriefcase", "IconAdjustmentsHorizontal", "IconFilter", "IconBolt"
-];
+// Use the centralized icon list from DynamicIcon
+const CURATED_ICONS = AVAILABLE_ICON_NAMES;
+
 
 interface UniversalIconPickerProps {
   /** Current icon name (IconRocket) or emoji */
@@ -160,4 +150,12 @@ export const UniversalIconPicker = memo(function UniversalIconPicker({
       </PopoverContent>
     </Popover>
   );
+}, (prevProps, nextProps) => {
+  // Only re-render if these specific props change
+  // Ignore full theme object changes for performance
+  return prevProps.value === nextProps.value && 
+         prevProps.disabled === nextProps.disabled &&
+         prevProps.size === nextProps.size &&
+         prevProps.theme.primary === nextProps.theme.primary &&
+         prevProps.theme.themeType === nextProps.theme.themeType;
 });

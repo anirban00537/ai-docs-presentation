@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import { createLogoGridContent, type LogoGridContent } from "../definitions";
@@ -32,11 +32,11 @@ interface LogoGridBlockProps {
   readOnly?: boolean;
 }
 
-export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
+export const LogoGridBlock = memo(function LogoGridBlock({
   block,
   onUpdate,
   theme,
-}) => {
+}: LogoGridBlockProps) {
   const content = (block.content as LogoGridContent) ?? createLogoGridContent();
   const { logos, columns, grayscale = true } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -287,4 +287,4 @@ export const LogoGridBlock: React.FC<LogoGridBlockProps> = ({
       </Dialog>
     </>
   );
-};
+});

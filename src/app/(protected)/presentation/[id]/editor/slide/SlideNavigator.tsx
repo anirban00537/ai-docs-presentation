@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { SlideContainer } from "./SlideContainer";
 import type { Slide } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
@@ -55,8 +56,25 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const dispatch = useAppDispatch();
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const activeSlideRef = useRef<HTMLDivElement>(null);
   const previousActiveSlideIdRef = useRef<string | null>(null);
+  
+  // Ref for the scrollable container (for virtualization)
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Calculate proper scale to show full slide (16:9 aspect ratio)
+  const containerWidth = 220;
+  const scale = containerWidth / SLIDE_MAX_WIDTH;
+  const slideHeight = SLIDE_MAX_WIDTH * (9 / 16);
+  const thumbnailHeight = slideHeight * scale;
+  const itemHeight = thumbnailHeight + 12; // Height + gap
+
+  // Virtualized list configuration
+  const virtualizer = useVirtualizer({
+    count: slides.length,
+    getScrollElement: () => scrollContainerRef.current,
+    estimateSize: () => itemHeight,
+    overscan: 2, // Render 2 items above and below the visible area
+  });
 
   // Apply pending layout when a new slide becomes active
   useEffect(() => {
@@ -78,46 +96,41 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
 
   // Scroll to active slide when it changes
   useEffect(() => {
-    if (activeSlideRef.current && !isCollapsed) {
-      setTimeout(() => {
-        if (activeSlideRef.current) {
-          activeSlideRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }
-      }, 100);
+    if (activeSlideId && !isCollapsed) {
+      const activeIndex = slides.findIndex(s => s.id === activeSlideId);
+      if (activeIndex !== -1) {
+        // Scroll the virtualizer to the active slide
+        setTimeout(() => {
+          virtualizer.scrollToIndex(activeIndex, { align: 'center', behavior: 'smooth' });
+        }, 100);
+      }
     }
-  }, [activeSlideId, isCollapsed, slides.length]);
+  }, [activeSlideId, isCollapsed, slides, virtualizer]);
 
-  const handleSlideClick = (slideId: string) => {
+  const handleSlideClick = useCallback((slideId: string) => {
     dispatch(setActiveSlide(slideId));
     const slideElement = document.querySelector(`[data-slide-id="${slideId}"]`);
     if (slideElement) {
       slideElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  };
+  }, [dispatch]);
 
-  const handleAddSlide = () => {
+  const handleAddSlide = useCallback(() => {
     setIsLayoutModalOpen(true);
-  };
+  }, []);
 
-  const handleSelectLayout = (template: LayoutTemplate) => {
+  const handleSelectLayout = useCallback((template: LayoutTemplate) => {
     setPendingLayout(template);
     dispatch(addSlide({}));
-  };
+  }, [dispatch]);
 
-  const handleDeleteSlide = (e: React.MouseEvent, slideId: string) => {
+  const handleDeleteSlide = useCallback((e: React.MouseEvent, slideId: string) => {
     e.stopPropagation();
     if (slides.length <= 1) return;
     dispatch(deleteSlide(slideId));
-  };
+  }, [dispatch, slides.length]);
 
-  // Calculate proper scale to show full slide (16:9 aspect ratio)
-  const containerWidth = 220;
-  const scale = containerWidth / SLIDE_MAX_WIDTH;
-  const slideHeight = SLIDE_MAX_WIDTH * (9 / 16);
-  const thumbnailHeight = slideHeight * scale;
+  const virtualItems = virtualizer.getVirtualItems();
 
   return (
     <>
@@ -202,7 +215,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                   className="text-xs font-medium uppercase tracking-wider opacity-50"
                   style={{ color: isDark ? "#fff" : "#000" }}
                 >
-                  Slides
+                  Slides ({slides.length})
                 </span>
                 <div className="flex items-center gap-1">
                   <button
@@ -227,95 +240,116 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                 </div>
               </div>
 
-              {/* Slides List */}
+              {/* Virtualized Slides List */}
               <div 
-                className={`relative flex-1 overflow-y-auto pb-3 space-y-2.5 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
+                ref={scrollContainerRef}
+                className={`relative flex-1 overflow-y-auto pb-3 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
                 style={{ paddingLeft: 18, paddingRight: 14, paddingTop: 8 }}
               >
-                {slides.map((slide, index) => {
-                  const isActive = slide.id === activeSlideId;
-                  return (
-                    <motion.div
-                      key={slide.id}
-                      ref={isActive ? activeSlideRef : null}
-                      layout
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                      onClick={() => handleSlideClick(slide.id)}
-                      className="relative cursor-pointer group"
-                      data-slide-preview-id={slide.id}
-                    >
-                      {/* Slide Preview Container */}
+                {/* Virtualized container with total height */}
+                <div
+                  style={{
+                    height: `${virtualizer.getTotalSize()}px`,
+                    width: '100%',
+                    position: 'relative',
+                  }}
+                >
+                  {/* Only render visible items */}
+                  {virtualItems.map((virtualItem) => {
+                    const slide = slides[virtualItem.index];
+                    const index = virtualItem.index;
+                    const isActive = slide.id === activeSlideId;
+
+                    return (
                       <div
-                        className="relative overflow-hidden rounded-xl transition-all duration-200"
+                        key={slide.id}
+                        data-slide-preview-id={slide.id}
                         style={{
-                          height: `${thumbnailHeight}px`,
-                          outline: isActive ? `2px solid ${theme.primary}` : "none",
-                          outlineOffset: "2px",
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: `${virtualItem.size}px`,
+                          transform: `translateY(${virtualItem.start}px)`,
                         }}
                       >
-                        {/* Scaled SlideContainer */}
                         <div
-                          className="absolute top-0 left-0 pointer-events-none"
-                          style={{
-                            transform: `scale(${scale})`,
-                            transformOrigin: "top left",
-                            width: `${SLIDE_MAX_WIDTH}px`,
-                            height: `${slideHeight}px`,
-                          }}
+                          onClick={() => handleSlideClick(slide.id)}
+                          className="relative cursor-pointer group"
+                          style={{ paddingBottom: 12 }}
                         >
-                          <SlideContainer
-                            slide={slide}
-                            onUpdateBlock={onUpdateBlock}
-                            onDeleteRow={onDeleteRow}
-                            onAddColumn={onAddColumn}
-                            onAddRowAtTop={onAddRowAtTop}
-                            onAddRowAtBottom={onAddRowAtBottom}
-                            onUpdateColumnWidths={onUpdateColumnWidths}
-                            enableDragHints={false}
-                            readOnly={true}
-                          />
-                        </div>
-
-                        {/* Hover Overlay */}
-                        <div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
-                          style={{
-                            background: isDark
-                              ? "rgba(0,0,0,0.4)"
-                              : "rgba(0,0,0,0.2)",
-                          }}
-                        >
-                          {slides.length > 1 && (
-                            <button
-                              onClick={(e) => handleDeleteSlide(e, slide.id)}
-                              className="p-2 rounded-lg transition-all hover:scale-110"
+                          {/* Slide Preview Container */}
+                          <div
+                            className="relative overflow-hidden rounded-xl transition-all duration-200"
+                            style={{
+                              height: `${thumbnailHeight}px`,
+                              outline: isActive ? `2px solid ${theme.primary}` : "none",
+                              outlineOffset: "2px",
+                            }}
+                          >
+                            {/* Scaled SlideContainer */}
+                            <div
+                              className="absolute top-0 left-0 pointer-events-none"
                               style={{
-                                backgroundColor: "rgba(239,68,68,0.9)",
-                                color: "white",
+                                transform: `scale(${scale})`,
+                                transformOrigin: "top left",
+                                width: `${SLIDE_MAX_WIDTH}px`,
+                                height: `${slideHeight}px`,
                               }}
-                              title="Delete slide"
                             >
-                              <IconTrash size={14} />
-                            </button>
-                          )}
+                              <SlideContainer
+                                slide={slide}
+                                onUpdateBlock={onUpdateBlock}
+                                onDeleteRow={onDeleteRow}
+                                onAddColumn={onAddColumn}
+                                onAddRowAtTop={onAddRowAtTop}
+                                onAddRowAtBottom={onAddRowAtBottom}
+                                onUpdateColumnWidths={onUpdateColumnWidths}
+                                enableDragHints={false}
+                                readOnly={true}
+                              />
+                            </div>
+
+                            {/* Hover Overlay */}
+                            <div
+                              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
+                              style={{
+                                background: isDark
+                                  ? "rgba(0,0,0,0.4)"
+                                  : "rgba(0,0,0,0.2)",
+                              }}
+                            >
+                              {slides.length > 1 && (
+                                <button
+                                  onClick={(e) => handleDeleteSlide(e, slide.id)}
+                                  className="p-2 rounded-lg transition-all hover:scale-110"
+                                  style={{
+                                    backgroundColor: "rgba(239,68,68,0.9)",
+                                    color: "white",
+                                  }}
+                                  title="Delete slide"
+                                >
+                                  <IconTrash size={14} />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Slide Number */}
+                          <div
+                            className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-[10px] font-semibold"
+                            style={{
+                              backgroundColor: isActive ? theme.primary : (isDark ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.9)"),
+                              color: isActive ? "white" : (isDark ? "white" : "#000"),
+                            }}
+                          >
+                            {index + 1}
+                          </div>
                         </div>
                       </div>
-
-                      {/* Slide Number */}
-                      <div
-                        className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-[10px] font-semibold"
-                        style={{
-                          backgroundColor: isActive ? theme.primary : (isDark ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.9)"),
-                          color: isActive ? "white" : (isDark ? "white" : "#000"),
-                        }}
-                      >
-                        {index + 1}
-                      </div>
-                    </motion.div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </motion.div>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/types/presentation";
 import { createVideoContent, type VideoContent } from "../definitions";
@@ -70,11 +70,11 @@ const getVideoEmbedUrl = (
   return embedUrl;
 };
 
-export const VideoBlock: React.FC<VideoBlockProps> = ({
+export const VideoBlock = memo(function VideoBlock({
   block,
   onUpdate,
   theme,
-}) => {
+}: VideoBlockProps) {
   const content = (block.content as VideoContent) ?? createVideoContent();
   const { source, url, autoplay, loop, title } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -275,4 +275,4 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
       </CommonCard>
     </BlockWrapper>
   );
-};
+});

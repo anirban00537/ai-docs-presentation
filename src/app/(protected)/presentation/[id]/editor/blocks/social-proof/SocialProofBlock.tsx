@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, memo } from "react";
 import type { Block, Theme } from "@/types/presentation";
 import {
   createSocialProofContent,
@@ -52,11 +52,11 @@ const platformIcons = {
   youtube: IconBrandYoutube,
 };
 
-export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
+export const SocialProofBlock = memo(function SocialProofBlock({
   block,
   onUpdate,
   theme,
-}) => {
+}: SocialProofBlockProps) {
   const content =
     (block.content as SocialProofContent) ?? createSocialProofContent();
   const { platforms, showRatings, rating, reviewCount } = content;
@@ -392,4 +392,4 @@ export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
       </Dialog>
     </BlockWrapper>
   );
-};
+});

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/types/presentation";
 import { createFAQContent, type FAQContent } from "../definitions";
@@ -34,12 +34,12 @@ interface FAQBlockProps {
 
 import { CommonCard } from "../CommonCard";
 
-export const FAQBlock: React.FC<FAQBlockProps> = ({
+export const FAQBlock = memo(function FAQBlock({
   block,
   onUpdate,
   theme,
   readOnly = false,
-}) => {
+}: FAQBlockProps) {
   const content = (block.content as FAQContent) ?? createFAQContent();
   const { items, style } = content;
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -280,4 +280,4 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({
       </Dialog>
     </BlockWrapper>
   );
-};
+});

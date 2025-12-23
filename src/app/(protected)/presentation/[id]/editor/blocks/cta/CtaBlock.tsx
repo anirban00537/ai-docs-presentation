@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/types/presentation";
 import { createCtaContent, type CtaContent } from "../definitions";
@@ -14,13 +14,13 @@ interface CtaBlockProps {
 
 import { CommonCard } from "../CommonCard";
 
-export const CtaBlock: React.FC<CtaBlockProps> = ({
+export const CtaBlock = memo(function CtaBlock({
   block,
   onUpdate,
   theme,
   placeholder,
   readOnly = false,
-}) => {
+}: CtaBlockProps) {
   const content = block.content as CtaContent;
   const [isEditingLabel, setIsEditingLabel] = useState(false);
 
@@ -139,4 +139,4 @@ export const CtaBlock: React.FC<CtaBlockProps> = ({
       </div>
     </CommonCard>
   );
-};
+});

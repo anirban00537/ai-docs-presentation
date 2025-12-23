@@ -1,11 +1,18 @@
-import React from "react";
+import React, { memo } from "react";
 
 interface BeamsProps {
   primary: string;
   secondary?: string[];
 }
 
-export const Beams: React.FC<BeamsProps> = ({ primary, secondary = [] }) => {
+// Helper to compare arrays
+const arraysEqual = (a?: string[], b?: string[]) => {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return a.length === b.length && a.every((v, i) => v === b[i]);
+};
+
+export const Beams = memo(function Beams({ primary, secondary = [] }: BeamsProps) {
   const color1 = secondary[0] || primary;
   const color2 = secondary[1] || primary;
   const color3 = secondary[2] || primary;
@@ -45,4 +52,7 @@ export const Beams: React.FC<BeamsProps> = ({ primary, secondary = [] }) => {
       </g>
     </svg>
   );
-};
+}, (prevProps, nextProps) => {
+  return prevProps.primary === nextProps.primary && 
+         arraysEqual(prevProps.secondary, nextProps.secondary);
+});

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import type { Block, Theme } from "@/types/presentation";
 import { type SpacerContent } from "@/types/presentation"; // spacer";
 
@@ -9,12 +9,12 @@ interface SpacerBlockProps {
   readOnly?: boolean;
 }
 
-export const SpacerBlock: React.FC<SpacerBlockProps> = ({
+export const SpacerBlock = memo(function SpacerBlock({
   block,
   onUpdate,
   theme,
   readOnly = false,
-}) => {
+}: SpacerBlockProps) {
   const content = block.content as SpacerContent;
   const { height } = content;
   const [isResizing, setIsResizing] = React.useState(false);
@@ -96,4 +96,4 @@ export const SpacerBlock: React.FC<SpacerBlockProps> = ({
       </div>
     </div>
   );
-};
+});

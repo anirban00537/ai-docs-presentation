@@ -1,3 +1,4 @@
+// Base ProseMirror styles - these will be injected globally ONCE
 export const PROSEMIRROR_STYLES = `
   .ProseMirror {
     outline: none;
@@ -134,5 +135,40 @@ export const PROSEMIRROR_STYLES = `
     border-radius: clamp(0.1rem, 0.2vw, 0.4rem);
     font-size: clamp(0.7rem, 1vw, 1.5rem);
   }
+  
+  /* Image cursor blink animation */
+  @keyframes image-cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  .image-bottom-cursor {
+    animation: image-cursor-blink 1s step-end infinite;
+  }
+  .prosemirror-image-wrapper .group:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
 `;
 
+// Track if base styles have been injected globally
+let baseStylesInjected = false;
+
+/**
+ * Injects base ProseMirror styles into the document head ONCE.
+ * This prevents memory bloat from duplicating styles per editor instance.
+ */
+export function injectBaseStyles(): void {
+  if (typeof document === 'undefined') return;
+  if (baseStylesInjected) return;
+  
+  const styleId = 'prosemirror-base-styles';
+  if (document.getElementById(styleId)) {
+    baseStylesInjected = true;
+    return;
+  }
+  
+  const styleEl = document.createElement('style');
+  styleEl.id = styleId;
+  styleEl.textContent = PROSEMIRROR_STYLES;
+  document.head.appendChild(styleEl);
+  baseStylesInjected = true;
+}

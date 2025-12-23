@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, memo } from "react";
 import type { Block, Theme } from "@/types/presentation";
 import { createCodeContent, type CodeContent } from "../definitions";
 import { IconCopy, IconCheck } from "@tabler/icons-react";
@@ -54,11 +54,11 @@ const languages = [
 
 import { CommonCard } from "../CommonCard";
 
-export const CodeBlock: React.FC<CodeBlockProps> = ({
+export const CodeBlock = memo(function CodeBlock({
   block,
   onUpdate,
   theme,
-}) => {
+}: CodeBlockProps) {
   const content = (block.content as CodeContent) ?? createCodeContent();
   const { language, code, showLineNumbers, theme: codeTheme } = content;
   const [copied, setCopied] = useState(false);
@@ -268,4 +268,4 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       </Dialog>
     </BlockWrapper>
   );
-};
+});

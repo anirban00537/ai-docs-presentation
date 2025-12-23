@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { type Theme, type SlideAccent } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
@@ -25,7 +25,7 @@ interface SlideFrameProps {
  * It handles theme-driven backgrounds, borders, shadows, and overlays 
  * like grain and vignette. Now supports Gamma-style Accent Layouts.
  */
-export const SlideFrame: React.FC<SlideFrameProps> = ({
+export const SlideFrame = memo(function SlideFrame({
   theme,
   slideId,
   fullWidth = false,
@@ -39,7 +39,7 @@ export const SlideFrame: React.FC<SlideFrameProps> = ({
   onAccentResize,
   accentControls,
   readOnly = false,
-}) => {
+}: SlideFrameProps) {
   const isDark = theme.themeType === "dark";
   const [isResizingAccent, setIsResizingAccent] = useState(false);
   const [localAccentSize, setLocalAccentSize] = useState(accent?.size || 40);
@@ -287,5 +287,5 @@ export const SlideFrame: React.FC<SlideFrameProps> = ({
       </div>
     </div>
   );
-};
+});
 

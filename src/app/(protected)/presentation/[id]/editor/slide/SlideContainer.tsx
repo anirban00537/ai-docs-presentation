@@ -223,7 +223,7 @@ export const SlideContainer = memo(function SlideContainer({
         </div>
       </SlideFrame>
 
-      {!readOnly && (
+      {!readOnly && isImagePickerOpen && (
         <Suspense fallback={null}>
           <ImagePickerModal
             isOpen={isImagePickerOpen}

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/types/presentation";
 import {
@@ -16,12 +16,12 @@ interface SimpleNumberCardBlockProps {
 
 import { CommonCard } from "../CommonCard";
 
-export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({
+export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
   block,
   onUpdate,
   theme,
   placeholder,
-}) => {
+}: SimpleNumberCardBlockProps) {
   const content = block.content as SimpleNumberCardContent;
   const number = content?.number ?? 1;
 
@@ -120,4 +120,4 @@ export const SimpleNumberCardBlock: React.FC<SimpleNumberCardBlockProps> = ({
       </div>
     </CommonCard>
   );
-};
+});

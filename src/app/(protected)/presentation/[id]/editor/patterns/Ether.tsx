@@ -1,11 +1,18 @@
-import React from "react";
+import React, { memo } from "react";
 
 interface EtherProps {
   primary: string;
   secondary?: string[];
 }
 
-export const Ether: React.FC<EtherProps> = ({ primary, secondary = [] }) => {
+// Helper to compare arrays
+const arraysEqual = (a?: string[], b?: string[]) => {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return a.length === b.length && a.every((v, i) => v === b[i]);
+};
+
+export const Ether = memo(function Ether({ primary, secondary = [] }: EtherProps) {
   const color1 = secondary[0] || primary;
   const color2 = secondary[1] || primary;
   const color3 = secondary[2] || primary;
@@ -48,4 +55,7 @@ export const Ether: React.FC<EtherProps> = ({ primary, secondary = [] }) => {
       </g>
     </svg>
   );
-};
+}, (prevProps, nextProps) => {
+  return prevProps.primary === nextProps.primary && 
+         arraysEqual(prevProps.secondary, nextProps.secondary);
+});

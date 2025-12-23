@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import type { Theme } from "@/types/presentation";
 import { SlideFrame } from "../slide/SlideFrame";
 
@@ -16,7 +16,7 @@ interface CommonCardProps {
  * CommonCard provides a standardized card container for various editor blocks.
  * It now uses the centralized SlideFrame for consistent styling across the editor.
  */
-export const CommonCard: React.FC<CommonCardProps> = ({
+export const CommonCard = memo(function CommonCard({
   theme,
   children,
   className = "",
@@ -24,7 +24,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
   onMouseEnter,
   onMouseLeave,
   onClick,
-}) => {
+}: CommonCardProps) {
   return (
     <SlideFrame
       theme={theme}
@@ -60,4 +60,4 @@ export const CommonCard: React.FC<CommonCardProps> = ({
       </div>
     </SlideFrame>
   );
-};
+});

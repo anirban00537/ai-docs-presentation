@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect, memo } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { BlockRenderer } from "./BlockRenderer";
@@ -32,7 +32,7 @@ interface BlockContainerProps {
   theme?: Theme;
 }
 
-export const BlockContainer: React.FC<BlockContainerProps> = ({
+export const BlockContainer = memo(function BlockContainer({
   block,
   slideId,
   rowId,
@@ -47,7 +47,7 @@ export const BlockContainer: React.FC<BlockContainerProps> = ({
   hideDragHandle = false,
   readOnly = false,
   theme: themeProp,
-}) => {
+}: BlockContainerProps) {
   const [isHovered, setIsHovered] = useState(false);
   const blockRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
@@ -168,5 +168,5 @@ export const BlockContainer: React.FC<BlockContainerProps> = ({
       </div>
     </div>
   );
-};
+});
 

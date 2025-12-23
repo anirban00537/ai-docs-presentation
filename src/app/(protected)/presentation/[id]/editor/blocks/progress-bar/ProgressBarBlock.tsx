@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/types/presentation";
 import {
@@ -30,11 +30,11 @@ interface ProgressBarBlockProps {
 
 import { CommonCard } from "../CommonCard";
 
-export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
+export const ProgressBarBlock = memo(function ProgressBarBlock({
   block,
   onUpdate,
   theme,
-}) => {
+}: ProgressBarBlockProps) {
   const content =
     (block.content as ProgressBarContent) ?? createProgressBarContent();
   const { items, showPercentage, animated } = content;
@@ -351,4 +351,4 @@ export const ProgressBarBlock: React.FC<ProgressBarBlockProps> = ({
       </Dialog>
     </BlockWrapper>
   );
-};
+});

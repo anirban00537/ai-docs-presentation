@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme } from "@/types/presentation";
 import { createQuoteContent, type QuoteContent } from "../definitions";
@@ -13,13 +13,13 @@ interface QuoteBlockProps {
 
 import { CommonCard } from "../CommonCard";
 
-export const QuoteBlock: React.FC<QuoteBlockProps> = ({
+export const QuoteBlock = memo(function QuoteBlock({
   block,
   onUpdate,
   theme,
   placeholder,
   readOnly = false,
-}) => {
+}: QuoteBlockProps) {
   const content = block.content as QuoteContent;
   const style = content?.style ?? "centered";
 
@@ -129,4 +129,4 @@ export const QuoteBlock: React.FC<QuoteBlockProps> = ({
       </div>
     </CommonCard>
   );
-};
+});

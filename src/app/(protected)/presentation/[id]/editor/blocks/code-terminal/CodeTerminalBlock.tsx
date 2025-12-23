@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, memo } from "react";
 import type { Block, Theme } from "@/types/presentation";
 import { type CodeTerminalContent } from "@/types/presentation"; // code-terminal";
 
@@ -10,11 +10,11 @@ interface CodeTerminalBlockProps {
 
 import { CommonCard } from "../CommonCard";
 
-export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
+export const CodeTerminalBlock = memo(function CodeTerminalBlock({
   block,
   onUpdate,
   theme,
-}) => {
+}: CodeTerminalBlockProps) {
   const content = block.content as CodeTerminalContent;
 
   const handleCommandChange = useCallback(
@@ -91,4 +91,4 @@ export const CodeTerminalBlock: React.FC<CodeTerminalBlockProps> = ({
       </div>
     </CommonCard>
   );
-};
+});
