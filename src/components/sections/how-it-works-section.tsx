@@ -1,110 +1,71 @@
 "use client";
 
-import { Variants } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-
-import { AnimatedGroup } from "@/components/ui/animated-group";
-
-const transitionVariants: { item: Variants } = {
-  item: {
-    hidden: {
-      opacity: 0,
-      filter: "blur(12px)",
-      y: 12,
-    },
-    visible: {
-      opacity: 1,
-      filter: "blur(0px)",
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        bounce: 0.3,
-        duration: 1.5,
-      },
-    },
-  },
-};
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const steps = [
   {
-    number: "01",
-    title: "Describe Your Idea",
-    description:
-      "Tell our AI what you want to present. A few words or a detailed brief—we handle both.",
+    id: "01",
+    title: "Input",
+    description: "Type a topic, paste a document, or enter a URL. Our engine reads it all.",
+    align: "left",
   },
   {
-    number: "02",
-    title: "AI Creates Your Slides",
-    description:
-      "Watch as our AI generates beautiful, professional slides tailored to your content.",
+    id: "02",
+    title: "Generate",
+    description: "The AI structures your narrative, selects layouts, and writes the copy.",
+    align: "center",
   },
   {
-    number: "03",
-    title: "Customize & Refine",
-    description:
-      "Fine-tune your presentation with our intuitive editor. Change colors, fonts, and layouts.",
-  },
-  {
-    number: "04",
-    title: "Share & Present",
-    description:
-      "Export, share, or present directly. Your presentation is ready in minutes, not hours.",
+    id: "03",
+    title: "Refine",
+    description: "Make quick edits with our drag-and-drop tools, then export to PDF or PPTX.",
+    align: "right",
   },
 ];
 
 export function HowItWorksSection() {
   return (
-    <section className="relative py-20 md:py-32">
-      <div className="absolute inset-0 bg-linear-to-b from-white via-primary/10 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <AnimatedGroup
-          variants={{
-            container: {
-              visible: {
-                transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-              },
-            },
-            ...transitionVariants,
-          }}
-          className="text-center"
-        >
-          <h2 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl md:text-5xl dark:text-zinc-50">
-            How it works
-          </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
-            Creating stunning presentations has never been easier. Follow these
-            simple steps.
-          </p>
-        </AnimatedGroup>
+    <section className="py-32 relative overflow-hidden bg-white">
+      <div className="container mx-auto px-4">
+        <div className="mb-20 text-center">
+            <h2 className="font-serif text-4xl md:text-5xl text-foreground">
+                From idea to deck <br />
+                <span className="italic text-secondary-foreground/60">in seconds.</span>
+            </h2>
+        </div>
 
-        <div className="mt-16 space-y-8">
-          {steps.map((step, index) => (
-            <AnimatedGroup
-              key={index}
-              variants={transitionVariants}
-              className="group"
+        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12">
+            
+          {/* Connecting Line (Desktop) */}
+          <div className="hidden md:block absolute top-24 left-0 w-full h-0.5 bg-gradient-to-r from-secondary/20 via-primary/20 to-secondary/20" />
+
+          {steps.map((step, i) => (
+            <motion.div
+              key={step.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.2 }}
+              className={cn(
+                "relative z-10 flex flex-col gap-4",
+                step.align === "center" ? "md:items-center md:text-center" : 
+                step.align === "right" ? "md:items-end md:text-right" : "md:items-start md:text-left"
+              )}
             >
-              <div className="flex flex-col items-center gap-8 rounded-2xl border border-white/80 bg-white/60 p-8 shadow-lg shadow-primary/20 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 md:flex-row md:gap-12 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-primary/10 dark:hover:shadow-primary/20">
-                <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/20 p-6 dark:bg-primary/20">
-                  <span className="text-4xl font-bold text-primary dark:text-primary">
-                    {step.number}
-                  </span>
-                </div>
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-2xl font-semibold text-zinc-950 dark:text-zinc-50">
+              <div className="relative">
+                <span className="font-serif text-[120px] leading-none text-secondary/30 select-none absolute -top-16 -left-6 z-0 mix-blend-multiply opacity-50">
+                    {step.id}
+                </span>
+                <h3 className="relative z-10 text-2xl font-bold bg-gradient-to-r from-white/80 via-secondary/10 to-white/80 backdrop-blur-sm px-4 py-1 rounded-lg inline-block">
                     {step.title}
-                  </h3>
-                  <p className="mt-3 text-zinc-600 dark:text-zinc-400">
-                    {step.description}
-                  </p>
-                </div>
-                {index < steps.length - 1 && (
-                  <div className="hidden shrink-0 md:block">
-                    <ArrowRight className="h-6 w-6 text-primary dark:text-primary" />
-                  </div>
-                )}
+                </h3>
               </div>
-            </AnimatedGroup>
+              
+              <p className="text-muted-foreground relative z-10 max-w-xs leading-relaxed">
+                {step.description}
+              </p>
+            </motion.div>
           ))}
         </div>
       </div>

@@ -2,121 +2,79 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 
 const menuItems = [
   { name: "Blog", href: "/blog" },
-  { name: "AI Research", href: "#link" },
-  { name: "Templates", href: "#link" },
-  { name: "Pricing", href: "#link" },
-  { name: "About", href: "#link" },
+  { name: "Research", href: "#research" },
+  { name: "Templates", href: "#templates" },
+  { name: "Pricing", href: "#pricing" },
 ];
 
 export function Navbar() {
-  const [menuState, setMenuState] = React.useState(false);
+  const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = React.useState(false);
 
-  React.useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (latest > 50) setIsScrolled(true);
+    else setIsScrolled(false);
+  });
 
   return (
-    <header>
-      <nav
-        data-state={menuState && "active"}
-        className="fixed z-20 w-full px-2 group"
+    <motion.header 
+      className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <div 
+        className={cn(
+          "pointer-events-auto flex items-center justify-between gap-8 h-14 pl-6 pr-2 rounded-full transition-all duration-300",
+          "bg-gradient-to-b from-white/90 via-secondary/10 to-white/90 backdrop-blur-xl border border-secondary/20 shadow-sm",
+          isScrolled ? "w-full max-w-4xl shadow-depth-2" : "w-full max-w-5xl"
+        )}
       >
-        <div
-          className={cn(
-            "mt-2 px-6 transition-all duration-300 lg:px-12",
-            isScrolled &&
-              "bg-white/10 dark:bg-black/10 rounded-2xl backdrop-blur-xl lg:px-5 shadow-lg shadow-black/5"
-          )}
-        >
-          <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
-            <div className="flex w-full justify-between lg:w-auto">
-              <Link
-                href="/"
-                aria-label="home"
-                className="flex items-center space-x-2"
-              >
-                <Image src="/logo.svg" alt="logo" width={200} height={200} />
-              </Link>
-            </div>
+        {/* Logo */}
+        <Link href="/" className="group flex items-center gap-2">
+          {/* Simple Butterfast Logo Text */}
+          <span className="font-serif text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">
+            Butterfast.
+          </span>
+        </Link>
 
-            <div className="absolute inset-0 m-auto hidden size-fit lg:block">
-              <ul className="flex gap-8 text-sm">
-                {menuItems.map((item, index) => (
-                  <li key={index}>
-                    <Link
-                      href={item.href}
-                      className="text-black dark:text-white hover:text-black/80 dark:hover:text-white/80 block duration-150"
-                    >
-                      <span>{item.name}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        {/* Desktop Menu */}
+        <nav className="hidden md:flex items-center gap-1">
+          {menuItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="px-4 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors relative group"
+            >
+              {item.name}
+              <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary rounded-full transition-all duration-300 group-hover:w-4" />
+            </Link>
+          ))}
+        </nav>
 
-            <div className="bg-white/10 dark:bg-black/10 backdrop-blur-xl group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl p-6 shadow-2xl shadow-black/10 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent">
-              <div className="lg:hidden">
-                <ul className="space-y-6 text-base">
-                  {menuItems.map((item, index) => (
-                    <li key={index}>
-                      <Link
-                        href={item.href}
-                        className="text-muted-foreground hover:text-accent-foreground block duration-150"
-                      >
-                        <span>{item.name}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="#">
-                    <span className="text-black">Login</span>
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="default"
-                  size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="#">
-                    <span className="text-white">Sign Up</span>
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="default"
-                  size="sm"
-                  className={cn(isScrolled ? "lg:inline-flex" : "hidden")}
-                >
-                  <Link href="#">
-                    <span className="text-white">Start Researching</span>
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </div>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="hidden sm:inline-flex text-foreground/70 hover:text-foreground hover:bg-secondary/20 rounded-full px-5"
+          >
+            Log in
+          </Button>
+          <Button 
+            size="sm" 
+            className="rounded-full bg-primary hover:bg-primary/90 text-white px-5 shadow-coral-glow transition-all hover:scale-105"
+          >
+            Get Started
+          </Button>
         </div>
-      </nav>
-    </header>
+      </div>
+    </motion.header>
   );
 }

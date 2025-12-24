@@ -68,107 +68,69 @@ export function PricingCard({
 
   const cardContent = (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        delay: index * 0.1,
-        duration: 0.5,
-        ease: "easeOut",
-      }}
-      className={cn("relative h-full", className)}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
+      className={cn(
+        "relative rounded-3xl p-8 transition-all duration-300 transform",
+        isPopular 
+          ? "bg-gradient-to-b from-white via-secondary/10 to-white shadow-depth-3 border-secondary/20 md:scale-105 z-10" 
+          : "bg-white/40 border border-secondary/20 shadow-sm hover:shadow-md hover:bg-white/80",
+        className
+      )}
     >
+      {/* Pro Glow Effect */}
       {isPopular && (
-        <div className="absolute -top-4 inset-x-0 flex justify-center z-20">
-          <span className="bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg shadow-primary/25">
-            Most Popular
-          </span>
-        </div>
+          <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-b from-secondary/20 via-primary/5 to-transparent blur-2xl opacity-50" />
+      )}
+      
+      {isPopular && (
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-coral-glow flex items-center gap-1">
+              <IconSparkles size={12} fill="currentColor" />
+              Most Popular
+          </div>
       )}
 
-      <div
-        className={cn(
-          "relative h-full flex flex-col p-8 rounded-[38px] transition-all duration-500 group",
-          isPopular
-            ? "scale-[1.02] ring-1 ring-primary/20 shadow-xl shadow-primary/5"
-            : "border-0"
-        )}
-        style={{
-          backgroundColor: "color-mix(in srgb, var(--secondary) 25%, var(--card))",
-          backdropFilter: "blur(28px) saturate(190%)",
-          WebkitBackdropFilter: "blur(28px) saturate(190%)",
-          border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
-          boxShadow: `
-            0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
-            0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-            0 14px 48px -12px rgba(0, 0, 0, 0.08)
-          `,
-        }}
-      >
-        {/* Glass shine overlay */}
-        <div
-          className="absolute inset-x-0 top-0 h-1/2 pointer-events-none rounded-t-[38px]"
-          style={{
-            background:
-              "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 40%, transparent) 0%, transparent 50%)",
-          }}
-        />
-
-        {/* Header/Icon */}
-        <div className="relative z-10 mb-10">
-          <div
-            className="w-11 h-11 rounded-1.5xl flex items-center justify-center mb-6"
-            style={{
-              backgroundColor: isPopular
-                ? "color-mix(in srgb, var(--primary) 10%, transparent)"
-                : "color-mix(in srgb, var(--secondary) 20%, transparent)",
-            }}
-          >
-            {isPopular ? (
-              <IconSparkles size={20} className="text-primary/70" />
-            ) : (
-              <IconRocket size={20} className="text-secondary-foreground/60" />
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="mb-8">
+            <h3 className="font-serif text-2xl text-foreground mb-2">{product.name}</h3>
+            {product.description && (
+              <p className="text-sm text-muted-foreground min-h-[40px] leading-relaxed">
+                {product.description}
+              </p>
             )}
-          </div>
-          <h3 className="text-xl font-semibold text-foreground tracking-tight">
-            {product.name}
-          </h3>
-          {product.description && (
-            <p className="text-sm text-muted-foreground/70 mt-2 leading-relaxed font-medium">
-              {product.description}
-            </p>
-          )}
         </div>
 
         {/* Pricing */}
-        <div className="relative z-10 mb-10">
+        <div className="flex items-baseline gap-1 mb-8">
           {primaryPrice ? (
-            <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-semibold text-foreground tracking-tight">
+            <>
+              <span className="text-4xl font-bold text-foreground tracking-tight">
                 {formatPrice(primaryPrice)}
               </span>
               {product.recurringInterval && (
-                <span className="text-muted-foreground/60 text-sm font-medium">
+                <span className="text-muted-foreground text-sm">
                   /{product.recurringInterval}
                 </span>
               )}
-            </div>
+            </>
           ) : (
-            <span className="text-xl font-semibold">Custom</span>
+             <span className="text-2xl font-bold">Custom</span>
           )}
         </div>
 
-        {/* Features List - No Labels */}
-        <div className="relative z-10 flex-1 mb-10">
+        {/* Features List */}
+        <div className="flex-1 mb-8">
           {features && features.length > 0 ? (
             <ul className="space-y-4">
               {features.map((feature: string, idx: number) => (
-                <li key={idx} className="flex items-start gap-3">
-                  <div className="mt-1 w-4 h-4 rounded-full bg-secondary/20 flex items-center justify-center shrink-0">
-                    <IconCheck size={10} className="text-secondary-foreground/70" />
-                  </div>
-                  <span className="text-sm text-foreground/70 font-medium leading-normal">
-                    {feature}
+                <li key={idx} className="flex items-start gap-3 text-sm text-foreground/80">
+                  <span className="mt-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-secondary/30 text-secondary-foreground shrink-0">
+                    <IconCheck size={12} strokeWidth={3} />
                   </span>
+                  {feature}
                 </li>
               ))}
             </ul>
@@ -180,15 +142,15 @@ export function PricingCard({
         </div>
 
         {/* CTA Button */}
-        <div className="relative z-10 mt-auto">
+        <div className="mt-auto">
           {href ? (
             <Button
               asChild
               className={cn(
-                "w-full h-13 rounded-2xl text-sm font-semibold transition-all duration-300 transform active:scale-[0.97]",
-                isPopular
-                  ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
-                  : "bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-lg shadow-secondary/10"
+                "w-full h-12 rounded-full text-base transition-all",
+                isPopular 
+                    ? "bg-primary hover:bg-primary/90 text-white shadow-coral-glow" 
+                    : "bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground border-transparent"
               )}
             >
               <Link href={href}>{cta || "Get Started"}</Link>
@@ -197,13 +159,14 @@ export function PricingCard({
             <Button
               onClick={handleClick}
               disabled={isCurrentPlan || loading || !primaryPrice}
+              variant={isPopular ? "default" : "secondary"}
               className={cn(
-                "w-full h-13 rounded-2xl text-sm font-semibold transition-all duration-300 transform active:scale-[0.97]",
+                "w-full h-12 rounded-full text-base transition-all",
                 isCurrentPlan
-                  ? "bg-secondary/40 hover:bg-secondary/60 text-secondary-foreground border border-secondary/20 shadow-none"
-                  : isPopular
-                  ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
-                  : "bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-lg shadow-secondary/10"
+                  ? "bg-secondary/20 text-secondary-foreground cursor-not-allowed hover:bg-secondary/20"
+                  : isPopular 
+                    ? "bg-primary hover:bg-primary/90 text-white shadow-coral-glow" 
+                    : "bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground border-transparent"
               )}
             >
               {loading

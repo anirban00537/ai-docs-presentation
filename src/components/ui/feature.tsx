@@ -1,160 +1,92 @@
 "use client";
 
-import { useState, useEffect } from "react"
+import { motion } from "framer-motion";
+import { IconLayoutDashboard, IconWand, IconDownload, IconPalette, IconTypography } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 
-import { motion } from "framer-motion"
-
-function TypeTester() {
-  const [scale, setScale] = useState(1)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setScale((prev) => (prev === 1 ? 1.5 : 1))
-    }, 2000)
-    return () => clearInterval(interval)
-  }, [])
-
-  return (
-    <div className="flex items-center justify-center h-full">
-      <motion.span
-        className="font-serif text-6xl md:text-8xl text-white"
-        animate={{ scale }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        Aa
-      </motion.span>
-    </div>
-  )
-}
-
-export default function LayoutAnimation() {
-  const [layout, setLayout] = useState(0)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLayout((prev) => (prev + 1) % 3)
-    }, 2500)
-    return () => clearInterval(interval)
-  }, [])
-
-  const layouts = ["grid-cols-2 grid-rows-2", "grid-cols-3 grid-rows-1", "grid-cols-1 grid-rows-3"]
-
-  return (
-    <div className="h-full p-4 flex items-center justify-center">
-      <motion.div className={`grid ${layouts[layout]} gap-2 w-full max-w-[140px]`} layout>
-        {[1, 2, 3].map((i) => (
-          <motion.div
-            key={i}
-            className="bg-white/20 rounded-md min-h-[30px]"
-            layout
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          />
-        ))}
-      </motion.div>
-    </div>
-  )
-}
-
-function SpeedIndicator() {
-  const [progress, setProgress] = useState(0)
-
-  useEffect(() => {
-    const timeout = setTimeout(() => setProgress(100), 500)
-    return () => clearTimeout(timeout)
-  }, [])
-
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-4">
-      <span className="text-3xl md:text-4xl font-sans font-medium text-white">100ms</span>
-      <span className="text-sm text-white/80">Load Time</span>
-      <div className="w-full max-w-[120px] h-1.5 bg-white/20 rounded-full overflow-hidden">
-        <motion.div
-          className="h-full bg-white rounded-full"
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.1 }}
-        />
-      </div>
-    </div>
-  )
-}
+const features = [
+  {
+    title: "AI Layout Engine",
+    description: "Our intelligence engine analyzes your content structure and automatically selects the perfect layout for every slide, instantly.",
+    icon: <IconLayoutDashboard className="w-8 h-8 text-primary/80" />,
+    className: "md:col-span-2 md:row-span-2 bg-gradient-to-br from-white via-secondary/10 to-white border-secondary/20",
+    large: true,
+  },
+  {
+    title: "Smart Reformatting",
+    description: "Paste a blog post or a document, and watch it transform into a deck.",
+    icon: <IconWand className="w-6 h-6 text-primary/60" />,
+    className: "bg-white border-secondary/20 shadow-sm",
+  },
+  {
+    title: "Export Anywhere",
+    description: "Download as PDF, PowerPoint, or share a live web link.",
+    icon: <IconDownload className="w-6 h-6 text-primary/60" />,
+    className: "bg-white border-secondary/20 shadow-sm",
+  },
+  {
+    title: "Brand Consistency",
+    description: "Your fonts, your colors, your logo. Applied automatically to every single slide generated.",
+    icon: <IconPalette className="w-6 h-6 text-primary/60" />,
+    className: "md:row-span-2 bg-primary/5 border-primary/10",
+  },
+  {
+    title: "Cinematic Typography",
+    description: "We use editorial-grade font pairings to make your text readable and beautiful.",
+    icon: <IconTypography className="w-6 h-6 text-primary/60" />,
+    className: "bg-white border-secondary/20 shadow-sm",
+  },
+];
 
 export function FeaturesSection() {
   return (
-    <section className="bg-background px-6 py-24">
-      <div className="max-w-6xl mx-auto">
-        <motion.p
-          className="text-muted-foreground text-sm uppercase tracking-widest mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          Features
-        </motion.p>
+    <section className="bg-background py-24 relative overflow-hidden">
+        {/* Background Texture */}
+        <div className="absolute inset-0 bg-noise opacity-30 pointer-events-none" />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Typography Card */}
-          <motion.div
-            className="bg-primary rounded-xl p-8 min-h-[280px] flex flex-col"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 0.98 }}
-            whileTap={{ scale: 0.96 }}
-            transition={{ duration: 0.2 }}
-            data-clickable
-          >
-            <div className="flex-1">
-              <TypeTester />
-            </div>
-            <div className="mt-4">
-              <h3 className="font-serif text-xl text-white">Typography</h3>
-              <p className="text-white/80 text-sm mt-1">Beautiful, responsive type that scales perfectly.</p>
-            </div>
-          </motion.div>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-xl mx-auto text-center mb-16">
+          <h2 className="font-serif text-3xl md:text-5xl text-foreground mb-4">
+            Everything you need, <br />
+            <span className="italic text-primary/80">nothing you don't.</span>
+          </h2>
+          <p className="text-muted-foreground">
+            A complete suite of tools designed to make you a better storyteller, without the learning curve.
+          </p>
+        </div>
 
-          {/* Layouts Card */}
-          <motion.div
-            className="bg-primary rounded-xl p-8 min-h-[280px] flex flex-col"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            whileHover={{ scale: 0.98 }}
-            whileTap={{ scale: 0.96 }}
-            data-clickable
-          >
-            <div className="flex-1">
-              <LayoutAnimation />
-            </div>
-            <div className="mt-4">
-              <h3 className="font-serif text-xl text-white">Layouts</h3>
-              <p className="text-white/80 text-sm mt-1">Flexible grids that adapt to your content.</p>
-            </div>
-          </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
+          {features.map((feature, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -5 }}
+              className={cn(
+                "group relative overflow-hidden rounded-3xl p-8 flex flex-col justify-between border transition-all duration-300 hover:shadow-depth-2",
+                feature.className
+              )}
+            >
+              <div className="relative z-10">
+                <div className="mb-4 inline-flex p-3 rounded-2xl bg-white shadow-sm ring-1 ring-black/5 group-hover:scale-110 transition-transform duration-300">
+                  {feature.icon}
+                </div>
+                <h3 className={cn("font-serif text-xl mb-2 text-foreground", feature.large && "text-3xl")}>
+                  {feature.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
+                  {feature.description}
+                </p>
+              </div>
 
-          {/* Speed Card */}
-          <motion.div
-            className="bg-primary rounded-xl p-8 min-h-[280px] flex flex-col"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            whileHover={{ scale: 0.98 }}
-            whileTap={{ scale: 0.96 }}
-            data-clickable
-          >
-            <div className="flex-1">
-              <SpeedIndicator />
-            </div>
-            <div className="mt-4">
-              <h3 className="font-serif text-xl text-white">Speed</h3>
-              <p className="text-white/80 text-sm mt-1">Blazing fast pages that keep visitors engaged.</p>
-            </div>
-          </motion.div>
+              {/* Hover Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
-

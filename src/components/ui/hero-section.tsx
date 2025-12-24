@@ -1,229 +1,187 @@
 "use client";
 
-import Image from "next/image";
-import { cn } from "@/lib/utils";
-import { ProgressiveBlur } from "@/components/ui/progressive-blur";
-import { TimelineContent } from "@/components/ui/timeline-animation";
-import { Button } from "@/components/ui/button";
-
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { IconSparkles, IconPlayerPlay } from "@tabler/icons-react";
 
-export const blocksDesign = [
-  {
-    id: "hero-section",
-    name: "Hero Section",
-    url: "/blocks/hero-section",
-    des: "Beautiful hero layouts to start your landing page.",
-    imgclass: "object-cover",
-    textClass: "text-white",
-    imgSrc:
-      "https://images.unsplash.com/photo-1754630551378-e1ecffe9da6b?q=80&w=687&auto=format&fit=crop",
-  },
-  {
-    id: "faq-section",
-    name: "FAQ Section",
-    url: "/blocks/faq-section",
-    des: "Beautiful FAQ layouts to start your landing page.",
-    imgclass: "object-contain",
-    textClass: "text-primary",
-    imgSrc:
-      "https://images.unsplash.com/photo-1755543041886-41944f3e08c8?q=80&w=687&auto=format&fit=crop",
-  },
-  {
-    id: "testimonial-section",
-    name: "Testimonial Section",
-    url: "/blocks/testimonial-section",
-    des: "Beautiful testimonial layouts to start your landing page.",
-    imgclass: "object-contain",
-    textClass: "text-primary",
-    imgSrc:
-      "https://images.unsplash.com/photo-1750688650387-48fbdc7399b3?q=80&w=687&auto=format&fit=crop",
-  },
-  {
-    id: "newsletter-section",
-    name: "Newsletter Section",
-    url: "/blocks/newsletter",
-    blocks: 16,
-    des: "Beautiful newsletter layouts to start your landing page.",
-    imgSrc:
-      "https://images.unsplash.com/photo-1654649451086-dd75d8170a27?q=80&w=687&auto=format&fit=crop",
-  },
-  {
-    id: "carousel-section",
-    name: "Carousel Section",
-    url: "/blocks/carousel",
-    blocks: 6,
-    des: "Beautiful carousel layouts to start your landing page.",
-    imgSrc:
-      "https://images.unsplash.com/photo-1609323170444-197be3079778?q=80&w=687&auto=format&fit=crop",
-  },
-  {
-    id: "testimonial-section",
-    name: "Testimonial Section",
-    url: "/blocks/testimonial",
-    blocks: 13,
-    des: "Beautiful testimonials layouts to start your landing page.",
-    imgSrc:
-      "https://images.unsplash.com/photo-1635776062764-e025521e3df3?q=80&w=687&auto=format&fit=crop",
-  },
-];
+export default function HeroSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  
+  // Real Unsplash Images
+  const deckImages = [
+    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1620641788427-b95c84f1d416?q=80&w=2670&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop"
+  ];
 
-function Others1() {
-  const timelineRef = useRef<HTMLElement>(null);
-  const revealVariants = {
-    visible: (i: number) => ({
-      y: 0,
-      opacity: 1,
-      filter: "blur(0px)",
-      transition: {
-        delay: i * 0.4,
-        duration: 0.5,
-      },
-    }),
-    hidden: {
-      filter: "blur(10px)",
-      y: -20,
-      opacity: 0,
-    },
+  // Auto-rotate every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % deckImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [deckImages.length]);
+
+  // Helper to determine position relative to active index
+  // 0 = center, 1 = right, 2 = left (since we have 3 images)
+  const getPosition = (index: number) => {
+     if (index === activeIndex) return "center";
+     if (index === (activeIndex + 1) % deckImages.length) return "right";
+     return "left";
   };
 
   return (
-    <main ref={timelineRef} className="bg-white">
-      <div className="pt-28 pb-5 max-w-screen-2xl mx-auto min-h-screen px-4">
-        <article className="w-fit mx-auto 2xl:max-w-5xl xl:max-w-4xl max-w-2xl text-center space-y-6">
-          <TimelineContent
-            as="a"
-            animationNum={2}
-            target="_blank"
-            timelineRef={timelineRef}
-            customVariants={revealVariants}
-            className="flex w-fit mx-auto items-center gap-1 rounded-full bg-primary border-4 border-primary/20 py-0.5 pl-0.5 pr-3 text-xs shadow-lg shadow-primary/10"
-          >
-            <div className="rounded-full bg-secondary px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
-              New
-            </div>
-            <p className="text-white sm:text-base text-xs inline-block">
-              ✨ AI Powered
-              <span className="px-1 font-semibold">Presentations</span>
-            </p>
-
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-              data-slot="icon"
-              className="h-3 w-3 text-white"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-          </TimelineContent>
-
-          <TimelineContent
-            as="h1"
-            animationNum={3}
-            timelineRef={timelineRef}
-            customVariants={revealVariants}
-            className="2xl:text-7xl text-foreground xl:text-6xl sm:text-5xl text-4xl leading-[100%] tracking-tight"
-          >
-            Create Stunning{" "}
-            <span className="font-semibold bg-linear-to-r from-primary/80 to-primary bg-clip-text text-transparent">
-              AI Powered
-            </span>{" "}
-            Presentations{" "}
-            <span className="font-semibold bg-linear-to-r from-primary/80 to-primary bg-clip-text text-transparent underline decoration-primary/20 underline-offset-8">
-              Instantly
-            </span>
-          </TimelineContent>
-
-          <TimelineContent
-            as="p"
-            animationNum={4}
-            timelineRef={timelineRef}
-            customVariants={revealVariants}
-            className="lg:text-xl text-muted-foreground sm:text-lg text-sm max-w-2xl mx-auto font-medium"
-          >
-            Transform your ideas into professional presentations in seconds with
-            AI-powered design. <span className="text-secondary-foreground italic font-normal">Smart. Fast. Beautiful.</span>
-          </TimelineContent>
-
-          <TimelineContent
-            as="div"
-            animationNum={5}
-            timelineRef={timelineRef}
-            customVariants={revealVariants}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
-          >
-            <Link href="/home">
-              <Button
-                variant="default"
-                size="lg"
-                className="w-full sm:w-auto px-8 py-6 text-base"
-              >
-                Get Started
-              </Button>
-
-            </Link>
-            <Button
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto px-8 py-6 text-foreground bg-secondary/20 border-secondary/30 hover:bg-secondary/40"
-            >
-              Learn More
-            </Button>
-
-          </TimelineContent>
-        </article>
-
-        <div className="grid md:grid-cols-3 grid-cols-2 gap-6 pt-20">
-          {blocksDesign.map((component, index) => {
-            return (
-              <TimelineContent
-                as="a"
-                animationNum={index + 5}
-                timelineRef={timelineRef}
-                key={index}
-                target="_blank"
-                href={component?.url}
-                className="transition-all aspect-video rounded-lg backdrop-blur-sm overflow-hidden"
-                rel="noreferrer"
-              >
-                <figure className="relative h-full w-full">
-                  {component.imgSrc && (
-                    <Image
-                      src={component.imgSrc}
-                      alt="hero-sec"
-                      width={400}
-                      height={400}
-                      className={cn("w-full h-full object-cover rounded-xl")}
-                    />
-                  )}
-                </figure>
-                <ProgressiveBlur
-                  className="pointer-events-none absolute bottom-0 left-0 h-[25%] w-full"
-                  blurIntensity={0.5}
-                />
-                <div
-                  className={cn(
-                    "sm:py-2 py-1 sm:px-4 px-2 absolute bottom-2 left-2"
-                  )}
-                >
-                  <h1 className="2xl:text-xl xl:text-xl md:text-lg text-sm font-medium leading-[140%] capitalize text-white">
-                    {component.name} (<span className="font-semibold">4</span>)
-                  </h1>
-                </div>
-              </TimelineContent>
-            );
-          })}
-        </div>
+    <section className="relative pt-32 pb-32 overflow-hidden min-h-screen flex flex-col items-center justify-start bg-[#faf9f6] dark:bg-zinc-950">
+      
+      {/* 1. Ambient Background Mesh */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+         <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] bg-secondary/10 rounded-full blur-[120px] mix-blend-multiply opacity-70 animate-blob" />
+         <div className="absolute top-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-primary/5 rounded-full blur-[120px] mix-blend-multiply opacity-70 animate-blob animation-delay-2000" />
+         <div className="absolute bottom-[-20%] left-[20%] w-[70vw] h-[70vw] bg-pink-100/40 rounded-full blur-[120px] mix-blend-multiply opacity-70 animate-blob animation-delay-4000" />
+         {/* Texture Overlay */}
+         <div className="absolute inset-0 bg-noise opacity-[0.03]" />
       </div>
-    </main>
+
+      <div className="container relative z-10 px-4 flex flex-col items-center">
+        
+        {/* 2. Editorial Headline Section */}
+        <div className="text-center max-w-4xl mx-auto mb-16">
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.6 }}
+               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-secondary/20 shadow-sm mb-8"
+            >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                <span className="text-xs font-bold tracking-widest uppercase text-foreground/70">
+                    AI-Powered Design v2.0
+                </span>
+            </motion.div>
+
+            <motion.h1
+               initial={{ opacity: 0, y: 30 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.8, delay: 0.1 }}
+               className="font-serif text-6xl md:text-8xl font-medium tracking-tight text-foreground leading-[1] mb-8"
+            >
+              Ideas to <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">Slides</span> <br />
+              in Seconds.
+            </motion.h1>
+
+            <motion.p
+               initial={{ opacity: 0, y: 30 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.8, delay: 0.2 }}
+               className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+            >
+               Butterfast transforms your notes into stunning, professional presentations. 
+               No design skills needed. Just pure storytelling.
+            </motion.p>
+
+            <motion.div
+               initial={{ opacity: 0, y: 30 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.8, delay: 0.3 }}
+               className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            >
+               <Link href="/home">
+                  <Button size="lg" className="h-14 px-10 rounded-full text-lg bg-primary text-white hover:bg-primary/90 shadow-coral-glow hover:scale-105 transition-all duration-300">
+                    <IconSparkles className="mr-2 h-5 w-5" />
+                    Start Creating Free
+                  </Button>
+               </Link>
+               <Button variant="ghost" size="lg" className="h-14 px-8 rounded-full text-lg hover:bg-black/5">
+                  <IconPlayerPlay className="mr-2 h-5 w-5 fill-current" />
+                  See how it works
+               </Button>
+            </motion.div>
+        </div>
+
+        {/* 3. The Levitating 3D Carousel */}
+        <div className="relative w-full h-[500px] perspective-[1200px] flex items-center justify-center -mt-8">
+            {deckImages.map((src, index) => {
+               const pos = getPosition(index);
+               
+               // Center card
+               if (pos === "center") {
+                   return (
+                     <motion.div
+                        layoutId={`card-${src}`}
+                        key={`card-${index}`}
+                        className="absolute w-[800px] aspect-[16/9] shadow-2xl rounded-2xl overflow-hidden border-[6px] border-white z-30"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ 
+                            scale: 1, 
+                            opacity: 1, 
+                            rotateY: 0, 
+                            z: 100,
+                            x: 0 
+                        }}
+                        transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
+                     >
+                        <Image src={src} alt="Active Slide" fill className="object-cover" priority />
+                        {/* Shimmer Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none" />
+                     </motion.div>
+                   );
+               }
+               
+               // Left card
+               if (pos === "left") {
+                   return (
+                       <motion.div
+                          layoutId={`card-${src}`}
+                          key={`card-${index}`}
+                          className="absolute w-[800px] aspect-[16/9] bg-black/5 rounded-2xl overflow-hidden shadow-lg z-10 grayscale-[50%]"
+                          animate={{ 
+                              scale: 0.85, 
+                              opacity: 0.4, 
+                              rotateY: 25, 
+                              z: -100, 
+                              x: '-45%' 
+                          }}
+                          transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
+                       >
+                            <Image src={src} alt="Left Slide" fill className="object-cover" />
+                            <div className="absolute inset-0 bg-white/20" />
+                       </motion.div>
+                   );
+               }
+
+               // Right card
+               if (pos === "right") {
+                    return (
+                        <motion.div
+                            layoutId={`card-${src}`}
+                            key={`card-${index}`}
+                            className="absolute w-[800px] aspect-[16/9] bg-black/5 rounded-2xl overflow-hidden shadow-lg z-10 grayscale-[50%]"
+                            animate={{ 
+                                scale: 0.85, 
+                                opacity: 0.4, 
+                                rotateY: -25, 
+                                z: -100, 
+                                x: '45%' 
+                            }}
+                            transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
+                        >
+                            <Image src={src} alt="Right Slide" fill className="object-cover" />
+                            <div className="absolute inset-0 bg-white/20" />
+                        </motion.div>
+                    );
+               }
+            })}
+
+            {/* Reflections */}
+            <div className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 w-[90%] h-32 bg-gradient-to-b from-black/5 to-transparent blur-3xl rounded-[100%] z-0" />
+        </div>
+
+      </div>
+    </section>
   );
 }
-
-export default Others1;

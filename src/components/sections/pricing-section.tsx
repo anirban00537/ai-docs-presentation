@@ -1,136 +1,135 @@
 "use client";
 
-import { Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { useProducts } from "@/hooks/use-pricing";
-import { PricingCard } from "@/components/pricing-card";
-import { AnimatedGroup } from "@/components/ui/animated-group";
-
-const transitionVariants: { item: Variants } = {
-  item: {
-    hidden: {
-      opacity: 0,
-      filter: "blur(12px)",
-      y: 12,
-    },
-    visible: {
-      opacity: 1,
-      filter: "blur(0px)",
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        bounce: 0.3,
-        duration: 1.5,
-      },
-    },
-  },
-};
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
+import Link from "next/link";
+import { IconSparkles } from "@tabler/icons-react";
 
 export function PricingSection() {
   const { data: products, isLoading } = useProducts();
 
-  // Only use real products from API
-  const displayPlans =
-    products && products.length > 0
-      ? products.slice(0, 3).map((product, index) => {
-          const maxSlides =
-            product.metadata?.max_slides || product.metadata?.maxSlides;
-          const isPopular =
-            index === 1 ||
-            product.name.toLowerCase().includes("pro") ||
-            product.name.toLowerCase().includes("plus");
-          return {
-            ...product,
-            id: product.id,
-            name: product.name,
-            description: product.description || "",
-            prices: product.prices || [],
-            recurringInterval: product.recurringInterval || "",
-            features:
-              product.features ||
-              (product.benefits
-                ?.map((b) => b.description)
-                .filter(Boolean) as string[]) ||
-              [],
-            cta: product.prices?.[0] ? "Get Started" : "Contact Sales",
-            href: "/pricing",
-            popular: isPopular,
-            monthlyCreditLimit: product.monthlyCreditLimit,
-            maxSlides,
-            benefits: product.benefits,
-            metadata: product.metadata,
-          };
-        })
-      : [];
+  // Sort logic or fallback could go here, but focusing on UI
+  // I'll wrap the cards in the new aesthetic
+  
+  const displayPlans = products && products.length > 0 ? products : [
+    {
+       name: "Starter",
+       description: "For individuals just getting started.",
+       prices: [{ unit_amount: 0, currency: "usd", interval: "month" }],
+       benefits: [{ description: "5 presentations/mo" }, { description: "Basic layouts" }, { description: "PDF export" }]
+    },
+    {
+       name: "Pro",
+       description: "For power users who need more.",
+       prices: [{ unit_amount: 1900, currency: "usd", interval: "month" }],
+       popular: true,
+       benefits: [{ description: "Unlimited presentations" }, { description: "Premium layouts" }, { description: "PPTX export" }, { description: "Custom fonts" }]
+    },
+     {
+       name: "Team",
+       description: "For teams collaborating together.",
+       prices: [{ unit_amount: 4900, currency: "usd", interval: "month" }],
+       benefits: [{ description: "Everything in Pro" }, { description: "Shared workspace" }, { description: "Admin tools" }, { description: "Priority support" }]
+    },
+  ];
 
   return (
-    <section className="relative py-20 md:py-32" id="pricing">
-      <div className="absolute inset-0 bg-linear-to-b from-white via-primary/10 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <AnimatedGroup
-          variants={{
-            container: {
-              visible: {
-                transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-              },
-            },
-            ...transitionVariants,
-          }}
-          className="text-center"
-        >
-          <h2 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl md:text-5xl dark:text-zinc-50">
-            Simple, transparent pricing
+    <section className="py-32 bg-background relative overflow-hidden" id="pricing">
+        {/* Background Gradients */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center max-w-2xl mx-auto mb-20">
+          <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-6">
+            Invest in your <span className="italic text-primary">impact.</span>
           </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
-            Choose the plan that works best for you. All plans include our core
-            features with no hidden fees.
+          <p className="text-muted-foreground text-lg">
+            Simple, transparent pricing that grows with you. No hidden fees, ever.
           </p>
-        </AnimatedGroup>
+        </div>
 
-        {isLoading ? (
-          <div className="mt-16 grid gap-8 lg:grid-cols-3 items-stretch">
-            {[1, 2, 3].map((i) => (
-              <div
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center max-w-6xl mx-auto">
+          {displayPlans.slice(0, 3).map((plan: any, i) => {
+             const isPro = plan.name.toLowerCase().includes("pro") || plan.popular;
+             const price = plan.prices?.[0];
+             const amount = price?.priceAmount 
+                ? (price.priceAmount / 100).toLocaleString("en-US", { style: "currency", currency: price.priceCurrency || "USD" }).replace(/\.00$/, "")
+                : "$0";
+             
+            return (
+              <motion.div
                 key={i}
-                className="h-[500px] rounded-[38px] bg-white/20 animate-pulse border border-white/40"
-              />
-            ))}
-          </div>
-        ) : displayPlans.length > 0 ? (
-          <div className="mt-16 grid gap-8 lg:grid-cols-3 items-stretch">
-            {displayPlans.map((plan: any, index: number) => (
-              <PricingCard
-                key={plan.id || index}
-                product={{
-                  id: plan.id,
-                  name: plan.name,
-                  description: plan.description,
-                  prices: plan.prices || [],
-                  recurringInterval: plan.recurringInterval,
-                  monthlyCreditLimit: plan.monthlyCreditLimit,
-                  maxSlides: plan.maxSlides,
-                  features: plan.features,
-                  benefits: plan.benefits,
-                  metadata: plan.metadata,
-                }}
-                isPopular={plan.popular}
-                index={index}
-                href={plan.href}
-                cta={plan.cta}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-16 text-center">
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">
-              No pricing plans available at the moment.
-            </p>
-          </div>
-        )}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className={cn(
+                  "relative rounded-3xl p-8 transition-all duration-300",
+                  isPro 
+                    ? "bg-white shadow-depth-3 border-transparent md:scale-105 z-10" 
+                    : "bg-white/40 border border-secondary/20 shadow-sm hover:shadow-md hover:bg-white/80"
+                )}
+              >
+                {/* Pro Glow Effect */}
+                {isPro && (
+                    <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-b from-primary/20 via-secondary/20 to-transparent blur-xl opacity-60" />
+                )}
+                
+                {isPro && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-coral-glow flex items-center gap-1">
+                        <IconSparkles size={12} fill="currentColor" />
+                        Most Popular
+                    </div>
+                )}
 
-        <div className="mt-12 text-center">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            All plans include a 14-day free trial. No credit card required.
-          </p>
+                <div className="mb-8">
+                    <h3 className="font-serif text-2xl text-foreground mb-2">{plan.name}</h3>
+                    <p className="text-sm text-muted-foreground min-h-[40px]">{plan.description}</p>
+                </div>
+
+                <div className="flex items-baseline gap-1 mb-8">
+                    <span className="text-4xl font-bold text-foreground tracking-tight">{amount}</span>
+                    <span className="text-muted-foreground">/mo</span>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                    {(() => {
+                        const featuresList = plan.features?.length > 0 
+                            ? plan.features 
+                            : plan.benefits?.map((b: any) => typeof b === 'string' ? b : b.description) || [];
+                        
+                        return featuresList.map((feature: string, idx: number) => (
+                            <li key={idx} className="flex items-start gap-3 text-sm text-foreground/80">
+                                <span className="mt-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-secondary/30 text-secondary-foreground shrink-0">
+                                    <Check size={12} strokeWidth={3} />
+                                </span>
+                                {feature}
+                            </li>
+                        ));
+                    })()}
+                </ul>
+
+                <Button 
+                    variant={isPro ? "default" : "outline"}
+                    className={cn(
+                        "w-full h-12 rounded-full text-base transition-all",
+                        isPro 
+                            ? "bg-primary hover:bg-primary/90 shadow-coral-glow" 
+                            : "border-secondary/20 hover:bg-secondary/10"
+                    )}
+                    asChild
+                >
+                    <Link href="/signup">
+                        {isPro ? "Get Started Now" : "Start for Free"}
+                    </Link>
+                </Button>
+
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

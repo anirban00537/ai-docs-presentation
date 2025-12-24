@@ -1,105 +1,78 @@
 "use client";
 
-import { Variants } from "framer-motion";
-import { Quote } from "lucide-react";
-
-import { AnimatedGroup } from "@/components/ui/animated-group";
-
-const transitionVariants: { item: Variants } = {
-  item: {
-    hidden: {
-      opacity: 0,
-      filter: "blur(12px)",
-      y: 12,
-    },
-    visible: {
-      opacity: 1,
-      filter: "blur(0px)",
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        bounce: 0.3,
-        duration: 1.5,
-      },
-    },
-  },
-};
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const testimonials = [
   {
-    quote:
-      "Butterfast has completely transformed how I create presentations. What used to take hours now takes minutes, and they look absolutely stunning.",
+    quote: "Butterfast transformed our pitch deck workflow. What took days now takes minutes.",
     author: "Sarah Chen",
-    role: "Marketing Director",
-    company: "TechCorp",
+    role: "Marketing Director @ TechCorp",
   },
   {
-    quote:
-      "The AI is incredibly smart and the designs are beautiful. My team loves how easy it is to collaborate and share presentations.",
-    author: "Michael Rodriguez",
+    quote: "The layout engine is eerily smart. It just knows where to put things.",
+    author: "Mark Davis",
+    role: "Founder, ScaleAI",
+  },
+  {
+    quote: "Finally, an AI presentation tool that understands clean design principles.",
+    author: "Elena Rodriguez",
+    role: "Creative Lead",
+  },
+  {
+    quote: "It feels like having a professional designer sitting right next to you.",
+    author: "David Kim",
     role: "Product Manager",
-    company: "StartupXYZ",
-  },
-  {
-    quote:
-      "I've tried many presentation tools, but nothing comes close to the smooth experience Butterfast provides. It truly feels as smooth as butter!",
-    author: "Emily Johnson",
-    role: "Creative Director",
-    company: "DesignStudio",
   },
 ];
 
 export function TestimonialsSection() {
   return (
-    <section className="relative py-20 md:py-32">
-      <div className="absolute inset-0 bg-linear-to-b from-white via-primary/10 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950" />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <AnimatedGroup
-          variants={{
-            container: {
-              visible: {
-                transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-              },
-            },
-            ...transitionVariants,
-          }}
-          className="text-center"
-        >
-          <h2 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl md:text-5xl dark:text-zinc-50">
-            Loved by creators worldwide
-          </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
-            See what our users are saying about their experience with
-            Butterfast.
-          </p>
-        </AnimatedGroup>
+    <section className="py-32 bg-secondary/5 overflow-hidden">
+      <div className="container mx-auto px-4 mb-16 text-center">
+        <h2 className="font-serif text-3xl md:text-4xl text-foreground">
+            Love letters from <span className="text-primary italic">creators.</span>
+        </h2>
+      </div>
 
-        <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {testimonials.map((testimonial, index) => (
-            <AnimatedGroup
-              key={index}
-              variants={transitionVariants}
-              className="group"
+      <div className="relative w-full overflow-hidden mask-linear-fade">
+         <div className="absolute left-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-r from-secondary/5 to-transparent" />
+         <div className="absolute right-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-l from-secondary/5 to-transparent" />
+
+        <motion.div 
+            className="flex gap-8 w-max pl-4"
+            animate={{ x: "-50%" }}
+            transition={{ 
+                duration: 40,
+                repeat: Infinity,
+                ease: "linear"
+            }}
+        >
+          {[...testimonials, ...testimonials].map((t, i) => (
+            <div
+              key={i}
+              className="relative w-[350px] md:w-[450px] p-10 bg-gradient-to-b from-white via-secondary/5 to-white rounded-2xl shadow-sm border border-secondary/10 shrink-0"
             >
-              <div className="relative rounded-2xl border border-white/80 bg-white/60 p-8 shadow-lg shadow-primary/20 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 dark:border-zinc-800 dark:bg-zinc-900/60 dark:shadow-primary/10 dark:hover:shadow-primary/20">
-                <div className="mb-4 inline-flex rounded-xl bg-primary/20 p-2 dark:bg-primary/20">
-                  <Quote className="h-5 w-5 text-primary dark:text-primary" />
-                </div>
-                <p className="text-lg text-zinc-700 dark:text-zinc-300">
-                  "{testimonial.quote}"
+              {/* Giant Quote Mark */}
+              <span className="absolute top-4 left-6 text-9xl text-primary/10 font-serif leading-none select-none">
+                &ldquo;
+              </span>
+
+              <div className="relative z-10">
+                <p className="font-serif text-xl md:text-2xl text-foreground leading-relaxed mb-6 italic">
+                   {t.quote}
                 </p>
-                <div className="mt-6 border-t border-zinc-200/50 pt-6 dark:border-zinc-800">
-                  <p className="font-semibold text-zinc-950 dark:text-zinc-50">
-                    {testimonial.author}
-                  </p>
-                  <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                    {testimonial.role} at {testimonial.company}
-                  </p>
+                <div className="flex items-center gap-3">
+                   <div className="w-8 h-px bg-primary/30" />
+                   <div>
+                       <p className="text-sm font-bold text-foreground">{t.author}</p>
+                       <p className="text-xs text-muted-foreground uppercase tracking-wider">{t.role}</p>
+                   </div>
                 </div>
               </div>
-            </AnimatedGroup>
+            </div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
