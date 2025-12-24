@@ -13,8 +13,8 @@ export default function HeroSection() {
   // Real Unsplash Images
   const deckImages = [
     "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1620641788427-b95c84f1d416?q=80&w=2670&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop"
+    "https://images.unsplash.com/photo-1590097520505-416422f07ad1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1649385652265-0b9d8197a4b0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   ];
 
   // Auto-rotate every 5 seconds
