@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import { auth } from 'src/modules/auth/auth-lib';
+import { getAuth } from 'src/modules/auth/auth-lib';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -26,6 +26,7 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
+    const auth = await getAuth();
     const session = await auth.api.getSession({
       headers: request.headers,
     });
