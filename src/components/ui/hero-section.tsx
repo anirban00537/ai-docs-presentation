@@ -34,7 +34,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative pt-32 pb-32 overflow-hidden min-h-screen flex flex-col items-center justify-start bg-[#faf9f6] dark:bg-zinc-950">
+    <section className="relative pt-32 pb-32 overflow-hidden min-h-screen flex flex-col items-center justify-start bg-gradient-to-b from-secondary/20 via-white to-primary/5 dark:bg-zinc-950">
       
       {/* 1. Ambient Background Mesh */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

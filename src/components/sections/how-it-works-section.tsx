@@ -26,13 +26,26 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section className="py-32 relative overflow-hidden bg-white">
+    <section className="py-32 relative overflow-hidden bg-gradient-to-b from-secondary/10 via-white to-primary/5">
       <div className="container mx-auto px-4">
-        <div className="mb-20 text-center">
-            <h2 className="font-serif text-4xl md:text-5xl text-foreground">
+        <div className="mb-24 text-center max-w-3xl mx-auto">
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-secondary/20 shadow-sm mb-6"
+            >
+                <span className="w-2 h-2 rounded-full bg-primary/70"></span>
+                <span className="text-xs font-bold tracking-widest uppercase text-foreground/70">
+                    Seamless Workflow
+                </span>
+            </motion.div>
+            <h2 className="font-serif text-5xl md:text-7xl text-foreground mb-6 tracking-tight leading-[1]">
                 From idea to deck <br />
                 <span className="italic text-secondary-foreground/60">in seconds.</span>
             </h2>
+            <p className="text-xl text-muted-foreground leading-relaxed">
+              Three simple steps to generate professional presentations.
+            </p>
         </div>
 
         <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12">

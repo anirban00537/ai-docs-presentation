@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Libre_Baskerville } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import Script from "next/script";
@@ -8,6 +8,13 @@ const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+const libre = Libre_Baskerville({
+  variable: "--font-libre",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -70,7 +77,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${poppins.variable} font-sans antialiased h-full`}>
+      <body className={`${poppins.variable} ${libre.variable} font-sans antialiased h-full`}>
         <Providers>{children}</Providers>
         <Script
           src="https://u11.butterfast.com/script.js"

@@ -28,9 +28,19 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="py-32 bg-secondary/5 overflow-hidden">
-      <div className="container mx-auto px-4 mb-16 text-center">
-        <h2 className="font-serif text-3xl md:text-4xl text-foreground">
+    <section className="py-32 bg-gradient-to-b from-secondary/10 via-white to-primary/5 overflow-hidden">
+      <div className="container mx-auto px-4 mb-20 text-center">
+          <motion.div 
+             initial={{ opacity: 0, y: 20 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-secondary/20 shadow-sm mb-6"
+          >
+              <span className="w-2 h-2 rounded-full bg-primary/70"></span>
+              <span className="text-xs font-bold tracking-widest uppercase text-foreground/70">
+                  Community Love
+              </span>
+          </motion.div>
+        <h2 className="font-serif text-5xl md:text-7xl text-foreground tracking-tight">
             Love letters from <span className="text-primary italic">creators.</span>
         </h2>
       </div>

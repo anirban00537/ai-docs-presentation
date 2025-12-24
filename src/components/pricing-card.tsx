@@ -6,6 +6,8 @@ import { IconSparkles, IconCheck, IconRocket } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { formatPrice, type Product, type Price } from "@/services/pricing";
 import { Button } from "@/components/ui/button";
+import { useAppSelector } from "@/store/hooks";
+import { selectIsAuthenticated } from "@/store/slices/userSlice";
 
 interface PricingCardProps {
   product: {
@@ -41,6 +43,9 @@ export function PricingCard({
   loading = false,
   className,
 }: PricingCardProps) {
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const targetHref = isAuthenticated ? "/subscription" : href;
+
   const primaryPrice = product.prices?.[0];
   const maxSlides =
     product.maxSlides ||
@@ -75,14 +80,14 @@ export function PricingCard({
       className={cn(
         "relative rounded-3xl p-8 transition-all duration-300 transform",
         isPopular 
-          ? "bg-gradient-to-b from-white via-secondary/10 to-white shadow-depth-3 border-secondary/20 md:scale-105 z-10" 
+          ? "bg-white shadow-depth-3 border-transparent md:scale-105 z-10" 
           : "bg-white/40 border border-secondary/20 shadow-sm hover:shadow-md hover:bg-white/80",
         className
       )}
     >
       {/* Pro Glow Effect */}
       {isPopular && (
-          <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-b from-secondary/20 via-primary/5 to-transparent blur-2xl opacity-50" />
+          <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-b from-primary/20 via-secondary/20 to-transparent blur-xl opacity-60" />
       )}
       
       {isPopular && (
@@ -143,30 +148,31 @@ export function PricingCard({
 
         {/* CTA Button */}
         <div className="mt-auto">
-          {href ? (
+          {targetHref ? (
             <Button
               asChild
+              variant={isPopular ? "default" : "outline"}
               className={cn(
                 "w-full h-12 rounded-full text-base transition-all",
                 isPopular 
                     ? "bg-primary hover:bg-primary/90 text-white shadow-coral-glow" 
-                    : "bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground border-transparent"
+                    : "border-secondary/20 hover:bg-secondary/10 text-foreground"
               )}
             >
-              <Link href={href}>{cta || "Get Started"}</Link>
+              <Link href={targetHref || "#"}>{cta || "Get Started"}</Link>
             </Button>
           ) : (
             <Button
               onClick={handleClick}
               disabled={isCurrentPlan || loading || !primaryPrice}
-              variant={isPopular ? "default" : "secondary"}
+              variant={isPopular ? "default" : "outline"}
               className={cn(
                 "w-full h-12 rounded-full text-base transition-all",
                 isCurrentPlan
-                  ? "bg-secondary/20 text-secondary-foreground cursor-not-allowed hover:bg-secondary/20"
+                  ? "bg-secondary/20 text-secondary-foreground cursor-not-allowed hover:bg-secondary/20 border-transparent"
                   : isPopular 
                     ? "bg-primary hover:bg-primary/90 text-white shadow-coral-glow" 
-                    : "bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground border-transparent"
+                    : "border-secondary/20 hover:bg-secondary/10 text-foreground"
               )}
             >
               {loading

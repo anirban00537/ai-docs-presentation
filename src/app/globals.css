@@ -90,8 +90,8 @@
   --sidebar-accent-foreground: #705b00;
   --sidebar-border: #f2eabf;
   --sidebar-ring: #ff7979;
-  --font-sans: "Inter", "Poppins", sans-serif;
-  --font-serif: "Libre Baskerville", serif;
+  --font-sans: var(--font-poppins), sans-serif;
+  --font-serif: var(--font-libre), serif;
   --font-mono: "IBM Plex Mono", monospace;
   --radius: 0.75rem;
 

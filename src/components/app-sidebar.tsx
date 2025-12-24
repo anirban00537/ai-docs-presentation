@@ -113,49 +113,41 @@ export function AppSidebar() {
         transition={{ type: "spring", damping: 25, stiffness: 300, mass: 0.8 }}
         className="fixed inset-y-0 left-0 z-50 w-[280px] flex flex-col"
       >
-        {/* Main Glass Container */}
+        {/* Main Glass Container - Updated Gradient */}
         <div 
           className="absolute inset-0 w-full h-full overflow-hidden border-r border-secondary/20"
           style={{
-            background: "color-mix(in srgb, var(--secondary) 15%, var(--background))",
-            backdropFilter: "blur(50px) saturate(200%)",
-            WebkitBackdropFilter: "blur(50px) saturate(200%)",
+             background: "rgba(255, 255, 255, 0.8)",
+             backdropFilter: "blur(20px)",
+             WebkitBackdropFilter: "blur(20px)",
           }}
         >
-          {/* Subtle noise texture or gradient for depth */}
-          <div className="absolute inset-0 bg-gradient-to-b from-secondary/10 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-white to-secondary/10 pointer-events-none" />
         </div>
 
         {/* Content wrapper */}
         <div className="relative z-10 flex flex-col h-full overflow-hidden">
           
           {/* Header */}
-          <div className="flex items-center justify-between p-6 pb-2">
-            <Link href="/" className="flex items-center group">
-              <div className="relative transition-transform duration-300 group-hover:scale-105">
-                <Image
-                  src="/logo.svg"
-                  alt="Butterfast"
-                  width={190}
-                  height={40}
-                  priority
-                  className="object-contain" // Ensure logo fits well
-                />
-              </div>
+          <div className="flex items-center justify-between p-6 pb-4">
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="font-serif text-2xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">
+                Butterfast.
+              </span>
             </Link>
             
             {/* Mobile close button */}
             <button
               onClick={() => setIsMobileOpen(false)}
-              className="p-2 rounded-full md:hidden hover:bg-black/5 transition-colors text-foreground/60"
+              className="p-2 rounded-full md:hidden hover:bg-secondary/10 transition-colors text-foreground/60"
             >
               <IconX size={20} />
             </button>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar-light">
-            <p className="px-3 text-[10px] font-bold text-foreground/40 uppercase tracking-widest mb-2 select-none">
+          <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto custom-scrollbar-light">
+            <p className="px-3 text-[10px] font-bold text-foreground/40 uppercase tracking-widest mb-3 select-none">
               Menu
             </p>
             {navItems.map((item) => {
@@ -170,29 +162,20 @@ export function AppSidebar() {
                 >
                   <div
                     className={cn(
-                      "relative flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all duration-300 ease-out",
+                      "relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-300 ease-out",
                       isActive 
-                        ? "bg-secondary/60 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] text-black" 
-                        : "hover:bg-secondary/30 text-foreground/70 hover:text-foreground"
+                        ? "bg-white shadow-sm border border-secondary/20 text-primary" 
+                        : "hover:bg-secondary/10 text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    {isActive && (
-                      <motion.div
-                        layoutId="active-nav-bg"
-                        className="absolute inset-0 bg-secondary/80 rounded-xl"
-                        initial={false}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        style={{ backdropFilter: "blur(8px)" }}
-                      />
-                    )}
-                    
+                   
                     <span className="relative z-10 flex items-center justify-center">
                       <item.icon
                         size={20}
-                        stroke={isActive ? 2 : 1.5}
+                        stroke={1.5}
                         className={cn(
                           "transition-colors duration-300",
-                          isActive ? "text-black" : "text-foreground/60 group-hover:text-foreground/80"
+                          isActive ? "text-primary" : "text-foreground/50 group-hover:text-foreground/80"
                         )}
                       />
                     </span>
@@ -205,23 +188,13 @@ export function AppSidebar() {
                     >
                       {item.title}
                     </span>
-
-                    {isActive && (
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="ml-auto"
-                      >
-                         <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                      </motion.div>
-                    )}
                   </div>
                 </Link>
               );
             })}
             
             {/* Secondary Section Label */}
-            <div className="pt-6 pb-2">
+            <div className="pt-8 pb-3">
                  <p className="px-3 text-[10px] font-bold text-foreground/40 uppercase tracking-widest select-none">
                   Preferences
                 </p>
@@ -234,16 +207,19 @@ export function AppSidebar() {
                   href={item.url}
                   onClick={() => setIsMobileOpen(false)}
                   className={cn(
-                    "flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl transition-all duration-200 group",
+                    "flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group",
                     isActive 
-                      ? "bg-secondary text-foreground font-medium" 
-                      : "hover:bg-secondary/30 text-foreground/70 hover:text-foreground"
+                      ? "bg-white shadow-sm border border-secondary/20 text-primary font-medium" 
+                      : "hover:bg-secondary/10 text-muted-foreground hover:text-foreground"
                   )}
                 >
                   <item.icon 
                     size={20} 
                     stroke={1.5} 
-                    className="text-foreground/50 group-hover:text-foreground/80 transition-colors" 
+                    className={cn(
+                      "transition-colors duration-300",
+                      isActive ? "text-primary" : "text-foreground/50 group-hover:text-foreground/80"
+                    )}
                   />
                   <span className="text-[14px] font-medium">
                     {item.title}
@@ -256,32 +232,31 @@ export function AppSidebar() {
 
           {/* Bottom Actions */}
           <div className="p-4 space-y-4">
-             {/* Premium Card - Refined */}
+             {/* Premium Card - Updated Design */}
             <div 
               className="relative overflow-hidden rounded-2xl p-[1px] group"
             >
               <div 
-                className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/30 via-secondary/20 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-500"
+                className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/20 via-white to-secondary/20 opacity-100"
               />
                <div 
-                className="relative rounded-[15px] p-4 bg-secondary/20 backdrop-blur-md overflow-hidden"
+                className="relative rounded-[15px] p-5 bg-white/60 backdrop-blur-md overflow-hidden border border-white/50"
               >
-                 <div className="flex items-start gap-4 mb-3">
-                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary shadow-inner">
+                 <div className="flex items-start gap-4 mb-4">
+                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20">
                       <IconSparkles size={20} className="" />
                    </div>
                    <div className="flex-1 min-w-0">
-                     <h4 className="text-sm font-bold text-foreground leading-none mb-1">Scale Plan</h4>
-                     <p className="text-[11px] text-muted-foreground leading-tight line-clamp-2">
-                        Unlock infinite generation & advanced tools.
+                     <h4 className="text-sm font-serif font-bold text-foreground leading-none mb-1.5">Scale Plan</h4>
+                     <p className="text-[11px] text-muted-foreground leading-tight">
+                        Unlimited generation & premium assets.
                      </p>
                    </div>
                  </div>
                  
                 <Button
-                  variant="default"
                   size="sm"
-                  className="w-full justify-center h-9 text-xs font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30"
+                  className="w-full justify-center h-10 rounded-full text-xs font-semibold bg-primary text-white shadow-coral-glow hover:bg-primary/90 hover:scale-[1.02] transition-all"
                 >
                   Upgrade to Pro
                 </Button>
@@ -366,4 +341,3 @@ export function AppSidebar() {
     </>
   );
 }
-

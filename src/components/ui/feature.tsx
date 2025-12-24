@@ -40,17 +40,27 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="bg-background py-24 relative overflow-hidden">
+    <section className="bg-gradient-to-b from-primary/5 via-white to-secondary/10 py-32 relative overflow-hidden">
         {/* Background Texture */}
         <div className="absolute inset-0 bg-noise opacity-30 pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-xl mx-auto text-center mb-16">
-          <h2 className="font-serif text-3xl md:text-5xl text-foreground mb-4">
+        <div className="max-w-2xl mx-auto text-center mb-20">
+          <motion.div 
+             initial={{ opacity: 0, y: 20 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-secondary/20 shadow-sm mb-6"
+          >
+              <span className="w-2 h-2 rounded-full bg-secondary"></span>
+              <span className="text-xs font-bold tracking-widest uppercase text-foreground/70">
+                  Powerful Features
+              </span>
+          </motion.div>
+          <h2 className="font-serif text-5xl md:text-7xl text-foreground mb-6 tracking-tight leading-[1.1]">
             Everything you need, <br />
             <span className="italic text-primary/80">nothing you don't.</span>
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-xl text-muted-foreground leading-relaxed">
             A complete suite of tools designed to make you a better storyteller, without the learning curve.
           </p>
         </div>
