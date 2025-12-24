@@ -14,6 +14,8 @@ import {
   updatePresentation,
   deleteSlide,
 } from "@/services/presentation";
+import { presentationKeys } from "@/hooks/use-presentation";
+import { queryClient } from "@/lib/query-client";
 import { toast } from "sonner";
 
 // Convert Redux slide to API format
@@ -57,6 +59,11 @@ const syncStateToApi = async (state: RootState) => {
         globalTheme: currentTheme,
       });
       previousThemeState = JSON.parse(JSON.stringify(currentTheme));
+      
+      // Invalidate the presentation query cache so navigating back fetches fresh data
+      queryClient.invalidateQueries({ 
+        queryKey: presentationKeys.detail(currentPresentationId) 
+      });
     } catch (error) {
       console.error("Failed to update theme:", error);
       toast.error("Failed to save theme");
