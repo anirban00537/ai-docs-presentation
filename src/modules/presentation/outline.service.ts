@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import {
@@ -8,7 +8,6 @@ import {
 import { ResponseModel } from 'src/shared/models/response.model';
 import { CreateOutlineDto, UpdateOutlineDto } from './dto/create-outline.dto';
 import { CreateFromPromptDto } from './dto/create-from-prompt.dto';
-import { OpenRouter } from '@openrouter/sdk';
 import { ConfigService } from '@nestjs/config';
 import { PresentationService } from './presentation.service';
 import { CreditService } from '../subscription/services/credit.service';
@@ -27,10 +26,10 @@ interface OutlineResponse {
 }
 
 @Injectable()
-export class OutlineService {
+export class OutlineService implements OnModuleInit {
   private readonly logger = new Logger(OutlineService.name);
   private readonly generatingOutlines = new Set<string>(); // Track outlines currently being generated
-  private openRouter: OpenRouter;
+  private openRouter: any = null;
   private readonly MODEL_NAME = coreConstant.AI_MODELS.OUTLINE.NAME;
 
   constructor(
@@ -39,21 +38,22 @@ export class OutlineService {
     private readonly presentationService: PresentationService,
     private readonly creditService: CreditService,
     private readonly aiUsageService: AiUsageService,
-  ) {
+  ) {}
+
+  async onModuleInit() {
     const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
     if (!apiKey) {
-      this.logger.error(
-        'OPENROUTER_API_KEY is not set in environment variables.',
-      );
-    } else {
-      try {
-        this.openRouter = new OpenRouter({
-          apiKey: apiKey,
-        });
-        this.logger.log('OpenRouter SDK initialized');
-      } catch (error) {
-        this.logger.error('Failed to initialize OpenRouter SDK:', error);
-      }
+      this.logger.error('OPENROUTER_API_KEY is not set in environment variables.');
+      return;
+    }
+    
+    try {
+      // Dynamic import for ESM-only package
+      const { OpenRouter } = await import('@openrouter/sdk');
+      this.openRouter = new OpenRouter({ apiKey });
+      this.logger.log('OpenRouter SDK initialized');
+    } catch (error) {
+      this.logger.error('Failed to initialize OpenRouter SDK:', error);
     }
   }
 

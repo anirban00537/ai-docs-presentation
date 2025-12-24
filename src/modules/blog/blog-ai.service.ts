@@ -1,25 +1,36 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
 import { ResponseModel } from 'src/shared/models/response.model';
 import { successResponse, processException, errorResponse } from 'src/shared/helpers/functions';
-import { OpenRouter } from '@openrouter/sdk';
 import slugify from 'slugify';
 import { AiUsageService } from '../subscription/services/ai-usage.service';
 import { User } from '@prisma/client';
 
 @Injectable()
-export class BlogAiService {
+export class BlogAiService implements OnModuleInit {
   private readonly logger = new Logger(BlogAiService.name);
-  private openRouter: OpenRouter;
+  private openRouter: any = null;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly aiUsageService: AiUsageService
-  ) {
+  ) {}
+
+  async onModuleInit() {
     const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
-    if (apiKey) {
+    if (!apiKey) {
+      this.logger.warn('OPENROUTER_API_KEY is not set - AI features disabled');
+      return;
+    }
+    
+    try {
+      // Dynamic import for ESM-only package
+      const { OpenRouter } = await import('@openrouter/sdk');
       this.openRouter = new OpenRouter({ apiKey });
+      this.logger.log('OpenRouter SDK initialized');
+    } catch (error) {
+      this.logger.error('Failed to initialize OpenRouter SDK:', error);
     }
   }
 

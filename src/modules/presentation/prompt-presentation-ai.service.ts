@@ -1,7 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
-import { OpenRouter } from '@openrouter/sdk';
 import { ConfigService } from '@nestjs/config';
 import { AiUsageService } from '../subscription/services/ai-usage.service';
 import { ImagesService } from '../images/images.service';
@@ -20,9 +19,9 @@ interface ImageAnalysisResult {
 }
 
 @Injectable()
-export class PromptPresentationAIService {
+export class PromptPresentationAIService implements OnModuleInit {
   private readonly logger = new Logger(PromptPresentationAIService.name);
-  private openRouter: OpenRouter;
+  private openRouter: any = null;
   private readonly MODEL_NAME = coreConstant.AI_MODELS.SLIDES.NAME;
 
   constructor(
@@ -30,23 +29,25 @@ export class PromptPresentationAIService {
     private readonly configService: ConfigService,
     private readonly aiUsageService: AiUsageService,
     private readonly imagesService: ImagesService,
-  ) {
+  ) {}
+
+  async onModuleInit() {
     const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
     if (!apiKey) {
-      this.logger.error(
-        'OPENROUTER_API_KEY is not set in environment variables.',
-      );
-    } else {
-      try {
-        this.openRouter = new OpenRouter({
-          apiKey: apiKey,
-        });
-        this.logger.log('OpenRouter SDK initialized');
-      } catch (error) {
-        this.logger.error('Failed to initialize OpenRouter SDK:', error);
-      }
+      this.logger.error('OPENROUTER_API_KEY is not set in environment variables.');
+      return;
+    }
+    
+    try {
+      // Dynamic import for ESM-only package
+      const { OpenRouter } = await import('@openrouter/sdk');
+      this.openRouter = new OpenRouter({ apiKey });
+      this.logger.log('OpenRouter SDK initialized');
+    } catch (error) {
+      this.logger.error('Failed to initialize OpenRouter SDK:', error);
     }
   }
+
 
   /**
    * Analyze a layout schema to detect image fields and generate Unsplash search queries
