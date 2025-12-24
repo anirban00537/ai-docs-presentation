@@ -108,7 +108,7 @@ export const ImageBlock = memo(function ImageBlock({
     <>
       <CommonCard 
         theme={theme}
-        className="w-full h-full flex flex-col gap-0 group/image relative p-0 overflow-hidden border-none transition-all duration-500 hover:shadow-2xl"
+        className="w-full h-full min-w-0 flex flex-col gap-0 group/image relative p-0 overflow-hidden border-none transition-all duration-500 hover:shadow-2xl"
         style={{ borderRadius: "24px" }}
       >
         {/* Image Container */}

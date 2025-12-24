@@ -296,7 +296,7 @@ export const ContentRow = memo(function ContentRow({
           setNodeRef(node);
           rowContainerRef.current = node;
         }}
-        className="group/row flex-1 grid gap-1 transition-all items-stretch rounded-xl relative"
+        className="group/row flex-1 grid gap-1 transition-all items-stretch rounded-xl relative max-w-full overflow-hidden"
         style={{
           gridTemplateColumns,
           fontFamily: getFontFamily(theme.fontFamily || "Inter"),

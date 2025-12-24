@@ -102,10 +102,9 @@ export const SlideFrame = memo(function SlideFrame({
       backgroundColor: theme.cardBackground,
       fontFamily: getFontFamily(theme.fontFamily || "Inter"),
       position: "relative",
-      overflow: "visible",
       ...(fullWidth
-        ? { width: "100%", minHeight: "100vh" }
-        : { minWidth: `${SLIDE_MAX_WIDTH}px`, maxWidth: `${SLIDE_MAX_WIDTH}px` }),
+        ? { width: "100%", minHeight: "100vh", overflow: "visible" }
+        : { minWidth: `${SLIDE_MAX_WIDTH}px`, maxWidth: `${SLIDE_MAX_WIDTH}px`, overflow: "hidden" }),
       ...style,
     };
 
@@ -273,7 +272,7 @@ export const SlideFrame = memo(function SlideFrame({
         )}
 
         {/* Content Area */}
-        <div className={`relative flex-1 flex flex-col justify-center z-10 ${isBackground ? "z-20" : ""}`}>
+        <div className={`relative flex-1 flex flex-col justify-center min-w-0 z-10 ${isBackground ? "z-20" : ""}`}>
           {/* Background Controls (Special case since image is in bg layer) */}
           {isBackground && !readOnly && (
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none group/accent-bg">

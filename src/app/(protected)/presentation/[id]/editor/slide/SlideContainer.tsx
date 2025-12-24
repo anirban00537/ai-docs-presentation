@@ -172,7 +172,7 @@ export const SlideContainer = memo(function SlideContainer({
         )}
 
         <div 
-          className={`relative ${fullWidth ? "w-full" : "flex-1"}`}
+          className={`relative min-w-0 max-w-full ${fullWidth ? "w-full" : "flex-1"}`}
           style={{ 
             padding: fullWidth ? "4rem 6rem" : "2rem 2.5rem",
           }}

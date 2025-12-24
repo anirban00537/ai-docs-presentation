@@ -26,7 +26,7 @@ export const BlockWrapper: React.FC<BlockWrapperProps> = ({
   const isDark = theme?.themeType === "dark";
 
   return (
-    <div className={`relative w-full h-full ${className}`}>
+    <div className={`relative w-full h-full min-w-0 ${className}`}>
       {/* Content */}
       {children}
 

@@ -138,7 +138,7 @@ export const BlockContainer = memo(function BlockContainer({
       onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
     >
       <div
-        className={`relative p-2 transition-all h-full w-full flex flex-col flex-1 rounded-xl ${
+        className={`relative p-2 transition-all h-full w-full flex flex-col flex-1 min-w-0 rounded-xl ${
           isDragging && !readOnly ? "opacity-50" : ""
         }`}
         style={{

@@ -6,6 +6,10 @@ import {
 } from "@/types/presentation"; // image-gallery";
 import { IconPhoto, IconTrash, IconPlus, IconColumns2, IconColumns3, IconLayoutGrid } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
+import { 
+  ImagePickerModal, 
+  type SelectedImage 
+} from "../../panels/ImagePickerModal";
 
 interface ImageGalleryBlockProps {
   block: Block;
@@ -29,13 +33,17 @@ export const ImageGalleryBlock = memo(function ImageGalleryBlock({
   const columns = content.columns || 3;
   const isDark = theme.themeType === "dark";
 
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   const addImage = () => {
-    const url = prompt("Enter image URL:");
-    if (!url) return;
-    
+    setIsModalOpen(true);
+  };
+
+  const handleImageSelect = (image: SelectedImage) => {
     const newImage: GalleryImage = {
       id: nanoid(),
-      url,
+      url: image.url,
       caption: "",
     };
     
@@ -43,6 +51,7 @@ export const ImageGalleryBlock = memo(function ImageGalleryBlock({
       ...content,
       images: [...images, newImage],
     });
+    setIsModalOpen(false);
   };
 
   const removeImage = (id: string) => {
@@ -173,6 +182,13 @@ export const ImageGalleryBlock = memo(function ImageGalleryBlock({
           </CommonCard>
         )}
       </div>
+
+      <ImagePickerModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelect={handleImageSelect}
+        theme={theme}
+      />
     </div>
   );
 });
