@@ -311,7 +311,7 @@ export class SubscriptionService {
           this.logger.log(
             `Credit reset triggered for user ${user.id}: newSubscription=${isNewSubscription}, newPeriod=${isNewPeriod}, planChange=${isPlanChange}`,
           );
-          const monthlyLimit = this.getMonthlyCreditLimit(
+          const monthlyLimit = await this.getMonthlyCreditLimit(
             activeSubscription.product?.id,
             activeSubscription,
           );
@@ -514,7 +514,7 @@ export class SubscriptionService {
 
       // Update monthly limit based on product metadata
       // Note: updateMonthlyLimit handles initialization if credit balance doesn't exist
-      const monthlyLimit = this.getMonthlyCreditLimit(
+      const monthlyLimit = await this.getMonthlyCreditLimit(
         data.product_id || data.product?.id,
         data,
       );
@@ -590,7 +590,7 @@ export class SubscriptionService {
           `Subscription REACTIVATION detected for user ${subscription.userId}. Resetting credits.`,
         );
 
-      const monthlyLimit = this.getMonthlyCreditLimit(newProductId, data);
+      const monthlyLimit = await this.getMonthlyCreditLimit(newProductId, data);
       await this.creditService.updateMonthlyLimit(
         subscription.userId,
         monthlyLimit,
@@ -956,15 +956,18 @@ export class SubscriptionService {
 
   /**
    * Get monthly credit limit based on product ID or metadata
-   * prioritized metadata from Polar.sh
+   * Fetches from Polar API if metadata is not available in passed data
+   * Falls back to free tier credits if nothing is found
    */
-  private getMonthlyCreditLimit(productId?: string, data?: any): number {
-    // Polar puts metadata either in the root data or under product
+  private async getMonthlyCreditLimit(productId?: string, data?: any): Promise<number> {
+    const FREE_TIER_CREDITS = 10;
+
+    // 1. Try to get from passed data (webhook/sync data)
     const metadata = data?.metadata || data?.product?.metadata || {};
     let metadataLimit = metadata.ai_credits;
 
     // Direct check if metadata property exists on the object passed
-    if (!metadataLimit && (data as any).metadata?.ai_credits) {
+    if (!metadataLimit && (data as any)?.metadata?.ai_credits) {
       metadataLimit = (data as any).metadata.ai_credits;
     }
 
@@ -972,34 +975,62 @@ export class SubscriptionService {
       const parsed = parseInt(String(metadataLimit), 10);
       if (!isNaN(parsed) && parsed > 0) {
         this.logger.log(
-          `CREDIT ASSIGNMENT [METADATA]: Assigning ${parsed} credits to user from product ${productId}`,
+          `CREDIT ASSIGNMENT [METADATA]: Assigning ${parsed} credits from product ${productId}`,
         );
         return parsed;
       }
     }
 
-    // 2. Fallback to hardcoded limits - configure these based on your Polar.sh products
-    const limits: Record<string, number> = {
-      // Go Plan: 3000 credits for the $10 package
-      'b0d421eb-615c-4ef8-9053-1a8449afbcc0': 3000,
-      // Plus Plan: 10000 credits for the $20 package
-      '308587ed-b4a0-469b-bfbc-89713a380bb3': 10000,
-      // Pro Plan: 50000 credits for the $50 package
-      'ecbe461f-0b80-486c-9ee1-5943b55922d3': 50000,
-    };
+    // 2. Fetch product from Polar API if productId is available and metadata not found
+    if (productId && this.polarService.isConfigured()) {
+      try {
+        this.logger.debug(
+          `CREDIT ASSIGNMENT [API_FETCH]: Fetching product ${productId} from Polar to get credit limit`,
+        );
+        const product = await this.polarService.getProduct(productId);
+        const productMetadata = product?.metadata || (product as any)?.metadata || {};
+        const apiCredits = productMetadata.ai_credits;
 
-    const limit = limits[productId || ''] || 0;
-    if (limit > 0) {
-      this.logger.log(
-        `CREDIT ASSIGNMENT [FALLBACK]: Assigning ${limit} hardcoded credits for product ${productId}`,
-      );
-    } else {
-      this.logger.warn(
-        `CREDIT ASSIGNMENT [NONE]: No limit found for product ${productId} in metadata or fallbacks`,
-      );
+        if (apiCredits) {
+          const parsed = parseInt(String(apiCredits), 10);
+          if (!isNaN(parsed) && parsed > 0) {
+            this.logger.log(
+              `CREDIT ASSIGNMENT [API]: Assigning ${parsed} credits from Polar API for product ${productId}`,
+            );
+            return parsed;
+          }
+        }
+      } catch (error: any) {
+        this.logger.warn(
+          `CREDIT ASSIGNMENT [API_ERROR]: Failed to fetch product ${productId} from Polar: ${error.message}`,
+        );
+      }
     }
 
-    return limit;
+    // 3. Fall back to free tier if nothing found
+    this.logger.warn(
+      `CREDIT ASSIGNMENT [FREE_TIER]: No credit limit found for product ${productId}, defaulting to ${FREE_TIER_CREDITS} (free tier)`,
+    );
+    return FREE_TIER_CREDITS;
+  }
+
+  /**
+   * Extract credit limit from product metadata synchronously
+   * Used when we already have the full product data (e.g., in getProducts list)
+   */
+  private extractCreditLimitFromProduct(product: any): number {
+    const FREE_TIER_CREDITS = 10;
+    const metadata = product?.metadata || {};
+    const aiCredits = metadata.ai_credits;
+
+    if (aiCredits) {
+      const parsed = parseInt(String(aiCredits), 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        return parsed;
+      }
+    }
+
+    return FREE_TIER_CREDITS;
   }
 
   /**
@@ -1187,8 +1218,8 @@ export class SubscriptionService {
               (product as any).updated_at ||
               product.createdAt ||
               product.created_at,
-            // Add credit limit based on product metadata or configuration
-            monthlyCreditLimit: this.getMonthlyCreditLimit(product.id, product),
+            // Add credit limit based on product metadata
+            monthlyCreditLimit: this.extractCreditLimitFromProduct(product),
           };
         }),
       );
@@ -1290,7 +1321,7 @@ export class SubscriptionService {
           productAny.updated_at ||
           product.createdAt ||
           productAny.created_at,
-        monthlyCreditLimit: this.getMonthlyCreditLimit(product.id),
+        monthlyCreditLimit: this.extractCreditLimitFromProduct(product),
       };
 
       return successResponse('Product retrieved successfully', productData);
