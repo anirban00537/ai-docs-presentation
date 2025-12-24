@@ -12,30 +12,8 @@ import { PricingCard } from "@/components/pricing-card";
 export function PricingSection() {
   const { data: products, isLoading } = useProducts();
 
-  // Sort logic or fallback could go here, but focusing on UI
-  // I'll wrap the cards in the new aesthetic
-  
-  const displayPlans = products && products.length > 0 ? products : [
-    {
-       name: "Starter",
-       description: "For individuals just getting started.",
-       prices: [{ priceAmount: 0, priceCurrency: "usd", recurringInterval: "month" }],
-       benefits: [{ description: "5 presentations/mo" }, { description: "Basic layouts" }, { description: "PDF export" }]
-    },
-    {
-       name: "Pro",
-       description: "For power users who need more.",
-       prices: [{ priceAmount: 1900, priceCurrency: "usd", recurringInterval: "month" }],
-       popular: true,
-       benefits: [{ description: "Unlimited presentations" }, { description: "Premium layouts" }, { description: "PPTX export" }, { description: "Custom fonts" }]
-    },
-     {
-       name: "Team",
-       description: "For teams collaborating together.",
-       prices: [{ priceAmount: 4900, priceCurrency: "usd", recurringInterval: "month" }],
-       benefits: [{ description: "Everything in Pro" }, { description: "Shared workspace" }, { description: "Admin tools" }, { description: "Priority support" }]
-    },
-  ];
+  // Only show real products from API, no dummy data
+  const displayPlans = products || [];
 
   return (
     <section className="py-32 bg-gradient-to-b from-primary/5 via-white to-secondary/10 relative overflow-hidden" id="pricing">
@@ -62,22 +40,52 @@ export function PricingSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center max-w-6xl mx-auto">
-          {displayPlans.slice(0, 3).map((plan: any, i) => {
-             const isPro = plan.name.toLowerCase().includes("pro") || plan.popular;
-             
-            return (
-              <PricingCard
-                key={i}
-                product={plan}
-                index={i}
-                isPopular={isPro}
-                href="/signup"
-                cta={isPro ? "Get Started Now" : "Start for Free"}
-              />
-            );
-          })}
-        </div>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center max-w-6xl mx-auto">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white/50 rounded-3xl p-8 h-[450px] animate-pulse border border-secondary/10">
+                <div className="h-6 w-24 bg-secondary/20 rounded mb-4" />
+                <div className="h-4 w-48 bg-secondary/10 rounded mb-8" />
+                <div className="h-12 w-32 bg-secondary/20 rounded mb-8" />
+                <div className="space-y-3">
+                  <div className="h-4 w-full bg-secondary/10 rounded" />
+                  <div className="h-4 w-3/4 bg-secondary/10 rounded" />
+                  <div className="h-4 w-5/6 bg-secondary/10 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Products Grid */}
+        {!isLoading && displayPlans.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center max-w-6xl mx-auto">
+            {displayPlans.slice(0, 3).map((plan: any, i) => {
+               const isPlus = plan.name?.toLowerCase().includes("plus");
+               
+              return (
+                <PricingCard
+                  key={plan.id || i}
+                  product={plan}
+                  index={i}
+                  isPopular={isPlus}
+                  href="/signup"
+                  cta={isPlus ? "Get Started Now" : "Start for Free"}
+                />
+              );
+            })}
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && displayPlans.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-muted-foreground text-lg">
+              Pricing plans are being loaded. Please check back soon.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -119,10 +119,7 @@ export default function PricingPage() {
               currentSubscription?.productId === product.id &&
               currentSubscription?.status === "active";
             // Mark Plus (middle plan) or Pro as popular
-            const isPopular =
-              index === 1 ||
-              product.name.toLowerCase().includes("pro") ||
-              product.name.toLowerCase().includes("plus");
+            const isPopular = index === 1;
 
             return (
               <PricingCard
