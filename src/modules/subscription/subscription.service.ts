@@ -227,6 +227,11 @@ export class SubscriptionService {
         });
       }
 
+      // Get existing subscription BEFORE upsert to compare for credit reset logic
+      const existingSubscription = await this.prisma.subscription.findUnique({
+        where: { userId: user.id },
+      });
+
       // Update or create subscription record
       // Safely extract fields whether they are camelCase (SDK) or snake_case (API)
       const currentPeriodStart =
@@ -288,12 +293,34 @@ export class SubscriptionService {
       });
 
       // Update credit balance based on subscription
+      // Only reset credits if: new subscription, new billing period, or plan change
       if (activeSubscription.status === 'active') {
-        const monthlyLimit = this.getMonthlyCreditLimit(
-          activeSubscription.product?.id,
-          activeSubscription,
-        );
-        await this.creditService.updateMonthlyLimit(user.id, monthlyLimit);
+        const existingPeriodStart = existingSubscription?.currentPeriodStart
+          ? new Date(existingSubscription.currentPeriodStart).getTime()
+          : 0;
+        const newPeriodStart = currentPeriodStart
+          ? new Date(currentPeriodStart).getTime()
+          : 0;
+
+        // Determine if we should reset credits
+        const isNewSubscription = !existingSubscription?.polarSubscriptionId;
+        const isNewPeriod = newPeriodStart > existingPeriodStart;
+        const isPlanChange = productId !== existingSubscription?.productId;
+
+        if (isNewSubscription || isNewPeriod || isPlanChange) {
+          this.logger.log(
+            `Credit reset triggered for user ${user.id}: newSubscription=${isNewSubscription}, newPeriod=${isNewPeriod}, planChange=${isPlanChange}`,
+          );
+          const monthlyLimit = this.getMonthlyCreditLimit(
+            activeSubscription.product?.id,
+            activeSubscription,
+          );
+          await this.creditService.updateMonthlyLimit(user.id, monthlyLimit);
+        } else {
+          this.logger.debug(
+            `Sync: No credit reset needed for user ${user.id} - subscription data updated without resetting credits`,
+          );
+        }
       }
 
       return successResponse('Subscription synced successfully', subscription);
