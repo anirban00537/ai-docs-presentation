@@ -172,7 +172,7 @@ export function AppSidebar() {
                     className={cn(
                       "relative flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all duration-300 ease-out",
                       isActive 
-                        ? "bg-secondary/60 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] text-primary" 
+                        ? "bg-secondary/60 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] text-black" 
                         : "hover:bg-secondary/30 text-foreground/70 hover:text-foreground"
                     )}
                   >
@@ -192,7 +192,7 @@ export function AppSidebar() {
                         stroke={isActive ? 2 : 1.5}
                         className={cn(
                           "transition-colors duration-300",
-                          isActive ? "text-primary" : "text-foreground/60 group-hover:text-foreground/80"
+                          isActive ? "text-black" : "text-foreground/60 group-hover:text-foreground/80"
                         )}
                       />
                     </span>
