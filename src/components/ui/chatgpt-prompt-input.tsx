@@ -148,6 +148,49 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
 
     const hasValue = value.trim().length > 0;
 
+    // --- Dynamic Placeholder Logic ---
+    const placeholders = [
+      "Create a deck about AI in Modern Healthcare...",
+      "Design a pitch for a Sustainable Fashion startup...",
+      "Explain Quantum Physics to a fifth grader...",
+      "Develop a marketing plan for a boutique coffee shop...",
+    ];
+
+    const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = React.useState(0);
+    const [placeholderText, setPlaceholderText] = React.useState("");
+    const [isDeleting, setIsDeleting] = React.useState(false);
+
+    React.useEffect(() => {
+      const currentFullText = placeholders[currentPlaceholderIndex];
+      const typingSpeed = isDeleting ? 40 : 80;
+      const pauseDuration = isDeleting ? 100 : 2000;
+
+      const handleTyping = () => {
+        if (!isDeleting && placeholderText === currentFullText) {
+          setTimeout(() => setIsDeleting(true), pauseDuration);
+        } else if (isDeleting && placeholderText === "") {
+          setIsDeleting(false);
+          setCurrentPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+        } else {
+          setPlaceholderText((prev) =>
+            isDeleting
+              ? prev.substring(0, prev.length - 1)
+              : currentFullText.substring(0, prev.length + 1)
+          );
+        }
+      };
+
+      const timeout = setTimeout(handleTyping, typingSpeed);
+      return () => clearTimeout(timeout);
+    }, [placeholderText, isDeleting, currentPlaceholderIndex, placeholders]);
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit(e);
+      }
+    };
+
     return (
       <form onSubmit={handleSubmit}>
         <div
@@ -163,8 +206,9 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
             rows={1}
             value={value}
             onChange={handleInputChange}
-            placeholder="Message..."
-            className="custom-scrollbar w-full resize-none border-0 bg-transparent p-3 text-foreground placeholder:text-muted-foreground focus:ring-0 focus-visible:outline-none min-h-12"
+            onKeyDown={handleKeyDown}
+            placeholder={placeholderText}
+            className="custom-scrollbar w-full resize-none border-0 bg-transparent p-3 text-foreground placeholder:text-muted-foreground/60 focus:ring-0 focus-visible:outline-none min-h-12"
             {...props}
           />
 
