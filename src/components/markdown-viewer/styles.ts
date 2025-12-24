@@ -8,69 +8,77 @@ export const MARKDOWN_VIEWER_STYLES = `
     outline: none;
     min-height: 24px;
     width: 100%;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: inherit;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--foreground);
+    font-family: var(--font-sans);
   }
 
   .markdown-viewer-prosemirror:focus {
     outline: none;
   }
 
-  /* Headings - Compact sizes */
+  /* Headings - Using Serif Font */
   .markdown-viewer-prosemirror h1 {
-    font-size: 1.25rem;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
     font-weight: 700;
     line-height: 1.3;
-    margin-bottom: 0.375rem;
+    margin-bottom: 0.75rem;
     margin-top: 0;
-    color: inherit;
+    color: var(--foreground);
+    letter-spacing: -0.01em;
   }
 
   .markdown-viewer-prosemirror h2 {
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 700;
     line-height: 1.35;
-    margin-bottom: 0.375rem;
-    margin-top: 0.5rem;
-    color: inherit;
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+    color: var(--foreground);
   }
 
   .markdown-viewer-prosemirror h3 {
-    font-size: 1rem;
-    font-weight: 600;
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    font-weight: 700;
     line-height: 1.4;
-    margin-bottom: 0.25rem;
-    margin-top: 0.5rem;
-    color: inherit;
+    margin-bottom: 0.375rem;
+    margin-top: 0.75rem;
+    color: var(--foreground);
   }
 
   .markdown-viewer-prosemirror h4 {
-    font-size: 0.9375rem;
-    font-weight: 600;
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 700;
     line-height: 1.4;
     margin-bottom: 0.25rem;
-    margin-top: 0.375rem;
-    color: inherit;
+    margin-top: 0.5rem;
+    color: var(--foreground);
   }
 
   /* Paragraphs */
   .markdown-viewer-prosemirror p {
     margin: 0;
-    margin-bottom: 0.375rem;
-    font-size: 0.875rem;
-    line-height: 1.6;
+    margin-bottom: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--foreground);
+    opacity: 0.9;
   }
 
   .markdown-viewer-prosemirror p:last-child {
     margin-bottom: 0;
   }
 
-  /* Lists - Compact */
+  /* Lists - Themed Markers */
   .markdown-viewer-prosemirror ul,
   .markdown-viewer-prosemirror ol {
-    padding-left: 1.25rem;
-    margin: 0.25rem 0;
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
   }
 
   .markdown-viewer-prosemirror ul {
@@ -82,9 +90,11 @@ export const MARKDOWN_VIEWER_STYLES = `
   }
 
   .markdown-viewer-prosemirror li {
-    margin: 0.125rem 0;
-    font-size: 0.875rem;
-    line-height: 1.5;
+    margin: 0.25rem 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--foreground);
+    opacity: 0.9;
   }
 
   .markdown-viewer-prosemirror li p {
@@ -92,43 +102,43 @@ export const MARKDOWN_VIEWER_STYLES = `
   }
 
   .markdown-viewer-prosemirror li::marker {
-    color: rgba(139, 92, 246, 0.7);
+    color: var(--primary);
+    font-weight: 700;
   }
 
-  /* Blockquote - Styled for glassmorphism */
+  /* Blockquote - Effortless Silk Aesthetic */
   .markdown-viewer-prosemirror blockquote {
-    border-left: 2px solid rgba(139, 92, 246, 0.5);
-    padding-left: 0.75rem;
-    margin: 0.375rem 0;
-    color: rgba(0, 0, 0, 0.6);
+    border-left: 3px solid var(--primary);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    color: var(--foreground);
     font-style: italic;
-    font-size: 0.8125rem;
-    background: rgba(139, 92, 246, 0.05);
-    border-radius: 0 0.375rem 0.375rem 0;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    padding-right: 0.5rem;
+    font-size: 0.9375rem;
+    background: color-mix(in srgb, var(--primary) 5%, transparent);
+    border-radius: 0 1rem 1rem 0;
   }
 
-  /* Code blocks - Compact */
+  /* Code blocks */
   .markdown-viewer-prosemirror pre {
-    background: rgba(0, 0, 0, 0.04);
-    border-radius: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 0.75rem;
+    background: color-mix(in srgb, var(--secondary) 10%, transparent);
+    border-radius: 1rem;
+    padding: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
     overflow-x: auto;
-    margin: 0.375rem 0;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    margin: 1rem 0;
+    border: 1px solid color-mix(in srgb, var(--secondary) 20%, transparent);
+    color: var(--foreground);
   }
 
   .markdown-viewer-prosemirror code {
-    background: rgba(139, 92, 246, 0.1);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 0.8125em;
-    color: #7c3aed;
+    background: color-mix(in srgb, var(--secondary) 20%, transparent);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--primary);
+    font-weight: 500;
   }
 
   .markdown-viewer-prosemirror pre code {
@@ -136,26 +146,28 @@ export const MARKDOWN_VIEWER_STYLES = `
     padding: 0;
     color: inherit;
     font-size: inherit;
+    font-weight: inherit;
   }
 
   /* Links */
   .markdown-viewer-prosemirror a {
-    color: #8b5cf6;
+    color: var(--primary);
     text-decoration: underline;
-    text-decoration-color: rgba(139, 92, 246, 0.3);
-    text-underline-offset: 2px;
+    text-decoration-color: color-mix(in srgb, var(--primary) 30%, transparent);
+    text-underline-offset: 3px;
+    font-weight: 500;
     transition: all 0.2s ease;
   }
 
   .markdown-viewer-prosemirror a:hover {
-    color: #7c3aed;
-    text-decoration-color: rgba(124, 58, 237, 0.6);
+    color: var(--primary);
+    text-decoration-color: var(--primary);
   }
 
   /* Strong and Emphasis */
   .markdown-viewer-prosemirror strong {
-    font-weight: 600;
-    color: inherit;
+    font-weight: 700;
+    color: var(--foreground);
   }
 
   .markdown-viewer-prosemirror em {
@@ -165,36 +177,28 @@ export const MARKDOWN_VIEWER_STYLES = `
   /* Horizontal Rule */
   .markdown-viewer-prosemirror hr {
     border: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    margin: 0.75rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--secondary) 30%, transparent);
+    margin: 1.25rem 0;
   }
 
   /* Empty state placeholder */
-  .markdown-viewer-prosemirror p.is-empty:first-child::before,
-  .markdown-viewer-prosemirror h1.is-empty:first-child::before,
-  .markdown-viewer-prosemirror h2.is-empty:first-child::before,
-  .markdown-viewer-prosemirror h3.is-empty:first-child::before {
+  .markdown-viewer-prosemirror p.is-empty:first-child::before {
     content: "Start typing...";
-    color: rgba(0, 0, 0, 0.35);
+    color: var(--muted-foreground);
+    opacity: 0.5;
     pointer-events: none;
     float: left;
     height: 0;
-    font-size: 0.875rem;
     font-style: italic;
   }
 
   /* Selection styling */
   .markdown-viewer-prosemirror ::selection {
-    background: rgba(139, 92, 246, 0.2);
-  }
-
-  /* Focus ring for editable mode */
-  .markdown-viewer-prosemirror.ProseMirror-focused {
-    outline: none;
+    background: color-mix(in srgb, var(--primary) 20%, transparent);
   }
 
   /* Smooth transitions */
   .markdown-viewer-prosemirror * {
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
   }
 `;

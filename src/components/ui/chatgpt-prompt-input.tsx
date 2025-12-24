@@ -152,7 +152,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
       <form onSubmit={handleSubmit}>
         <div
           className={cn(
-            "flex flex-col rounded-[24px] p-2 transition-all duration-300 bg-white shadow-depth-3 border border-gray-100 focus-within:shadow-xl focus-within:border-secondary/30 focus-within:ring-1 focus-within:ring-secondary/20 cursor-text",
+            "flex flex-col rounded-[24px] p-2 transition-all duration-300 bg-secondary/10 shadow-depth-3 border border-secondary/20 focus-within:shadow-xl focus-within:border-secondary/40 focus-within:ring-1 focus-within:ring-secondary/20 cursor-text",
             className
           )}
         >

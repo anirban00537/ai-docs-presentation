@@ -63,25 +63,22 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
 
   if (isLoading) {
     return (
-      <div className={cn("w-full space-y-4", className)}>
-        <div className="h-8 w-3/4 animate-pulse rounded-xl bg-muted/30" />
-        <div className="space-y-4">
+      <div className={cn("w-full space-y-6", className)}>
+        <div className="h-10 w-3/4 animate-pulse rounded-2xl bg-secondary/10" />
+        <div className="space-y-6">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-2xl p-6 space-y-2 animate-pulse"
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.25)",
-                backdropFilter: "blur(16px) saturate(180%)",
-                WebkitBackdropFilter: "blur(16px) saturate(180%)",
-                boxShadow: `
-                  0 1px 0 0 rgba(255, 255, 255, 0.8) inset,
-                  0 4px 16px rgba(0, 0, 0, 0.06)
-                `,
-              }}
+              className="rounded-[32px] p-8 bg-white/40 border border-secondary/20 shadow-sm backdrop-blur-md animate-pulse"
             >
-              <div className="h-6 w-2/3 rounded-xl bg-muted/40" />
-              <div className="h-4 w-full rounded-xl bg-muted/30" />
+              <div className="flex gap-6">
+                <div className="h-12 w-12 rounded-2xl bg-secondary/10 shrink-0" />
+                <div className="flex-1 space-y-3">
+                  <div className="h-6 w-1/3 rounded-xl bg-secondary/10" />
+                  <div className="h-4 w-full rounded-xl bg-secondary/10" />
+                  <div className="h-4 w-5/6 rounded-xl bg-secondary/10" />
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -110,10 +107,10 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
 
   return (
     <div
-      className={cn("w-full space-y-6 transition-all duration-300", className)}
+      className={cn("w-full space-y-8 transition-all duration-300", className)}
     >
       {/* Title */}
-      <div className="mb-8">
+      <div className="mb-10">
         {editable ? (
           <input
             type="text"
@@ -123,17 +120,17 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
               setLocalOutline(updated);
               onUpdate?.(updated);
             }}
-            className="text-3xl font-bold text-foreground bg-transparent border-b-2 border-transparent hover:border-muted focus:border-primary focus:outline-none w-full"
+            className="text-3xl md:text-4xl font-serif font-bold text-foreground bg-transparent border-b-2 border-transparent hover:border-secondary/20 focus:border-primary focus:outline-none w-full transition-all"
           />
         ) : (
-          <h1 className="text-3xl font-bold text-foreground">
+          <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground tracking-tight">
             {localOutline.title}
           </h1>
         )}
       </div>
 
       {/* Outline Items */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {localOutline.outlines.map((item, index) => {
           const isVisible = index < revealedItems;
           if (!isVisible) return null;
@@ -142,45 +139,20 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
             <div
               key={index}
               className={cn(
-                "relative rounded-2xl p-6 overflow-hidden transition-all duration-300",
-                "hover:scale-[1.01]",
+                "relative rounded-[32px] p-8 overflow-hidden transition-all duration-300",
+                "bg-white/40 border border-secondary/20 shadow-sm",
+                "hover:shadow-depth-3 hover:bg-white hover:scale-[1.005]",
                 !isLoading && "animate-in fade-in-0 slide-in-from-bottom-4"
               )}
               style={{
-                backgroundColor: "rgba(255, 255, 255, 0.25)",
-                backdropFilter: "blur(16px) saturate(180%)",
-                WebkitBackdropFilter: "blur(16px) saturate(180%)",
-                boxShadow: `
-                  0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
-                  0 -1px 0 0 rgba(0, 0, 0, 0.03) inset,
-                  1px 0 0 0 rgba(255, 255, 255, 0.7) inset,
-                  -1px 0 0 0 rgba(0, 0, 0, 0.02) inset,
-                  0 4px 16px rgba(0, 0, 0, 0.06),
-                  0 1px 4px rgba(0, 0, 0, 0.03)
-                `,
                 animationDelay: isLoading ? undefined : `${index * 100}ms`,
               }}
             >
-              {/* Glass shine overlay */}
-              <div 
-                className="absolute inset-0 pointer-events-none rounded-2xl"
-                style={{
-                  background: "linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%, transparent 70%, rgba(255, 255, 255, 0.15) 100%)",
-                }}
-              />
-              
-              <div className="relative flex gap-4">
+              <div className="relative flex gap-6">
                 {/* Number Badge */}
                 <div className="shrink-0">
                   <div 
-                    className="flex h-12 w-12 items-center justify-center rounded-xl text-white font-bold text-xl"
-                    style={{
-                      background: "linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)",
-                      boxShadow: `
-                        0 4px 12px rgba(139, 92, 246, 0.3),
-                        0 1px 0 0 rgba(255, 255, 255, 0.2) inset
-                      `,
-                    }}
+                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white font-bold text-xl shadow-coral-glow"
                   >
                     {index + 1}
                   </div>
