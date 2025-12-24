@@ -131,9 +131,13 @@ export function AppSidebar() {
           {/* Header */}
           <div className="flex items-center justify-between p-6 pb-4">
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="font-serif text-2xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">
-                Butterfast.
-              </span>
+              <Image 
+                src="/logo.svg" 
+                alt="Butterfast Logo" 
+                width={130} 
+                height={32} 
+                className="h-8 w-auto"
+              />
             </Link>
             
             {/* Mobile close button */}

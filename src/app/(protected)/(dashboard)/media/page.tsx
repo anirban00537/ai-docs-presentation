@@ -114,82 +114,51 @@ const MediaCard = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       whileHover={{ y: -4 }}
-      className="group relative rounded-2xl overflow-hidden"
-      style={{
-        backgroundColor: "color-mix(in srgb, var(--secondary) 40%, var(--card))",
-        backdropFilter: "blur(20px) saturate(180%)",
-        WebkitBackdropFilter: "blur(20px) saturate(180%)",
-        border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
-        boxShadow: `
-          0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
-          0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-          0 12px 32px -8px rgba(0, 0, 0, 0.08)
-        `,
-      }}
+      className="group relative rounded-2xl overflow-hidden bg-white/40 border border-secondary/20 shadow-sm hover:shadow-depth-3 hover:bg-white hover:border-primary/20 transition-all duration-300"
     >
-      {/* Glass shine overlay */}
-      <div 
-        className="absolute inset-0 pointer-events-none rounded-2xl z-10" 
-        style={{
-          background: "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 30%, transparent) 0%, transparent 50%)",
-        }}
-      />
-
       {/* Thumbnail */}
       <div 
-        className="relative aspect-square bg-muted/30 overflow-hidden cursor-pointer"
+        className="relative aspect-square bg-secondary/5 overflow-hidden cursor-pointer"
         onClick={() => onClick(media)}
       >
         {isImage ? (
           <img
             src={media.url}
             alt={media.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--secondary) 10%, transparent)",
-            }}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <IconPhoto size={48} className="text-muted-foreground/40" />
+            <IconPhoto size={48} className="text-secondary/30" />
           </div>
         )}
 
         {/* Hover overlay with actions */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2 z-20">
+        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2 z-20 backdrop-blur-[2px]">
           <button
             onClick={handleCopyUrl}
-            className="p-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--secondary) 30%, transparent)",
-            }}
+            className="p-2 rounded-full bg-white/90 shadow-sm hover:scale-110 transition-transform text-foreground hover:text-primary"
           >
-            <IconCopy size={18} className="text-secondary-foreground" />
+            <IconCopy size={18} />
           </button>
           <button
             onClick={handleDownload}
-            className="p-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--secondary) 30%, transparent)",
-            }}
+            className="p-2 rounded-full bg-white/90 shadow-sm hover:scale-110 transition-transform text-foreground hover:text-primary"
           >
-            <IconDownload size={18} className="text-secondary-foreground" />
+            <IconDownload size={18} />
           </button>
         </div>
 
         {/* Favorite badge */}
         <button
           onClick={() => onToggleFavorite(media)}
-          className="absolute top-2 right-2 p-1.5 rounded-full backdrop-blur-sm transition-all duration-300 z-20 hover:scale-110"
-          style={{
-            backgroundColor: "color-mix(in srgb, var(--secondary) 80%, transparent)",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-          }}
+          className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm shadow-sm hover:scale-110 transition-transform z-20 opacity-0 group-hover:opacity-100 data-[favorite=true]:opacity-100"
+          data-favorite={media.isFavorite}
         >
           {media.isFavorite ? (
             <IconHeartFilled size={16} className="text-red-500" />
           ) : (
-            <IconHeart size={16} className="text-muted-foreground" />
+            <IconHeart size={16} className="text-muted-foreground hover:text-red-500" />
           )}
         </button>
       </div>
@@ -198,29 +167,23 @@ const MediaCard = ({
       <div className="relative p-3 z-20">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-foreground truncate">
+            <p className="text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors">
               {media.name}
             </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">
               {formatFileSize(media.size)} • {formatDate(media.createdAt)}
             </p>
           </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button >
+              <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-secondary/10 rounded-md">
                 <IconDots size={16} className="text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-40 rounded-xl border-0"
-              style={{
-                backgroundColor: "color-mix(in srgb, var(--card) 85%, transparent)",
-                backdropFilter: "blur(24px) saturate(180%)",
-                WebkitBackdropFilter: "blur(24px) saturate(180%)",
-                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
-              }}
+              className="w-40 rounded-xl border border-secondary/20 shadow-lg bg-white/95 backdrop-blur-md"
             >
               <DropdownMenuItem
                 onClick={() => onEdit(media)}
@@ -262,7 +225,7 @@ const MediaCard = ({
             {media.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="px-1.5 py-0.5 text-[10px] font-medium rounded-md bg-primary/10 text-primary"
+                className="px-1.5 py-0.5 text-[10px] font-medium rounded-md bg-secondary/10 text-secondary-foreground border border-secondary/10"
               >
                 {tag}
               </span>
@@ -294,28 +257,20 @@ const EmptyState = ({ onUpload }: { onUpload: () => void }) => (
     className="flex flex-col items-center justify-center py-20"
   >
     <div
-      className="relative w-24 h-24 rounded-3xl flex items-center justify-center mb-6"
-      style={{
-        backgroundColor: "color-mix(in srgb, var(--card) 60%, transparent)",
-        backdropFilter: "blur(20px)",
-        boxShadow: `
-          0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
-          0 8px 32px rgba(0, 0, 0, 0.08)
-        `,
-      }}
+      className="relative w-24 h-24 rounded-3xl flex items-center justify-center mb-6 bg-white shadow-depth-3 border border-secondary/20"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-transparent rounded-3xl" />
-      <IconPhoto size={40} className="text-primary/60 relative z-10" />
+      <IconPhoto size={40} className="text-secondary/50" />
     </div>
-    <h3 className="text-lg font-semibold text-foreground mb-2">
+    <h3 className="text-lg font-serif font-bold text-foreground mb-2">
       No media yet
     </h3>
-    <p className="text-sm text-muted-foreground text-center max-w-sm mb-6">
+    <p className="text-sm text-muted-foreground text-center max-w-sm mb-6 leading-relaxed">
       Upload images to use in your presentations. They&apos;ll be stored securely
       and accessible from anywhere.
     </p>
     <Button
       onClick={onUpload}
+      className="shadow-coral-glow hover:scale-105 transition-transform"
     >
       <IconUpload size={18} className="mr-2" />
       Upload Media
@@ -329,15 +284,12 @@ const LoadingSkeleton = () => (
     {Array.from({ length: 10 }).map((_, i) => (
       <div
         key={i}
-        className="animate-pulse rounded-2xl overflow-hidden"
-        style={{
-          backgroundColor: "color-mix(in srgb, var(--card) 40%, transparent)",
-        }}
+        className="animate-pulse rounded-2xl overflow-hidden bg-white/40 border border-secondary/20"
       >
-        <div className="aspect-square bg-muted/30" />
+        <div className="aspect-square bg-secondary/10" />
         <div className="p-3 space-y-2">
-          <div className="h-4 w-3/4 bg-muted/40 rounded" />
-          <div className="h-3 w-1/2 bg-muted/30 rounded" />
+          <div className="h-4 w-3/4 bg-secondary/20 rounded" />
+          <div className="h-3 w-1/2 bg-secondary/10 rounded" />
         </div>
       </div>
     ))}
@@ -516,7 +468,11 @@ export default function MediaPage() {
   ];
 
   return (
-    <div className="relative flex-1 flex flex-col min-h-[calc(100vh-80px)]">
+    <div className="relative flex-1 flex flex-col min-h-[calc(100vh-80px)] bg-gradient-to-b from-primary/5 via-white to-secondary/10">
+      {/* Background Blobs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
+
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -528,28 +484,27 @@ export default function MediaPage() {
       />
 
       {/* Content */}
-      <div className="relative z-10 w-full flex-1 px-8 py-8 overflow-y-auto">
+      <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-10 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-12 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6"
         >
-          <div className="text-center sm:text-left">
-
-            <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-tight">
-              Media <span className="text-primary/80 font-normal italic">library</span>
-            </h1>
-            <p className="text-sm md:text-base text-muted-foreground/70 mt-3 font-medium max-w-md">
-              Manage your images and media files in one central place.
-            </p>
-          </div>
+            <div className="space-y-4">
+                <h1 className="font-serif text-3xl md:text-5xl text-foreground tracking-tight leading-tight">
+                Media <span className="italic text-primary">library</span>
+                </h1>
+                <p className="text-sm md:text-base text-muted-foreground/80 font-medium max-w-md">
+                Manage your images and assets in one central place.
+                </p>
+            </div>
 
           <Button
             onClick={handleUpload}
             disabled={uploadMutation.isPending}
             variant="default"
-        
+            className="shadow-coral-glow hover:scale-105 transition-transform"
           >
             {uploadMutation.isPending ? (
               <IconLoader2 size={18} className="mr-2 animate-spin" />
@@ -562,60 +517,50 @@ export default function MediaPage() {
 
         {/* Search and filters */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-6 flex flex-col sm:flex-row gap-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mb-8 flex flex-col sm:flex-row gap-4"
         >
-          {/* Search */}
-          <div className="relative flex-1 max-w-md">
+            {/* Search */}
+            <div className="relative flex-1 max-w-md">
             <IconSearch
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
             />
             <Input
-              placeholder="Search media..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 rounded-xl border-0 h-11"
-              style={{
-                backgroundColor: "color-mix(in srgb, var(--card) 60%, transparent)",
-                backdropFilter: "blur(16px)",
-              }}
+                placeholder="Search media..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 rounded-xl h-11 bg-white/60 border border-secondary/20 focus:bg-white transition-all shadow-sm"
             />
             {searchQuery && (
-              <button
+                <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted/50"
-              >
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-secondary/10"
+                >
                 <IconX size={14} className="text-muted-foreground" />
-              </button>
+                </button>
             )}
-          </div>
+            </div>
 
-          {/* Category tabs */}
-          <div
-            className="flex items-center gap-1 p-1 rounded-xl"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--card) 50%, transparent)",
-              backdropFilter: "blur(16px)",
-            }}
-          >
+            {/* Category tabs */}
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-secondary/10 border border-secondary/10">
             {categories.map((cat) => (
-              <button
+                <button
                 key={cat.value}
                 onClick={() => setCategory(cat.value)}
                 className={cn(
-                  "px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
-                  category === cat.value
-                    ? "bg-secondary text-secondary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/20"
+                    "px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
+                    category === cat.value
+                    ? "bg-white text-foreground shadow-sm font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-white/50"
                 )}
-              >
+                >
                 {cat.label}
-              </button>
+                </button>
             ))}
-          </div>
+            </div>
         </motion.div>
 
         {/* Media count */}

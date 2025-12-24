@@ -67,22 +67,7 @@ const SendIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const XIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
-  </svg>
-);
+
 
 // --- The Final, Self-Contained PromptBox Component ---
 interface PromptBoxProps {
@@ -167,19 +152,9 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
       <form onSubmit={handleSubmit}>
         <div
           className={cn(
-            "flex flex-col rounded-[28px] p-2 transition-colors cursor-text",
+            "flex flex-col rounded-[24px] p-2 transition-all duration-300 bg-white shadow-depth-3 border border-gray-100 focus-within:shadow-xl focus-within:border-secondary/30 focus-within:ring-1 focus-within:ring-secondary/20 cursor-text",
             className
           )}
-          style={{
-            backgroundColor: "color-mix(in srgb, var(--secondary) 18%, white)",
-            backdropFilter: "blur(40px) saturate(210%)",
-            WebkitBackdropFilter: "blur(40px) saturate(210%)",
-            border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
-            boxShadow: `
-              0 1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-              0 12px 48px rgba(0, 0, 0, 0.1)
-            `,
-          }}
         >
 
 
@@ -223,7 +198,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                       <button
                         type="submit"
                         disabled={!hasValue || savePromptMutation.isPending}
-                        className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-primary/40"
+                        className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none bg-primary text-primary-foreground hover:bg-primary/90 shadow-coral-glow hover:scale-105 disabled:bg-primary/40 disabled:shadow-none"
                       >
                         {savePromptMutation.isPending ? (
                           <svg

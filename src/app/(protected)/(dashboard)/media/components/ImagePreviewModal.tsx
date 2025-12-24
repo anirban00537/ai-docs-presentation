@@ -101,11 +101,7 @@ export const ImagePreviewModal = ({
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute top-6 right-6 p-3 rounded-full z-10 transition-all duration-200 hover:scale-110"
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.15)",
-          backdropFilter: "blur(16px)",
-        }}
+        className="absolute top-6 right-6 p-3 rounded-full z-10 transition-all duration-200 hover:scale-110 bg-white/10 hover:bg-white/20 backdrop-blur-md shadow-sm border border-white/10"
       >
         <IconX size={24} className="text-white" />
       </button>
@@ -117,11 +113,7 @@ export const ImagePreviewModal = ({
             e.stopPropagation();
             onPrevious();
           }}
-          className="absolute left-6 top-1/2 -translate-y-1/2 p-3 rounded-full z-10 transition-all duration-200 hover:scale-110"
-          style={{
-            backgroundColor: "rgba(255, 255, 255, 0.15)",
-            backdropFilter: "blur(16px)",
-          }}
+          className="absolute left-6 top-1/2 -translate-y-1/2 p-3 rounded-full z-10 transition-all duration-200 hover:scale-110 bg-white/10 hover:bg-white/20 backdrop-blur-md shadow-sm border border-white/10"
         >
           <IconChevronLeft size={28} className="text-white" />
         </button>
@@ -132,11 +124,7 @@ export const ImagePreviewModal = ({
             e.stopPropagation();
             onNext();
           }}
-          className="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-full z-10 transition-all duration-200 hover:scale-110"
-          style={{
-            backgroundColor: "rgba(255, 255, 255, 0.15)",
-            backdropFilter: "blur(16px)",
-          }}
+          className="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-full z-10 transition-all duration-200 hover:scale-110 bg-white/10 hover:bg-white/20 backdrop-blur-md shadow-sm border border-white/10"
         >
           <IconChevronRight size={28} className="text-white" />
         </button>
@@ -153,10 +141,7 @@ export const ImagePreviewModal = ({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="relative rounded-2xl overflow-hidden"
-          style={{
-            boxShadow: "0 25px 100px rgba(0, 0, 0, 0.5)",
-          }}
+          className="relative rounded-2xl overflow-hidden shadow-2xl bg-black/50"
         >
           {isImage ? (
             <img
@@ -176,10 +161,7 @@ export const ImagePreviewModal = ({
 
           {/* Glass overlay at bottom with title */}
           <div
-            className="absolute bottom-0 left-0 right-0 p-4"
-            style={{
-              background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)",
-            }}
+            className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent"
           >
             <p className="text-white font-medium truncate">{media.name}</p>
             <p className="text-white/60 text-sm">
@@ -197,11 +179,7 @@ export const ImagePreviewModal = ({
         >
           <button
             onClick={onToggleFavorite}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              backdropFilter: "blur(16px)",
-            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10"
           >
             {media.isFavorite ? (
               <IconHeartFilled size={18} className="text-red-400" />
@@ -215,11 +193,7 @@ export const ImagePreviewModal = ({
 
           <button
             onClick={onCopyUrl}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              backdropFilter: "blur(16px)",
-            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10"
           >
             <IconCopy size={18} className="text-white" />
             <span className="text-white text-sm font-medium">Copy URL</span>
@@ -227,11 +201,7 @@ export const ImagePreviewModal = ({
 
           <button
             onClick={onDownload}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              backdropFilter: "blur(16px)",
-            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10"
           >
             <IconDownload size={18} className="text-white" />
             <span className="text-white text-sm font-medium">Download</span>
@@ -240,13 +210,9 @@ export const ImagePreviewModal = ({
           <button
             onClick={() => setShowInfo(!showInfo)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105",
-              showInfo && "ring-2 ring-white/30"
+              "flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10",
+              showInfo && "bg-white/20 ring-1 ring-white/30"
             )}
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              backdropFilter: "blur(16px)",
-            }}
           >
             <IconInfoCircle size={18} className="text-white" />
             <span className="text-white text-sm font-medium">Info</span>

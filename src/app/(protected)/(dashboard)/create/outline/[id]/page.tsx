@@ -185,42 +185,21 @@ export default function OutlinePage() {
 
   if (isLoading) {
     return (
-      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden">
+      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden bg-gradient-to-b from-primary/5 via-white to-secondary/10">
         <div className="relative w-full max-w-4xl px-4">
           <div className="animate-pulse space-y-6">
-            <div 
-              className="rounded-2xl p-6"
-              style={{
-                backgroundColor: "color-mix(in srgb, var(--secondary) 10%, transparent)",
-                backdropFilter: "blur(24px) saturate(180%)",
-                WebkitBackdropFilter: "blur(24px) saturate(180%)",
-                boxShadow: `
-                  0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
-                  0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-                  0 8px 32px rgba(0, 0, 0, 0.08)
-                `,
-              }}
-            >
-              <div className="h-8 w-3/4 bg-muted/50 rounded-xl" />
-              <div className="h-4 w-full bg-muted/50 rounded-xl mt-4" />
-              <div className="h-4 w-2/3 bg-muted/50 rounded-xl mt-2" />
+            <div className="rounded-[32px] p-8 bg-white/40 border border-secondary/20 shadow-sm backdrop-blur-md">
+              <div className="h-8 w-3/4 bg-secondary/10 rounded-xl" />
+              <div className="h-4 w-full bg-secondary/10 rounded-xl mt-4" />
+              <div className="h-4 w-2/3 bg-secondary/10 rounded-xl mt-2" />
             </div>
             {[1, 2, 3].map((i) => (
               <div 
                 key={i}
-                className="rounded-2xl p-6"
-                style={{
-                  backgroundColor: "color-mix(in srgb, var(--secondary) 10%, transparent)",
-                  backdropFilter: "blur(24px) saturate(180%)",
-                  WebkitBackdropFilter: "blur(24px) saturate(180%)",
-                  boxShadow: `
-                    0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
-                    0 8px 32px rgba(0, 0, 0, 0.08)
-                  `,
-                }}
+                className="rounded-[32px] p-8 bg-white/40 border border-secondary/20 shadow-sm backdrop-blur-md"
               >
-                <div className="h-6 w-1/2 bg-muted/50 rounded-xl" />
-                <div className="h-4 w-full bg-muted/50 rounded-xl mt-3" />
+                <div className="h-6 w-1/2 bg-secondary/10 rounded-xl" />
+                <div className="h-4 w-full bg-secondary/10 rounded-xl mt-3" />
               </div>
             ))}
           </div>
@@ -251,22 +230,27 @@ export default function OutlinePage() {
   }
 
   return (
-    <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)]">
+    <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] bg-gradient-to-b from-primary/5 via-white to-secondary/10">
+      {/* Background Blobs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
+
       {/* === SCROLLABLE CONTENT LAYER === */}
-      <div className="relative z-10 w-full max-w-4xl flex flex-col gap-6 px-4 py-8 overflow-y-auto">
+      <div className="relative z-10 w-full max-w-7xl flex flex-col gap-8 px-4 py-8 overflow-y-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
+          className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4"
         >
-
-          <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-tight">
-            Refine your <span className="text-primary/80 font-normal italic">outline</span>
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground/70 mt-3 font-medium max-w-2xl">
-            Review and customize your presentation structure. Your changes are saved automatically.
-          </p>
+          <div>
+            <h1 className="font-serif text-3xl md:text-5xl font-bold text-foreground tracking-tight leading-tight">
+              Refine your <span className="text-primary italic">outline</span>
+            </h1>
+            <p className="text-sm md:text-base text-muted-foreground/80 mt-3 font-medium max-w-2xl">
+              Review and customize your presentation structure. Your changes are saved automatically.
+            </p>
+          </div>
           
           {/* Auto-save Status Indicator */}
           <AnimatePresence mode="wait">
@@ -306,41 +290,15 @@ export default function OutlinePage() {
           transition={{ delay: 0.05 }}
           className="relative"
         >
-          <div
-            className="relative rounded-2xl p-4 z-20"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
-              backdropFilter: "blur(24px) saturate(180%)",
-              WebkitBackdropFilter: "blur(24px) saturate(180%)",
-              boxShadow: `
-                0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
-                0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-                0 4px 16px rgba(0, 0, 0, 0.06)
-              `,
-            }}
-          >
-            {/* Glass shine overlay */}
-            <div 
-              className="absolute inset-0 pointer-events-none rounded-2xl"
-              style={{
-                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.2) 100%)",
-              }}
-            />
-            
+          <div className="relative rounded-[32px] p-6 z-20 bg-white/40 border border-secondary/20 shadow-sm transition-all duration-300 hover:shadow-depth-3 hover:bg-white">
             <div className="relative flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div 
-                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                  style={{
-                    backgroundColor: "color-mix(in srgb, var(--primary) 15%, transparent)",
-                    boxShadow: "0 2px 8px color-mix(in srgb, var(--primary) 15%, transparent)",
-                  }}
-                >
-                  <IconPalette size={20} style={{ color: "var(--primary)" }} />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-primary/10 text-primary shadow-sm">
+                  <IconPalette size={24} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground">Presentation Theme</h3>
-                  <p className="text-xs text-muted-foreground">
+                  <h3 className="font-serif text-lg font-bold text-foreground">Presentation Theme</h3>
+                  <p className="text-sm text-muted-foreground/80">
                     {selectedTheme ? selectedTheme.name : "Select a theme for your slides"}
                   </p>
                 </div>
@@ -352,39 +310,35 @@ export default function OutlinePage() {
                   onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
                   disabled={themesLoading}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200",
-                    "bg-white/50 hover:bg-white/70 border border-white/60",
+                    "flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-200",
+                    "bg-white border border-secondary/20 shadow-sm hover:shadow-md hover:scale-[1.02]",
                     "text-sm font-medium text-foreground"
                   )}
-                  style={{
-                    backdropFilter: "blur(12px)",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                  }}
                 >
                   {themesLoading ? (
                     <IconLoader2 size={16} className="animate-spin" />
                   ) : selectedTheme ? (
                     <>
                       {/* Theme color preview */}
-                      <div className="flex gap-0.5">
+                      <div className="flex gap-1">
                         <div 
-                          className="w-3 h-3 rounded-full"
+                          className="w-4 h-4 rounded-full border border-black/5 shadow-sm"
                           style={{ backgroundColor: selectedTheme.themeData?.primary || "#8B5CF6" }}
                         />
                         <div 
-                          className="w-3 h-3 rounded-full"
+                          className="w-4 h-4 rounded-full border border-black/5 shadow-sm"
                           style={{ backgroundColor: selectedTheme.themeData?.cardBackground || "#ffffff" }}
                         />
                       </div>
-                      <span className="max-w-[100px] truncate">{selectedTheme.name}</span>
+                      <span className="max-w-[120px] truncate font-semibold">{selectedTheme.name}</span>
                     </>
                   ) : (
                     <span>Choose theme</span>
                   )}
                   <IconChevronDown 
-                    size={14} 
+                    size={16} 
                     className={cn(
-                      "transition-transform duration-200",
+                      "transition-transform duration-200 text-muted-foreground",
                       themeDropdownOpen && "rotate-180"
                     )}
                   />
@@ -398,51 +352,45 @@ export default function OutlinePage() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -8, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-full mt-2 w-64 max-h-80 overflow-y-auto rounded-xl z-50"
-                      style={{
-                        backgroundColor: "rgba(255, 255, 255, 0.9)",
-                        backdropFilter: "blur(24px) saturate(180%)",
-                        WebkitBackdropFilter: "blur(24px) saturate(180%)",
-                        boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.4) inset",
-                      }}
+                      className="absolute right-0 top-full mt-2 w-72 max-h-80 overflow-y-auto rounded-2xl z-50 bg-white/95 backdrop-blur-xl border border-secondary/20 shadow-xl p-2"
                     >
-                      <div className="p-2 space-y-1">
+                      <div className="space-y-1">
                         {themes.map((theme) => (
                           <button
                             key={theme.id}
                             onClick={() => handleThemeSelect(theme)}
                             className={cn(
-                              "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150",
-                              "text-left hover:bg-white/70",
-                              selectedTheme?.id === theme.id && "bg-primary/10"
+                              "w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-150",
+                              "text-left hover:bg-secondary/10",
+                              selectedTheme?.id === theme.id && "bg-primary/5 text-primary"
                             )}
                           >
                             {/* Theme color swatches */}
-                            <div className="flex gap-0.5 shrink-0">
+                            <div className="flex gap-1 shrink-0">
                               <div 
-                                className="w-4 h-4 rounded-full border border-white/50"
+                                className="w-5 h-5 rounded-full border border-black/10 shadow-sm"
                                 style={{ backgroundColor: theme.themeData?.primary || "#8B5CF6" }}
                               />
                               <div 
-                                className="w-4 h-4 rounded-full border border-black/5"
+                                className="w-5 h-5 rounded-full border border-black/10 shadow-sm"
                                 style={{ backgroundColor: theme.themeData?.cardBackground || "#ffffff" }}
                               />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className={cn(
-                                "text-sm font-medium truncate",
+                                "text-sm font-bold truncate",
                                 selectedTheme?.id === theme.id ? "text-primary" : "text-foreground"
                               )}>
                                 {theme.name}
                               </p>
                               {theme.description && (
-                                <p className="text-xs text-muted-foreground truncate">
+                                <p className="text-xs text-muted-foreground truncate opacity-80">
                                   {theme.description}
                                 </p>
                               )}
                             </div>
                             {selectedTheme?.id === theme.id && (
-                              <IconCheck size={14} className="text-primary shrink-0" />
+                              <IconCheck size={16} className="text-primary shrink-0" />
                             )}
                           </button>
                         ))}
@@ -467,51 +415,21 @@ export default function OutlinePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="relative rounded-2xl p-6 overflow-hidden"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
-              backdropFilter: "blur(24px) saturate(180%)",
-              WebkitBackdropFilter: "blur(24px) saturate(180%)",
-              boxShadow: `
-                0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
-                0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-                1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-                -1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-                0 8px 32px rgba(0, 0, 0, 0.08),
-                0 2px 8px rgba(0, 0, 0, 0.04)
-              `,
-            }}
+            className="relative rounded-[32px] p-8 overflow-hidden bg-white/40 border border-secondary/20 shadow-sm transition-all duration-300 hover:shadow-depth-3 hover:bg-white"
           >
-            {/* Glass shine overlay */}
-            <div 
-              className="absolute inset-0 pointer-events-none rounded-2xl"
-              style={{
-                background: "linear-gradient(135deg, color-mix(in srgb, var(--card) 50%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--card) 20%, transparent) 100%)",
-              }}
-            />
-            
-            <div className="relative flex items-start gap-4">
-              <div 
-                className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                style={{
-                  backgroundColor: "color-mix(in srgb, var(--primary) 15%, transparent)",
-                  boxShadow: `
-                    0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
-                    0 4px 12px color-mix(in srgb, var(--primary) 15%, transparent)
-                  `,
-                }}
-              >
-                <IconFileText size={22} style={{ color: "var(--primary)" }} />
+            <div className="relative flex items-start gap-5">
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-primary/10 text-primary shadow-sm">
+                <IconFileText size={24} />
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-sm font-semibold text-foreground mb-2">
+                <h2 className="font-serif text-lg font-bold text-foreground mb-3">
                   Your Prompt
                 </h2>
-                <p className="text-foreground/80 whitespace-pre-wrap text-sm leading-relaxed">
+                <p className="text-foreground/80 whitespace-pre-wrap text-base leading-relaxed">
                   {outline.prompt}
                 </p>
-                <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="px-2 py-1 rounded-lg bg-muted/50">
+                <div className="mt-5 flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="px-3 py-1.5 rounded-lg bg-secondary/10 border border-secondary/10 font-semibold text-secondary-foreground">
                     {outline.numberOfSlides} slides
                   </span>
                 </div>
@@ -558,32 +476,9 @@ export default function OutlinePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="space-y-6"
+            className="space-y-8"
           >
-            <div
-              className="relative rounded-2xl p-6 overflow-hidden"
-              style={{
-                backgroundColor: "color-mix(in srgb, var(--card) 35%, transparent)",
-                backdropFilter: "blur(24px) saturate(180%)",
-                WebkitBackdropFilter: "blur(24px) saturate(180%)",
-                boxShadow: `
-                  0 1px 0 0 color-mix(in srgb, var(--foreground) 10%, transparent) inset,
-                  0 -1px 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-                  1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-                  -1px 0 0 0 color-mix(in srgb, var(--foreground) 5%, transparent) inset,
-                  0 8px 32px rgba(0, 0, 0, 0.08),
-                  0 2px 8px rgba(0, 0, 0, 0.04)
-                `,
-              }}
-            >
-              {/* Glass shine overlay */}
-              <div 
-                className="absolute inset-0 pointer-events-none rounded-2xl"
-                style={{
-                  background: "linear-gradient(135deg, color-mix(in srgb, var(--card) 50%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--card) 20%, transparent) 100%)",
-                }}
-              />
-              
+            <div className="relative rounded-[32px] p-8 overflow-hidden bg-white/40 border border-secondary/20 shadow-sm transition-all duration-300 hover:shadow-depth-3 hover:bg-white">
               <div className="relative">
                 <OutlineViewer
                   outline={outlineData}
@@ -602,19 +497,12 @@ export default function OutlinePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="flex gap-3 justify-end items-center"
+              className="flex gap-4 justify-end items-center"
             >
               <Button
                 onClick={() => router.push("/home")}
                 variant="outline"
-                className="rounded-xl px-5 h-11 gap-2 transition-all duration-300 hover:scale-[1.02]"
-                style={{
-                  backgroundColor: "color-mix(in srgb, var(--card) 50%, transparent)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  border: "1px solid color-mix(in srgb, var(--foreground) 20%, transparent)",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-                }}
+                className="rounded-xl px-6 h-12 gap-2 bg-white/50 border-secondary/20 hover:bg-white text-base font-medium shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <IconArrowLeft size={18} />
                 Back
@@ -623,18 +511,18 @@ export default function OutlinePage() {
                 <Link href={presentationUrl}>
                   <Button
                     disabled={updateOutlineMutation.isPending}
-                    className="rounded-xl px-6 h-11 gap-2 transition-all duration-300 hover:scale-[1.02] bg-primary hover:bg-primary/90 text-primary-foreground"
+                    className="rounded-xl px-8 h-12 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground text-base font-bold shadow-coral-glow hover:scale-105 transition-all duration-300"
                   >
-                    <IconSparkles size={18} />
+                    <IconSparkles size={20} />
                     Create Presentation
                   </Button>
                 </Link>
               ) : (
                 <Button
                   disabled={true}
-                  className="rounded-xl px-6 h-11 gap-2 bg-primary/50 text-primary-foreground"
+                  className="rounded-xl px-8 h-12 gap-2 bg-primary/50 text-primary-foreground text-base font-bold cursor-not-allowed"
                 >
-                  <IconSparkles size={18} />
+                  <IconSparkles size={20} />
                   Create Presentation
                 </Button>
               )}

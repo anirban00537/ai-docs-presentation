@@ -67,49 +67,52 @@ export default function MyPresentationsPage() {
   }
 
   return (
-    <div className="relative flex-1 flex flex-col min-h-[calc(100vh-80px)]">
+    <div className="relative flex-1 flex flex-col min-h-[calc(100vh-80px)] bg-gradient-to-b from-primary/5 via-white to-secondary/10">
+      {/* Background Blobs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
+
       {/* === SCROLLABLE CONTENT LAYER === */}
-      <div className="relative z-10 w-full flex-1 px-8 py-8 overflow-y-auto">
+      <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-10 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-12 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6"
         >
-          <div className="text-center sm:text-left">
-
-            <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-tight">
-              My <span className="text-primary/80 font-normal italic">presentations</span>
-            </h1>
-            <p className="text-sm md:text-base text-muted-foreground/70 mt-3 font-medium max-w-md">
-              {presentations.length > 0 
-                ? `You have ${presentations.length} presentation${presentations.length !== 1 ? 's' : ''} in your library.`
-                : "Create and manage your professional presentations."
-              }
-            </p>
-          </div>
-          
-          <motion.div
+            <div className="space-y-4">
+                <h1 className="font-serif text-3xl md:text-5xl text-foreground tracking-tight leading-tight">
+                My <span className="italic text-primary">presentations</span>
+                </h1>
+                <p className="text-sm md:text-base text-muted-foreground/80 font-medium max-w-md">
+                {presentations.length > 0
+                    ? `You have ${presentations.length} presentation${presentations.length !== 1 ? 's' : ''} in your library.`
+                    : "Create and manage your professional presentations."
+                }
+                </p>
+            </div>
+            
+            <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
-          >
-            <Button
-              onClick={() => router.push("/home")}
-              variant="default"
-             
             >
-              <IconPlus size={18} />
-              New Project
+            <Button
+                onClick={() => router.push("/home")}
+                variant="default"
+                className="shadow-coral-glow hover:scale-105 transition-transform"
+            >
+                <IconPlus size={18} className="mr-2" />
+                New Project
             </Button>
-          </motion.div>
+            </motion.div>
         </motion.div>
 
         {/* Content */}
         {presentations.length === 0 ? (
           <EmptyState onCreateClick={() => router.push("/home")} />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
             <AnimatePresence mode="popLayout">
               {presentations.map((presentation: any, index: number) => (
                 <PresentationCard

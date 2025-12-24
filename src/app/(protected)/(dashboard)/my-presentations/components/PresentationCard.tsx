@@ -69,38 +69,17 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
     >
       <Link href={`/presentation/${presentation.id}`}>
         <div 
-          className="relative overflow-hidden rounded-2xl transition-all duration-300 cursor-pointer"
-          style={{
-            backgroundColor: "color-mix(in srgb, var(--secondary) 35%, var(--card))",
-            backdropFilter: "blur(24px) saturate(180%)",
-            WebkitBackdropFilter: "blur(24px) saturate(180%)",
-            border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
-            boxShadow: `
-              0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
-              0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-              0 4px 16px rgba(0, 0, 0, 0.06),
-              0 1px 4px rgba(0, 0, 0, 0.03)
-            `,
-          }}
+          className="relative overflow-hidden rounded-2xl transition-all duration-300 cursor-pointer bg-white/40 border border-secondary/20 hover:border-primary/20 hover:shadow-depth-3 hover:bg-white"
         >
-          {/* Glass shine overlay */}
-          <div 
-            className="absolute inset-0 pointer-events-none rounded-2xl z-10"
-            style={{
-              background: "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 40%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--secondary) 10%, transparent) 100%)",
-            }}
-          />
-
           {/* Slide Preview */}
-          <div className="relative" style={{ borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
+          <div className="relative border-b border-black/5">
             {firstSlide ? (
               <SlidePreview slide={firstSlide} theme={theme} />
             ) : (
               <div 
-                className="aspect-video flex items-center justify-center"
-                style={{ backgroundColor: `${theme.primary}08` }}
+                className="aspect-video flex items-center justify-center bg-secondary/5"
               >
-                <IconPresentation size={48} style={{ color: `${theme.primary}50` }} />
+                <IconPresentation size={48} className="text-secondary/50" />
               </div>
             )}
 
@@ -110,17 +89,17 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
 
           {/* Content */}
           <div className="relative p-4 z-10">
-            <h3 className="text-sm font-semibold text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
+            <h3 className="font-serif text-sm font-bold text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
               {presentation.title || "Untitled Presentation"}
             </h3>
             
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <IconStack2 size={14} />
-                {slideCount} {slideCount === 1 ? "slide" : "slides"}
+            <div className="flex items-center gap-4 text-xs text-muted-foreground font-medium">
+              <span className="flex items-center gap-1.5 p-1 px-2 rounded-full bg-secondary/10">
+                <IconStack2 size={12} />
+                {slideCount}
               </span>
               <span className="flex items-center gap-1.5">
-                <IconCalendar size={14} />
+                <IconCalendar size={12} />
                 {formatDate(presentation.updatedAt || presentation.createdAt)}
               </span>
             </div>
@@ -129,17 +108,11 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
       </Link>
 
       {/* Actions dropdown */}
-      <div className="absolute top-3 right-3 z-30">
+      <div className="absolute top-3 right-3 z-30 opacity-0 group-hover:opacity-100 transition-all duration-200">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
-              className="p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-105"
-              style={{
-                backgroundColor: "color-mix(in srgb, var(--secondary) 85%, transparent)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-              }}
+              className="p-1.5 rounded-lg bg-white/80 backdrop-blur-sm border border-black/5 shadow-sm hover:bg-white transition-colors"
               onClick={(e) => e.preventDefault()}
             >
               <IconDotsVertical size={16} className="text-foreground/70" />
@@ -147,21 +120,14 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent 
             align="end"
-            className="rounded-xl border-0"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--popover) 90%, transparent)",
-              backdropFilter: "blur(24px) saturate(180%)",
-              WebkitBackdropFilter: "blur(24px) saturate(180%)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
-              border: "1px solid color-mix(in srgb, var(--secondary) 30%, transparent)",
-            }}
+            className="rounded-xl border border-secondary/20 shadow-lg bg-white/95 backdrop-blur-md"
           >
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(presentation.id);
               }}
-              className="rounded-lg"
+              className="rounded-lg cursor-pointer"
             >
               <IconEdit className="size-4 mr-2" />
               Edit
@@ -172,7 +138,7 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
                 e.stopPropagation();
                 onDelete(presentation.id, presentation.title || "Untitled Presentation");
               }}
-              className="text-destructive focus:text-destructive rounded-lg"
+              className="text-destructive focus:text-destructive rounded-lg cursor-pointer"
             >
               <IconTrash className="size-4 mr-2" />
               Delete

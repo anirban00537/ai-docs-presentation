@@ -96,8 +96,12 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] overflow-y-auto px-4 py-16">
-      <div className="relative z-10 w-full max-w-5xl flex flex-col gap-14">
+    <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] overflow-y-auto px-4 py-16 bg-gradient-to-b from-primary/5 via-white to-secondary/10">
+      {/* Background Blobs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
+
+      <div className="relative z-10 w-full max-w-7xl flex flex-col gap-14">
         
         {/* Header */}
         <motion.div
@@ -106,11 +110,10 @@ export default function SubscriptionPage() {
           className="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6"
         >
           <div className="text-center sm:text-left">
-
-            <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight leading-tight">
-              Subscription & <span className="text-primary/80 font-normal italic">billing</span>
+            <h1 className="font-serif text-3xl md:text-5xl font-bold text-foreground tracking-tight leading-tight">
+              Subscription & <span className="text-primary italic">billing</span>
             </h1>
-            <p className="text-sm md:text-base text-muted-foreground/70 mt-3 font-medium max-w-md">
+            <p className="text-sm md:text-base text-muted-foreground/80 mt-3 font-medium max-w-md">
               Monitor your AI credit usage and plan health in real-time.
             </p>
           </div>
@@ -119,6 +122,7 @@ export default function SubscriptionPage() {
             variant="outline"
             onClick={handleSync}
             disabled={syncMutation.isPending}
+            className="bg-white/50 border-secondary/20 hover:bg-white transition-all shadow-sm"
           >
             <IconRefresh
               className={cn("mr-2 h-4 w-4 text-primary/70", syncMutation.isPending && "animate-spin")}
@@ -135,71 +139,46 @@ export default function SubscriptionPage() {
             initial={{ opacity: 0, x: -15 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="relative flex flex-col p-9 rounded-[38px] overflow-hidden group"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--secondary) 15%, transparent)",
-              backdropFilter: "blur(28px) saturate(190%)",
-              WebkitBackdropFilter: "blur(28px) saturate(190%)",
-              boxShadow: `
-                0 1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-                0 -1px 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
-                1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
-                -1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
-                0 10px 40px -15px rgba(0, 0, 0, 0.04)
-              `,
-            }}
+            className="relative flex flex-col p-9 rounded-[32px] overflow-hidden group bg-white/40 border border-secondary/20 shadow-sm hover:shadow-depth-3 hover:bg-white transition-all duration-300"
           >
-            {/* Glass shine overlay */}
-            <div 
-              className="absolute inset-x-0 top-0 h-1/2 pointer-events-none rounded-t-[38px]"
-              style={{
-                background: "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 40%, transparent) 0%, transparent 50%)",
-              }}
-            />
-
             <div className="relative z-10 flex items-center justify-between mb-10">
               <div className="flex items-center gap-4">
-                <div 
-                  className="w-11 h-11 rounded-1.5xl flex items-center justify-center"
-                  style={{
-                    backgroundColor: "color-mix(in srgb, var(--primary) 10%, transparent)",
-                  }}
-                >
-                  <IconSparkles size={20} className="text-primary/60" />
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-primary/10 text-primary">
+                  <IconSparkles size={24} />
                 </div>
-                <h2 className="text-xl font-semibold text-foreground tracking-tight">Credits</h2>
+                <h2 className="font-serif text-2xl font-bold text-foreground tracking-tight">Credits</h2>
               </div>
               <div className="text-right">
-                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 mb-1">Available Now</p>
-                <p className="text-3xl font-semibold text-foreground tracking-tighter">{totalAvailableCredits.toLocaleString()}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1">Available Now</p>
+                <p className="text-4xl font-serif font-bold text-foreground tracking-tight">{totalAvailableCredits.toLocaleString()}</p>
               </div>
             </div>
 
             <div className="relative z-10 grid grid-cols-2 gap-5 pt-2">
-              <div className="p-5 rounded-2.5xl bg-secondary/10 border border-secondary/20">
-                <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Monthly Limit</p>
-                <p className="text-lg font-semibold text-foreground/80">{credits?.monthlyLimit?.toLocaleString() || 0}</p>
+              <div className="p-5 rounded-2xl bg-secondary/5 border border-secondary/10">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Monthly Limit</p>
+                <p className="text-lg font-bold text-foreground/80">{credits?.monthlyLimit?.toLocaleString() || 0}</p>
               </div>
-              <div className="p-5 rounded-2.5xl bg-secondary/10 border border-secondary/20">
-                <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Consumed</p>
-                <p className="text-lg font-semibold text-foreground/80">{credits?.monthlyUsed?.toLocaleString() || 0}</p>
+              <div className="p-5 rounded-2xl bg-secondary/5 border border-secondary/10">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Consumed</p>
+                <p className="text-lg font-bold text-foreground/80">{credits?.monthlyUsed?.toLocaleString() || 0}</p>
               </div>
-              <div className="p-5 rounded-2.5xl bg-secondary/10 border border-secondary/20">
-                <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Free Batch</p>
-                <p className="text-lg font-semibold text-foreground/80">{(credits?.freeCredits || 0) - (credits?.freeCreditsUsed || 0)}</p>
+              <div className="p-5 rounded-2xl bg-secondary/5 border border-secondary/10">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Free Batch</p>
+                <p className="text-lg font-bold text-foreground/80">{(credits?.freeCredits || 0) - (credits?.freeCreditsUsed || 0)}</p>
               </div>
-              <div className="p-5 rounded-2.5xl bg-secondary/10 border border-secondary/20">
-                <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Paid Batch</p>
-                <p className="text-lg font-semibold text-foreground/80">{credits?.remainingCredits || 0}</p>
+              <div className="p-5 rounded-2xl bg-secondary/5 border border-secondary/10">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Paid Batch</p>
+                <p className="text-lg font-bold text-foreground/80">{credits?.remainingCredits || 0}</p>
               </div>
             </div>
 
             {!hasCredits && (
-              <div className="relative z-10 mt-10 p-4 rounded-2.5xl border border-yellow-500/10 bg-yellow-500/5 flex items-start gap-4">
-                <IconAlertCircle className="h-5 w-5 text-yellow-600/60 mt-0.5 shrink-0" />
+              <div className="relative z-10 mt-10 p-4 rounded-2xl border border-yellow-500/20 bg-yellow-500/10 flex items-start gap-4">
+                <IconAlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-yellow-700/80">Low Credit Balance</p>
-                  <p className="text-xs text-yellow-700/50 mt-1 font-medium leading-relaxed italic">
+                  <p className="text-sm font-bold text-yellow-700">Low Credit Balance</p>
+                  <p className="text-xs text-yellow-700/70 mt-1 font-medium leading-relaxed">
                     You&apos;ve run out of fuel. Level up your plan to keep building.
                   </p>
                 </div>
@@ -212,39 +191,14 @@ export default function SubscriptionPage() {
             initial={{ opacity: 0, x: 15 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="relative flex flex-col p-9 rounded-[38px] overflow-hidden group"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--secondary) 15%, transparent)",
-              backdropFilter: "blur(28px) saturate(190%)",
-              WebkitBackdropFilter: "blur(28px) saturate(190%)",
-              boxShadow: `
-                0 1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-                0 -1px 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
-                1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
-                -1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
-                0 10px 40px -15px rgba(0, 0, 0, 0.04)
-              `,
-            }}
+            className="relative flex flex-col p-9 rounded-[32px] overflow-hidden group bg-white/40 border border-secondary/20 shadow-sm hover:shadow-depth-3 hover:bg-white transition-all duration-300"
           >
-            {/* Glass shine overlay */}
-            <div 
-              className="absolute inset-x-0 top-0 h-1/2 pointer-events-none rounded-t-[38px]"
-              style={{
-                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%)",
-              }}
-            />
-
             <div className="relative z-10 flex items-center justify-between mb-12">
               <div className="flex items-center gap-4">
-                <div 
-                  className="w-11 h-11 rounded-1.5xl flex items-center justify-center"
-                  style={{
-                    backgroundColor: "color-mix(in srgb, var(--chart-1) 10%, transparent)",
-                  }}
-                >
-                  <IconCreditCard size={20} className="text-blue-500/60" />
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-blue-500/10 text-blue-600">
+                  <IconCreditCard size={24} />
                 </div>
-                <h2 className="text-xl font-semibold text-foreground tracking-tight">Plan Status</h2>
+                <h2 className="font-serif text-2xl font-bold text-foreground tracking-tight">Plan Status</h2>
               </div>
               {getStatusBadge()}
             </div>
@@ -254,15 +208,15 @@ export default function SubscriptionPage() {
                 <>
                   <div className="grid grid-cols-1 gap-8">
                     <div>
-                      <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 mb-2.5">Subscription Identity</p>
-                      <div className="px-4 py-3 rounded-2xl bg-secondary/10 border border-secondary/20 font-mono text-[10px] text-foreground/50 truncate">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2.5">Subscription Identity</p>
+                      <div className="px-4 py-3 rounded-xl bg-secondary/5 border border-secondary/10 font-mono text-xs text-foreground/60 truncate">
                         {subscription.polarSubscriptionId || subscription.id}
                       </div>
                     </div>
                     {subscription.currentPeriodEnd && (
                       <div>
-                        <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 mb-2.5">Renewal Date</p>
-                        <div className="text-xl font-semibold text-foreground/80 italic underline decoration-primary/20 underline-offset-8">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2.5">Renewal Date</p>
+                        <div className="text-xl font-serif font-bold text-foreground italic">
                           {new Date(subscription.currentPeriodEnd).toLocaleDateString(undefined, {
                             month: 'long', day: 'numeric', year: 'numeric'
                           })}
@@ -273,9 +227,9 @@ export default function SubscriptionPage() {
 
                   <div className="pt-6 mt-auto">
                     {subscription.cancelAtPeriodEnd ? (
-                      <div className="p-5 rounded-2.5xl bg-orange-500/5 border border-orange-500/10">
-                        <p className="text-sm font-semibold text-orange-700/80">Scheduled Termination</p>
-                        <p className="text-xs text-orange-700/50 mt-1 font-medium leading-relaxed italic">
+                      <div className="p-5 rounded-2xl bg-orange-500/5 border border-orange-500/10">
+                        <p className="text-sm font-bold text-orange-700">Scheduled Termination</p>
+                        <p className="text-xs text-orange-700/70 mt-1 font-medium leading-relaxed">
                           Access remains active until the current period expires.
                         </p>
                       </div>
@@ -284,24 +238,24 @@ export default function SubscriptionPage() {
                         <AlertDialogTrigger asChild>
                           <Button 
                             variant="ghost" 
-                          
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
                           >
                             Terminate Membership
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent className="rounded-[32px] border border-white/20 shadow-2xl bg-white/95 backdrop-blur-3xl">
+                        <AlertDialogContent className="rounded-3xl border border-secondary/20 shadow-2xl bg-white/95 backdrop-blur-3xl">
                           <AlertDialogHeader>
-                            <AlertDialogTitle className="text-xl font-semibold tracking-tight">Cancel Subscription?</AlertDialogTitle>
+                            <AlertDialogTitle className="font-serif text-2xl font-bold tracking-tight">Cancel Subscription?</AlertDialogTitle>
                             <AlertDialogDescription className="text-sm font-medium text-muted-foreground/80 leading-relaxed">
                               Your access will continue until the end of your current billing period. Are you sure you want to stop building amazing presentations?
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter className="gap-2 mt-6">
-                            <AlertDialogCancel className="rounded-2xl h-11 px-6 font-semibold text-sm">Keep Plan</AlertDialogCancel>
+                            <AlertDialogCancel className="rounded-xl h-11 px-6 font-semibold text-sm border-secondary/20">Keep Plan</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={handleCancel}
                               disabled={cancelMutation.isPending}
-                              className="rounded-2xl h-11 px-8 font-semibold text-sm bg-red-500 hover:bg-red-600 text-white"
+                              className="rounded-xl h-11 px-8 font-semibold text-sm bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/20"
                             >
                               {cancelMutation.isPending ? "Ending..." : "Confirm Cancellation"}
                             </AlertDialogAction>
@@ -313,12 +267,17 @@ export default function SubscriptionPage() {
                 </>
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <div className="w-14 h-14 rounded-full bg-slate-50 flex items-center justify-center mb-5">
-                    <IconCreditCard size={28} className="text-slate-300" />
+                  <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mb-5">
+                    <IconCreditCard size={32} className="text-muted-foreground/50" />
                   </div>
-                  <p className="text-lg font-semibold text-foreground/80 tracking-tight">No active membership</p>
-                  <p className="text-sm text-muted-foreground/60 mt-1.5 max-w-[180px] leading-relaxed">Unlock pro features and more credits today.</p>
-                  <Button onClick={() => window.location.href = '/pricing'} >Explore Plans</Button>
+                  <p className="text-xl font-serif font-bold text-foreground tracking-tight">No active membership</p>
+                  <p className="text-sm text-muted-foreground/70 mt-2 max-w-[200px] leading-relaxed">Unlock pro features and more credits today.</p>
+                  <Button 
+                    onClick={() => window.location.href = '/pricing'} 
+                    className="mt-6 rounded-xl h-11 px-6 font-semibold shadow-coral-glow hover:scale-105 transition-transform"
+                  >
+                    Explore Plans
+                  </Button>
                 </div>
               )}
             </div>
@@ -330,56 +289,42 @@ export default function SubscriptionPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="relative px-9 py-7 rounded-[38px] overflow-hidden"
-          style={{
-            backgroundColor: "color-mix(in srgb, var(--secondary) 15%, transparent)",
-            backdropFilter: "blur(28px) saturate(190%)",
-            WebkitBackdropFilter: "blur(28px) saturate(190%)",
-            boxShadow: `
-              0 1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-              0 -1px 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
-              1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
-              -1px 0 0 0 color-mix(in srgb, var(--secondary) 10%, transparent) inset,
-              0 10px 40px -15px rgba(0, 0, 0, 0.04)
-            `,
-          }}
+          className="relative px-9 py-8 rounded-[32px] overflow-hidden bg-white/40 border border-secondary/20 shadow-sm"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent pointer-events-none" />
-          
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10 text-center md:text-left">
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-muted-foreground/30 mb-1.5">Historical Impact</p>
-              <div className="flex items-center gap-2 justify-center md:justify-start">
-                <span className="text-2xl font-semibold text-foreground tracking-tighter">{credits?.usedCredits?.toLocaleString() || 0}</span>
-                <span className="text-[10px] font-bold text-muted-foreground/50 mt-1 uppercase tracking-tighter">Credits Consumed</span>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 mb-2">Historical Impact</p>
+              <div className="flex items-center gap-3 justify-center md:justify-start">
+                <span className="text-3xl font-serif font-bold text-foreground tracking-tight">{credits?.usedCredits?.toLocaleString() || 0}</span>
+                <span className="text-[10px] font-bold text-muted-foreground/60 mt-1 uppercase tracking-wider">Credits Consumed</span>
               </div>
             </div>
             
-            <div className="hidden md:block w-px h-10 bg-black/5" />
+            <div className="hidden md:block w-px h-12 bg-secondary/20" />
             
-            <div className="flex-1 max-w-sm">
+            <div className="flex-1 max-w-sm w-full">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-widest">Usage Velocity</span>
-                  <span className="text-[10px] font-bold text-primary italic">
+                  <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">Usage Velocity</span>
+                  <span className="text-[12px] font-bold text-primary italic">
                     {Math.round(((credits?.monthlyUsed || 0) / (credits?.monthlyLimit || 1)) * 100)}%
                   </span>
                 </div>
-                <div className="h-2 w-full bg-black/5 rounded-full overflow-hidden p-0.5">
+                <div className="h-2.5 w-full bg-secondary/10 rounded-full overflow-hidden p-0.5">
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(100, Math.round(((credits?.monthlyUsed || 0) / (credits?.monthlyLimit || 1)) * 100))}%` }}
                     transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                    className="h-full bg-primary/80 rounded-full shadow-[0_0_12px_rgba(139,92,246,0.15)]"
+                    className="h-full bg-primary rounded-full shadow-sm"
                   />
                 </div>
             </div>
 
-            <div className="hidden md:block w-px h-10 bg-black/5" />
+            <div className="hidden md:block w-px h-12 bg-secondary/20" />
 
             {credits?.lastResetAt && (
               <div className="text-right">
-                <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-muted-foreground/30 mb-1.5">Last Reset Cycle</p>
-                <p className="text-sm font-semibold text-foreground/70">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 mb-2">Last Reset Cycle</p>
+                <p className="text-lg font-serif font-bold text-foreground">
                   {new Date(credits.lastResetAt).toLocaleDateString(undefined, { 
                     month: 'short', day: 'numeric', year: 'numeric'
                   })}

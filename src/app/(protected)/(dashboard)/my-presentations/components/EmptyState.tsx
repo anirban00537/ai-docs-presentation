@@ -17,41 +17,14 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateClick }) => (
   >
     {/* Glassmorphic icon container */}
     <motion.div
-      className="relative w-24 h-24 rounded-3xl flex items-center justify-center mb-8 overflow-hidden"
+      className="relative w-24 h-24 rounded-3xl flex items-center justify-center mb-8 overflow-hidden bg-white shadow-depth-3 border border-secondary/20"
       animate={{ scale: [1, 1.03, 1] }}
       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      style={{
-        backgroundColor: "color-mix(in srgb, var(--secondary) 15%, transparent)",
-        backdropFilter: "blur(24px) saturate(180%)",
-        WebkitBackdropFilter: "blur(24px) saturate(180%)",
-        boxShadow: `
-          0 1px 0 0 color-mix(in srgb, var(--secondary) 25%, transparent) inset,
-          0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-          0 8px 32px color-mix(in srgb, var(--primary) 12%, transparent),
-          0 2px 8px rgba(0, 0, 0, 0.04)
-        `,
-      }}
     >
-      {/* Glass shine overlay */}
-      <div 
-        className="absolute inset-0 pointer-events-none rounded-3xl"
-        style={{
-          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.3) 100%)",
-        }}
-      />
-      
-      {/* Primary glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--primary) 20%, transparent) 0%, transparent 60%)",
-        }}
-      />
-      
-      <IconPresentation size={42} className="text-primary relative z-10" />
+      <IconPresentation size={42} className="text-secondary opacity-80" />
     </motion.div>
     
-    <h3 className="text-xl font-semibold text-foreground mb-2">
+    <h3 className="text-xl font-bold font-serif text-foreground mb-2">
       No presentations yet
     </h3>
     <p className="text-sm text-muted-foreground mb-8 text-center max-w-md leading-relaxed">
@@ -60,10 +33,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateClick }) => (
     
     <Button
       onClick={onCreateClick}
-      className="gap-2 px-6 h-11 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-[1.02]"
-      style={{
-        boxShadow: "0 4px 16px color-mix(in srgb, var(--primary) 25%, transparent)",
-      }}
+      className="gap-2 px-6 h-11 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-[1.02] shadow-coral-glow"
     >
       <IconPlus size={18} />
       Create Your First Presentation

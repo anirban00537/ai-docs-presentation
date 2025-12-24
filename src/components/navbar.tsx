@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
@@ -32,16 +33,18 @@ export function Navbar() {
       <div 
         className={cn(
           "pointer-events-auto flex items-center justify-between gap-8 h-14 pl-6 pr-2 rounded-full transition-all duration-300",
-          "bg-gradient-to-b from-white/90 via-secondary/10 to-white/90 backdrop-blur-xl border border-secondary/20 shadow-sm",
+          "bg-white/80 backdrop-blur-xl border border-white/40 shadow-sm",
           isScrolled ? "w-full max-w-4xl shadow-depth-2" : "w-full max-w-5xl"
         )}
       >
-        {/* Logo */}
         <Link href="/" className="group flex items-center gap-2">
-          {/* Simple Butterfast Logo Text */}
-          <span className="font-serif text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">
-            Butterfast.
-          </span>
+          <Image 
+            src="/logo.svg" 
+            alt="Butterfast Logo" 
+            width={130} 
+            height={32} 
+            className="h-8 w-auto"
+          />
         </Link>
 
         {/* Desktop Menu */}
@@ -63,7 +66,7 @@ export function Navbar() {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="hidden sm:inline-flex text-foreground/70 hover:text-foreground hover:bg-secondary/20 rounded-full px-5"
+            className="hidden sm:inline-flex text-foreground/70 hover:text-foreground hover:bg-foreground/5 rounded-full px-5"
           >
             Log in
           </Button>

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { PromptBox } from "@/components/ui/chatgpt-prompt-input";
+import { cn } from "@/lib/utils";
 import {
   IconRobot,
   IconRocket,
@@ -17,28 +18,32 @@ const suggestions = [
     title: "AI Revolution",
     description: "How AI is transforming industries",
     prompt: "Create a presentation about how artificial intelligence is revolutionizing healthcare, education, and creative industries",
-    color: "var(--chart-1)", // Theme primary chart color
+    color: "bg-chart-1", 
+    iconColor: "text-chart-1",
   },
   {
     icon: IconRocket,
     title: "Space Exploration",
     description: "Journey through the cosmos",
     prompt: "Create a presentation about recent breakthroughs in space exploration, Mars missions, and the future of interstellar travel",
-    color: "var(--chart-2)", // Theme secondary chart color
+    color: "bg-chart-2",
+    iconColor: "text-chart-2",
   },
   {
     icon: IconLeaf,
     title: "Climate Solutions",
     description: "Saving our planet",
     prompt: "Create a presentation about innovative climate change solutions, renewable energy technologies, and sustainable living practices",
-    color: "var(--chart-3)", // Theme tertiary chart color
+    color: "bg-chart-3",
+    iconColor: "text-chart-3",
   },
   {
     icon: IconBooks,
     title: "Ancient Wonders",
     description: "Mysteries of history",
     prompt: "Create a presentation about the Seven Wonders of the Ancient World, their construction, and their historical significance",
-    color: "var(--chart-4)", // Theme quaternary chart color
+    color: "bg-chart-4",
+    iconColor: "text-chart-4",
   },
 ];
 
@@ -57,49 +62,21 @@ const SuggestionCard: React.FC<{
       whileHover={{ scale: 1.02, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(suggestion.prompt)}
-      className="group relative flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-300 overflow-hidden"
-      style={{
-        backgroundColor: "color-mix(in srgb, var(--secondary) 35%, var(--card))",
-        backdropFilter: "blur(24px) saturate(180%)",
-        WebkitBackdropFilter: "blur(24px) saturate(180%)",
-        border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
-        boxShadow: `
-          0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
-          0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-          0 4px 16px rgba(0, 0, 0, 0.06)
-        `,
-      }}
+      className="group relative flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-300 overflow-hidden bg-white/40 hover:bg-white border border-secondary/20 hover:border-primary/20 hover:shadow-depth-3"
     >
-      {/* Glass shine overlay */}
       <div 
-        className="absolute inset-0 pointer-events-none rounded-xl"
-        style={{
-          background: "linear-gradient(135deg, color-mix(in srgb, var(--secondary) 40%, transparent) 0%, transparent 40%, transparent 60%, color-mix(in srgb, var(--secondary) 10%, transparent) 100%)",
-        }}
-      />
-      
-      {/* Colored glow on hover */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at 0% 50%, color-mix(in srgb, ${suggestion.color} 20%, transparent) 0%, transparent 60%)`,
-        }}
-      />
-
-      <div 
-        className="relative w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
-        style={{
-          backgroundColor: `color-mix(in srgb, ${suggestion.color} 15%, transparent)`,
-          boxShadow: `0 2px 8px color-mix(in srgb, ${suggestion.color} 15%, transparent)`,
-        }}
+        className={cn(
+          "relative w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 bg-secondary/20",
+          suggestion.iconColor
+        )}
       >
-        <Icon size={18} style={{ color: suggestion.color }} />
+        <Icon size={20} className="opacity-80 group-hover:opacity-100" />
       </div>
-      <div className="relative min-w-0">
-        <h3 className="text-sm font-semibold text-foreground group-hover:text-foreground transition-colors truncate">
+      <div className="relative min-w-0 flex-1">
+        <h3 className="text-sm font-serif font-bold text-foreground group-hover:text-primary transition-colors truncate mb-0.5">
           {suggestion.title}
         </h3>
-        <p className="text-xs text-muted-foreground truncate">
+        <p className="text-xs text-muted-foreground truncate opacity-80 group-hover:opacity-100">
           {suggestion.description}
         </p>
       </div>
@@ -116,16 +93,19 @@ export default function HomePage() {
   };
 
   return (
-    <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden px-4">
+    <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden px-4 bg-gradient-to-b from-primary/5 via-white to-secondary/10">
+      {/* Background Blobs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
+
       {/* Content */}
-      <div className="relative w-full max-w-3xl flex flex-col gap-10">
+      <div className="relative w-full max-w-4xl flex flex-col gap-12 z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-6"
+          className="text-center space-y-4"
         >
-
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground leading-tight">
             What would you like to <span className="text-primary/80 font-normal italic">build</span> today?
           </h1>
@@ -137,7 +117,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="relative w-full"
+          className="relative w-full max-w-2xl mx-auto"
         >
           <PromptBox
             name="message"
@@ -149,7 +129,7 @@ export default function HomePage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-500"
+              className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-500 text-center font-medium"
             >
               {error}
             </motion.div>
@@ -161,13 +141,13 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="space-y-5"
+          className="space-y-6"
         >
-          <p className="text-xs font-medium text-muted-foreground text-center uppercase tracking-widest">
+          <p className="text-xs font-bold text-muted-foreground/60 text-center uppercase tracking-widest">
             Quick Start Ideas
           </p>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {suggestions.map((suggestion, index) => (
               <SuggestionCard
                 key={suggestion.title}
@@ -184,17 +164,17 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-xs text-muted-foreground/60 text-center"
+          className="text-xs text-muted-foreground/60 text-center font-medium"
         >
           Press{" "}
           <kbd 
-            className="px-2 py-1 rounded-lg text-[10px] font-mono mx-0.5 bg-muted text-muted-foreground"
+            className="px-2 py-1 rounded-lg text-[10px] font-mono mx-0.5 bg-white border border-secondary/20 shadow-sm text-secondary-foreground"
           >
             ⌘
           </kbd>
           +
           <kbd 
-            className="px-2 py-1 rounded-lg text-[10px] font-mono mx-0.5 bg-muted text-muted-foreground"
+            className="px-2 py-1 rounded-lg text-[10px] font-mono mx-0.5 bg-white border border-secondary/20 shadow-sm text-secondary-foreground"
           >
             Enter
           </kbd>
