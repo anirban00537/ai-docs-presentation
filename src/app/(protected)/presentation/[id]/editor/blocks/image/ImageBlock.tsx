@@ -1,8 +1,9 @@
 import React, { useState, memo } from "react";
 import type { Block, Theme } from "@/types/presentation";
 import { type ImageContent } from "@/types/presentation";
-import { IconPhoto, IconExternalLink } from "@tabler/icons-react";
+import { IconPhoto, IconExternalLink, IconRectangleVertical, IconRectangle, IconPhotoPlus } from "@tabler/icons-react";
 import { CommonCard } from "../CommonCard";
+import { cn } from "@/lib/utils";
 import {
   ImagePickerModal,
   type SelectedImage,
@@ -23,7 +24,7 @@ export const ImageBlock = memo(function ImageBlock({
   readOnly = false,
 }: ImageBlockProps) {
   const content = block.content as ImageContent;
-  const { url, alt, caption, objectFit = "cover", attribution } = content;
+  const { url, alt, caption, objectFit = "cover", height = 450, attribution } = content;
   const isDark = theme.themeType === "dark";
 
   // Modal state
@@ -44,10 +45,33 @@ export const ImageBlock = memo(function ImageBlock({
     onUpdate({ ...content, caption: e.target.value });
   };
 
-  const toggleObjectFit = () => {
+  const toggleHeightMode = () => {
     if (readOnly) return;
-    const newFit = objectFit === "cover" ? "contain" : objectFit === "contain" ? "fill" : "cover";
-    onUpdate({ ...content, objectFit: newFit });
+    // Modes: Standard (450), Wide (300), Natural (0)
+    let nextHeight = 450;
+    if (height === 450) nextHeight = 300;
+    else if (height === 300) nextHeight = 0; // Natural
+    else nextHeight = 450;
+
+    onUpdate({ 
+      ...content, 
+      type: "image",
+      height: nextHeight,
+      // Default to cover for fixed heights, contain for natural
+      objectFit: nextHeight === 0 ? "contain" : "cover"
+    });
+  };
+
+  const getHeightIcon = () => {
+    if (height === 0) return <IconPhotoPlus size={14} />;
+    if (height === 300) return <IconRectangle size={14} />;
+    return <IconRectangleVertical size={14} />;
+  };
+
+  const getHeightLabel = () => {
+    if (height === 0) return "Original (Natural)";
+    if (height === 300) return "Wide (Panoramic)";
+    return "Classic (Standard)";
   };
 
   const openModal = () => {
@@ -113,18 +137,24 @@ export const ImageBlock = memo(function ImageBlock({
       >
         {/* Image Container */}
         <div 
-          className="relative w-full flex-1 min-h-[300px] overflow-hidden"
+          className={cn(
+            "relative w-full overflow-hidden transition-all duration-500",
+            height === 0 ? "h-auto" : "flex-1"
+          )}
           style={{
             backgroundColor: `${theme.primary}05`,
+            height: height > 0 ? `${height}px` : "auto",
+            minHeight: height > 0 ? `${height}px` : "200px"
           }}
         >
           <img
+            key={`${url}-${height}`}
             src={url}
             alt={alt || caption || "Image"}
-            className="w-full h-full transition-transform duration-700 ease-out group-hover/image:scale-105"
-            style={{
-              objectFit: objectFit,
-            }}
+            className={cn(
+              "w-full h-full transition-transform duration-700 ease-out group-hover/image:scale-105",
+              height === 0 ? "object-contain" : "object-cover"
+            )}
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
@@ -147,79 +177,23 @@ export const ImageBlock = memo(function ImageBlock({
                 >
                   Change Image
                 </button>
-                <button
-                  onClick={toggleObjectFit}
-                  className="px-4 py-2 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-xl border"
-                  style={{
-                    backgroundColor: "rgba(255,255,255,0.95)",
-                    borderColor: "rgba(255,255,255,0.2)",
-                    color: "#000",
-                  }}
-                  title={`Current: ${objectFit}`}
-                >
-                  {objectFit === "cover" ? "Fit" : objectFit === "contain" ? "Fill" : "Cover"}
-                </button>
+                 <button
+                   onClick={toggleHeightMode}
+                   className="px-4 py-2 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-xl border flex items-center gap-2"
+                   style={{
+                     backgroundColor: "rgba(255,255,255,0.95)",
+                     borderColor: "rgba(255,255,255,0.2)",
+                     color: "#000",
+                   }}
+                   title={`Current: ${getHeightLabel()}`}
+                 >
+                   {getHeightIcon()}
+                   {getHeightLabel()}
+                 </button>
               </div>
             </div>
           )}
         </div>
-
-        {/* Caption Section */}
-        {(caption || !readOnly) && (
-          <div 
-            className="p-6 relative z-10"
-            style={{ 
-              backgroundColor: isDark ? "rgba(30,30,35,0.5)" : "rgba(255,255,255,0.5)",
-              backdropFilter: "blur(12px)"
-            }}
-          >
-            {/* Minimal Gradient Background Blob */}
-            <div
-              className="absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-[0.03] blur-xl pointer-events-none"
-              style={{ backgroundColor: theme.primary }}
-            />
-
-            {!readOnly ? (
-              <input
-                type="text"
-                value={caption || ""}
-                onChange={handleCaptionChange}
-                placeholder="Add a caption..."
-                className="w-full text-base font-bold bg-transparent border-0 outline-none transition-all tracking-tight leading-tight"
-                style={{
-                  color: theme.bodyColor,
-                  opacity: caption ? 0.9 : 0.4,
-                }}
-              />
-            ) : (
-              <p
-                className="text-base font-bold tracking-tight leading-tight opacity-90"
-                style={{ color: theme.bodyColor }}
-              >
-                {caption}
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* Unsplash Attribution */}
-        {attribution && attribution.name && (
-          <a
-            href={attribution.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute bottom-4 right-4 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-xl flex items-center gap-2 transition-all opacity-0 group-hover/image:opacity-100 hover:scale-105"
-            style={{
-              backgroundColor: "rgba(0,0,0,0.6)",
-              backdropFilter: "blur(8px)",
-              color: "#fff",
-              border: "1px solid rgba(255,255,255,0.1)"
-            }}
-          >
-            Photo by {attribution.name}
-            <IconExternalLink size={12} strokeWidth={2.5} />
-          </a>
-        )}
       </CommonCard>
 
       {!readOnly && (

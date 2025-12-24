@@ -42,6 +42,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   const [activeTab, setActiveTab] = useState<"unsplash" | "uploads">("unsplash");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -86,12 +87,13 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
     if (!file) return;
 
     try {
+      setIsProcessing(true);
       const result = await uploadMedia.mutateAsync({
         file,
         name: file.name,
       });
       
-      if (result.data) {
+      if (result?.data) {
         onSelect({
           url: result.data.url,
           alt: file.name,
@@ -100,6 +102,8 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       }
     } catch (error) {
       console.error("Failed to upload image:", error);
+    } finally {
+      setIsProcessing(false);
     }
 
     if (fileInputRef.current) {
@@ -109,6 +113,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
 
   const handleSelectUnsplashPhoto = useCallback(async (photo: UnsplashPhoto) => {
     try {
+      setIsProcessing(true);
       await trackDownload.mutateAsync({ downloadLocation: photo.links.downloadLocation });
     } catch (error) {
       console.error("Failed to track download:", error);
@@ -122,6 +127,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         link: `https://unsplash.com/@${photo.user.username}?utm_source=butterfast&utm_medium=referral`,
       },
     });
+    setIsProcessing(false);
     onClose();
   }, [onSelect, onClose, trackDownload]);
 
@@ -132,6 +138,8 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
     });
     onClose();
   }, [onSelect, onClose]);
+
+  const actualLoading = isSearching || isLoadingRandom || isLoadingMedia;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -147,9 +155,26 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
             ? "0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.1) inset"
             : "0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255,255,255,0.8) inset",
           maxWidth: "540px",
+          width: "95vw",
+          height: "80vh",
           maxHeight: "80vh",
         }}
       >
+        {/* Processing Overlay */}
+        {isProcessing && (
+          <div 
+            className="absolute inset-0 z-[100] flex flex-col items-center justify-center gap-3 backdrop-blur-md"
+            style={{ backgroundColor: isDark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.4)" }}
+          >
+            <div className="p-4 rounded-2xl bg-white/10 dark:bg-black/20 shadow-xl border border-white/10 flex flex-col items-center">
+              <Loader2 size={32} className="animate-spin text-primary" />
+              <span className="text-xs font-medium mt-3" style={{ color: isDark ? "#fff" : "#000" }}>
+                Processing Image...
+              </span>
+            </div>
+          </div>
+        )}
+
         <div 
           className="absolute inset-0 pointer-events-none rounded-2xl"
           style={{
@@ -159,7 +184,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           }}
         />
 
-        <div className="relative flex flex-col h-full max-h-[80vh]">
+        <div className="relative flex flex-col h-full overflow-hidden">
           <div 
             className="relative flex items-center justify-between px-5 py-4 border-b shrink-0"
             style={{ 
@@ -235,7 +260,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
                 />
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={uploadMedia.isPending}
+                  disabled={uploadMedia.isPending || isProcessing}
                   className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-medium transition-all disabled:opacity-50"
                   style={{
                     backgroundColor: `${theme.primary}15`,
@@ -269,27 +294,31 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
                     color: isDark ? "#fff" : "#000",
                   }}
                 />
+                {(isSearching || (searchQuery !== debouncedQuery && searchQuery.length > 0)) && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <Loader2 size={12} className="animate-spin opacity-40" />
+                  </div>
+                )}
               </div>
             )}
           </div>
 
           <div 
             className="relative flex-1 overflow-y-auto px-5 py-4"
-            style={{
-              maxHeight: "400px",
-            }}
           >
-            {(isSearching || isLoadingRandom || isLoadingMedia) && (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 
-                  size={24} 
-                  className="animate-spin opacity-50"
-                  style={{ color: theme.primary }}
-                />
+            {actualLoading && unsplashPhotos.length === 0 && userPhotos.length === 0 && (
+              <div className="grid grid-cols-3 gap-2">
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <div 
+                    key={i} 
+                    className="aspect-square rounded-lg animate-pulse"
+                    style={{ backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
+                  />
+                ))}
               </div>
             )}
 
-            {activeTab === "unsplash" && !isSearching && !isLoadingRandom && (
+            {activeTab === "unsplash" && !actualLoading && (
               <>
                 {unsplashPhotos.length === 0 && debouncedQuery ? (
                   <div className="flex items-center justify-center py-12">
@@ -305,6 +334,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
                     {unsplashPhotos.map((photo) => (
                       <button
                         key={photo.id}
+                        disabled={isProcessing}
                         onClick={() => handleSelectUnsplashPhoto(photo)}
                         className="relative aspect-square rounded-lg overflow-hidden group transition-all"
                       >
@@ -331,7 +361,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
               </>
             )}
 
-            {activeTab === "uploads" && !isLoadingMedia && (
+            {activeTab === "uploads" && !actualLoading && (
               <>
                 {userPhotos.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 gap-2">
@@ -352,6 +382,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
                     {userPhotos.map((media) => (
                       <button
                         key={media.id}
+                        disabled={isProcessing}
                         onClick={() => handleSelectUserMedia(media)}
                         className="relative aspect-square rounded-lg overflow-hidden group transition-all"
                       >
