@@ -171,14 +171,13 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
             className
           )}
           style={{
-            backgroundColor: "color-mix(in srgb, var(--secondary) 25%, var(--card))",
-            backdropFilter: "blur(24px) saturate(180%)",
-            WebkitBackdropFilter: "blur(24px) saturate(180%)",
+            backgroundColor: "color-mix(in srgb, var(--secondary) 18%, white)",
+            backdropFilter: "blur(40px) saturate(210%)",
+            WebkitBackdropFilter: "blur(40px) saturate(210%)",
             border: "1px solid color-mix(in srgb, var(--secondary) 40%, transparent)",
             boxShadow: `
-              0 1px 0 0 color-mix(in srgb, var(--secondary) 30%, transparent) inset,
-              0 -1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-              0 8px 32px rgba(0, 0, 0, 0.08)
+              0 1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
+              0 12px 48px rgba(0, 0, 0, 0.1)
             `,
           }}
         >
@@ -202,12 +201,12 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                   value={numberOfSlides}
                   onValueChange={setNumberOfSlides}
                 >
-                  <SelectTrigger className="h-8 w-fit gap-2 px-2 text-xs border-0 bg-transparent hover:bg-secondary/20 transition-colors focus:ring-0">
+                  <SelectTrigger className="h-8 w-fit gap-2 px-2 text-xs border-0 bg-transparent hover:bg-secondary/10 transition-colors focus:ring-0">
                     <SelectValue placeholder="Slides" />
                   </SelectTrigger>
-                  <SelectContent className="bg-popover border-secondary/20">
+                  <SelectContent className="bg-popover border-secondary/10">
                     {Array.from({ length: 50 }, (_, i) => i + 1).map((num) => (
-                      <SelectItem key={num} value={num.toString()} className="focus:bg-secondary/20">
+                      <SelectItem key={num} value={num.toString()} className="focus:bg-secondary/10">
                         {num} {num === 1 ? "slide" : "slides"}
                       </SelectItem>
                     ))}
@@ -216,7 +215,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
 
                 {/* Right-aligned buttons container */}
                 <div className="ml-auto flex items-center gap-2">
-                  <div className="h-4 w-px bg-secondary/20 mr-1" />
+                  <div className="h-4 w-px bg-secondary/10 mr-1" />
 
 
                   <Tooltip>
