@@ -10,11 +10,15 @@ import { IconSparkles, IconPlayerPlay } from "@tabler/icons-react";
 export default function HeroSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   
-  // Real Unsplash Images
+  // Real Unsplash Images - 6 images for the carousel
   const deckImages = [
     "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1590097520505-416422f07ad1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1649385652265-0b9d8197a4b0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    "https://images.unsplash.com/photo-1649385652265-0b9d8197a4b0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    // 3 new images
+    "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=1287&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=1170&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1129&auto=format&fit=crop"
   ];
 
   // Auto-rotate every 5 seconds
@@ -26,11 +30,13 @@ export default function HeroSection() {
   }, [deckImages.length]);
 
   // Helper to determine position relative to active index
-  // 0 = center, 1 = right, 2 = left (since we have 3 images)
+  // center = active, right = next, left = previous, hidden = others
   const getPosition = (index: number) => {
-     if (index === activeIndex) return "center";
-     if (index === (activeIndex + 1) % deckImages.length) return "right";
-     return "left";
+    const total = deckImages.length;
+    if (index === activeIndex) return "center";
+    if (index === (activeIndex + 1) % total) return "right";
+    if (index === (activeIndex - 1 + total) % total) return "left";
+    return "hidden"; // Other images are hidden
   };
 
   return (
@@ -112,7 +118,7 @@ export default function HeroSection() {
                if (pos === "center") {
                    return (
                      <motion.div
-                        layoutId={`card-${src}`}
+                        layoutId={`card-${index}`}
                         key={`card-${index}`}
                         className="absolute w-[800px] aspect-[16/9] shadow-2xl rounded-2xl overflow-hidden border-[6px] border-white z-30"
                         initial={{ scale: 0.8, opacity: 0 }}
@@ -136,7 +142,7 @@ export default function HeroSection() {
                if (pos === "left") {
                    return (
                        <motion.div
-                          layoutId={`card-${src}`}
+                          layoutId={`card-${index}`}
                           key={`card-${index}`}
                           className="absolute w-[800px] aspect-[16/9] bg-black/5 rounded-2xl overflow-hidden shadow-lg z-10 grayscale-[50%]"
                           animate={{ 
@@ -158,7 +164,7 @@ export default function HeroSection() {
                if (pos === "right") {
                     return (
                         <motion.div
-                            layoutId={`card-${src}`}
+                            layoutId={`card-${index}`}
                             key={`card-${index}`}
                             className="absolute w-[800px] aspect-[16/9] bg-black/5 rounded-2xl overflow-hidden shadow-lg z-10 grayscale-[50%]"
                             animate={{ 
@@ -175,6 +181,24 @@ export default function HeroSection() {
                         </motion.div>
                     );
                }
+
+               // Hidden cards (not center, left, or right) - animate out
+               return (
+                   <motion.div
+                       layoutId={`card-${index}`}
+                       key={`card-${index}`}
+                       className="absolute w-[800px] aspect-[16/9] rounded-2xl overflow-hidden z-0"
+                       animate={{ 
+                           scale: 0.5, 
+                           opacity: 0, 
+                           z: -200,
+                           x: 0
+                       }}
+                       transition={{ duration: 0.5 }}
+                   >
+                       <Image src={src} alt="Hidden Slide" fill className="object-cover" />
+                   </motion.div>
+               );
             })}
 
             {/* Reflections */}
