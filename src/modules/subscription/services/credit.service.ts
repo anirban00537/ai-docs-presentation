@@ -1,6 +1,9 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
+// Constants for credit management
+const FREE_TIER_CREDITS = 10;
+
 @Injectable()
 export class CreditService {
   constructor(private readonly prisma: PrismaService) {}
@@ -8,7 +11,7 @@ export class CreditService {
   /**
    * Initialize credit balance for a user
    */
-  async initializeCreditBalance(userId: string, freeCredits: number = 10): Promise<void> {
+  async initializeCreditBalance(userId: string, freeCredits: number = FREE_TIER_CREDITS): Promise<void> {
     const existing = await this.prisma.creditBalance.findUnique({
       where: { userId },
     });
@@ -64,7 +67,7 @@ export class CreditService {
                       new Date(subscription.currentPeriodEnd) < now &&
                       !['active', 'trialing'].includes(subscription.status);
 
-    if (isExpired && balance.remainingCredits > 10) {
+    if (isExpired && balance.remainingCredits > FREE_TIER_CREDITS) {
       console.warn(`[CREDIT_SERVICE] User ${userId} has expired subscription. Blocking high credit usage.`);
       // If expired, they shouldn't be using high balances that haven't been reset yet
       // They are only allowed to use up to 10 (the free tier)
@@ -88,6 +91,13 @@ export class CreditService {
     description?: string,
     presentationId?: string,
   ): Promise<void> {
+    // Validate amount - must be positive integer
+    if (!Number.isInteger(amount) || amount <= 0) {
+      throw new BadRequestException(
+        `Invalid credit amount: ${amount}. Must be a positive integer.`,
+      );
+    }
+
     console.log(`[CREDIT_SERVICE] Attempting to use ${amount} credits for user ${userId} (${description || 'No description'})`);
     
     // Use a transaction to prevent race conditions
@@ -139,6 +149,7 @@ export class CreditService {
 
   /**
     * Add credits to user's balance
+    * Uses a database transaction to prevent race conditions
     */
   async addCredits(
     userId: string,
@@ -147,71 +158,130 @@ export class CreditService {
     description?: string,
     subscriptionId?: string,
   ): Promise<void> {
-    console.log(`[CREDIT_SERVICE] Adding ${amount} credits (${type}) to user ${userId}: ${description || ''}`);
-    
-    const balance = await this.getCreditBalance(userId);
-    if (!balance) {
-      await this.initializeCreditBalance(userId);
+    // Validate amount - must be positive
+    if (amount <= 0) {
+      throw new BadRequestException(
+        `Invalid credit amount: ${amount}. Must be a positive number.`,
+      );
     }
 
-    const updatedBalance = await this.prisma.creditBalance.update({
-      where: { userId },
-      data: {
-        totalCredits: {
-          increment: amount,
-        },
-        remainingCredits: {
-          increment: amount,
-        },
-      },
-    });
+    console.log(`[CREDIT_SERVICE] Adding ${amount} credits (${type}) to user ${userId}: ${description || ''}`);
+    
+    // Use a transaction to prevent race conditions
+    await this.prisma.$transaction(async (tx) => {
+      const balance = await tx.creditBalance.findUnique({
+        where: { userId },
+      });
 
-    // Create transaction record
-    await this.prisma.creditTransaction.create({
-      data: {
-        userId,
-        amount,
-        type,
-        description: description || 'Credits added',
-        subscriptionId,
-        balanceAfter: updatedBalance.remainingCredits,
-      },
+      if (!balance) {
+        // Initialize if not exists
+        await tx.creditBalance.create({
+          data: {
+            userId,
+            totalCredits: amount,
+            remainingCredits: amount,
+            monthlyLimit: 0,
+            monthlyUsed: 0,
+            lastResetAt: new Date(),
+          },
+        });
+
+        // Create transaction record
+        await tx.creditTransaction.create({
+          data: {
+            userId,
+            amount,
+            type,
+            description: description || 'Credits added',
+            subscriptionId,
+            balanceAfter: amount,
+          },
+        });
+        return;
+      }
+
+      const updatedBalance = await tx.creditBalance.update({
+        where: { userId },
+        data: {
+          totalCredits: {
+            increment: amount,
+          },
+          remainingCredits: {
+            increment: amount,
+          },
+        },
+      });
+
+      // Create transaction record
+      await tx.creditTransaction.create({
+        data: {
+          userId,
+          amount,
+          type,
+          description: description || 'Credits added',
+          subscriptionId,
+          balanceAfter: updatedBalance.remainingCredits,
+        },
+      });
     });
   }
 
   /**
     * Reset monthly usage (called when subscription renews)
+    * Uses a database transaction to prevent race conditions
     */
   async resetMonthlyUsage(userId: string): Promise<void> {
     console.log(`[CREDIT_SERVICE] Resetting monthly usage for user ${userId}`);
-    await this.prisma.creditBalance.update({
-      where: { userId },
-      data: {
-        monthlyUsed: 0,
-        lastResetAt: new Date(),
-      },
+    
+    await this.prisma.$transaction(async (tx) => {
+      await tx.creditBalance.update({
+        where: { userId },
+        data: {
+          monthlyUsed: 0,
+          lastResetAt: new Date(),
+        },
+      });
     });
   }
 
   /**
     * Update monthly limit based on subscription
+    * Uses a database transaction to prevent race conditions
     */
   async updateMonthlyLimit(userId: string, limit: number): Promise<void> {
     console.log(`[CREDIT_SERVICE] Updating monthly limit for user ${userId} to ${limit} credits`);
     
-    const balance = await this.getCreditBalance(userId);
-    if (!balance) {
-      await this.initializeCreditBalance(userId);
-    }
+    // Use a transaction to prevent race conditions
+    await this.prisma.$transaction(async (tx) => {
+      const balance = await tx.creditBalance.findUnique({
+        where: { userId },
+      });
 
-    await this.prisma.creditBalance.update({
-      where: { userId },
-      data: {
-        monthlyLimit: limit,
-        remainingCredits: limit, // Reset balance to the new limit
-        monthlyUsed: 0,          // Reset usage count
-        lastResetAt: new Date(),
-      },
+      if (!balance) {
+        // Initialize with the new limit
+        await tx.creditBalance.create({
+          data: {
+            userId,
+            totalCredits: limit,
+            remainingCredits: limit,
+            monthlyLimit: limit,
+            monthlyUsed: 0,
+            lastResetAt: new Date(),
+          },
+        });
+        return;
+      }
+
+      await tx.creditBalance.update({
+        where: { userId },
+        data: {
+          monthlyLimit: limit,
+          remainingCredits: limit, // Reset balance to the new limit
+          totalCredits: limit,     // Also update totalCredits to reflect current entitlement
+          monthlyUsed: 0,          // Reset usage count
+          lastResetAt: new Date(),
+        },
+      });
     });
   }
 

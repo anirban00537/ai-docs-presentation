@@ -512,10 +512,8 @@ export class SubscriptionService {
         },
       });
 
-      // Initialize credit balance for new subscriber
-      await this.creditService.initializeCreditBalance(user.id);
-
       // Update monthly limit based on product metadata
+      // Note: updateMonthlyLimit handles initialization if credit balance doesn't exist
       const monthlyLimit = this.getMonthlyCreditLimit(
         data.product_id || data.product?.id,
         data,
@@ -523,7 +521,7 @@ export class SubscriptionService {
       await this.creditService.updateMonthlyLimit(user.id, monthlyLimit);
 
       this.logger.log(
-        `Created new subscription ${polarSubscriptionId} for user ${user.id}`,
+        `Created new subscription ${polarSubscriptionId} for user ${user.id} with ${monthlyLimit} credits`,
       );
       return;
     }
@@ -647,9 +645,23 @@ export class SubscriptionService {
       this.logger.log(
         `CUSTOMER DELETED: ${data.id}. Marking associated subscriptions as inactive.`,
       );
-      // Find subscription for this customer and mark as inactive
+      // Find subscriptions for this customer and mark as inactive
       const polarCustomerId = data.id;
       if (polarCustomerId) {
+        // Find all subscriptions for this customer to reset their credits
+        const subscriptions = await this.prisma.subscription.findMany({
+          where: { polarCustomerId },
+        });
+
+        // Reset credits to free tier for each affected user
+        for (const subscription of subscriptions) {
+          this.logger.log(
+            `Resetting credits to free tier (10) for user ${subscription.userId} due to customer deletion`,
+          );
+          await this.creditService.updateMonthlyLimit(subscription.userId, 10);
+        }
+
+        // Mark subscriptions as inactive
         await this.prisma.subscription.updateMany({
           where: { polarCustomerId },
           data: { status: 'inactive' },
@@ -745,7 +757,7 @@ export class SubscriptionService {
       const orderAmount = data.order_amount || data.amount || 0;
 
       if (refundAmount >= orderAmount) {
-        // Full refund - cancel subscription
+        // Full refund - cancel subscription and reset credits to free tier
         await this.prisma.subscription.update({
           where: { userId },
           data: {
@@ -753,7 +765,14 @@ export class SubscriptionService {
             canceledAt: new Date(),
           },
         });
-        this.logger.log(`Subscription ${subscription.id} marked as refunded`);
+
+        // Reset credits to free tier (10) since the user got a full refund
+        this.logger.log(
+          `Resetting credits to free tier (10) for user ${userId} due to full refund`,
+        );
+        await this.creditService.updateMonthlyLimit(userId, 10);
+
+        this.logger.log(`Subscription ${subscription.id} marked as refunded and credits reset`);
       }
     }
   }
@@ -1290,7 +1309,14 @@ export class SubscriptionService {
   ): Promise<ResponseModel> {
     try {
       if (!this.polarService.isConfigured()) {
-        return errorResponse('Polar.sh is not configured');
+        return errorResponse(
+          'Payment system is not configured. Please contact support.',
+        );
+      }
+
+      // Validate productId
+      if (!productId || productId.trim() === '') {
+        return errorResponse('Product ID is required to create a checkout.');
       }
 
       // Ensure customer exists in Polar
@@ -1301,7 +1327,12 @@ export class SubscriptionService {
       );
 
       if (!customer) {
-        return errorResponse('Failed to create/get customer in Polar.sh');
+        this.logger.error(
+          `Failed to create/get customer for user ${user.id} (${user.email})`,
+        );
+        return errorResponse(
+          'Unable to initialize your customer profile. Please try again or contact support.',
+        );
       }
 
       // Create checkout session
@@ -1312,7 +1343,12 @@ export class SubscriptionService {
       );
 
       if (!checkout) {
-        return errorResponse('Failed to create checkout session');
+        this.logger.error(
+          `Checkout creation returned null for product ${productId}, user ${user.id}`,
+        );
+        return errorResponse(
+          'Unable to create checkout session. The product may be unavailable or there was a payment system error. Please try again.',
+        );
       }
 
       // Return checkout URL - Polar SDK returns checkout object with url property
@@ -1321,7 +1357,9 @@ export class SubscriptionService {
 
       if (!checkoutUrl) {
         this.logger.error('Checkout created but no URL found:', checkout);
-        return errorResponse('Checkout created but URL not available');
+        return errorResponse(
+          'Checkout was created but the payment link is unavailable. Please try again.',
+        );
       }
 
       return successResponse('Checkout session created successfully', {
@@ -1330,9 +1368,28 @@ export class SubscriptionService {
       });
     } catch (error: any) {
       this.logger.error(`Failed to create checkout: ${error.message}`, error);
-      return errorResponse(
-        error.message || 'Failed to create checkout session',
-      );
+
+      // Provide more specific error messages based on error type
+      let userMessage = 'Failed to create checkout session. Please try again.';
+
+      if (error.message?.includes('product')) {
+        userMessage =
+          'The selected plan is not available. Please choose a different plan.';
+      } else if (error.message?.includes('customer')) {
+        userMessage =
+          'There was an issue with your account. Please try again or contact support.';
+      } else if (
+        error.message?.includes('network') ||
+        error.message?.includes('timeout')
+      ) {
+        userMessage =
+          'Connection to payment system failed. Please check your internet and try again.';
+      } else if (error.message?.includes('401') || error.message?.includes('unauthorized')) {
+        userMessage =
+          'Payment system authentication failed. Please contact support.';
+      }
+
+      return errorResponse(userMessage);
     }
   }
 }
