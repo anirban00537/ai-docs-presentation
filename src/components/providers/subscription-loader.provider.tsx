@@ -18,15 +18,14 @@ export const SubscriptionLoaderProvider: React.FC<SubscriptionLoaderProviderProp
 }) => {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const token = typeof window !== "undefined" ? Cookie.get("token") : null;
 
   useEffect(() => {
-    if (isAuthenticated && token) {
+    if (isAuthenticated) {
       dispatch(fetchSubscriptionInfo());
-    } else if (!token) {
+    } else {
       dispatch(clearSubscriptionInfo());
     }
-  }, [isAuthenticated, token, dispatch]);
+  }, [isAuthenticated, dispatch]);
 
   return <>{children}</>;
 };
