@@ -412,13 +412,15 @@ export class SubscriptionController {
         ? `${webhookId}.${timestamp}.${payload}`
         : `${timestamp}.${payload}`; // Fallback if webhook-id is missing
 
-      this.logger.debug('Signature verification details:', {
-        signedPayloadPreview: signedPayload.substring(0, 100) + '...',
-        signedPayloadLength: signedPayload.length,
-        numSignatures: signatures.length,
-        webhookId,
-        timestamp,
-      });
+      // VERBOSE DEBUG - Print full values to console
+      console.log('=== WEBHOOK SIGNATURE DEBUG ===');
+      console.log('webhookId:', webhookId);
+      console.log('timestamp:', timestamp);
+      console.log('payload (first 200 chars):', payload.substring(0, 200));
+      console.log('payload length:', payload.length);
+      console.log('signedPayload (first 200 chars):', signedPayload.substring(0, 200));
+      console.log('received signature header:', signature);
+      console.log('num signatures to try:', signatures.length);
 
       // Try each signature (Svix can send multiple for secret rotation)
       for (const sig of signatures) {
@@ -437,6 +439,12 @@ export class SubscriptionController {
         const hmac = crypto.createHmac('sha256', actualSecret);
         hmac.update(signedPayload);
         const computedDigest = hmac.digest('base64');
+
+        // VERBOSE DEBUG - Print full signature comparison
+        console.log('--- Signature comparison ---');
+        console.log('Received sig (extracted):', signatureValue);
+        console.log('Computed sig:', computedDigest);
+        console.log('Match?:', signatureValue === computedDigest);
 
         this.logger.debug('Comparing signatures:', {
           received: signatureValue.substring(0, 20) + '...',
