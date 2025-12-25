@@ -78,7 +78,7 @@ export class SubscriptionService {
           : null,
         isActive: !!isSubscriptionValid,
         hasCredits:
-          creditBalance !== null && creditBalance.remainingCredits > 0,
+          creditBalance !== null && creditBalance.balance > 0,
         features,
       };
 
@@ -220,7 +220,7 @@ export class SubscriptionService {
         this.logger.log(
           `Resetting credits to 10 for user ${user.id} due to inactive subscription`,
         );
-        await this.creditService.updateMonthlyLimit(user.id, 10);
+        await this.creditService.updateCreditsFromSubscription(user.id, 10);
 
         return successResponse('Subscription synced successfully', {
           status: 'inactive',
@@ -307,18 +307,25 @@ export class SubscriptionService {
         const isNewPeriod = newPeriodStart > existingPeriodStart;
         const isPlanChange = productId !== existingSubscription?.productId;
 
-        if (isNewSubscription || isNewPeriod || isPlanChange) {
+        // NEW: Also check if current quota matches plan limit
+        const creditBalance = await this.creditService.getCreditBalance(user.id);
+        const monthlyLimit = await this.getMonthlyCreditLimit(
+          activeSubscription.product?.id,
+          activeSubscription,
+        );
+        const isQuotaMismatch = creditBalance && creditBalance.quota !== monthlyLimit;
+
+        this.logger.log(`Sync Check [${user.id}]: isNewSub=${isNewSubscription}, isNewPeriod=${isNewPeriod}, isPlanChange=${isPlanChange}, isQuotaMismatch=${isQuotaMismatch} (BalanceQuota=${creditBalance?.quota}, PlanLimit=${monthlyLimit})`);
+
+        if (isNewSubscription || isNewPeriod || isPlanChange || isQuotaMismatch) {
           this.logger.log(
-            `Credit reset triggered for user ${user.id}: newSubscription=${isNewSubscription}, newPeriod=${isNewPeriod}, planChange=${isPlanChange}`,
+            `Credit sync triggered for user ${user.id}: newSubscription=${isNewSubscription}, newPeriod=${isNewPeriod}, planChange=${isPlanChange}, quotaMismatch=${isQuotaMismatch}`,
           );
-          const monthlyLimit = await this.getMonthlyCreditLimit(
-            activeSubscription.product?.id,
-            activeSubscription,
-          );
-          await this.creditService.updateMonthlyLimit(user.id, monthlyLimit);
+          // Pass isQuotaMismatch as forceReplace to ensure it REPLACES instead of ADDING in this case
+          await this.creditService.updateCreditsFromSubscription(user.id, monthlyLimit, isQuotaMismatch);
         } else {
           this.logger.debug(
-            `Sync: No credit reset needed for user ${user.id} - subscription data updated without resetting credits`,
+            `Sync: No credit reset needed for user ${user.id} - subscription data and quota are already in sync`,
           );
         }
       }
@@ -518,7 +525,7 @@ export class SubscriptionService {
         data.product_id || data.product?.id,
         data,
       );
-      await this.creditService.updateMonthlyLimit(user.id, monthlyLimit);
+      await this.creditService.updateCreditsFromSubscription(user.id, monthlyLimit);
 
       this.logger.log(
         `Created new subscription ${polarSubscriptionId} for user ${user.id} with ${monthlyLimit} credits`,
@@ -591,7 +598,7 @@ export class SubscriptionService {
         );
 
       const monthlyLimit = await this.getMonthlyCreditLimit(newProductId, data);
-      await this.creditService.updateMonthlyLimit(
+      await this.creditService.updateCreditsFromSubscription(
         subscription.userId,
         monthlyLimit,
       );
@@ -620,7 +627,7 @@ export class SubscriptionService {
       this.logger.log(
         `Subscription ${polarSubscriptionId} ended for user ${subscription.userId}. Resetting credits to 10.`,
       );
-      await this.creditService.updateMonthlyLimit(subscription.userId, 10);
+      await this.creditService.updateCreditsFromSubscription(subscription.userId, 10);
     }
 
     await this.prisma.subscription.updateMany({
@@ -658,7 +665,7 @@ export class SubscriptionService {
           this.logger.log(
             `Resetting credits to free tier (10) for user ${subscription.userId} due to customer deletion`,
           );
-          await this.creditService.updateMonthlyLimit(subscription.userId, 10);
+          await this.creditService.updateCreditsFromSubscription(subscription.userId, 10);
         }
 
         // Mark subscriptions as inactive
@@ -770,7 +777,7 @@ export class SubscriptionService {
         this.logger.log(
           `Resetting credits to free tier (10) for user ${userId} due to full refund`,
         );
-        await this.creditService.updateMonthlyLimit(userId, 10);
+        await this.creditService.updateCreditsFromSubscription(userId, 10);
 
         this.logger.log(`Subscription ${subscription.id} marked as refunded and credits reset`);
       }
@@ -1044,13 +1051,9 @@ export class SubscriptionService {
       const simplifiedBalance = {
         id: balance.id,
         userId: balance.userId,
-        // The main balance is 'remainingCredits'
-        remainingCredits: balance.remainingCredits,
-        // Show total available in the current bucket
-        totalCredits: Math.max(balance.totalCredits, balance.monthlyLimit),
-        // Usage tracker
-        monthlyUsed: balance.monthlyUsed,
-        monthlyLimit: balance.monthlyLimit,
+        balance: balance.balance,
+        quota: balance.quota,
+        usedCredits: balance.usedCredits,
         lastResetAt: balance.lastResetAt,
         updatedAt: balance.updatedAt,
       };

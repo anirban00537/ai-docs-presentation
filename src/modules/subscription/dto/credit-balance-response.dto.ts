@@ -8,25 +8,13 @@ export class CreditBalanceResponseDto {
   userId: string;
 
   @IsInt()
-  totalCredits: number;
+  balance: number;
+
+  @IsInt()
+  quota: number;
 
   @IsInt()
   usedCredits: number;
-
-  @IsInt()
-  remainingCredits: number;
-
-  @IsInt()
-  monthlyLimit: number;
-
-  @IsInt()
-  monthlyUsed: number;
-
-  @IsInt()
-  freeCredits: number;
-
-  @IsInt()
-  freeCreditsUsed: number;
 
   @IsDate()
   @IsOptional()

@@ -404,20 +404,16 @@ model CreditBalance {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Credit balances
-  totalCredits     Int @default(0)
-  usedCredits      Int @default(0)
-  remainingCredits Int @default(0)
+  // Single source of truth for UI
+  balance Int @default(30)
+  
+  // The total entitlement for the current cycle
+  quota   Int @default(30)
 
-  // Monthly limits (resets each billing cycle)
-  monthlyLimit Int @default(0)
-  monthlyUsed  Int @default(0)
+  // Tracking for analytics
+  usedCredits Int @default(0)
 
-  // Free tier credits
-  freeCredits     Int @default(0)
-  freeCreditsUsed Int @default(0)
-
-  // Last reset date for monthly credits
+  // Last reset/purchase date
   lastResetAt DateTime?
 
   createdAt DateTime @default(now())
