@@ -88,6 +88,8 @@ export const useUpdateOutline = () => {
 
 // Generate and create slides from presentation hook
 export const useGenerateAndCreateSlides = () => {
+  const dispatch = useAppDispatch();
+
   return useMutation({
     mutationFn: ({
       presentationId,
@@ -96,5 +98,8 @@ export const useGenerateAndCreateSlides = () => {
       presentationId: string;
       onChunk: (chunk: SlideGenerationChunk) => void;
     }) => generateAndCreateSlides(presentationId, onChunk),
+    onSuccess: () => {
+      dispatch(fetchCreditBalance());
+    },
   });
 };
