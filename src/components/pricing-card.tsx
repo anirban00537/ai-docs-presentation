@@ -44,7 +44,10 @@ export function PricingCard({
   className,
 }: PricingCardProps) {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const targetHref = isAuthenticated ? "/subscription" : href;
+  
+  // Only use href redirect if href is explicitly passed AND no onSelect handler is provided
+  // This ensures checkout flow works when onSelect is passed (dashboard pricing page)
+  const targetHref = onSelect ? undefined : (isAuthenticated ? "/subscription" : href);
 
   const primaryPrice = product.prices?.[0];
   const maxSlides =
