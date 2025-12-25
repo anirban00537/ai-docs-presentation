@@ -77,8 +77,9 @@ export class SubscriptionController {
 
   /**
    * Get available products/pricing plans
-   * This endpoint can be public or protected depending on your needs
+   * This endpoint is now public to allow unauthenticated users to view pricing
    */
+  @Public()
   @Get('products')
   async getProducts() {
     return this.subscriptionService.getProducts();
@@ -87,6 +88,7 @@ export class SubscriptionController {
   /**
    * Get product by ID
    */
+  @Public()
   @Get('products/:id')
   async getProduct(@Param('id') id: string) {
     return this.subscriptionService.getProduct(id);
