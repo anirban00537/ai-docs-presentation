@@ -21,6 +21,11 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAppSelector } from "@/store/hooks";
 import { selectUser } from "@/store/slices/userSlice";
+import { 
+  selectCreditBalance, 
+  selectIsSubscribed, 
+  selectSubscriptionStatus 
+} from "@/store/slices/subscriptionSlice";
 import { useSignOut } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -69,6 +74,9 @@ const formatName = (user: any) => {
 export function AppSidebar() {
   const pathname = usePathname();
   const user = useAppSelector(selectUser);
+  const creditBalance = useAppSelector(selectCreditBalance);
+  const isSubscribed = useAppSelector(selectIsSubscribed);
+  const subscriptionStatus = useAppSelector(selectSubscriptionStatus);
   const signOutMutation = useSignOut();
   const isMobile = useIsMobile();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
@@ -236,7 +244,7 @@ export function AppSidebar() {
 
           {/* Bottom Actions */}
           <div className="p-4 space-y-4">
-             {/* Premium Card - Updated Design */}
+             {/* Premium/Credits Card - Updated Design */}
             <div 
               className="relative overflow-hidden rounded-2xl p-[1px] group"
             >
@@ -251,19 +259,36 @@ export function AppSidebar() {
                       <IconSparkles size={20} className="" />
                    </div>
                    <div className="flex-1 min-w-0">
-                     <h4 className="text-sm font-serif font-bold text-foreground leading-none mb-1.5">Scale Plan</h4>
-                     <p className="text-[11px] text-muted-foreground leading-tight">
-                        Unlimited generation & premium assets.
+                     <h4 className="text-sm font-serif font-bold text-foreground leading-none mb-1.5">
+                       {isSubscribed ? (subscriptionStatus?.features?.productName || "Pro Plan") : "Free Plan"}
+                     </h4>
+                     <p className="text-[11px] text-muted-foreground leading-tight flex items-center gap-1.5">
+                       <span className="font-bold text-primary">{creditBalance?.balance ?? 0}</span> credits remaining
                      </p>
                    </div>
                  </div>
                  
-                <Button
-                  size="sm"
-                  className="w-full justify-center h-10 rounded-full text-xs font-semibold bg-primary text-white shadow-coral-glow hover:bg-primary/90 hover:scale-[1.02] transition-all"
-                >
-                  Upgrade to Pro
-                </Button>
+                {!isSubscribed ? (
+                  <Link href="/pricing" className="block w-full">
+                    <Button
+                      size="sm"
+                      className="w-full justify-center h-10 rounded-full text-xs font-semibold bg-primary text-white shadow-coral-glow hover:bg-primary/90 hover:scale-[1.02] transition-all"
+                    >
+                      Upgrade to Pro
+                    </Button>
+                  </Link>
+                ) : (
+                  <div className="w-full h-2 bg-secondary/20 rounded-full overflow-hidden">
+                    <motion.div 
+                      className="h-full bg-primary"
+                      initial={{ width: 0 }}
+                      animate={{ 
+                        width: `${Math.min(100, (creditBalance?.balance ?? 0) / (creditBalance?.quota ?? 1) * 100)}%` 
+                      }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                    />
+                  </div>
+                )}
 
               </div>
             </div>

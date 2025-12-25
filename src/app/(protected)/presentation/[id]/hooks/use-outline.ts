@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getOutline,
@@ -8,6 +9,8 @@ import {
   type UpdateOutlineDto,
   type SlideGenerationChunk,
 } from "@/services/presentation";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchCreditBalance } from "@/store/slices/subscriptionSlice";
 
 // Query keys
 export const outlineKeys = {
@@ -15,9 +18,12 @@ export const outlineKeys = {
   detail: (id: string) => [...outlineKeys.all, id] as const,
 };
 
-// Get outline query
+// Get outline query - refetches credits when outline completes
 export const useOutline = (outlineId: string | null) => {
-  return useQuery({
+  const dispatch = useAppDispatch();
+  const hasRefreshedCredits = useRef(false);
+
+  const query = useQuery({
     queryKey: outlineId ? outlineKeys.detail(outlineId) : ["outline", "null"],
     queryFn: () => {
       if (!outlineId) {
@@ -26,8 +32,23 @@ export const useOutline = (outlineId: string | null) => {
       return getOutline(outlineId);
     },
     enabled: !!outlineId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // Always fetch fresh data
+    refetchInterval: (q) => {
+      const status = (q.state.data as any)?.data?.status;
+      return status === "generating" ? 3000 : false;
+    },
   });
+
+  // Refetch credits when outline completes
+  const status = query.data?.data?.status;
+  useEffect(() => {
+    if (status === "completed" && !hasRefreshedCredits.current) {
+      hasRefreshedCredits.current = true;
+      dispatch(fetchCreditBalance());
+    }
+  }, [status, dispatch]);
+
+  return query;
 };
 
 // Save prompt mutation

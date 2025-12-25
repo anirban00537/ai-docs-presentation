@@ -11,6 +11,8 @@ import {
   type Subscription,
 } from "@/services/subscription";
 import { toast } from "sonner";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchCreditBalance } from "@/store/slices/subscriptionSlice";
 
 // Query keys
 export const subscriptionKeys = {
@@ -84,12 +86,15 @@ export const useCreditBalance = () => {
 // Use credits
 export const useUseCredits = () => {
   const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
 
   return useMutation({
     mutationFn: (payload: UseCreditsDto) => useCredits(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.credits() });
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.status() });
+      // Update credit balance in Redux
+      dispatch(fetchCreditBalance());
     },
     onError: (error: any) => {
       toast.error(
