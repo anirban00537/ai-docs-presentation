@@ -225,13 +225,27 @@ export class SubscriptionController {
       if (standardWebhookSignature && standardWebhookId) {
         // Use Standard Webhooks format - extract event from body or webhook-id
         // IMPORTANT: Use raw body as-is, don't JSON.stringify it (that changes the payload)
-        const rawBody = req.rawBody
-          ? typeof req.rawBody === 'string'
-            ? req.rawBody
-            : Buffer.isBuffer(req.rawBody)
-              ? req.rawBody.toString('utf8')
-              : JSON.stringify(req.rawBody)
-          : JSON.stringify(req.body || {}); // Fallback only if rawBody not available
+        // Prefer rawBodyString (preserved exactly as received) over reconstructed body
+        const rawBody = (req as any).rawBodyString
+          ? (req as any).rawBodyString
+          : req.rawBody
+            ? typeof req.rawBody === 'string'
+              ? req.rawBody
+              : Buffer.isBuffer(req.rawBody)
+                ? req.rawBody.toString('utf8')
+                : JSON.stringify(req.rawBody)
+            : JSON.stringify(req.body || {}); // Fallback only if rawBody not available
+
+        // Debug logging for webhook verification
+        this.logger.debug('Standard Webhooks verification attempt:', {
+          hasRawBodyString: !!(req as any).rawBodyString,
+          hasRawBody: !!req.rawBody,
+          rawBodyLength: rawBody?.length,
+          webhookId: standardWebhookId,
+          timestamp: standardWebhookTimestamp,
+          signaturePreview: standardWebhookSignature?.substring(0, 30) + '...',
+          secretPrefix: webhookSecret?.substring(0, 15) + '...',
+        });
 
         const bodyData =
           typeof req.body === 'object' && req.body !== null
@@ -251,6 +265,8 @@ export class SubscriptionController {
             webhookSecret,
             standardWebhookId || undefined,
           );
+          
+          this.logger.log(`Webhook signature verification result: ${isValid ? 'VALID' : 'INVALID'}`);
         } catch (error: any) {
           // Log the error
           this.logger.warn(
@@ -345,7 +361,7 @@ export class SubscriptionController {
 
   /**
    * Verify Standard Webhooks (Svix) format signature
-   * Format: v1,<hex_digest>
+   * Format: v1,<base64_digest>
    */
   private verifyStandardWebhookSignature(
     payload: string,
@@ -354,7 +370,14 @@ export class SubscriptionController {
     secret: string,
     webhookId?: string,
   ): boolean {
-    if (!signature || !timestamp || !secret) return false;
+    if (!signature || !timestamp || !secret) {
+      this.logger.warn('Missing required params for signature verification', {
+        hasSignature: !!signature,
+        hasTimestamp: !!timestamp,
+        hasSecret: !!secret,
+      });
+      return false;
+    }
 
     try {
       // Svix/Polar.sh webhook secrets format: "whsec_<base64>" or "polar_whs_<base64>"
@@ -365,27 +388,37 @@ export class SubscriptionController {
         // Standard Svix format: remove prefix and base64-decode to binary
         const secretPart = secret.substring(6); // Remove "whsec_"
         actualSecret = Buffer.from(secretPart, 'base64'); // Keep as Buffer (binary)
+        this.logger.debug('Using whsec_ format secret');
       } else if (secret.startsWith('polar_whs_')) {
         // Polar.sh format: remove prefix and base64-decode to binary
         const secretPart = secret.substring(10); // Remove "polar_whs_"
         actualSecret = Buffer.from(secretPart, 'base64'); // Keep as Buffer (binary)
+        this.logger.debug(`Using polar_whs_ format secret, decoded ${actualSecret.length} bytes`);
+      } else {
+        this.logger.debug('Using raw secret (no known prefix)');
       }
-      // If secret doesn't start with a known prefix, use as-is (string)
+      
       // Standard Webhooks (Svix) format: signature is "v1,<base64_digest>"
-      // Signed payload format: timestamp + "." + payload
-      // Signature is base64-encoded HMAC-SHA256, not hex
+      // Signed payload format: {msg_id}.{timestamp}.{body}
+      // Signature is base64-encoded HMAC-SHA256
       // NOTE: Svix webhook-signature can contain multiple signatures: "v1,sig1 v1,sig2"
-      // We need to check each signature until one matches
       const signatures = signature
         .split(' ')
         .map((s) => s.trim())
         .filter((s) => s);
 
-      // Svix Standard Webhooks format: signed content = svix-id.svix-timestamp.raw-body
-      // We use webhook-id, webhook-timestamp, and the raw payload
+      // Svix Standard Webhooks format: signed content = msg_id.timestamp.raw-body
       const signedPayload = webhookId
         ? `${webhookId}.${timestamp}.${payload}`
         : `${timestamp}.${payload}`; // Fallback if webhook-id is missing
+
+      this.logger.debug('Signature verification details:', {
+        signedPayloadPreview: signedPayload.substring(0, 100) + '...',
+        signedPayloadLength: signedPayload.length,
+        numSignatures: signatures.length,
+        webhookId,
+        timestamp,
+      });
 
       // Try each signature (Svix can send multiple for secret rotation)
       for (const sig of signatures) {
@@ -400,30 +433,43 @@ export class SubscriptionController {
           signatureValue = sig;
         }
 
-        // Use the processed secret (with prefix removed and decoded if needed)
-        // actualSecret can be a Buffer (binary) or string
+        // Compute HMAC-SHA256
         const hmac = crypto.createHmac('sha256', actualSecret);
         hmac.update(signedPayload);
         const computedDigest = hmac.digest('base64');
 
+        this.logger.debug('Comparing signatures:', {
+          received: signatureValue.substring(0, 20) + '...',
+          computed: computedDigest.substring(0, 20) + '...',
+          receivedLength: signatureValue.length,
+          computedLength: computedDigest.length,
+        });
+
         // Both signature and computed digest are now base64
-        // Compare them directly (base64 strings)
         if (signatureValue.length !== computedDigest.length) {
+          this.logger.debug('Signature length mismatch, trying next...');
           continue; // Try next signature
         }
 
-        // Use timing-safe comparison for base64 strings
-        const isValid = crypto.timingSafeEqual(
-          Buffer.from(signatureValue, 'base64'),
-          Buffer.from(computedDigest, 'base64'),
-        );
+        try {
+          // Use timing-safe comparison for base64 strings
+          const isValid = crypto.timingSafeEqual(
+            Buffer.from(signatureValue, 'base64'),
+            Buffer.from(computedDigest, 'base64'),
+          );
 
-        if (isValid) {
-          return true; // Found a valid signature
+          if (isValid) {
+            this.logger.log('Webhook signature VERIFIED successfully');
+            return true; // Found a valid signature
+          }
+        } catch (compareError) {
+          this.logger.debug('Comparison error (length mismatch in decoded buffers)');
+          continue;
         }
       }
 
       // None of the signatures matched
+      this.logger.warn('No matching signature found after trying all signatures');
       return false;
     } catch (error) {
       console.error('Standard Webhook signature verification error:', error);

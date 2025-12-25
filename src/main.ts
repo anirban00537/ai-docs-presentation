@@ -56,17 +56,22 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // Capture raw body for webhook signature verification
-  // Always capture for webhook routes (check path instead of headers)
+  // Always capture for webhook routes (check path and Standard Webhooks headers)
   const rawBodyBuffer = (req, res, buffer, encoding) => {
-    // Check if this is a webhook request by path
+    // Check if this is a webhook request by path or headers
+    // Polar.sh uses Standard Webhooks format with 'webhook-signature' header
     const isWebhookRequest =
       req.path?.includes('/subscription/webhook') ||
       req.originalUrl?.includes('/subscription/webhook') ||
+      req.url?.includes('/subscription/webhook') ||
+      req.headers['webhook-signature'] ||  // Standard Webhooks (Polar.sh)
       req.headers['x-polar-signature'] ||
       req.headers['x-signature'];
 
     if (isWebhookRequest && buffer && buffer.length) {
-      req.rawBody = buffer.toString(encoding || 'utf8');
+      // Store both as Buffer and string for flexibility
+      req.rawBody = buffer;
+      req.rawBodyString = buffer.toString(encoding || 'utf8');
     }
   };
 
