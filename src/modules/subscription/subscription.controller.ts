@@ -380,21 +380,29 @@ export class SubscriptionController {
     }
 
     try {
-      // Svix/Polar.sh webhook secrets format: "whsec_<base64>" or "polar_whs_<base64>"
-      // Extract and decode the secret part
-      // IMPORTANT: The decoded secret is binary data, NOT a UTF-8 string
-      let actualSecret: string | Buffer = secret;
+      // Svix/Polar.sh webhook secrets format: "whsec_<base64>" or "polar_whs_<...>"
+      // Extract and prepare the secret
+      let secretsToTry: (string | Buffer)[] = [];
+      
       if (secret.startsWith('whsec_')) {
-        // Standard Svix format: remove prefix and base64-decode to binary
-        const secretPart = secret.substring(6); // Remove "whsec_"
-        actualSecret = Buffer.from(secretPart, 'base64'); // Keep as Buffer (binary)
+        // Standard Svix format: base64 encoded
+        const secretPart = secret.substring(6);
+        secretsToTry.push(Buffer.from(secretPart, 'base64'));
         this.logger.debug('Using whsec_ format secret');
       } else if (secret.startsWith('polar_whs_')) {
-        // Polar.sh format: remove prefix and base64-decode to binary
-        const secretPart = secret.substring(10); // Remove "polar_whs_"
-        actualSecret = Buffer.from(secretPart, 'base64'); // Keep as Buffer (binary)
-        this.logger.debug(`Using polar_whs_ format secret, decoded ${actualSecret.length} bytes`);
+        // Polar.sh format: try BOTH base64 decoded AND raw string
+        // Since we're not sure of Polar's exact format
+        const secretPart = secret.substring(10);
+        // Try 1: Base64 decoded
+        secretsToTry.push(Buffer.from(secretPart, 'base64'));
+        // Try 2: Raw string (not base64 decoded)
+        secretsToTry.push(secretPart);
+        // Try 3: Full secret with prefix as raw string
+        secretsToTry.push(secret);
+        this.logger.debug(`Using polar_whs_ format, trying ${secretsToTry.length} secret variations`);
       } else {
+        // Use as-is
+        secretsToTry.push(secret);
         this.logger.debug('Using raw secret (no known prefix)');
       }
       
@@ -421,63 +429,60 @@ export class SubscriptionController {
       console.log('signedPayload (first 200 chars):', signedPayload.substring(0, 200));
       console.log('received signature header:', signature);
       console.log('num signatures to try:', signatures.length);
+      console.log('num secret variations to try:', secretsToTry.length);
 
-      // Try each signature (Svix can send multiple for secret rotation)
-      for (const sig of signatures) {
-        // Extract signature value from "v1,<signature>" format
-        let signatureValue: string;
-        if (sig.includes(',')) {
-          const parts = sig.split(',');
-          signatureValue = parts.length > 1 ? parts[1] : parts[0];
-        } else if (sig.startsWith('v1')) {
-          signatureValue = sig.substring(2);
-        } else {
-          signatureValue = sig;
-        }
+      // Try each secret variation
+      for (let secretIdx = 0; secretIdx < secretsToTry.length; secretIdx++) {
+        const currentSecret = secretsToTry[secretIdx];
+        console.log(`--- Trying secret variation ${secretIdx + 1}/${secretsToTry.length} ---`);
 
-        // Compute HMAC-SHA256
-        const hmac = crypto.createHmac('sha256', actualSecret);
-        hmac.update(signedPayload);
-        const computedDigest = hmac.digest('base64');
-
-        // VERBOSE DEBUG - Print full signature comparison
-        console.log('--- Signature comparison ---');
-        console.log('Received sig (extracted):', signatureValue);
-        console.log('Computed sig:', computedDigest);
-        console.log('Match?:', signatureValue === computedDigest);
-
-        this.logger.debug('Comparing signatures:', {
-          received: signatureValue.substring(0, 20) + '...',
-          computed: computedDigest.substring(0, 20) + '...',
-          receivedLength: signatureValue.length,
-          computedLength: computedDigest.length,
-        });
-
-        // Both signature and computed digest are now base64
-        if (signatureValue.length !== computedDigest.length) {
-          this.logger.debug('Signature length mismatch, trying next...');
-          continue; // Try next signature
-        }
-
-        try {
-          // Use timing-safe comparison for base64 strings
-          const isValid = crypto.timingSafeEqual(
-            Buffer.from(signatureValue, 'base64'),
-            Buffer.from(computedDigest, 'base64'),
-          );
-
-          if (isValid) {
-            this.logger.log('Webhook signature VERIFIED successfully');
-            return true; // Found a valid signature
+        // Try each signature (Svix can send multiple for secret rotation)
+        for (const sig of signatures) {
+          // Extract signature value from "v1,<signature>" format
+          let signatureValue: string;
+          if (sig.includes(',')) {
+            const parts = sig.split(',');
+            signatureValue = parts.length > 1 ? parts[1] : parts[0];
+          } else if (sig.startsWith('v1')) {
+            signatureValue = sig.substring(2);
+          } else {
+            signatureValue = sig;
           }
-        } catch (compareError) {
-          this.logger.debug('Comparison error (length mismatch in decoded buffers)');
-          continue;
+
+          // Compute HMAC-SHA256
+          const hmac = crypto.createHmac('sha256', currentSecret);
+          hmac.update(signedPayload);
+          const computedDigest = hmac.digest('base64');
+
+          // VERBOSE DEBUG - Print full signature comparison
+          console.log('Received sig (extracted):', signatureValue);
+          console.log('Computed sig:', computedDigest);
+          console.log('Match?:', signatureValue === computedDigest);
+
+          // Both signature and computed digest are now base64
+          if (signatureValue.length !== computedDigest.length) {
+            continue; // Try next signature
+          }
+
+          try {
+            // Use timing-safe comparison for base64 strings
+            const isValid = crypto.timingSafeEqual(
+              Buffer.from(signatureValue, 'base64'),
+              Buffer.from(computedDigest, 'base64'),
+            );
+
+            if (isValid) {
+              this.logger.log(`Webhook signature VERIFIED successfully with secret variation ${secretIdx + 1}`);
+              return true; // Found a valid signature
+            }
+          } catch (compareError) {
+            continue;
+          }
         }
       }
 
       // None of the signatures matched
-      this.logger.warn('No matching signature found after trying all signatures');
+      this.logger.warn('No matching signature found after trying all secret variations');
       return false;
     } catch (error) {
       console.error('Standard Webhook signature verification error:', error);
