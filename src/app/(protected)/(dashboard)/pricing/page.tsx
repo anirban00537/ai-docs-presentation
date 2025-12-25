@@ -2,8 +2,9 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { useSubscriptionStatus } from "@/hooks/use-subscription";
 import { useProducts } from "@/hooks/use-pricing";
+import { useAppSelector } from "@/store/hooks";
+import { selectSubscriptionStatus } from "@/store/slices/subscriptionSlice";
 import { createCheckout } from "@/services/pricing";
 import { PricingCard } from "@/components/pricing-card";
 import { toast } from "sonner";
@@ -11,7 +12,7 @@ import { useState } from "react";
 
 export default function PricingPage() {
   const { data: products, isLoading: productsLoading } = useProducts();
-  const { data: subscriptionStatus } = useSubscriptionStatus();
+  const subscriptionStatus = useAppSelector(selectSubscriptionStatus);
   const currentSubscription = subscriptionStatus?.subscription;
   const [loadingCheckout, setLoadingCheckout] = useState<string | null>(null);
 

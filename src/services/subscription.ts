@@ -26,13 +26,9 @@ export interface Subscription {
 export interface CreditBalance {
   id: string;
   userId: string;
-  totalCredits: number;
+  balance: number;
+  quota: number;
   usedCredits: number;
-  remainingCredits: number;
-  monthlyLimit: number;
-  monthlyUsed: number;
-  freeCredits: number;
-  freeCreditsUsed: number;
   lastResetAt?: string;
   createdAt: string;
   updatedAt: string;

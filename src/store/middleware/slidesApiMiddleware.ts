@@ -1,5 +1,4 @@
 import { Middleware } from "@reduxjs/toolkit";
-import type { RootState, AppDispatch } from "@/store";
 import {
   addSlide as addSlideAction,
   deleteSlide as deleteSlideAction,
@@ -45,7 +44,7 @@ let stateUpdateTimeout: NodeJS.Timeout | null = null;
 const STATE_UPDATE_DEBOUNCE_DELAY = 800; // 800ms debounce for all state updates
 
 // Unified function to sync all state changes to API
-const syncStateToApi = async (state: RootState) => {
+const syncStateToApi = async (state: any) => {
   if (!currentPresentationId) return;
 
   const { slides: currentSlides, theme: currentTheme } = state.slides.present;
@@ -138,7 +137,7 @@ const syncStateToApi = async (state: RootState) => {
 };
 
 // Middleware to handle slide API operations
-export const slidesApiMiddleware: Middleware<object, RootState, AppDispatch> =
+export const slidesApiMiddleware: Middleware<object, any, any> =
   (store) => (next) => (action: any) => {
     const result = next(action);
     const state = store.getState();

@@ -7,6 +7,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { store } from "@/store";
 import { queryClient } from "@/lib/query-client";
 import { UserLoaderProvider } from "@/components/providers/user-loader.provider";
+import { SubscriptionLoaderProvider } from "@/components/providers/subscription-loader.provider";
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -25,7 +26,9 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
   const content = (
     <Provider store={store}>
       <UserLoaderProvider>
-        <div className="h-full">{children}</div>
+        <SubscriptionLoaderProvider>
+          <div className="h-full">{children}</div>
+        </SubscriptionLoaderProvider>
       </UserLoaderProvider>
     </Provider>
   );

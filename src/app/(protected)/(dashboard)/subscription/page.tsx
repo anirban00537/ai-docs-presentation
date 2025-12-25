@@ -9,11 +9,17 @@ import {
   IconAlertCircle,
 } from "@tabler/icons-react";
 import {
-  useSubscriptionStatus,
   useSyncSubscription,
   useCancelSubscription,
-  useCreditBalance,
 } from "@/hooks/use-subscription";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { 
+  selectSubscriptionStatus, 
+  selectCreditBalance, 
+  selectIsSubscribed,
+  selectSubscriptionLoading,
+  fetchSubscriptionInfo
+} from "@/store/slices/subscriptionSlice";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -29,19 +35,28 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function SubscriptionPage() {
-  const { data: status, isLoading: statusLoading } = useSubscriptionStatus();
-  const { data: creditBalance, isLoading: creditsLoading } = useCreditBalance();
+  const dispatch = useAppDispatch();
+  const status = useAppSelector(selectSubscriptionStatus);
+  const creditBalance = useAppSelector(selectCreditBalance);
+  const statusLoading = useAppSelector(selectSubscriptionLoading);
+  const isActive = useAppSelector(selectIsSubscribed);
+  
   const syncMutation = useSyncSubscription();
   const cancelMutation = useCancelSubscription();
   const [cancelDialogOpen, setCancelDialogOpen] = React.useState(false);
 
   const subscription = status?.subscription;
-  const credits = creditBalance || status?.creditBalance;
-  const isActive = status?.isActive || false;
-  const hasCredits = status?.hasCredits || false;
+  const credits = creditBalance;
+  
+  const totalAvailableCredits = credits?.balance || 0;
+  const hasCredits = totalAvailableCredits > 0;
 
   const handleSync = () => {
-    syncMutation.mutate();
+    syncMutation.mutate(undefined, {
+      onSuccess: () => {
+        dispatch(fetchSubscriptionInfo());
+      }
+    });
   };
 
   const handleCancel = () => {
@@ -77,11 +92,7 @@ export default function SubscriptionPage() {
     );
   };
 
-  const totalAvailableCredits =
-    (credits?.remainingCredits || 0) +
-    ((credits?.freeCredits || 0) - (credits?.freeCreditsUsed || 0));
-
-  if (statusLoading || creditsLoading) {
+  if (statusLoading) {
     return (
       <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4">
         <div className="w-full max-w-4xl space-y-8 animate-pulse">
@@ -150,26 +161,20 @@ export default function SubscriptionPage() {
               </div>
               <div className="text-right">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1">Available Now</p>
-                <p className="text-4xl font-serif font-bold text-foreground tracking-tight">{totalAvailableCredits.toLocaleString()}</p>
+                <p className="text-4xl font-serif font-bold text-foreground tracking-tight">{credits?.balance?.toLocaleString() || 0}</p>
               </div>
             </div>
 
-            <div className="relative z-10 grid grid-cols-2 gap-5 pt-2">
-              <div className="p-5 rounded-2xl bg-secondary/5 border border-secondary/10">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Monthly Limit</p>
-                <p className="text-lg font-bold text-foreground/80">{credits?.monthlyLimit?.toLocaleString() || 0}</p>
-              </div>
-              <div className="p-5 rounded-2xl bg-secondary/5 border border-secondary/10">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Consumed</p>
-                <p className="text-lg font-bold text-foreground/80">{credits?.monthlyUsed?.toLocaleString() || 0}</p>
-              </div>
-              <div className="p-5 rounded-2xl bg-secondary/5 border border-secondary/10">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Free Batch</p>
-                <p className="text-lg font-bold text-foreground/80">{(credits?.freeCredits || 0) - (credits?.freeCreditsUsed || 0)}</p>
-              </div>
-              <div className="p-5 rounded-2xl bg-secondary/5 border border-secondary/10">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Paid Batch</p>
-                <p className="text-lg font-bold text-foreground/80">{credits?.remainingCredits || 0}</p>
+            <div className="relative z-10 grid grid-cols-1 gap-5 pt-2">
+              <div className="p-5 rounded-2xl bg-secondary/5 border border-secondary/10 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Cycle Quota</p>
+                  <p className="text-lg font-bold text-foreground/80">{credits?.quota?.toLocaleString() || 0}</p>
+                </div>
+                <div className="text-right">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1.5">Used This Cycle</p>
+                    <p className="text-lg font-bold text-foreground/80">{Math.max(0, (credits?.quota || 0) - (credits?.balance || 0)).toLocaleString()}</p>
+                </div>
               </div>
             </div>
 
@@ -234,7 +239,7 @@ export default function SubscriptionPage() {
                   <div className="grid grid-cols-2 gap-4 pt-2">
                     <div className="p-4 rounded-xl bg-secondary/5 border border-secondary/10">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1">AI Credits</p>
-                      <p className="text-lg font-bold text-foreground/80">{status?.features?.metadata?.ai_credits || credits?.monthlyLimit || '-'}</p>
+                      <p className="text-lg font-bold text-foreground/80">{status?.features?.metadata?.ai_credits || credits?.quota || '-'}</p>
                     </div>
                     <div className="p-4 rounded-xl bg-secondary/5 border border-secondary/10">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1">Max Slides</p>
@@ -343,13 +348,13 @@ export default function SubscriptionPage() {
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">Usage Velocity</span>
                   <span className="text-[12px] font-bold text-primary italic">
-                    {Math.round(((credits?.monthlyUsed || 0) / (credits?.monthlyLimit || 1)) * 100)}%
+                    {Math.round((Math.max(0, (credits?.quota || 0) - (credits?.balance || 0)) / (credits?.quota || 1)) * 100)}%
                   </span>
                 </div>
                 <div className="h-2.5 w-full bg-secondary/10 rounded-full overflow-hidden p-0.5">
                   <motion.div 
                     initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(100, Math.round(((credits?.monthlyUsed || 0) / (credits?.monthlyLimit || 1)) * 100))}%` }}
+                    animate={{ width: `${Math.min(100, Math.round((Math.max(0, (credits?.quota || 0) - (credits?.balance || 0)) / (credits?.quota || 1)) * 100))}%` }}
                     transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     className="h-full bg-primary rounded-full shadow-sm"
                   />
