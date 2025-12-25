@@ -193,39 +193,76 @@ export default function SubscriptionPage() {
             transition={{ delay: 0.2 }}
             className="relative flex flex-col p-9 rounded-[32px] overflow-hidden group bg-white/40 border border-secondary/20 shadow-sm hover:shadow-depth-3 hover:bg-white transition-all duration-300"
           >
-            <div className="relative z-10 flex items-center justify-between mb-12">
+            <div className="relative z-10 flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-blue-500/10 text-blue-600">
                   <IconCreditCard size={24} />
                 </div>
-                <h2 className="font-serif text-2xl font-bold text-foreground tracking-tight">Plan Status</h2>
+                <div>
+                  <h2 className="font-serif text-2xl font-bold text-foreground tracking-tight">Plan Status</h2>
+                  {status?.features?.productName && (
+                    <p className="text-sm text-primary font-semibold mt-0.5">
+                      {status.features.metadata?.plan_name || status.features.productName}
+                    </p>
+                  )}
+                </div>
               </div>
               {getStatusBadge()}
             </div>
 
-            <div className="relative z-10 flex-1 space-y-8">
+            <div className="relative z-10 flex-1 space-y-6">
               {subscription ? (
                 <>
-                  <div className="grid grid-cols-1 gap-8">
+                  {/* Plan Features */}
+                  {status?.features?.features && status.features.features.length > 0 && (
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2.5">Subscription Identity</p>
-                      <div className="px-4 py-3 rounded-xl bg-secondary/5 border border-secondary/10 font-mono text-xs text-foreground/60 truncate">
-                        {subscription.polarSubscriptionId || subscription.id}
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-3">Plan Features</p>
+                      <div className="space-y-2">
+                        {status.features.features.slice(0, 6).map((feature: string, idx: number) => (
+                          <div key={idx} className="flex items-center gap-2.5 text-sm text-foreground/80">
+                            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                              <IconSparkles size={12} className="text-primary" />
+                            </div>
+                            <span className="font-medium">{feature}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                    {subscription.currentPeriodEnd && (
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2.5">Renewal Date</p>
-                        <div className="text-xl font-serif font-bold text-foreground italic">
-                          {new Date(subscription.currentPeriodEnd).toLocaleDateString(undefined, {
-                            month: 'long', day: 'numeric', year: 'numeric'
-                          })}
-                        </div>
-                      </div>
-                    )}
+                  )}
+
+                  {/* Subscription Details Grid */}
+                  <div className="grid grid-cols-2 gap-4 pt-2">
+                    <div className="p-4 rounded-xl bg-secondary/5 border border-secondary/10">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1">AI Credits</p>
+                      <p className="text-lg font-bold text-foreground/80">{status?.features?.metadata?.ai_credits || credits?.monthlyLimit || '-'}</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-secondary/5 border border-secondary/10">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 mb-1">Max Slides</p>
+                      <p className="text-lg font-bold text-foreground/80">{status?.features?.metadata?.max_slides || '-'}</p>
+                    </div>
                   </div>
 
-                  <div className="pt-6 mt-auto">
+                  {/* Renewal Date */}
+                  {subscription.currentPeriodEnd && (
+                    <div className="pt-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2">Next Renewal</p>
+                      <div className="text-lg font-serif font-bold text-foreground">
+                        {new Date(subscription.currentPeriodEnd).toLocaleDateString(undefined, {
+                          month: 'long', day: 'numeric', year: 'numeric'
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Subscription ID (collapsible) */}
+                  <div className="pt-2">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2">Subscription ID</p>
+                    <div className="px-3 py-2 rounded-lg bg-secondary/5 border border-secondary/10 font-mono text-[11px] text-foreground/50 truncate">
+                      {subscription.polarSubscriptionId || subscription.id}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 mt-auto">
                     {subscription.cancelAtPeriodEnd ? (
                       <div className="p-5 rounded-2xl bg-orange-500/5 border border-orange-500/10">
                         <p className="text-sm font-bold text-orange-700">Scheduled Termination</p>

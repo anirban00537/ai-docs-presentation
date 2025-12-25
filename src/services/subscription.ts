@@ -43,6 +43,30 @@ export interface SubscriptionStatus {
   creditBalance: CreditBalance | null;
   isActive: boolean;
   hasCredits: boolean;
+  features?: {
+    productId: string;
+    productName: string;
+    productDescription: string | null;
+    benefits: Array<{
+      id: string;
+      type: string;
+      description: string;
+      selectable: boolean;
+      metadata: Record<string, any>;
+      properties: Record<string, any>;
+    }>;
+    metadata: {
+      ai_images?: string;
+      plan_name?: string;
+      ai_credits?: string;
+      max_slides?: string;
+      no_branding?: string;
+      white_label?: string;
+      beautiful_ai_images?: string;
+      [key: string]: any;
+    };
+    features: string[];
+  };
 }
 
 export interface UseCreditsDto {
