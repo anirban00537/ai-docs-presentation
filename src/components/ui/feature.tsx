@@ -1,99 +1,82 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { IconLayoutDashboard, IconWand, IconDownload, IconPalette, IconTypography } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
+import { IconLayoutDashboard, IconWand, IconDownload, IconPalette, IconTypography, IconCheck } from "@tabler/icons-react";
 
 const features = [
   {
     title: "AI Layout Engine",
     description: "Our intelligence engine analyzes your content structure and automatically selects the perfect layout for every slide, instantly.",
-    icon: <IconLayoutDashboard className="w-8 h-8 text-primary/80" />,
-    className: "md:col-span-2 md:row-span-2 bg-gradient-to-br from-white via-secondary/10 to-white border-secondary/20",
-    large: true,
+    icon: <IconLayoutDashboard className="w-6 h-6 text-primary" />,
   },
   {
     title: "Smart Reformatting",
-    description: "Paste a blog post or a document, and watch it transform into a deck.",
-    icon: <IconWand className="w-6 h-6 text-primary/60" />,
-    className: "bg-white border-secondary/20 shadow-sm",
+    description: "Paste a blog post or a document, and watch it transform into a professional slide deck in seconds.",
+    icon: <IconWand className="w-6 h-6 text-primary" />,
   },
   {
     title: "Export Anywhere",
-    description: "Download as PDF, PowerPoint, or share a live web link.",
-    icon: <IconDownload className="w-6 h-6 text-primary/60" />,
-    className: "bg-white border-secondary/20 shadow-sm",
+    description: "Download your presentations as PDF, PowerPoint, or share a live web link with your audience.",
+    icon: <IconDownload className="w-6 h-6 text-primary" />,
   },
   {
     title: "Brand Consistency",
-    description: "Your fonts, your colors, your logo. Applied automatically to every single slide generated.",
-    icon: <IconPalette className="w-6 h-6 text-primary/60" />,
-    className: "md:row-span-2 bg-primary/5 border-primary/10",
+    description: "Your fonts, your colors, and your logo applied automatically to every single slide you generate.",
+    icon: <IconPalette className="w-6 h-6 text-primary" />,
   },
   {
     title: "Cinematic Typography",
-    description: "We use editorial-grade font pairings to make your text readable and beautiful.",
-    icon: <IconTypography className="w-6 h-6 text-primary/60" />,
-    className: "bg-white border-secondary/20 shadow-sm",
+    description: "We use editorial-grade font pairings to make your text readable, beautiful, and emotionally resonant.",
+    icon: <IconTypography className="w-6 h-6 text-primary" />,
   },
+  {
+    title: "Auto-Styling",
+    description: "Our engine handles colors and contrast automatically, ensuring your content always looks its best.",
+    icon: <IconCheck className="w-6 h-6 text-primary" />,
+  }
 ];
 
 export function FeaturesSection() {
   return (
-    <section className="bg-gradient-to-b from-primary/5 via-white to-secondary/10 py-32 relative overflow-hidden">
-        {/* Background Texture */}
-        <div className="absolute inset-0 bg-noise opacity-30 pointer-events-none" />
+    <section className="py-24 relative overflow-hidden bg-white" id="features">
+      {/* Background Subtle Elements */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent" />
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-2xl mx-auto text-center mb-20">
-          <motion.div 
-             initial={{ opacity: 0, y: 20 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-secondary/20 shadow-sm mb-6"
-          >
-              <span className="w-2 h-2 rounded-full bg-secondary"></span>
-              <span className="text-xs font-bold tracking-widest uppercase text-foreground/70">
-                  Powerful Features
-              </span>
-          </motion.div>
-          <h2 className="font-serif text-5xl md:text-7xl text-foreground mb-6 tracking-tight leading-[1.1]">
+        {/* Header Section - Inspired by PricingSection */}
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-secondary/20 shadow-sm mb-6">
+            <span className="w-2 h-2 rounded-full bg-primary/70"></span>
+            <span className="text-xs font-bold tracking-widest uppercase text-foreground/70">
+              Powerful Capabilities
+            </span>
+          </div>
+          <h2 className="font-serif text-5xl md:text-6xl text-foreground mb-6 tracking-tight leading-[1.1]">
             Everything you need, <br />
-            <span className="italic text-primary/80">nothing you don't.</span>
+            <span className="italic text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-orange-500">nothing you don't.</span>
           </h2>
-          <p className="text-xl text-muted-foreground leading-relaxed">
-            A complete suite of tools designed to make you a better storyteller, without the learning curve.
+          <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            A complete suite of storytelling tools designed to eliminate the friction between your ideas and a finished presentation.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
-          {features.map((feature, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -5 }}
-              className={cn(
-                "group relative overflow-hidden rounded-3xl p-8 flex flex-col justify-between border transition-all duration-300 hover:shadow-depth-2",
-                feature.className
-              )}
+        {/* Features Grid - Clean & Minimal */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {features.map((feature, index) => (
+            <div 
+              key={index}
+              className="group p-8 rounded-3xl bg-white border border-secondary/20 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-gradient-to-b hover:from-white hover:to-primary/5"
             >
-              <div className="relative z-10">
-                <div className="mb-4 inline-flex p-3 rounded-2xl bg-white shadow-sm ring-1 ring-black/5 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
-                </div>
-                <h3 className={cn("font-serif text-xl mb-2 text-foreground", feature.large && "text-3xl")}>
-                  {feature.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                  {feature.description}
-                </p>
+              <div className="mb-6 inline-flex p-3 rounded-2xl bg-secondary/10 group-hover:bg-primary/10 transition-colors duration-300">
+                {feature.icon}
               </div>
-
-              {/* Hover Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            </motion.div>
+              <h3 className="font-serif text-2xl text-foreground mb-3 font-medium">
+                {feature.title}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                {feature.description}
+              </p>
+            </div>
           ))}
         </div>
       </div>
