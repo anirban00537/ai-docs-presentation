@@ -276,7 +276,7 @@ export const generateAndCreateSlides = async (
   const token = getCookie("token");
   const headers: HeadersInit = {
     "Content-Type": "application/json",
-    Accept: "application/json",
+    Accept: "text/event-stream",
     apisecretkeycheck: apiSecretKey,
   };
 
@@ -284,64 +284,103 @@ export const generateAndCreateSlides = async (
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(
-    `${baseURL}/presentation/${presentationId}/slides/create`,
-    {
-      method: "POST",
-      headers,
-      credentials: "include",
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const reader = response.body?.getReader();
-  if (!reader) {
-    throw new Error("No response body");
-  }
-
-  const decoder = new TextDecoder();
-  let buffer = "";
-
   try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+    const response = await fetch(
+      `${baseURL}/presentation/${presentationId}/slides/create`,
+      {
+        method: "POST",
+        headers,
+        credentials: "include",
+      }
+    );
 
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() || "";
+    if (!response.ok) {
+      // Handle HTTP errors
+      onChunk({
+        type: "error",
+        message: `Request failed with status ${response.status}. Please try again.`,
+      });
+      return;
+    }
 
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          const data = line.slice(6);
-          if (data.trim()) {
-            try {
-              const chunk: SlideGenerationChunk = JSON.parse(data);
-              onChunk(chunk);
-            } catch (e) {
-              console.error("Error parsing chunk:", e);
+    const reader = response.body?.getReader();
+    if (!reader) {
+      onChunk({
+        type: "error",
+        message: "No response body received from server.",
+      });
+      return;
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (value) {
+          buffer += decoder.decode(value, { stream: !done });
+        }
+        
+        // Process all complete lines in the buffer
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || ""; // Keep incomplete line in buffer
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6).trim();
+            if (data) {
+              try {
+                const chunk: SlideGenerationChunk = JSON.parse(data);
+                console.log("[SSE] Received chunk:", chunk.type, chunk.message || "");
+                onChunk(chunk);
+                
+                // If we received an error, we can stop processing
+                if (chunk.type === "error") {
+                  console.log("[SSE] Error chunk received, stopping stream");
+                  reader.releaseLock();
+                  return;
+                }
+              } catch (e) {
+                console.error("Error parsing SSE chunk:", e, "Data:", data);
+              }
+            }
+          }
+        }
+
+        if (done) {
+          console.log("[SSE] Stream done");
+          break;
+        }
+
+      }
+
+      // Process any remaining data in buffer after stream ends
+      if (buffer.trim()) {
+        const remainingLines = buffer.split("\n");
+        for (const line of remainingLines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6).trim();
+            if (data) {
+              try {
+                const chunk: SlideGenerationChunk = JSON.parse(data);
+                onChunk(chunk);
+              } catch (e) {
+                console.error("Error parsing final SSE chunk:", e, "Data:", data);
+              }
             }
           }
         }
       }
+    } finally {
+      reader.releaseLock();
     }
-
-    // Process remaining buffer
-    if (buffer.startsWith("data: ")) {
-      const data = buffer.slice(6);
-      if (data.trim()) {
-        try {
-          const chunk: SlideGenerationChunk = JSON.parse(data);
-          onChunk(chunk);
-        } catch (e) {
-          console.error("Error parsing chunk:", e);
-        }
-      }
-    }
-  } finally {
-    reader.releaseLock();
+  } catch (error: any) {
+    // Network or other fetch errors
+    onChunk({
+      type: "error",
+      message: error.message || "Failed to connect to the server. Please check your connection.",
+    });
   }
 };

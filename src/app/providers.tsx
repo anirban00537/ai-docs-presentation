@@ -8,6 +8,7 @@ import { store } from "@/store";
 import { queryClient } from "@/lib/query-client";
 import { UserLoaderProvider } from "@/components/providers/user-loader.provider";
 import { SubscriptionLoaderProvider } from "@/components/providers/subscription-loader.provider";
+import { Toaster } from "@/components/ui/sonner";
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -28,6 +29,7 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
       <UserLoaderProvider>
         <SubscriptionLoaderProvider>
           <div className="h-full">{children}</div>
+          <Toaster richColors position="top-right" />
         </SubscriptionLoaderProvider>
       </UserLoaderProvider>
     </Provider>
@@ -47,3 +49,4 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
 };
 
 export default Providers;
+

@@ -101,5 +101,10 @@ export const useGenerateAndCreateSlides = () => {
     onSuccess: () => {
       dispatch(fetchCreditBalance());
     },
+    onError: (error: any) => {
+      // This catches any errors that weren't handled by onChunk
+      console.error("[useGenerateAndCreateSlides] Mutation error:", error);
+    },
   });
 };
+

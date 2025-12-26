@@ -266,6 +266,7 @@ export const useEditorPage = ({
                 chunk.type === "slide-error" ||
                 chunk.type === "error"
               ) {
+                console.log("[useEditorPage] Error chunk received:", chunk);
                 setIsGeneratingSlides(false);
                 setSlideGenerationProgress(null);
                 const errorMessage = chunk.message || "Unknown error";
@@ -275,7 +276,9 @@ export const useEditorPage = ({
                   errorMessage.toLowerCase().includes("insufficient credits") ||
                   errorMessage.toLowerCase().includes("credits")
                 ) {
+                  console.log("[useEditorPage] Showing credits error toast");
                   toast.error(errorMessage, {
+                    duration: 10000,
                     action: {
                       label: "View Subscription",
                       onClick: () => {
@@ -284,7 +287,10 @@ export const useEditorPage = ({
                     },
                   });
                 } else {
-                  toast.error(`Error generating slides: ${errorMessage}`);
+                  console.log("[useEditorPage] Showing generic error toast");
+                  toast.error(`Error generating slides: ${errorMessage}`, {
+                    duration: 10000,
+                  });
                 }
               }
             },
