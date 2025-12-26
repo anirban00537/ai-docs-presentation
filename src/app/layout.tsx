@@ -79,16 +79,13 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className={`${poppins.variable} ${libre.variable} font-sans antialiased h-full`}>
         <Providers>{children}</Providers>
-        {/* Plausible Analytics */}
+        {/* Umami Analytics */}
         <Script
           defer
+          src="https://u11.butterfast.com/script.js"
+          data-website-id="fa1ed556-8ffd-4d22-899d-3ce2b258b594"
           strategy="afterInteractive"
-          data-domain="butterfast.com"
-          src="https://u11.butterfast.com/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js"
         />
-        <Script id="plausible-init">
-          {`window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }`}
-        </Script>
       </body>
     </html>
   );
