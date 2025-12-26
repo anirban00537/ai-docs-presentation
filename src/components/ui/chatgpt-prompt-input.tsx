@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useSavePrompt } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // --- Utility Function & Radix Primitives ---
 const TooltipProvider = TooltipPrimitive.Provider;
@@ -132,15 +133,38 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
               // Redirect to outline page
               router.push(`/create/outline/${response.data.id}`);
             } else {
-              onError?.(response.message || "Failed to save prompt");
+              // Handle API response with success: false
+              const errorMessage = response.message || "Failed to save prompt";
+              
+              // Check if it's a credit-related error
+              if (
+                errorMessage.toLowerCase().includes("insufficient credits") ||
+                errorMessage.toLowerCase().includes("credits")
+              ) {
+                toast.error(errorMessage, {
+                  duration: 10000,
+                  action: {
+                    label: "Upgrade",
+                    onClick: () => {
+                      window.location.href = "/subscription";
+                    },
+                  },
+                });
+              } else {
+                toast.error(errorMessage, { duration: 5000 });
+              }
+              
+              onError?.(errorMessage);
             }
           },
           onError: (err: any) => {
-            onError?.(
-              err?.response?.data?.message ||
-                err?.message ||
-                "An unexpected error occurred"
-            );
+            const errorMessage = err?.response?.data?.message ||
+              err?.message ||
+              "An unexpected error occurred";
+            
+            toast.error(errorMessage, { duration: 5000 });
+            
+            onError?.(errorMessage);
           },
         }
       );
