@@ -17,8 +17,9 @@ export class AdminFinanceService {
       const where: any = {};
       if (search) {
         where.OR = [
-          { stripeCustomerId: { contains: search, mode: 'insensitive' } },
+          { polarSubscriptionId: { contains: search, mode: 'insensitive' } },
           { user: { email: { contains: search, mode: 'insensitive' } } },
+          { user: { name: { contains: search, mode: 'insensitive' } } },
         ];
       }
       if (userId) where.userId = userId;
@@ -30,15 +31,53 @@ export class AdminFinanceService {
           skip: Number(skip),
           take: Number(perPage),
           include: {
-            user: { select: { email: true, name: true } },
+            user: { 
+              select: { 
+                email: true, 
+                name: true,
+                CreditBalance: true
+              } 
+            },
           },
           orderBy: { createdAt: 'desc' },
         }),
         this.prisma.subscription.count({ where }),
       ]);
 
+      // Fetch AI usage statistics for these users
+      const userIds = subscriptions.map(s => s.userId);
+      const usageStats = await this.prisma.aiUsage.groupBy({
+        by: ['userId'],
+        where: { userId: { in: userIds } },
+        _sum: {
+          inputTokens: true,
+          outputTokens: true,
+          cost: true
+        }
+      });
+
+      // Map usage stats back to subscriptions
+      const subscriptionsWithUsage = subscriptions.map(sub => {
+        const usage = usageStats.find(u => u.userId === sub.userId)?._sum || {
+          inputTokens: 0,
+          outputTokens: 0,
+          cost: 0
+        };
+
+        return {
+          ...sub,
+          usage: {
+            inputTokens: usage.inputTokens || 0,
+            outputTokens: usage.outputTokens || 0,
+            totalTokens: (usage.inputTokens || 0) + (usage.outputTokens || 0),
+            cost: usage.cost || 0
+          },
+          creditBalance: sub.user.CreditBalance
+        };
+      });
+
       return successResponse('Subscriptions retrieved successfully', {
-        subscriptions,
+        subscriptions: subscriptionsWithUsage,
         pagination: {
           page: Number(page),
           perPage: Number(perPage),
@@ -53,14 +92,19 @@ export class AdminFinanceService {
 
   async getRevenueAnalytics(): Promise<ResponseModel> {
     try {
-      const [totalRevenue, activeSubs, churnedSubs] = await Promise.all([
-        this.prisma.aiUsage.aggregate({ _sum: { cost: true } }), // Simplified revenue proxy
+      const [revenueData, activeSubs, churnedSubs] = await Promise.all([
+        this.prisma.creditTransaction.aggregate({
+          where: { type: 'purchase' },
+          _sum: { amount: true }
+        }),
         this.prisma.subscription.count({ where: { status: 'active' } }),
         this.prisma.subscription.count({ where: { status: 'canceled' } }),
       ]);
 
+      // Note: amount is in cents/units, adjust if needed. Assuming it matches currency units for now.
+      // If it's cents, we should divide by 100.
       return successResponse('Revenue analytics retrieved', {
-        revenue: totalRevenue._sum.cost || 0,
+        revenue: revenueData._sum.amount || 0,
         activeSubscriptions: activeSubs,
         churnedSubscriptions: churnedSubs,
       });
