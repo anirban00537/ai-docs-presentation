@@ -17,8 +17,9 @@ export class AdminFinanceService {
       const where: any = {};
       if (search) {
         where.OR = [
-          { stripeCustomerId: { contains: search, mode: 'insensitive' } },
+          { polarSubscriptionId: { contains: search, mode: 'insensitive' } },
           { user: { email: { contains: search, mode: 'insensitive' } } },
+          { user: { name: { contains: search, mode: 'insensitive' } } },
         ];
       }
       if (userId) where.userId = userId;
@@ -30,15 +31,58 @@ export class AdminFinanceService {
           skip: Number(skip),
           take: Number(perPage),
           include: {
-            user: { select: { email: true, name: true } },
+            user: { 
+              select: { 
+                email: true, 
+                name: true,
+                CreditBalance: true,
+              } 
+            },
           },
           orderBy: { createdAt: 'desc' },
         }),
         this.prisma.subscription.count({ where }),
       ]);
 
+      // Fetch AI usage statistics for these users
+      const userIds = subscriptions.map(s => s.userId);
+      this.logger.log(`[getSubscriptions] Subscription userIds: ${JSON.stringify(userIds)}`);
+      
+      const usageStats = await this.prisma.aiUsage.groupBy({
+        by: ['userId'],
+        where: { userId: { in: userIds } },
+        _sum: {
+          inputTokens: true,
+          outputTokens: true,
+          cost: true,
+        },
+      });
+      
+      this.logger.log(`[getSubscriptions] UsageStats results: ${JSON.stringify(usageStats)}`);
+
+
+      // Map usage stats back to subscriptions
+      const subscriptionsWithUsage = subscriptions.map(sub => {
+        const usage = usageStats.find(u => u.userId === sub.userId)?._sum || {
+          inputTokens: 0,
+          outputTokens: 0,
+          cost: 0,
+        };
+
+        return {
+          ...sub,
+          usage: {
+            inputTokens: usage.inputTokens || 0,
+            outputTokens: usage.outputTokens || 0,
+            totalTokens: (usage.inputTokens || 0) + (usage.outputTokens || 0),
+            cost: usage.cost || 0,
+          },
+          creditBalance: (sub.user as any).CreditBalance,
+        };
+      });
+
       return successResponse('Subscriptions retrieved successfully', {
-        subscriptions,
+        subscriptions: subscriptionsWithUsage,
         pagination: {
           page: Number(page),
           perPage: Number(perPage),
