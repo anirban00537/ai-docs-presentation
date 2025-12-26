@@ -445,6 +445,20 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
     payload: CreateOutlineDto,
   ): Promise<ResponseModel> {
     try {
+      // Check if user has enough credits before creating outline
+      // Outline generation requires 1 credit + slides require 1 credit each
+      const estimatedTotalCredits = 1 + payload.numberOfSlides; // 1 for outline + 1 per slide
+      
+      const hasCredits = await this.creditService.hasEnoughCredits(user.id, estimatedTotalCredits);
+      if (!hasCredits) {
+        this.logger.warn(`User ${user.id} attempted to create outline without sufficient credits (required: ${estimatedTotalCredits})`);
+        return {
+          success: false,
+          message: `Insufficient credits. You need at least ${estimatedTotalCredits} credits to generate a ${payload.numberOfSlides}-slide presentation. Please upgrade your subscription or purchase more credits.`,
+          data: null,
+        };
+      }
+
       // Use a transaction to ensure both outline and presentation are created and linked atomically
       const result = await this.prisma.$transaction(async (tx) => {
         // Create outline first
