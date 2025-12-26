@@ -69,7 +69,8 @@ export class AdminUsersService {
         const balance = await tx.creditBalance.findUnique({ where: { userId } });
         if (!balance) throw new Error('Credit balance not found');
 
-        const finalBalance = balance.balance + amount;
+        const currentBalance = balance.balance;
+        const finalBalance = currentBalance + amount;
 
         const updated = await tx.creditBalance.update({
           where: { userId },
