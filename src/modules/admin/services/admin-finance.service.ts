@@ -35,7 +35,7 @@ export class AdminFinanceService {
               select: { 
                 email: true, 
                 name: true,
-                CreditBalance: true
+                CreditBalance: true,
               } 
             },
           },
@@ -46,22 +46,26 @@ export class AdminFinanceService {
 
       // Fetch AI usage statistics for these users
       const userIds = subscriptions.map(s => s.userId);
+      this.logger.log(`[getSubscriptions] Subscription userIds: ${JSON.stringify(userIds)}`);
+      
       const usageStats = await this.prisma.aiUsage.groupBy({
         by: ['userId'],
         where: { userId: { in: userIds } },
         _sum: {
           inputTokens: true,
           outputTokens: true,
-          cost: true
-        }
+          cost: true,
+        },
       });
+      
+      this.logger.log(`[getSubscriptions] UsageStats results: ${JSON.stringify(usageStats)}`);
 
       // Map usage stats back to subscriptions
       const subscriptionsWithUsage = subscriptions.map(sub => {
         const usage = usageStats.find(u => u.userId === sub.userId)?._sum || {
           inputTokens: 0,
           outputTokens: 0,
-          cost: 0
+          cost: 0,
         };
 
         return {
@@ -70,9 +74,9 @@ export class AdminFinanceService {
             inputTokens: usage.inputTokens || 0,
             outputTokens: usage.outputTokens || 0,
             totalTokens: (usage.inputTokens || 0) + (usage.outputTokens || 0),
-            cost: usage.cost || 0
+            cost: usage.cost || 0,
           },
-          creditBalance: sub.user.CreditBalance
+          creditBalance: (sub.user as any).CreditBalance,
         };
       });
 
