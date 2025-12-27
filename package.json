@@ -25,6 +25,7 @@
     "prisma:migrate:prod": "npx prisma migrate deploy",
     "prisma:push": "npx prisma db push",
     "prisma:seed": "npx prisma db seed",
+    "prisma:seed:templates": "npx tsx prisma/seed-templates.ts",
     "prisma:generate": "npx prisma generate",
     "dev": "nodemon src/index.js"
   },
