@@ -48,6 +48,118 @@ export class PromptPresentationAIService implements OnModuleInit {
     }
   }
 
+  /**
+   * Clean markdown code block wrappers and other malformed patterns from JSON content
+   */
+  private cleanJsonContent(content: string): string {
+    let cleaned = content?.trim() || '';
+    
+    // Remove markdown code blocks (```json ... ``` or ``` ... ```)
+    if (cleaned.startsWith('```json')) {
+      cleaned = cleaned.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (cleaned.startsWith('```')) {
+      cleaned = cleaned.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+    
+    cleaned = cleaned.trim();
+    
+    // Remove leading dots, periods, or other garbage characters before the JSON
+    // Pattern: anything before the first { that isn't part of valid JSON
+    cleaned = cleaned.replace(/^[.\s\n\r]*(?=\{)/, '');
+    
+    // Fix double opening braces: {{ -> {
+    // This handles cases like "{\n{" or "{{"
+    cleaned = cleaned.replace(/^\{\s*\{/, '{');
+    
+    // Fix double closing braces at the end: }} -> }
+    // But only if there's an imbalance (more } than {)
+    const openCount = (cleaned.match(/\{/g) || []).length;
+    const closeCount = (cleaned.match(/\}/g) || []).length;
+    if (closeCount > openCount) {
+      // Remove extra closing braces from the end
+      const excess = closeCount - openCount;
+      for (let i = 0; i < excess; i++) {
+        cleaned = cleaned.replace(/\}(\s*)$/, '$1');
+      }
+    }
+    
+    return cleaned.trim();
+  }
+
+  /**
+   * Attempt to repair common JSON issues like missing closing braces
+   */
+  private attemptJsonRepair(jsonStr: string): string | null {
+    try {
+      // Count opening and closing braces/brackets
+      const openBraces = (jsonStr.match(/\{/g) || []).length;
+      const closeBraces = (jsonStr.match(/\}/g) || []).length;
+      const openBrackets = (jsonStr.match(/\[/g) || []).length;
+      const closeBrackets = (jsonStr.match(/\]/g) || []).length;
+      
+      let repaired = jsonStr;
+      
+      // Add missing closing brackets first (inner), then braces (outer)
+      if (openBrackets > closeBrackets) {
+        repaired += ']'.repeat(openBrackets - closeBrackets);
+      }
+      if (openBraces > closeBraces) {
+        repaired += '}'.repeat(openBraces - closeBraces);
+      }
+      
+      // Validate the repair worked
+      JSON.parse(repaired);
+      this.logger.debug('Successfully repaired truncated JSON');
+      return repaired;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Robust JSON extraction with multiple fallback strategies
+   */
+  private extractValidJson(content: string): any {
+    const originalContent = content?.substring(0, 200) || '';
+    
+    // Step 1: Clean markdown wrappers and malformed patterns
+    const cleanedContent = this.cleanJsonContent(content);
+    
+    this.logger.debug(`JSON extraction - Original starts with: "${originalContent.substring(0, 50)}..."`);
+    this.logger.debug(`JSON extraction - Cleaned starts with: "${cleanedContent.substring(0, 50)}..."`);
+    
+    // Step 2: Try direct parse
+    try {
+      return JSON.parse(cleanedContent);
+    } catch (directError) {
+      this.logger.debug(`Direct JSON parse failed: ${(directError as Error).message}`);
+    }
+    
+    // Step 3: Try to extract JSON object from text
+    const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      // Apply cleaning again to the extracted match (handles nested double braces)
+      let extractedJson = jsonMatch[0];
+      extractedJson = extractedJson.replace(/^\{\s*\{/, '{'); // Fix leading double braces
+      
+      try {
+        return JSON.parse(extractedJson);
+      } catch (extractError) {
+        this.logger.debug(`Extracted JSON parse failed: ${(extractError as Error).message}`);
+        
+        // Step 4: Attempt repair
+        const repairedJson = this.attemptJsonRepair(extractedJson);
+        if (repairedJson) {
+          return JSON.parse(repairedJson);
+        }
+      }
+    }
+    
+    // All strategies failed - log more details for debugging
+    this.logger.error(`JSON extraction failed. Cleaned content (first 300 chars): ${cleanedContent.substring(0, 300)}`);
+    throw new Error(`Failed to extract valid JSON from AI response. Content starts with: ${cleanedContent.substring(0, 100)}...`);
+  }
+
 
   /**
    * Analyze a layout schema to detect image fields and generate Unsplash search queries
@@ -158,7 +270,8 @@ If no image fields are found, return hasImages as false with an empty imageField
         return { hasImages: false, imageFields: [] };
       }
 
-      const result: ImageAnalysisResult = JSON.parse(content);
+      // Use robust JSON extraction to handle markdown wrappers and malformed JSON
+      const result: ImageAnalysisResult = this.extractValidJson(content);
       
       this.logger.debug(
         `Image analysis result: ${result.hasImages ? result.imageFields.length : 0} image fields found`,
@@ -510,6 +623,29 @@ IMPORTANT:
               content: slidePrompt,
             },
           ],
+          // Use structured JSON output to prevent malformed responses
+          responseFormat: {
+            type: 'json_schema',
+            jsonSchema: {
+              name: 'slide_content',
+              strict: true,
+              schema: {
+                type: 'object',
+                properties: {
+                  rows: {
+                    type: 'array',
+                    description: 'Array of slide rows matching the template structure',
+                    items: {
+                      type: 'object',
+                      additionalProperties: true,
+                    },
+                  },
+                },
+                required: ['rows'],
+                additionalProperties: false,
+              },
+            },
+          },
           stream: false,
         });
 
@@ -538,27 +674,13 @@ IMPORTANT:
           });
         }
 
-        // Clean the response
-        let cleanedContent = (content as string)?.trim() || '';
-        if (cleanedContent.startsWith('```json')) {
-          cleanedContent = cleanedContent
-            .replace(/^```json\s*/, '')
-            .replace(/\s*```$/, '');
-        } else if (cleanedContent.startsWith('```')) {
-          cleanedContent = cleanedContent
-            .replace(/^```\s*/, '')
-            .replace(/\s*```$/, '');
-        }
-
-        // Parse JSON
+        // Use robust JSON extraction with cleanup, fallback, and repair strategies
         let slideData;
         try {
-          slideData = JSON.parse(cleanedContent);
+          slideData = this.extractValidJson(content as string);
         } catch (parseError) {
-          const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            slideData = JSON.parse(jsonMatch[0]);
-          }
+          this.logger.error(`[Slide ${slideNumber}] JSON extraction failed:`, parseError);
+          throw new Error(`Failed to parse slide content: ${(parseError as Error).message}`);
         }
 
         // Extract rows if nested in data object
