@@ -24,7 +24,12 @@ import {
 } from './dto/feature-response.dto';
 
 // Destructure commonly used constants for cleaner code
-const { SUBSCRIPTION_STATUS, SUBSCRIPTION_ACTIVE_STATUSES, SUBSCRIPTION_ENDED_STATUSES, CREDITS } = coreConstant;
+const {
+  SUBSCRIPTION_STATUS,
+  SUBSCRIPTION_ACTIVE_STATUSES,
+  SUBSCRIPTION_ENDED_STATUSES,
+  CREDITS,
+} = coreConstant;
 
 @Injectable()
 export class SubscriptionService {
@@ -48,7 +53,9 @@ export class SubscriptionService {
       const creditBalance = await this.creditService.getCreditBalance(user.id);
 
       const hasAccessCheck = await this.hasActiveAccess(user.id);
-      const isActive = hasAccessCheck.reason === 'active' || hasAccessCheck.reason === 'trialing';
+      const isActive =
+        hasAccessCheck.reason === 'active' ||
+        hasAccessCheck.reason === 'trialing';
       const hasAccess = hasAccessCheck.hasAccess;
 
       // Fetch product features if subscription has a productId
@@ -78,8 +85,7 @@ export class SubscriptionService {
           : null,
         isActive: !!isActive,
         hasAccess: !!hasAccess,
-        hasCredits:
-          creditBalance !== null && creditBalance.balance > 0,
+        hasCredits: creditBalance !== null && creditBalance.balance > 0,
         features,
       };
 
@@ -95,7 +101,7 @@ export class SubscriptionService {
   /**
    * Check if a user has active subscription access
    * This is the SINGLE SOURCE OF TRUTH for access decisions
-   * 
+   *
    * Access is granted if:
    * 1. Status is active/trialing AND period hasn't ended
    * 2. OR subscription is canceled but period is still valid (cancelAtPeriodEnd)
@@ -103,7 +109,13 @@ export class SubscriptionService {
   async hasActiveAccess(userId: string): Promise<{
     hasAccess: boolean;
     subscription: any | null;
-    reason: 'active' | 'trialing' | 'canceled_but_period_valid' | 'no_subscription' | 'period_ended' | 'inactive';
+    reason:
+      | 'active'
+      | 'trialing'
+      | 'canceled_but_period_valid'
+      | 'no_subscription'
+      | 'period_ended'
+      | 'inactive';
     periodEnd: Date | null;
   }> {
     const subscription = await this.prisma.subscription.findUnique({
@@ -111,9 +123,9 @@ export class SubscriptionService {
     });
 
     if (!subscription) {
-      return { 
-        hasAccess: false, 
-        subscription: null, 
+      return {
+        hasAccess: false,
+        subscription: null,
         reason: 'no_subscription',
         periodEnd: null,
       };
@@ -124,7 +136,12 @@ export class SubscriptionService {
     const periodValid = periodEnd && new Date(periodEnd) > now;
 
     // Case 1: Active or trialing with valid period
-    if ((SUBSCRIPTION_ACTIVE_STATUSES as readonly string[]).includes(subscription.status) && periodValid) {
+    if (
+      (SUBSCRIPTION_ACTIVE_STATUSES as readonly string[]).includes(
+        subscription.status,
+      ) &&
+      periodValid
+    ) {
       return {
         hasAccess: true,
         subscription,
@@ -144,7 +161,11 @@ export class SubscriptionService {
     }
 
     // Case 3: Status is canceled/inactive and period has ended
-    if ((SUBSCRIPTION_ENDED_STATUSES as readonly string[]).includes(subscription.status)) {
+    if (
+      (SUBSCRIPTION_ENDED_STATUSES as readonly string[]).includes(
+        subscription.status,
+      )
+    ) {
       return {
         hasAccess: false,
         subscription,
@@ -291,7 +312,11 @@ export class SubscriptionService {
         this.logger.log(
           `Resetting credits to ${CREDITS.FREE_TIER} for user ${user.id} due to inactive subscription`,
         );
-        await this.creditService.updateCreditsFromSubscription(user.id, CREDITS.FREE_TIER, { previousPeriodEnd: null });
+        await this.creditService.updateCreditsFromSubscription(
+          user.id,
+          CREDITS.FREE_TIER,
+          { previousPeriodEnd: null },
+        );
 
         return successResponse('Subscription synced successfully', {
           status: SUBSCRIPTION_STATUS.INACTIVE,
@@ -365,11 +390,12 @@ export class SubscriptionService {
 
       // Update credit balance based on subscription
       // Process credits if subscription has active access (including cancelAtPeriodEnd with valid period)
-      const periodStillValid = currentPeriodEnd && new Date(currentPeriodEnd) > new Date();
-      const hasActiveAccess = 
+      const periodStillValid =
+        currentPeriodEnd && new Date(currentPeriodEnd) > new Date();
+      const hasActiveAccess =
         ['active', 'trialing'].includes(activeSubscription.status) ||
         (activeSubscription.cancel_at_period_end && periodStillValid);
-      
+
       if (hasActiveAccess) {
         const existingPeriodStart = existingSubscription?.currentPeriodStart
           ? new Date(existingSubscription.currentPeriodStart).getTime()
@@ -384,32 +410,48 @@ export class SubscriptionService {
         const isPlanChange = productId !== existingSubscription?.productId;
 
         // NEW: Also check if current quota matches plan limit
-        const creditBalance = await this.creditService.getCreditBalance(user.id);
+        const creditBalance = await this.creditService.getCreditBalance(
+          user.id,
+        );
         const monthlyLimit = await this.getMonthlyCreditLimit(
           activeSubscription.product?.id,
           activeSubscription,
         );
-        const isQuotaMismatch = creditBalance && creditBalance.quota !== monthlyLimit;
+        const isQuotaMismatch =
+          creditBalance && creditBalance.quota !== monthlyLimit;
 
-        this.logger.log(`Sync Check [${user.id}]: hasActiveAccess=${hasActiveAccess}, isNewSub=${isNewSubscription}, isNewPeriod=${isNewPeriod}, isPlanChange=${isPlanChange}, isQuotaMismatch=${isQuotaMismatch} (BalanceQuota=${creditBalance?.quota}, PlanLimit=${monthlyLimit})`);
+        this.logger.log(
+          `Sync Check [${user.id}]: hasActiveAccess=${hasActiveAccess}, isNewSub=${isNewSubscription}, isNewPeriod=${isNewPeriod}, isPlanChange=${isPlanChange}, isQuotaMismatch=${isQuotaMismatch} (BalanceQuota=${creditBalance?.quota}, PlanLimit=${monthlyLimit})`,
+        );
 
-        if (isNewSubscription || isNewPeriod || isPlanChange || isQuotaMismatch) {
+        if (
+          isNewSubscription ||
+          isNewPeriod ||
+          isPlanChange ||
+          isQuotaMismatch
+        ) {
           this.logger.log(
             `Credit sync triggered for user ${user.id}: newSubscription=${isNewSubscription}, newPeriod=${isNewPeriod}, planChange=${isPlanChange}, quotaMismatch=${isQuotaMismatch}`,
           );
           // Pass the PREVIOUS period end date to determine rollover eligibility
           // If forceReplace (quota mismatch), don't roll over credits
-          await this.creditService.updateCreditsFromSubscription(user.id, monthlyLimit, {
-            forceReplace: isQuotaMismatch,
-            previousPeriodEnd: existingSubscription?.currentPeriodEnd || null,
-          });
+          await this.creditService.updateCreditsFromSubscription(
+            user.id,
+            monthlyLimit,
+            {
+              forceReplace: isQuotaMismatch,
+              previousPeriodEnd: existingSubscription?.currentPeriodEnd || null,
+            },
+          );
         } else {
           this.logger.debug(
             `Sync: No credit reset needed for user ${user.id} - subscription data and quota are already in sync`,
           );
         }
       } else {
-        this.logger.log(`Sync: User ${user.id} does not have active access (status=${activeSubscription.status}, periodValid=${periodStillValid})`);
+        this.logger.log(
+          `Sync: User ${user.id} does not have active access (status=${activeSubscription.status}, periodValid=${periodStillValid})`,
+        );
       }
 
       return successResponse('Subscription synced successfully', subscription);
@@ -481,10 +523,10 @@ export class SubscriptionService {
           await this.handleSubscriptionUpdate(data);
           break;
         case 'subscription.canceled':
-          await this.handleSubscriptionCanceled(data);  // Preserves access if period valid
+          await this.handleSubscriptionCanceled(data); // Preserves access if period valid
           break;
         case 'subscription.revoked':
-          await this.handleSubscriptionRevoked(data);   // Immediate termination
+          await this.handleSubscriptionRevoked(data); // Immediate termination
           break;
         case 'subscription.uncanceled':
           await this.handleSubscriptionUncanceled(data);
@@ -609,7 +651,11 @@ export class SubscriptionService {
         data.product_id || data.product?.id,
         data,
       );
-      await this.creditService.updateCreditsFromSubscription(user.id, monthlyLimit, { previousPeriodEnd: null });
+      await this.creditService.updateCreditsFromSubscription(
+        user.id,
+        monthlyLimit,
+        { previousPeriodEnd: null },
+      );
 
       this.logger.log(
         `Created new subscription ${polarSubscriptionId} for user ${user.id} with ${monthlyLimit} credits`,
@@ -697,7 +743,7 @@ export class SubscriptionService {
 
   /**
    * Handle subscription canceled webhook
-   * 
+   *
    * IMPORTANT: "Canceled" means the user clicked cancel, NOT that access should end.
    * Access should be preserved until currentPeriodEnd.
    * Credits should only be reset when the period actually ends.
@@ -705,7 +751,7 @@ export class SubscriptionService {
   private async handleSubscriptionCanceled(data: any): Promise<void> {
     const polarSubscriptionId = data.id;
     const currentPeriodEnd = data.current_period_end || data.currentPeriodEnd;
-    
+
     this.logger.log(
       `Handling subscription.canceled webhook: ${polarSubscriptionId}`,
     );
@@ -716,12 +762,16 @@ export class SubscriptionService {
     });
 
     if (!subscription) {
-      this.logger.warn(`Subscription ${polarSubscriptionId} not found in database`);
+      this.logger.warn(
+        `Subscription ${polarSubscriptionId} not found in database`,
+      );
       return;
     }
 
     const now = new Date();
-    const periodEnd = currentPeriodEnd ? new Date(currentPeriodEnd) : subscription.currentPeriodEnd;
+    const periodEnd = currentPeriodEnd
+      ? new Date(currentPeriodEnd)
+      : subscription.currentPeriodEnd;
     const cancelAtPeriodEnd = data.cancel_at_period_end ?? true;
     const periodStillValid = periodEnd && new Date(periodEnd) > now;
 
@@ -729,62 +779,66 @@ export class SubscriptionService {
       // User canceled but period is still valid and they chose "at period end"
       this.logger.log(
         `Subscription ${polarSubscriptionId} canceled but period valid until ${periodEnd}. ` +
-        `Preserving access and credits for user ${subscription.userId}.`
+          `Preserving access and credits for user ${subscription.userId}.`,
       );
-      
+
       await this.prisma.subscription.update({
         where: { polarSubscriptionId },
         data: {
           cancelAtPeriodEnd: true,
-          canceledAt: data.canceled_at ? new Date(data.canceled_at) : new Date(),
+          canceledAt: data.canceled_at
+            ? new Date(data.canceled_at)
+            : new Date(),
           // IMPORTANT: Keep status as 'active' or 'trialing' if it already was
           // Unless it was already canceled
         },
       });
-      
+
       // DO NOT reset credits - user paid for this period
     } else {
       // Period has ended OR user chose "Immediately"
       this.logger.log(
         `Subscription ${polarSubscriptionId} ${!cancelAtPeriodEnd ? 'immediately canceled' : 'period has ended'} for user ${subscription.userId}. ` +
-        `Revoking access and resetting credits to free tier.`
+          `Revoking access and resetting credits to free tier.`,
       );
-      
+
       await this.prisma.subscription.update({
         where: { polarSubscriptionId },
         data: {
           status: SUBSCRIPTION_STATUS.CANCELED,
           cancelAtPeriodEnd: cancelAtPeriodEnd,
-          canceledAt: data.canceled_at ? new Date(data.canceled_at) : new Date(),
+          canceledAt: data.canceled_at
+            ? new Date(data.canceled_at)
+            : new Date(),
         },
       });
 
       // NOW reset credits to free tier
       await this.creditService.updateCreditsFromSubscription(
-        subscription.userId, 
-        CREDITS.FREE_TIER, 
-        { previousPeriodEnd: null }
+        subscription.userId,
+        CREDITS.FREE_TIER,
+        { previousPeriodEnd: null },
       );
     }
   }
 
   /**
    * Handle subscription revoked webhook
-   * 
+   *
    * According to Polar.sh documentation:
    * - For end-of-period cancellation: subscription.revoked is sent when the billing period ends
    * - For immediate cancellation: subscription.revoked is sent immediately
-   * 
+   *
    * In BOTH cases, access should be revoked and credits reset to free tier.
    * The subscription status at this point is 'canceled' in Polar.
    */
   private async handleSubscriptionRevoked(data: any): Promise<void> {
     const polarSubscriptionId = data.id;
     const isImmediateRevoke = !data.cancel_at_period_end;
-    
+
     this.logger.log(
       `Handling subscription.revoked webhook: ${polarSubscriptionId} ` +
-      `(${isImmediateRevoke ? 'IMMEDIATE' : 'END-OF-PERIOD'} revocation)`,
+        `(${isImmediateRevoke ? 'IMMEDIATE' : 'END-OF-PERIOD'} revocation)`,
     );
 
     const subscription = await this.prisma.subscription.findUnique({
@@ -792,20 +846,22 @@ export class SubscriptionService {
     });
 
     if (!subscription) {
-      this.logger.warn(`Subscription ${polarSubscriptionId} not found in database for revocation`);
+      this.logger.warn(
+        `Subscription ${polarSubscriptionId} not found in database for revocation`,
+      );
       return;
     }
 
     this.logger.log(
       `Subscription ${polarSubscriptionId} revoked for user ${subscription.userId}. ` +
-      `Access ended. Resetting credits to free tier.`
+        `Access ended. Resetting credits to free tier.`,
     );
-    
+
     // Reset credits to free tier - access has ended
     await this.creditService.updateCreditsFromSubscription(
-      subscription.userId, 
-      CREDITS.FREE_TIER, 
-      { previousPeriodEnd: null }
+      subscription.userId,
+      CREDITS.FREE_TIER,
+      { previousPeriodEnd: null },
     );
 
     // Update subscription status to canceled/revoked
@@ -844,7 +900,11 @@ export class SubscriptionService {
           this.logger.log(
             `Resetting credits to free tier (${CREDITS.FREE_TIER}) for user ${subscription.userId} due to customer deletion`,
           );
-          await this.creditService.updateCreditsFromSubscription(subscription.userId, CREDITS.FREE_TIER, { previousPeriodEnd: null });
+          await this.creditService.updateCreditsFromSubscription(
+            subscription.userId,
+            CREDITS.FREE_TIER,
+            { previousPeriodEnd: null },
+          );
         }
 
         // Mark subscriptions as inactive
@@ -956,9 +1016,15 @@ export class SubscriptionService {
         this.logger.log(
           `Resetting credits to free tier (${CREDITS.FREE_TIER}) for user ${userId} due to full refund`,
         );
-        await this.creditService.updateCreditsFromSubscription(userId, CREDITS.FREE_TIER, { previousPeriodEnd: null });
+        await this.creditService.updateCreditsFromSubscription(
+          userId,
+          CREDITS.FREE_TIER,
+          { previousPeriodEnd: null },
+        );
 
-        this.logger.log(`Subscription ${subscription.id} marked as refunded and credits reset`);
+        this.logger.log(
+          `Subscription ${subscription.id} marked as refunded and credits reset`,
+        );
       }
     }
   }
@@ -973,6 +1039,8 @@ export class SubscriptionService {
 
   /**
    * Extract features from Polar product data
+   * Features are extracted from feature_1, feature_2, feature_3, etc. metadata keys
+   * ai_credits is kept as is in metadata
    */
   extractFeaturesFromProduct(product: any): FeatureResponseDto {
     const productAny = product as any;
@@ -997,138 +1065,32 @@ export class SubscriptionService {
     // Extract metadata
     const metadata = product.metadata || productAny.metadata || {};
 
-    // Build feature list from benefits and metadata
+    // Build feature list from feature_1, feature_2, feature_3, etc.
     const features: string[] = [];
 
-    // Add benefit descriptions as features
-    benefits.forEach((benefit) => {
-      if (benefit.description) {
-        features.push(benefit.description);
+    // Extract features from feature_1, feature_2, feature_3, etc. metadata keys
+    // Support up to feature_20
+    for (let i = 1; i <= 20; i++) {
+      const featureKey = `feature_${i}`;
+      const featureValue = metadata[featureKey];
+
+      if (
+        featureValue &&
+        typeof featureValue === 'string' &&
+        featureValue.trim() !== ''
+      ) {
+        features.push(featureValue.trim());
       }
-    });
+    }
 
-    // Define known metadata keys with custom formatting
-    const knownMetadataFormatters: Record<string, (value: any) => string> = {
-      ai_credits: (v) => `${v} AI Credits per month`,
-      max_slides: (v) => `Up to ${v} Slides per presentation`,
-      max_presentations: (v) => `Up to ${v} Presentations`,
-      presentations: (v) => `Up to ${v} Presentations`,
-      beautiful_ai_images: (v) =>
-        v === 'true' || v === true ? 'Beautiful AI-Generated Images' : '',
-      ai_images: (v) =>
-        v === 'true' || v === true ? 'Beautiful AI-Generated Images' : '',
-      white_label: (v) =>
-        v === 'true' || v === true ? 'White Label / No Branding' : '',
-      no_branding: (v) =>
-        v === 'true' || v === true ? 'White Label / No Branding' : '',
-      unlimited_access: (v) =>
-        v === 'true' || v === true || v ? 'Unlimited Access' : '',
-      unlimited: (v) =>
-        v === 'true' || v === true || v ? 'Unlimited Access' : '',
-      priority_support: (v) =>
-        v === 'true' || v === true || v ? 'Priority Support' : '',
-      advanced_features: (v) =>
-        v === 'true' || v === true || v ? 'Advanced Features' : '',
-      advanced: (v) =>
-        v === 'true' || v === true || v ? 'Advanced Features' : '',
-      api_access: (v) => (v === 'true' || v === true || v ? 'API Access' : ''),
-      api: (v) => (v === 'true' || v === true || v ? 'API Access' : ''),
-      custom_templates: (v) =>
-        v === 'true' || v === true || v ? 'Custom Templates' : '',
-      templates: (v) =>
-        v === 'true' || v === true || v ? 'Custom Templates' : '',
-      export_formats: (v) => `Export Formats: ${v}`,
-      storage_gb: (v) => `${v} GB Storage`,
-      storage: (v) => `${v} GB Storage`,
-      team_size: (v) => `Team Collaboration (${v || 'Unlimited'} members)`,
-      collaboration: (v) =>
-        v === 'true' || v === true || v
-          ? `Team Collaboration (${metadata.team_size || 'Unlimited'} members)`
-          : '',
-      branding: (v) =>
-        v && metadata.white_label !== 'true' ? 'Custom Branding' : '',
-      analytics: (v) =>
-        v === 'true' || v === true || v ? 'Advanced Analytics' : '',
-      webhooks: (v) =>
-        v === 'true' || v === true || v ? 'Webhook Integration' : '',
-      sso: (v) =>
-        v === 'true' || v === true || v ? 'Single Sign-On (SSO)' : '',
-      single_sign_on: (v) =>
-        v === 'true' || v === true || v ? 'Single Sign-On (SSO)' : '',
-      backup: (v) =>
-        v === 'true' || v === true || v ? 'Automated Backups' : '',
-      backups: (v) =>
-        v === 'true' || v === true || v ? 'Automated Backups' : '',
-      version_history: (v) => `Version History (${v} versions)`,
-      plan_name: (v) =>
-        `${String(v).charAt(0).toUpperCase() + String(v).slice(1)} Plan`,
-    };
-
-    // Track features to avoid duplicates
-    const featureSet = new Set<string>();
-
-    // Process all metadata fields dynamically
-    Object.entries(metadata).forEach(([key, value]) => {
-      // Skip empty values
-      if (value === null || value === undefined || value === '') {
-        return;
-      }
-
-      // Use known formatter if available
-      if (knownMetadataFormatters[key]) {
-        const formatted = knownMetadataFormatters[key](value);
-        if (formatted && !featureSet.has(formatted)) {
-          features.push(formatted);
-          featureSet.add(formatted);
+    // Also add benefit descriptions as features if no feature_X keys found
+    if (features.length === 0) {
+      benefits.forEach((benefit) => {
+        if (benefit.description) {
+          features.push(benefit.description);
         }
-        // Continue to process even if we have a formatter, to handle aliases
-        // But skip if this is an alias that would produce duplicate output
-        // (e.g., ai_images and beautiful_ai_images both produce same output)
-        return;
-      }
-
-      // For unknown metadata keys, create a human-readable feature
-      // Convert snake_case to Title Case and format the value
-      const formattedKey = key
-        .split('_')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-
-      // Format value based on type
-      let formattedValue: string;
-      if (value === 'true' || value === true) {
-        formattedValue = formattedKey;
-      } else if (value === 'false' || value === false) {
-        // Skip false values
-        return;
-      } else if (typeof value === 'number') {
-        formattedValue = `${formattedKey}: ${value}`;
-      } else {
-        // For string values, check if it's a numeric string
-        const stringValue = String(value);
-        const trimmed = stringValue.trim();
-        if (
-          trimmed !== '' &&
-          !isNaN(Number(trimmed)) &&
-          !isNaN(parseFloat(trimmed))
-        ) {
-          // It's a numeric string, format as number
-          formattedValue = `${formattedKey}: ${Number(trimmed)}`;
-        } else {
-          // Regular string value
-          formattedValue = `${formattedKey}: ${trimmed}`;
-        }
-      }
-
-      // Only add if not already in the set (avoid duplicates)
-      if (formattedValue && !featureSet.has(formattedValue)) {
-        features.push(formattedValue);
-        featureSet.add(formattedValue);
-      }
-    });
-
-    // Remove duplicates from features array (in case of any edge cases)
-    const uniqueFeatures = Array.from(new Set(features));
+      });
+    }
 
     return {
       productId: product.id,
@@ -1136,7 +1098,7 @@ export class SubscriptionService {
       productDescription: product.description || productAny.description,
       benefits,
       metadata,
-      features: uniqueFeatures.length > 0 ? uniqueFeatures : undefined,
+      features: features.length > 0 ? features : undefined,
     };
   }
 
@@ -1145,7 +1107,10 @@ export class SubscriptionService {
    * Fetches from Polar API if metadata is not available in passed data
    * Falls back to free tier credits if nothing is found
    */
-  private async getMonthlyCreditLimit(productId?: string, data?: any): Promise<number> {
+  private async getMonthlyCreditLimit(
+    productId?: string,
+    data?: any,
+  ): Promise<number> {
     const FREE_TIER_CREDITS = 10;
 
     // 1. Try to get from passed data (webhook/sync data)
@@ -1174,7 +1139,8 @@ export class SubscriptionService {
           `CREDIT ASSIGNMENT [API_FETCH]: Fetching product ${productId} from Polar to get credit limit`,
         );
         const product = await this.polarService.getProduct(productId);
-        const productMetadata = product?.metadata || (product as any)?.metadata || {};
+        const productMetadata =
+          product?.metadata || (product as any)?.metadata || {};
         const apiCredits = productMetadata.ai_credits;
 
         if (apiCredits) {
@@ -1539,24 +1505,27 @@ export class SubscriptionService {
 
       if (existingSubscription) {
         const { hasAccess } = await this.hasActiveAccess(user.id);
-        
-        this.logger.log(`[createCheckout] Checking subscription for user ${user.id}`, {
-          hasAccess,
-          existingProductId: existingSubscription.productId,
-          requestedProductId: productId,
-          status: existingSubscription.status
-        });
-        
+
+        this.logger.log(
+          `[createCheckout] Checking subscription for user ${user.id}`,
+          {
+            hasAccess,
+            existingProductId: existingSubscription.productId,
+            requestedProductId: productId,
+            status: existingSubscription.status,
+          },
+        );
+
         if (hasAccess) {
           // User has active subscription - block ALL new checkouts
           // Polar.sh does not allow multiple subscriptions per customer
           // Users must manage their subscription (upgrade/downgrade/cancel) through the subscription page
           this.logger.warn(
-            `User ${user.id} tried to checkout product ${productId} while having active subscription to ${existingSubscription.productId}`
+            `User ${user.id} tried to checkout product ${productId} while having active subscription to ${existingSubscription.productId}`,
           );
           return errorResponse(
             'You already have an active subscription. ' +
-            'Please visit your subscription page to manage or change your plan.',
+              'Please visit your subscription page to manage or change your plan.',
           );
         }
         // If no active access (expired/canceled), allow new subscription
@@ -1627,7 +1596,10 @@ export class SubscriptionService {
       ) {
         userMessage =
           'Connection to payment system failed. Please check your internet and try again.';
-      } else if (error.message?.includes('401') || error.message?.includes('unauthorized')) {
+      } else if (
+        error.message?.includes('401') ||
+        error.message?.includes('unauthorized')
+      ) {
         userMessage =
           'Payment system authentication failed. Please contact support.';
       }
