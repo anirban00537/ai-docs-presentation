@@ -183,6 +183,7 @@ export class CreditService {
             userId,
             balance: finalBalance,
             quota: newLimit,
+            usedCredits: 0,
             lastResetAt: new Date(),
           },
         });
@@ -193,6 +194,7 @@ export class CreditService {
           data: {
             balance: finalBalance,
             quota: newLimit,
+            usedCredits: 0,
             lastResetAt: new Date(),
           },
         });
