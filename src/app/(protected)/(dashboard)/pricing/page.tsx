@@ -9,6 +9,7 @@ import { createCheckout } from "@/services/pricing";
 import { PricingCard } from "@/components/pricing-card";
 import { toast } from "sonner";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function PricingPage() {
   const { data: products, isLoading: productsLoading } = useProducts();
@@ -21,6 +22,7 @@ export default function PricingPage() {
     if (subscriptionStatus) {
       console.log("[PricingPage] Subscription Status:", {
         isActive: subscriptionStatus.isActive,
+        hasAccess: subscriptionStatus.hasAccess,
         productId: currentSubscription?.productId,
         status: currentSubscription?.status,
         periodEnd: currentSubscription?.currentPeriodEnd
@@ -103,6 +105,10 @@ export default function PricingPage() {
     );
   }
 
+  const hasAccess = subscriptionStatus?.hasAccess || false;
+  const isSubscriptionActive = subscriptionStatus?.isActive || false;
+  const isCanceled = currentSubscription?.status === 'canceled' || currentSubscription?.cancelAtPeriodEnd || false;
+
   const availableProducts = products?.filter((p) => !p.isArchived) || [];
   const sortedProducts = [...availableProducts].sort((a, b) => {
     const priceA = a.prices?.[0]?.priceAmount || 0;
@@ -133,7 +139,7 @@ export default function PricingPage() {
         </motion.div>
 
         {/* Current Subscription Status */}
-        {currentSubscription && currentSubscription.status === "active" && (
+        {currentSubscription && hasAccess && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -146,8 +152,13 @@ export default function PricingPage() {
                 backdropFilter: "blur(8px)",
               }}
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-secondary-foreground/60 animate-pulse" />
-              Active Plan: {currentSubscription.productId || "Pro"}
+              <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isCanceled ? "bg-orange-500" : "bg-secondary-foreground/60")} />
+              {isCanceled ? "Expiring Plan: " : "Active Plan: "} {currentSubscription.productId || "Pro"}
+              {isCanceled && currentSubscription.currentPeriodEnd && (
+                <span className="opacity-70 ml-1">
+                  (Ends {new Date(currentSubscription.currentPeriodEnd).toLocaleDateString()})
+                </span>
+              )}
             </div>
           </motion.div>
         )}
@@ -156,12 +167,14 @@ export default function PricingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">
           {sortedProducts.map((product, index) => {
             const isCurrentPlan =
-              subscriptionStatus?.isActive &&
+              hasAccess &&
               currentSubscription?.productId === product.id;
             // Mark Plus (middle plan) or Pro as popular
             const isPopular = index === 1;
-            // User has any active subscription = disable all checkout buttons
-            const hasActiveSubscription = subscriptionStatus?.isActive || false;
+            
+            // Only block checkout if they have an active, non-canceled subscription
+            // If it's canceled, we allow them to subscribe to a new plan (or the same one)
+            const hasBlockingSubscription = isSubscriptionActive && !isCanceled;
 
             return (
               <PricingCard
@@ -173,13 +186,15 @@ export default function PricingPage() {
                 }}
                 isPopular={isPopular}
                 isCurrentPlan={isCurrentPlan}
+                isCanceled={isCanceled}
                 index={index}
-                // Only allow checkout if user has NO active subscription
-                onSelect={hasActiveSubscription ? undefined : handleSelectPlan}
+                // Only allow checkout if user has NO blocking subscription
+                // Or if it IS the current plan but it's canceled (Renew)
+                onSelect={hasBlockingSubscription && (!isCurrentPlan || !isCanceled) ? undefined : handleSelectPlan}
                 loading={loadingCheckout === product.id}
-                // For users with active subscription but on different plan, show "View Subscription"
-                href={hasActiveSubscription && !isCurrentPlan ? "/subscription" : undefined}
-                cta={isCurrentPlan ? "Current Plan" : (hasActiveSubscription ? "View Subscription" : undefined)}
+                // For users with blocking subscription but on different plan, show "View Subscription"
+                href={hasBlockingSubscription && !isCurrentPlan ? "/subscription" : undefined}
+                cta={isCurrentPlan ? (isCanceled ? "Renew Plan" : "Current Plan") : (hasBlockingSubscription ? "View Subscription" : undefined)}
               />
             );
           })}

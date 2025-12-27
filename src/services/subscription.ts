@@ -38,6 +38,7 @@ export interface SubscriptionStatus {
   subscription: Subscription | null;
   creditBalance: CreditBalance | null;
   isActive: boolean;
+  hasAccess: boolean;
   hasCredits: boolean;
   features?: {
     productId: string;

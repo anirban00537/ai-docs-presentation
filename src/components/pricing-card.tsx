@@ -24,6 +24,7 @@ interface PricingCardProps {
   };
   isPopular?: boolean;
   isCurrentPlan?: boolean;
+  isCanceled?: boolean;
   index?: number;
   onSelect?: (productId: string, priceId?: string) => void;
   href?: string;
@@ -36,6 +37,7 @@ export function PricingCard({
   product,
   isPopular = false,
   isCurrentPlan = false,
+  isCanceled = false,
   index = 0,
   onSelect,
   href,
@@ -167,11 +169,11 @@ export function PricingCard({
           ) : (
             <Button
               onClick={handleClick}
-              disabled={isCurrentPlan || loading || !primaryPrice}
+              disabled={(isCurrentPlan && !isCanceled) || loading || !primaryPrice}
               variant={isPopular ? "default" : "outline"}
               className={cn(
                 "w-full h-12 rounded-full text-base transition-all",
-                isCurrentPlan
+                isCurrentPlan && !isCanceled
                   ? "bg-secondary/20 text-secondary-foreground cursor-not-allowed hover:bg-secondary/20 border-transparent"
                   : isPopular 
                     ? "bg-primary hover:bg-primary/90 text-white shadow-coral-glow" 
@@ -181,7 +183,7 @@ export function PricingCard({
               {loading
                 ? "Loading..."
                 : isCurrentPlan
-                ? "Current Plan"
+                ? (isCanceled ? (cta || "Renew Plan") : "Current Plan")
                 : primaryPrice
                 ? cta || `Choose ${product.name}`
                 : "Contact for Quote"}
