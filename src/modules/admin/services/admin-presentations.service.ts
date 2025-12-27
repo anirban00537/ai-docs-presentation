@@ -33,14 +33,72 @@ export class AdminPresentationsService {
           include: {
             user: { select: { email: true, name: true } },
             analytics: { select: { viewCount: true } },
+            _count: { select: { slides: true } },
           },
           orderBy: { createdAt: 'desc' },
         }),
         this.prisma.presentation.count({ where }),
       ]);
 
+      // Get token usage and cost for each presentation
+      const presentationsWithUsage = await Promise.all(
+        presentations.map(async (presentation) => {
+          // Get all AI usage records for this presentation
+          const aiUsages = await this.prisma.aiUsage.findMany({
+            where: {
+              presentationId: presentation.id,
+            },
+            select: {
+              inputTokens: true,
+              outputTokens: true,
+              cost: true,
+            },
+          });
+
+          // Also check for outline-related usage if presentation was created from an outline
+          const outline = await this.prisma.outline.findFirst({
+            where: {
+              presentationId: presentation.id,
+            },
+            select: { id: true },
+          });
+
+          let outlineUsages: any[] = [];
+          if (outline) {
+            outlineUsages = await this.prisma.aiUsage.findMany({
+              where: {
+                outlineId: outline.id,
+              },
+              select: {
+                inputTokens: true,
+                outputTokens: true,
+                cost: true,
+              },
+            });
+          }
+
+          // Combine all usages
+          const allUsages = [...aiUsages, ...outlineUsages];
+
+          // Calculate totals
+          const totalTokens = allUsages.reduce(
+            (sum, usage) => sum + usage.inputTokens + usage.outputTokens,
+            0,
+          );
+          const totalCost = allUsages.reduce((sum, usage) => sum + usage.cost, 0);
+
+          return {
+            ...presentation,
+            aiUsage: {
+              totalTokens,
+              totalCost,
+            },
+          };
+        }),
+      );
+
       return successResponse('Presentations retrieved successfully', {
-        presentations,
+        presentations: presentationsWithUsage,
         pagination: {
           page: Number(page),
           perPage: Number(perPage),
