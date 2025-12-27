@@ -13,6 +13,7 @@ import {
   errorResponse,
   processException,
 } from 'src/shared/helpers/functions';
+import { coreConstant } from 'src/shared/helpers/coreConstant';
 import { ResponseModel } from 'src/shared/models/response.model';
 import { SubscriptionResponseDto } from './dto/subscription-response.dto';
 import { CreditBalanceResponseDto } from './dto/credit-balance-response.dto';
@@ -21,6 +22,9 @@ import {
   FeatureResponseDto,
   BenefitResponseDto,
 } from './dto/feature-response.dto';
+
+// Destructure commonly used constants for cleaner code
+const { SUBSCRIPTION_STATUS, SUBSCRIPTION_ACTIVE_STATUSES, SUBSCRIPTION_ENDED_STATUSES, CREDITS } = coreConstant;
 
 @Injectable()
 export class SubscriptionService {
@@ -89,6 +93,76 @@ export class SubscriptionService {
     } catch (error) {
       return processException(error);
     }
+  }
+
+  /**
+   * Check if a user has active subscription access
+   * This is the SINGLE SOURCE OF TRUTH for access decisions
+   * 
+   * Access is granted if:
+   * 1. Status is active/trialing AND period hasn't ended
+   * 2. OR subscription is canceled but period is still valid (cancelAtPeriodEnd)
+   */
+  async hasActiveAccess(userId: string): Promise<{
+    hasAccess: boolean;
+    subscription: any | null;
+    reason: 'active' | 'trialing' | 'canceled_but_period_valid' | 'no_subscription' | 'period_ended' | 'inactive';
+    periodEnd: Date | null;
+  }> {
+    const subscription = await this.prisma.subscription.findUnique({
+      where: { userId },
+    });
+
+    if (!subscription) {
+      return { 
+        hasAccess: false, 
+        subscription: null, 
+        reason: 'no_subscription',
+        periodEnd: null,
+      };
+    }
+
+    const now = new Date();
+    const periodEnd = subscription.currentPeriodEnd;
+    const periodValid = periodEnd && new Date(periodEnd) > now;
+
+    // Case 1: Active or trialing with valid period
+    if ((SUBSCRIPTION_ACTIVE_STATUSES as readonly string[]).includes(subscription.status) && periodValid) {
+      return {
+        hasAccess: true,
+        subscription,
+        reason: subscription.status as 'active' | 'trialing',
+        periodEnd: new Date(periodEnd),
+      };
+    }
+
+    // Case 2: Canceled but period still valid (user clicked cancel, still has access)
+    if (subscription.cancelAtPeriodEnd && periodValid) {
+      return {
+        hasAccess: true,
+        subscription,
+        reason: 'canceled_but_period_valid',
+        periodEnd: new Date(periodEnd),
+      };
+    }
+
+    // Case 3: Status is canceled/inactive and period has ended
+    if ((SUBSCRIPTION_ENDED_STATUSES as readonly string[]).includes(subscription.status)) {
+      return {
+        hasAccess: false,
+        subscription,
+        reason: 'period_ended',
+        periodEnd: periodEnd ? new Date(periodEnd) : null,
+      };
+    }
+
+    // Case 4: Inactive or unknown status
+    return {
+      hasAccess: false,
+      subscription,
+      reason: 'inactive',
+      periodEnd: periodEnd ? new Date(periodEnd) : null,
+    };
   }
 
   /**
@@ -208,22 +282,22 @@ export class SubscriptionService {
           create: {
             userId: user.id,
             polarCustomerId: customer.id,
-            status: 'inactive',
+            status: SUBSCRIPTION_STATUS.INACTIVE,
           },
           update: {
-            status: 'inactive',
+            status: SUBSCRIPTION_STATUS.INACTIVE,
             polarCustomerId: customer.id,
           },
         });
 
-        // Reset credits to 10 for inactive users (no active period, so no rollover)
+        // Reset credits to free tier for inactive users (no active period, so no rollover)
         this.logger.log(
-          `Resetting credits to 10 for user ${user.id} due to inactive subscription`,
+          `Resetting credits to ${CREDITS.FREE_TIER} for user ${user.id} due to inactive subscription`,
         );
-        await this.creditService.updateCreditsFromSubscription(user.id, 10, { previousPeriodEnd: null });
+        await this.creditService.updateCreditsFromSubscription(user.id, CREDITS.FREE_TIER, { previousPeriodEnd: null });
 
         return successResponse('Subscription synced successfully', {
-          status: 'inactive',
+          status: SUBSCRIPTION_STATUS.INACTIVE,
         });
       }
 
@@ -293,8 +367,13 @@ export class SubscriptionService {
       });
 
       // Update credit balance based on subscription
-      // Only reset credits if: new subscription, new billing period, or plan change
-      if (activeSubscription.status === 'active') {
+      // Process credits if subscription has active access (including cancelAtPeriodEnd with valid period)
+      const periodStillValid = currentPeriodEnd && new Date(currentPeriodEnd) > new Date();
+      const hasActiveAccess = 
+        ['active', 'trialing'].includes(activeSubscription.status) ||
+        (activeSubscription.cancel_at_period_end && periodStillValid);
+      
+      if (hasActiveAccess) {
         const existingPeriodStart = existingSubscription?.currentPeriodStart
           ? new Date(existingSubscription.currentPeriodStart).getTime()
           : 0;
@@ -315,7 +394,7 @@ export class SubscriptionService {
         );
         const isQuotaMismatch = creditBalance && creditBalance.quota !== monthlyLimit;
 
-        this.logger.log(`Sync Check [${user.id}]: isNewSub=${isNewSubscription}, isNewPeriod=${isNewPeriod}, isPlanChange=${isPlanChange}, isQuotaMismatch=${isQuotaMismatch} (BalanceQuota=${creditBalance?.quota}, PlanLimit=${monthlyLimit})`);
+        this.logger.log(`Sync Check [${user.id}]: hasActiveAccess=${hasActiveAccess}, isNewSub=${isNewSubscription}, isNewPeriod=${isNewPeriod}, isPlanChange=${isPlanChange}, isQuotaMismatch=${isQuotaMismatch} (BalanceQuota=${creditBalance?.quota}, PlanLimit=${monthlyLimit})`);
 
         if (isNewSubscription || isNewPeriod || isPlanChange || isQuotaMismatch) {
           this.logger.log(
@@ -332,6 +411,8 @@ export class SubscriptionService {
             `Sync: No credit reset needed for user ${user.id} - subscription data and quota are already in sync`,
           );
         }
+      } else {
+        this.logger.log(`Sync: User ${user.id} does not have active access (status=${activeSubscription.status}, periodValid=${periodStillValid})`);
       }
 
       return successResponse('Subscription synced successfully', subscription);
@@ -403,8 +484,10 @@ export class SubscriptionService {
           await this.handleSubscriptionUpdate(data);
           break;
         case 'subscription.canceled':
+          await this.handleSubscriptionCanceled(data);  // Preserves access if period valid
+          break;
         case 'subscription.revoked':
-          await this.handleSubscriptionCanceled(data);
+          await this.handleSubscriptionRevoked(data);   // Immediate termination
           break;
         case 'subscription.uncanceled':
           await this.handleSubscriptionUncanceled(data);
@@ -617,11 +700,17 @@ export class SubscriptionService {
 
   /**
    * Handle subscription canceled webhook
+   * 
+   * IMPORTANT: "Canceled" means the user clicked cancel, NOT that access should end.
+   * Access should be preserved until currentPeriodEnd.
+   * Credits should only be reset when the period actually ends.
    */
   private async handleSubscriptionCanceled(data: any): Promise<void> {
     const polarSubscriptionId = data.id;
+    const currentPeriodEnd = data.current_period_end || data.currentPeriodEnd;
+    
     this.logger.log(
-      `Handling subscription CANCELED/REVOKED: ${polarSubscriptionId}`,
+      `Handling subscription.canceled webhook: ${polarSubscriptionId}`,
     );
 
     // Find the subscription to get the userId
@@ -629,20 +718,105 @@ export class SubscriptionService {
       where: { polarSubscriptionId },
     });
 
-    if (subscription?.userId) {
-      this.logger.log(
-        `Subscription ${polarSubscriptionId} ended for user ${subscription.userId}. Resetting credits to 10.`,
-      );
-      // Subscription canceled - reset to free tier (no rollover)
-      await this.creditService.updateCreditsFromSubscription(subscription.userId, 10, { previousPeriodEnd: null });
+    if (!subscription) {
+      this.logger.warn(`Subscription ${polarSubscriptionId} not found in database`);
+      return;
     }
 
-    await this.prisma.subscription.updateMany({
+    const now = new Date();
+    const periodEnd = currentPeriodEnd ? new Date(currentPeriodEnd) : subscription.currentPeriodEnd;
+    const periodStillValid = periodEnd && new Date(periodEnd) > now;
+
+    if (periodStillValid) {
+      // User canceled but period is still valid - PRESERVE ACCESS & CREDITS
+      this.logger.log(
+        `Subscription ${polarSubscriptionId} canceled but period valid until ${periodEnd}. ` +
+        `Preserving access and credits for user ${subscription.userId}.`
+      );
+      
+      await this.prisma.subscription.update({
+        where: { polarSubscriptionId },
+        data: {
+          cancelAtPeriodEnd: true,
+          canceledAt: data.canceled_at ? new Date(data.canceled_at) : new Date(),
+          // IMPORTANT: Keep status as 'active' - user still has access!
+          // Status will be changed to 'expired' when period actually ends
+        },
+      });
+      
+      // DO NOT reset credits - user paid for this period
+    } else {
+      // Period has ended - NOW revoke access and reset credits
+      this.logger.log(
+        `Subscription ${polarSubscriptionId} period has ended for user ${subscription.userId}. ` +
+        `Revoking access and resetting credits to free tier.`
+      );
+      
+      await this.prisma.subscription.update({
+        where: { polarSubscriptionId },
+        data: {
+          status: SUBSCRIPTION_STATUS.CANCELED,
+          cancelAtPeriodEnd: true,
+          canceledAt: data.canceled_at ? new Date(data.canceled_at) : new Date(),
+        },
+      });
+
+      // NOW reset credits to free tier
+      await this.creditService.updateCreditsFromSubscription(
+        subscription.userId, 
+        CREDITS.FREE_TIER, 
+        { previousPeriodEnd: null }
+      );
+    }
+  }
+
+  /**
+   * Handle subscription revoked webhook
+   * 
+   * According to Polar.sh documentation:
+   * - For end-of-period cancellation: subscription.revoked is sent when the billing period ends
+   * - For immediate cancellation: subscription.revoked is sent immediately
+   * 
+   * In BOTH cases, access should be revoked and credits reset to free tier.
+   * The subscription status at this point is 'canceled' in Polar.
+   */
+  private async handleSubscriptionRevoked(data: any): Promise<void> {
+    const polarSubscriptionId = data.id;
+    const isImmediateRevoke = !data.cancel_at_period_end;
+    
+    this.logger.log(
+      `Handling subscription.revoked webhook: ${polarSubscriptionId} ` +
+      `(${isImmediateRevoke ? 'IMMEDIATE' : 'END-OF-PERIOD'} revocation)`,
+    );
+
+    const subscription = await this.prisma.subscription.findUnique({
+      where: { polarSubscriptionId },
+    });
+
+    if (!subscription) {
+      this.logger.warn(`Subscription ${polarSubscriptionId} not found in database for revocation`);
+      return;
+    }
+
+    this.logger.log(
+      `Subscription ${polarSubscriptionId} revoked for user ${subscription.userId}. ` +
+      `Access ended. Resetting credits to free tier.`
+    );
+    
+    // Reset credits to free tier - access has ended
+    await this.creditService.updateCreditsFromSubscription(
+      subscription.userId, 
+      CREDITS.FREE_TIER, 
+      { previousPeriodEnd: null }
+    );
+
+    // Update subscription status to canceled/revoked
+    await this.prisma.subscription.update({
       where: { polarSubscriptionId },
       data: {
-        status: data.status || 'canceled',
+        status: SUBSCRIPTION_STATUS.CANCELED,
         canceledAt: data.canceled_at ? new Date(data.canceled_at) : new Date(),
-        cancelAtPeriodEnd: data.cancel_at_period_end || true,
+        // Keep cancelAtPeriodEnd as was - for audit trail
       },
     });
   }
@@ -670,15 +844,15 @@ export class SubscriptionService {
         // Reset credits to free tier for each affected user (no rollover)
         for (const subscription of subscriptions) {
           this.logger.log(
-            `Resetting credits to free tier (10) for user ${subscription.userId} due to customer deletion`,
+            `Resetting credits to free tier (${CREDITS.FREE_TIER}) for user ${subscription.userId} due to customer deletion`,
           );
-          await this.creditService.updateCreditsFromSubscription(subscription.userId, 10, { previousPeriodEnd: null });
+          await this.creditService.updateCreditsFromSubscription(subscription.userId, CREDITS.FREE_TIER, { previousPeriodEnd: null });
         }
 
         // Mark subscriptions as inactive
         await this.prisma.subscription.updateMany({
           where: { polarCustomerId },
-          data: { status: 'inactive' },
+          data: { status: SUBSCRIPTION_STATUS.INACTIVE },
         });
       }
     } else {
@@ -697,7 +871,7 @@ export class SubscriptionService {
     const updated = await this.prisma.subscription.updateMany({
       where: { polarSubscriptionId },
       data: {
-        status: 'active',
+        status: SUBSCRIPTION_STATUS.ACTIVE,
         cancelAtPeriodEnd: false,
         canceledAt: null,
       },
@@ -719,7 +893,7 @@ export class SubscriptionService {
     await this.prisma.subscription.updateMany({
       where: { polarSubscriptionId },
       data: {
-        status: 'past_due',
+        status: SUBSCRIPTION_STATUS.PAST_DUE,
       },
     });
   }
@@ -775,16 +949,16 @@ export class SubscriptionService {
         await this.prisma.subscription.update({
           where: { userId },
           data: {
-            status: 'refunded',
+            status: SUBSCRIPTION_STATUS.REFUNDED,
             canceledAt: new Date(),
           },
         });
 
-        // Reset credits to free tier (10) since the user got a full refund (no rollover)
+        // Reset credits to free tier since the user got a full refund (no rollover)
         this.logger.log(
-          `Resetting credits to free tier (10) for user ${userId} due to full refund`,
+          `Resetting credits to free tier (${CREDITS.FREE_TIER}) for user ${userId} due to full refund`,
         );
-        await this.creditService.updateCreditsFromSubscription(userId, 10, { previousPeriodEnd: null });
+        await this.creditService.updateCreditsFromSubscription(userId, CREDITS.FREE_TIER, { previousPeriodEnd: null });
 
         this.logger.log(`Subscription ${subscription.id} marked as refunded and credits reset`);
       }

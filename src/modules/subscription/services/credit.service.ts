@@ -1,8 +1,9 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { coreConstant } from 'src/shared/helpers/coreConstant';
 
-// Constants for credit management
-const FREE_TIER_CREDITS = 10;
+// Use centralized constant
+const FREE_TIER_CREDITS = coreConstant.CREDITS.FREE_TIER;
 
 @Injectable()
 export class CreditService {
@@ -237,5 +238,14 @@ export class CreditService {
       take: limit,
     });
   }
-}
 
+  /**
+   * Reset credits to free tier (convenience method)
+   * Use this when a subscription is canceled, expired, or revoked
+   */
+  async resetToFreeTier(userId: string): Promise<void> {
+    await this.updateCreditsFromSubscription(userId, FREE_TIER_CREDITS, { 
+      previousPeriodEnd: null 
+    });
+  }
+}

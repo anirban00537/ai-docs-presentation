@@ -70,4 +70,29 @@ export const coreConstant = {
       PRICING: { prompt: 10.0, completion: 30.0 },
     }
   },
+
+  // Subscription Status Constants
+  SUBSCRIPTION_STATUS: {
+    ACTIVE: 'active',
+    TRIALING: 'trialing',
+    INACTIVE: 'inactive',
+    CANCELED: 'canceled',
+    EXPIRED: 'expired',
+    REVOKED: 'revoked',
+    PAST_DUE: 'past_due',
+    REFUNDED: 'refunded',
+    CANCELLING: 'cancelling',
+  } as const,
+
+  // Statuses that grant active access
+  SUBSCRIPTION_ACTIVE_STATUSES: ['active', 'trialing'] as const,
+  
+  // Statuses that indicate subscription has ended
+  SUBSCRIPTION_ENDED_STATUSES: ['canceled', 'expired', 'revoked'] as const,
+
+  // Credit System Constants
+  CREDITS: {
+    FREE_TIER: 10,
+    DEFAULT_NEW_USER: 10,
+  } as const,
 };
