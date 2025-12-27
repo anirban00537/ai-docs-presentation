@@ -1534,6 +1534,36 @@ export class SubscriptionService {
         return errorResponse('Product ID is required to create a checkout.');
       }
 
+      // Check if user already has an active subscription
+      const existingSubscription = await this.prisma.subscription.findUnique({
+        where: { userId: user.id },
+      });
+
+      if (existingSubscription) {
+        const { hasAccess } = await this.hasActiveAccess(user.id);
+        
+        this.logger.log(`[createCheckout] Checking subscription for user ${user.id}`, {
+          hasAccess,
+          existingProductId: existingSubscription.productId,
+          requestedProductId: productId,
+          status: existingSubscription.status
+        });
+        
+        if (hasAccess) {
+          // User has active subscription - block ALL new checkouts
+          // Polar.sh does not allow multiple subscriptions per customer
+          // Users must manage their subscription (upgrade/downgrade/cancel) through the subscription page
+          this.logger.warn(
+            `User ${user.id} tried to checkout product ${productId} while having active subscription to ${existingSubscription.productId}`
+          );
+          return errorResponse(
+            'You already have an active subscription. ' +
+            'Please visit your subscription page to manage or change your plan.',
+          );
+        }
+        // If no active access (expired/canceled), allow new subscription
+      }
+
       // Ensure customer exists in Polar
       const customer = await this.polarService.createOrGetCustomer(
         user.id,
