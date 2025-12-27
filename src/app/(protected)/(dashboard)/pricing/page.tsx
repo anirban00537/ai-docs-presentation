@@ -16,6 +16,21 @@ export default function PricingPage() {
   const currentSubscription = subscriptionStatus?.subscription;
   const [loadingCheckout, setLoadingCheckout] = useState<string | null>(null);
 
+  // Debug logs
+  React.useEffect(() => {
+    if (subscriptionStatus) {
+      console.log("[PricingPage] Subscription Status:", {
+        isActive: subscriptionStatus.isActive,
+        productId: currentSubscription?.productId,
+        status: currentSubscription?.status,
+        periodEnd: currentSubscription?.currentPeriodEnd
+      });
+    }
+    if (products?.length) {
+      console.log("[PricingPage] Available Products:", products.map(p => ({ id: p.id, name: p.name })));
+    }
+  }, [subscriptionStatus, products]);
+
   const handleSelectPlan = async (productId: string, priceId?: string) => {
     if (!priceId) {
       toast.error("No price available for this product");
@@ -32,15 +47,39 @@ export default function PricingPage() {
       if (response.success && response.data?.checkoutUrl) {
         window.location.href = response.data.checkoutUrl;
       } else {
-        toast.error(response.message || "Failed to create checkout session");
+        // Handle specific error cases
+        const errorMessage = response.message || "Failed to create checkout session";
+        
+        // Check if it's a duplicate subscription error
+        if (errorMessage.toLowerCase().includes("already have an active subscription")) {
+          toast.error(errorMessage, {
+            action: {
+              label: "Manage Subscription",
+              onClick: () => window.location.href = "/subscription",
+            },
+          });
+        } else {
+          toast.error(errorMessage);
+        }
       }
     } catch (error: any) {
       console.error("Checkout error:", error);
-      toast.error(
+      const errorMessage = 
         error?.response?.data?.message ||
-          error?.message ||
-          "Failed to create checkout session"
-      );
+        error?.message ||
+        "Failed to create checkout session";
+      
+      // Check if it's a duplicate subscription error from catch block
+      if (errorMessage.toLowerCase().includes("already have an active subscription")) {
+        toast.error(errorMessage, {
+          action: {
+            label: "Manage Subscription",
+            onClick: () => window.location.href = "/subscription",
+          },
+        });
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setLoadingCheckout(null);
     }
@@ -117,10 +156,12 @@ export default function PricingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">
           {sortedProducts.map((product, index) => {
             const isCurrentPlan =
-              currentSubscription?.productId === product.id &&
-              currentSubscription?.status === "active";
+              subscriptionStatus?.isActive &&
+              currentSubscription?.productId === product.id;
             // Mark Plus (middle plan) or Pro as popular
             const isPopular = index === 1;
+            // User has any active subscription = disable all checkout buttons
+            const hasActiveSubscription = subscriptionStatus?.isActive || false;
 
             return (
               <PricingCard
@@ -133,8 +174,12 @@ export default function PricingPage() {
                 isPopular={isPopular}
                 isCurrentPlan={isCurrentPlan}
                 index={index}
-                onSelect={handleSelectPlan}
+                // Only allow checkout if user has NO active subscription
+                onSelect={hasActiveSubscription ? undefined : handleSelectPlan}
                 loading={loadingCheckout === product.id}
+                // For users with active subscription but on different plan, show "View Subscription"
+                href={hasActiveSubscription && !isCurrentPlan ? "/subscription" : undefined}
+                cta={isCurrentPlan ? "Current Plan" : (hasActiveSubscription ? "View Subscription" : undefined)}
               />
             );
           })}

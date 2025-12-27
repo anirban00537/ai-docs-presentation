@@ -12,11 +12,14 @@ import { IconSparkles } from "@tabler/icons-react";
 import { PricingCard } from "@/components/pricing-card";
 import { useAppSelector } from "@/store/hooks";
 import { selectIsAuthenticated } from "@/store/slices/userSlice";
+import { selectSubscription, selectIsSubscribed } from "@/store/slices/subscriptionSlice";
 import { toast } from "sonner";
 
 export function PricingSection() {
   const { data: products, isLoading } = useProducts();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const subscription = useAppSelector(selectSubscription);
+  const isSubscribed = useAppSelector(selectIsSubscribed);
   const [loadingCheckout, setLoadingCheckout] = useState<string | null>(null);
 
   // Only show real products from API, no dummy data
@@ -39,15 +42,39 @@ export function PricingSection() {
       if (response.success && response.data?.checkoutUrl) {
         window.location.href = response.data.checkoutUrl;
       } else {
-        toast.error(response.message || "Failed to create checkout session");
+        // Handle specific error cases
+        const errorMessage = response.message || "Failed to create checkout session";
+        
+        // Check if it's a duplicate subscription error
+        if (errorMessage.toLowerCase().includes("already have an active subscription")) {
+          toast.error(errorMessage, {
+            action: {
+              label: "Manage Subscription",
+              onClick: () => window.location.href = "/subscription",
+            },
+          });
+        } else {
+          toast.error(errorMessage);
+        }
       }
     } catch (error: any) {
       console.error("Checkout error:", error);
-      toast.error(
+      const errorMessage = 
         error?.response?.data?.message ||
-          error?.message ||
-          "Failed to create checkout session"
-      );
+        error?.message ||
+        "Failed to create checkout session";
+      
+      // Check if it's a duplicate subscription error from catch block
+      if (errorMessage.toLowerCase().includes("already have an active subscription")) {
+        toast.error(errorMessage, {
+          action: {
+            label: "Manage Subscription",
+            onClick: () => window.location.href = "/subscription",
+          },
+        });
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setLoadingCheckout(null);
     }
@@ -108,6 +135,7 @@ export function PricingSection() {
                   product={plan}
                   index={i}
                   isPopular={isPlus}
+                  isCurrentPlan={isSubscribed && subscription?.productId === plan.id}
                   // For authenticated users: use onSelect to trigger checkout
                   // For unauthenticated users: use href to redirect to signup
                   onSelect={isAuthenticated ? handleSelectPlan : undefined}
