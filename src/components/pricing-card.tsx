@@ -17,7 +17,6 @@ interface PricingCardProps {
     prices?: Price[];
     recurringInterval?: string;
     monthlyCreditLimit?: number;
-    maxSlides?: string | number;
     features?: string[];
     benefits?: Array<{ description?: string }>;
     metadata?: Record<string, any>;
@@ -46,18 +45,18 @@ export function PricingCard({
   className,
 }: PricingCardProps) {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  
+
   // Only use href redirect if href is explicitly passed AND no onSelect handler is provided
   // This ensures checkout flow works when onSelect is passed (dashboard pricing page)
-  const targetHref = onSelect ? undefined : (isAuthenticated ? "/subscription" : href);
+  const targetHref = onSelect
+    ? undefined
+    : isAuthenticated
+    ? "/subscription"
+    : href;
 
   const primaryPrice = product.prices?.[0];
-  const maxSlides =
-    product.maxSlides ||
-    product.metadata?.max_slides ||
-    product.metadata?.maxSlides;
 
-  // Get features from product.features (dynamically extracted from all metadata)
+  // Get features from product.features (extracted from feature_1, feature_2, feature_3, etc. metadata keys)
   // Fallback to benefits if features array is not available
   const features =
     product.features && product.features.length > 0
@@ -84,33 +83,35 @@ export function PricingCard({
       transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
       className={cn(
         "relative rounded-3xl p-8 transition-all duration-300 transform",
-        isPopular 
-          ? "bg-white shadow-depth-3 border-transparent md:scale-105 z-10" 
+        isPopular
+          ? "bg-white shadow-depth-3 border-transparent md:scale-105 z-10"
           : "bg-white/40 border border-secondary/20 shadow-sm hover:shadow-md hover:bg-white/80",
         className
       )}
     >
       {/* Pro Glow Effect */}
       {isPopular && (
-          <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-b from-primary/20 via-secondary/20 to-transparent blur-xl opacity-60" />
+        <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-b from-primary/20 via-secondary/20 to-transparent blur-xl opacity-60" />
       )}
-      
+
       {isPopular && (
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-coral-glow flex items-center gap-1">
-              <IconSparkles size={12} fill="currentColor" />
-              Most Popular
-          </div>
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-coral-glow flex items-center gap-1">
+          <IconSparkles size={12} fill="currentColor" />
+          Most Popular
+        </div>
       )}
 
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="mb-8">
-            <h3 className="font-serif text-2xl text-foreground mb-2">{product.name}</h3>
-            {product.description && (
-              <p className="text-sm text-muted-foreground min-h-[40px] leading-relaxed">
-                {product.description}
-              </p>
-            )}
+          <h3 className="font-serif text-2xl text-foreground mb-2">
+            {product.name}
+          </h3>
+          {product.description && (
+            <p className="text-sm text-muted-foreground min-h-[40px] leading-relaxed">
+              {product.description}
+            </p>
+          )}
         </div>
 
         {/* Pricing */}
@@ -127,7 +128,7 @@ export function PricingCard({
               )}
             </>
           ) : (
-             <span className="text-2xl font-bold">Custom</span>
+            <span className="text-2xl font-bold">Custom</span>
           )}
         </div>
 
@@ -136,7 +137,10 @@ export function PricingCard({
           {features && features.length > 0 ? (
             <ul className="space-y-4">
               {features.map((feature: string, idx: number) => (
-                <li key={idx} className="flex items-start gap-3 text-sm text-foreground/80">
+                <li
+                  key={idx}
+                  className="flex items-start gap-3 text-sm text-foreground/80"
+                >
                   <span className="mt-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-secondary/30 text-secondary-foreground shrink-0">
                     <IconCheck size={12} strokeWidth={3} />
                   </span>
@@ -159,9 +163,9 @@ export function PricingCard({
               variant={isPopular ? "default" : "outline"}
               className={cn(
                 "w-full h-12 rounded-full text-base transition-all",
-                isPopular 
-                    ? "bg-primary hover:bg-primary/90 text-white shadow-coral-glow" 
-                    : "border-secondary/20 hover:bg-secondary/10 text-foreground"
+                isPopular
+                  ? "bg-primary hover:bg-primary/90 text-white shadow-coral-glow"
+                  : "border-secondary/20 hover:bg-secondary/10 text-foreground"
               )}
             >
               <Link href={targetHref || "#"}>{cta || "Get Started"}</Link>
@@ -169,21 +173,25 @@ export function PricingCard({
           ) : (
             <Button
               onClick={handleClick}
-              disabled={(isCurrentPlan && !isCanceled) || loading || !primaryPrice}
+              disabled={
+                (isCurrentPlan && !isCanceled) || loading || !primaryPrice
+              }
               variant={isPopular ? "default" : "outline"}
               className={cn(
                 "w-full h-12 rounded-full text-base transition-all",
                 isCurrentPlan && !isCanceled
                   ? "bg-secondary/20 text-secondary-foreground cursor-not-allowed hover:bg-secondary/20 border-transparent"
-                  : isPopular 
-                    ? "bg-primary hover:bg-primary/90 text-white shadow-coral-glow" 
-                    : "border-secondary/20 hover:bg-secondary/10 text-foreground"
+                  : isPopular
+                  ? "bg-primary hover:bg-primary/90 text-white shadow-coral-glow"
+                  : "border-secondary/20 hover:bg-secondary/10 text-foreground"
               )}
             >
               {loading
                 ? "Loading..."
                 : isCurrentPlan
-                ? (isCanceled ? (cta || "Renew Plan") : "Current Plan")
+                ? isCanceled
+                  ? cta || "Renew Plan"
+                  : "Current Plan"
                 : primaryPrice
                 ? cta || `Choose ${product.name}`
                 : "Contact for Quote"}

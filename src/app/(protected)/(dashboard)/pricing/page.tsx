@@ -25,11 +25,14 @@ export default function PricingPage() {
         hasAccess: subscriptionStatus.hasAccess,
         productId: currentSubscription?.productId,
         status: currentSubscription?.status,
-        periodEnd: currentSubscription?.currentPeriodEnd
+        periodEnd: currentSubscription?.currentPeriodEnd,
       });
     }
     if (products?.length) {
-      console.log("[PricingPage] Available Products:", products.map(p => ({ id: p.id, name: p.name })));
+      console.log(
+        "[PricingPage] Available Products:",
+        products.map((p) => ({ id: p.id, name: p.name }))
+      );
     }
   }, [subscriptionStatus, products]);
 
@@ -50,14 +53,19 @@ export default function PricingPage() {
         window.location.href = response.data.checkoutUrl;
       } else {
         // Handle specific error cases
-        const errorMessage = response.message || "Failed to create checkout session";
-        
+        const errorMessage =
+          response.message || "Failed to create checkout session";
+
         // Check if it's a duplicate subscription error
-        if (errorMessage.toLowerCase().includes("already have an active subscription")) {
+        if (
+          errorMessage
+            .toLowerCase()
+            .includes("already have an active subscription")
+        ) {
           toast.error(errorMessage, {
             action: {
               label: "Manage Subscription",
-              onClick: () => window.location.href = "/subscription",
+              onClick: () => (window.location.href = "/subscription"),
             },
           });
         } else {
@@ -66,17 +74,21 @@ export default function PricingPage() {
       }
     } catch (error: any) {
       console.error("Checkout error:", error);
-      const errorMessage = 
+      const errorMessage =
         error?.response?.data?.message ||
         error?.message ||
         "Failed to create checkout session";
-      
+
       // Check if it's a duplicate subscription error from catch block
-      if (errorMessage.toLowerCase().includes("already have an active subscription")) {
+      if (
+        errorMessage
+          .toLowerCase()
+          .includes("already have an active subscription")
+      ) {
         toast.error(errorMessage, {
           action: {
             label: "Manage Subscription",
-            onClick: () => window.location.href = "/subscription",
+            onClick: () => (window.location.href = "/subscription"),
           },
         });
       } else {
@@ -96,7 +108,8 @@ export default function PricingPage() {
               key={i}
               className="h-[500px] rounded-3xl animate-pulse border-0 shadow-xl"
               style={{
-                backgroundColor: "color-mix(in srgb, var(--secondary) 15%, var(--card))",
+                backgroundColor:
+                  "color-mix(in srgb, var(--secondary) 15%, var(--card))",
               }}
             />
           ))}
@@ -107,7 +120,10 @@ export default function PricingPage() {
 
   const hasAccess = subscriptionStatus?.hasAccess || false;
   const isSubscriptionActive = subscriptionStatus?.isActive || false;
-  const isCanceled = currentSubscription?.status === 'canceled' || currentSubscription?.cancelAtPeriodEnd || false;
+  const isCanceled =
+    currentSubscription?.status === "canceled" ||
+    currentSubscription?.cancelAtPeriodEnd ||
+    false;
 
   const availableProducts = products?.filter((p) => !p.isArchived) || [];
   const sortedProducts = [...availableProducts].sort((a, b) => {
@@ -148,15 +164,26 @@ export default function PricingPage() {
             <div
               className="px-5 py-2 rounded-2xl flex items-center gap-2.5 border border-secondary/30 text-xs font-semibold text-secondary-foreground"
               style={{
-                backgroundColor: "color-mix(in srgb, var(--secondary) 80%, transparent)",
+                backgroundColor:
+                  "color-mix(in srgb, var(--secondary) 80%, transparent)",
                 backdropFilter: "blur(8px)",
               }}
             >
-              <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isCanceled ? "bg-orange-500" : "bg-secondary-foreground/60")} />
-              {isCanceled ? "Expiring Plan: " : "Active Plan: "} {currentSubscription.productId || "Pro"}
+              <div
+                className={cn(
+                  "w-1.5 h-1.5 rounded-full animate-pulse",
+                  isCanceled ? "bg-orange-500" : "bg-secondary-foreground/60"
+                )}
+              />
+              {isCanceled ? "Expiring Plan: " : "Active Plan: "}{" "}
+              {currentSubscription.productId || "Pro"}
               {isCanceled && currentSubscription.currentPeriodEnd && (
                 <span className="opacity-70 ml-1">
-                  (Ends {new Date(currentSubscription.currentPeriodEnd).toLocaleDateString()})
+                  (Ends{" "}
+                  {new Date(
+                    currentSubscription.currentPeriodEnd
+                  ).toLocaleDateString()}
+                  )
                 </span>
               )}
             </div>
@@ -167,11 +194,10 @@ export default function PricingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">
           {sortedProducts.map((product, index) => {
             const isCurrentPlan =
-              hasAccess &&
-              currentSubscription?.productId === product.id;
+              hasAccess && currentSubscription?.productId === product.id;
             // Mark Plus (middle plan) or Pro as popular
             const isPopular = index === 1;
-            
+
             // Only block checkout if they have an active, non-canceled subscription
             // If it's canceled, we allow them to subscribe to a new plan (or the same one)
             const hasBlockingSubscription = isSubscriptionActive && !isCanceled;
@@ -179,22 +205,34 @@ export default function PricingPage() {
             return (
               <PricingCard
                 key={product.id}
-                product={{
-                  ...product,
-                  maxSlides:
-                    product.metadata?.max_slides || product.metadata?.maxSlides,
-                }}
+                product={product}
                 isPopular={isPopular}
                 isCurrentPlan={isCurrentPlan}
                 isCanceled={isCanceled}
                 index={index}
                 // Only allow checkout if user has NO blocking subscription
                 // Or if it IS the current plan but it's canceled (Renew)
-                onSelect={hasBlockingSubscription && (!isCurrentPlan || !isCanceled) ? undefined : handleSelectPlan}
+                onSelect={
+                  hasBlockingSubscription && (!isCurrentPlan || !isCanceled)
+                    ? undefined
+                    : handleSelectPlan
+                }
                 loading={loadingCheckout === product.id}
                 // For users with blocking subscription but on different plan, show "View Subscription"
-                href={hasBlockingSubscription && !isCurrentPlan ? "/subscription" : undefined}
-                cta={isCurrentPlan ? (isCanceled ? "Renew Plan" : "Current Plan") : (hasBlockingSubscription ? "View Subscription" : undefined)}
+                href={
+                  hasBlockingSubscription && !isCurrentPlan
+                    ? "/subscription"
+                    : undefined
+                }
+                cta={
+                  isCurrentPlan
+                    ? isCanceled
+                      ? "Renew Plan"
+                      : "Current Plan"
+                    : hasBlockingSubscription
+                    ? "View Subscription"
+                    : undefined
+                }
               />
             );
           })}
