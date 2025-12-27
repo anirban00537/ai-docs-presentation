@@ -47,13 +47,9 @@ export class SubscriptionService {
 
       const creditBalance = await this.creditService.getCreditBalance(user.id);
 
-      const now = new Date();
-      const isSubscriptionValid =
-        subscription &&
-        (['active', 'trialing'].includes(subscription.status) ||
-          (subscription.status === 'canceled' &&
-            subscription.currentPeriodEnd &&
-            new Date(subscription.currentPeriodEnd) > now));
+      const hasAccessCheck = await this.hasActiveAccess(user.id);
+      const isActive = hasAccessCheck.reason === 'active' || hasAccessCheck.reason === 'trialing';
+      const hasAccess = hasAccessCheck.hasAccess;
 
       // Fetch product features if subscription has a productId
       let features: FeatureResponseDto | null = null;
@@ -80,7 +76,8 @@ export class SubscriptionService {
         creditBalance: creditBalance
           ? (creditBalance as unknown as CreditBalanceResponseDto)
           : null,
-        isActive: !!isSubscriptionValid,
+        isActive: !!isActive,
+        hasAccess: !!hasAccess,
         hasCredits:
           creditBalance !== null && creditBalance.balance > 0,
         features,
@@ -725,10 +722,11 @@ export class SubscriptionService {
 
     const now = new Date();
     const periodEnd = currentPeriodEnd ? new Date(currentPeriodEnd) : subscription.currentPeriodEnd;
+    const cancelAtPeriodEnd = data.cancel_at_period_end ?? true;
     const periodStillValid = periodEnd && new Date(periodEnd) > now;
 
-    if (periodStillValid) {
-      // User canceled but period is still valid - PRESERVE ACCESS & CREDITS
+    if (periodStillValid && cancelAtPeriodEnd) {
+      // User canceled but period is still valid and they chose "at period end"
       this.logger.log(
         `Subscription ${polarSubscriptionId} canceled but period valid until ${periodEnd}. ` +
         `Preserving access and credits for user ${subscription.userId}.`
@@ -739,16 +737,16 @@ export class SubscriptionService {
         data: {
           cancelAtPeriodEnd: true,
           canceledAt: data.canceled_at ? new Date(data.canceled_at) : new Date(),
-          // IMPORTANT: Keep status as 'active' - user still has access!
-          // Status will be changed to 'expired' when period actually ends
+          // IMPORTANT: Keep status as 'active' or 'trialing' if it already was
+          // Unless it was already canceled
         },
       });
       
       // DO NOT reset credits - user paid for this period
     } else {
-      // Period has ended - NOW revoke access and reset credits
+      // Period has ended OR user chose "Immediately"
       this.logger.log(
-        `Subscription ${polarSubscriptionId} period has ended for user ${subscription.userId}. ` +
+        `Subscription ${polarSubscriptionId} ${!cancelAtPeriodEnd ? 'immediately canceled' : 'period has ended'} for user ${subscription.userId}. ` +
         `Revoking access and resetting credits to free tier.`
       );
       
@@ -756,7 +754,7 @@ export class SubscriptionService {
         where: { polarSubscriptionId },
         data: {
           status: SUBSCRIPTION_STATUS.CANCELED,
-          cancelAtPeriodEnd: true,
+          cancelAtPeriodEnd: cancelAtPeriodEnd,
           canceledAt: data.canceled_at ? new Date(data.canceled_at) : new Date(),
         },
       });
@@ -816,7 +814,7 @@ export class SubscriptionService {
       data: {
         status: SUBSCRIPTION_STATUS.CANCELED,
         canceledAt: data.canceled_at ? new Date(data.canceled_at) : new Date(),
-        // Keep cancelAtPeriodEnd as was - for audit trail
+        cancelAtPeriodEnd: false, // Revocation means access is gone, period end no longer matters
       },
     });
   }

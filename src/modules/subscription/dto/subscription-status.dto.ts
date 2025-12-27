@@ -6,6 +6,7 @@ export class SubscriptionStatusDto {
   subscription: SubscriptionResponseDto | null;
   creditBalance: CreditBalanceResponseDto | null;
   isActive: boolean;
+  hasAccess: boolean;
   hasCredits: boolean;
   features?: FeatureResponseDto | null;
 }
