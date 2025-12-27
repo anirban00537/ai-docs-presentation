@@ -117,67 +117,81 @@ export class CreditService {
   /**
     * Update credits based on subscription change
     * Logic: 
-    * 1. Active Upgrade (Active -> New Plan): balance = balance + newLimit
-    * 2. New/Reactivation (Inactive -> Plan): balance = newLimit
+    * 1. Active subscription with valid period (not expired) -> User upgrades/renews: ADD credits to remaining balance
+    * 2. Expired/No subscription -> New/Reactivation: REPLACE with new quota
+    * 
+    * @param userId - The user ID
+    * @param newLimit - The new credit limit from the plan
+    * @param options - Configuration options
+    * @param options.forceReplace - If true, always replace instead of adding
+    * @param options.previousPeriodEnd - The END date of the PREVIOUS subscription period (before update)
     */
   async updateCreditsFromSubscription(
     userId: string,
     newLimit: number,
-    forceReplace: boolean = false,
+    options?: {
+      forceReplace?: boolean;
+      previousPeriodEnd?: Date | null;
+    },
   ): Promise<void> {
+    const forceReplace = options?.forceReplace ?? false;
+    const previousPeriodEnd = options?.previousPeriodEnd;
+    
     console.log(
-      `[CREDIT_SERVICE] Syncing credits for user ${userId} to ${newLimit} (forceReplace: ${forceReplace})`,
+      `[CREDIT_SERVICE] Syncing credits for user ${userId} to ${newLimit} (forceReplace: ${forceReplace}, previousPeriodEnd: ${previousPeriodEnd})`,
     );
 
     await this.prisma.$transaction(async (tx) => {
-      const subscription = await tx.subscription.findUnique({
-        where: { userId },
-      });
-
       const existingBalance = await tx.creditBalance.findUnique({
         where: { userId },
       });
 
       const now = new Date();
 
-      // Check if they have a valid active period currently
-      const hasActiveSubscription =
-        subscription &&
-        ['active', 'trialing'].includes(subscription.status) &&
-        subscription.currentPeriodEnd &&
-        new Date(subscription.currentPeriodEnd) > now;
+      // Check if the PREVIOUS subscription period was still valid (not expired)
+      // This determines if we should roll over remaining credits
+      const hadValidActivePeriod = 
+        previousPeriodEnd && 
+        new Date(previousPeriodEnd) > now;
 
       let finalBalance: number;
       let updateDescription: string;
       let isActuallyAdding: boolean = false;
 
       console.log(
-        `[CREDIT_SERVICE] Sync Trace: userId=${userId}, hasActiveSub=${hasActiveSubscription}, existingBalance=${existingBalance?.balance}, existingQuota=${existingBalance?.quota}`,
+        `[CREDIT_SERVICE] Rollover Decision: userId=${userId}, previousPeriodEnd=${previousPeriodEnd}, isStillValid=${hadValidActivePeriod}, existingBalance=${existingBalance?.balance}, existingQuota=${existingBalance?.quota}`,
       );
 
-      // We ADD credits if it's an active subscription AND we are not forcing a replacement
-      if (hasActiveSubscription && existingBalance && !forceReplace) {
-        // Upgrade/Renewal: Add to existing balance
+      // We ADD credits ONLY if:
+      // 1. The previous subscription period was still valid (not expired)
+      // 2. User has an existing balance
+      // 3. We're not forcing a replacement
+      if (hadValidActivePeriod && existingBalance && !forceReplace) {
+        // Upgrade/Mid-cycle renewal: Add to existing balance (rollover)
         finalBalance = existingBalance.balance + newLimit;
-        updateDescription = `Plan update: +${newLimit} credits added to balance`;
+        updateDescription = `Plan upgrade: +${newLimit} credits added to existing ${existingBalance.balance} (rollover)`;
         isActuallyAdding = true;
         console.log(
-          `[CREDIT_SERVICE] Action: ADDING. New Balance: ${finalBalance}`,
+          `[CREDIT_SERVICE] Action: ADDING (rollover). Previous period still valid. New Balance: ${finalBalance}`,
         );
       } else {
-        // New, Reactivation, or Forced Sync: Replace existing balance
+        // New subscription, expired period, or forced sync: Replace with new quota
         finalBalance = newLimit;
-        updateDescription = forceReplace 
-          ? `Plan sync: Adjusted balance to ${newLimit} credits`
-          : `New credit cycle: Set balance to ${newLimit} credits`;
+        if (forceReplace) {
+          updateDescription = `Plan sync: Adjusted balance to ${newLimit} credits`;
+        } else if (!previousPeriodEnd) {
+          updateDescription = `New subscription: Set balance to ${newLimit} credits`;
+        } else {
+          updateDescription = `New billing cycle: Set balance to ${newLimit} credits (previous period expired)`;
+        }
         isActuallyAdding = false;
         console.log(
-          `[CREDIT_SERVICE] Action: REPLACING. New Balance: ${finalBalance}`,
+          `[CREDIT_SERVICE] Action: REPLACING. Reason: ${!previousPeriodEnd ? 'No previous period' : hadValidActivePeriod ? 'Force replace' : 'Previous period expired'}. New Balance: ${finalBalance}`,
         );
       }
 
       if (!existingBalance) {
-        console.log(`[CREDIT_SERVICE] Creating new record for user ${userId}`);
+        console.log(`[CREDIT_SERVICE] Creating new credit balance record for user ${userId}`);
         await tx.creditBalance.create({
           data: {
             userId,
@@ -188,7 +202,7 @@ export class CreditService {
           },
         });
       } else {
-        console.log(`[CREDIT_SERVICE] Updating existing record for user ${userId}`);
+        console.log(`[CREDIT_SERVICE] Updating existing credit balance record for user ${userId}`);
         await tx.creditBalance.update({
           where: { userId },
           data: {
@@ -209,7 +223,7 @@ export class CreditService {
           balanceAfter: finalBalance,
         },
       });
-      console.log(`[CREDIT_SERVICE] Sync completed for user ${userId}`);
+      console.log(`[CREDIT_SERVICE] Credit sync completed for user ${userId}. Final balance: ${finalBalance}`);
     });
   }
 

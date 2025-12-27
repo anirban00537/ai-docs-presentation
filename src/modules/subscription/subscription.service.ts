@@ -216,11 +216,11 @@ export class SubscriptionService {
           },
         });
 
-        // Reset credits to 10 for inactive users
+        // Reset credits to 10 for inactive users (no active period, so no rollover)
         this.logger.log(
           `Resetting credits to 10 for user ${user.id} due to inactive subscription`,
         );
-        await this.creditService.updateCreditsFromSubscription(user.id, 10);
+        await this.creditService.updateCreditsFromSubscription(user.id, 10, { previousPeriodEnd: null });
 
         return successResponse('Subscription synced successfully', {
           status: 'inactive',
@@ -321,8 +321,12 @@ export class SubscriptionService {
           this.logger.log(
             `Credit sync triggered for user ${user.id}: newSubscription=${isNewSubscription}, newPeriod=${isNewPeriod}, planChange=${isPlanChange}, quotaMismatch=${isQuotaMismatch}`,
           );
-          // Pass isQuotaMismatch as forceReplace to ensure it REPLACES instead of ADDING in this case
-          await this.creditService.updateCreditsFromSubscription(user.id, monthlyLimit, isQuotaMismatch);
+          // Pass the PREVIOUS period end date to determine rollover eligibility
+          // If forceReplace (quota mismatch), don't roll over credits
+          await this.creditService.updateCreditsFromSubscription(user.id, monthlyLimit, {
+            forceReplace: isQuotaMismatch,
+            previousPeriodEnd: existingSubscription?.currentPeriodEnd || null,
+          });
         } else {
           this.logger.debug(
             `Sync: No credit reset needed for user ${user.id} - subscription data and quota are already in sync`,
@@ -520,12 +524,12 @@ export class SubscriptionService {
       });
 
       // Update monthly limit based on product metadata
-      // Note: updateMonthlyLimit handles initialization if credit balance doesn't exist
+      // Note: This is a NEW subscription (created via webhook), so no previous period - no rollover
       const monthlyLimit = await this.getMonthlyCreditLimit(
         data.product_id || data.product?.id,
         data,
       );
-      await this.creditService.updateCreditsFromSubscription(user.id, monthlyLimit);
+      await this.creditService.updateCreditsFromSubscription(user.id, monthlyLimit, { previousPeriodEnd: null });
 
       this.logger.log(
         `Created new subscription ${polarSubscriptionId} for user ${user.id} with ${monthlyLimit} credits`,
@@ -598,9 +602,11 @@ export class SubscriptionService {
         );
 
       const monthlyLimit = await this.getMonthlyCreditLimit(newProductId, data);
+      // Pass the PREVIOUS period end (captured before update) to determine rollover eligibility
       await this.creditService.updateCreditsFromSubscription(
         subscription.userId,
         monthlyLimit,
+        { previousPeriodEnd: subscription.currentPeriodEnd },
       );
     } else {
       this.logger.debug(
@@ -627,7 +633,8 @@ export class SubscriptionService {
       this.logger.log(
         `Subscription ${polarSubscriptionId} ended for user ${subscription.userId}. Resetting credits to 10.`,
       );
-      await this.creditService.updateCreditsFromSubscription(subscription.userId, 10);
+      // Subscription canceled - reset to free tier (no rollover)
+      await this.creditService.updateCreditsFromSubscription(subscription.userId, 10, { previousPeriodEnd: null });
     }
 
     await this.prisma.subscription.updateMany({
@@ -660,12 +667,12 @@ export class SubscriptionService {
           where: { polarCustomerId },
         });
 
-        // Reset credits to free tier for each affected user
+        // Reset credits to free tier for each affected user (no rollover)
         for (const subscription of subscriptions) {
           this.logger.log(
             `Resetting credits to free tier (10) for user ${subscription.userId} due to customer deletion`,
           );
-          await this.creditService.updateCreditsFromSubscription(subscription.userId, 10);
+          await this.creditService.updateCreditsFromSubscription(subscription.userId, 10, { previousPeriodEnd: null });
         }
 
         // Mark subscriptions as inactive
@@ -773,11 +780,11 @@ export class SubscriptionService {
           },
         });
 
-        // Reset credits to free tier (10) since the user got a full refund
+        // Reset credits to free tier (10) since the user got a full refund (no rollover)
         this.logger.log(
           `Resetting credits to free tier (10) for user ${userId} due to full refund`,
         );
-        await this.creditService.updateCreditsFromSubscription(userId, 10);
+        await this.creditService.updateCreditsFromSubscription(userId, 10, { previousPeriodEnd: null });
 
         this.logger.log(`Subscription ${subscription.id} marked as refunded and credits reset`);
       }
