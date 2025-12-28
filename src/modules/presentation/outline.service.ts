@@ -38,7 +38,7 @@ export class OutlineService implements OnModuleInit {
     private readonly presentationService: PresentationService,
     private readonly creditService: CreditService,
     private readonly aiUsageService: AiUsageService,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
@@ -46,7 +46,7 @@ export class OutlineService implements OnModuleInit {
       this.logger.error('OPENROUTER_API_KEY is not set in environment variables.');
       return;
     }
-    
+
     try {
       // Dynamic import for ESM-only package
       const { OpenRouter } = await import('@openrouter/sdk');
@@ -109,7 +109,7 @@ export class OutlineService implements OnModuleInit {
         this.generatingOutlines.add(id);
         this.logger.log(`🚀 STARTING OUTLINE AUTO-GENERATION: ID ${id}`);
         this.logger.log(`📝 User Prompt: "${outline.prompt.substring(0, 100)}${outline.prompt.length > 100 ? '...' : ''}"`);
-        
+
         try {
           if (!this.openRouter) {
             throw new Error('OpenRouter service is not initialized');
@@ -144,7 +144,7 @@ export class OutlineService implements OnModuleInit {
               description: true,
             },
           });
-          
+
           if (allLayouts.length === 0) {
             throw new Error(
               'No layouts available in the database. Please run simple-layout-seed.ts.',
@@ -157,7 +157,7 @@ export class OutlineService implements OnModuleInit {
             name: layout.name,
             description: layout.description,
           }));
-          
+
           this.logger.log(`📊 [Outline ${id}] Found ${layoutsInfo.length} layouts for selection.`);
 
           this.logger.log(`🤖 [Outline ${id}] Calling LLM for outline generation (Model: ${this.MODEL_NAME})...`);
@@ -190,8 +190,18 @@ For each slide, follow these steps:
 4. Select a DIFFERENT layout than you've already used for previous slides
 5. Ensure the layoutId you choose exactly matches one of the "id" values from the available layouts list (case-sensitive)
 
+⚠️ VISUAL VARIETY REQUIREMENT (ACCENT TEMPLATES) ⚠️
+Some layouts feature "accent" images - these are side panels, background images, or banners that add visual richness and make the presentation more engaging.
+- Look for layouts with descriptions mentioning "accent", "left-side accent", "right-side accent", "top banner accent", or "background accent"
+- These accent layouts create visual variety and professional polish
+- You MUST include AT LEAST 2-3 accent layouts in your ${numberOfSlides}-slide presentation
+- Distribute accent layouts throughout the presentation (not just at the beginning or end)
+- Examples of good accent usage: product showcases, team spotlights, case studies, testimonials
+- Presentations without accent layouts look flat and unprofessional - avoid this!
+
 IMPORTANT RULES:
 - The FIRST slide MUST use an introduction/title/hero layout - this is mandatory
+- Include AT LEAST 2-3 layouts that have accent/visual features
 - Each slide MUST have a unique layoutId - no duplicates allowed across all ${numberOfSlides} slides
 - Match the layout's description to the slide's content purpose
 - If you have multiple slides with similar content (e.g., multiple features), you MUST still use different layouts that are appropriate for that content type
@@ -253,7 +263,7 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
           });
 
           const content = response.choices[0]?.message?.content;
-          
+
           // Log tech usage
           if (response.usage) {
             const inputTokens = (response.usage as any).promptTokens || (response.usage as any).prompt_tokens;
@@ -448,7 +458,7 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
       // Check if user has enough credits before creating outline
       // Outline generation requires 1 credit + slides require 1 credit each
       const estimatedTotalCredits = 1 + payload.numberOfSlides; // 1 for outline + 1 per slide
-      
+
       const hasCredits = await this.creditService.hasEnoughCredits(user.id, estimatedTotalCredits);
       if (!hasCredits) {
         this.logger.warn(`User ${user.id} attempted to create outline without sufficient credits (required: ${estimatedTotalCredits})`);
