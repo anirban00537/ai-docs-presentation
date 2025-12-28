@@ -12,6 +12,12 @@ import {
   ProseMirrorDocumentSchema,
   NumberCardContentSchema,
   SimpleNumberCardContentSchema,
+  SpineCardContentSchema,
+  ModernPillCardContentSchema,
+  InvertedImpactContentSchema,
+  GlassBillboardContentSchema,
+  LayeredNumberContentSchema,
+  CornerCutContentSchema,
 } from "./blocks";
 
 import {
@@ -37,6 +43,14 @@ export type SpacerContent = z.infer<typeof SpacerContentSchema>;
 export type NumberCardContent = z.infer<typeof NumberCardContentSchema>;
 
 export type SimpleNumberCardContent = z.infer<typeof SimpleNumberCardContentSchema>;
+
+export type SpineCardContent = z.infer<typeof SpineCardContentSchema>;
+
+export type ModernPillCardContent = z.infer<typeof ModernPillCardContentSchema>;
+export type InvertedImpactContent = z.infer<typeof InvertedImpactContentSchema>;
+export type GlassBillboardContent = z.infer<typeof GlassBillboardContentSchema>;
+export type LayeredNumberContent = z.infer<typeof LayeredNumberContentSchema>;
+export type CornerCutContent = z.infer<typeof CornerCutContentSchema>;
 
 
 export type LayoutTemplate = {

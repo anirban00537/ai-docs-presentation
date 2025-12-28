@@ -11,6 +11,12 @@ import {
   IconSeparator,
   IconHash,
   IconNumber,
+  IconLayoutSidebarLeftCollapse,
+  IconBadge,
+  IconContrast,
+  IconBoxModel,
+  IconLayersIntersect,
+  IconPolygon,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
 
@@ -55,6 +61,42 @@ const blockDefinitions = [
     icon: <IconNumber size={18} />,
     label: "Simple Number",
     description: "Minimalist number with text",
+  },
+  {
+    type: BLOCK_TYPES.SPINE_CARD,
+    icon: <IconLayoutSidebarLeftCollapse size={18} />,
+    label: "Spine Card",
+    description: "Vertical accent for emphasis",
+  },
+  {
+    type: BLOCK_TYPES.MODERN_PILL_CARD,
+    icon: <IconBadge size={18} />,
+    label: "Pill Card",
+    description: "Categorized header with pill",
+  },
+  {
+    type: BLOCK_TYPES.INVERTED_IMPACT_BLOCK,
+    icon: <IconContrast size={18} />,
+    label: "Inverted",
+    description: "High contrast impact block",
+  },
+  {
+    type: BLOCK_TYPES.GLASS_BILLBOARD_BLOCK,
+    icon: <IconBoxModel size={18} />,
+    label: "Billboard",
+    description: "Centered hero text",
+  },
+  {
+    type: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
+    icon: <IconLayersIntersect size={18} />,
+    label: "Layered",
+    description: "Depth with large number",
+  },
+  {
+    type: BLOCK_TYPES.CORNER_CUT_BLOCK,
+    icon: <IconPolygon size={18} />,
+    label: "Corner Cut",
+    description: "Geometric edge accent",
   },
 ];
 

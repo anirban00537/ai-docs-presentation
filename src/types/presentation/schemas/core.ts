@@ -8,6 +8,12 @@ export const BLOCK_TYPES = {
   SPACER: "spacer",
   NUMBER_CARD: "number-card",
   SIMPLE_NUMBER_CARD: "simple-number-card",
+  SPINE_CARD: "spine-card",
+  MODERN_PILL_CARD: "modern-pill-card",
+  INVERTED_IMPACT_BLOCK: "inverted-impact-block",
+  GLASS_BILLBOARD_BLOCK: "glass-billboard-block",
+  LAYERED_NUMBER_BLOCK: "layered-number-block",
+  CORNER_CUT_BLOCK: "corner-cut-block",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

@@ -11,6 +11,12 @@ import { CodeBlock } from "./code/CodeBlock";
 import { SpacerBlock } from "./spacer/SpacerBlock";
 import { NumberCardBlock } from "./number-card/NumberCardBlock";
 import { SimpleNumberCardBlock } from "./simple-number-card/SimpleNumberCardBlock";
+import { SpineCardBlock } from "./spine-card/SpineCardBlock";
+import { ModernPillCardBlock } from "./modern-pill-card/ModernPillCardBlock";
+import { InvertedImpactBlock } from "./inverted-impact-block/InvertedImpactBlock";
+import { GlassBillboardBlock } from "./glass-billboard-block/GlassBillboardBlock";
+import { LayeredNumberBlock } from "./layered-number-block/LayeredNumberBlock";
+import { CornerCutBlock } from "./corner-cut-block/CornerCutBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -62,6 +68,42 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: SimpleNumberCardBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.SIMPLE_NUMBER_CARD, content),
+  },
+  [BLOCK_TYPES.SPINE_CARD]: {
+    type: BLOCK_TYPES.SPINE_CARD,
+    component: SpineCardBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.SPINE_CARD, content),
+  },
+  [BLOCK_TYPES.MODERN_PILL_CARD]: {
+    type: BLOCK_TYPES.MODERN_PILL_CARD,
+    component: ModernPillCardBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.MODERN_PILL_CARD, content),
+  },
+  [BLOCK_TYPES.INVERTED_IMPACT_BLOCK]: {
+    type: BLOCK_TYPES.INVERTED_IMPACT_BLOCK,
+    component: InvertedImpactBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.INVERTED_IMPACT_BLOCK, content),
+  },
+  [BLOCK_TYPES.GLASS_BILLBOARD_BLOCK]: {
+    type: BLOCK_TYPES.GLASS_BILLBOARD_BLOCK,
+    component: GlassBillboardBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.GLASS_BILLBOARD_BLOCK, content),
+  },
+  [BLOCK_TYPES.LAYERED_NUMBER_BLOCK]: {
+    type: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
+    component: LayeredNumberBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.LAYERED_NUMBER_BLOCK, content),
+  },
+  [BLOCK_TYPES.CORNER_CUT_BLOCK]: {
+    type: BLOCK_TYPES.CORNER_CUT_BLOCK,
+    component: CornerCutBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.CORNER_CUT_BLOCK, content),
   },
 };
 

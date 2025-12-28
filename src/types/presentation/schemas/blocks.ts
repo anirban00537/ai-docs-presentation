@@ -47,6 +47,39 @@ export const SimpleNumberCardContentSchema = z.object({
   editorContent: ProseMirrorDocumentSchema,
 });
 
+export const SpineCardContentSchema = z.object({
+  type: z.literal("spine-card"),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
+export const ModernPillCardContentSchema = z.object({
+  type: z.literal("modern-pill-card"),
+  label: z.string().optional(),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
+export const InvertedImpactContentSchema = z.object({
+  type: z.literal("inverted-impact-block"),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
+export const GlassBillboardContentSchema = z.object({
+  type: z.literal("glass-billboard-block"),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
+export const LayeredNumberContentSchema = z.object({
+  type: z.literal("layered-number-block"),
+  number: z.number(),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
+export const CornerCutContentSchema = z.object({
+  type: z.literal("corner-cut-block"),
+  label: z.string().optional(),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
 // --- Master Content Union ---
 
 export const BlockContentSchema = z.union([
@@ -56,6 +89,12 @@ export const BlockContentSchema = z.union([
   SpacerContentSchema,
   NumberCardContentSchema,
   SimpleNumberCardContentSchema,
+  SpineCardContentSchema,
+  ModernPillCardContentSchema,
+  InvertedImpactContentSchema,
+  GlassBillboardContentSchema,
+  LayeredNumberContentSchema,
+  CornerCutContentSchema,
 ]);
 
 
