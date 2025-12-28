@@ -3,7 +3,10 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BLOCK_TYPES } from "../blocks/definitions";
+import { 
+  BLOCK_TYPES,
+  createCalloutContent 
+} from "../blocks/definitions";
 import {
   IconFileText,
   IconPhoto,
@@ -17,6 +20,10 @@ import {
   IconBoxModel,
   IconLayersIntersect,
   IconPolygon,
+  IconInfoCircle,
+  IconAlertTriangle,
+  IconAlertOctagon,
+  IconNote,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
 
@@ -25,7 +32,15 @@ interface BlockLibraryPanelProps {
   onClose: () => void;
 }
 
-const blockDefinitions = [
+interface BlockDefinition {
+  type: string;
+  icon: React.ReactNode;
+  label: string;
+  description: string;
+  initialContent?: Record<string, any>;
+}
+
+const blockDefinitions: BlockDefinition[] = [
   {
     type: BLOCK_TYPES.PROSEMIRROR,
     icon: <IconFileText size={18} />,
@@ -97,6 +112,34 @@ const blockDefinitions = [
     icon: <IconPolygon size={18} />,
     label: "Corner Cut",
     description: "Geometric edge accent",
+  },
+  {
+    type: BLOCK_TYPES.CALLOUT_BLOCK,
+    icon: <IconNote size={18} />,
+    label: "Note box",
+    description: "Neutral note box",
+    initialContent: createCalloutContent("note"),
+  },
+  {
+    type: BLOCK_TYPES.CALLOUT_BLOCK,
+    icon: <IconInfoCircle size={18} />,
+    label: "Info box",
+    description: "Blue info callout",
+    initialContent: createCalloutContent("info"),
+  },
+  {
+    type: BLOCK_TYPES.CALLOUT_BLOCK,
+    icon: <IconAlertTriangle size={18} />,
+    label: "Warning box",
+    description: "Yellow warning alert",
+    initialContent: createCalloutContent("warning"),
+  },
+  {
+    type: BLOCK_TYPES.CALLOUT_BLOCK,
+    icon: <IconAlertOctagon size={18} />,
+    label: "Error box",
+    description: "Red error/caution",
+    initialContent: createCalloutContent("error"),
   },
 ];
 
@@ -204,13 +247,14 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
                 Drag to add to your slide
               </p>
               <div className="grid grid-cols-4 gap-1">
-                {blockDefinitions.map((block) => (
+                {blockDefinitions.map((block, index) => (
                   <BlockOption
-                    key={block.type}
-                    id={`block-option-${block.type}`}
+                    key={`${block.type}-${index}`}
+                    id={`block-option-${block.type}-${index}`}
                     blockType={block.type}
                     icon={block.icon}
                     label={block.label}
+                    initialContent={block.initialContent}
                   />
                 ))}
               </div>

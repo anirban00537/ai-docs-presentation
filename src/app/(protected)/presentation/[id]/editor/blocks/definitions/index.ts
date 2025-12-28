@@ -15,6 +15,7 @@ import { createInvertedImpactContent, normalizeInvertedImpactContent } from "./i
 import { createGlassBillboardContent, normalizeGlassBillboardContent } from "./glass-billboard-block";
 import { createLayeredNumberContent, normalizeLayeredNumberContent } from "./layered-number-block";
 import { createCornerCutContent, normalizeCornerCutContent } from "./corner-cut-block";
+import { createCalloutContent, normalizeCalloutContent } from "./callout-block";
 
 // Re-export factories and normalizers
 export {
@@ -29,6 +30,7 @@ export {
   createGlassBillboardContent, normalizeGlassBillboardContent,
   createLayeredNumberContent, normalizeLayeredNumberContent,
   createCornerCutContent, normalizeCornerCutContent,
+  createCalloutContent, normalizeCalloutContent,
 };
 
 import {
@@ -63,6 +65,8 @@ export const createBlockContentForType = (
       return createLayeredNumberContent();
     case BLOCK_TYPES.CORNER_CUT_BLOCK:
       return createCornerCutContent();
+    case BLOCK_TYPES.CALLOUT_BLOCK:
+      return createCalloutContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return getDefaultHeadingContent();
@@ -96,6 +100,8 @@ export const normalizeBlockContent = (
       return normalizeLayeredNumberContent(content);
     case BLOCK_TYPES.CORNER_CUT_BLOCK:
       return normalizeCornerCutContent(content);
+    case BLOCK_TYPES.CALLOUT_BLOCK:
+      return normalizeCalloutContent(content);
     default:
       if (isMarkdownFormat(content)) {
         return content;

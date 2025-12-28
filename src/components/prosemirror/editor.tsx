@@ -57,7 +57,7 @@ type ProseMirrorEditorProps = {
   placeholder?: string;
   blockId?: string;
   /** Optional theme prop. If not provided, falls back to Redux store theme */
-  theme?: Theme;
+  theme?: Theme | (Theme & { bodyColor?: string });
 };
 
 export const ProseMirrorEditor = memo(function ProseMirrorEditor({
@@ -739,7 +739,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       view.destroy();
       viewRef.current = null;
     };
-  }, [initialDoc, readOnly, placeholder, executeCommand, theme]);
+  }, [initialDoc, readOnly, placeholder, executeCommand]);
 
   // Handle menu item click
   const handleMenuClick = useCallback(
@@ -795,7 +795,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       [data-prosemirror-id="${editorId}"] .ProseMirror h2,
       [data-prosemirror-id="${editorId}"] .ProseMirror h3,
       [data-prosemirror-id="${editorId}"] .ProseMirror h4 {
-        color: ${theme.headingColor} !important;
+        color: ${theme.themeType === 'dark' ? theme.bodyColor : theme.headingColor} !important;
       }
       [data-prosemirror-id="${editorId}"] .ProseMirror p,
       [data-prosemirror-id="${editorId}"] .ProseMirror li,

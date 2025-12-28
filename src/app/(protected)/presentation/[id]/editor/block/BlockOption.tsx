@@ -9,6 +9,7 @@ interface BlockOptionProps {
   blockType: string;
   icon: React.ReactNode;
   label: string;
+  initialContent?: Record<string, any>;
 }
 
 export const BlockOption: React.FC<BlockOptionProps> = ({
@@ -16,6 +17,7 @@ export const BlockOption: React.FC<BlockOptionProps> = ({
   blockType,
   icon,
   label,
+  initialContent,
 }) => {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
@@ -23,7 +25,7 @@ export const BlockOption: React.FC<BlockOptionProps> = ({
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id,
-      data: { type: "block-option", blockType },
+      data: { type: "block-option", blockType, initialContent },
     });
 
   const style = {

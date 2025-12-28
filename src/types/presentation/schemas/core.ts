@@ -14,6 +14,7 @@ export const BLOCK_TYPES = {
   GLASS_BILLBOARD_BLOCK: "glass-billboard-block",
   LAYERED_NUMBER_BLOCK: "layered-number-block",
   CORNER_CUT_BLOCK: "corner-cut-block",
+  CALLOUT_BLOCK: "callout-block",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

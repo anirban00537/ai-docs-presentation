@@ -17,6 +17,7 @@ import { InvertedImpactBlock } from "./inverted-impact-block/InvertedImpactBlock
 import { GlassBillboardBlock } from "./glass-billboard-block/GlassBillboardBlock";
 import { LayeredNumberBlock } from "./layered-number-block/LayeredNumberBlock";
 import { CornerCutBlock } from "./corner-cut-block/CornerCutBlock";
+import { CalloutBlock } from "./callout-block/CalloutBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -104,6 +105,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: CornerCutBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.CORNER_CUT_BLOCK, content),
+  },
+  [BLOCK_TYPES.CALLOUT_BLOCK]: {
+    type: BLOCK_TYPES.CALLOUT_BLOCK,
+    component: CalloutBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.CALLOUT_BLOCK, content),
   },
 };
 

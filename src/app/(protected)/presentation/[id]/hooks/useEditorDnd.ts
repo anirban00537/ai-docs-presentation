@@ -82,14 +82,15 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
         if (over && draggingBlockType) {
           const overData = over.data.current;
           
-          // Build initialContent for image blocks
+          // Build initialContent for block or images
+          const activeData = active.data.current;
           const initialContent = draggingImageData ? {
             url: draggingImageData.url,
             alt: draggingImageData.alt || "",
             caption: "",
             objectFit: "cover",
             attribution: draggingImageData.attribution,
-          } : undefined;
+          } : (activeData?.initialContent as Record<string, any> | undefined);
 
           if (overData?.type === "row-insert") {
             const slideId = overData.slideId as string;

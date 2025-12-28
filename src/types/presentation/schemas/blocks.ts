@@ -80,6 +80,12 @@ export const CornerCutContentSchema = z.object({
   editorContent: ProseMirrorDocumentSchema,
 });
 
+export const CalloutContentSchema = z.object({
+  type: z.literal("callout-block"),
+  variant: z.enum(["note", "info", "warning", "error", "success", "question"]),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
 // --- Master Content Union ---
 
 export const BlockContentSchema = z.union([
@@ -95,6 +101,7 @@ export const BlockContentSchema = z.union([
   GlassBillboardContentSchema,
   LayeredNumberContentSchema,
   CornerCutContentSchema,
+  CalloutContentSchema,
 ]);
 
 

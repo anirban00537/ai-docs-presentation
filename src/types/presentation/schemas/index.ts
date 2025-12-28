@@ -18,6 +18,7 @@ import {
   GlassBillboardContentSchema,
   LayeredNumberContentSchema,
   CornerCutContentSchema,
+  CalloutContentSchema,
 } from "./blocks";
 
 import {
@@ -51,6 +52,7 @@ export type InvertedImpactContent = z.infer<typeof InvertedImpactContentSchema>;
 export type GlassBillboardContent = z.infer<typeof GlassBillboardContentSchema>;
 export type LayeredNumberContent = z.infer<typeof LayeredNumberContentSchema>;
 export type CornerCutContent = z.infer<typeof CornerCutContentSchema>;
+export type CalloutContent = z.infer<typeof CalloutContentSchema>;
 
 
 export type LayoutTemplate = {
