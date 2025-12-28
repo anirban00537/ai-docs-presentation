@@ -96,13 +96,7 @@ export function createRow(blocks: Block[], columnWidths?: number[]): Row {
  */
 export type TemplateCategory =
   | "introduction"
-  | "content"
-  | "data"
-  | "social-proof"
-  | "pricing"
-  | "team"
-  | "media"
-  | "closing";
+  | "content";
 
 /**
  * Template metadata for search and filtering

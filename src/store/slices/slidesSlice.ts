@@ -17,6 +17,7 @@ import {
   createBlockContentForType,
   createNumberCardContent,
 } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
+
 import {
   createBlockInstance,
   createRow,
@@ -463,6 +464,7 @@ const slidesSlice = createSlice({
             ? createNumberCardContent()
             : createBlockContentForType(blockType as any);
       }
+
 
       let adjustedNewIndex: number;
       if (oldIndex < newIndex) {

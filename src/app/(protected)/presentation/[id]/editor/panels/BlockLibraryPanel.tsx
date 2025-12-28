@@ -1,6 +1,4 @@
 import React from "react";
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { X } from "lucide-react";
@@ -8,28 +6,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BLOCK_TYPES } from "../blocks/definitions";
 import {
   IconFileText,
-  IconHash,
-  IconMessageCircle,
-  IconTarget,
-  IconQuote,
-  IconTimeline,
-  IconUsers,
-  IconCreditCard,
   IconPhoto,
-  IconChartBar,
-  IconListCheck,
-  IconTable,
-  IconHelp,
-  IconBrandAppstore,
-  IconVideo,
   IconCode,
-  IconProgress,
-  IconBrandTwitter,
-  IconAward,
-  IconTerminal2,
-  IconActivity,
-  IconBulb,
   IconSeparator,
+  IconHash,
+  IconNumber,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
 
@@ -46,88 +27,10 @@ const blockDefinitions = [
     description: "Rich text editor with formatting",
   },
   {
-    type: BLOCK_TYPES.NUMBER_CARD,
-    icon: <IconHash size={18} />,
-    label: "Number Card",
-    description: "Sequence number and description",
-  },
-  {
-    type: BLOCK_TYPES.TESTIMONIAL,
-    icon: <IconMessageCircle size={18} />,
-    label: "Testimonial",
-    description: "Customer quote with name and role",
-  },
-  {
-    type: BLOCK_TYPES.CTA,
-    icon: <IconTarget size={18} />,
-    label: "CTA Banner",
-    description: "Call-to-action with button",
-  },
-  {
-    type: BLOCK_TYPES.QUOTE,
-    icon: <IconQuote size={18} />,
-    label: "Quote",
-    description: "Inspiring quote with author",
-  },
-  {
-    type: BLOCK_TYPES.TIMELINE,
-    icon: <IconTimeline size={18} />,
-    label: "Timeline",
-    description: "Step-by-step process visualization",
-  },
-  {
-    type: BLOCK_TYPES.TEAM_CARD,
-    icon: <IconUsers size={18} />,
-    label: "Team",
-    description: "Profile card with social links",
-  },
-  {
-    type: BLOCK_TYPES.PRICING_CARD,
-    icon: <IconCreditCard size={18} />,
-    label: "Pricing",
-    description: "Feature comparison card",
-  },
-  {
-    type: BLOCK_TYPES.IMAGE_GALLERY,
+    type: BLOCK_TYPES.IMAGE,
     icon: <IconPhoto size={18} />,
-    label: "Gallery",
-    description: "Grid layout for multiple images",
-  },
-  {
-    type: BLOCK_TYPES.STATS_COUNTER,
-    icon: <IconChartBar size={18} />,
-    label: "Stats",
-    description: "Animated statistics and metrics",
-  },
-  {
-    type: BLOCK_TYPES.FEATURE_LIST,
-    icon: <IconListCheck size={18} />,
-    label: "Features",
-    description: "Showcase features with icons",
-  },
-  {
-    type: BLOCK_TYPES.COMPARISON_TABLE,
-    icon: <IconTable size={18} />,
-    label: "Compare",
-    description: "Compare features side-by-side",
-  },
-  {
-    type: BLOCK_TYPES.FAQ,
-    icon: <IconHelp size={18} />,
-    label: "FAQ",
-    description: "Expandable questions and answers",
-  },
-  {
-    type: BLOCK_TYPES.LOGO_GRID,
-    icon: <IconBrandAppstore size={18} />,
-    label: "Logos",
-    description: "Showcase partners and clients",
-  },
-  {
-    type: BLOCK_TYPES.VIDEO,
-    icon: <IconVideo size={18} />,
-    label: "Video",
-    description: "Embed YouTube or Vimeo videos",
+    label: "Image",
+    description: "Single image with caption",
   },
   {
     type: BLOCK_TYPES.CODE,
@@ -136,54 +39,25 @@ const blockDefinitions = [
     description: "Syntax-highlighted code snippets",
   },
   {
-    type: BLOCK_TYPES.PROGRESS_BAR,
-    icon: <IconProgress size={18} />,
-    label: "Progress",
-    description: "Animated progress indicators",
-  },
-  {
-    type: BLOCK_TYPES.SOCIAL_PROOF,
-    icon: <IconBrandTwitter size={18} />,
-    label: "Social",
-    description: "Social media stats and ratings",
-  },
-  {
-    type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
-    icon: <IconHash size={18} />,
-    label: "Number",
-    description: "Minimalist number with text",
-  },
-  {
-    type: BLOCK_TYPES.BADGE,
-    icon: <IconAward size={18} />,
-    label: "Badge",
-    description: "Awards and certifications",
-  },
-  {
-    type: BLOCK_TYPES.CODE_TERMINAL,
-    icon: <IconTerminal2 size={18} />,
-    label: "Terminal",
-    description: "Mini terminal window",
-  },
-  {
-    type: BLOCK_TYPES.PULSE_METRIC,
-    icon: <IconActivity size={18} />,
-    label: "Pulse",
-    description: "Animated growth metric",
-  },
-  {
-    type: BLOCK_TYPES.GLASS_INSIGHT,
-    icon: <IconBulb size={18} />,
-    label: "Insight",
-    description: "Key takeaway box",
-  },
-  {
     type: BLOCK_TYPES.SPACER,
     icon: <IconSeparator size={18} />,
     label: "Spacer",
     description: "Adjustable vertical space",
   },
+  {
+    type: BLOCK_TYPES.NUMBER_CARD,
+    icon: <IconHash size={18} />,
+    label: "Number Card",
+    description: "Sequence number and description",
+  },
+  {
+    type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
+    icon: <IconNumber size={18} />,
+    label: "Simple Number",
+    description: "Minimalist number with text",
+  },
 ];
+
 
 export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
   isOpen,
@@ -278,9 +152,8 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
 
             {/* Blocks Grid */}
             <div
-              className={`relative flex-1 overflow-y-auto px-3 pb-3 ${
-                isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
-              }`}
+              className={`relative flex-1 overflow-y-auto px-3 pb-3 ${isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+                }`}
             >
               <p
                 className="text-[11px] font-medium mb-2 px-1 opacity-50"

@@ -3,30 +3,11 @@ import { BlockContentSchema } from "./blocks";
 
 export const BLOCK_TYPES = {
   PROSEMIRROR: "prosemirror",
-  NUMBER_CARD: "number-card",
-  TESTIMONIAL: "testimonial",
-  CTA: "cta",
-  QUOTE: "quote",
-  TIMELINE: "timeline",
-  TEAM_CARD: "team-card",
-  PRICING_CARD: "pricing-card",
-  IMAGE_GALLERY: "image-gallery",
   IMAGE: "image",
-  STATS_COUNTER: "stats-counter",
-  FEATURE_LIST: "feature-list",
-  COMPARISON_TABLE: "comparison-table",
-  FAQ: "faq",
-  LOGO_GRID: "logo-grid",
-  VIDEO: "video",
   CODE: "code",
-  PROGRESS_BAR: "progress-bar",
-  SOCIAL_PROOF: "social-proof",
-  BADGE: "badge",
-  SIMPLE_NUMBER_CARD: "simple-number-card",
-  CODE_TERMINAL: "code-terminal",
-  PULSE_METRIC: "pulse-metric",
-  GLASS_INSIGHT: "glass-insight",
   SPACER: "spacer",
+  NUMBER_CARD: "number-card",
+  SIMPLE_NUMBER_CARD: "simple-number-card",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

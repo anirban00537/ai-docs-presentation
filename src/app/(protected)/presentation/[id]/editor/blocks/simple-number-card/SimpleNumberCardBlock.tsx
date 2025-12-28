@@ -21,6 +21,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
   onUpdate,
   theme,
   placeholder,
+  readOnly = false,
 }: SimpleNumberCardBlockProps) {
   const content = block.content as SimpleNumberCardContent;
   const number = content?.number ?? 1;
@@ -33,6 +34,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
 
   const handleEditorChange = useCallback(
     (newEditorContent: any) => {
+      if (readOnly) return;
       const newContent: SimpleNumberCardContent = {
         type: "simple-number-card",
         number,
@@ -40,11 +42,13 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
       };
       onUpdate(newContent);
     },
-    [number, onUpdate]
+    [number, onUpdate, readOnly]
   );
+
 
   const handleNumberChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (readOnly) return;
       const val = parseInt(e.target.value, 10);
       const newNumber = isNaN(val) ? 0 : val;
 
@@ -55,15 +59,15 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
       };
       onUpdate(newContent);
     },
-    [editorContent, onUpdate]
+    [editorContent, onUpdate, readOnly]
   );
 
   return (
-    <CommonCard 
-      theme={theme} 
+    <CommonCard
+      theme={theme}
       className="w-full h-full transition-all duration-300 hover:shadow-md"
     >
-      <div 
+      <div
         className="flex flex-row gap-6 p-6 items-start w-full h-full relative overflow-hidden"
         style={{ borderRadius: theme.cardBorderRadius ?? "12px" }}
       >
@@ -98,6 +102,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
             type="number"
             value={String(number).padStart(2, "0")}
             onChange={handleNumberChange}
+            disabled={readOnly}
             className="no-spinner bg-transparent border-none outline-none text-center w-full font-bold"
             style={{
               color: theme.primary,
@@ -115,6 +120,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
             placeholder={placeholder ?? "Type description..."}
             className="text-sm leading-relaxed opacity-70 tracking-tight"
             theme={theme}
+            readOnly={readOnly}
           />
         </div>
       </div>
