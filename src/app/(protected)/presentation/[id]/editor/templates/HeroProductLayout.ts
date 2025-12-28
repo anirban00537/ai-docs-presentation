@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const HeroProductLayout: LayoutTemplate = {
   id: "hero-product-layout",
   name: "Hero Product Showcase",
-  description: "High-impact product launch with visual focus",
+  description: "Product launch hero with features, specs, and awards. Features left-side accent with product photography.",
   icon: "IconRocket",
   accent: {
     position: "left",

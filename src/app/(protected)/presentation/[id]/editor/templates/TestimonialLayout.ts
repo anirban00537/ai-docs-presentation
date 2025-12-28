@@ -14,7 +14,7 @@ import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from ".
 export const TestimonialLayout: LayoutTemplate = {
   id: "testimonial-layout",
   name: "Testimonials",
-  description: "Customer testimonials and reviews",
+  description: "Three customer testimonial cards in a row with quotes, names, and titles. Social proof section for case studies and landing pages.",
   icon: "IconMessageChat",
   getRows: (): Row[] => {
     // Row 1: Section Title

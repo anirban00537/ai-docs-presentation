@@ -10,7 +10,7 @@ import type { Block } from "@/types/presentation";
 export const CustomerStoriesLayout = {
   id: "customer-stories-layout",
   name: "Customer Stories",
-  description: "Narrative of customer success with proof points",
+  description: "Case study narrative with challenge-solution-outcome timeline and executive quote. Perfect for detailed success stories.",
   icon: "IconBook",
   getRows: (): Row[] => {
     const header: Block = {

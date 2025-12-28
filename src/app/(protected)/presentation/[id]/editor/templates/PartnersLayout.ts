@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const PartnersLayout = {
   id: "partners-layout",
   name: "Partners & Clients",
-  description: "Showcase your partners and clients",
+  description: "Logo grid displaying trusted partners and enterprise clients. Grayscale logos with optional links for credibility building.",
   icon: "IconUsers",
   getRows: (): Row[] => {
     // Row 1: Section Title

@@ -14,7 +14,7 @@ import { createProseMirrorBlock, createSectionHeader, createHeadingDoc, createTy
 export const TeamLayout: LayoutTemplate = {
   id: "team-layout",
   name: "Meet the Team",
-  description: "Introduce your team members with style",
+  description: "Three team member cards with photos, titles, and professional backgrounds. Ideal for leadership introductions and about pages.",
   icon: "IconUsersGroup",
   getRows: (): Row[] => {
     // Row 1: Section Title

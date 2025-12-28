@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const FounderStoryLayout: LayoutTemplate = {
   id: "founder-story-layout",
   name: "Founder Story",
-  description: "Compelling executive profile with journey timeline",
+  description: "Executive or founder bio with milestone timeline and quote. Features left-side accent with professional portrait.",
   icon: "IconUser",
   accent: {
     position: "left",

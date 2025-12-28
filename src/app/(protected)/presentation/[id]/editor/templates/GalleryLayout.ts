@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const GalleryLayout = {
   id: "gallery-layout",
   name: "Image Gallery",
-  description: "Showcase multiple images in a beautiful grid",
+  description: "Three-column image gallery with captions for showcasing deployments, products, or portfolio work. Clean visual presentation.",
   icon: "IconPhoto",
   getRows: (): Row[] => {
     // Row 1: Section Title

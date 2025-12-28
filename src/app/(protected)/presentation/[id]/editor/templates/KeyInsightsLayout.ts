@@ -14,7 +14,7 @@ import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from ".
 export const KeyInsightsLayout: LayoutTemplate = {
   id: "key-insights",
   name: "Strategic Takeaways",
-  description: "Highlighted key points in glass cards",
+  description: "Strategic takeaways displayed in elegant glass-style insight cards. Perfect for summarizing key findings or action items.",
   icon: "IconBolt",
   getRows: (): Row[] => {
     // Row 1: Header

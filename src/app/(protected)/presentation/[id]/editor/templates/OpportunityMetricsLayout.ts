@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const OpportunityMetricsLayout = {
   id: "opportunity-metrics-layout",
   name: "Opportunity Metrics",
-  description: "Highlight the market or opportunity with three key metrics",
+  description: "Market opportunity showcase with TAM, growth rate, and adoption metrics. Quantifies the business case with animated counters.",
   icon: "IconChartLine",
   getRows: (): Row[] => {
     const header: Block = {

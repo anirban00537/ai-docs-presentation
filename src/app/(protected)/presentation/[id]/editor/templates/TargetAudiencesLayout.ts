@@ -9,7 +9,7 @@ import type { Block } from "@/types/presentation";
 export const TargetAudiencesLayout = {
   id: "target-audiences-layout",
   name: "Target Audiences",
-  description: "Highlight who this is for",
+  description: "Four persona cards targeting Engineering, Product, Sales, and C-Suite with role-specific value propositions. Stakeholder alignment slide.",
   icon: "IconTarget",
   getRows: (): Row[] => {
     const heading: Block = {

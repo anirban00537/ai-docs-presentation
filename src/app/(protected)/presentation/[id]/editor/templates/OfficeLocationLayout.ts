@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const OfficeLocationLayout: LayoutTemplate = {
   id: "office-location-layout",
   name: "Office Location",
-  description: "Showcase your workspace and company culture",
+  description: "HQ or office showcase with stats and amenities. Features left-side accent with modern workspace photography.",
   icon: "IconBuildingSkyscraper",
   accent: {
     position: "left",

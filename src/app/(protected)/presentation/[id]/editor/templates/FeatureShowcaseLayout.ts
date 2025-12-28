@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const FeatureShowcaseLayout = {
   id: "feature-showcase-layout",
   name: "Feature Showcase",
-  description: "Highlight product features with icons",
+  description: "Three-column icon grid featuring deployment, security, and design capabilities. Ideal for product capability overviews.",
   icon: "IconRocket",
   getRows: (): Row[] => {
     // Row 1: Section Title

@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const EventAnnouncementLayout: LayoutTemplate = {
   id: "event-announcement-layout",
   name: "Event Announcement",
-  description: "High-energy event invitation with atmospheric background",
+  description: "Conference or webinar promotion with speaker lineup and CTA. Features dramatic full-background accent with stage atmosphere.",
   icon: "IconConfetti",
   accent: {
     position: "background",

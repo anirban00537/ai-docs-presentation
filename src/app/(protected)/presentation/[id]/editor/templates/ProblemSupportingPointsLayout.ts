@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const ProblemSupportingPointsLayout = {
   id: "problem-supporting-points-layout",
   name: "Problem + Supporting Points",
-  description: "Problem statement with two reinforcing points",
+  description: "Innovation paradox framing with velocity and cost challenges. Two-column grid reinforcing the problem with specific pain points.",
   icon: "IconNote",
   getRows: (): Row[] => {
     const statement: Block = {

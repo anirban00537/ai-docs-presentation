@@ -14,7 +14,7 @@ import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from ".
 export const FAQLayout: LayoutTemplate = {
   id: "faq-layout",
   name: "FAQ Section",
-  description: "Answer common questions with expandable sections",
+  description: "Expandable accordion-style FAQ section covering security, deployment, and billing. Great for support pages and pre-sales objection handling.",
   icon: "IconQuestionMark",
   getRows: (): Row[] => {
     // Row 1: Section Title

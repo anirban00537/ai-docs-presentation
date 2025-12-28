@@ -9,7 +9,7 @@ import type { Block } from "@/types/presentation";
 export const ComparisonOldNewLayout = {
   id: "comparison-old-new-layout",
   name: "Old vs New",
-  description: "Compare the old way with the new way",
+  description: "Before/after workflow comparison showing legacy vs modern approach. Highlights transformation benefits with side-by-side details.",
   icon: "IconArrowsLeftRight",
   getRows: (): Row[] => {
     const intro: Block = {

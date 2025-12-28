@@ -6,7 +6,7 @@ import { BLOCK_TYPES } from "../blocks/definitions";
 export const SummaryLayout: LayoutTemplate = {
   id: "summary-layout",
   name: "Summary",
-  description: "Executive summary with key points organized in two columns.",
+  description: "Eight numbered insight cards in two columns covering major findings, observations, and strategic takeaways. Perfect for research summaries.",
   icon: "IconListCheck",
   getRows: (): Row[] => {
     const headerBlock: Block = {

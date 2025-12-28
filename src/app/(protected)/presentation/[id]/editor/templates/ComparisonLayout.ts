@@ -9,7 +9,7 @@ import type { Block } from "@/types/presentation";
 export const ComparisonLayout = {
   id: "comparison-layout",
   name: "Plan Comparison",
-  description: "Compare pricing plans side-by-side",
+  description: "Side-by-side pricing plan comparison table with feature checkmarks. Perfect for SaaS pricing pages and plan selection.",
   icon: "IconArrowsLeftRight",
   getRows: (): Row[] => {
     // Row 1: Section Title

@@ -7,7 +7,7 @@ import type { Block } from "@/types/presentation";
 export const PricingThreeTierLayout: LayoutTemplate = {
   id: "pricing-three-tier-layout",
   name: "Pricing - 3 Tier",
-  description: "Three-tier pricing table with a highlighted plan",
+  description: "Starter/Pro/Enterprise pricing cards with feature checkmarks and upgrade CTAs. Scalable pricing from free to custom enterprise.",
   icon: "IconCurrencyDollar",
   getRows: (): Row[] => {
     const header: Block = {

@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const QuoteLayout = {
   id: "quote-layout",
   name: "Inspirational Quotes",
-  description: "Share wisdom with elegant typography",
+  description: "Two inspirational quotes with elegant typography in centered and left-aligned styles. Perfect for guiding principles slides.",
   icon: "IconQuote",
   getRows: (): Row[] => {
     // Row 1: Section Title

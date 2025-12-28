@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const ProgressLayout = {
   id: "progress-layout",
   name: "Progress Indicators",
-  description: "Show progress and achievements",
+  description: "Project status dashboard with animated progress bars for migrations, refactors, and training. Color-coded completion tracking.",
   icon: "IconTrendingUp",
   getRows: (): Row[] => {
     // Row 1: Section Title

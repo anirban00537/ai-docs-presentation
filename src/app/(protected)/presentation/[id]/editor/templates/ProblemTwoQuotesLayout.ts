@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const ProblemTwoQuotesLayout = {
   id: "problem-two-quotes-layout",
   name: "Problem + Two Quotes",
-  description: "Problem statement reinforced by two user quotes",
+  description: "Problem validation with two side-by-side quotes from different roles. Shows universal frustration across the organization.",
   icon: "IconMessages",
   getRows: (): Row[] => {
     const intro: Block = {

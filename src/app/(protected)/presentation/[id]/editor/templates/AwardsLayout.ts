@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const AwardsLayout = {
   id: "awards-layout",
   name: "Awards & Recognition",
-  description: "Showcase achievements and certifications",
+  description: "Display industry awards, certifications, and accolades in a badge grid format. Perfect for credibility and social proof sections.",
   icon: "IconTrophy",
   getRows: (): Row[] => {
     // Row 1: Section Title

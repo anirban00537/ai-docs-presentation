@@ -14,7 +14,7 @@ import { createProseMirrorBlock, createSectionHeader, createHeadingDoc, createTy
 export const PricingLayout: LayoutTemplate = {
   id: "pricing-layout",
   name: "Pricing Plans",
-  description: "Compare plans with clear features",
+  description: "Three pricing cards (Developer/Startup/Business) with feature lists and CTAs. No hidden fees messaging with transparent tiers.",
   icon: "IconTag",
   getRows: (): Row[] => {
     // Row 1: Section Title

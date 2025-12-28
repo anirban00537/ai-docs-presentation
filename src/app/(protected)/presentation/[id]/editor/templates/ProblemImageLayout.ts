@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const ProblemImageLayout = {
   id: "problem-image-layout",
   name: "Problem with Visual",
-  description: "Problem statement paired with an illustrative image",
+  description: "Problem statement with masonry image gallery showing workflow complexity. Visual evidence of pain points with captions.",
   icon: "IconPhoto",
   getRows: (): Row[] => {
     const copy: Block = {

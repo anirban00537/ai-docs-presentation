@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const CustomerJourneyLayout: LayoutTemplate = {
   id: "customer-journey-layout",
   name: "Customer Journey",
-  description: "End-to-end user journey visualization with banner",
+  description: "User journey mapping from discovery to advocacy. Features top banner accent with abstract gradient flow.",
   icon: "IconMapPin",
   accent: {
     position: "top",

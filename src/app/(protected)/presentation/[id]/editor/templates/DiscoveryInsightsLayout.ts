@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const DiscoveryInsightsLayout = {
   id: "discovery-insights-layout",
   name: "Discovery Call Insights",
-  description: "Summarize key findings from discovery calls",
+  description: "Stakeholder research synthesis with categorized themes and challenges. Ideal for presenting discovery call findings and user research.",
   icon: "IconSearch",
   getRows: (): Row[] => {
     const intro: Block = {

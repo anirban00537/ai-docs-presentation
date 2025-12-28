@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const FeatureLayout = {
   id: "feature-layout",
   name: "Features Showcase",
-  description: "Highlight key features with premium cards",
+  description: "Three premium numbered feature cards showcasing core differentiators. Emphasizes scale, global reach, and observability benefits.",
   icon: "IconRocket",
   getRows: (): Row[] => {
     // Row 1: Section Title & Subtitle

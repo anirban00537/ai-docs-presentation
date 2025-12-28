@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const ContextualTestimonialLayout: LayoutTemplate = {
   id: "contextual-testimonial-layout",
   name: "Contextual Testimonial",
-  description: "Authentic customer feedback with visual context",
+  description: "Customer quote with rating and trust signals. Features right-side accent image showing team collaboration.",
   icon: "IconMessageChat",
   accent: {
     position: "right",

@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const SocialProofLayout = {
   id: "social-proof-layout",
   name: "Social Proof",
-  description: "Display social media stats and ratings",
+  description: "Social media followers across Twitter, LinkedIn, YouTube, and Instagram with star rating. Community momentum visualization.",
   icon: "IconDeviceMobile",
   getRows: (): Row[] => {
     // Row 1: Section Title

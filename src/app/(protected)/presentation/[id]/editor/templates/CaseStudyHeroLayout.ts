@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const CaseStudyHeroLayout: LayoutTemplate = {
   id: "case-study-hero-layout",
   name: "Case Study Hero",
-  description: "Impactful success story with metrics and proof",
+  description: "Client success story with key metrics and outcomes. Features right-side accent image for meeting/success visuals.",
   icon: "IconChartLine",
   accent: {
     position: "right",
@@ -25,10 +25,10 @@ export const CaseStudyHeroLayout: LayoutTemplate = {
     // Client Logo Area
     const logo = createLogoGridContent();
     logo.logos = [
-        { name: "Acme Corp", image: "" }, 
+      { name: "Acme Corp", image: "" },
     ];
     // We use a small grid just for the main client logo to give it presence
-    logo.columns = 3; 
+    logo.columns = 3;
 
     // Main Story Header
     const storyBlock: Block = {

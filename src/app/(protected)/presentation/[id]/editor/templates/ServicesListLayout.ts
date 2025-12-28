@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const ServicesListLayout = {
   id: "services-list-layout",
   name: "Services List",
-  description: "Grid of services or offerings",
+  description: "Six-item service capabilities grid covering advisory, integration, data, security, development, and support offerings.",
   icon: "IconTools",
   getRows: (): Row[] => {
     const header: Block = {

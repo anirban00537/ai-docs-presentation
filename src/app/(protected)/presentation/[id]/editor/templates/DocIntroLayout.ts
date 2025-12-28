@@ -10,7 +10,7 @@ import type { Block } from "@/types/presentation";
 export const DocIntroLayout = {
   id: "doc-intro-layout",
   name: "Document Intro",
-  description: "Introductory page for docs or proposals",
+  description: "Executive brief opening with vision, scope, timeline, and success metrics. Includes CTA for document approval.",
   icon: "IconFileText",
   getRows: (): Row[] => {
     const intro: Block = {

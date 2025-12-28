@@ -14,7 +14,7 @@ import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from ".
 export const StatsLayout: LayoutTemplate = {
   id: "stats-layout",
   name: "Statistics Dashboard",
-  description: "Showcase key metrics with animated counters",
+  description: "Key metrics display with animated stat counters. Perfect for performance reports, impact showcases, and KPI displays.",
   icon: "IconChartPie",
   getRows: (): Row[] => {
     // Row 1: Section Title

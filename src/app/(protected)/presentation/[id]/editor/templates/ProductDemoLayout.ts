@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const ProductDemoLayout: LayoutTemplate = {
   id: "product-demo-layout",
   name: "Product Demo",
-  description: "Feature-rich product walkthrough with visual emphasis",
+  description: "Feature-rich product walkthrough with detailed benefits and CTA. Features right-side accent with dashboard/analytics screenshot.",
   icon: "IconDeviceLaptop",
   accent: {
     position: "right",

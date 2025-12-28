@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const TeamSpotlightLayout: LayoutTemplate = {
   id: "team-spotlight-layout",
   name: "Team Spotlight",
-  description: "Leadership profile with credentials and bio",
+  description: "Team member or speaker highlight with bio, credentials, and social links. Features left-side accent with professional headshot.",
   icon: "IconStar",
   accent: {
     position: "left",

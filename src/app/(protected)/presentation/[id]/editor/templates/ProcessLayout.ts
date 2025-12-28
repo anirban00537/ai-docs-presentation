@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const ProcessLayout = {
   id: "process-layout",
   name: "Process & Timeline",
-  description: "Visualize workflows with a step-by-step timeline",
+  description: "Four-step agile methodology from discovery through launch. Timeline visualization with icons and detailed phase descriptions.",
   icon: "IconSettings",
   getRows: (): Row[] => {
     // Row 1: Section Title & Subtitle

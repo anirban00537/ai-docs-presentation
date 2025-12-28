@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const CustomerQuotesLayout = {
   id: "customer-quotes-layout",
   name: "Customer Quotes",
-  description: "Multiple quotes from customers for social proof",
+  description: "Three customer testimonial cards in a row with avatars and quotes. Builds trust through authentic voices and real experiences.",
   icon: "IconThumbUp",
   getRows: (): Row[] => {
     const header: Block = {

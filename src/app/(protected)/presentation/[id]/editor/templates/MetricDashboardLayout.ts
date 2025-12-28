@@ -18,7 +18,7 @@ import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from ".
 export const MetricDashboardLayout: LayoutTemplate = {
   id: "metric-dashboard",
   name: "Growth Metrics Dashboard",
-  description: "High-level KPI overview with pulse charts",
+  description: "Executive KPI dashboard with pulse charts and glass insight cards. Ideal for quarterly reports and performance reviews.",
   icon: "IconChartBar",
   getRows: (): Row[] => {
     // Row 1: Header

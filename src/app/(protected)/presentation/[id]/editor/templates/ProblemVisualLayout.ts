@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const ProblemVisualLayout: LayoutTemplate = {
   id: "problem-visual-layout",
   name: "Problem Visual",
-  description: "Impactful problem statement emphasizing the cost of inaction",
+  description: "Pain point visualization with quantified stats showing cost of inaction. Features top banner accent with busy work environment imagery.",
   icon: "IconAlertTriangle",
   accent: {
     position: "top",

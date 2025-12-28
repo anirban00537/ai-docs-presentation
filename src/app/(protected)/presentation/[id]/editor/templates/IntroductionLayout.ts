@@ -14,11 +14,11 @@ import { createSectionHeader, createProseMirrorBlock } from "./template-utils";
 export const IntroductionLayout: LayoutTemplate = {
   id: "introduction",
   name: "Introduction",
-  description: "Big title with small subtitle",
+  description: "Clean title slide with prominent heading and subtitle. Perfect for opening slides, section dividers, and document cover pages.",
   icon: "IconHandWave",
   getRows: (): Row[] => {
     const spacerContent = createSpacerContent(120);
-    
+
     const titleBlock = createProseMirrorBlock(
       createSectionHeader(
         "User Research Findings for Product Development",

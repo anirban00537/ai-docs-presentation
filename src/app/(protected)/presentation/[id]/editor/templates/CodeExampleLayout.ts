@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const CodeExampleLayout = {
   id: "code-example-layout",
   name: "Code Example",
-  description: "Showcase code snippets with syntax highlighting",
+  description: "Developer-focused slide with syntax-highlighted code block. Ideal for API integration demos and SDK walkthroughs.",
   icon: "IconDeviceLaptop",
   getRows: (): Row[] => {
     // Row 1: Section Title

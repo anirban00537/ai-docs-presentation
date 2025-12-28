@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const ProblemQuoteLayout = {
   id: "problem-quote-layout",
   name: "Problem + User Quote",
-  description: "Problem statement supported by a user quote",
+  description: "Customer pain point with executive-level quote highlighting urgency. Powerful voice-of-customer validation for problem slides.",
   icon: "IconMessageChat",
   getRows: (): Row[] => {
     const statement: Block = {

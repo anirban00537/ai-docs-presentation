@@ -14,7 +14,7 @@ import { createTypedBlock } from "./template-utils";
 export const IndustryFocusLayout: LayoutTemplate = {
   id: "industry-focus-layout",
   name: "Industry Focus",
-  description: "Deep dive market analysis with visual context",
+  description: "Market analysis with key metrics and industry trends. Features right-side accent with fintech/digital abstract imagery.",
   icon: "IconBuildingFactory",
   accent: {
     position: "right",

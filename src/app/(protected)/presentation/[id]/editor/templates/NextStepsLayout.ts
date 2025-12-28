@@ -6,7 +6,7 @@ import type { Block } from "@/types/presentation";
 export const NextStepsLayout = {
   id: "next-steps-layout",
   name: "Next Steps",
-  description: "Outline the next three actions to take",
+  description: "30-day onboarding roadmap with four weekly milestones from kickoff to go-live. Clear action items with deliverables.",
   icon: "IconArrowRight",
   getRows: (): Row[] => {
     const header: Block = {

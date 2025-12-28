@@ -18,7 +18,7 @@ import { createProseMirrorBlock, createSectionHeader, createTypedBlock } from ".
 export const TechnicalWalkthroughLayout: LayoutTemplate = {
   id: "technical-walkthrough",
   name: "Developer Integration",
-  description: "Step-by-step guide with code terminals",
+  description: "Developer onboarding tutorial with numbered steps and terminal code blocks. Shows install and init commands with output.",
   icon: "IconTerminal",
   getRows: (): Row[] => {
     // Row 1: Header
