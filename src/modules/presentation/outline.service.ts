@@ -174,38 +174,19 @@ ${userPrompt}
 Available Layouts (each layout has id, name, and description):
 ${JSON.stringify(layoutsInfo, null, 2)}
 
-⚠️ CRITICAL: LAYOUT VARIETY REQUIREMENT ⚠️
-You MUST use DIFFERENT layouts for each slide. DO NOT reuse the same layoutId for multiple slides.
-Each of the ${numberOfSlides} slides MUST have a UNIQUE layoutId from the available layouts list above.
-Repeating the same layout across multiple slides is INCORRECT and will result in a poor presentation.
-
-FIRST SLIDE REQUIREMENT:
-The FIRST slide (outlines[0]) MUST use an introduction/title/hero layout. Look for layouts with names/descriptions that indicate they are designed for title pages, introductions, hero sections, or opening slides. This is mandatory.
-
 LAYOUT SELECTION PROCESS:
 For each slide, follow these steps:
 1. Review all available layouts above, paying close attention to each layout's "name" and "description"
 2. For the FIRST slide only: Select an introduction/title/hero layout from the available layouts
 3. For subsequent slides: Identify which layout's purpose best matches the content you're planning for that specific slide
-4. Select a DIFFERENT layout than you've already used for previous slides
+4. Attempt to vary layouts if multiple are available
 5. Ensure the layoutId you choose exactly matches one of the "id" values from the available layouts list (case-sensitive)
-
-⚠️ VISUAL VARIETY REQUIREMENT (ACCENT TEMPLATES) ⚠️
-Some layouts feature "accent" images - these are side panels, background images, or banners that add visual richness and make the presentation more engaging.
-- Look for layouts with descriptions mentioning "accent", "left-side accent", "right-side accent", "top banner accent", or "background accent"
-- These accent layouts create visual variety and professional polish
-- You MUST include AT LEAST 2-3 accent layouts in your ${numberOfSlides}-slide presentation
-- Distribute accent layouts throughout the presentation (not just at the beginning or end)
-- Examples of good accent usage: product showcases, team spotlights, case studies, testimonials
-- Presentations without accent layouts look flat and unprofessional - avoid this!
 
 IMPORTANT RULES:
 - The FIRST slide MUST use an introduction/title/hero layout - this is mandatory
-- Include AT LEAST 2-3 layouts that have accent/visual features
-- Each slide MUST have a unique layoutId - no duplicates allowed across all ${numberOfSlides} slides
 - Match the layout's description to the slide's content purpose
-- If you have multiple slides with similar content (e.g., multiple features), you MUST still use different layouts that are appropriate for that content type
-- Visual variety is essential for an engaging presentation - using the same layout repeatedly is incorrect
+- If you have multiple slides with similar content, use the most appropriate layout available even if you have to reuse one
+- Focus on high-quality content that matches the slide purpose
 
 For each outline item, generate markdown content that includes:
 - A heading with "# Section Title"
