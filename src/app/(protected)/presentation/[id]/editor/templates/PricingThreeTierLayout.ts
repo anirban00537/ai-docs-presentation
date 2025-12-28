@@ -14,7 +14,7 @@ export const PricingThreeTierLayout: LayoutTemplate = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">Transparent Pricing. Scales With You.</h2>\n\n<p style="text-align: center">Start small and upgrade as you grow. No hidden fees, cancel anytime.</p>',
+        '## Transparent Pricing. Scales With You. {.center}\n\nStart small and upgrade as you grow. No hidden fees, cancel anytime. {.center}',
     };
 
     const plans = [

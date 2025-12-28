@@ -12,14 +12,14 @@ export interface LegacyProseMirrorDocument {
 }
 
 /**
- * Recursively serialize ProseMirror JSON to Markdown with HTML tags for alignment
+ * Recursively serialize ProseMirror JSON to Markdown with {.alignment} attribute syntax
  */
 function serializeNodeToMarkdown(node: any): string {
   if (!node || !node.type) return "";
 
   const parts: string[] = [];
 
-  // Handle alignment for paragraphs and headings using HTML tags
+  // Handle alignment for paragraphs and headings using {.alignment} attribute syntax
   if (node.type === "paragraph" || node.type === "heading") {
     const textAlign = node.attrs?.textAlign;
     const text =
@@ -31,15 +31,14 @@ function serializeNodeToMarkdown(node: any): string {
         })
         .join("") || "";
 
-    // Wrap in HTML tag if alignment is not left
+    // Add {.alignment} attribute if alignment is not left
     if (textAlign && textAlign !== "left") {
       if (node.type === "heading") {
         const level = node.attrs?.level || 1;
-        parts.push(
-          `<h${level} style="text-align: ${textAlign}">${text}</h${level}>`
-        );
+        const prefix = "#".repeat(level);
+        parts.push(`${prefix} ${text} {.${textAlign}}`);
       } else {
-        parts.push(`<p style="text-align: ${textAlign}">${text}</p>`);
+        parts.push(`${text} {.${textAlign}}`);
       }
     } else {
       // Default alignment - use standard markdown
@@ -138,8 +137,8 @@ export function prosemirrorToMarkdown(
 
 /**
  * Convert Markdown string to ProseMirror JSON document
- * Restores alignment information from HTML tags
- * @param markdown - Markdown string with optional HTML tags for alignment
+ * Restores alignment information from {.alignment} attributes or legacy HTML tags
+ * @param markdown - Markdown string with optional {.alignment} attributes or HTML tags
  * @param targetSchema - ProseMirror schema to use (defaults to editor schema)
  * @returns ProseMirror JSON document with alignment preserved
  */
@@ -161,43 +160,70 @@ export function markdownToProseMirror(
   }
 
   try {
-    // First, parse HTML tags to extract alignment
+    const alignmentMap = new Map<string, string>(); // Maps text content to alignment
+    let processedMarkdown = markdown;
+
+    // ===== STEP 1: Parse new {.alignment} attribute syntax =====
+    // Match patterns like "## Heading {.center}" or "Some text {.right}"
+    const attributeRegex = /^(#{1,6}\s+)?(.+?)\s+\{\.(center|right|justify|left)\}\s*$/gm;
+    let attrMatch;
+    const attrReplacements: Array<{
+      original: string;
+      replacement: string;
+      contentKey: string;
+      alignment: string;
+    }> = [];
+
+    attributeRegex.lastIndex = 0;
+    while ((attrMatch = attributeRegex.exec(markdown)) !== null) {
+      const [fullMatch, headingPrefix, content, alignment] = attrMatch;
+      const contentKey = content.trim();
+      alignmentMap.set(contentKey, alignment);
+
+      // Create replacement (remove the {.alignment} part)
+      const replacement = headingPrefix ? `${headingPrefix}${contentKey}` : contentKey;
+      attrReplacements.push({
+        original: fullMatch,
+        replacement,
+        contentKey,
+        alignment,
+      });
+    }
+
+    // Apply attribute replacements
+    attrReplacements.forEach(({ original, replacement }) => {
+      processedMarkdown = processedMarkdown.replace(original, replacement);
+    });
+
+    // ===== STEP 2: Parse legacy HTML tags for backward compatibility =====
     // Match HTML tags like <p style="text-align: center">text</p> or <h1 style="text-align: right">text</h1>
-    // Handle both single and double quotes, and various spacing
     const htmlTagRegex =
       /<(p|h[1-6])\s+style\s*=\s*["']text-align\s*:\s*(left|center|right|justify)\s*["']\s*>([\s\S]*?)<\/\1>/gi;
-    const alignmentMap = new Map<string, string>(); // Maps text content to alignment
-    const replacements: Array<{
+    const htmlReplacements: Array<{
       original: string;
       replacement: string;
       alignment: string;
     }> = [];
 
-    let processedMarkdown = markdown;
-    let match;
-
-    // Extract HTML tags and replace with plain markdown, storing alignment
-    // Reset regex lastIndex to start from beginning
+    let htmlMatch;
     htmlTagRegex.lastIndex = 0;
-    while ((match = htmlTagRegex.exec(markdown)) !== null) {
-      const [fullMatch, tag, alignment, content] = match;
+    while ((htmlMatch = htmlTagRegex.exec(processedMarkdown)) !== null) {
+      const [fullMatch, tag, alignment, content] = htmlMatch;
       const isHeading = tag.startsWith("h");
       const level = isHeading ? parseInt(tag[1]) : 0;
 
-      // Create a unique key for this content
       const contentKey = content.trim();
       alignmentMap.set(contentKey, alignment);
 
-      // Store replacement info
       if (isHeading) {
         const headingPrefix = "#".repeat(level);
-        replacements.push({
+        htmlReplacements.push({
           original: fullMatch,
           replacement: `${headingPrefix} ${contentKey}`,
           alignment,
         });
       } else {
-        replacements.push({
+        htmlReplacements.push({
           original: fullMatch,
           replacement: contentKey,
           alignment,
@@ -205,31 +231,27 @@ export function markdownToProseMirror(
       }
     }
 
-    // Apply replacements in reverse order to maintain positions
-    replacements.reverse().forEach(({ original, replacement }) => {
+    // Apply HTML replacements in reverse order to maintain positions
+    htmlReplacements.reverse().forEach(({ original, replacement }) => {
       processedMarkdown = processedMarkdown.replace(original, replacement);
     });
 
-    // Use default markdown parser on processed markdown
+    // ===== STEP 3: Parse with markdown parser =====
     const defaultDoc = defaultMarkdownParser.parse(processedMarkdown);
-
-    // Convert the default schema document to our custom schema
     const defaultJson = defaultDoc.toJSON();
 
-    // Apply alignment attributes based on our map
+    // ===== STEP 4: Apply alignment attributes =====
     const applyAlignment = (node: any): void => {
       if (!node || !node.content) return;
 
       for (const child of node.content) {
         if (child.type === "paragraph" || child.type === "heading") {
-          // Get text content to match with alignment map
           const text =
             child.content
               ?.map((c: any) => (c.type === "text" ? c.text : ""))
               .join("")
               .trim() || "";
 
-          // Check if this text has alignment stored
           const alignment = alignmentMap.get(text);
           if (alignment && alignment !== "left") {
             if (!child.attrs) child.attrs = {};
@@ -241,19 +263,15 @@ export function markdownToProseMirror(
       }
     };
 
-    // Apply alignment to the document
     applyAlignment(defaultJson);
 
     // Parse with our custom schema to ensure compatibility
     const prosemirrorNode = ProseMirrorNode.fromJSON(targetSchema, defaultJson);
-
-    // Convert back to JSON using our schema
     const json = prosemirrorNode.toJSON();
 
     return json as LegacyProseMirrorDocument;
   } catch (error) {
     console.warn("Failed to convert Markdown to ProseMirror:", error);
-    // Return empty paragraph as fallback
     return {
       type: "doc",
       content: [
@@ -261,11 +279,11 @@ export function markdownToProseMirror(
           type: "paragraph",
           content: markdown
             ? [
-                {
-                  type: "text",
-                  text: markdown,
-                },
-              ]
+              {
+                type: "text",
+                text: markdown,
+              },
+            ]
             : [],
         },
       ],

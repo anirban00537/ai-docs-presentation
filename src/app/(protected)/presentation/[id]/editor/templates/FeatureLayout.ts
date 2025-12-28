@@ -14,7 +14,7 @@ export const FeatureLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">Why We Lead the Market</h2>\n\n<p style="text-align: center">Built for speed, scale, and security from the ground up.</p>',
+        '## Why We Lead the Market {.center}\n\nBuilt for speed, scale, and security from the ground up. {.center}',
     };
 
     // Row 2: Three Premium Feature Cards

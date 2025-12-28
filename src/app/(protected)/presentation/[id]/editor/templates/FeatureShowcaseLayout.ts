@@ -14,7 +14,7 @@ export const FeatureShowcaseLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">The Platform Advantage</h2>\n\n<p style="text-align: center">Everything you need to build, scale, and manage your operations in one place.</p>',
+        '## The Platform Advantage {.center}\n\nEverything you need to build, scale, and manage your operations in one place. {.center}',
     };
 
     // Row 2: Feature List

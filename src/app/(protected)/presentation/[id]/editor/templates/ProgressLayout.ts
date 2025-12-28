@@ -14,7 +14,7 @@ export const ProgressLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">Q3 Migration Status</h2>\n\n<p style="text-align: center">Current tracking against our core infrastructure goals.</p>',
+        '## Q3 Migration Status {.center}\n\nCurrent tracking against our core infrastructure goals. {.center}',
     };
 
     // Row 2: Progress Bars

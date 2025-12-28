@@ -13,7 +13,7 @@ export const ServicesListLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">Comprehensive Capabilities</h2>\n\n<p style="text-align: center">We don\'t just provide software. We provide the end-to-end partnership required for transformation.</p>',
+        '## Comprehensive Capabilities {.center}\n\nWe don\'t just provide software. We provide the end-to-end partnership required for transformation. {.center}',
     };
 
     const features = createFeatureListContent();

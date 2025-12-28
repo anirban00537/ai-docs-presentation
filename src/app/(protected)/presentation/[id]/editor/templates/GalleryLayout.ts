@@ -14,27 +14,27 @@ export const GalleryLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">Visualizing Success</h2>\n\n<p style="text-align: center">A look at our recent high-impact deployments.</p>',
+        '## Visualizing Success {.center}\n\nA look at our recent high-impact deployments. {.center}',
     };
 
     // Row 2: Gallery
     const gallery = createImageGalleryContent();
     gallery.columns = 3;
     gallery.images = [
-      { 
-        id: nanoid(), 
-        url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop", 
-        caption: "Data Visualization" 
+      {
+        id: nanoid(),
+        url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop",
+        caption: "Data Visualization"
       },
-      { 
-        id: nanoid(), 
-        url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop", 
-        caption: "Business Analytics" 
+      {
+        id: nanoid(),
+        url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop",
+        caption: "Business Analytics"
       },
-      { 
-        id: nanoid(), 
-        url: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1000&auto=format&fit=crop", 
-        caption: "System Monitoring" 
+      {
+        id: nanoid(),
+        url: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1000&auto=format&fit=crop",
+        caption: "System Monitoring"
       },
     ];
 

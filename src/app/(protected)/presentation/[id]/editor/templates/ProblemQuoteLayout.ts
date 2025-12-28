@@ -13,7 +13,7 @@ export const ProblemQuoteLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">The Voice of the Customer</h2>\n\n<p style="text-align: center">Our stakeholders are frustrated. They need a solution that works as fast as they do.</p>',
+        '## The Voice of the Customer {.center}\n\nOur stakeholders are frustrated. They need a solution that works as fast as they do. {.center}',
     };
 
     const quote = createQuoteContent();

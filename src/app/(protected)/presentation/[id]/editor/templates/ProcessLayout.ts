@@ -14,7 +14,7 @@ export const ProcessLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">Our Proven Methodology</h2>\n\n<p style="text-align: center">We follow a rigorous process to ensure on-time, on-budget delivery.</p>',
+        '## Our Proven Methodology {.center}\n\nWe follow a rigorous process to ensure on-time, on-budget delivery. {.center}',
     };
 
     // Row 2: Timeline

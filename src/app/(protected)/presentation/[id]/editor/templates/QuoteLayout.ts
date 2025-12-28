@@ -13,7 +13,7 @@ export const QuoteLayout = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: '<h2 style="text-align: center">Guiding Principles</h2>',
+      content: '## Guiding Principles {.center}',
     };
 
     // Row 2: Centered Quote

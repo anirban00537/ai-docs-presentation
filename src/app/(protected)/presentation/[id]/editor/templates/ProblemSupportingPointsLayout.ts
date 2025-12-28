@@ -13,7 +13,7 @@ export const ProblemSupportingPointsLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">The Innovation Paradox</h2>\n\n<p style="text-align: center">Organizations are desperate to innovate, but their legacy infrastructure is actively preventing them from moving forward.</p>',
+        '## The Innovation Paradox {.center}\n\nOrganizations are desperate to innovate, but their legacy infrastructure is actively preventing them from moving forward. {.center}',
     };
 
     const features = createFeatureListContent();

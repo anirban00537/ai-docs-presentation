@@ -17,7 +17,7 @@ export const CustomerStoriesLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">Case Study: Scaling Global Operations</h2>\n\n<p style="text-align: center">How Acme Corp reduced overhead by 30% while expanding into 5 new markets.</p>',
+        '## Case Study: Scaling Global Operations {.center}\n\nHow Acme Corp reduced overhead by 30% while expanding into 5 new markets. {.center}',
     };
 
     const timeline = createTimelineContent();

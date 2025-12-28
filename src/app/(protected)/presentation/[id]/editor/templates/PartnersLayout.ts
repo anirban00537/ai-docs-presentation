@@ -14,7 +14,7 @@ export const PartnersLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">Trusted by Industry Leaders</h2>\n\n<p style="text-align: center">Powering innovation at 500+ global enterprises.</p>',
+        '## Trusted by Industry Leaders {.center}\n\nPowering innovation at 500+ global enterprises. {.center}',
     };
 
     // Row 2: Logo Grid

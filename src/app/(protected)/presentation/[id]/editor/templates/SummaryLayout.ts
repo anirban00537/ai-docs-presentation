@@ -12,7 +12,7 @@ export const SummaryLayout: LayoutTemplate = {
     const headerBlock: Block = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
-      content: '<h1 style="text-align: center">Summary</h1>',
+      content: '# Summary {.center}',
     };
 
     const createCard = (

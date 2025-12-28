@@ -16,7 +16,7 @@ export const TargetAudiencesLayout = {
       id: nanoid(),
       type: BLOCK_TYPES.PROSEMIRROR,
       content:
-        '<h2 style="text-align: center">Who Wins With Us</h2>\n\n<p style="text-align: center">We solve critical pain points for every level of the organization, ensuring alignment from day one.</p>',
+        '## Who Wins With Us {.center}\n\nWe solve critical pain points for every level of the organization, ensuring alignment from day one. {.center}',
     };
 
     const audiences = createFeatureListContent();
