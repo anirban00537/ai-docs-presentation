@@ -29,7 +29,7 @@ export class PromptPresentationAIService implements OnModuleInit {
     private readonly configService: ConfigService,
     private readonly aiUsageService: AiUsageService,
     private readonly imagesService: ImagesService,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
@@ -37,7 +37,7 @@ export class PromptPresentationAIService implements OnModuleInit {
       this.logger.error('OPENROUTER_API_KEY is not set in environment variables.');
       return;
     }
-    
+
     try {
       // Dynamic import for ESM-only package
       const { OpenRouter } = await import('@openrouter/sdk');
@@ -53,24 +53,24 @@ export class PromptPresentationAIService implements OnModuleInit {
    */
   private cleanJsonContent(content: string): string {
     let cleaned = content?.trim() || '';
-    
+
     // Remove markdown code blocks (```json ... ``` or ``` ... ```)
     if (cleaned.startsWith('```json')) {
       cleaned = cleaned.replace(/^```json\s*/, '').replace(/\s*```$/, '');
     } else if (cleaned.startsWith('```')) {
       cleaned = cleaned.replace(/^```\s*/, '').replace(/\s*```$/, '');
     }
-    
+
     cleaned = cleaned.trim();
-    
+
     // Remove leading dots, periods, or other garbage characters before the JSON
     // Pattern: anything before the first { that isn't part of valid JSON
     cleaned = cleaned.replace(/^[.\s\n\r]*(?=\{)/, '');
-    
+
     // Fix double opening braces: {{ -> {
     // This handles cases like "{\n{" or "{{"
     cleaned = cleaned.replace(/^\{\s*\{/, '{');
-    
+
     // Fix double closing braces at the end: }} -> }
     // But only if there's an imbalance (more } than {)
     const openCount = (cleaned.match(/\{/g) || []).length;
@@ -82,7 +82,7 @@ export class PromptPresentationAIService implements OnModuleInit {
         cleaned = cleaned.replace(/\}(\s*)$/, '$1');
       }
     }
-    
+
     return cleaned.trim();
   }
 
@@ -96,9 +96,9 @@ export class PromptPresentationAIService implements OnModuleInit {
       const closeBraces = (jsonStr.match(/\}/g) || []).length;
       const openBrackets = (jsonStr.match(/\[/g) || []).length;
       const closeBrackets = (jsonStr.match(/\]/g) || []).length;
-      
+
       let repaired = jsonStr;
-      
+
       // Add missing closing brackets first (inner), then braces (outer)
       if (openBrackets > closeBrackets) {
         repaired += ']'.repeat(openBrackets - closeBrackets);
@@ -106,7 +106,7 @@ export class PromptPresentationAIService implements OnModuleInit {
       if (openBraces > closeBraces) {
         repaired += '}'.repeat(openBraces - closeBraces);
       }
-      
+
       // Validate the repair worked
       JSON.parse(repaired);
       this.logger.debug('Successfully repaired truncated JSON');
@@ -121,32 +121,32 @@ export class PromptPresentationAIService implements OnModuleInit {
    */
   private extractValidJson(content: string): any {
     const originalContent = content?.substring(0, 200) || '';
-    
+
     // Step 1: Clean markdown wrappers and malformed patterns
     const cleanedContent = this.cleanJsonContent(content);
-    
+
     this.logger.debug(`JSON extraction - Original starts with: "${originalContent.substring(0, 50)}..."`);
     this.logger.debug(`JSON extraction - Cleaned starts with: "${cleanedContent.substring(0, 50)}..."`);
-    
+
     // Step 2: Try direct parse
     try {
       return JSON.parse(cleanedContent);
     } catch (directError) {
       this.logger.debug(`Direct JSON parse failed: ${(directError as Error).message}`);
     }
-    
+
     // Step 3: Try to extract JSON object from text
     const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       // Apply cleaning again to the extracted match (handles nested double braces)
       let extractedJson = jsonMatch[0];
       extractedJson = extractedJson.replace(/^\{\s*\{/, '{'); // Fix leading double braces
-      
+
       try {
         return JSON.parse(extractedJson);
       } catch (extractError) {
         this.logger.debug(`Extracted JSON parse failed: ${(extractError as Error).message}`);
-        
+
         // Step 4: Attempt repair
         const repairedJson = this.attemptJsonRepair(extractedJson);
         if (repairedJson) {
@@ -154,7 +154,7 @@ export class PromptPresentationAIService implements OnModuleInit {
         }
       }
     }
-    
+
     // All strategies failed - log more details for debugging
     this.logger.error(`JSON extraction failed. Cleaned content (first 300 chars): ${cleanedContent.substring(0, 300)}`);
     throw new Error(`Failed to extract valid JSON from AI response. Content starts with: ${cleanedContent.substring(0, 100)}...`);
@@ -272,7 +272,7 @@ If no image fields are found, return hasImages as false with an empty imageField
 
       // Use robust JSON extraction to handle markdown wrappers and malformed JSON
       const result: ImageAnalysisResult = this.extractValidJson(content);
-      
+
       this.logger.debug(
         `Image analysis result: ${result.hasImages ? result.imageFields.length : 0} image fields found`,
       );
@@ -456,7 +456,7 @@ DO NOT change these URLs. Copy them exactly as provided above into the appropria
         // STEP 1: Analyze layout for image fields
         // ============================================
         let imageInjectionPrompt = '';
-        
+
         if (layoutData) {
           this.logger.log(
             `🔍 [Slide ${slideNumber}] Analyzing layout for image fields...`,
@@ -530,13 +530,14 @@ CRITICAL INSTRUCTIONS FOR USING THE LAYOUT TEMPLATE:
 
 FORMATTING PRESERVATION (MOST CRITICAL):
 - You MUST preserve the EXACT formatting structure from the template's "content" field
-- If the template uses HTML tags (like <h1 style="text-align: center">), you MUST use the SAME HTML tags with the SAME attributes
+- If the template uses {.center}, {.right}, or {.justify} alignment attributes, you MUST keep them
+- The format is: "## Heading Text {.center}" or "Paragraph text. {.center}" - the {.alignment} goes at the END of the line
 - If the template uses plain Markdown (like ## Title), you MUST use the SAME Markdown format
-- DO NOT add any HTML tags that are not in the template
+- DO NOT add any alignment attributes that are not in the template
 - DO NOT add any Markdown formatting that is not in the template
 - DO NOT change the formatting style - only replace the text content
-- For example: If template has "<h2 style="text-align: center">Title</h2>", you should have "<h2 style="text-align: center">Your New Title</h2>" - keep the exact same HTML structure
-- For example: If template has "## Title", you should have "## New Title" - keep the exact same Markdown format
+- For example: If template has "## Title {.center}", you should have "## Your New Title {.center}" - keep the exact same format
+- For example: If template has "Description text. {.center}", you should have "Your description. {.center}" - keep the {.center} at the end
 - DO NOT add extra formatting like bold, italic, lists, etc. unless they exist in the template`;
 
         const slidePrompt = `You are generating slide ${slideNumber} of ${totalSlides} for a presentation titled "${title}".
@@ -564,12 +565,13 @@ You MUST generate ONLY a JSON object with a "rows" array that matches the layout
 
 ⚠️ FORMATTING RULES (FOLLOW EXACTLY) ⚠️:
 
-1. IF TEMPLATE HAS HTML TAGS:
-   - ⚠️ IMPORTANT: Preserve the EXACT HTML tag structure (e.g., <h1 style="text-align: center">, <p style="text-align: center">)
-   - Keep the same tag name, same attributes, same style values
-   - Only change the text content inside the tags
-   - Example: Template has "<h2 style="text-align: center">Title</h2>" → You output "<h2 style="text-align: center">New Title</h2>"
-   - ⚠️ DO NOT add any HTML tags that are not in the template
+1. IF TEMPLATE HAS ALIGNMENT ATTRIBUTES (e.g., {.center}, {.right}, {.justify}):
+   - ⚠️ IMPORTANT: Preserve the EXACT alignment attribute at the END of the line
+   - The format is: "Content text {.alignment}" where alignment is center, right, justify, or left
+   - Only change the text content, keep the {.alignment} at the end
+   - Example: Template has "## Title {.center}" → You output "## New Title {.center}"
+   - Example: Template has "Description text. {.center}" → You output "Your new description. {.center}"
+   - ⚠️ DO NOT add any {.alignment} attributes that are not in the template
 
 2. IF TEMPLATE HAS MARKDOWN:
    - ⚠️ IMPORTANT: Preserve the EXACT Markdown format (e.g., ## Title, **bold**, - list item)
@@ -579,11 +581,10 @@ You MUST generate ONLY a JSON object with a "rows" array that matches the layout
    - ⚠️ DO NOT add any Markdown formatting that is not in the template
 
 3. ⚠️ DO NOT ADD EXTRA FORMATTING (CRITICAL):
-   - DO NOT add HTML tags if the template doesn't have them
+   - DO NOT add alignment attributes if the template doesn't have them
    - DO NOT add Markdown formatting (bold, italic, lists) if the template doesn't have them
-   - DO NOT wrap content in additional tags
-   - DO NOT convert between HTML and Markdown - use what's in the template
-   - DO NOT add any formatting that is not already present in the template
+   - DO NOT wrap content in additional formatting
+   - Use what's in the template exactly
 
 4. TEXT CONTENT ONLY:
    - Extract the text from the outline content

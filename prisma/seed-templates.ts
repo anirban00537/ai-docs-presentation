@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2025-12-23T11:57:52.889Z
+ * Generated: 2025-12-28T09:45:02.377Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -17,11 +17,11 @@ const prisma = new PrismaClient();
 const layoutTemplates = [
     {
       name: "Hero Product Showcase",
-      description: "High-impact product launch with visual focus",
+      description: "Product launch hero with features, specs, and awards. Features left-side accent with product photography.",
       data: {
         "id": "hero-product-layout",
         "name": "Hero Product Showcase",
-        "description": "High-impact product launch with visual focus",
+        "description": "Product launch hero with features, specs, and awards. Features left-side accent with product photography.",
         "icon": "IconRocket",
         "rows": [
           {
@@ -120,11 +120,11 @@ const layoutTemplates = [
     },
     {
       name: "Product Demo",
-      description: "Feature-rich product walkthrough with visual emphasis",
+      description: "Feature-rich product walkthrough with detailed benefits and CTA. Features right-side accent with dashboard/analytics screenshot.",
       data: {
         "id": "product-demo-layout",
         "name": "Product Demo",
-        "description": "Feature-rich product walkthrough with visual emphasis",
+        "description": "Feature-rich product walkthrough with detailed benefits and CTA. Features right-side accent with dashboard/analytics screenshot.",
         "icon": "IconDeviceLaptop",
         "rows": [
           {
@@ -195,11 +195,11 @@ const layoutTemplates = [
     },
     {
       name: "Case Study Hero",
-      description: "Impactful success story with metrics and proof",
+      description: "Client success story with key metrics and outcomes. Features right-side accent image for meeting/success visuals.",
       data: {
         "id": "case-study-hero-layout",
         "name": "Case Study Hero",
-        "description": "Impactful success story with metrics and proof",
+        "description": "Client success story with key metrics and outcomes. Features right-side accent image for meeting/success visuals.",
         "icon": "IconChartLine",
         "rows": [
           {
@@ -271,11 +271,11 @@ const layoutTemplates = [
     },
     {
       name: "Founder Story",
-      description: "Compelling executive profile with journey timeline",
+      description: "Executive or founder bio with milestone timeline and quote. Features left-side accent with professional portrait.",
       data: {
         "id": "founder-story-layout",
         "name": "Founder Story",
-        "description": "Compelling executive profile with journey timeline",
+        "description": "Executive or founder bio with milestone timeline and quote. Features left-side accent with professional portrait.",
         "icon": "IconUser",
         "rows": [
           {
@@ -312,7 +312,7 @@ const layoutTemplates = [
                 "type": "timeline",
                 "content": {
                   "type": "timeline",
-                  "title": "<h2 style=\"text-align: center\">Our Process</h2>",
+                  "title": "## Our Process {.center}",
                   "steps": [
                     {
                       "icon": "IconLamp",
@@ -352,11 +352,11 @@ const layoutTemplates = [
     },
     {
       name: "Team Spotlight",
-      description: "Leadership profile with credentials and bio",
+      description: "Team member or speaker highlight with bio, credentials, and social links. Features left-side accent with professional headshot.",
       data: {
         "id": "team-spotlight-layout",
         "name": "Team Spotlight",
-        "description": "Leadership profile with credentials and bio",
+        "description": "Team member or speaker highlight with bio, credentials, and social links. Features left-side accent with professional headshot.",
         "icon": "IconStar",
         "rows": [
           {
@@ -433,11 +433,11 @@ const layoutTemplates = [
     },
     {
       name: "Problem Visual",
-      description: "Impactful problem statement emphasizing the cost of inaction",
+      description: "Pain point visualization with quantified stats showing cost of inaction. Features top banner accent with busy work environment imagery.",
       data: {
         "id": "problem-visual-layout",
         "name": "Problem Visual",
-        "description": "Impactful problem statement emphasizing the cost of inaction",
+        "description": "Pain point visualization with quantified stats showing cost of inaction. Features top banner accent with busy work environment imagery.",
         "icon": "IconAlertTriangle",
         "rows": [
           {
@@ -507,11 +507,11 @@ const layoutTemplates = [
     },
     {
       name: "Event Announcement",
-      description: "High-energy event invitation with atmospheric background",
+      description: "Conference or webinar promotion with speaker lineup and CTA. Features dramatic full-background accent with stage atmosphere.",
       data: {
         "id": "event-announcement-layout",
         "name": "Event Announcement",
-        "description": "High-energy event invitation with atmospheric background",
+        "description": "Conference or webinar promotion with speaker lineup and CTA. Features dramatic full-background accent with stage atmosphere.",
         "icon": "IconConfetti",
         "rows": [
           {
@@ -584,11 +584,11 @@ const layoutTemplates = [
     },
     {
       name: "Industry Focus",
-      description: "Deep dive market analysis with visual context",
+      description: "Market analysis with key metrics and industry trends. Features right-side accent with fintech/digital abstract imagery.",
       data: {
         "id": "industry-focus-layout",
         "name": "Industry Focus",
-        "description": "Deep dive market analysis with visual context",
+        "description": "Market analysis with key metrics and industry trends. Features right-side accent with fintech/digital abstract imagery.",
         "icon": "IconBuildingFactory",
         "rows": [
           {
@@ -660,11 +660,11 @@ const layoutTemplates = [
     },
     {
       name: "Contextual Testimonial",
-      description: "Authentic customer feedback with visual context",
+      description: "Customer quote with rating and trust signals. Features right-side accent image showing team collaboration.",
       data: {
         "id": "contextual-testimonial-layout",
         "name": "Contextual Testimonial",
-        "description": "Authentic customer feedback with visual context",
+        "description": "Customer quote with rating and trust signals. Features right-side accent image showing team collaboration.",
         "icon": "IconMessageChat",
         "rows": [
           {
@@ -734,11 +734,11 @@ const layoutTemplates = [
     },
     {
       name: "Office Location",
-      description: "Showcase your workspace and company culture",
+      description: "HQ or office showcase with stats and amenities. Features left-side accent with modern workspace photography.",
       data: {
         "id": "office-location-layout",
         "name": "Office Location",
-        "description": "Showcase your workspace and company culture",
+        "description": "HQ or office showcase with stats and amenities. Features left-side accent with modern workspace photography.",
         "icon": "IconBuildingSkyscraper",
         "rows": [
           {
@@ -808,11 +808,11 @@ const layoutTemplates = [
     },
     {
       name: "Customer Journey",
-      description: "End-to-end user journey visualization with banner",
+      description: "User journey mapping from discovery to advocacy. Features top banner accent with abstract gradient flow.",
       data: {
         "id": "customer-journey-layout",
         "name": "Customer Journey",
-        "description": "End-to-end user journey visualization with banner",
+        "description": "User journey mapping from discovery to advocacy. Features top banner accent with abstract gradient flow.",
         "icon": "IconMapPin",
         "rows": [
           {
@@ -833,7 +833,7 @@ const layoutTemplates = [
                 "type": "timeline",
                 "content": {
                   "type": "timeline",
-                  "title": "<h2 style=\"text-align: center\">Our Process</h2>",
+                  "title": "## Our Process {.center}",
                   "steps": [
                     {
                       "icon": "IconSearch",
@@ -888,11 +888,11 @@ const layoutTemplates = [
     },
     {
       name: "Features Showcase",
-      description: "Highlight key features with premium cards",
+      description: "Three premium numbered feature cards showcasing core differentiators. Emphasizes scale, global reach, and observability benefits.",
       data: {
         "id": "feature-layout",
         "name": "Features Showcase",
-        "description": "Highlight key features with premium cards",
+        "description": "Three premium numbered feature cards showcasing core differentiators. Emphasizes scale, global reach, and observability benefits.",
         "icon": "IconRocket",
         "rows": [
           {
@@ -901,7 +901,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Why We Lead the Market</h2>\n\n<p style=\"text-align: center\">Built for speed, scale, and security from the ground up.</p>"
+                "content": "## Why We Lead the Market {.center}\n\nBuilt for speed, scale, and security from the ground up. {.center}"
               }
             ]
           },
@@ -951,11 +951,11 @@ const layoutTemplates = [
     },
     {
       name: "Meet the Team",
-      description: "Introduce your team members with style",
+      description: "Three team member cards with photos, titles, and professional backgrounds. Ideal for leadership introductions and about pages.",
       data: {
         "id": "team-layout",
         "name": "Meet the Team",
-        "description": "Introduce your team members with style",
+        "description": "Three team member cards with photos, titles, and professional backgrounds. Ideal for leadership introductions and about pages.",
         "icon": "IconUsersGroup",
         "rows": [
           {
@@ -964,7 +964,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Meet The Builders</h2>\n\n<p style=\"text-align: center\">Obsessed with quality, craft, and user experience.</p>"
+                "content": "## Meet The Builders {.center}\n\nObsessed with quality, craft, and user experience. {.center}"
               }
             ]
           },
@@ -1017,11 +1017,11 @@ const layoutTemplates = [
     },
     {
       name: "Pricing Plans",
-      description: "Compare plans with clear features",
+      description: "Three pricing cards (Developer/Startup/Business) with feature lists and CTAs. No hidden fees messaging with transparent tiers.",
       data: {
         "id": "pricing-layout",
         "name": "Pricing Plans",
-        "description": "Compare plans with clear features",
+        "description": "Three pricing cards (Developer/Startup/Business) with feature lists and CTAs. No hidden fees messaging with transparent tiers.",
         "icon": "IconTag",
         "rows": [
           {
@@ -1030,7 +1030,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Simple, Transparent Pricing</h2>\n\n<p style=\"text-align: center\">No hidden fees. Cancel anytime.</p>"
+                "content": "## Simple, Transparent Pricing {.center}\n\nNo hidden fees. Cancel anytime. {.center}"
               }
             ]
           },
@@ -1131,11 +1131,11 @@ const layoutTemplates = [
     },
     {
       name: "Image Gallery",
-      description: "Showcase multiple images in a beautiful grid",
+      description: "Three-column image gallery with captions for showcasing deployments, products, or portfolio work. Clean visual presentation.",
       data: {
         "id": "gallery-layout",
         "name": "Image Gallery",
-        "description": "Showcase multiple images in a beautiful grid",
+        "description": "Three-column image gallery with captions for showcasing deployments, products, or portfolio work. Clean visual presentation.",
         "icon": "IconPhoto",
         "rows": [
           {
@@ -1144,7 +1144,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Visualizing Success</h2>\n\n<p style=\"text-align: center\">A look at our recent high-impact deployments.</p>"
+                "content": "## Visualizing Success {.center}\n\nA look at our recent high-impact deployments. {.center}"
               }
             ]
           },
@@ -1158,17 +1158,17 @@ const layoutTemplates = [
                   "type": "image-gallery",
                   "images": [
                     {
-                      "id": "vpMy-UmKIrzpBYmJUSbTD",
+                      "id": "7nLPVNiS38I5N_adsVhXu",
                       "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop",
                       "caption": "Data Visualization"
                     },
                     {
-                      "id": "deoRw-WmP6KOGT1u1yg2T",
+                      "id": "a_msXlNKQUBSJsQbBXK-V",
                       "url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop",
                       "caption": "Business Analytics"
                     },
                     {
-                      "id": "Gw7uFTzSlhJwU3jWIPFCH",
+                      "id": "Gh9LH1nbBMlbOkekmjUhq",
                       "url": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1000&auto=format&fit=crop",
                       "caption": "System Monitoring"
                     }
@@ -1187,11 +1187,11 @@ const layoutTemplates = [
     },
     {
       name: "Testimonials",
-      description: "Customer testimonials and reviews",
+      description: "Three customer testimonial cards in a row with quotes, names, and titles. Social proof section for case studies and landing pages.",
       data: {
         "id": "testimonial-layout",
         "name": "Testimonials",
-        "description": "Customer testimonials and reviews",
+        "description": "Three customer testimonial cards in a row with quotes, names, and titles. Social proof section for case studies and landing pages.",
         "icon": "IconMessageChat",
         "rows": [
           {
@@ -1200,7 +1200,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">What Our Customers Say</h2>\n\n<p style=\"text-align: center\">Join thousands of satisfied customers worldwide.</p>"
+                "content": "## What Our Customers Say {.center}\n\nJoin thousands of satisfied customers worldwide. {.center}"
               }
             ]
           },
@@ -1250,11 +1250,11 @@ const layoutTemplates = [
     },
     {
       name: "Inspirational Quotes",
-      description: "Share wisdom with elegant typography",
+      description: "Two inspirational quotes with elegant typography in centered and left-aligned styles. Perfect for guiding principles slides.",
       data: {
         "id": "quote-layout",
         "name": "Inspirational Quotes",
-        "description": "Share wisdom with elegant typography",
+        "description": "Two inspirational quotes with elegant typography in centered and left-aligned styles. Perfect for guiding principles slides.",
         "icon": "IconQuote",
         "rows": [
           {
@@ -1263,7 +1263,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Guiding Principles</h2>"
+                "content": "## Guiding Principles {.center}"
               }
             ]
           },
@@ -1305,11 +1305,11 @@ const layoutTemplates = [
     },
     {
       name: "Process & Timeline",
-      description: "Visualize workflows with a step-by-step timeline",
+      description: "Four-step agile methodology from discovery through launch. Timeline visualization with icons and detailed phase descriptions.",
       data: {
         "id": "process-layout",
         "name": "Process & Timeline",
-        "description": "Visualize workflows with a step-by-step timeline",
+        "description": "Four-step agile methodology from discovery through launch. Timeline visualization with icons and detailed phase descriptions.",
         "icon": "IconSettings",
         "rows": [
           {
@@ -1318,7 +1318,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Our Proven Methodology</h2>\n\n<p style=\"text-align: center\">We follow a rigorous process to ensure on-time, on-budget delivery.</p>"
+                "content": "## Our Proven Methodology {.center}\n\nWe follow a rigorous process to ensure on-time, on-budget delivery. {.center}"
               }
             ]
           },
@@ -1365,11 +1365,11 @@ const layoutTemplates = [
     },
     {
       name: "Statistics Dashboard",
-      description: "Showcase key metrics with animated counters",
+      description: "Key metrics display with animated stat counters. Perfect for performance reports, impact showcases, and KPI displays.",
       data: {
         "id": "stats-layout",
         "name": "Statistics Dashboard",
-        "description": "Showcase key metrics with animated counters",
+        "description": "Key metrics display with animated stat counters. Perfect for performance reports, impact showcases, and KPI displays.",
         "icon": "IconChartPie",
         "rows": [
           {
@@ -1378,7 +1378,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">By The Numbers</h2>\n\n<p style=\"text-align: center\">Scale, speed, and reliability you can trust.</p>"
+                "content": "## By The Numbers {.center}\n\nScale, speed, and reliability you can trust. {.center}"
               }
             ]
           },
@@ -1424,11 +1424,11 @@ const layoutTemplates = [
     },
     {
       name: "Feature Showcase",
-      description: "Highlight product features with icons",
+      description: "Three-column icon grid featuring deployment, security, and design capabilities. Ideal for product capability overviews.",
       data: {
         "id": "feature-showcase-layout",
         "name": "Feature Showcase",
-        "description": "Highlight product features with icons",
+        "description": "Three-column icon grid featuring deployment, security, and design capabilities. Ideal for product capability overviews.",
         "icon": "IconRocket",
         "rows": [
           {
@@ -1437,7 +1437,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">The Platform Advantage</h2>\n\n<p style=\"text-align: center\">Everything you need to build, scale, and manage your operations in one place.</p>"
+                "content": "## The Platform Advantage {.center}\n\nEverything you need to build, scale, and manage your operations in one place. {.center}"
               }
             ]
           },
@@ -1480,11 +1480,11 @@ const layoutTemplates = [
     },
     {
       name: "Plan Comparison",
-      description: "Compare pricing plans side-by-side",
+      description: "Side-by-side pricing plan comparison table with feature checkmarks. Perfect for SaaS pricing pages and plan selection.",
       data: {
         "id": "comparison-layout",
         "name": "Plan Comparison",
-        "description": "Compare pricing plans side-by-side",
+        "description": "Side-by-side pricing plan comparison table with feature checkmarks. Perfect for SaaS pricing pages and plan selection.",
         "icon": "IconArrowsLeftRight",
         "rows": [
           {
@@ -1493,7 +1493,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Find Your Perfect Fit</h2>\n\n<p style=\"text-align: center\">Simple, transparent pricing for teams of all sizes.</p>"
+                "content": "## Find Your Perfect Fit {.center}\n\nSimple, transparent pricing for teams of all sizes. {.center}"
               }
             ]
           },
@@ -1573,11 +1573,11 @@ const layoutTemplates = [
     },
     {
       name: "FAQ Section",
-      description: "Answer common questions with expandable sections",
+      description: "Expandable accordion-style FAQ section covering security, deployment, and billing. Great for support pages and pre-sales objection handling.",
       data: {
         "id": "faq-layout",
         "name": "FAQ Section",
-        "description": "Answer common questions with expandable sections",
+        "description": "Expandable accordion-style FAQ section covering security, deployment, and billing. Great for support pages and pre-sales objection handling.",
         "icon": "IconQuestionMark",
         "rows": [
           {
@@ -1586,7 +1586,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Frequently Asked Questions</h2>\n\n<p style=\"text-align: center\">Everything you need to know about security, deployment, and billing.</p>"
+                "content": "## Frequently Asked Questions {.center}\n\nEverything you need to know about security, deployment, and billing. {.center}"
               }
             ]
           },
@@ -1633,11 +1633,11 @@ const layoutTemplates = [
     },
     {
       name: "Partners & Clients",
-      description: "Showcase your partners and clients",
+      description: "Logo grid displaying trusted partners and enterprise clients. Grayscale logos with optional links for credibility building.",
       data: {
         "id": "partners-layout",
         "name": "Partners & Clients",
-        "description": "Showcase your partners and clients",
+        "description": "Logo grid displaying trusted partners and enterprise clients. Grayscale logos with optional links for credibility building.",
         "icon": "IconUsers",
         "rows": [
           {
@@ -1646,7 +1646,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Trusted by Industry Leaders</h2>\n\n<p style=\"text-align: center\">Powering innovation at 500+ global enterprises.</p>"
+                "content": "## Trusted by Industry Leaders {.center}\n\nPowering innovation at 500+ global enterprises. {.center}"
               }
             ]
           },
@@ -1698,11 +1698,11 @@ const layoutTemplates = [
     },
     {
       name: "Code Example",
-      description: "Showcase code snippets with syntax highlighting",
+      description: "Developer-focused slide with syntax-highlighted code block. Ideal for API integration demos and SDK walkthroughs.",
       data: {
         "id": "code-example-layout",
         "name": "Code Example",
-        "description": "Showcase code snippets with syntax highlighting",
+        "description": "Developer-focused slide with syntax-highlighted code block. Ideal for API integration demos and SDK walkthroughs.",
         "icon": "IconDeviceLaptop",
         "rows": [
           {
@@ -1711,7 +1711,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Built for Developers</h2>\n\n<p style=\"text-align: center\">Integrate our full-featured SDK in less than 5 minutes.</p>"
+                "content": "## Built for Developers {.center}\n\nIntegrate our full-featured SDK in less than 5 minutes. {.center}"
               }
             ]
           },
@@ -1739,11 +1739,11 @@ const layoutTemplates = [
     },
     {
       name: "Progress Indicators",
-      description: "Show progress and achievements",
+      description: "Project status dashboard with animated progress bars for migrations, refactors, and training. Color-coded completion tracking.",
       data: {
         "id": "progress-layout",
         "name": "Progress Indicators",
-        "description": "Show progress and achievements",
+        "description": "Project status dashboard with animated progress bars for migrations, refactors, and training. Color-coded completion tracking.",
         "icon": "IconTrendingUp",
         "rows": [
           {
@@ -1752,7 +1752,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Q3 Migration Status</h2>\n\n<p style=\"text-align: center\">Current tracking against our core infrastructure goals.</p>"
+                "content": "## Q3 Migration Status {.center}\n\nCurrent tracking against our core infrastructure goals. {.center}"
               }
             ]
           },
@@ -1800,11 +1800,11 @@ const layoutTemplates = [
     },
     {
       name: "Social Proof",
-      description: "Display social media stats and ratings",
+      description: "Social media followers across Twitter, LinkedIn, YouTube, and Instagram with star rating. Community momentum visualization.",
       data: {
         "id": "social-proof-layout",
         "name": "Social Proof",
-        "description": "Display social media stats and ratings",
+        "description": "Social media followers across Twitter, LinkedIn, YouTube, and Instagram with star rating. Community momentum visualization.",
         "icon": "IconDeviceMobile",
         "rows": [
           {
@@ -1813,7 +1813,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">A Growing Movement</h2>\n\n<p style=\"text-align: center\">Join over 50,000 developers across the globe who trust us.</p>"
+                "content": "## A Growing Movement {.center}\n\nJoin over 50,000 developers across the globe who trust us. {.center}"
               }
             ]
           },
@@ -1862,11 +1862,11 @@ const layoutTemplates = [
     },
     {
       name: "Awards & Recognition",
-      description: "Showcase achievements and certifications",
+      description: "Display industry awards, certifications, and accolades in a badge grid format. Perfect for credibility and social proof sections.",
       data: {
         "id": "awards-layout",
         "name": "Awards & Recognition",
-        "description": "Showcase achievements and certifications",
+        "description": "Display industry awards, certifications, and accolades in a badge grid format. Perfect for credibility and social proof sections.",
         "icon": "IconTrophy",
         "rows": [
           {
@@ -1875,7 +1875,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Recognized Excellence</h2>\n\n<p style=\"text-align: center\">We are proud to be backed by the industry's most respected organizations.</p>"
+                "content": "## Recognized Excellence {.center}\n\nWe are proud to be backed by the industry's most respected organizations. {.center}"
               }
             ]
           },
@@ -1920,11 +1920,11 @@ const layoutTemplates = [
     },
     {
       name: "Problem + Supporting Points",
-      description: "Problem statement with two reinforcing points",
+      description: "Innovation paradox framing with velocity and cost challenges. Two-column grid reinforcing the problem with specific pain points.",
       data: {
         "id": "problem-supporting-points-layout",
         "name": "Problem + Supporting Points",
-        "description": "Problem statement with two reinforcing points",
+        "description": "Innovation paradox framing with velocity and cost challenges. Two-column grid reinforcing the problem with specific pain points.",
         "icon": "IconNote",
         "rows": [
           {
@@ -1933,7 +1933,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">The Innovation Paradox</h2>\n\n<p style=\"text-align: center\">Organizations are desperate to innovate, but their legacy infrastructure is actively preventing them from moving forward.</p>"
+                "content": "## The Innovation Paradox {.center}\n\nOrganizations are desperate to innovate, but their legacy infrastructure is actively preventing them from moving forward. {.center}"
               }
             ]
           },
@@ -1971,11 +1971,11 @@ const layoutTemplates = [
     },
     {
       name: "Introduction",
-      description: "Big title with small subtitle",
+      description: "Clean title slide with prominent heading and subtitle. Perfect for opening slides, section dividers, and document cover pages.",
       data: {
         "id": "introduction",
         "name": "Introduction",
-        "description": "Big title with small subtitle",
+        "description": "Clean title slide with prominent heading and subtitle. Perfect for opening slides, section dividers, and document cover pages.",
         "icon": "IconHandWave",
         "rows": [
           {
@@ -1997,7 +1997,7 @@ const layoutTemplates = [
               {
                 "id": "block-1-0",
                 "type": "prosemirror",
-                "content": "<h1 style=\"text-align: center\">User Research Findings for Product Development</h1>\n\n<p style=\"text-align: center\">Key insights, pain points, and actionable recommendations from our recent research study</p>"
+                "content": "# User Research Findings for Product Development {.center}\n\nKey insights, pain points, and actionable recommendations from our recent research study {.center}"
               }
             ]
           },
@@ -2022,11 +2022,11 @@ const layoutTemplates = [
     },
     {
       name: "Opportunity Metrics",
-      description: "Highlight the market or opportunity with three key metrics",
+      description: "Market opportunity showcase with TAM, growth rate, and adoption metrics. Quantifies the business case with animated counters.",
       data: {
         "id": "opportunity-metrics-layout",
         "name": "Opportunity Metrics",
-        "description": "Highlight the market or opportunity with three key metrics",
+        "description": "Market opportunity showcase with TAM, growth rate, and adoption metrics. Quantifies the business case with animated counters.",
         "icon": "IconChartLine",
         "rows": [
           {
@@ -2035,7 +2035,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">A Massive Untapped Opportunity</h2>\n\n<p style=\"text-align: center\">The market is shifting rapidly. We are positioned to capture a significant share of this emerging $100B+ ecosystem.</p>"
+                "content": "## A Massive Untapped Opportunity {.center}\n\nThe market is shifting rapidly. We are positioned to capture a significant share of this emerging $100B+ ecosystem. {.center}"
               }
             ]
           },
@@ -2081,11 +2081,11 @@ const layoutTemplates = [
     },
     {
       name: "Discovery Call Insights",
-      description: "Summarize key findings from discovery calls",
+      description: "Stakeholder research synthesis with categorized themes and challenges. Ideal for presenting discovery call findings and user research.",
       data: {
         "id": "discovery-insights-layout",
         "name": "Discovery Call Insights",
-        "description": "Summarize key findings from discovery calls",
+        "description": "Stakeholder research synthesis with categorized themes and challenges. Ideal for presenting discovery call findings and user research.",
         "icon": "IconSearch",
         "rows": [
           {
@@ -2094,7 +2094,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Strategic Discovery: Key Themes</h2>\n\n<p style=\"text-align: center\">We spoke with 15 key stakeholders. Here is a synthesis of the critical challenges and opportunities identified.</p>"
+                "content": "## Strategic Discovery: Key Themes {.center}\n\nWe spoke with 15 key stakeholders. Here is a synthesis of the critical challenges and opportunities identified. {.center}"
               }
             ]
           },
@@ -2142,11 +2142,11 @@ const layoutTemplates = [
     },
     {
       name: "Problem + User Quote",
-      description: "Problem statement supported by a user quote",
+      description: "Customer pain point with executive-level quote highlighting urgency. Powerful voice-of-customer validation for problem slides.",
       data: {
         "id": "problem-quote-layout",
         "name": "Problem + User Quote",
-        "description": "Problem statement supported by a user quote",
+        "description": "Customer pain point with executive-level quote highlighting urgency. Powerful voice-of-customer validation for problem slides.",
         "icon": "IconMessageChat",
         "rows": [
           {
@@ -2155,7 +2155,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">The Voice of the Customer</h2>\n\n<p style=\"text-align: center\">Our stakeholders are frustrated. They need a solution that works as fast as they do.</p>"
+                "content": "## The Voice of the Customer {.center}\n\nOur stakeholders are frustrated. They need a solution that works as fast as they do. {.center}"
               }
             ]
           },
@@ -2182,11 +2182,11 @@ const layoutTemplates = [
     },
     {
       name: "Problem + Two Quotes",
-      description: "Problem statement reinforced by two user quotes",
+      description: "Problem validation with two side-by-side quotes from different roles. Shows universal frustration across the organization.",
       data: {
         "id": "problem-two-quotes-layout",
         "name": "Problem + Two Quotes",
-        "description": "Problem statement reinforced by two user quotes",
+        "description": "Problem validation with two side-by-side quotes from different roles. Shows universal frustration across the organization.",
         "icon": "IconMessages",
         "rows": [
           {
@@ -2195,7 +2195,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Frustration is Universal</h2>\n\n<p style=\"text-align: center\">From the front lines to the C-suite, the lack of visibility is causing paralysis.</p>"
+                "content": "## Frustration is Universal {.center}\n\nFrom the front lines to the C-suite, the lack of visibility is causing paralysis. {.center}"
               }
             ]
           },
@@ -2236,11 +2236,11 @@ const layoutTemplates = [
     },
     {
       name: "Customer Quotes",
-      description: "Multiple quotes from customers for social proof",
+      description: "Three customer testimonial cards in a row with avatars and quotes. Builds trust through authentic voices and real experiences.",
       data: {
         "id": "customer-quotes-layout",
         "name": "Customer Quotes",
-        "description": "Multiple quotes from customers for social proof",
+        "description": "Three customer testimonial cards in a row with avatars and quotes. Builds trust through authentic voices and real experiences.",
         "icon": "IconThumbUp",
         "rows": [
           {
@@ -2249,7 +2249,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Trusted by Industry Leaders</h2>\n\n<p style=\"text-align: center\">Don't just take our word for it. Here's what the best in the business have to say about our impact.</p>"
+                "content": "## Trusted by Industry Leaders {.center}\n\nDon't just take our word for it. Here's what the best in the business have to say about our impact. {.center}"
               }
             ]
           },
@@ -2304,11 +2304,11 @@ const layoutTemplates = [
     },
     {
       name: "Pricing - 3 Tier",
-      description: "Three-tier pricing table with a highlighted plan",
+      description: "Starter/Pro/Enterprise pricing cards with feature checkmarks and upgrade CTAs. Scalable pricing from free to custom enterprise.",
       data: {
         "id": "pricing-three-tier-layout",
         "name": "Pricing - 3 Tier",
-        "description": "Three-tier pricing table with a highlighted plan",
+        "description": "Starter/Pro/Enterprise pricing cards with feature checkmarks and upgrade CTAs. Scalable pricing from free to custom enterprise.",
         "icon": "IconCurrencyDollar",
         "rows": [
           {
@@ -2317,7 +2317,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Transparent Pricing. Scales With You.</h2>\n\n<p style=\"text-align: center\">Start small and upgrade as you grow. No hidden fees, cancel anytime.</p>"
+                "content": "## Transparent Pricing. Scales With You. {.center}\n\nStart small and upgrade as you grow. No hidden fees, cancel anytime. {.center}"
               }
             ]
           },
@@ -2435,11 +2435,11 @@ const layoutTemplates = [
     },
     {
       name: "Customer Stories",
-      description: "Narrative of customer success with proof points",
+      description: "Case study narrative with challenge-solution-outcome timeline and executive quote. Perfect for detailed success stories.",
       data: {
         "id": "customer-stories-layout",
         "name": "Customer Stories",
-        "description": "Narrative of customer success with proof points",
+        "description": "Case study narrative with challenge-solution-outcome timeline and executive quote. Perfect for detailed success stories.",
         "icon": "IconBook",
         "rows": [
           {
@@ -2448,7 +2448,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Case Study: Scaling Global Operations</h2>\n\n<p style=\"text-align: center\">How Acme Corp reduced overhead by 30% while expanding into 5 new markets.</p>"
+                "content": "## Case Study: Scaling Global Operations {.center}\n\nHow Acme Corp reduced overhead by 30% while expanding into 5 new markets. {.center}"
               }
             ]
           },
@@ -2510,11 +2510,11 @@ const layoutTemplates = [
     },
     {
       name: "Services List",
-      description: "Grid of services or offerings",
+      description: "Six-item service capabilities grid covering advisory, integration, data, security, development, and support offerings.",
       data: {
         "id": "services-list-layout",
         "name": "Services List",
-        "description": "Grid of services or offerings",
+        "description": "Six-item service capabilities grid covering advisory, integration, data, security, development, and support offerings.",
         "icon": "IconTools",
         "rows": [
           {
@@ -2523,7 +2523,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Comprehensive Capabilities</h2>\n\n<p style=\"text-align: center\">We don't just provide software. We provide the end-to-end partnership required for transformation.</p>"
+                "content": "## Comprehensive Capabilities {.center}\n\nWe don't just provide software. We provide the end-to-end partnership required for transformation. {.center}"
               }
             ]
           },
@@ -2581,11 +2581,11 @@ const layoutTemplates = [
     },
     {
       name: "Document Intro",
-      description: "Introductory page for docs or proposals",
+      description: "Executive brief opening with vision, scope, timeline, and success metrics. Includes CTA for document approval.",
       data: {
         "id": "doc-intro-layout",
         "name": "Document Intro",
-        "description": "Introductory page for docs or proposals",
+        "description": "Executive brief opening with vision, scope, timeline, and success metrics. Includes CTA for document approval.",
         "icon": "IconFileText",
         "rows": [
           {
@@ -2594,7 +2594,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h1 style=\"text-align: center\">Project Alpha: Executive Brief</h1>\n\n<p style=\"text-align: center\">This document outlines the strategic vision, scope, and implementation plan for the upcoming Q3 initiatives. Our goal is to align all stakeholders on the critical path to launch.</p>"
+                "content": "# Project Alpha: Executive Brief {.center}\n\nThis document outlines the strategic vision, scope, and implementation plan for the upcoming Q3 initiatives. Our goal is to align all stakeholders on the critical path to launch. {.center}"
               }
             ]
           },
@@ -2657,11 +2657,11 @@ const layoutTemplates = [
     },
     {
       name: "Old vs New",
-      description: "Compare the old way with the new way",
+      description: "Before/after workflow comparison showing legacy vs modern approach. Highlights transformation benefits with side-by-side details.",
       data: {
         "id": "comparison-old-new-layout",
         "name": "Old vs New",
-        "description": "Compare the old way with the new way",
+        "description": "Before/after workflow comparison showing legacy vs modern approach. Highlights transformation benefits with side-by-side details.",
         "icon": "IconArrowsLeftRight",
         "rows": [
           {
@@ -2670,7 +2670,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Transforming the Workflow: Then vs. Now</h2>\n\n<p style=\"text-align: center\">The traditional approach is fraught with inefficiencies and manual bottlenecks. Our modern solution streamlines operations, reducing friction and accelerating time-to-market.</p>"
+                "content": "## Transforming the Workflow: Then vs. Now {.center}\n\nThe traditional approach is fraught with inefficiencies and manual bottlenecks. Our modern solution streamlines operations, reducing friction and accelerating time-to-market. {.center}"
               }
             ]
           },
@@ -2741,11 +2741,11 @@ const layoutTemplates = [
     },
     {
       name: "Target Audiences",
-      description: "Highlight who this is for",
+      description: "Four persona cards targeting Engineering, Product, Sales, and C-Suite with role-specific value propositions. Stakeholder alignment slide.",
       data: {
         "id": "target-audiences-layout",
         "name": "Target Audiences",
-        "description": "Highlight who this is for",
+        "description": "Four persona cards targeting Engineering, Product, Sales, and C-Suite with role-specific value propositions. Stakeholder alignment slide.",
         "icon": "IconTarget",
         "rows": [
           {
@@ -2754,7 +2754,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Who Wins With Us</h2>\n\n<p style=\"text-align: center\">We solve critical pain points for every level of the organization, ensuring alignment from day one.</p>"
+                "content": "## Who Wins With Us {.center}\n\nWe solve critical pain points for every level of the organization, ensuring alignment from day one. {.center}"
               }
             ]
           },
@@ -2802,11 +2802,11 @@ const layoutTemplates = [
     },
     {
       name: "Next Steps",
-      description: "Outline the next three actions to take",
+      description: "30-day onboarding roadmap with four weekly milestones from kickoff to go-live. Clear action items with deliverables.",
       data: {
         "id": "next-steps-layout",
         "name": "Next Steps",
-        "description": "Outline the next three actions to take",
+        "description": "30-day onboarding roadmap with four weekly milestones from kickoff to go-live. Clear action items with deliverables.",
         "icon": "IconArrowRight",
         "rows": [
           {
@@ -2815,7 +2815,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">The Path Forward</h2>\n\n<p style=\"text-align: center\">We are ready to move fast. Here is our proposed 30-day onboarding plan to get your team live and realizing value.</p>"
+                "content": "## The Path Forward {.center}\n\nWe are ready to move fast. Here is our proposed 30-day onboarding plan to get your team live and realizing value. {.center}"
               }
             ]
           },
@@ -2861,11 +2861,11 @@ const layoutTemplates = [
     },
     {
       name: "Summary",
-      description: "Executive summary with key points organized in two columns.",
+      description: "Eight numbered insight cards in two columns covering major findings, observations, and strategic takeaways. Perfect for research summaries.",
       data: {
         "id": "summary-layout",
         "name": "Summary",
-        "description": "Executive summary with key points organized in two columns.",
+        "description": "Eight numbered insight cards in two columns covering major findings, observations, and strategic takeaways. Perfect for research summaries.",
         "icon": "IconListCheck",
         "rows": [
           {
@@ -2874,7 +2874,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h1 style=\"text-align: center\">Summary</h1>"
+                "content": "# Summary {.center}"
               }
             ]
           },
@@ -2978,11 +2978,11 @@ const layoutTemplates = [
     },
     {
       name: "Growth Metrics Dashboard",
-      description: "High-level KPI overview with pulse charts",
+      description: "Executive KPI dashboard with pulse charts and glass insight cards. Ideal for quarterly reports and performance reviews.",
       data: {
         "id": "metric-dashboard",
         "name": "Growth Metrics Dashboard",
-        "description": "High-level KPI overview with pulse charts",
+        "description": "Executive KPI dashboard with pulse charts and glass insight cards. Ideal for quarterly reports and performance reviews.",
         "icon": "IconChartBar",
         "rows": [
           {
@@ -2991,7 +2991,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Q3 Performance Overview</h2>"
+                "content": "## Q3 Performance Overview {.center}"
               }
             ]
           },
@@ -3064,11 +3064,11 @@ const layoutTemplates = [
     },
     {
       name: "Developer Integration",
-      description: "Step-by-step guide with code terminals",
+      description: "Developer onboarding tutorial with numbered steps and terminal code blocks. Shows install and init commands with output.",
       data: {
         "id": "technical-walkthrough",
         "name": "Developer Integration",
-        "description": "Step-by-step guide with code terminals",
+        "description": "Developer onboarding tutorial with numbered steps and terminal code blocks. Shows install and init commands with output.",
         "icon": "IconTerminal",
         "rows": [
           {
@@ -3077,7 +3077,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Quick Start Guide</h2>"
+                "content": "## Quick Start Guide {.center}"
               }
             ]
           },
@@ -3135,11 +3135,11 @@ const layoutTemplates = [
     },
     {
       name: "Strategic Takeaways",
-      description: "Highlighted key points in glass cards",
+      description: "Strategic takeaways displayed in elegant glass-style insight cards. Perfect for summarizing key findings or action items.",
       data: {
         "id": "key-insights",
         "name": "Strategic Takeaways",
-        "description": "Highlighted key points in glass cards",
+        "description": "Strategic takeaways displayed in elegant glass-style insight cards. Perfect for summarizing key findings or action items.",
         "icon": "IconBolt",
         "rows": [
           {
@@ -3148,7 +3148,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "<h2 style=\"text-align: center\">Core Strategic Pillars</h2>"
+                "content": "## Core Strategic Pillars {.center}"
               }
             ]
           },
