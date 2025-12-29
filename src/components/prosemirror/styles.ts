@@ -2,56 +2,46 @@
 export const PROSEMIRROR_STYLES = `
   .ProseMirror {
     outline: none;
+    min-height: 40px;
     width: 100%;
   }
   .ProseMirror:focus {
     outline: none;
   }
   
-  /* Remove margin from first child to eliminate top space */
-  .ProseMirror > *:first-child {
-    margin-top: 0 !important;
-  }
-  
   /* Default fixed font sizes for editor mode */
   .ProseMirror h1 {
     font-size: 3rem;
     font-weight: 700;
-    line-height: 1.15;
-    margin-top: 0.75rem;
-    margin-bottom: 0.35rem;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
   }
   .ProseMirror h2 {
     font-size: 2.25rem;
     font-weight: 600;
-    line-height: 1.2;
-    margin-top: 0.6rem;
-    margin-bottom: 0.3rem;
+    line-height: 1.25;
+    margin-bottom: 0.5rem;
   }
   .ProseMirror h3 {
     font-size: 1.875rem;
     font-weight: 600;
-    line-height: 1.25;
-    margin-top: 0.5rem;
-    margin-bottom: 0.25rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
   }
   .ProseMirror h4 {
     font-size: 1.5rem;
     font-weight: 600;
-    line-height: 1.3;
-    margin-top: 0.4rem;
-    margin-bottom: 0.2rem;
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
   }
   .ProseMirror p,
   .ProseMirror li {
     font-size: 1rem;
-    line-height: 1.5;
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
+    line-height: 1.6;
   }
   .ProseMirror ul, .ProseMirror ol {
     padding-left: 1.5rem;
-    margin: 0.35rem 0;
+    margin: 0.5rem 0;
   }
   .ProseMirror ul {
     list-style: disc;
@@ -60,12 +50,12 @@ export const PROSEMIRROR_STYLES = `
     list-style: decimal;
   }
   .ProseMirror li {
-    margin: 0.15rem 0;
+    margin: 0.25rem 0;
   }
   .ProseMirror blockquote {
     border-left: 3px solid #e5e7eb;
     padding-left: 1rem;
-    margin: 0.35rem 0;
+    margin: 0.5rem 0;
     color: #6b7280;
     font-style: italic;
   }

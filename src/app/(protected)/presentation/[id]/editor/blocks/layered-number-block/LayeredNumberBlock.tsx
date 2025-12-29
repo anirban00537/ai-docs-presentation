@@ -57,10 +57,10 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
   return (
     <CommonCard
       theme={theme}
-      className="w-full transition-all duration-300 hover:shadow-md"
+      className="w-full h-full transition-all duration-300 hover:shadow-md"
     >
       <div
-        className="flex flex-col w-full relative overflow-hidden p-5"
+        className="flex flex-col h-full w-full relative overflow-hidden p-8"
         style={{ 
           borderRadius: theme.cardBorderRadius ?? "12px",
           backgroundColor: theme.cardBackground,
@@ -71,7 +71,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
             className="absolute -right-4 -bottom-10 md:-bottom-16 text-[180px] md:text-[240px] font-black leading-none pointer-events-none select-none z-0"
             style={{
                 color: theme.headingColor,
-                opacity: 0.05,
+                opacity: 0.04,
                 fontFamily: "var(--font-heading)",
             }}
         >
@@ -79,9 +79,9 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
         </div>
         
         {/* Editable Small Number Reference */}
-         <div className="mb-2 z-10 flex items-center justify-between">
+         <div className="mb-4 z-10 flex items-center justify-between">
               <div 
-                className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-[10px] border"
+                className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border"
                 style={{
                      borderColor: `${theme.primary}40`,
                      color: theme.primary,
@@ -109,7 +109,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
             value={editorContent}
             onChange={handleEditorChange}
             placeholder={placeholder ?? "Type step details..."}
-            className="prose-sm leading-snug"
+            className="prose-base leading-relaxed"
             readOnly={readOnly}
             theme={theme}
           />

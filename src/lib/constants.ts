@@ -1,4 +1,4 @@
-export const SLIDE_MAX_WIDTH = 1200; // Maximum width for slides in pixels
+export const SLIDE_MAX_WIDTH = 1000; // Maximum width for slides in pixels
 
 export const GOOGLE_FONTS = [
   // Sans Serif

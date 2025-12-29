@@ -54,13 +54,13 @@ export const CornerCutBlock = memo(function CornerCutBlock({
 
   return (
     <div
-      className="w-full transition-all duration-300 hover:shadow-lg group"
+      className="w-full h-full transition-all duration-300 hover:shadow-lg group"
       style={{
           filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.05))"
       }}
     >
       <div
-        className="flex flex-col w-full relative overflow-hidden"
+        className="flex flex-col h-full w-full relative overflow-hidden"
         style={{ 
             backgroundColor: theme.cardBackground,
             // Create the clip path for top-right corner cut
@@ -96,7 +96,7 @@ export const CornerCutBlock = memo(function CornerCutBlock({
          </div>
 
         {/* Content Area */}
-        <div className="flex-1 min-w-0 p-5 pt-10 z-10 border-l-4"
+        <div className="flex-1 min-w-0 p-8 pt-12 z-10 border-l-4"
              style={{ borderColor: `${theme.primary}20` }}
         >
           <ProseMirrorEditor
@@ -105,7 +105,7 @@ export const CornerCutBlock = memo(function CornerCutBlock({
             value={editorContent}
             onChange={handleEditorChange}
             placeholder={placeholder ?? "Type technical detail..."}
-            className="prose-sm leading-snug font-mono"
+            className="prose-sm leading-relaxed font-mono"
             readOnly={readOnly}
             theme={theme}
           />

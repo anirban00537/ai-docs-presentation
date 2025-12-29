@@ -56,16 +56,16 @@ export const ModernPillCardBlock = memo(function ModernPillCardBlock({
   return (
     <CommonCard
       theme={theme}
-      className="w-full transition-all duration-300 hover:shadow-md"
+      className="w-full h-full transition-all duration-300 hover:shadow-md"
     >
       <div
-        className="flex flex-col w-full relative overflow-hidden"
+        className="flex flex-col h-full w-full relative overflow-hidden"
         style={{ 
           borderRadius: theme.cardBorderRadius ?? "12px",
           backgroundColor: theme.cardBackground,
         }}
       >
-        <div className="absolute top-4 left-4 z-20">
+        <div className="absolute top-6 left-6 z-20">
              <div 
                 className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm flex items-center"
                 style={{ 
@@ -89,14 +89,14 @@ export const ModernPillCardBlock = memo(function ModernPillCardBlock({
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 min-w-0 p-5 pt-12 z-10">
+        <div className="flex-1 min-w-0 p-8 pt-16 z-10">
           <ProseMirrorEditor
             key={block.id}
             blockId={block.id}
             value={editorContent}
             onChange={handleEditorChange}
             placeholder={placeholder ?? "Type your feature details..."}
-            className="prose-sm leading-snug"
+            className="prose-sm leading-relaxed"
             readOnly={readOnly}
             theme={theme}
           />
