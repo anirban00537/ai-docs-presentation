@@ -83,7 +83,7 @@ export const NumberCardBlock = memo(function NumberCardBlock({
       className="h-full w-full transition-all duration-300 hover:shadow-md"
     >
       <div
-        className="flex flex-col gap-8 p-8 h-full w-full relative overflow-hidden"
+        className="flex flex-col gap-3 p-5 w-full relative overflow-hidden"
         style={{ 
           color: theme.headingColor,
           borderRadius: theme.cardBorderRadius ?? "12px"

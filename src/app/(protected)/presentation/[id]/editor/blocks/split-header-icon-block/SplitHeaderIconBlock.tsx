@@ -101,7 +101,7 @@ export const SplitHeaderIconBlock = memo(function SplitHeaderIconBlock({
                 </div>
 
                 {/* Content Area */}
-                <div className="p-8 flex-1">
+                <div className="p-3 px-6 flex-1">
                     <ProseMirrorEditor
                         key={block.id}
                         blockId={block.id}

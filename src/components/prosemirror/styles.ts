@@ -9,30 +9,31 @@ export const PROSEMIRROR_STYLES = `
     outline: none;
   }
   
+  /* Remove top margin from first child to eliminate unwanted spacing */
+  .ProseMirror > *:first-child {
+    margin-top: 0 !important;
+  }
+  
   /* Default fixed font sizes for editor mode */
   .ProseMirror h1 {
     font-size: 3rem;
     font-weight: 700;
     line-height: 1.2;
-    margin-bottom: 0.5rem;
   }
   .ProseMirror h2 {
     font-size: 2.25rem;
     font-weight: 600;
     line-height: 1.25;
-    margin-bottom: 0.5rem;
   }
   .ProseMirror h3 {
     font-size: 1.875rem;
     font-weight: 600;
     line-height: 1.3;
-    margin-bottom: 0.5rem;
   }
   .ProseMirror h4 {
     font-size: 1.5rem;
     font-weight: 600;
     line-height: 1.35;
-    margin-bottom: 0.5rem;
   }
   .ProseMirror p,
   .ProseMirror li {
@@ -93,19 +94,15 @@ export const PROSEMIRROR_STYLES = `
   /* Presentation mode: viewport-responsive font sizes */
   .presentation-mode .ProseMirror h1 {
     font-size: clamp(1.75rem, 3.2vw, 4.5rem);
-    margin-bottom: clamp(0.2rem, 0.4vw, 0.75rem);
   }
   .presentation-mode .ProseMirror h2 {
     font-size: clamp(1.35rem, 2.4vw, 3.5rem);
-    margin-bottom: clamp(0.2rem, 0.35vw, 0.6rem);
   }
   .presentation-mode .ProseMirror h3 {
     font-size: clamp(1.125rem, 2vw, 2.75rem);
-    margin-bottom: clamp(0.2rem, 0.3vw, 0.5rem);
   }
   .presentation-mode .ProseMirror h4 {
     font-size: clamp(1rem, 1.6vw, 2.25rem);
-    margin-bottom: clamp(0.2rem, 0.25vw, 0.4rem);
   }
   .presentation-mode .ProseMirror p,
   .presentation-mode .ProseMirror li {
