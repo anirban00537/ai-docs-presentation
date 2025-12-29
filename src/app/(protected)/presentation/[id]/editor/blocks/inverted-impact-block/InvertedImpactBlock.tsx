@@ -41,7 +41,7 @@ export const InvertedImpactBlock = memo(function InvertedImpactBlock({
 
   return (
     <div
-      className="w-full h-full transition-all duration-300 hover:scale-[1.01] hover:shadow-xl group"
+      className="w-full transition-all duration-300 hover:scale-[1.01] hover:shadow-xl group"
       style={{
           borderRadius: theme.cardBorderRadius ?? "12px",
           backgroundColor: theme.primary,
@@ -49,7 +49,7 @@ export const InvertedImpactBlock = memo(function InvertedImpactBlock({
           boxShadow: theme.cardBoxShadow
       }}
     >
-      <div className="flex flex-col h-full w-full relative overflow-hidden p-8">
+      <div className="flex flex-col w-full relative overflow-hidden p-6">
         
         {/* Subtle Texture Overlay */}
         <div 
@@ -82,7 +82,7 @@ export const InvertedImpactBlock = memo(function InvertedImpactBlock({
             value={editorContent}
             onChange={handleEditorChange}
             placeholder={placeholder ?? "Type impactful text..."}
-            className="prose-lg leading-relaxed text-white selection:bg-white/20"
+            className="prose-md leading-snug text-white selection:bg-white/20"
             readOnly={readOnly}
             theme={{...theme, bodyColor: "#ffffff", headingColor: "#ffffff"}} // Force white text theme
           />

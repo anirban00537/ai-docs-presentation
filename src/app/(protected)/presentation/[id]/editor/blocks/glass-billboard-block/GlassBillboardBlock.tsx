@@ -41,7 +41,7 @@ export const GlassBillboardBlock = memo(function GlassBillboardBlock({
 
   return (
     <div
-      className="w-full h-full transition-all duration-300 flex items-center justify-center p-8"
+      className="w-full transition-all duration-300 py-4 px-6"
       style={{
           // No background, just pure text layout
       }}
@@ -53,7 +53,7 @@ export const GlassBillboardBlock = memo(function GlassBillboardBlock({
             value={editorContent}
             onChange={handleEditorChange}
             placeholder={placeholder ?? "Type your hero statement..."}
-            className="prose-xl md:prose-2xl leading-tight font-light"
+            className="prose-lg md:prose-xl leading-tight font-light"
             readOnly={readOnly}
             theme={theme}
           />

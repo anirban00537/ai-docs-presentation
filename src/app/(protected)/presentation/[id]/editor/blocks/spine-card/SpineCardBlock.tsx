@@ -45,10 +45,10 @@ export const SpineCardBlock = memo(function SpineCardBlock({
   return (
     <CommonCard
       theme={theme}
-      className="w-full h-full transition-all duration-300 hover:shadow-md"
+      className="w-full transition-all duration-300 hover:shadow-md"
     >
       <div
-        className="flex flex-row h-full w-full relative overflow-hidden"
+        className="flex flex-row w-full relative overflow-hidden"
         style={{ 
           borderRadius: theme.cardBorderRadius ?? "12px",
           backgroundColor: `${theme.primary}05`, // Very subtle tint
@@ -61,14 +61,14 @@ export const SpineCardBlock = memo(function SpineCardBlock({
         />
 
         {/* Content Area */}
-        <div className="flex-1 min-w-0 p-6 z-10">
+        <div className="flex-1 min-w-0 p-4 z-10">
           <ProseMirrorEditor
             key={block.id}
             blockId={block.id}
             value={editorContent}
             onChange={handleEditorChange}
             placeholder={placeholder ?? "Type your note..."}
-            className="prose-sm leading-relaxed"
+            className="prose-sm leading-snug"
             readOnly={readOnly}
             theme={theme}
           />

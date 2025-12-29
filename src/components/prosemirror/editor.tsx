@@ -139,31 +139,6 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       return;
     }
 
-    // #region agent log
-    const hasInlineColorStyles =
-      typeof value === "string" &&
-      (value.includes('style="color') ||
-        value.includes("style='color") ||
-        value.includes("color:"));
-    fetch("http://127.0.0.1:7242/ingest/e8f5be2f-77ff-445e-8e96-5a33ec9bea24", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        location: "editor.tsx:112",
-        message: "Content sync - checking for inline color styles",
-        data: {
-          hasInlineColorStyles,
-          valueType: typeof value,
-          valuePreview:
-            typeof value === "string" ? value.substring(0, 200) : "not-string",
-        },
-        timestamp: Date.now(),
-        sessionId: "debug-session",
-        runId: "run1",
-        hypothesisId: "C",
-      }),
-    }).catch(() => {});
-    // #endregion
 
     // Handle both Markdown string and legacy JSON format
     let prosemirrorDoc: ProseMirrorNode | null = null;
