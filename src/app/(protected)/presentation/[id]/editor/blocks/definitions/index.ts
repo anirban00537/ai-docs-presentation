@@ -17,6 +17,9 @@ import { createLayeredNumberContent, normalizeLayeredNumberContent } from "./lay
 import { createCornerCutContent, normalizeCornerCutContent } from "./corner-cut-block";
 import { createCalloutContent, normalizeCalloutContent } from "./callout-block";
 import { createStepCardContent, normalizeStepCardContent } from "./step-card-block";
+import { createDogEarIconContent, normalizeDogEarIconContent } from "./dog-ear-icon-block";
+import { createSplitHeaderIconContent, normalizeSplitHeaderIconContent } from "./split-header-icon-block";
+import { createOutlineOffsetIconContent, normalizeOutlineOffsetIconContent } from "./outline-offset-icon-block";
 
 // Re-export factories and normalizers
 export {
@@ -33,6 +36,9 @@ export {
   createCornerCutContent, normalizeCornerCutContent,
   createCalloutContent, normalizeCalloutContent,
   createStepCardContent, normalizeStepCardContent,
+  createDogEarIconContent, normalizeDogEarIconContent,
+  createSplitHeaderIconContent, normalizeSplitHeaderIconContent,
+  createOutlineOffsetIconContent, normalizeOutlineOffsetIconContent,
 };
 
 import {
@@ -71,6 +77,12 @@ export const createBlockContentForType = (
       return createCalloutContent();
     case BLOCK_TYPES.STEP_CARD_BLOCK:
       return createStepCardContent();
+    case BLOCK_TYPES.DOG_EAR_ICON_BLOCK:
+      return createDogEarIconContent();
+    case BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK:
+      return createSplitHeaderIconContent();
+    case BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK:
+      return createOutlineOffsetIconContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return getDefaultHeadingContent();
@@ -108,6 +120,12 @@ export const normalizeBlockContent = (
       return normalizeCalloutContent(content);
     case BLOCK_TYPES.STEP_CARD_BLOCK:
       return normalizeStepCardContent(content);
+    case BLOCK_TYPES.DOG_EAR_ICON_BLOCK:
+      return normalizeDogEarIconContent(content);
+    case BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK:
+      return normalizeSplitHeaderIconContent(content);
+    case BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK:
+      return normalizeOutlineOffsetIconContent(content);
     default:
       if (isMarkdownFormat(content)) {
         return content;

@@ -19,6 +19,9 @@ import { LayeredNumberBlock } from "./layered-number-block/LayeredNumberBlock";
 import { CornerCutBlock } from "./corner-cut-block/CornerCutBlock";
 import { CalloutBlock } from "./callout-block/CalloutBlock";
 import { StepCardBlock } from "./step-card-block/StepCardBlock";
+import { DogEarIconBlock } from "./dog-ear-icon-block/DogEarIconBlock";
+import { SplitHeaderIconBlock } from "./split-header-icon-block/SplitHeaderIconBlock";
+import { OutlineOffsetIconBlock } from "./outline-offset-icon-block/OutlineOffsetIconBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -119,7 +122,26 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.STEP_CARD_BLOCK, content),
   },
+  [BLOCK_TYPES.DOG_EAR_ICON_BLOCK]: {
+    type: BLOCK_TYPES.DOG_EAR_ICON_BLOCK,
+    component: DogEarIconBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.DOG_EAR_ICON_BLOCK, content),
+  },
+  [BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK]: {
+    type: BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK,
+    component: SplitHeaderIconBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK, content),
+  },
+  [BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK]: {
+    type: BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK,
+    component: OutlineOffsetIconBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK, content),
+  },
 };
+
 
 
 export const resolveBlockComponent = (

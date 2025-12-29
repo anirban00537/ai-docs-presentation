@@ -3,9 +3,9 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
+import {
   BLOCK_TYPES,
-  createCalloutContent 
+  createCalloutContent
 } from "../blocks/definitions";
 import {
   IconFileText,
@@ -25,6 +25,8 @@ import {
   IconAlertOctagon,
   IconNote,
   IconCircleNumber1,
+  IconFolder,
+  IconLayout,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
 
@@ -147,6 +149,24 @@ const blockDefinitions: BlockDefinition[] = [
     label: "Error box",
     description: "Red error/caution",
     initialContent: createCalloutContent("error"),
+  },
+  {
+    type: BLOCK_TYPES.DOG_EAR_ICON_BLOCK,
+    icon: <IconFileText size={18} />,
+    label: "Memo",
+    description: "Icon file card",
+  },
+  {
+    type: BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK,
+    icon: <IconFolder size={18} />,
+    label: "Group",
+    description: "Folder with header",
+  },
+  {
+    type: BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK,
+    icon: <IconLayout size={18} />,
+    label: "Blueprint",
+    description: "Technical spec card",
   },
 ];
 

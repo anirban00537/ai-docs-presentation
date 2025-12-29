@@ -20,6 +20,9 @@ import {
   CornerCutContentSchema,
   CalloutContentSchema,
   StepCardContentSchema,
+  DogEarIconContentSchema,
+  SplitHeaderIconContentSchema,
+  OutlineOffsetIconContentSchema,
 } from "./blocks";
 
 import {
@@ -55,6 +58,9 @@ export type LayeredNumberContent = z.infer<typeof LayeredNumberContentSchema>;
 export type CornerCutContent = z.infer<typeof CornerCutContentSchema>;
 export type CalloutContent = z.infer<typeof CalloutContentSchema>;
 export type StepCardContent = z.infer<typeof StepCardContentSchema>;
+export type DogEarIconContent = z.infer<typeof DogEarIconContentSchema>;
+export type SplitHeaderIconContent = z.infer<typeof SplitHeaderIconContentSchema>;
+export type OutlineOffsetIconContent = z.infer<typeof OutlineOffsetIconContentSchema>;
 
 
 export type LayoutTemplate = {

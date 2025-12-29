@@ -16,6 +16,9 @@ export const BLOCK_TYPES = {
   CORNER_CUT_BLOCK: "corner-cut-block",
   CALLOUT_BLOCK: "callout-block",
   STEP_CARD_BLOCK: "step-card-block",
+  DOG_EAR_ICON_BLOCK: "dog-ear-icon-block",
+  SPLIT_HEADER_ICON_BLOCK: "split-header-icon-block",
+  OUTLINE_OFFSET_ICON_BLOCK: "outline-offset-icon-block",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

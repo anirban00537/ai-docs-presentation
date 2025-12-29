@@ -94,6 +94,28 @@ export const StepCardContentSchema = z.object({
 
 // --- Master Content Union ---
 
+
+
+// --- New Icon Block Schemas ---
+
+export const DogEarIconContentSchema = z.object({
+  type: z.literal("dog-ear-icon-block"),
+  icon: z.string().optional(),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
+export const SplitHeaderIconContentSchema = z.object({
+  type: z.literal("split-header-icon-block"),
+  icon: z.string().optional(),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
+export const OutlineOffsetIconContentSchema = z.object({
+  type: z.literal("outline-offset-icon-block"),
+  icon: z.string().optional(),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
 export const BlockContentSchema = z.union([
   ProseMirrorDocumentSchema,
   CodeContentSchema,
@@ -109,6 +131,9 @@ export const BlockContentSchema = z.union([
   CornerCutContentSchema,
   CalloutContentSchema,
   StepCardContentSchema,
+  DogEarIconContentSchema,
+  SplitHeaderIconContentSchema,
+  OutlineOffsetIconContentSchema,
 ]);
 
 
