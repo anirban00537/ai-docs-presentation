@@ -104,7 +104,7 @@ export const SlideFrame = memo(function SlideFrame({
       position: "relative",
       ...(fullWidth
         ? { width: "100%", minHeight: "100vh", overflow: "visible" }
-        : { minWidth: `${SLIDE_MAX_WIDTH}px`, maxWidth: `${SLIDE_MAX_WIDTH}px`, overflow: "hidden" }),
+        : { minWidth: `${SLIDE_MAX_WIDTH}px`, maxWidth: `${SLIDE_MAX_WIDTH}px`, overflow: "visible" }),
       ...style,
     };
 

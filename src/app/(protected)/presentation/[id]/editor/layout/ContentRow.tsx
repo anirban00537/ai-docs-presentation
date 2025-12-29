@@ -301,6 +301,7 @@ export const ContentRow = memo(function ContentRow({
           gridTemplateColumns,
           fontFamily: getFontFamily(theme.fontFamily || "Inter"),
           backgroundColor: isOver ? `${theme.primary}08` : "transparent",
+          overflow: "visible",
         }}
       >
         {row.blocks.map((block, index) => (
