@@ -86,6 +86,12 @@ export const CalloutContentSchema = z.object({
   editorContent: ProseMirrorDocumentSchema,
 });
 
+export const StepCardContentSchema = z.object({
+  type: z.literal("step-card-block"),
+  stepNumber: z.number(),
+  editorContent: ProseMirrorDocumentSchema,
+});
+
 // --- Master Content Union ---
 
 export const BlockContentSchema = z.union([
@@ -102,6 +108,7 @@ export const BlockContentSchema = z.union([
   LayeredNumberContentSchema,
   CornerCutContentSchema,
   CalloutContentSchema,
+  StepCardContentSchema,
 ]);
 
 

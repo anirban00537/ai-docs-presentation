@@ -96,8 +96,7 @@ export const CornerCutBlock = memo(function CornerCutBlock({
          </div>
 
         {/* Content Area */}
-        <div className="flex-1 min-w-0 p-8 pt-12 z-10 border-l-4"
-             style={{ borderColor: `${theme.primary}20` }}
+        <div className="flex-1 min-w-0 p-8 pt-12 z-10"
         >
           <ProseMirrorEditor
             key={block.id}

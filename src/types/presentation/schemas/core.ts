@@ -15,6 +15,7 @@ export const BLOCK_TYPES = {
   LAYERED_NUMBER_BLOCK: "layered-number-block",
   CORNER_CUT_BLOCK: "corner-cut-block",
   CALLOUT_BLOCK: "callout-block",
+  STEP_CARD_BLOCK: "step-card-block",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

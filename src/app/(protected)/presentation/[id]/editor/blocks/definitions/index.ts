@@ -16,6 +16,7 @@ import { createGlassBillboardContent, normalizeGlassBillboardContent } from "./g
 import { createLayeredNumberContent, normalizeLayeredNumberContent } from "./layered-number-block";
 import { createCornerCutContent, normalizeCornerCutContent } from "./corner-cut-block";
 import { createCalloutContent, normalizeCalloutContent } from "./callout-block";
+import { createStepCardContent, normalizeStepCardContent } from "./step-card-block";
 
 // Re-export factories and normalizers
 export {
@@ -31,6 +32,7 @@ export {
   createLayeredNumberContent, normalizeLayeredNumberContent,
   createCornerCutContent, normalizeCornerCutContent,
   createCalloutContent, normalizeCalloutContent,
+  createStepCardContent, normalizeStepCardContent,
 };
 
 import {
@@ -67,6 +69,8 @@ export const createBlockContentForType = (
       return createCornerCutContent();
     case BLOCK_TYPES.CALLOUT_BLOCK:
       return createCalloutContent();
+    case BLOCK_TYPES.STEP_CARD_BLOCK:
+      return createStepCardContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return getDefaultHeadingContent();
@@ -102,6 +106,8 @@ export const normalizeBlockContent = (
       return normalizeCornerCutContent(content);
     case BLOCK_TYPES.CALLOUT_BLOCK:
       return normalizeCalloutContent(content);
+    case BLOCK_TYPES.STEP_CARD_BLOCK:
+      return normalizeStepCardContent(content);
     default:
       if (isMarkdownFormat(content)) {
         return content;

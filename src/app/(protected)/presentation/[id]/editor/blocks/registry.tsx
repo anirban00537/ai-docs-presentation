@@ -18,6 +18,7 @@ import { GlassBillboardBlock } from "./glass-billboard-block/GlassBillboardBlock
 import { LayeredNumberBlock } from "./layered-number-block/LayeredNumberBlock";
 import { CornerCutBlock } from "./corner-cut-block/CornerCutBlock";
 import { CalloutBlock } from "./callout-block/CalloutBlock";
+import { StepCardBlock } from "./step-card-block/StepCardBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -111,6 +112,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: CalloutBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.CALLOUT_BLOCK, content),
+  },
+  [BLOCK_TYPES.STEP_CARD_BLOCK]: {
+    type: BLOCK_TYPES.STEP_CARD_BLOCK,
+    component: StepCardBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.STEP_CARD_BLOCK, content),
   },
 };
 

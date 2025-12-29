@@ -24,6 +24,7 @@ import {
   IconAlertTriangle,
   IconAlertOctagon,
   IconNote,
+  IconCircleNumber1,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
 
@@ -112,6 +113,12 @@ const blockDefinitions: BlockDefinition[] = [
     icon: <IconPolygon size={18} />,
     label: "Corner Cut",
     description: "Geometric edge accent",
+  },
+  {
+    type: BLOCK_TYPES.STEP_CARD_BLOCK,
+    icon: <IconCircleNumber1 size={18} />,
+    label: "Step Card",
+    description: "Numbered process step",
   },
   {
     type: BLOCK_TYPES.CALLOUT_BLOCK,

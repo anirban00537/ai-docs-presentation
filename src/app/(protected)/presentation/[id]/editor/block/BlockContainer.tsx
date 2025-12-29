@@ -138,12 +138,13 @@ export const BlockContainer = memo(function BlockContainer({
       onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
     >
       <div
-        className={`relative p-2 transition-all h-full w-full flex flex-col flex-1 min-w-0 rounded-xl ${
+        className={`relative p-1 transition-all h-full w-full flex flex-col flex-1 min-w-0 rounded-xl ${
           isDragging && !readOnly ? "opacity-50" : ""
         }`}
         style={{
           outline: !readOnly && isFocused ? `2px solid ${theme.primary}` : "none",
-          outlineOffset: "1px",
+          outlineOffset: "2px",
+          overflow: "visible",
         }}
       >
         {/* Block Toolbar */}
