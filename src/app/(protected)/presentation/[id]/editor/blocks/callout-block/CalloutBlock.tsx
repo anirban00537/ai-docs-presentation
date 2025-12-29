@@ -59,18 +59,18 @@ export const CalloutBlock = memo(function CalloutBlock({
             case 'error': return { bg: 'rgba(127, 29, 29, 0.5)', border: '#f87171', text: '#ffffff', icon: '#fca5a5' }; 
             case 'success': return { bg: 'rgba(20, 83, 45, 0.5)', border: '#4ade80', text: '#ffffff', icon: '#86efac' }; 
             case 'question': return { bg: 'rgba(88, 28, 135, 0.5)', border: '#c084fc', text: '#ffffff', icon: '#d8b4fe' }; 
-            case 'note': default: return { bg: `${theme.primary}15`, border: theme.primary, text: '#ffffff', icon: theme.primary };
+            case 'note': default: return { bg: 'rgba(51, 65, 85, 0.5)', border: '#94a3b8', text: '#ffffff', icon: '#cbd5e1' };
         }
     }
 
-    // Light mode colors
+    // Light mode colors - Saturated backgrounds
     switch (variant) {
-        case 'info': return { bg: '#eff6ff', border: '#3b82f6', text: '#1e3a8a', icon: '#2563eb' };
-        case 'warning': return { bg: '#fffbeb', border: '#f59e0b', text: '#78350f', icon: '#d97706' };
-        case 'error': return { bg: '#fef2f2', border: '#ef4444', text: '#7f1d1d', icon: '#dc2626' };
-        case 'success': return { bg: '#f0fdf4', border: '#22c55e', text: '#14532d', icon: '#16a34a' };
-        case 'question': return { bg: '#faf5ff', border: '#a855f7', text: '#581c87', icon: '#9333ea' };
-        case 'note': default: return { bg: `${theme.primary}10`, border: theme.primary, text: theme.bodyColor, icon: theme.primary };
+        case 'info': return { bg: '#dbeafe', border: '#3b82f6', text: '#1e3a8a', icon: '#2563eb' };
+        case 'warning': return { bg: '#fef3c7', border: '#f59e0b', text: '#78350f', icon: '#d97706' };
+        case 'error': return { bg: '#fee2e2', border: '#ef4444', text: '#7f1d1d', icon: '#dc2626' };
+        case 'success': return { bg: '#dcfce7', border: '#22c55e', text: '#14532d', icon: '#16a34a' };
+        case 'question': return { bg: '#f3e8ff', border: '#a855f7', text: '#581c87', icon: '#9333ea' };
+        case 'note': default: return { bg: '#f1f5f9', border: '#cbd5e1', text: '#334155', icon: '#64748b' };
     }
   };
 
