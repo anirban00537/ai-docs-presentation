@@ -1,9 +1,7 @@
-export * from "./code-terminal/CodeTerminalBlock";
-export * from "./pulse-metric/PulseMetricBlock";
-export * from "./glass-insight/GlassInsightBlock";
 export * from "./spacer/SpacerBlock";
-export { NumberCardBlock } from "./number-card/NumberCardBlock";
-export { TestimonialBlock } from "./testimonial/TestimonialBlock";
-export { CtaBlock } from "./cta/CtaBlock";
-export { QuoteBlock } from "./quote/QuoteBlock";
-export { TimelineBlock } from "./timeline/TimelineBlock";
+export * from "./code/CodeBlock";
+export * from "./image/ImageBlock";
+export * from "./prosemirror/ProseMirrorBlock";
+export * from "./registry";
+export * from "./factories";
+export * from "./utils";

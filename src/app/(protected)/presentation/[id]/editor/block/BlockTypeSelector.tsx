@@ -33,27 +33,8 @@ const blockTypeOptions = [
     icon: IconHash,
     label: "Number Card",
   },
-  {
-    type: BLOCK_TYPES.TESTIMONIAL,
-    icon: IconMessageCircle,
-    label: "Testimonial",
-  },
-  {
-    type: BLOCK_TYPES.CTA,
-    icon: IconTarget,
-    label: "CTA Banner",
-  },
-  {
-    type: BLOCK_TYPES.QUOTE,
-    icon: IconQuote,
-    label: "Quote",
-  },
-  {
-    type: BLOCK_TYPES.TIMELINE,
-    icon: IconTimeline,
-    label: "Timeline",
-  },
 ];
+
 
 export const BlockTypeSelector: React.FC<BlockTypeSelectorProps> = ({
   isOpen,

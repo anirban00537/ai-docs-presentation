@@ -57,7 +57,7 @@ type ProseMirrorEditorProps = {
   placeholder?: string;
   blockId?: string;
   /** Optional theme prop. If not provided, falls back to Redux store theme */
-  theme?: Theme;
+  theme?: Theme | (Theme & { bodyColor?: string });
 };
 
 export const ProseMirrorEditor = memo(function ProseMirrorEditor({
@@ -139,31 +139,6 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       return;
     }
 
-    // #region agent log
-    const hasInlineColorStyles =
-      typeof value === "string" &&
-      (value.includes('style="color') ||
-        value.includes("style='color") ||
-        value.includes("color:"));
-    fetch("http://127.0.0.1:7242/ingest/e8f5be2f-77ff-445e-8e96-5a33ec9bea24", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        location: "editor.tsx:112",
-        message: "Content sync - checking for inline color styles",
-        data: {
-          hasInlineColorStyles,
-          valueType: typeof value,
-          valuePreview:
-            typeof value === "string" ? value.substring(0, 200) : "not-string",
-        },
-        timestamp: Date.now(),
-        sessionId: "debug-session",
-        runId: "run1",
-        hypothesisId: "C",
-      }),
-    }).catch(() => {});
-    // #endregion
 
     // Handle both Markdown string and legacy JSON format
     let prosemirrorDoc: ProseMirrorNode | null = null;
@@ -739,7 +714,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       view.destroy();
       viewRef.current = null;
     };
-  }, [initialDoc, readOnly, placeholder, executeCommand, theme]);
+  }, [initialDoc, readOnly, placeholder, executeCommand]);
 
   // Handle menu item click
   const handleMenuClick = useCallback(
@@ -795,7 +770,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       [data-prosemirror-id="${editorId}"] .ProseMirror h2,
       [data-prosemirror-id="${editorId}"] .ProseMirror h3,
       [data-prosemirror-id="${editorId}"] .ProseMirror h4 {
-        color: ${theme.headingColor} !important;
+        color: ${theme.themeType === 'dark' ? theme.bodyColor : theme.headingColor} !important;
       }
       [data-prosemirror-id="${editorId}"] .ProseMirror p,
       [data-prosemirror-id="${editorId}"] .ProseMirror li,

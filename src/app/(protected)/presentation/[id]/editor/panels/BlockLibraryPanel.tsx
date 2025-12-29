@@ -1,35 +1,29 @@
 import React from "react";
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BLOCK_TYPES } from "../blocks/definitions";
+import { 
+  BLOCK_TYPES,
+  createCalloutContent 
+} from "../blocks/definitions";
 import {
   IconFileText,
-  IconHash,
-  IconMessageCircle,
-  IconTarget,
-  IconQuote,
-  IconTimeline,
-  IconUsers,
-  IconCreditCard,
   IconPhoto,
-  IconChartBar,
-  IconListCheck,
-  IconTable,
-  IconHelp,
-  IconBrandAppstore,
-  IconVideo,
   IconCode,
-  IconProgress,
-  IconBrandTwitter,
-  IconAward,
-  IconTerminal2,
-  IconActivity,
-  IconBulb,
   IconSeparator,
+  IconHash,
+  IconNumber,
+  IconLayoutSidebarLeftCollapse,
+  IconBadge,
+  IconContrast,
+  IconBoxModel,
+  IconLayersIntersect,
+  IconPolygon,
+  IconInfoCircle,
+  IconAlertTriangle,
+  IconAlertOctagon,
+  IconNote,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
 
@@ -38,7 +32,15 @@ interface BlockLibraryPanelProps {
   onClose: () => void;
 }
 
-const blockDefinitions = [
+interface BlockDefinition {
+  type: string;
+  icon: React.ReactNode;
+  label: string;
+  description: string;
+  initialContent?: Record<string, any>;
+}
+
+const blockDefinitions: BlockDefinition[] = [
   {
     type: BLOCK_TYPES.PROSEMIRROR,
     icon: <IconFileText size={18} />,
@@ -46,88 +48,10 @@ const blockDefinitions = [
     description: "Rich text editor with formatting",
   },
   {
-    type: BLOCK_TYPES.NUMBER_CARD,
-    icon: <IconHash size={18} />,
-    label: "Number Card",
-    description: "Sequence number and description",
-  },
-  {
-    type: BLOCK_TYPES.TESTIMONIAL,
-    icon: <IconMessageCircle size={18} />,
-    label: "Testimonial",
-    description: "Customer quote with name and role",
-  },
-  {
-    type: BLOCK_TYPES.CTA,
-    icon: <IconTarget size={18} />,
-    label: "CTA Banner",
-    description: "Call-to-action with button",
-  },
-  {
-    type: BLOCK_TYPES.QUOTE,
-    icon: <IconQuote size={18} />,
-    label: "Quote",
-    description: "Inspiring quote with author",
-  },
-  {
-    type: BLOCK_TYPES.TIMELINE,
-    icon: <IconTimeline size={18} />,
-    label: "Timeline",
-    description: "Step-by-step process visualization",
-  },
-  {
-    type: BLOCK_TYPES.TEAM_CARD,
-    icon: <IconUsers size={18} />,
-    label: "Team",
-    description: "Profile card with social links",
-  },
-  {
-    type: BLOCK_TYPES.PRICING_CARD,
-    icon: <IconCreditCard size={18} />,
-    label: "Pricing",
-    description: "Feature comparison card",
-  },
-  {
-    type: BLOCK_TYPES.IMAGE_GALLERY,
+    type: BLOCK_TYPES.IMAGE,
     icon: <IconPhoto size={18} />,
-    label: "Gallery",
-    description: "Grid layout for multiple images",
-  },
-  {
-    type: BLOCK_TYPES.STATS_COUNTER,
-    icon: <IconChartBar size={18} />,
-    label: "Stats",
-    description: "Animated statistics and metrics",
-  },
-  {
-    type: BLOCK_TYPES.FEATURE_LIST,
-    icon: <IconListCheck size={18} />,
-    label: "Features",
-    description: "Showcase features with icons",
-  },
-  {
-    type: BLOCK_TYPES.COMPARISON_TABLE,
-    icon: <IconTable size={18} />,
-    label: "Compare",
-    description: "Compare features side-by-side",
-  },
-  {
-    type: BLOCK_TYPES.FAQ,
-    icon: <IconHelp size={18} />,
-    label: "FAQ",
-    description: "Expandable questions and answers",
-  },
-  {
-    type: BLOCK_TYPES.LOGO_GRID,
-    icon: <IconBrandAppstore size={18} />,
-    label: "Logos",
-    description: "Showcase partners and clients",
-  },
-  {
-    type: BLOCK_TYPES.VIDEO,
-    icon: <IconVideo size={18} />,
-    label: "Video",
-    description: "Embed YouTube or Vimeo videos",
+    label: "Image",
+    description: "Single image with caption",
   },
   {
     type: BLOCK_TYPES.CODE,
@@ -136,54 +60,89 @@ const blockDefinitions = [
     description: "Syntax-highlighted code snippets",
   },
   {
-    type: BLOCK_TYPES.PROGRESS_BAR,
-    icon: <IconProgress size={18} />,
-    label: "Progress",
-    description: "Animated progress indicators",
-  },
-  {
-    type: BLOCK_TYPES.SOCIAL_PROOF,
-    icon: <IconBrandTwitter size={18} />,
-    label: "Social",
-    description: "Social media stats and ratings",
-  },
-  {
-    type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
-    icon: <IconHash size={18} />,
-    label: "Number",
-    description: "Minimalist number with text",
-  },
-  {
-    type: BLOCK_TYPES.BADGE,
-    icon: <IconAward size={18} />,
-    label: "Badge",
-    description: "Awards and certifications",
-  },
-  {
-    type: BLOCK_TYPES.CODE_TERMINAL,
-    icon: <IconTerminal2 size={18} />,
-    label: "Terminal",
-    description: "Mini terminal window",
-  },
-  {
-    type: BLOCK_TYPES.PULSE_METRIC,
-    icon: <IconActivity size={18} />,
-    label: "Pulse",
-    description: "Animated growth metric",
-  },
-  {
-    type: BLOCK_TYPES.GLASS_INSIGHT,
-    icon: <IconBulb size={18} />,
-    label: "Insight",
-    description: "Key takeaway box",
-  },
-  {
     type: BLOCK_TYPES.SPACER,
     icon: <IconSeparator size={18} />,
     label: "Spacer",
     description: "Adjustable vertical space",
   },
+  {
+    type: BLOCK_TYPES.NUMBER_CARD,
+    icon: <IconHash size={18} />,
+    label: "Number Card",
+    description: "Sequence number and description",
+  },
+  {
+    type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
+    icon: <IconNumber size={18} />,
+    label: "Simple Number",
+    description: "Minimalist number with text",
+  },
+  {
+    type: BLOCK_TYPES.SPINE_CARD,
+    icon: <IconLayoutSidebarLeftCollapse size={18} />,
+    label: "Spine Card",
+    description: "Vertical accent for emphasis",
+  },
+  {
+    type: BLOCK_TYPES.MODERN_PILL_CARD,
+    icon: <IconBadge size={18} />,
+    label: "Pill Card",
+    description: "Categorized header with pill",
+  },
+  {
+    type: BLOCK_TYPES.INVERTED_IMPACT_BLOCK,
+    icon: <IconContrast size={18} />,
+    label: "Inverted",
+    description: "High contrast impact block",
+  },
+  {
+    type: BLOCK_TYPES.GLASS_BILLBOARD_BLOCK,
+    icon: <IconBoxModel size={18} />,
+    label: "Billboard",
+    description: "Centered hero text",
+  },
+  {
+    type: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
+    icon: <IconLayersIntersect size={18} />,
+    label: "Layered",
+    description: "Depth with large number",
+  },
+  {
+    type: BLOCK_TYPES.CORNER_CUT_BLOCK,
+    icon: <IconPolygon size={18} />,
+    label: "Corner Cut",
+    description: "Geometric edge accent",
+  },
+  {
+    type: BLOCK_TYPES.CALLOUT_BLOCK,
+    icon: <IconNote size={18} />,
+    label: "Note box",
+    description: "Neutral note box",
+    initialContent: createCalloutContent("note"),
+  },
+  {
+    type: BLOCK_TYPES.CALLOUT_BLOCK,
+    icon: <IconInfoCircle size={18} />,
+    label: "Info box",
+    description: "Blue info callout",
+    initialContent: createCalloutContent("info"),
+  },
+  {
+    type: BLOCK_TYPES.CALLOUT_BLOCK,
+    icon: <IconAlertTriangle size={18} />,
+    label: "Warning box",
+    description: "Yellow warning alert",
+    initialContent: createCalloutContent("warning"),
+  },
+  {
+    type: BLOCK_TYPES.CALLOUT_BLOCK,
+    icon: <IconAlertOctagon size={18} />,
+    label: "Error box",
+    description: "Red error/caution",
+    initialContent: createCalloutContent("error"),
+  },
 ];
+
 
 export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
   isOpen,
@@ -278,9 +237,8 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
 
             {/* Blocks Grid */}
             <div
-              className={`relative flex-1 overflow-y-auto px-3 pb-3 ${
-                isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
-              }`}
+              className={`relative flex-1 overflow-y-auto px-3 pb-3 ${isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+                }`}
             >
               <p
                 className="text-[11px] font-medium mb-2 px-1 opacity-50"
@@ -289,13 +247,14 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
                 Drag to add to your slide
               </p>
               <div className="grid grid-cols-4 gap-1">
-                {blockDefinitions.map((block) => (
+                {blockDefinitions.map((block, index) => (
                   <BlockOption
-                    key={block.type}
-                    id={`block-option-${block.type}`}
+                    key={`${block.type}-${index}`}
+                    id={`block-option-${block.type}-${index}`}
                     blockType={block.type}
                     icon={block.icon}
                     label={block.label}
+                    initialContent={block.initialContent}
                   />
                 ))}
               </div>
