@@ -55,15 +55,11 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
   );
 
   return (
-    <CommonCard
-      theme={theme}
-      className="w-full h-full transition-all duration-300 hover:shadow-md"
-    >
-      <div
+    <div
         className="flex flex-col h-full w-full relative overflow-hidden p-8"
         style={{ 
           borderRadius: theme.cardBorderRadius ?? "12px",
-          backgroundColor: theme.cardBackground,
+          backgroundColor: 'transparent',
         }}
       >
         {/* Layered Number Background */}
@@ -85,7 +81,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
                 style={{
                      borderColor: `${theme.primary}40`,
                      color: theme.primary,
-                     backgroundColor: `${theme.primary}05`
+                     // Background removed as requested
                 }}
               >
                   {readOnly ? (
@@ -115,6 +111,5 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
           />
         </div>
       </div>
-    </CommonCard>
   );
 });
