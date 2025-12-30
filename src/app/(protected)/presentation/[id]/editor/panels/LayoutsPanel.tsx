@@ -211,38 +211,7 @@ export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
               className={`relative flex-1 overflow-y-auto px-3 pb-3 ${isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
                 }`}
             >
-              <p
-                className="text-[11px] font-medium mb-2 px-1 opacity-50"
-                style={{ color: isDark ? "#fff" : "#000" }}
-              >
-                Drag to add 3 blocks at once
-              </p>
-              <div className="space-y-6">
-                <div>
-                  <h3
-                    className="text-[10px] uppercase tracking-wider font-semibold mb-2 px-1 opacity-40 font-mono"
-                    style={{ color: isDark ? "#fff" : "#000" }}
-                  >
-                    3 Columns
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {layoutDefinitions.map((layout) => (
-                      <div
-                        key={layout.id}
-                        onClick={() => handleLayoutClick(layout)}
-                        className="cursor-pointer"
-                      >
-                        <LayoutOption
-                          id={layout.id}
-                          icon={layout.icon}
-                          label={layout.label}
-                          blockType={layout.blockType}
-                          columnCount={3}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div className="space-y-6 pt-2">
 
                 {/* Master Layouts */}
                 <div>
