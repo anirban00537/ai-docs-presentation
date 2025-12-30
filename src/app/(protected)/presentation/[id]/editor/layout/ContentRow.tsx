@@ -104,7 +104,7 @@ export const ContentRow = memo(function ContentRow({
   });
 
   const MAX_COLUMNS = 3;
-  const canAddColumn = row.blocks.length < MAX_COLUMNS;
+  const canAddColumn = true; // Still allow calling the action, it handles row splitting
 
   // Use localWidths for rendering
   const gridTemplateColumns = useMemo(
@@ -349,17 +349,7 @@ export const ContentRow = memo(function ContentRow({
           onClick={() => {
             const lastBlock = row.blocks[row.blocks.length - 1];
             if (!lastBlock) return;
-
-            // If row already has 3 blocks (MAX_COLUMNS), create a new row below
-            if (row.blocks.length >= MAX_COLUMNS) {
-              // We need to use the Redux action to add a new row with the same block type
-              // Import and dispatch addRowWithColumnsAtIndex
-              // For now, use onAddColumn which will trigger the existing logic
-              onAddColumn(row.id, lastBlock.id);
-            } else {
-              // Row has space, add to current row
-              onAddColumn(row.id, lastBlock.id);
-            }
+            onAddColumn(row.id, lastBlock.id);
           }}
           className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-30 opacity-0 group-hover/row:opacity-100 transition-all duration-200 hover:scale-110"
           style={{

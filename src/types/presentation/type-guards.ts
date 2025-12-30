@@ -7,8 +7,9 @@ import type {
   BlockContent,
   CodeContent,
   ImageContent,
-  NumberCardContent,
   SimpleNumberCardContent,
+  LayeredNumberContent,
+  CalloutContent,
   SpacerContent,
   ProseMirrorDocument,
 } from "./schemas";
@@ -41,13 +42,17 @@ export const isImageContent = (
   content: BlockContent
 ): content is ImageContent => hasType(content, "image");
 
-export const isNumberCardContent = (
-  content: BlockContent
-): content is NumberCardContent => hasType(content, "number-card");
-
 export const isSimpleNumberCardContent = (
   content: BlockContent
 ): content is SimpleNumberCardContent => hasType(content, "simple-number-card");
+
+export const isLayeredNumberContent = (
+  content: BlockContent
+): content is LayeredNumberContent => hasType(content, "layered-number-block");
+
+export const isCalloutContent = (
+  content: BlockContent
+): content is CalloutContent => hasType(content, "callout-block");
 
 export const isSpacerContent = (
   content: BlockContent

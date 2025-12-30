@@ -194,43 +194,14 @@ const slidesSlice = createSlice({
       const row = slide.rows.find((r) => r.id === rowId);
       if (!row) return;
 
-      // Check if row already has blocks of a different type
-      // Enforce "one block type per row" rule
-      if (row.blocks.length > 0) {
-        const existingBlockType = row.blocks[0].type;
-        if (existingBlockType !== blockType) {
-          // Block type mismatch - create new row instead
-          const newBlock = createBlockInstance(blockType as any, initialContent);
-          const newRow = createRow([newBlock]);
-          const currentRowIndex = slide.rows.findIndex((r) => r.id === rowId);
-          slide.rows.splice(currentRowIndex + 1, 0, newRow);
-          return;
-        }
-      }
-
-      // If row already has 3 blocks, try to add to next row if it has space and same type
+      // If row already has 3 blocks, create a new row below it with the same block type
       if (row.blocks.length >= MAX_BLOCKS_PER_ROW) {
         const newBlock = createBlockInstance(blockType as any, initialContent);
-        const currentRowIndex = slide.rows.findIndex((r) => r.id === rowId);
-        const nextRow = slide.rows[currentRowIndex + 1];
-        
-        // Check if next row exists, has same block type, and has available space
-        if (nextRow && 
-            nextRow.blocks.length > 0 && 
-            nextRow.blocks.length < MAX_BLOCKS_PER_ROW &&
-            nextRow.blocks[0].type === blockType) {
-          // Add to existing next row
-          nextRow.blocks.push(newBlock);
-          // Recalculate column widths
-          nextRow.columnWidths = nextRow.blocks.map(() => 1);
-        } else {
-          // Create a new row below current row
-          const newRow = createRow([newBlock]);
-          slide.rows.splice(currentRowIndex + 1, 0, newRow);
-        }
+        const newRow = createRow([newBlock]);
+        const rowIndex = slide.rows.findIndex((r) => r.id === rowId);
+        slide.rows.splice(rowIndex + 1, 0, newRow);
         return;
       }
-
 
       const newBlock = createBlockInstance(blockType as any, initialContent);
 
@@ -255,7 +226,6 @@ const slidesSlice = createSlice({
       }
 
       // Recalculate column widths to be equal (fractional units for CSS Grid)
-      const newBlockCount = row.blocks.length;
       row.columnWidths = row.blocks.map(() => 1);
     },
     addRowToSlide: (
@@ -375,14 +345,11 @@ const slidesSlice = createSlice({
         );
         if (targetIndex === -1 || blockIndex === targetIndex) return;
 
-        // Remove from old position and insert at new position
         const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
-        // Adjust targetIndex if we removed from before the target position
         const adjustedTargetIndex =
           blockIndex < targetIndex ? targetIndex - 1 : targetIndex;
         sourceRow.blocks.splice(adjustedTargetIndex, 0, movedBlock);
 
-        // Reorder column widths to match block order
         if (sourceRow.columnWidths && sourceRow.columnWidths.length > 0) {
           const [movedWidth] = sourceRow.columnWidths.splice(blockIndex, 1);
           sourceRow.columnWidths.splice(adjustedTargetIndex, 0, movedWidth);
@@ -390,50 +357,29 @@ const slidesSlice = createSlice({
         return;
       }
 
-      // Different row - move block
+      // Different row move
       const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
-
-      // Ensure we have a valid block
       if (!movedBlock) return;
-
-      // Enforce "one block type per row" rule for cross-row moves
-      // Check if target row has blocks of different type
-      if (targetRow.blocks.length > 0) {
-        const targetRowType = targetRow.blocks[0].type;
-        if (targetRowType !== movedBlock.type) {
-          // Cannot move to row with different block type - reject the move
-          // Put the block back in its original position
-          sourceRow.blocks.splice(blockIndex, 0, movedBlock);
-          return;
-        }
-      }
 
       if (targetBlockId) {
         const targetIndex = targetRow.blocks.findIndex(
           (b) => b.id === targetBlockId
         );
         if (targetIndex === -1) {
-          // Target block not found, append to end
           targetRow.blocks.push(movedBlock);
         } else {
-          // Insert before target block
           targetRow.blocks.splice(targetIndex, 0, movedBlock);
         }
       } else {
         targetRow.blocks.push(movedBlock);
       }
 
-      // Recalculate column widths for both rows (fractional units for CSS Grid)
-      if (sourceRow.blocks.length > 0) {
-        sourceRow.columnWidths = sourceRow.blocks.map(() => 1);
-      }
-      if (targetRow.blocks.length > 0) {
-        targetRow.columnWidths = targetRow.blocks.map(() => 1);
-      }
+      // Recalculate widths
+      sourceRow.columnWidths = sourceRow.blocks.map(() => 1);
+      targetRow.columnWidths = targetRow.blocks.map(() => 1);
 
-      // Remove empty rows
+      // Clean up empty rows
       slide.rows = slide.rows.filter((r) => r.blocks.length > 0);
-      // Ensure at least one row
       if (slide.rows.length === 0) {
         slide.rows.push(createRow());
       }
@@ -472,59 +418,22 @@ const slidesSlice = createSlice({
       if (newIndex < 0 || newIndex > row.blocks.length) return;
       if (oldIndex === newIndex) return;
 
-      // Move block from oldIndex to newIndex (not swap)
       const blockToMove = row.blocks[oldIndex];
-      if (!blockToMove || !blockToMove.id) return;
-
-      const originalContent = blockToMove.content;
-
       const [movedBlock] = row.blocks.splice(oldIndex, 1);
-      // Keep column widths in sync while we move the block
+      
       let movedWidth: number | undefined;
       if (row.columnWidths && row.columnWidths.length > oldIndex) {
         movedWidth = row.columnWidths.splice(oldIndex, 1)[0];
       }
 
-      if (!movedBlock || movedBlock.id !== blockToMove.id) {
-        row.blocks.splice(oldIndex, 0, blockToMove);
-        if (movedWidth !== undefined && row.columnWidths) {
-          row.columnWidths.splice(oldIndex, 0, movedWidth);
-        }
-        return;
-      }
-
-      if (movedBlock.content !== originalContent) {
-        movedBlock.content = originalContent;
-      }
-
-      if (!movedBlock.content) {
-        const blockType = movedBlock.type || "prosemirror";
-        movedBlock.content = createBlockContentForType(blockType as any);
-      }
-
-
-      let adjustedNewIndex: number;
-      if (oldIndex < newIndex) {
-        adjustedNewIndex = newIndex - 1;
-      } else {
-        adjustedNewIndex = newIndex;
-      }
-
-      const finalIndex = Math.max(
-        0,
-        Math.min(adjustedNewIndex, row.blocks.length)
-      );
+      let adjustedNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
+      const finalIndex = Math.max(0, Math.min(adjustedNewIndex, row.blocks.length));
 
       row.blocks.splice(finalIndex, 0, movedBlock);
 
-      // Reorder column widths to match block order
       if (row.columnWidths) {
         const widthToInsert = movedWidth !== undefined ? movedWidth : 1;
-        const safeIndex = Math.max(
-          0,
-          Math.min(finalIndex, row.columnWidths.length)
-        );
-        row.columnWidths.splice(safeIndex, 0, widthToInsert);
+        row.columnWidths.splice(finalIndex, 0, widthToInsert);
       } else {
         row.columnWidths = row.blocks.map(() => 1);
       }
@@ -566,17 +475,8 @@ const slidesSlice = createSlice({
       const duplicatedBlock: Block = JSON.parse(JSON.stringify(originalBlock));
       duplicatedBlock.id = nanoid();
 
-      // If row is full, create new row below
-      if (row.blocks.length >= MAX_BLOCKS_PER_ROW) {
-        const newRow = createRow([duplicatedBlock]);
-        const rowIndex = slide.rows.findIndex((r) => r.id === rowId);
-        slide.rows.splice(rowIndex + 1, 0, newRow);
-      } else {
-        // Insert after original block
-        row.blocks.splice(blockIndex + 1, 0, duplicatedBlock);
-        // Recalculate column widths
-        row.columnWidths = row.blocks.map(() => 1);
-      }
+      row.blocks.splice(blockIndex + 1, 0, duplicatedBlock);
+      row.columnWidths = row.blocks.map(() => 1);
     },
 
     deleteBlock: (
@@ -595,12 +495,10 @@ const slidesSlice = createSlice({
 
       row.blocks = row.blocks.filter((b) => b.id !== blockId);
 
-      // Recalculate column widths if blocks remain
       if (row.blocks.length > 0) {
         row.columnWidths = row.blocks.map(() => 1);
       }
 
-      // Remove empty rows (but keep at least one row in slide)
       slide.rows = slide.rows.filter((r) => r.blocks.length > 0);
       if (slide.rows.length === 0) {
         slide.rows.push(createRow());
@@ -624,7 +522,6 @@ const slidesSlice = createSlice({
       const block = row.blocks.find((b) => b.id === blockId);
       if (!block) return;
 
-      // Change block type and reset content to default for new type
       block.type = newType;
       block.content = createBlockContentForType(newType as any);
     },
@@ -749,39 +646,31 @@ export const {
 
 export type { Block, Row, Slide, Theme, PresentationInfo, SlideAccent };
 
-// --- Undoable Reducer ---
-// Wrap the reducer with redux-undo for undo/redo functionality
-// Exclude actions that shouldn't be undoable (e.g., navigation, theme changes)
 const undoableSlidesReducer = undoable(slidesSlice.reducer, {
-  limit: 50, // Maximum number of undo steps
+  limit: 50,
   filter: excludeAction([
-    // Actions that shouldn't trigger undo history
     "slides/setActiveSlide",
     "slides/setTheme",
     "slides/resetTheme",
     "slides/setPresentation",
     "slides/updatePresentationTitle",
-    "slides/setSlides", // Initial load shouldn't be undoable
-    "slides/replaceSlideWithServerData", // Server sync shouldn't be undoable
+    "slides/setSlides",
+    "slides/replaceSlideWithServerData",
   ]),
-  // Group rapid updates together (e.g., typing)
   groupBy: (action) => {
-    // Group block content updates by block ID to prevent every keystroke from being a separate undo step
     if (action.type === "slides/updateBlockContent") {
       const payload = action.payload as { blockId: string };
       return `updateBlockContent-${payload.blockId}`;
     }
-    return null; // Default: don't group
+    return null;
   },
-  // Sync filter - ignore rapid consecutive actions of the same type
   syncFilter: true,
 });
 
-// Type for the undoable state
+export default undoableSlidesReducer;
+
 export type UndoableSlidesState = StateWithHistory<SlidesState>;
 
-// --- Selectors (updated for redux-undo state structure) ---
-// The state now has { past: [], present: SlidesState, future: [] }
 export const selectSlidesState = (state: RootState) => state.slides.present;
 export const selectSlides = (state: RootState) => state.slides.present.slides;
 export const selectActiveSlideId = (state: RootState) =>
@@ -794,13 +683,6 @@ export const selectTheme = (state: RootState) => state.slides.present.theme;
 export const selectPresentation = (state: RootState) =>
   state.slides.present.presentation;
 
-// --- Undo/Redo Selectors ---
 export const selectCanUndo = (state: RootState) => state.slides.past.length > 0;
 export const selectCanRedo = (state: RootState) =>
   state.slides.future.length > 0;
-export const selectUndoStackLength = (state: RootState) =>
-  state.slides.past.length;
-export const selectRedoStackLength = (state: RootState) =>
-  state.slides.future.length;
-
-export default undoableSlidesReducer;

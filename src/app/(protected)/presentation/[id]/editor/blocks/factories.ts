@@ -32,9 +32,8 @@ export const createRowWithColumns = (
   blockType?: BlockType,
   initialContent?: any
 ): Row => {
-  const actualCount = Math.min(columnCount, MAX_BLOCKS_PER_ROW);
   const blocks: Block[] = [];
-  for (let i = 0; i < actualCount; i++) {
+  for (let i = 0; i < columnCount; i++) {
     blocks.push(createBlockInstance(blockType, initialContent));
   }
   return createRow(blocks);
