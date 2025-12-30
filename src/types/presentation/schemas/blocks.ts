@@ -47,36 +47,9 @@ export const SimpleNumberCardContentSchema = z.object({
   editorContent: ProseMirrorDocumentSchema,
 });
 
-export const SpineCardContentSchema = z.object({
-  type: z.literal("spine-card"),
-  editorContent: ProseMirrorDocumentSchema,
-});
-
-export const ModernPillCardContentSchema = z.object({
-  type: z.literal("modern-pill-card"),
-  label: z.string().optional(),
-  editorContent: ProseMirrorDocumentSchema,
-});
-
-export const InvertedImpactContentSchema = z.object({
-  type: z.literal("inverted-impact-block"),
-  editorContent: ProseMirrorDocumentSchema,
-});
-
-export const GlassBillboardContentSchema = z.object({
-  type: z.literal("glass-billboard-block"),
-  editorContent: ProseMirrorDocumentSchema,
-});
-
 export const LayeredNumberContentSchema = z.object({
   type: z.literal("layered-number-block"),
   number: z.number(),
-  editorContent: ProseMirrorDocumentSchema,
-});
-
-export const CornerCutContentSchema = z.object({
-  type: z.literal("corner-cut-block"),
-  label: z.string().optional(),
   editorContent: ProseMirrorDocumentSchema,
 });
 
@@ -86,35 +59,18 @@ export const CalloutContentSchema = z.object({
   editorContent: ProseMirrorDocumentSchema,
 });
 
-export const StepCardContentSchema = z.object({
-  type: z.literal("step-card-block"),
-  stepNumber: z.number(),
+export const SolidBoxContentSchema = z.object({
+  type: z.literal("solid-box-block"),
   editorContent: ProseMirrorDocumentSchema,
 });
+export type SolidBoxContent = z.infer<typeof SolidBoxContentSchema>;
 
-// --- Master Content Union ---
-
-
-
-// --- New Icon Block Schemas ---
-
-export const DogEarIconContentSchema = z.object({
-  type: z.literal("dog-ear-icon-block"),
+export const SolidIconBoxContentSchema = z.object({
+  type: z.literal("solid-icon-box-block"),
   icon: z.string().optional(),
   editorContent: ProseMirrorDocumentSchema,
 });
-
-export const SplitHeaderIconContentSchema = z.object({
-  type: z.literal("split-header-icon-block"),
-  icon: z.string().optional(),
-  editorContent: ProseMirrorDocumentSchema,
-});
-
-export const OutlineOffsetIconContentSchema = z.object({
-  type: z.literal("outline-offset-icon-block"),
-  icon: z.string().optional(),
-  editorContent: ProseMirrorDocumentSchema,
-});
+export type SolidIconBoxContent = z.infer<typeof SolidIconBoxContentSchema>;
 
 export const BlockContentSchema = z.union([
   ProseMirrorDocumentSchema,
@@ -123,17 +79,10 @@ export const BlockContentSchema = z.union([
   SpacerContentSchema,
   NumberCardContentSchema,
   SimpleNumberCardContentSchema,
-  SpineCardContentSchema,
-  ModernPillCardContentSchema,
-  InvertedImpactContentSchema,
-  GlassBillboardContentSchema,
   LayeredNumberContentSchema,
-  CornerCutContentSchema,
   CalloutContentSchema,
-  StepCardContentSchema,
-  DogEarIconContentSchema,
-  SplitHeaderIconContentSchema,
-  OutlineOffsetIconContentSchema,
+  SolidBoxContentSchema,
+  SolidIconBoxContentSchema,
 ]);
 
 

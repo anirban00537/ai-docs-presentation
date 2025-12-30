@@ -9,17 +9,10 @@ import { createCodeContent, normalizeCodeContent } from "./code";
 import { createSpacerContent, normalizeSpacerContent } from "./spacer";
 import { createNumberCardContent, normalizeNumberCardContent, getDefaultNumberCardEditorContent } from "./number-card";
 import { createSimpleNumberCardContent, normalizeSimpleNumberCardContent } from "./simple-number-card";
-import { createSpineCardContent, normalizeSpineCardContent } from "./spine-card";
-import { createModernPillCardContent, normalizeModernPillCardContent } from "./modern-pill-card";
-import { createInvertedImpactContent, normalizeInvertedImpactContent } from "./inverted-impact-block";
-import { createGlassBillboardContent, normalizeGlassBillboardContent } from "./glass-billboard-block";
 import { createLayeredNumberContent, normalizeLayeredNumberContent } from "./layered-number-block";
-import { createCornerCutContent, normalizeCornerCutContent } from "./corner-cut-block";
 import { createCalloutContent, normalizeCalloutContent } from "./callout-block";
-import { createStepCardContent, normalizeStepCardContent } from "./step-card-block";
-import { createDogEarIconContent, normalizeDogEarIconContent } from "./dog-ear-icon-block";
-import { createSplitHeaderIconContent, normalizeSplitHeaderIconContent } from "./split-header-icon-block";
-import { createOutlineOffsetIconContent, normalizeOutlineOffsetIconContent } from "./outline-offset-icon-block";
+import { createSolidBoxContent, normalizeSolidBoxContent } from "./solid-box-block";
+import { createSolidIconBoxContent, normalizeSolidIconBoxContent } from "./solid-icon-box-block";
 
 // Re-export factories and normalizers
 export {
@@ -28,17 +21,10 @@ export {
   createSpacerContent, normalizeSpacerContent,
   createNumberCardContent, normalizeNumberCardContent, getDefaultNumberCardEditorContent,
   createSimpleNumberCardContent, normalizeSimpleNumberCardContent,
-  createSpineCardContent, normalizeSpineCardContent,
-  createModernPillCardContent, normalizeModernPillCardContent,
-  createInvertedImpactContent, normalizeInvertedImpactContent,
-  createGlassBillboardContent, normalizeGlassBillboardContent,
   createLayeredNumberContent, normalizeLayeredNumberContent,
-  createCornerCutContent, normalizeCornerCutContent,
   createCalloutContent, normalizeCalloutContent,
-  createStepCardContent, normalizeStepCardContent,
-  createDogEarIconContent, normalizeDogEarIconContent,
-  createSplitHeaderIconContent, normalizeSplitHeaderIconContent,
-  createOutlineOffsetIconContent, normalizeOutlineOffsetIconContent,
+  createSolidBoxContent, normalizeSolidBoxContent,
+  createSolidIconBoxContent, normalizeSolidIconBoxContent,
 };
 
 import {
@@ -61,28 +47,14 @@ export const createBlockContentForType = (
       return createNumberCardContent();
     case BLOCK_TYPES.SIMPLE_NUMBER_CARD:
       return createSimpleNumberCardContent();
-    case BLOCK_TYPES.SPINE_CARD:
-      return createSpineCardContent();
-    case BLOCK_TYPES.MODERN_PILL_CARD:
-      return createModernPillCardContent();
-    case BLOCK_TYPES.INVERTED_IMPACT_BLOCK:
-      return createInvertedImpactContent();
-    case BLOCK_TYPES.GLASS_BILLBOARD_BLOCK:
-      return createGlassBillboardContent();
     case BLOCK_TYPES.LAYERED_NUMBER_BLOCK:
       return createLayeredNumberContent();
-    case BLOCK_TYPES.CORNER_CUT_BLOCK:
-      return createCornerCutContent();
     case BLOCK_TYPES.CALLOUT_BLOCK:
       return createCalloutContent();
-    case BLOCK_TYPES.STEP_CARD_BLOCK:
-      return createStepCardContent();
-    case BLOCK_TYPES.DOG_EAR_ICON_BLOCK:
-      return createDogEarIconContent();
-    case BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK:
-      return createSplitHeaderIconContent();
-    case BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK:
-      return createOutlineOffsetIconContent();
+    case BLOCK_TYPES.SOLID_BOX_BLOCK:
+      return createSolidBoxContent();
+    case BLOCK_TYPES.SOLID_ICON_BOX_BLOCK:
+      return createSolidIconBoxContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return getDefaultHeadingContent();
@@ -104,28 +76,14 @@ export const normalizeBlockContent = (
       return normalizeNumberCardContent(content);
     case BLOCK_TYPES.SIMPLE_NUMBER_CARD:
       return normalizeSimpleNumberCardContent(content);
-    case BLOCK_TYPES.SPINE_CARD:
-      return normalizeSpineCardContent(content);
-    case BLOCK_TYPES.MODERN_PILL_CARD:
-      return normalizeModernPillCardContent(content);
-    case BLOCK_TYPES.INVERTED_IMPACT_BLOCK:
-      return normalizeInvertedImpactContent(content);
-    case BLOCK_TYPES.GLASS_BILLBOARD_BLOCK:
-      return normalizeGlassBillboardContent(content);
     case BLOCK_TYPES.LAYERED_NUMBER_BLOCK:
       return normalizeLayeredNumberContent(content);
-    case BLOCK_TYPES.CORNER_CUT_BLOCK:
-      return normalizeCornerCutContent(content);
     case BLOCK_TYPES.CALLOUT_BLOCK:
       return normalizeCalloutContent(content);
-    case BLOCK_TYPES.STEP_CARD_BLOCK:
-      return normalizeStepCardContent(content);
-    case BLOCK_TYPES.DOG_EAR_ICON_BLOCK:
-      return normalizeDogEarIconContent(content);
-    case BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK:
-      return normalizeSplitHeaderIconContent(content);
-    case BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK:
-      return normalizeOutlineOffsetIconContent(content);
+    case BLOCK_TYPES.SOLID_BOX_BLOCK:
+      return normalizeSolidBoxContent(content);
+    case BLOCK_TYPES.SOLID_ICON_BOX_BLOCK:
+      return normalizeSolidIconBoxContent(content);
     default:
       if (isMarkdownFormat(content)) {
         return content;

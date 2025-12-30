@@ -27,6 +27,7 @@ import {
   IconCircleNumber1,
   IconFolder,
   IconLayout,
+  IconStar,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
 
@@ -81,46 +82,10 @@ const blockDefinitions: BlockDefinition[] = [
     description: "Minimalist number with text",
   },
   {
-    type: BLOCK_TYPES.SPINE_CARD,
-    icon: <IconLayoutSidebarLeftCollapse size={18} />,
-    label: "Spine Card",
-    description: "Vertical accent for emphasis",
-  },
-  {
-    type: BLOCK_TYPES.MODERN_PILL_CARD,
-    icon: <IconBadge size={18} />,
-    label: "Pill Card",
-    description: "Categorized header with pill",
-  },
-  {
-    type: BLOCK_TYPES.INVERTED_IMPACT_BLOCK,
-    icon: <IconContrast size={18} />,
-    label: "Inverted",
-    description: "High contrast impact block",
-  },
-  {
-    type: BLOCK_TYPES.GLASS_BILLBOARD_BLOCK,
-    icon: <IconBoxModel size={18} />,
-    label: "Billboard",
-    description: "Centered hero text",
-  },
-  {
     type: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
     icon: <IconLayersIntersect size={18} />,
     label: "Layered",
     description: "Depth with large number",
-  },
-  {
-    type: BLOCK_TYPES.CORNER_CUT_BLOCK,
-    icon: <IconPolygon size={18} />,
-    label: "Corner Cut",
-    description: "Geometric edge accent",
-  },
-  {
-    type: BLOCK_TYPES.STEP_CARD_BLOCK,
-    icon: <IconCircleNumber1 size={18} />,
-    label: "Step Card",
-    description: "Numbered process step",
   },
   {
     type: BLOCK_TYPES.CALLOUT_BLOCK,
@@ -151,22 +116,16 @@ const blockDefinitions: BlockDefinition[] = [
     initialContent: createCalloutContent("error"),
   },
   {
-    type: BLOCK_TYPES.DOG_EAR_ICON_BLOCK,
-    icon: <IconFileText size={18} />,
-    label: "Memo",
-    description: "Icon file card",
+    type: BLOCK_TYPES.SOLID_BOX_BLOCK,
+    icon: <IconBoxModel size={18} />,
+    label: "Solid Box",
+    description: "Simple solid colored box",
   },
   {
-    type: BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK,
-    icon: <IconFolder size={18} />,
-    label: "Group",
-    description: "Folder with header",
-  },
-  {
-    type: BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK,
-    icon: <IconLayout size={18} />,
-    label: "Blueprint",
-    description: "Technical spec card",
+    type: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
+    icon: <IconStar size={18} />,
+    label: "Icon Box",
+    description: "Solid box with an icon",
   },
 ];
 

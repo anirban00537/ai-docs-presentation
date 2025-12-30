@@ -8,17 +8,10 @@ export const BLOCK_TYPES = {
   SPACER: "spacer",
   NUMBER_CARD: "number-card",
   SIMPLE_NUMBER_CARD: "simple-number-card",
-  SPINE_CARD: "spine-card",
-  MODERN_PILL_CARD: "modern-pill-card",
-  INVERTED_IMPACT_BLOCK: "inverted-impact-block",
-  GLASS_BILLBOARD_BLOCK: "glass-billboard-block",
   LAYERED_NUMBER_BLOCK: "layered-number-block",
-  CORNER_CUT_BLOCK: "corner-cut-block",
   CALLOUT_BLOCK: "callout-block",
-  STEP_CARD_BLOCK: "step-card-block",
-  DOG_EAR_ICON_BLOCK: "dog-ear-icon-block",
-  SPLIT_HEADER_ICON_BLOCK: "split-header-icon-block",
-  OUTLINE_OFFSET_ICON_BLOCK: "outline-offset-icon-block",
+  SOLID_BOX_BLOCK: "solid-box-block",
+  SOLID_ICON_BOX_BLOCK: "solid-icon-box-block",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

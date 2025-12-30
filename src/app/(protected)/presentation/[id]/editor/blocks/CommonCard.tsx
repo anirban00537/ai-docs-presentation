@@ -34,6 +34,7 @@ export const CommonCard = memo(function CommonCard({
         minWidth: "auto",
         maxWidth: "none",
         width: "100%",
+        height: "100%",
         minHeight: "auto",
       }}
       onMouseEnter={onMouseEnter}

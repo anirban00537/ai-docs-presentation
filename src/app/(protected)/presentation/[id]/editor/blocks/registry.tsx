@@ -11,17 +11,10 @@ import { CodeBlock } from "./code/CodeBlock";
 import { SpacerBlock } from "./spacer/SpacerBlock";
 import { NumberCardBlock } from "./number-card/NumberCardBlock";
 import { SimpleNumberCardBlock } from "./simple-number-card/SimpleNumberCardBlock";
-import { SpineCardBlock } from "./spine-card/SpineCardBlock";
-import { ModernPillCardBlock } from "./modern-pill-card/ModernPillCardBlock";
-import { InvertedImpactBlock } from "./inverted-impact-block/InvertedImpactBlock";
-import { GlassBillboardBlock } from "./glass-billboard-block/GlassBillboardBlock";
 import { LayeredNumberBlock } from "./layered-number-block/LayeredNumberBlock";
-import { CornerCutBlock } from "./corner-cut-block/CornerCutBlock";
 import { CalloutBlock } from "./callout-block/CalloutBlock";
-import { StepCardBlock } from "./step-card-block/StepCardBlock";
-import { DogEarIconBlock } from "./dog-ear-icon-block/DogEarIconBlock";
-import { SplitHeaderIconBlock } from "./split-header-icon-block/SplitHeaderIconBlock";
-import { OutlineOffsetIconBlock } from "./outline-offset-icon-block/OutlineOffsetIconBlock";
+import { SolidBoxBlock } from "./solid-box-block/SolidBoxBlock";
+import { SolidIconBoxBlock } from "./solid-icon-box-block/SolidIconBoxBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -74,41 +67,11 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.SIMPLE_NUMBER_CARD, content),
   },
-  [BLOCK_TYPES.SPINE_CARD]: {
-    type: BLOCK_TYPES.SPINE_CARD,
-    component: SpineCardBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.SPINE_CARD, content),
-  },
-  [BLOCK_TYPES.MODERN_PILL_CARD]: {
-    type: BLOCK_TYPES.MODERN_PILL_CARD,
-    component: ModernPillCardBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.MODERN_PILL_CARD, content),
-  },
-  [BLOCK_TYPES.INVERTED_IMPACT_BLOCK]: {
-    type: BLOCK_TYPES.INVERTED_IMPACT_BLOCK,
-    component: InvertedImpactBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.INVERTED_IMPACT_BLOCK, content),
-  },
-  [BLOCK_TYPES.GLASS_BILLBOARD_BLOCK]: {
-    type: BLOCK_TYPES.GLASS_BILLBOARD_BLOCK,
-    component: GlassBillboardBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.GLASS_BILLBOARD_BLOCK, content),
-  },
   [BLOCK_TYPES.LAYERED_NUMBER_BLOCK]: {
     type: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
     component: LayeredNumberBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.LAYERED_NUMBER_BLOCK, content),
-  },
-  [BLOCK_TYPES.CORNER_CUT_BLOCK]: {
-    type: BLOCK_TYPES.CORNER_CUT_BLOCK,
-    component: CornerCutBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.CORNER_CUT_BLOCK, content),
   },
   [BLOCK_TYPES.CALLOUT_BLOCK]: {
     type: BLOCK_TYPES.CALLOUT_BLOCK,
@@ -116,29 +79,17 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.CALLOUT_BLOCK, content),
   },
-  [BLOCK_TYPES.STEP_CARD_BLOCK]: {
-    type: BLOCK_TYPES.STEP_CARD_BLOCK,
-    component: StepCardBlock,
+  [BLOCK_TYPES.SOLID_BOX_BLOCK]: {
+    type: BLOCK_TYPES.SOLID_BOX_BLOCK,
+    component: SolidBoxBlock,
     normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.STEP_CARD_BLOCK, content),
+      normalizeBlockContent(BLOCK_TYPES.SOLID_BOX_BLOCK, content),
   },
-  [BLOCK_TYPES.DOG_EAR_ICON_BLOCK]: {
-    type: BLOCK_TYPES.DOG_EAR_ICON_BLOCK,
-    component: DogEarIconBlock,
+  [BLOCK_TYPES.SOLID_ICON_BOX_BLOCK]: {
+    type: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
+    component: SolidIconBoxBlock,
     normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.DOG_EAR_ICON_BLOCK, content),
-  },
-  [BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK]: {
-    type: BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK,
-    component: SplitHeaderIconBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.SPLIT_HEADER_ICON_BLOCK, content),
-  },
-  [BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK]: {
-    type: BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK,
-    component: OutlineOffsetIconBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.OUTLINE_OFFSET_ICON_BLOCK, content),
+      normalizeBlockContent(BLOCK_TYPES.SOLID_ICON_BOX_BLOCK, content),
   },
 };
 
