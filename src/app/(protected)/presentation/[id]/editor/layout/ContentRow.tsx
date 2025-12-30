@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, memo, useMemo } from "react";
+import React, { useState, useRef, useCallback, memo, useMemo, useEffect } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { BlockColumn } from "./BlockColumn";
 import type { Row } from "@/store/slices/slidesSlice";
@@ -62,7 +62,31 @@ export const ContentRow = memo(function ContentRow({
     index: number;
     leftPercent: number;
   } | null>(null);
+  const [isResizing, setIsResizing] = useState(false);
   
+  // Initialize widths
+  const [localWidths, setLocalWidths] = useState<number[]>(
+    row.columnWidths && row.columnWidths.length === row.blocks.length
+      ? row.columnWidths
+      : Array(row.blocks.length).fill(1)
+  );
+  
+  // Keep tracks of widths without triggering effects during drag
+  const latestWidthsRef = useRef<number[]>(localWidths);
+
+  // Sync state when row blocks change or external updates happen
+  useEffect(() => {
+    if (!isResizing) {
+      const newWidths =
+        row.columnWidths && row.columnWidths.length === row.blocks.length
+          ? row.columnWidths
+          : Array(row.blocks.length).fill(1);
+      
+      setLocalWidths(newWidths);
+      latestWidthsRef.current = newWidths;
+    }
+  }, [row.columnWidths, row.blocks.length, isResizing]);
+
   const rowContainerRef = useRef<HTMLDivElement>(null);
   const reduxTheme = useAppSelector(selectTheme);
   const theme = themeProp || reduxTheme || DEFAULT_THEME;
@@ -82,15 +106,62 @@ export const ContentRow = memo(function ContentRow({
   const MAX_COLUMNS = 3;
   const canAddColumn = row.blocks.length < MAX_COLUMNS;
 
-  // Calculate equal width columns
+  // Use localWidths for rendering
   const gridTemplateColumns = useMemo(
-    () => `repeat(${row.blocks.length}, 1fr)`,
-    [row.blocks.length]
+    () => localWidths.map((w) => `${w}fr`).join(" "),
+    [localWidths]
+  );
+  
+  const handleResizeStart = useCallback(() => {
+    setIsResizing(true);
+  }, []);
+
+  const handleResizeEnd = useCallback(() => {
+    setIsResizing(false);
+    // Commit the final widths to Redux
+    if (latestWidthsRef.current) {
+      onUpdateColumnWidths(row.id, latestWidthsRef.current);
+    }
+  }, [onUpdateColumnWidths, row.id]);
+
+  const handleResize = useCallback(
+    (index: number, deltaX: number) => {
+      if (!rowContainerRef.current) return;
+      const containerWidth = rowContainerRef.current.offsetWidth;
+      const totalFr = latestWidthsRef.current.reduce((sum, w) => sum + w, 0);
+      
+      // Convert pixel delta to Fr delta
+      const deltaFr = (deltaX / containerWidth) * totalFr;
+
+      // Update the two adjacent columns
+      setLocalWidths((prev) => {
+        const next = [...prev];
+        const leftWidth = next[index];
+        const rightWidth = next[index + 1];
+
+        // Limits for min width (e.g. 0.2fr)
+        const MIN_WIDTH = 0.2;
+
+        if (leftWidth + deltaFr < MIN_WIDTH) {
+           return prev; // Too small
+        }
+        if (rightWidth - deltaFr < MIN_WIDTH) {
+           return prev; // Too small
+        }
+        
+        next[index] = leftWidth + deltaFr;
+        next[index + 1] = rightWidth - deltaFr;
+        
+        latestWidthsRef.current = next;
+        return next;
+      });
+    },
+    []
   );
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | MouseEvent) => {
-      if ((!isOver && !isAnyDragActive) || !rowContainerRef.current) {
+      if ((!isOver && !isAnyDragActive) || !rowContainerRef.current || isResizing) {
         if (!isOver && !isAnyDragActive) setDropIndicator(null);
         return;
       }
@@ -109,13 +180,19 @@ export const ContentRow = memo(function ContentRow({
         setDropIndicator({ index: 0, leftPercent: 50 });
         return;
       }
-
-      // Calculate equal-width boundaries
-      const boundaries: number[] = [];
-      for (let i = 0; i <= blockCount; i++) {
-        boundaries.push((i / blockCount) * rect.width);
+      
+      // Calculate boundaries based on current widths
+      const totalFr = localWidths.reduce((sum, w) => sum + w, 0);
+      const boundaries: number[] = [0];
+      let currentX = 0;
+      
+      for (let i = 0; i < blockCount; i++) {
+        const widthPercent = localWidths[i] / totalFr;
+        currentX += widthPercent * rect.width;
+        boundaries.push(currentX);
       }
 
+      // Find closest boundary
       let closestIndex = 0;
       let minDistance = Infinity;
 
@@ -134,7 +211,7 @@ export const ContentRow = memo(function ContentRow({
         leftPercent: Math.min(100, Math.max(0, leftPercent)),
       });
     },
-    [isOver, isAnyDragActive, row.blocks.length]
+    [isOver, isAnyDragActive, row.blocks.length, localWidths, isResizing]
   );
 
   const handleMouseLeave = useCallback(() => {}, []);
@@ -248,6 +325,11 @@ export const ContentRow = memo(function ContentRow({
             canAddColumn={canAddColumn}
             readOnly={readOnly}
             theme={theme}
+            // Resize props
+            onResize={handleResize}
+            isResizing={isResizing}
+            onResizeStart={handleResizeStart}
+            onResizeEnd={handleResizeEnd}
           />
         ))}
 
@@ -307,4 +389,3 @@ export const ContentRow = memo(function ContentRow({
     </div>
   );
 });
-

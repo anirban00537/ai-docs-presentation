@@ -20,6 +20,10 @@ interface BlockColumnProps {
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   isLastBlock: boolean;
   canAddColumn: boolean;
+  onResize?: (index: number, deltaX: number) => void;
+  isResizing?: boolean;
+  onResizeStart?: () => void;
+  onResizeEnd?: () => void;
   readOnly?: boolean;
   /** Optional theme prop. If not provided, falls back to Redux store theme */
   theme?: Theme;
@@ -37,10 +41,17 @@ export const BlockColumn = memo(function BlockColumn({
   onAddColumn,
   isLastBlock,
   canAddColumn,
+  onResize,
+  isResizing,
+  onResizeStart,
+  onResizeEnd,
   readOnly = false,
   theme: themeProp,
 }: BlockColumnProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isBorderHovered, setIsBorderHovered] = useState(false);
+  const [isResizingActive, setIsResizingActive] = useState(false);
+  
   const reduxTheme = useAppSelector(selectTheme);
   const theme = themeProp || reduxTheme || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
@@ -48,6 +59,12 @@ export const BlockColumn = memo(function BlockColumn({
   const { setFocusedBlock } = useBlockFocus();
   const handleStartRef = useRef<{ x: number; y: number } | null>(null);
   const wasDraggingRef = useRef(false);
+
+  // Resize logic variables
+  const borderResizeRef = useRef<HTMLDivElement>(null);
+  const lastXRef = useRef<number>(0);
+  const mouseMoveHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
+  const mouseUpHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
 
   const {
     attributes,
@@ -67,6 +84,50 @@ export const BlockColumn = memo(function BlockColumn({
     zIndex: isDragging ? 200 : undefined,
   };
 
+  // Resize Handlers
+  const handleBorderMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (onResizeStart) onResizeStart();
+      setIsResizingActive(true);
+      lastXRef.current = e.clientX;
+
+      const handleMouseMove = (moveEvent: MouseEvent) => {
+        const deltaX = moveEvent.clientX - lastXRef.current;
+        lastXRef.current = moveEvent.clientX;
+        if (onResize) onResize(index, deltaX);
+      };
+
+      const handleMouseUp = (upEvent: MouseEvent) => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        mouseMoveHandlerRef.current = null;
+        mouseUpHandlerRef.current = null;
+        setIsResizingActive(false);
+        if (onResizeEnd) onResizeEnd();
+      };
+
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      mouseMoveHandlerRef.current = handleMouseMove;
+      mouseUpHandlerRef.current = handleMouseUp;
+    },
+    [index, onResize, onResizeStart, onResizeEnd]
+  );
+  
+  // Cleanup resize listeners on unmount
+  useEffect(() => {
+    return () => {
+      if (mouseMoveHandlerRef.current) {
+        document.removeEventListener("mousemove", mouseMoveHandlerRef.current);
+      }
+      if (mouseUpHandlerRef.current) {
+        document.removeEventListener("mouseup", mouseUpHandlerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div
@@ -77,11 +138,35 @@ export const BlockColumn = memo(function BlockColumn({
       onMouseLeave={() => !readOnly && setIsHovered(false)}
     >
       <div className="relative h-full w-full flex flex-col">
+        {/* Resize Handle - Only shows between blocks */}
+        {!readOnly && !isLastBlock && onResize && (
+          <div
+            ref={borderResizeRef}
+            className="absolute top-4 bottom-4 right-[-6px] z-50 flex items-center justify-center cursor-col-resize touch-none"
+            style={{ 
+              width: "12px",
+              marginRight: "-6px" 
+            }}
+            onMouseEnter={() => setIsBorderHovered(true)}
+            onMouseLeave={() => setIsBorderHovered(false)}
+            onMouseDown={handleBorderMouseDown}
+          >
+            {/* Visual Line */}
+            <div 
+              className={`w-[2px] h-full rounded-full transition-all duration-200 ${
+                isBorderHovered || isResizingActive 
+                  ? "opacity-100 bg-blue-500 shadow-[0_0_0_1px_rgba(59,130,246,0.3)]" 
+                  : "opacity-0 group-hover/column:opacity-30 bg-gray-400"
+              }`}
+            />
+          </div>
+        )}
+
         {/* Column Handle - Minimal */}
         {!readOnly && (
           <div
             className={`absolute z-30 transition-all duration-200 ${
-              isHovered ? "opacity-100" : "opacity-0 group-hover/column:opacity-100"
+              isHovered && !isResizing ? "opacity-100" : "opacity-0 group-hover/column:opacity-100"
             }`}
             style={{
               top: "-2px",
@@ -148,4 +233,3 @@ export const BlockColumn = memo(function BlockColumn({
     </div>
   );
 });
-
