@@ -804,6 +804,50 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       [data-prosemirror-id="${editorId}"] .ProseMirror h4.is-empty::before {
         color: ${theme.bodyColor}80 !important;
       }
+      /* Hide ALL browser extensions - writing tools, password managers, etc */
+      [data-prosemirror-id="${editorId}"] grammarly-extension,
+      [data-prosemirror-id="${editorId}"] grammarly-desktop-integration,
+      [data-prosemirror-id="${editorId}"] .gr_,
+      [data-prosemirror-id="${editorId}"] [data-grammarly-part],
+      [data-prosemirror-id="${editorId}"] [class*="grammarly"],
+      [data-prosemirror-id="${editorId}"] ltframe,
+      [data-prosemirror-id="${editorId}"] [class*="languagetool"],
+      [data-prosemirror-id="${editorId}"] [class*="prowritingaid"],
+      [data-prosemirror-id="${editorId}"] [class*="ginger"],
+      [data-prosemirror-id="${editorId}"] [class*="whitesmoke"],
+      [data-prosemirror-id="${editorId}"] [class*="wordtune"],
+      [data-prosemirror-id="${editorId}"] [class*="quillbot"],
+      [data-prosemirror-id="${editorId}"] [class*="sapling"],
+      [data-prosemirror-id="${editorId}"] [class*="writer"],
+      [data-prosemirror-id="${editorId}"] [class*="reverso"],
+      [data-prosemirror-id="${editorId}"] [class*="trinka"],
+      [data-prosemirror-id="${editorId}"] [class*="ludwig"],
+      [data-prosemirror-id="${editorId}"] [class*="textexpander"],
+      [data-prosemirror-id="${editorId}"] [class*="perfectit"],
+      [data-prosemirror-id="${editorId}"] [class*="hemingway"],
+      [data-prosemirror-id="${editorId}"] [class*="honey"],
+      [data-prosemirror-id="${editorId}"] [class*="lastpass"],
+      [data-prosemirror-id="${editorId}"] [class*="1password"],
+      [data-prosemirror-id="${editorId}"] [class*="dashlane"],
+      [data-prosemirror-id="${editorId}"] [class*="bitwarden"],
+      [data-prosemirror-id="${editorId}"] [data-lastpass-icon-root],
+      [data-prosemirror-id="${editorId}"] [data-extension],
+      [data-prosemirror-id="${editorId}"] [class*="extension"],
+      [data-prosemirror-id="${editorId}"] iframe[src*="extension"],
+      [data-prosemirror-id="${editorId}"] [id*="grammarly"],
+      [data-prosemirror-id="${editorId}"] [id*="ginger"],
+      [data-prosemirror-id="${editorId}"] [id*="wordtune"],
+      [data-prosemirror-id="${editorId}"] [id*="quillbot"],
+      [data-prosemirror-id="${editorId}"] [id*="sapling"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+      }
     `;
   }, [theme]);
 
@@ -821,6 +865,8 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
         data-gramm="false"
         data-gramm_editor="false"
         data-enable-grammarly="false"
+        data-grammarly-disable="true"
+        spellCheck="false"
       />
       {/* Edit UI - hidden in readOnly mode */}
       {!readOnly && (
