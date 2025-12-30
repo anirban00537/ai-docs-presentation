@@ -67,17 +67,31 @@ export const CalloutContentSchema = z.object({
   editorContent: ProseMirrorDocumentSchema,
 });
 
+export const SolidBoxItemSchema = z.object({
+  id: z.string(),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
+});
+
 export const SolidBoxContentSchema = z.object({
   type: z.literal("solid-box-block"),
-  editorContent: ProseMirrorDocumentSchema,
+  items: z.array(SolidBoxItemSchema).default([]),
 });
+export type SolidBoxItem = z.infer<typeof SolidBoxItemSchema>;
 export type SolidBoxContent = z.infer<typeof SolidBoxContentSchema>;
+
+export const SolidIconBoxItemSchema = z.object({
+  id: z.string(),
+  icon: z.string().optional(),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
+});
 
 export const SolidIconBoxContentSchema = z.object({
   type: z.literal("solid-icon-box-block"),
-  icon: z.string().optional(),
-  editorContent: ProseMirrorDocumentSchema,
+  items: z.array(SolidIconBoxItemSchema).default([]),
 });
+export type SolidIconBoxItem = z.infer<typeof SolidIconBoxItemSchema>;
 export type SolidIconBoxContent = z.infer<typeof SolidIconBoxContentSchema>;
 
 export const SidelineCardItemSchema = z.object({

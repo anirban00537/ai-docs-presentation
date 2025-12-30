@@ -31,22 +31,7 @@ interface LayoutDefinition {
 }
 
 // Only 3-column layouts
-const layoutDefinitions: LayoutDefinition[] = [
-  {
-    id: "solid-box-3col",
-    blockType: BLOCK_TYPES.SOLID_BOX_BLOCK,
-    icon: <IconBoxModel size={18} />,
-    label: "Solid Box",
-    description: "Three solid colored boxes",
-  },
-  {
-    id: "icon-box-3col",
-    blockType: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
-    icon: <IconStar size={18} />,
-    label: "Icon Box",
-    description: "Three boxes with icons",
-  },
-];
+const layoutDefinitions: LayoutDefinition[] = [];
 
 const masterLayouts: LayoutDefinition[] = [
   {
@@ -95,6 +80,22 @@ const masterLayouts: LayoutDefinition[] = [
     icon: <IconLayoutSidebarLeftCollapse size={18} />,
     label: "Side Accent Grid",
     description: "Grid of elegant side-accent cards",
+    columnCount: 1,
+  },
+  {
+    id: "icon-grid",
+    blockType: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
+    icon: <IconStar size={18} />,
+    label: "Icon Grid",
+    description: "Grid of featured icon cards",
+    columnCount: 1,
+  },
+  {
+    id: "focus-grid",
+    blockType: BLOCK_TYPES.SOLID_BOX_BLOCK,
+    icon: <IconBoxModel size={18} />,
+    label: "Focus Grid",
+    description: "Grid of clean focus cards",
     columnCount: 1,
   },
 ];
