@@ -1,18 +1,59 @@
-import { BlockContent, BLOCK_TYPES } from "@/types/presentation";
+import { BLOCK_TYPES, type SidelineCardContent, type SidelineCardItem } from "@/types/presentation";
 import { SidelineCardContentSchema } from "@/types/presentation/schemas/blocks";
+import { nanoid } from "nanoid";
 
-export const getDefaultSidelineCardEditorContent = (): string =>
-  "### Key Insight\n\nUse this card to highlight important takeaways. The vertical accent draws attention while maintaining a clean, structured look.";
-
-export const createSidelineCardContent = (): any => ({
-  type: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
-  editorContent: getDefaultSidelineCardEditorContent(),
+export const createSidelineCardItem = (
+  title: string = "## Key Insight",
+  description: string = "Highlight important takeaways here. The vertical accent draws attention."
+): SidelineCardItem => ({
+  id: nanoid(),
+  title,
+  description,
 });
 
-export const normalizeSidelineCardContent = (content: unknown): any => {
-  const parsed = SidelineCardContentSchema.safeParse(content);
-  if (parsed.success) {
-    return parsed.data;
+export const createSidelineCardContent = (itemCount: number = 3): SidelineCardContent => ({
+  type: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
+  items: Array.from({ length: itemCount }, () => createSidelineCardItem()),
+});
+
+export const normalizeSidelineCardContent = (content: any): SidelineCardContent => {
+  if (!content || typeof content !== "object") return createSidelineCardContent();
+
+  // Handle legacy single content migration
+  if (content.editorContent && !content.items) {
+    return {
+      type: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
+      items: [createSidelineCardItem("## Insight", content.editorContent)],
+    };
   }
+
+  // Handle items migration
+  let items = content.items;
+  if (Array.isArray(content.items)) {
+    items = content.items.map((item: any) => {
+        if (item.editorContent && (!item.title || !item.description)) {
+            return {
+                id: item.id || nanoid(),
+                title: item.title || "## Title",
+                description: item.description || item.editorContent,
+            };
+        }
+        return {
+            id: item.id || nanoid(),
+            title: item.title || "## Title",
+            description: item.description || "Description",
+        };
+    });
+  }
+
+  const result = SidelineCardContentSchema.safeParse({
+    ...content,
+    items: items || createSidelineCardContent().items,
+  });
+
+  if (result.success) {
+    return result.data;
+  }
+
   return createSidelineCardContent();
 };

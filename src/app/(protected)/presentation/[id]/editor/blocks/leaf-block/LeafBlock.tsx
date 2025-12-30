@@ -62,14 +62,11 @@ export const LeafBlock = memo(function LeafBlock({
                 {items.map((item, index) => (
                     <div
                         key={item.id}
-                        className="relative group/leaf p-8 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
+                        className="relative group/leaf p-8 transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
                         style={{
                             borderRadius: "0px 48px 0px 48px",
-                            backgroundColor: theme.cardBackground,
-                            border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"}`,
-                            boxShadow: isDark 
-                                ? "0 10px 30px -5px rgba(0,0,0,0.5)" 
-                                : `0 10px 30px -5px ${theme.primary}15`,
+                            backgroundColor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.5)",
+                            backdropFilter: "blur(12px)",
                         }}
                     >
                         {/* Premium Glow Effect */}

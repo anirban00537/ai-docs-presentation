@@ -80,10 +80,17 @@ export const SolidIconBoxContentSchema = z.object({
 });
 export type SolidIconBoxContent = z.infer<typeof SolidIconBoxContentSchema>;
 
+export const SidelineCardItemSchema = z.object({
+  id: z.string(),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
+});
+
 export const SidelineCardContentSchema = z.object({
   type: z.literal("sideline-card-block"),
-  editorContent: ProseMirrorDocumentSchema,
+  items: z.array(SidelineCardItemSchema).default([]),
 });
+export type SidelineCardItem = z.infer<typeof SidelineCardItemSchema>;
 export type SidelineCardContent = z.infer<typeof SidelineCardContentSchema>;
 export const ButtonBlockContentSchema = z.object({
   type: z.literal("button-block"),
@@ -111,8 +118,8 @@ export type LeafBlockContent = z.infer<typeof LeafBlockContentSchema>;
 // Timeline Bento Block
 export const TimelineBentoItemSchema = z.object({
   id: z.string(),
-  title: z.string(),
-  description: z.string(),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
 });
 
 export const TimelineBentoContentSchema = z.object({

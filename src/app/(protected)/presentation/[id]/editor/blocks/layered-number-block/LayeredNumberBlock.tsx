@@ -77,11 +77,8 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
             className="relative group/layered p-10 transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
             style={{
               borderRadius: "32px",
-              backgroundColor: theme.cardBackground,
-              border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`,
-              boxShadow: isDark 
-                ? "0 20px 50px -15px rgba(0,0,0,0.7)" 
-                : `0 20px 50px -15px ${theme.primary}15`,
+              backgroundColor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.4)",
+              backdropFilter: "blur(20px)",
             }}
           >
             {/* Massive Background Number Indicator */}

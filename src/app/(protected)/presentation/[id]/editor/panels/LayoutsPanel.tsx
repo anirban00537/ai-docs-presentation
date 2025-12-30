@@ -46,13 +46,6 @@ const layoutDefinitions: LayoutDefinition[] = [
     label: "Icon Box",
     description: "Three boxes with icons",
   },
-  {
-    id: "sideline-3col",
-    blockType: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
-    icon: <IconLayoutSidebarLeftCollapse size={18} />,
-    label: "Side Line",
-    description: "Three accent-line cards",
-  },
 ];
 
 const masterLayouts: LayoutDefinition[] = [
@@ -94,6 +87,14 @@ const masterLayouts: LayoutDefinition[] = [
     icon: <IconLeaf size={18} />,
     label: "Leaf Grid",
     description: "Internal grid of leaf cards",
+    columnCount: 1,
+  },
+  {
+    id: "side-accent-grid",
+    blockType: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
+    icon: <IconLayoutSidebarLeftCollapse size={18} />,
+    label: "Side Accent Grid",
+    description: "Grid of elegant side-accent cards",
     columnCount: 1,
   },
 ];

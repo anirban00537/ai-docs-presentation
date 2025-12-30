@@ -65,10 +65,9 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
             }}
         >
             <div 
-                className="w-full h-full flex flex-col items-center gap-0 shadow-sm border"
+                className="w-full h-full flex flex-col items-center gap-0"
                 style={{
                     background: theme.cardBackground,
-                    borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
                     borderRadius: "12px",
                 }}
             >
@@ -87,10 +86,9 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                         >
                             {/* Number Indicator - Unique design element */}
                             <div 
-                                className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold z-20 shadow-lg border transition-transform group-hover/item:scale-110"
+                                className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold z-20 transition-transform group-hover/item:scale-110"
                                 style={{
                                     background: theme.cardBackground,
-                                    borderColor: theme.primary,
                                     color: theme.primary,
                                 }}
                             >
@@ -107,7 +105,7 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                                     Remove
                                 </button>
                             )}
-                            <div className="bg-white/90 dark:bg-black/90 backdrop-blur shadow-sm border border-gray-200 dark:border-gray-800 rounded-md px-2 py-0.5 flex items-center justify-center">
+                            <div className="bg-white/90 dark:bg-black/90 backdrop-blur rounded-md px-2 py-0.5 flex items-center justify-center">
                                 <span className="text-gray-400 text-xs font-bold tracking-widest text-[8px]">OPTIONS</span>
                             </div>
                         </div>
@@ -162,10 +160,9 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
             {!readOnly && (
                 <button
                     onClick={handleAddItem}
-                    className="absolute bottom-6 right-6 h-10 w-10 flex items-center justify-center rounded-full shadow-lg border transition-all hover:scale-110 active:scale-95 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    className="absolute bottom-6 right-6 h-10 w-10 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     style={{
                         background: theme.cardBackground,
-                        borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
                         color: theme.primary,
                     }}
                 >

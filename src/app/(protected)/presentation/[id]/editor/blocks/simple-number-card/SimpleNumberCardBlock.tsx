@@ -76,12 +76,8 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
             key={item.id}
             className="relative group/num-card p-8 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
             style={{
-              borderRadius: "24px",
+              borderRadius: "20px",
               backgroundColor: theme.cardBackground,
-              border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"}`,
-              boxShadow: isDark 
-                ? "0 10px 40px -10px rgba(0,0,0,0.6)" 
-                : `0 10px 40px -10px ${theme.primary}20`,
             }}
           >
             {/* Background Decoration */}

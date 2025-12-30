@@ -4,7 +4,7 @@ import type { Block, Theme, TimelineBentoContent } from "@/types/presentation";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { createTimelineBentoItem } from "../definitions/timeline-bento-block";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconX } from "@tabler/icons-react";
 
 interface TimelineBentoBlockProps {
     block: Block;
@@ -27,6 +27,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
     const items = content.items || [];
 
     const handleItemUpdate = (index: number, field: "title" | "description", value: string) => {
+        if (readOnly) return;
         const newItems = [...items];
         newItems[index] = {
             ...newItems[index],
@@ -39,6 +40,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
     };
 
     const handleAddItem = () => {
+        if (readOnly) return;
         const newItem = createTimelineBentoItem();
         onUpdate({
             ...content,
@@ -46,17 +48,24 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
         });
     };
 
+    const handleRemoveItem = (index: number) => {
+        if (readOnly) return;
+        const newItems = items.filter((_, i) => i !== index);
+        onUpdate({
+            ...content,
+            items: newItems,
+        });
+    };
+
     return (
-        <div className="group relative w-full h-full min-h-[400px] py-4">
+        <div className="group relative w-full h-full min-h-[400px] py-12">
             {/* Responsive Vertical Timeline Line */}
             <div
                 className="absolute left-8 md:left-1/2 top-0 bottom-0 md:-translate-x-1/2"
                 style={{
-                    width: "3px",
-                    background: isDark
-                        ? `linear-gradient(180deg, transparent 0%, ${theme.primary || "#3b82f6"} 10%, ${theme.primary || "#3b82f6"} 90%, transparent 100%)`
-                        : `linear-gradient(180deg, transparent 0%, ${theme.primary || "#3b82f6"} 10%, ${theme.primary || "#3b82f6"} 90%, transparent 100%)`,
-                    opacity: 0.6,
+                    width: "2px",
+                    background: `linear-gradient(180deg, transparent 0%, ${theme.primary} 15%, ${theme.primary} 85%, transparent 100%)`,
+                    opacity: 0.5,
                 }}
             />
 
@@ -72,26 +81,36 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                 {isLeft && (
                                     <div className="w-full md:max-w-[90%]">
                                         <div
-                                            className="rounded-xl p-4 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+                                            className="relative group/timeline-card rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1"
                                             style={{
-                                                background: theme.cardBackground,
-                                                border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"}`,
-                                                boxShadow: isDark
-                                                    ? "0 4px 20px rgba(0, 0, 0, 0.3)"
-                                                    : `0 4px 20px ${theme.primary}15`,
+                                                backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.6)",
+                                                backdropFilter: "blur(16px)",
                                             }}
                                         >
+                                            {/* Remove Button */}
+                                            {!readOnly && (
+                                                <button
+                                                    onClick={() => handleRemoveItem(index)}
+                                                    className="absolute top-3 right-3 z-30 opacity-0 group-hover/timeline-card:opacity-100 transition-all p-1.5 rounded-full hover:bg-red-500/10 hover:text-red-500 text-gray-400"
+                                                >
+                                                    <IconX size={14} stroke={2.5} />
+                                                </button>
+                                            )}
+
                                             {/* Title Editor */}
-                                            <div className="mb-3">
+                                            <div className="mb-2">
                                                 <ProseMirrorEditor
                                                     key={`${item.id}-title`}
                                                     blockId={`${item.id}-title`}
                                                     value={item.title}
                                                     onChange={(value) => handleItemUpdate(index, "title", value)}
-                                                    placeholder="Item"
+                                                    placeholder="Event"
                                                     readOnly={readOnly}
-                                                    theme={theme}
-                                                    className="text-xl font-semibold"
+                                                    theme={{
+                                                        ...theme,
+                                                        headingColor: theme.primary,
+                                                    }}
+                                                    className="text-xl font-bold tracking-tight"
                                                 />
                                             </div>
 
@@ -102,10 +121,10 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                                     blockId={`${item.id}-description`}
                                                     value={item.description}
                                                     onChange={(value) => handleItemUpdate(index, "description", value)}
-                                                    placeholder="Description"
+                                                    placeholder="Details..."
                                                     readOnly={readOnly}
                                                     theme={theme}
-                                                    className="text-sm"
+                                                    className="text-sm leading-relaxed opacity-70"
                                                 />
                                             </div>
                                         </div>
@@ -113,48 +132,57 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                 )}
                             </div>
 
-                            {/* Timeline Dot (Responsive Position) */}
-                            <div
-                                className="absolute left-8 md:left-1/2 md:-translate-x-1/2 z-10 top-6 md:top-1/2 md:-translate-y-1/2"
-                                style={{
-                                    width: "16px",
-                                    height: "16px",
-                                }}
-                            >
-                                <div
-                                    className="w-full h-full rounded-full"
-                                    style={{
-                                        backgroundColor: theme.primary || "#3b82f6",
-                                        boxShadow: `0 0 0 4px ${isDark ? "#1a1a1a" : "#ffffff"}, 0 0 0 6px ${theme.primary || "#3b82f6"}40, 0 0 20px ${theme.primary || "#3b82f6"}60`,
-                                    }}
-                                />
-                            </div>
+                             {/* Timeline Dot */}
+                             <div
+                                 className="absolute left-8 md:left-1/2 md:-translate-x-1/2 z-10 top-8 md:top-1/2 md:-translate-y-1/2"
+                                 style={{
+                                     width: "12px",
+                                     height: "12px",
+                                 }}
+                             >
+                                 <div
+                                     className="w-full h-full rounded-full transition-transform duration-500"
+                                     style={{
+                                         backgroundColor: theme.primary,
+                                     }}
+                                 />
+                             </div>
 
                             {/* Right Side Container */}
                             <div className={`${!isLeft ? 'w-full pl-20 pr-4 md:w-1/2 md:pl-8 md:justify-start' : 'hidden md:flex md:w-1/2'} flex`}>
                                 {!isLeft && (
                                     <div className="w-full md:max-w-[90%]">
                                         <div
-                                            className="rounded-xl p-4 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+                                            className="relative group/timeline-card rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1"
                                             style={{
-                                                background: theme.cardBackground,
-                                                border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"}`,
-                                                boxShadow: isDark
-                                                    ? "0 4px 20px rgba(0, 0, 0, 0.3)"
-                                                    : `0 4px 20px ${theme.primary}15`,
+                                                backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.6)",
+                                                backdropFilter: "blur(16px)",
                                             }}
                                         >
+                                            {/* Remove Button */}
+                                            {!readOnly && (
+                                                <button
+                                                    onClick={() => handleRemoveItem(index)}
+                                                    className="absolute top-3 right-3 z-30 opacity-0 group-hover/timeline-card:opacity-100 transition-all p-1.5 rounded-full hover:bg-red-500/10 hover:text-red-500 text-gray-400"
+                                                >
+                                                    <IconX size={14} stroke={2.5} />
+                                                </button>
+                                            )}
+
                                             {/* Title Editor */}
-                                            <div className="mb-3">
+                                            <div className="mb-2">
                                                 <ProseMirrorEditor
                                                     key={`${item.id}-title`}
                                                     blockId={`${item.id}-title`}
                                                     value={item.title}
                                                     onChange={(value) => handleItemUpdate(index, "title", value)}
-                                                    placeholder="Item"
+                                                    placeholder="Event"
                                                     readOnly={readOnly}
-                                                    theme={theme}
-                                                    className="text-xl font-semibold"
+                                                    theme={{
+                                                        ...theme,
+                                                        headingColor: theme.primary,
+                                                    }}
+                                                    className="text-xl font-bold tracking-tight"
                                                 />
                                             </div>
 
@@ -165,10 +193,10 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                                     blockId={`${item.id}-description`}
                                                     value={item.description}
                                                     onChange={(value) => handleItemUpdate(index, "description", value)}
-                                                    placeholder="Description"
+                                                    placeholder="Details..."
                                                     readOnly={readOnly}
                                                     theme={theme}
-                                                    className="text-sm"
+                                                    className="text-sm leading-relaxed opacity-70"
                                                 />
                                             </div>
                                         </div>
@@ -180,38 +208,19 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                 })}
             </div>
 
-            {/* Add Item Button */}
+            {/* Float Add Button */}
             {!readOnly && (
-                <div className="relative flex justify-center mt-8 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button
-                        onClick={handleAddItem}
-                        className="group relative flex items-center gap-2 rounded-full px-5 py-2.5 transition-all duration-300 hover:scale-105 active:scale-95"
-                        style={{
-                            background: theme.cardBackground,
-                            backdropFilter: "blur(12px)",
-                            border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)"}`,
-                            boxShadow: isDark
-                                ? "0 4px 20px rgba(0,0,0,0.4)"
-                                : `0 4px 20px ${theme.primary}15`,
-                        }}
-                    >
-                        <div
-                            className="flex h-6 w-6 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-90"
-                            style={{
-                                background: theme.primary || "#3b82f6",
-                                color: "#fff",
-                            }}
-                        >
-                            <IconPlus size={14} stroke={3} />
-                        </div>
-                        <span
-                            className="text-sm font-semibold"
-                            style={{ color: isDark ? "#fff" : "#1a1a1a" }}
-                        >
-                            Add Event
-                        </span>
-                    </button>
-                </div>
+                <button
+                    onClick={handleAddItem}
+                    className="absolute bottom-6 left-1/2 -translate-x-1/2 h-10 w-10 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 z-30 opacity-0 group-hover:opacity-100 duration-300"
+                    style={{
+                        background: isDark ? "rgba(255, 255, 255, 0.05)" : "#fff",
+                        backdropFilter: "blur(12px)",
+                        color: theme.primary,
+                    }}
+                >
+                    <IconPlus size={20} stroke={2.5} />
+                </button>
             )}
         </div>
     );
