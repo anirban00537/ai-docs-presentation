@@ -28,11 +28,6 @@ const blockTypeOptions = [
     icon: IconFileText,
     label: "Text",
   },
-  {
-    type: BLOCK_TYPES.NUMBER_CARD,
-    icon: IconHash,
-    label: "Number Card",
-  },
 ];
 
 

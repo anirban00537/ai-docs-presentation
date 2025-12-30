@@ -20,6 +20,9 @@ export const createInputRules = (schema: Schema) => {
   rules.push(
     textblockTypeInputRule(/^###\s$/, schema.nodes.heading, { level: 3 })
   );
+  rules.push(
+    textblockTypeInputRule(/^####\s$/, schema.nodes.heading, { level: 4 })
+  );
 
   // Blockquote rule
   rules.push(wrappingInputRule(/^>\s$/, schema.nodes.blockquote));

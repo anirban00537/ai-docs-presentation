@@ -28,6 +28,12 @@ import {
   IconFolder,
   IconLayout,
   IconStar,
+  IconHeading,
+  IconH1,
+  IconH2,
+  IconH3,
+  IconH4,
+  IconQuote,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
 
@@ -42,17 +48,58 @@ interface BlockDefinition {
   label: string;
   description: string;
   category: "Core" | "Callouts" | "Cards & Boxes";
-  initialContent?: Record<string, any>;
+  initialContent?: any;
 }
 
 const blockDefinitions: BlockDefinition[] = [
   // Core
   {
     type: BLOCK_TYPES.PROSEMIRROR,
-    icon: <IconFileText size={18} />,
-    label: "Text",
-    description: "Rich text editor with formatting",
+    icon: <IconHeading size={18} />,
+    label: "Title",
+    description: "Title of the slide",
     category: "Core",
+    initialContent: "# Slide Title"
+  },
+  {
+    type: BLOCK_TYPES.PROSEMIRROR,
+    icon: <IconH1 size={18} />,
+    label: "Heading 1",
+    description: "Large section heading",
+    category: "Core",
+    initialContent: "# Heading 1"
+  },
+  {
+    type: BLOCK_TYPES.PROSEMIRROR,
+    icon: <IconH2 size={18} />,
+    label: "Heading 2",
+    description: "Medium section heading",
+    category: "Core",
+    initialContent: "## Heading 2"
+  },
+  {
+    type: BLOCK_TYPES.PROSEMIRROR,
+    icon: <IconH3 size={18} />,
+    label: "Heading 3",
+    description: "Small section heading",
+    category: "Core",
+    initialContent: "### Heading 3"
+  },
+  {
+    type: BLOCK_TYPES.PROSEMIRROR,
+    icon: <IconH4 size={18} />,
+    label: "Heading 4",
+    description: "Extra small section heading",
+    category: "Core",
+    initialContent: "#### Heading 4"
+  },
+  {
+    type: BLOCK_TYPES.PROSEMIRROR,
+    icon: <IconQuote size={18} />,
+    label: "Quote",
+    description: "Block quotation",
+    category: "Core",
+    initialContent: "> Your quote here"
   },
   {
     type: BLOCK_TYPES.IMAGE,
