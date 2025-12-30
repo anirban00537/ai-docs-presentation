@@ -15,6 +15,7 @@ export const BLOCK_TYPES = {
   BUTTON_BLOCK: "button-block",
   LEAF_BLOCK: "leaf-block",
   TIMELINE_BENTO_BLOCK: "timeline-bento-block",
+  STACKED_TIMELINE_BLOCK: "stacked-timeline-block",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

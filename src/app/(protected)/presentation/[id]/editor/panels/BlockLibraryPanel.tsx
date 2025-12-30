@@ -7,6 +7,8 @@ import {
   BLOCK_TYPES,
   createCalloutContent,
   createButtonBlockContent,
+  createTimelineBentoContent,
+  createStackedTimelineContent,
 } from "../blocks/definitions";
 import {
   IconFileText,
@@ -35,6 +37,7 @@ import {
   IconH3,
   IconH4,
   IconQuote,
+  IconTimeline,
   IconClick,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
@@ -165,6 +168,22 @@ const blockDefinitions: BlockDefinition[] = [
     description: "Red error/caution",
     category: "Callouts",
     initialContent: createCalloutContent("error"),
+  },
+  {
+    type: BLOCK_TYPES.TIMELINE_BENTO_BLOCK,
+    icon: <IconTimeline size={18} />,
+    label: "Timeline Bento",
+    description: "Alternating timeline layout",
+    category: "Cards & Boxes",
+    initialContent: createTimelineBentoContent(),
+  },
+  {
+    type: BLOCK_TYPES.STACKED_TIMELINE_BLOCK,
+    icon: <IconLayersIntersect size={18} />,
+    label: "Stacked Timeline",
+    description: "Vertical stacked timeline",
+    category: "Cards & Boxes",
+    initialContent: createStackedTimelineContent(),
   },
 ];
 

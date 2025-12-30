@@ -100,6 +100,21 @@ export const TimelineBentoContentSchema = z.object({
 export type TimelineBentoItem = z.infer<typeof TimelineBentoItemSchema>;
 export type TimelineBentoContent = z.infer<typeof TimelineBentoContentSchema>;
 
+// Stacked Timeline Block
+export const StackedTimelineItemSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+});
+
+export const StackedTimelineContentSchema = z.object({
+  type: z.literal("stacked-timeline-block"),
+  items: z.array(StackedTimelineItemSchema).default([]),
+});
+
+export type StackedTimelineItem = z.infer<typeof StackedTimelineItemSchema>;
+export type StackedTimelineContent = z.infer<typeof StackedTimelineContentSchema>;
+
 export const BlockContentSchema = z.union([
   z.string(),
   ImageContentSchema,
@@ -113,6 +128,7 @@ export const BlockContentSchema = z.union([
   ButtonBlockContentSchema,
   LeafBlockContentSchema,
   TimelineBentoContentSchema,
+  StackedTimelineContentSchema,
   SpacerContentSchema,
 ]);
 

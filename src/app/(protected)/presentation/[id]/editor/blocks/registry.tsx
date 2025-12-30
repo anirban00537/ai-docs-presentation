@@ -18,6 +18,7 @@ import { SidelineCardBlock } from "./sideline-card-block/SidelineCardBlock";
 import { ButtonBlock } from "./button-block/ButtonBlock";
 import { LeafBlock } from "./leaf-block/LeafBlock";
 import { TimelineBentoBlock } from "./timeline-bento/TimelineBentoBlock";
+import { StackedTimelineBlock } from "./stacked-timeline/StackedTimelineBlock";
 
 
 export interface BlockRendererProps {
@@ -112,6 +113,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: TimelineBentoBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.TIMELINE_BENTO_BLOCK, content),
+  },
+  [BLOCK_TYPES.STACKED_TIMELINE_BLOCK]: {
+    type: BLOCK_TYPES.STACKED_TIMELINE_BLOCK,
+    component: StackedTimelineBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.STACKED_TIMELINE_BLOCK, content),
   },
 };
 

@@ -85,6 +85,14 @@ const masterLayouts: LayoutDefinition[] = [
     description: "Bento grid with timeline",
     columnCount: 1,
   },
+  {
+    id: "stacked-timeline",
+    blockType: BLOCK_TYPES.STACKED_TIMELINE_BLOCK,
+    icon: <IconLayersIntersect size={18} />,
+    label: "Stacked Timeline",
+    description: "Vertical stacked timeline",
+    columnCount: 1,
+  },
 ];
 
 export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {

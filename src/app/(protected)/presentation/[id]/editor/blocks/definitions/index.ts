@@ -17,6 +17,7 @@ import { createSidelineCardContent, normalizeSidelineCardContent } from "./sidel
 import { createButtonBlockContent, normalizeButtonBlockContent } from "./button-block";
 import { createLeafBlockContent, normalizeLeafBlockContent } from "./leaf-block";
 import { createTimelineBentoContent, normalizeTimelineBentoContent } from "./timeline-bento-block";
+import { createStackedTimelineContent, normalizeStackedTimelineContent } from "./stacked-timeline-block";
 
 
 // Re-export factories and normalizers
@@ -33,6 +34,7 @@ export {
   createButtonBlockContent, normalizeButtonBlockContent,
   createLeafBlockContent, normalizeLeafBlockContent,
   createTimelineBentoContent, normalizeTimelineBentoContent,
+  createStackedTimelineContent, normalizeStackedTimelineContent,
 };
 
 import {
@@ -69,6 +71,8 @@ export const createBlockContentForType = (
       return createLeafBlockContent();
     case BLOCK_TYPES.TIMELINE_BENTO_BLOCK:
       return createTimelineBentoContent();
+    case BLOCK_TYPES.STACKED_TIMELINE_BLOCK:
+      return createStackedTimelineContent();
 
     case BLOCK_TYPES.PROSEMIRROR:
     default:
@@ -105,6 +109,8 @@ export const normalizeBlockContent = (
       return normalizeLeafBlockContent(content);
     case BLOCK_TYPES.TIMELINE_BENTO_BLOCK:
       return normalizeTimelineBentoContent(content);
+    case BLOCK_TYPES.STACKED_TIMELINE_BLOCK:
+      return normalizeStackedTimelineContent(content);
 
     default:
       if (isMarkdownFormat(content)) {
