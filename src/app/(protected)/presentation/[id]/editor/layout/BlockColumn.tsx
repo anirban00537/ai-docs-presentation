@@ -142,10 +142,12 @@ export const BlockColumn = memo(function BlockColumn({
         {!readOnly && !isLastBlock && onResize && (
           <div
             ref={borderResizeRef}
-            className="absolute top-4 bottom-4 right-[-6px] z-50 flex items-center justify-center cursor-col-resize touch-none"
+            className="absolute top-4 bottom-4 z-50 flex items-center justify-center cursor-col-resize touch-none"
             style={{ 
-              width: "12px",
-              marginRight: "-6px" 
+              left: "100%",
+              width: "24px",
+              transform: "translateX(-50%)",
+              marginLeft: "2px" // Exactly centered in the gap-1 (4px gap)
             }}
             onMouseEnter={() => setIsBorderHovered(true)}
             onMouseLeave={() => setIsBorderHovered(false)}

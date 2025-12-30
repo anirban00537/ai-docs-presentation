@@ -10,19 +10,9 @@ import {
   SpacerContentSchema,
   BlockContentSchema,
   ProseMirrorDocumentSchema,
-  NumberCardContentSchema,
   SimpleNumberCardContentSchema,
-  SpineCardContentSchema,
-  ModernPillCardContentSchema,
-  InvertedImpactContentSchema,
-  GlassBillboardContentSchema,
   LayeredNumberContentSchema,
-  CornerCutContentSchema,
   CalloutContentSchema,
-  StepCardContentSchema,
-  DogEarIconContentSchema,
-  SplitHeaderIconContentSchema,
-  OutlineOffsetIconContentSchema,
 } from "./blocks";
 
 import {
@@ -38,30 +28,12 @@ import { ThemeSchema, CardDesignPatternSchema } from "./theme";
 
 // Infer types
 export type ProseMirrorDocument = z.infer<typeof ProseMirrorDocumentSchema>;
-
 export type CodeContent = z.infer<typeof CodeContentSchema>;
-
 export type ImageContent = z.infer<typeof ImageContentSchema>;
-
 export type SpacerContent = z.infer<typeof SpacerContentSchema>;
-
-export type NumberCardContent = z.infer<typeof NumberCardContentSchema>;
-
 export type SimpleNumberCardContent = z.infer<typeof SimpleNumberCardContentSchema>;
-
-export type SpineCardContent = z.infer<typeof SpineCardContentSchema>;
-
-export type ModernPillCardContent = z.infer<typeof ModernPillCardContentSchema>;
-export type InvertedImpactContent = z.infer<typeof InvertedImpactContentSchema>;
-export type GlassBillboardContent = z.infer<typeof GlassBillboardContentSchema>;
 export type LayeredNumberContent = z.infer<typeof LayeredNumberContentSchema>;
-export type CornerCutContent = z.infer<typeof CornerCutContentSchema>;
 export type CalloutContent = z.infer<typeof CalloutContentSchema>;
-export type StepCardContent = z.infer<typeof StepCardContentSchema>;
-export type DogEarIconContent = z.infer<typeof DogEarIconContentSchema>;
-export type SplitHeaderIconContent = z.infer<typeof SplitHeaderIconContentSchema>;
-export type OutlineOffsetIconContent = z.infer<typeof OutlineOffsetIconContentSchema>;
-
 
 export type LayoutTemplate = {
   id: string;
