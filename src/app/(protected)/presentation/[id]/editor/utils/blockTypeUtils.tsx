@@ -27,7 +27,7 @@ export const getBlockTypeIcon = (type: string) => {
 export const getBlockTypeLabel = (type: string) => {
   switch (type) {
     case BLOCK_TYPES.PROSEMIRROR:
-      return "Text Block";
+      return "Text";
     case BLOCK_TYPES.IMAGE:
       return "Image";
     case BLOCK_TYPES.CODE:
@@ -35,9 +35,21 @@ export const getBlockTypeLabel = (type: string) => {
     case BLOCK_TYPES.SPACER:
       return "Spacer";
     case BLOCK_TYPES.SIMPLE_NUMBER_CARD:
-      return "Simple Number";
+      return "Number Card";
+    case BLOCK_TYPES.LAYERED_NUMBER_BLOCK:
+      return "Layered Number";
+    case BLOCK_TYPES.CALLOUT_BLOCK:
+      return "Callout";
+    case BLOCK_TYPES.SOLID_BOX_BLOCK:
+      return "Solid Box";
+    case BLOCK_TYPES.SOLID_ICON_BOX_BLOCK:
+      return "Icon Box";
+    case BLOCK_TYPES.SIDELINE_CARD_BLOCK:
+      return "Sideline Card";
+    case BLOCK_TYPES.BUTTON_BLOCK:
+      return "Button";
     default:
-      return type;
+      return "Block";
   }
 };
 

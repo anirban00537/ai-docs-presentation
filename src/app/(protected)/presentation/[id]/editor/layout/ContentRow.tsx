@@ -8,6 +8,7 @@ import { selectTheme, DEFAULT_THEME, type Theme } from "@/store/slices/slidesSli
 import { getFontFamily } from "@/lib/fonts";
 import { InsertionIndicator } from "./InsertionIndicator";
 import { IconTrash, IconPlus } from "@tabler/icons-react";
+import { getBlockTypeLabel } from "../utils/blockTypeUtils";
 
 // Wrapper to safely use useDndMonitor only when inside DndContext
 const DragMonitorBridge: React.FC<{
@@ -56,21 +57,12 @@ export const ContentRow = memo(function ContentRow({
   theme: themeProp,
 }: ContentRowProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isResizing, setIsResizing] = useState(false);
   const [isAnyDragActive, setIsAnyDragActive] = useState(false);
   const [dropIndicator, setDropIndicator] = useState<{
     index: number;
     leftPercent: number;
   } | null>(null);
-
-  const [localWidths, setLocalWidths] = useState<number[]>(() => {
-    if (row.columnWidths && row.columnWidths.length === row.blocks.length) {
-      return row.columnWidths;
-    }
-    return row.blocks.map(() => 1);
-  });
   
-  const latestWidthsRef = useRef<number[]>(localWidths);
   const rowContainerRef = useRef<HTMLDivElement>(null);
   const reduxTheme = useAppSelector(selectTheme);
   const theme = themeProp || reduxTheme || DEFAULT_THEME;
@@ -90,71 +82,11 @@ export const ContentRow = memo(function ContentRow({
   const MAX_COLUMNS = 3;
   const canAddColumn = row.blocks.length < MAX_COLUMNS;
 
-  React.useEffect(() => {
-    if (row.columnWidths && row.columnWidths.length === row.blocks.length) {
-      setLocalWidths(row.columnWidths);
-      latestWidthsRef.current = row.columnWidths;
-    } else if (row.blocks.length !== localWidths.length) {
-      const newWidths = row.blocks.map(() => 1);
-      setLocalWidths(newWidths);
-      latestWidthsRef.current = newWidths;
-    }
-  }, [row.columnWidths, row.blocks.length, row.blocks, localWidths.length]);
-
+  // Calculate equal width columns
   const gridTemplateColumns = useMemo(
-    () => localWidths.map((width) => `${width}fr`).join(" "),
-    [localWidths]
+    () => `repeat(${row.blocks.length}, 1fr)`,
+    [row.blocks.length]
   );
-
-  const handleResize = useCallback((index: number, deltaX: number) => {
-    if (!rowContainerRef.current) return;
-
-    const containerWidth = rowContainerRef.current.offsetWidth;
-
-    setLocalWidths((prevWidths) => {
-      const totalFr = prevWidths.reduce((sum, w) => sum + w, 0);
-      const deltaFr = (deltaX / containerWidth) * totalFr;
-      const newWidths = [...prevWidths];
-      const nextIndex = index + 1;
-
-      if (nextIndex >= newWidths.length) return prevWidths;
-
-      const currentFr = newWidths[index];
-      const nextFr = newWidths[nextIndex];
-      const minFrPercent = 0.1;
-      const minFr = totalFr * minFrPercent;
-
-      const maxIncrease = nextFr - minFr;
-      const maxDecrease = currentFr - minFr;
-
-      let actualDelta = deltaFr;
-      if (deltaFr > 0) {
-        actualDelta = Math.min(deltaFr, maxIncrease);
-      } else if (deltaFr < 0) {
-        actualDelta = Math.max(deltaFr, -maxDecrease);
-      }
-
-      const newCurrentFr = currentFr + actualDelta;
-      const newNextFr = nextFr - actualDelta;
-
-      if (newCurrentFr >= minFr && newNextFr >= minFr) {
-        newWidths[index] = newCurrentFr;
-        newWidths[nextIndex] = newNextFr;
-      }
-
-      latestWidthsRef.current = newWidths;
-      return newWidths;
-    });
-  }, []);
-
-  const handleResizeStart = useCallback(() => {
-    setIsResizing(true);
-  }, []);
-
-  const handleResizeEnd = useCallback(() => {
-    setIsResizing(false);
-    onUpdateColumnWidths(row.id, latestWidthsRef.current);
-  }, [onUpdateColumnWidths, row.id]);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | MouseEvent) => {
@@ -172,21 +104,17 @@ export const ContentRow = memo(function ContentRow({
       const mouseX = e.clientX;
       const relativeX = mouseX - rect.left;
 
-      const widths = latestWidthsRef.current;
-      if (!widths || widths.length === 0) {
+      const blockCount = row.blocks.length;
+      if (blockCount === 0) {
         setDropIndicator({ index: 0, leftPercent: 50 });
         return;
       }
 
-      const totalFr = widths.reduce((sum, w) => sum + w, 0);
-      let currentLeft = 0;
-      const boundaries: number[] = [0];
-
-      widths.forEach((w) => {
-        const pxWidth = (w / totalFr) * rect.width;
-        currentLeft += pxWidth;
-        boundaries.push(currentLeft);
-      });
+      // Calculate equal-width boundaries
+      const boundaries: number[] = [];
+      for (let i = 0; i <= blockCount; i++) {
+        boundaries.push((i / blockCount) * rect.width);
+      }
 
       let closestIndex = 0;
       let minDistance = Infinity;
@@ -206,7 +134,7 @@ export const ContentRow = memo(function ContentRow({
         leftPercent: Math.min(100, Math.max(0, leftPercent)),
       });
     },
-    [isOver, isAnyDragActive]
+    [isOver, isAnyDragActive, row.blocks.length]
   );
 
   const handleMouseLeave = useCallback(() => {}, []);
@@ -318,10 +246,6 @@ export const ContentRow = memo(function ContentRow({
             onAddColumn={onAddColumn}
             isLastBlock={index === row.blocks.length - 1}
             canAddColumn={canAddColumn}
-            onResize={handleResize}
-            isResizing={isResizing}
-            onResizeStart={handleResizeStart}
-            onResizeEnd={handleResizeEnd}
             readOnly={readOnly}
             theme={theme}
           />
@@ -369,7 +293,13 @@ export const ContentRow = memo(function ContentRow({
               ? "0 2px 8px rgba(0,0,0,0.3)" 
               : "0 2px 8px rgba(0,0,0,0.15)",
           }}
-          title={row.blocks.length >= MAX_COLUMNS ? "Add new row with same block type" : "Add same block type"}
+          title={
+            row.blocks.length > 0
+              ? row.blocks.length >= MAX_COLUMNS 
+                ? `Add ${getBlockTypeLabel(row.blocks[0].type || 'prosemirror')} (new row)` 
+                : `Add ${getBlockTypeLabel(row.blocks[0].type || 'prosemirror')}`
+              : "Add block"
+          }
         >
           <IconPlus size={14} stroke={2.5} />
         </button>

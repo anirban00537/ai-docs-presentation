@@ -20,10 +20,6 @@ interface BlockColumnProps {
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   isLastBlock: boolean;
   canAddColumn: boolean;
-  onResize: (index: number, deltaX: number) => void;
-  isResizing: boolean;
-  onResizeStart: () => void;
-  onResizeEnd: () => void;
   readOnly?: boolean;
   /** Optional theme prop. If not provided, falls back to Redux store theme */
   theme?: Theme;
@@ -41,17 +37,10 @@ export const BlockColumn = memo(function BlockColumn({
   onAddColumn,
   isLastBlock,
   canAddColumn,
-  onResize,
-  isResizing,
-  onResizeStart,
-  onResizeEnd,
   readOnly = false,
   theme: themeProp,
 }: BlockColumnProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isBorderHovered, setIsBorderHovered] = useState(false);
-  const borderResizeRef = useRef<HTMLDivElement>(null);
-  const lastXRef = useRef<number>(0);
   const reduxTheme = useAppSelector(selectTheme);
   const theme = themeProp || reduxTheme || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
@@ -59,8 +48,6 @@ export const BlockColumn = memo(function BlockColumn({
   const { setFocusedBlock } = useBlockFocus();
   const handleStartRef = useRef<{ x: number; y: number } | null>(null);
   const wasDraggingRef = useRef(false);
-  const mouseMoveHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
-  const mouseUpHandlerRef = useRef<(() => void) | null>(null);
 
   const {
     attributes,
@@ -79,53 +66,6 @@ export const BlockColumn = memo(function BlockColumn({
     opacity: isDragging ? 0.4 : 1,
     zIndex: isDragging ? 200 : undefined,
   };
-
-  useEffect(() => {
-    mouseMoveHandlerRef.current = (e: MouseEvent) => {
-      const deltaX = e.clientX - lastXRef.current;
-      onResize(index, deltaX);
-      lastXRef.current = e.clientX;
-    };
-  }, [index, onResize]);
-
-  useEffect(() => {
-    mouseUpHandlerRef.current = () => {
-      if (mouseMoveHandlerRef.current) {
-        document.removeEventListener("mousemove", mouseMoveHandlerRef.current);
-      }
-      if (mouseUpHandlerRef.current) {
-        document.removeEventListener("mouseup", mouseUpHandlerRef.current);
-      }
-      onResizeEnd();
-    };
-  }, [onResizeEnd]);
-
-  const handleBorderMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      lastXRef.current = e.clientX;
-      onResizeStart();
-      if (mouseMoveHandlerRef.current) {
-        document.addEventListener("mousemove", mouseMoveHandlerRef.current);
-      }
-      if (mouseUpHandlerRef.current) {
-        document.addEventListener("mouseup", mouseUpHandlerRef.current);
-      }
-    },
-    [onResizeStart]
-  );
-
-  useEffect(() => {
-    return () => {
-      if (mouseMoveHandlerRef.current) {
-        document.removeEventListener("mousemove", mouseMoveHandlerRef.current);
-      }
-      if (mouseUpHandlerRef.current) {
-        document.removeEventListener("mouseup", mouseUpHandlerRef.current);
-      }
-    };
-  }, []);
 
 
   return (
@@ -204,31 +144,6 @@ export const BlockColumn = memo(function BlockColumn({
           readOnly={readOnly}
           theme={theme}
         />
-
-        {/* Resize Handle */}
-        {!isLastBlock && !readOnly && (
-          <div
-            ref={borderResizeRef}
-            className={`absolute right-0 top-0 bottom-0 w-[1px] cursor-col-resize z-20 transition-all duration-300 ${
-              isBorderHovered || isResizing
-                ? "opacity-100 scale-x-[3]"
-                : "opacity-0 group-hover/row:opacity-20"
-            }`}
-            style={{
-              transform: "translateX(50%)",
-              backgroundColor: theme.primary,
-            }}
-            onMouseDown={handleBorderMouseDown}
-            onMouseEnter={() => setIsBorderHovered(true)}
-            onMouseLeave={() => setIsBorderHovered(false)}
-            role="separator"
-            aria-orientation="vertical"
-            aria-label={`Resize handle between column ${index + 1} and ${index + 2}`}
-          >
-            {/* Larger hit area */}
-            <div className="absolute inset-0 -mx-2" />
-          </div>
-        )}
       </div>
     </div>
   );
