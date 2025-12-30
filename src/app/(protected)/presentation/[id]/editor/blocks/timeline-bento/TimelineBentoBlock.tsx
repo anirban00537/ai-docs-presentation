@@ -48,9 +48,9 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
 
     return (
         <div className="group relative w-full h-full min-h-[600px] py-8">
-            {/* Centered Vertical Timeline Line */}
+            {/* Responsive Vertical Timeline Line */}
             <div
-                className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2"
+                className="absolute left-8 md:left-1/2 top-0 bottom-0 md:-translate-x-1/2"
                 style={{
                     width: "3px",
                     background: isDark
@@ -66,11 +66,11 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                     const isLeft = index % 2 === 0;
 
                     return (
-                        <div key={item.id} className="relative flex w-full items-center">
-                            {/* Left Side (50%) */}
-                            <div className={`w-1/2 flex ${isLeft ? 'justify-end pr-8' : ''}`}>
+                        <div key={item.id} className="relative flex flex-col md:flex-row w-full items-start md:items-center">
+                            {/* Left Side Container */}
+                            <div className={`${isLeft ? 'w-full pl-20 pr-4 md:w-1/2 md:pl-0 md:pr-8 md:justify-end' : 'hidden md:flex md:w-1/2'} flex`}>
                                 {isLeft && (
-                                    <div className="w-full max-w-[90%]">
+                                    <div className="w-full md:max-w-[90%]">
                                         <div
                                             className="rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
                                             style={{
@@ -113,9 +113,9 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                 )}
                             </div>
 
-                            {/* Timeline Dot (Centered) */}
+                            {/* Timeline Dot (Responsive Position) */}
                             <div
-                                className="absolute left-1/2 -translate-x-1/2 z-10"
+                                className="absolute left-8 md:left-1/2 md:-translate-x-1/2 z-10 top-6 md:top-1/2 md:-translate-y-1/2"
                                 style={{
                                     width: "16px",
                                     height: "16px",
@@ -130,10 +130,10 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                 />
                             </div>
 
-                            {/* Right Side (50%) */}
-                            <div className={`w-1/2 flex ${!isLeft ? 'justify-start pl-8' : ''}`}>
+                            {/* Right Side Container */}
+                            <div className={`${!isLeft ? 'w-full pl-20 pr-4 md:w-1/2 md:pl-8 md:justify-start' : 'hidden md:flex md:w-1/2'} flex`}>
                                 {!isLeft && (
-                                    <div className="w-full max-w-[90%]">
+                                    <div className="w-full md:max-w-[90%]">
                                         <div
                                             className="rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
                                             style={{
