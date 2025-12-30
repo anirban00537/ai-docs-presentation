@@ -15,6 +15,7 @@ import { LayeredNumberBlock } from "./layered-number-block/LayeredNumberBlock";
 import { CalloutBlock } from "./callout-block/CalloutBlock";
 import { SolidBoxBlock } from "./solid-box-block/SolidBoxBlock";
 import { SolidIconBoxBlock } from "./solid-icon-box-block/SolidIconBoxBlock";
+import { SidelineCardBlock } from "./sideline-card-block/SidelineCardBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -91,9 +92,13 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.SOLID_ICON_BOX_BLOCK, content),
   },
+  [BLOCK_TYPES.SIDELINE_CARD_BLOCK]: {
+    type: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
+    component: SidelineCardBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.SIDELINE_CARD_BLOCK, content),
+  },
 };
-
-
 
 export const resolveBlockComponent = (
   type?: string

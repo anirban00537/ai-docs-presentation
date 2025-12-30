@@ -72,6 +72,12 @@ export const SolidIconBoxContentSchema = z.object({
 });
 export type SolidIconBoxContent = z.infer<typeof SolidIconBoxContentSchema>;
 
+export const SidelineCardContentSchema = z.object({
+  type: z.literal("sideline-card-block"),
+  editorContent: ProseMirrorDocumentSchema,
+});
+export type SidelineCardContent = z.infer<typeof SidelineCardContentSchema>;
+
 export const BlockContentSchema = z.union([
   ProseMirrorDocumentSchema,
   CodeContentSchema,
@@ -83,6 +89,7 @@ export const BlockContentSchema = z.union([
   CalloutContentSchema,
   SolidBoxContentSchema,
   SolidIconBoxContentSchema,
+  SidelineCardContentSchema,
 ]);
 
 

@@ -1,6 +1,5 @@
 import React, { memo } from "react";
 import type { Theme } from "@/types/presentation";
-import { SlideFrame } from "../slide/SlideFrame";
 
 interface CommonCardProps {
   theme: Theme;
@@ -26,21 +25,6 @@ export const CommonCard = memo(function CommonCard({
   onClick,
 }: CommonCardProps) {
   return (
-    <SlideFrame
-      theme={theme}
-      className={`group/card ${className}`}
-      style={{
-        ...style,
-        minWidth: "auto",
-        maxWidth: "none",
-        width: "100%",
-        height: "100%",
-        minHeight: "auto",
-      }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      showPattern={false} // blocks usually don't show the background pattern
-    >
       <div className="cursor-pointer h-full w-full" onClick={onClick}>
         {/* Shine effect on hover - Block specific style */}
         <div
@@ -59,6 +43,5 @@ export const CommonCard = memo(function CommonCard({
         {/* Content */}
         {children}
       </div>
-    </SlideFrame>
   );
 });

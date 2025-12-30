@@ -13,6 +13,7 @@ import { createLayeredNumberContent, normalizeLayeredNumberContent } from "./lay
 import { createCalloutContent, normalizeCalloutContent } from "./callout-block";
 import { createSolidBoxContent, normalizeSolidBoxContent } from "./solid-box-block";
 import { createSolidIconBoxContent, normalizeSolidIconBoxContent } from "./solid-icon-box-block";
+import { createSidelineCardContent, normalizeSidelineCardContent } from "./sideline-card-block";
 
 // Re-export factories and normalizers
 export {
@@ -25,6 +26,7 @@ export {
   createCalloutContent, normalizeCalloutContent,
   createSolidBoxContent, normalizeSolidBoxContent,
   createSolidIconBoxContent, normalizeSolidIconBoxContent,
+  createSidelineCardContent, normalizeSidelineCardContent,
 };
 
 import {
@@ -55,6 +57,8 @@ export const createBlockContentForType = (
       return createSolidBoxContent();
     case BLOCK_TYPES.SOLID_ICON_BOX_BLOCK:
       return createSolidIconBoxContent();
+    case BLOCK_TYPES.SIDELINE_CARD_BLOCK:
+      return createSidelineCardContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return getDefaultHeadingContent();
@@ -84,6 +88,8 @@ export const normalizeBlockContent = (
       return normalizeSolidBoxContent(content);
     case BLOCK_TYPES.SOLID_ICON_BOX_BLOCK:
       return normalizeSolidIconBoxContent(content);
+    case BLOCK_TYPES.SIDELINE_CARD_BLOCK:
+      return normalizeSidelineCardContent(content);
     default:
       if (isMarkdownFormat(content)) {
         return content;

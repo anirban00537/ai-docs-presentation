@@ -127,6 +127,12 @@ const blockDefinitions: BlockDefinition[] = [
     label: "Icon Box",
     description: "Solid box with an icon",
   },
+  {
+    type: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
+    icon: <IconLayoutSidebarLeftCollapse size={18} />,
+    label: "Side Line",
+    description: "Vertical accent card",
+  },
 ];
 
 
