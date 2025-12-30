@@ -79,6 +79,12 @@ export const ButtonBlockContentSchema = z.object({
 });
 export type ButtonBlockContent = z.infer<typeof ButtonBlockContentSchema>;
 
+export const LeafBlockContentSchema = z.object({
+  type: z.literal("leaf-block"),
+  editorContent: ProseMirrorDocumentSchema,
+});
+export type LeafBlockContent = z.infer<typeof LeafBlockContentSchema>;
+
 export const BlockContentSchema = z.union([
   ProseMirrorDocumentSchema,
   CodeContentSchema,
@@ -91,6 +97,7 @@ export const BlockContentSchema = z.union([
   SolidIconBoxContentSchema,
   SidelineCardContentSchema,
   ButtonBlockContentSchema,
+  LeafBlockContentSchema,
 ]);
 
 

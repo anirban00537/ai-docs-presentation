@@ -16,6 +16,8 @@ import { SolidBoxBlock } from "./solid-box-block/SolidBoxBlock";
 import { SolidIconBoxBlock } from "./solid-icon-box-block/SolidIconBoxBlock";
 import { SidelineCardBlock } from "./sideline-card-block/SidelineCardBlock";
 import { ButtonBlock } from "./button-block/ButtonBlock";
+import { LeafBlock } from "./leaf-block/LeafBlock";
+
 
 export interface BlockRendererProps {
   block: Block;
@@ -98,7 +100,14 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.BUTTON_BLOCK, content),
   },
+  [BLOCK_TYPES.LEAF_BLOCK]: {
+    type: BLOCK_TYPES.LEAF_BLOCK,
+    component: LeafBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.LEAF_BLOCK, content),
+  },
 };
+
 
 export const resolveBlockComponent = (
   type?: string

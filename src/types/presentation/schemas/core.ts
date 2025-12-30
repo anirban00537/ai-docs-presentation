@@ -13,6 +13,7 @@ export const BLOCK_TYPES = {
   SOLID_ICON_BOX_BLOCK: "solid-icon-box-block",
   SIDELINE_CARD_BLOCK: "sideline-card-block",
   BUTTON_BLOCK: "button-block",
+  LEAF_BLOCK: "leaf-block",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

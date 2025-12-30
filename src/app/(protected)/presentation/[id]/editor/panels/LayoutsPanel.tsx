@@ -11,6 +11,7 @@ import {
   IconStar,
   IconLayoutSidebarLeftCollapse,
   IconColumns3,
+  IconLeaf,
 } from "@tabler/icons-react";
 import { LayoutOption } from "../block/LayoutOption";
 
@@ -64,6 +65,13 @@ const layoutDefinitions: LayoutDefinition[] = [
     label: "Side Line",
     description: "Three accent-line cards",
   },
+  {
+    id: "leaf-3col",
+    blockType: BLOCK_TYPES.LEAF_BLOCK,
+    icon: <IconLeaf size={18} />,
+    label: "Leaf Cards",
+    description: "Three organic leaf-shaped cards",
+  },
 ];
 
 export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
@@ -74,7 +82,7 @@ export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
 
   const handleLayoutClick = (layout: LayoutDefinition) => {
     if (!activeSlideId) return;
-    
+
     // Add a new row with 3 columns
     dispatch(
       addRowWithColumnsAtIndex({
@@ -84,7 +92,7 @@ export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
         blockType: layout.blockType,
       })
     );
-    
+
     onClose();
   };
 
@@ -174,9 +182,8 @@ export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
 
             {/* Layouts Grid */}
             <div
-              className={`relative flex-1 overflow-y-auto px-3 pb-3 ${
-                isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
-              }`}
+              className={`relative flex-1 overflow-y-auto px-3 pb-3 ${isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+                }`}
             >
               <p
                 className="text-[11px] font-medium mb-2 px-1 opacity-50"
