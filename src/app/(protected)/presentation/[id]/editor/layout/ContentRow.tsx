@@ -7,7 +7,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME, type Theme } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
 import { InsertionIndicator } from "./InsertionIndicator";
-import { IconTrash, IconPlus } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { getBlockTypeLabel } from "../utils/blockTypeUtils";
 
 // Wrapper to safely use useDndMonitor only when inside DndContext
@@ -103,7 +103,6 @@ export const ContentRow = memo(function ContentRow({
     disabled: readOnly,
   });
 
-  const MAX_COLUMNS = 3;
   const canAddColumn = true; // Still allow calling the action, it handles row splitting
 
   // Use localWidths for rendering
@@ -342,40 +341,6 @@ export const ContentRow = memo(function ContentRow({
           />
         )}
       </div>
-
-      {/* Row-level Add Button - Right Side Center */}
-      {!readOnly && (
-        <button
-          onClick={() => {
-            const lastBlock = row.blocks[row.blocks.length - 1];
-            if (!lastBlock) return;
-            onAddColumn(row.id, lastBlock.id);
-          }}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-30 opacity-0 group-hover/row:opacity-100 transition-all duration-200 hover:scale-110"
-          style={{
-            backgroundColor: theme.primary,
-            color: "#ffffff",
-            width: "24px",
-            height: "24px",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: isDark 
-              ? "0 2px 8px rgba(0,0,0,0.3)" 
-              : "0 2px 8px rgba(0,0,0,0.15)",
-          }}
-          title={
-            row.blocks.length > 0
-              ? row.blocks.length >= MAX_COLUMNS 
-                ? `Add ${getBlockTypeLabel(row.blocks[0].type || 'prosemirror')} (new row)` 
-                : `Add ${getBlockTypeLabel(row.blocks[0].type || 'prosemirror')}`
-              : "Add block"
-          }
-        >
-          <IconPlus size={14} stroke={2.5} />
-        </button>
-      )}
     </div>
   );
 });
