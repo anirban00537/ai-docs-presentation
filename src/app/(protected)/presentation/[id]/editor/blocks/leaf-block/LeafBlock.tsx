@@ -57,8 +57,8 @@ export const LeafBlock = memo(function LeafBlock({
     };
 
     return (
-        <div className="group relative w-full h-full min-h-[300px] p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="group relative w-full h-full min-h-[300px] p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {items.map((item, index) => (
                     <div
                         key={item.id}

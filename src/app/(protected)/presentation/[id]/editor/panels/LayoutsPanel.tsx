@@ -33,20 +33,6 @@ interface LayoutDefinition {
 // Only 3-column layouts
 const layoutDefinitions: LayoutDefinition[] = [
   {
-    id: "simple-number-3col",
-    blockType: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
-    icon: <IconNumber size={18} />,
-    label: "Simple Number",
-    description: "Three minimalist number cards",
-  },
-  {
-    id: "layered-3col",
-    blockType: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
-    icon: <IconLayersIntersect size={18} />,
-    label: "Layered",
-    description: "Three depth-effect numbers",
-  },
-  {
     id: "solid-box-3col",
     blockType: BLOCK_TYPES.SOLID_BOX_BLOCK,
     icon: <IconBoxModel size={18} />,
@@ -70,6 +56,22 @@ const layoutDefinitions: LayoutDefinition[] = [
 ];
 
 const masterLayouts: LayoutDefinition[] = [
+  {
+    id: "simple-number-grid",
+    blockType: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
+    icon: <IconNumber size={18} />,
+    label: "Simple Number Grid",
+    description: "Grid of minimalist number cards",
+    columnCount: 1,
+  },
+  {
+    id: "layered-steps",
+    blockType: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
+    icon: <IconLayersIntersect size={18} />,
+    label: "Layered Steps",
+    description: "Grid of high-depth numbered cards",
+    columnCount: 1,
+  },
   {
     id: "timeline-bento",
     blockType: BLOCK_TYPES.TIMELINE_BENTO_BLOCK,

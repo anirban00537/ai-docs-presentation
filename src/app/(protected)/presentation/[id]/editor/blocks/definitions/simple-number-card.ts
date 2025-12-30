@@ -1,18 +1,22 @@
-import { SimpleNumberCardContentSchema, type SimpleNumberCardContent } from "@/types/presentation";
+import { SimpleNumberCardContentSchema, type SimpleNumberCardContent, type SimpleNumberCardItem } from "@/types/presentation";
+import { nanoid } from "nanoid";
 
-import { 
-  normalizeToMarkdown, 
-  isLegacyProseMirrorFormat, 
-} from "@/lib/markdown/prosemirror-converter";
+export const createSimpleNumberCardItem = (
+  number: number = 1,
+  title: string = "## Point Title",
+  description: string = "Provide context and detail about this key point here."
+): SimpleNumberCardItem => ({
+  id: nanoid(),
+  number,
+  title,
+  description,
+});
 
 export const createSimpleNumberCardContent = (
-  number: number = 1,
-  title: string = "Title",
-  description: string = "This is a meaningful description that provides context and detail about the key point. It is long enough to span multiple lines, ensuring that the layout looks balanced and the text content is substantial enough to convey a complete thought or observation effectively."
+  itemCount: number = 3
 ): SimpleNumberCardContent => ({
   type: "simple-number-card",
-  number,
-  editorContent: `**${title}**: ${description}`,
+  items: Array.from({ length: itemCount }, (_, i) => createSimpleNumberCardItem(i + 1)),
 });
 
 export const normalizeSimpleNumberCardContent = (
@@ -20,15 +24,38 @@ export const normalizeSimpleNumberCardContent = (
 ): SimpleNumberCardContent => {
   if (!content || typeof content !== "object") return createSimpleNumberCardContent();
 
-  const editorContent = isLegacyProseMirrorFormat(content.editorContent)
-    ? normalizeToMarkdown(content.editorContent)
-    : typeof content.editorContent === "string"
-    ? content.editorContent
-    : createSimpleNumberCardContent().editorContent;
-  
+  // Handle legacy single-block migration (if it existed)
+  if (content.number !== undefined && content.editorContent && !content.items) {
+    return {
+      type: "simple-number-card",
+      items: [createSimpleNumberCardItem(content.number, "## Title", content.editorContent)],
+    };
+  }
+
+  // Handle items migration
+  let items = content.items;
+  if (Array.isArray(content.items)) {
+    items = content.items.map((item: any) => {
+        if (item.editorContent && (!item.title || !item.description)) {
+            return {
+                id: item.id || nanoid(),
+                number: item.number ?? 1,
+                title: item.title || "## Title",
+                description: item.description || item.editorContent,
+            };
+        }
+        return {
+            id: item.id || nanoid(),
+            number: item.number ?? 1,
+            title: item.title || "## Title",
+            description: item.description || "Description",
+        };
+    });
+  }
+
   const result = SimpleNumberCardContentSchema.safeParse({
     ...content,
-    editorContent,
+    items: items || createSimpleNumberCardContent().items,
   });
 
   if (result.success) {

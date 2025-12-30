@@ -33,17 +33,33 @@ export const SpacerContentSchema = z.object({
   height: z.number(),
 });
 
+export const SimpleNumberCardItemSchema = z.object({
+  id: z.string(),
+  number: z.number(),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
+});
+
 export const SimpleNumberCardContentSchema = z.object({
   type: z.literal("simple-number-card"),
+  items: z.array(SimpleNumberCardItemSchema).default([]),
+});
+export type SimpleNumberCardItem = z.infer<typeof SimpleNumberCardItemSchema>;
+export type SimpleNumberCardContent = z.infer<typeof SimpleNumberCardContentSchema>;
+
+export const LayeredNumberItemSchema = z.object({
+  id: z.string(),
   number: z.number(),
-  editorContent: ProseMirrorDocumentSchema,
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
 });
 
 export const LayeredNumberContentSchema = z.object({
   type: z.literal("layered-number-block"),
-  number: z.number(),
-  editorContent: ProseMirrorDocumentSchema,
+  items: z.array(LayeredNumberItemSchema).default([]),
 });
+export type LayeredNumberItem = z.infer<typeof LayeredNumberItemSchema>;
+export type LayeredNumberContent = z.infer<typeof LayeredNumberContentSchema>;
 
 export const CalloutContentSchema = z.object({
   type: z.literal("callout-block"),
