@@ -6,7 +6,6 @@ export const BLOCK_TYPES = {
   IMAGE: "image",
   CODE: "code",
   SPACER: "spacer",
-  NUMBER_CARD: "number-card",
   SIMPLE_NUMBER_CARD: "simple-number-card",
   LAYERED_NUMBER_BLOCK: "layered-number-block",
   CALLOUT_BLOCK: "callout-block",

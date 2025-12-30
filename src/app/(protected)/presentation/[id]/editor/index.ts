@@ -45,13 +45,11 @@ export { LoadingOverlay } from "./ui/LoadingOverlay";
 export { ProgressIndicator } from "./ui/ProgressIndicator";
 
 // Utils
-// Utils
 export { getBlockTypeIcon, getBlockTypeLabel } from "./utils/blockTypeUtils";
 export { layoutTemplates, layoutIconsMap } from "./utils/layoutTemplates";
 
 // Export block components (keep as-is)
 export { ProseMirrorBlock } from "./blocks/prosemirror/ProseMirrorBlock";
-export { NumberCardBlock } from "./blocks/number-card/NumberCardBlock";
 export { SimpleNumberCardBlock } from "./blocks/simple-number-card/SimpleNumberCardBlock";
 
 

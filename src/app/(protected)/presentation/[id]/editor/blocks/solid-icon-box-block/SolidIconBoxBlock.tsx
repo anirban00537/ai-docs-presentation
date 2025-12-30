@@ -1,11 +1,10 @@
-import React, { useCallback, useMemo, memo, useState } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
 import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
 import { createSolidIconBoxContent } from "../definitions/solid-icon-box-block";
 import type { SolidIconBoxContent } from "@/types/presentation/schemas/blocks";
 import { CommonCard } from "../CommonCard";
-import { DynamicIcon } from "../../ui/DynamicIcon";
-import { IconPickerModal } from "../../ui/IconPickerModal";
+import { UniversalIconPicker } from "../../ui/UniversalIconPicker";
 
 interface SolidIconBoxBlockProps {
   block: Block;
@@ -23,8 +22,6 @@ export const SolidIconBoxBlock = memo(function SolidIconBoxBlock({
   readOnly = false,
 }: SolidIconBoxBlockProps) {
   const content = block.content as SolidIconBoxContent;
-  const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
-
   const iconName = content?.icon || "star";
 
   const editorContent = useMemo(() => {
@@ -50,55 +47,43 @@ export const SolidIconBoxBlock = memo(function SolidIconBoxBlock({
         type: "solid-icon-box-block",
         icon: newIcon,
     });
-    setIsIconPickerOpen(false);
   }, [content, onUpdate, readOnly]);
 
   return (
-    <>
-      <CommonCard
-        theme={theme}
+    <CommonCard
+      theme={theme}
+    >
+      <div
+        className="flex flex-col h-full w-full relative overflow-hidden p-8"
+        style={{
+          backgroundColor: theme.cardBackground,
+          color: theme.bodyColor,
+        }}
       >
-        <div
-          className="flex flex-col h-full w-full relative overflow-hidden p-8"
-          style={{
-            backgroundColor: theme.cardBackground,
-            color: theme.bodyColor,
-          }}
-        >
-          <div className="mb-4">
-             <button
-                onClick={() => !readOnly && setIsIconPickerOpen(true)}
-                className={`p-3 rounded-xl transition-all ${!readOnly ? 'hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer' : 'cursor-default'}`}
-                style={{
-                    backgroundColor: `${theme.primary}15`,
-                    color: theme.primary,
-                }}
-             >
-                <DynamicIcon name={iconName} className="w-8 h-8" />
-             </button>
-          </div>
-
-          <div className="flex-1 min-w-0 z-10">
-            <ProseMirrorEditor
-              key={block.id}
-              blockId={block.id}
-              value={editorContent}
-              onChange={handleEditorChange}
-              placeholder={placeholder ?? "Type content..."}
-              className="prose-base leading-relaxed"
-              readOnly={readOnly}
+        <div className="mb-4">
+           <UniversalIconPicker
+              value={iconName}
+              onChange={handleIconChange}
               theme={theme}
-            />
-          </div>
+              disabled={readOnly}
+              size="lg"
+              className="group-hover/card:scale-110 transition-transform duration-300"
+           />
         </div>
-      </CommonCard>
 
-      <IconPickerModal
-        open={isIconPickerOpen}
-        onOpenChange={setIsIconPickerOpen}
-        onSelect={handleIconChange}
-        currentIcon={iconName}
-      />
-    </>
+        <div className="flex-1 min-w-0 z-10">
+          <ProseMirrorEditor
+            key={block.id}
+            blockId={block.id}
+            value={editorContent}
+            onChange={handleEditorChange}
+            placeholder={placeholder ?? "Type content..."}
+            className="prose-base leading-relaxed"
+            readOnly={readOnly}
+            theme={theme}
+          />
+        </div>
+      </div>
+    </CommonCard>
   );
 });

@@ -15,7 +15,6 @@ import {
 } from "@/types/presentation";
 import {
   createBlockContentForType,
-  createNumberCardContent,
 } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
 
 import {
@@ -459,10 +458,7 @@ const slidesSlice = createSlice({
 
       if (!movedBlock.content) {
         const blockType = movedBlock.type || "prosemirror";
-        movedBlock.content =
-          blockType === BLOCK_TYPES.NUMBER_CARD
-            ? createNumberCardContent()
-            : createBlockContentForType(blockType as any);
+        movedBlock.content = createBlockContentForType(blockType as any);
       }
 
 

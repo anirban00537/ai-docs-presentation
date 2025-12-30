@@ -9,7 +9,6 @@ import { ProseMirrorBlock } from "./prosemirror/ProseMirrorBlock";
 import { ImageBlock } from "./image/ImageBlock";
 import { CodeBlock } from "./code/CodeBlock";
 import { SpacerBlock } from "./spacer/SpacerBlock";
-import { NumberCardBlock } from "./number-card/NumberCardBlock";
 import { SimpleNumberCardBlock } from "./simple-number-card/SimpleNumberCardBlock";
 import { LayeredNumberBlock } from "./layered-number-block/LayeredNumberBlock";
 import { CalloutBlock } from "./callout-block/CalloutBlock";
@@ -55,12 +54,6 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     type: BLOCK_TYPES.SPACER,
     component: SpacerBlock,
     normalize: (content) => normalizeBlockContent(BLOCK_TYPES.SPACER, content),
-  },
-  [BLOCK_TYPES.NUMBER_CARD]: {
-    type: BLOCK_TYPES.NUMBER_CARD,
-    component: NumberCardBlock,
-    normalize: (content) =>
-      normalizeBlockContent(BLOCK_TYPES.NUMBER_CARD, content),
   },
   [BLOCK_TYPES.SIMPLE_NUMBER_CARD]: {
     type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,

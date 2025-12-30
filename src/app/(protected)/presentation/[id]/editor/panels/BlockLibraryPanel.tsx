@@ -41,57 +41,47 @@ interface BlockDefinition {
   icon: React.ReactNode;
   label: string;
   description: string;
+  category: "Core" | "Callouts" | "Cards & Boxes";
   initialContent?: Record<string, any>;
 }
 
 const blockDefinitions: BlockDefinition[] = [
+  // Core
   {
     type: BLOCK_TYPES.PROSEMIRROR,
     icon: <IconFileText size={18} />,
     label: "Text",
     description: "Rich text editor with formatting",
+    category: "Core",
   },
   {
     type: BLOCK_TYPES.IMAGE,
     icon: <IconPhoto size={18} />,
     label: "Image",
     description: "Single image with caption",
+    category: "Core",
   },
   {
     type: BLOCK_TYPES.CODE,
     icon: <IconCode size={18} />,
     label: "Code",
     description: "Syntax-highlighted code snippets",
+    category: "Core",
   },
   {
     type: BLOCK_TYPES.SPACER,
     icon: <IconSeparator size={18} />,
     label: "Spacer",
     description: "Adjustable vertical space",
+    category: "Core",
   },
-  {
-    type: BLOCK_TYPES.NUMBER_CARD,
-    icon: <IconHash size={18} />,
-    label: "Number Card",
-    description: "Sequence number and description",
-  },
-  {
-    type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
-    icon: <IconNumber size={18} />,
-    label: "Simple Number",
-    description: "Minimalist number with text",
-  },
-  {
-    type: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
-    icon: <IconLayersIntersect size={18} />,
-    label: "Layered",
-    description: "Depth with large number",
-  },
+  // Callouts
   {
     type: BLOCK_TYPES.CALLOUT_BLOCK,
     icon: <IconNote size={18} />,
     label: "Note box",
     description: "Neutral note box",
+    category: "Callouts",
     initialContent: createCalloutContent("note"),
   },
   {
@@ -99,6 +89,7 @@ const blockDefinitions: BlockDefinition[] = [
     icon: <IconInfoCircle size={18} />,
     label: "Info box",
     description: "Blue info callout",
+    category: "Callouts",
     initialContent: createCalloutContent("info"),
   },
   {
@@ -106,6 +97,7 @@ const blockDefinitions: BlockDefinition[] = [
     icon: <IconAlertTriangle size={18} />,
     label: "Warning box",
     description: "Yellow warning alert",
+    category: "Callouts",
     initialContent: createCalloutContent("warning"),
   },
   {
@@ -113,25 +105,44 @@ const blockDefinitions: BlockDefinition[] = [
     icon: <IconAlertOctagon size={18} />,
     label: "Error box",
     description: "Red error/caution",
+    category: "Callouts",
     initialContent: createCalloutContent("error"),
+  },
+  // Cards & Boxes
+  {
+    type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
+    icon: <IconNumber size={18} />,
+    label: "Simple Number",
+    description: "Minimalist number with text",
+    category: "Cards & Boxes",
+  },
+  {
+    type: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
+    icon: <IconLayersIntersect size={18} />,
+    label: "Layered",
+    description: "Depth with large number",
+    category: "Cards & Boxes",
   },
   {
     type: BLOCK_TYPES.SOLID_BOX_BLOCK,
     icon: <IconBoxModel size={18} />,
     label: "Solid Box",
     description: "Simple solid colored box",
+    category: "Cards & Boxes",
   },
   {
     type: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
     icon: <IconStar size={18} />,
     label: "Icon Box",
     description: "Solid box with an icon",
+    category: "Cards & Boxes",
   },
   {
     type: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
     icon: <IconLayoutSidebarLeftCollapse size={18} />,
     label: "Side Line",
     description: "Vertical accent card",
+    category: "Cards & Boxes",
   },
 ];
 
@@ -238,16 +249,30 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
               >
                 Drag to add to your slide
               </p>
-              <div className="grid grid-cols-4 gap-1">
-                {blockDefinitions.map((block, index) => (
-                  <BlockOption
-                    key={`${block.type}-${index}`}
-                    id={`block-option-${block.type}-${index}`}
-                    blockType={block.type}
-                    icon={block.icon}
-                    label={block.label}
-                    initialContent={block.initialContent}
-                  />
+              <div className="space-y-6">
+                {Array.from(new Set(blockDefinitions.map(b => b.category))).map(category => (
+                  <div key={category}>
+                    <h3
+                      className="text-[10px] uppercase tracking-wider font-semibold mb-2 px-1 opacity-40 font-mono"
+                      style={{ color: isDark ? "#fff" : "#000" }}
+                    >
+                      {category}
+                    </h3>
+                    <div className="grid grid-cols-4 gap-1">
+                      {blockDefinitions
+                        .filter(b => b.category === category)
+                        .map((block, index) => (
+                          <BlockOption
+                            key={`${block.type}-${index}`}
+                            id={`block-option-${block.type}-${index}`}
+                            blockType={block.type}
+                            icon={block.icon}
+                            label={block.label}
+                            initialContent={block.initialContent}
+                          />
+                        ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

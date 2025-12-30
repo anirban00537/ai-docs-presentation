@@ -7,7 +7,6 @@ export * from "@/types/presentation";
 import { createImageContent, normalizeImageContent } from "./image";
 import { createCodeContent, normalizeCodeContent } from "./code";
 import { createSpacerContent, normalizeSpacerContent } from "./spacer";
-import { createNumberCardContent, normalizeNumberCardContent, getDefaultNumberCardEditorContent } from "./number-card";
 import { createSimpleNumberCardContent, normalizeSimpleNumberCardContent } from "./simple-number-card";
 import { createLayeredNumberContent, normalizeLayeredNumberContent } from "./layered-number-block";
 import { createCalloutContent, normalizeCalloutContent } from "./callout-block";
@@ -20,7 +19,6 @@ export {
   createImageContent, normalizeImageContent,
   createCodeContent, normalizeCodeContent,
   createSpacerContent, normalizeSpacerContent,
-  createNumberCardContent, normalizeNumberCardContent, getDefaultNumberCardEditorContent,
   createSimpleNumberCardContent, normalizeSimpleNumberCardContent,
   createLayeredNumberContent, normalizeLayeredNumberContent,
   createCalloutContent, normalizeCalloutContent,
@@ -45,8 +43,6 @@ export const createBlockContentForType = (
       return createCodeContent();
     case BLOCK_TYPES.SPACER:
       return createSpacerContent();
-    case BLOCK_TYPES.NUMBER_CARD:
-      return createNumberCardContent();
     case BLOCK_TYPES.SIMPLE_NUMBER_CARD:
       return createSimpleNumberCardContent();
     case BLOCK_TYPES.LAYERED_NUMBER_BLOCK:
@@ -76,8 +72,6 @@ export const normalizeBlockContent = (
       return normalizeCodeContent(content);
     case BLOCK_TYPES.SPACER:
       return normalizeSpacerContent(content);
-    case BLOCK_TYPES.NUMBER_CARD:
-      return normalizeNumberCardContent(content);
     case BLOCK_TYPES.SIMPLE_NUMBER_CARD:
       return normalizeSimpleNumberCardContent(content);
     case BLOCK_TYPES.LAYERED_NUMBER_BLOCK:

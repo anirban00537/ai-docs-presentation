@@ -33,14 +33,6 @@ export const SpacerContentSchema = z.object({
   height: z.number(),
 });
 
-export const NumberCardContentSchema = z.object({
-  type: z.literal("number-card"),
-  icon: z.string().optional(),
-  number: z.number(),
-  size: z.enum(["small", "medium", "large"]).optional(),
-  editorContent: ProseMirrorDocumentSchema,
-});
-
 export const SimpleNumberCardContentSchema = z.object({
   type: z.literal("simple-number-card"),
   number: z.number(),
@@ -83,7 +75,6 @@ export const BlockContentSchema = z.union([
   CodeContentSchema,
   ImageContentSchema,
   SpacerContentSchema,
-  NumberCardContentSchema,
   SimpleNumberCardContentSchema,
   LayeredNumberContentSchema,
   CalloutContentSchema,
