@@ -81,14 +81,15 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                         <div 
                             className="relative w-full pl-10 pr-8 py-5 transition-all duration-500 group/item hover:bg-white/[0.02] dark:hover:bg-white/[0.02]"
                             style={{
-                                borderBottom: index < items.length - 1 ? `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"}` : "none",
+                                borderBottom: index < items.length - 1 ? `2px solid ${theme.primary}25` : "none",
                             }}
                         >
                             {/* Number Indicator - Unique design element */}
                             <div 
-                                className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold z-20 transition-transform group-hover/item:scale-110"
+                                className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold z-20 transition-transform group-hover/item:scale-110 border"
                                 style={{
                                     background: theme.cardBackground,
+                                    borderColor: `${theme.primary}40`,
                                     color: theme.primary,
                                 }}
                             >
@@ -105,9 +106,6 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                                     Remove
                                 </button>
                             )}
-                            <div className="bg-white/90 dark:bg-black/90 backdrop-blur rounded-md px-2 py-0.5 flex items-center justify-center">
-                                <span className="text-gray-400 text-xs font-bold tracking-widest text-[8px]">OPTIONS</span>
-                            </div>
                         </div>
 
                         {/* Title Editor */}
