@@ -205,7 +205,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
         // Invalid JSON, create empty doc
       }
     }
-    return schema.node("doc", null, [schema.node("paragraph")]);
+    return schema.node("doc", null, [schema.node("heading", { level: 2 })]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -458,9 +458,9 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
 
               setSelectionToolbar((prev) => {
                 // Only update if something actually changed
-                if (prev.visible && 
-                    prev.position.top === coords.top - editorRect.top &&
-                    prev.position.left === coords.left - editorRect.left + (to - from > 10 ? 50 : 0)) {
+                if (prev.visible &&
+                  prev.position.top === coords.top - editorRect.top &&
+                  prev.position.left === coords.left - editorRect.left + (to - from > 10 ? 50 : 0)) {
                   return prev; // No change needed
                 }
                 return {
@@ -621,7 +621,6 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       },
       attributes: {
         class: "outline-none min-h-[40px]",
-        "data-placeholder": placeholder,
       },
       nodeViews: {
         image(node, view, getPos) {
@@ -860,18 +859,18 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
   // Theme colors must be compared to ensure text colors update when theme changes
   const prevTheme = prevProps.theme;
   const nextTheme = nextProps.theme;
-  
+
   // Check if theme colors changed
-  const themeColorsEqual = 
+  const themeColorsEqual =
     prevTheme?.bodyColor === nextTheme?.bodyColor &&
     prevTheme?.headingColor === nextTheme?.headingColor &&
     prevTheme?.fontFamily === nextTheme?.fontFamily;
-  
+
   return prevProps.value === nextProps.value &&
-         prevProps.readOnly === nextProps.readOnly &&
-         prevProps.blockId === nextProps.blockId &&
-         prevProps.placeholder === nextProps.placeholder &&
-         themeColorsEqual;
+    prevProps.readOnly === nextProps.readOnly &&
+    prevProps.blockId === nextProps.blockId &&
+    prevProps.placeholder === nextProps.placeholder &&
+    themeColorsEqual;
 });
 
 export default ProseMirrorEditor;

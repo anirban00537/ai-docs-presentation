@@ -83,7 +83,7 @@ export const BlockContainer = memo(function BlockContainer({
       ) {
         return;
       }
-      
+
       e.preventDefault();
       e.stopPropagation();
       setFocusedBlock(slideId, block.id);
@@ -126,17 +126,15 @@ export const BlockContainer = memo(function BlockContainer({
         (blockRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
       }}
       style={!readOnly ? style : {}}
-      className={`group/block relative min-w-0 h-full w-full flex flex-col ${
-        !readOnly && isFocused ? "z-20" : ""
-      }`}
+      className={`group/block relative min-w-0 h-full w-full flex flex-col ${!readOnly && isFocused ? "z-20" : ""
+        }`}
       onClick={!readOnly ? handleBlockClick : undefined}
       onMouseEnter={!readOnly ? () => setIsHovered(true) : undefined}
       onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
     >
       <div
-        className={`relative p-1 transition-all h-full w-full flex flex-col flex-1 min-w-0 rounded-xl ${
-          isDragging && !readOnly ? "opacity-50" : ""
-        }`}
+        className={`relative p-1 transition-all h-full w-full flex flex-col flex-1 min-w-0 rounded-xl ${isDragging && !readOnly ? "opacity-50" : ""
+          }`}
         style={{
           outline: !readOnly && isFocused ? `2px solid ${theme.primary}` : "none",
           outlineOffset: "2px",
@@ -157,7 +155,6 @@ export const BlockContainer = memo(function BlockContainer({
           block={block}
           onUpdate={(content) => onUpdate(block.id, content)}
           theme={theme}
-          placeholder="Type '/' for commands"
           readOnly={readOnly}
         />
       </div>

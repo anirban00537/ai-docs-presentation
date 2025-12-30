@@ -482,7 +482,11 @@ export const useEditorPage = ({
   };
 
   const handleAddRowAtBottom = (slideId: string) => {
-    commandBus.addRowWithColumns({ slideId, columnCount: 1 });
+    commandBus.addRowWithColumns({
+      slideId,
+      columnCount: 1,
+      blockType: "prosemirror"
+    });
   };
 
   const handleUpdateColumnWidths = (

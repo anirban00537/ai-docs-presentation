@@ -79,16 +79,25 @@ export const PROSEMIRROR_STYLES = `
     background: none;
     padding: 0;
   }
-  .ProseMirror p.is-empty::before,
-  .ProseMirror h1.is-empty::before,
-  .ProseMirror h2.is-empty::before,
-  .ProseMirror h3.is-empty::before,
-  .ProseMirror h4.is-empty::before {
+  .ProseMirror p.is-empty:first-child,
+  .ProseMirror h1.is-empty:first-child,
+  .ProseMirror h2.is-empty:first-child,
+  .ProseMirror h3.is-empty:first-child,
+  .ProseMirror h4.is-empty:first-child {
+    position: relative;
+  }
+  .ProseMirror p.is-empty:first-child::before,
+  .ProseMirror h1.is-empty:first-child::before,
+  .ProseMirror h2.is-empty:first-child::before,
+  .ProseMirror h3.is-empty:first-child::before,
+  .ProseMirror h4.is-empty:first-child::before {
     content: "Type '/' for commands";
     color: #9ca3af;
+    opacity: 0.5;
     pointer-events: none;
-    float: left;
-    height: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 
   /* Presentation mode: viewport-responsive font sizes */
@@ -156,13 +165,13 @@ let baseStylesInjected = false;
 export function injectBaseStyles(): void {
   if (typeof document === 'undefined') return;
   if (baseStylesInjected) return;
-  
+
   const styleId = 'prosemirror-base-styles';
   if (document.getElementById(styleId)) {
     baseStylesInjected = true;
     return;
   }
-  
+
   const styleEl = document.createElement('style');
   styleEl.id = styleId;
   styleEl.textContent = PROSEMIRROR_STYLES;

@@ -102,7 +102,7 @@ export const BlockContentSchema = z.union([
 
 
 // Utilities
-export const getDefaultHeadingContent = (): string => "# Start typing...";
+export const getDefaultHeadingContent = (): string => "";
 
 export const withAlpha = (color: string, opacity: number): string => {
   if (color.startsWith("#")) {
