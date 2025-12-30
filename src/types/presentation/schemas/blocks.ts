@@ -69,6 +69,15 @@ export const SidelineCardContentSchema = z.object({
   editorContent: ProseMirrorDocumentSchema,
 });
 export type SidelineCardContent = z.infer<typeof SidelineCardContentSchema>;
+export const ButtonBlockContentSchema = z.object({
+  type: z.literal("button-block"),
+  text: z.string().default("Click here"),
+  link: z.string().optional(),
+  style: z.enum(["filled", "outline"]).default("filled"),
+  alignment: z.enum(["left", "center", "right"]).default("center"),
+  color: z.string().default("default"),
+});
+export type ButtonBlockContent = z.infer<typeof ButtonBlockContentSchema>;
 
 export const BlockContentSchema = z.union([
   ProseMirrorDocumentSchema,
@@ -81,6 +90,7 @@ export const BlockContentSchema = z.union([
   SolidBoxContentSchema,
   SolidIconBoxContentSchema,
   SidelineCardContentSchema,
+  ButtonBlockContentSchema,
 ]);
 
 

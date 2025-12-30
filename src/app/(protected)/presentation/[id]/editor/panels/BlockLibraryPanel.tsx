@@ -5,7 +5,8 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BLOCK_TYPES,
-  createCalloutContent
+  createCalloutContent,
+  createButtonBlockContent,
 } from "../blocks/definitions";
 import {
   IconFileText,
@@ -34,6 +35,7 @@ import {
   IconH3,
   IconH4,
   IconQuote,
+  IconClick,
 } from "@tabler/icons-react";
 import { BlockOption } from "../block/BlockOption";
 
@@ -47,7 +49,7 @@ interface BlockDefinition {
   icon: React.ReactNode;
   label: string;
   description: string;
-  category: "Core" | "Callouts" | "Cards & Boxes";
+  category: "Core" | "Callouts" | "Cards & Boxes" | "Interactive";
   initialContent?: any;
 }
 
@@ -146,6 +148,15 @@ const blockDefinitions: BlockDefinition[] = [
     description: "Yellow warning alert",
     category: "Callouts",
     initialContent: createCalloutContent("warning"),
+  },
+  // Interactive
+  {
+    type: BLOCK_TYPES.BUTTON_BLOCK,
+    icon: <IconClick size={18} />,
+    label: "Button",
+    description: "Clickable button",
+    category: "Interactive",
+    initialContent: createButtonBlockContent(),
   },
   {
     type: BLOCK_TYPES.CALLOUT_BLOCK,

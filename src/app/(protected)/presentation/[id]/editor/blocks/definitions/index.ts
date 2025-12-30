@@ -14,6 +14,8 @@ import { createSolidBoxContent, normalizeSolidBoxContent } from "./solid-box-blo
 import { createSolidIconBoxContent, normalizeSolidIconBoxContent } from "./solid-icon-box-block";
 import { createSidelineCardContent, normalizeSidelineCardContent } from "./sideline-card-block";
 
+import { createButtonBlockContent, normalizeButtonBlockContent } from "./button-block";
+
 // Re-export factories and normalizers
 export {
   createImageContent, normalizeImageContent,
@@ -25,6 +27,7 @@ export {
   createSolidBoxContent, normalizeSolidBoxContent,
   createSolidIconBoxContent, normalizeSolidIconBoxContent,
   createSidelineCardContent, normalizeSidelineCardContent,
+  createButtonBlockContent, normalizeButtonBlockContent,
 };
 
 import {
@@ -55,6 +58,8 @@ export const createBlockContentForType = (
       return createSolidIconBoxContent();
     case BLOCK_TYPES.SIDELINE_CARD_BLOCK:
       return createSidelineCardContent();
+    case BLOCK_TYPES.BUTTON_BLOCK:
+      return createButtonBlockContent();
     case BLOCK_TYPES.PROSEMIRROR:
     default:
       return getDefaultHeadingContent();
@@ -84,6 +89,8 @@ export const normalizeBlockContent = (
       return normalizeSolidIconBoxContent(content);
     case BLOCK_TYPES.SIDELINE_CARD_BLOCK:
       return normalizeSidelineCardContent(content);
+    case BLOCK_TYPES.BUTTON_BLOCK:
+      return normalizeButtonBlockContent(content);
     default:
       if (isMarkdownFormat(content)) {
         return content;

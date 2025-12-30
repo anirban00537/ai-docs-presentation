@@ -15,6 +15,7 @@ import { CalloutBlock } from "./callout-block/CalloutBlock";
 import { SolidBoxBlock } from "./solid-box-block/SolidBoxBlock";
 import { SolidIconBoxBlock } from "./solid-icon-box-block/SolidIconBoxBlock";
 import { SidelineCardBlock } from "./sideline-card-block/SidelineCardBlock";
+import { ButtonBlock } from "./button-block/ButtonBlock";
 
 export interface BlockRendererProps {
   block: Block;
@@ -90,6 +91,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: SidelineCardBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.SIDELINE_CARD_BLOCK, content),
+  },
+  [BLOCK_TYPES.BUTTON_BLOCK]: {
+    type: BLOCK_TYPES.BUTTON_BLOCK,
+    component: ButtonBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.BUTTON_BLOCK, content),
   },
 };
 
