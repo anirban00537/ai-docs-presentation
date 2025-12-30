@@ -16,6 +16,7 @@ import { createSidelineCardContent, normalizeSidelineCardContent } from "./sidel
 
 import { createButtonBlockContent, normalizeButtonBlockContent } from "./button-block";
 import { createLeafBlockContent, normalizeLeafBlockContent } from "./leaf-block";
+import { createTimelineBentoContent, normalizeTimelineBentoContent } from "./timeline-bento-block";
 
 
 // Re-export factories and normalizers
@@ -31,6 +32,7 @@ export {
   createSidelineCardContent, normalizeSidelineCardContent,
   createButtonBlockContent, normalizeButtonBlockContent,
   createLeafBlockContent, normalizeLeafBlockContent,
+  createTimelineBentoContent, normalizeTimelineBentoContent,
 };
 
 import {
@@ -65,6 +67,8 @@ export const createBlockContentForType = (
       return createButtonBlockContent();
     case BLOCK_TYPES.LEAF_BLOCK:
       return createLeafBlockContent();
+    case BLOCK_TYPES.TIMELINE_BENTO_BLOCK:
+      return createTimelineBentoContent();
 
     case BLOCK_TYPES.PROSEMIRROR:
     default:
@@ -99,6 +103,8 @@ export const normalizeBlockContent = (
       return normalizeButtonBlockContent(content);
     case BLOCK_TYPES.LEAF_BLOCK:
       return normalizeLeafBlockContent(content);
+    case BLOCK_TYPES.TIMELINE_BENTO_BLOCK:
+      return normalizeTimelineBentoContent(content);
 
     default:
       if (isMarkdownFormat(content)) {

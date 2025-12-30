@@ -12,6 +12,7 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconColumns3,
   IconLeaf,
+  IconTimelineEvent,
 } from "@tabler/icons-react";
 import { LayoutOption } from "../block/LayoutOption";
 
@@ -26,6 +27,7 @@ interface LayoutDefinition {
   icon: React.ReactNode;
   label: string;
   description: string;
+  columnCount?: number;
 }
 
 // Only 3-column layouts
@@ -74,6 +76,17 @@ const layoutDefinitions: LayoutDefinition[] = [
   },
 ];
 
+const masterLayouts: LayoutDefinition[] = [
+  {
+    id: "timeline-bento",
+    blockType: BLOCK_TYPES.TIMELINE_BENTO_BLOCK,
+    icon: <IconTimelineEvent size={18} />,
+    label: "Timeline Bento",
+    description: "Bento grid with timeline",
+    columnCount: 1,
+  },
+];
+
 export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const activeSlideId = useAppSelector(selectActiveSlideId);
@@ -83,11 +96,11 @@ export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
   const handleLayoutClick = (layout: LayoutDefinition) => {
     if (!activeSlideId) return;
 
-    // Add a new row with 3 columns
+    // Add a new row with the specified number of columns
     dispatch(
       addRowWithColumnsAtIndex({
         slideId: activeSlideId,
-        columnCount: 3,
+        columnCount: layout.columnCount || 3,
         insertIndex: 999, // Insert at bottom
         blockType: layout.blockType,
       })
@@ -212,6 +225,33 @@ export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
                           label={layout.label}
                           blockType={layout.blockType}
                           columnCount={3}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Master Layouts */}
+                <div>
+                  <h3
+                    className="text-[10px] uppercase tracking-wider font-semibold mb-2 px-1 opacity-40 font-mono"
+                    style={{ color: isDark ? "#fff" : "#000" }}
+                  >
+                    Master Layouts
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {masterLayouts.map((layout) => (
+                      <div
+                        key={layout.id}
+                        onClick={() => handleLayoutClick(layout)}
+                        className="cursor-pointer"
+                      >
+                        <LayoutOption
+                          id={layout.id}
+                          icon={layout.icon}
+                          label={layout.label}
+                          blockType={layout.blockType}
+                          columnCount={layout.columnCount || 1}
                         />
                       </div>
                     ))}

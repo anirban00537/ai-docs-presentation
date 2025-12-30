@@ -14,6 +14,7 @@ export const BLOCK_TYPES = {
   SIDELINE_CARD_BLOCK: "sideline-card-block",
   BUTTON_BLOCK: "button-block",
   LEAF_BLOCK: "leaf-block",
+  TIMELINE_BENTO_BLOCK: "timeline-bento-block",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

@@ -17,6 +17,7 @@ import { SolidIconBoxBlock } from "./solid-icon-box-block/SolidIconBoxBlock";
 import { SidelineCardBlock } from "./sideline-card-block/SidelineCardBlock";
 import { ButtonBlock } from "./button-block/ButtonBlock";
 import { LeafBlock } from "./leaf-block/LeafBlock";
+import { TimelineBentoBlock } from "./timeline-bento/TimelineBentoBlock";
 
 
 export interface BlockRendererProps {
@@ -105,6 +106,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: LeafBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.LEAF_BLOCK, content),
+  },
+  [BLOCK_TYPES.TIMELINE_BENTO_BLOCK]: {
+    type: BLOCK_TYPES.TIMELINE_BENTO_BLOCK,
+    component: TimelineBentoBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.TIMELINE_BENTO_BLOCK, content),
   },
 };
 

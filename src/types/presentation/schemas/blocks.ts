@@ -85,11 +85,25 @@ export const LeafBlockContentSchema = z.object({
 });
 export type LeafBlockContent = z.infer<typeof LeafBlockContentSchema>;
 
+// Timeline Bento Block
+export const TimelineBentoItemSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+});
+
+export const TimelineBentoContentSchema = z.object({
+  type: z.literal("timeline-bento-block"),
+  items: z.array(TimelineBentoItemSchema).default([]),
+});
+
+export type TimelineBentoItem = z.infer<typeof TimelineBentoItemSchema>;
+export type TimelineBentoContent = z.infer<typeof TimelineBentoContentSchema>;
+
 export const BlockContentSchema = z.union([
-  ProseMirrorDocumentSchema,
-  CodeContentSchema,
+  z.string(),
   ImageContentSchema,
-  SpacerContentSchema,
+  CodeContentSchema,
   SimpleNumberCardContentSchema,
   LayeredNumberContentSchema,
   CalloutContentSchema,
@@ -98,6 +112,8 @@ export const BlockContentSchema = z.union([
   SidelineCardContentSchema,
   ButtonBlockContentSchema,
   LeafBlockContentSchema,
+  TimelineBentoContentSchema,
+  SpacerContentSchema,
 ]);
 
 
