@@ -4,7 +4,7 @@ import type { Block, Theme, StackedTimelineContent } from "@/types/presentation"
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { createStackedTimelineItem } from "../definitions/stacked-timeline-block";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconX } from "@tabler/icons-react";
 import { getFontFamily } from "@/lib/fonts";
 
 interface StackedTimelineBlockProps {
@@ -44,6 +44,15 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
         onUpdate({
             ...content,
             items: [...items, newItem],
+        });
+    };
+
+    const handleRemoveItem = (index: number) => {
+        if (readOnly) return;
+        const newItems = items.filter((_, i) => i !== index);
+        onUpdate({
+            ...content,
+            items: newItems,
         });
     };
 
@@ -88,8 +97,16 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                                 {index + 1}
                             </div>
 
-                        {/* Selector Handle */}
-                        <div className="absolute top-2 right-4 opacity-0 group-hover/item:opacity-100 transition-opacity z-20">
+                        {/* Selector Handle & Remove Button */}
+                        <div className="absolute top-2 right-4 opacity-0 group-hover/item:opacity-100 transition-opacity z-20 flex items-center gap-2">
+                             {!readOnly && (
+                                <button
+                                    onClick={() => handleRemoveItem(index)}
+                                    className="p-1 px-2 text-[8px] font-bold tracking-widest rounded bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all uppercase"
+                                >
+                                    Remove
+                                </button>
+                            )}
                             <div className="bg-white/90 dark:bg-black/90 backdrop-blur shadow-sm border border-gray-200 dark:border-gray-800 rounded-md px-2 py-0.5 flex items-center justify-center">
                                 <span className="text-gray-400 text-xs font-bold tracking-widest text-[8px]">OPTIONS</span>
                             </div>

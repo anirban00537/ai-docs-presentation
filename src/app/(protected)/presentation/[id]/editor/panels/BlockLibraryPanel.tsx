@@ -9,6 +9,7 @@ import {
   createButtonBlockContent,
   createTimelineBentoContent,
   createStackedTimelineContent,
+  createLeafBlockContent,
 } from "../blocks/definitions";
 import {
   IconFileText,
@@ -184,6 +185,14 @@ const blockDefinitions: BlockDefinition[] = [
     description: "Vertical stacked timeline",
     category: "Cards & Boxes",
     initialContent: createStackedTimelineContent(),
+  },
+  {
+    type: BLOCK_TYPES.LEAF_BLOCK,
+    icon: <IconPolygon size={18} />,
+    label: "Leaf Grid",
+    description: "Grid of leaf-shaped cards",
+    category: "Cards & Boxes",
+    initialContent: createLeafBlockContent(),
   },
 ];
 

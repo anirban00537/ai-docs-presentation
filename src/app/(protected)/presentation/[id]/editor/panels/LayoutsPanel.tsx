@@ -67,13 +67,6 @@ const layoutDefinitions: LayoutDefinition[] = [
     label: "Side Line",
     description: "Three accent-line cards",
   },
-  {
-    id: "leaf-3col",
-    blockType: BLOCK_TYPES.LEAF_BLOCK,
-    icon: <IconLeaf size={18} />,
-    label: "Leaf Cards",
-    description: "Three organic leaf-shaped cards",
-  },
 ];
 
 const masterLayouts: LayoutDefinition[] = [
@@ -91,6 +84,14 @@ const masterLayouts: LayoutDefinition[] = [
     icon: <IconLayersIntersect size={18} />,
     label: "Stacked Timeline",
     description: "Vertical stacked timeline",
+    columnCount: 1,
+  },
+  {
+    id: "leaf-grid",
+    blockType: BLOCK_TYPES.LEAF_BLOCK,
+    icon: <IconLeaf size={18} />,
+    label: "Leaf Grid",
+    description: "Internal grid of leaf cards",
     columnCount: 1,
   },
 ];

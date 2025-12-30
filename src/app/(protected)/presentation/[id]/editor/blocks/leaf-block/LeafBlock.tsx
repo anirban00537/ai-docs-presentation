@@ -1,97 +1,156 @@
-import React, { useCallback, useMemo, memo } from "react";
+import React, { memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme } from "@/types/presentation";
-import {
-    type LeafBlockContent,
-    createLeafBlockContent,
-} from "../definitions";
-import { CommonCard } from "../CommonCard";
+import type { Block, Theme, LeafBlockContent } from "@/types/presentation";
+import { useAppSelector } from "@/store/hooks";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { createLeafItem } from "../definitions/leaf-block";
+import { IconPlus, IconX } from "@tabler/icons-react";
 
 interface LeafBlockProps {
     block: Block;
-    onUpdate: (content: LeafBlockContent) => void;
-    theme: Theme;
-    placeholder?: string;
+    onUpdate: (content: any) => void;
+    theme?: Theme;
     readOnly?: boolean;
 }
 
 export const LeafBlock = memo(function LeafBlock({
     block,
     onUpdate,
-    theme,
-    placeholder,
+    theme: themeProp,
     readOnly = false,
 }: LeafBlockProps) {
+    const reduxTheme = useAppSelector(selectTheme);
+    const theme = themeProp || reduxTheme || DEFAULT_THEME;
+    const isDark = theme.themeType === "dark";
+
     const content = block.content as LeafBlockContent;
+    const items = content.items || [];
 
-    const editorContent = useMemo(() => {
-        return (
-            content?.editorContent ?? createLeafBlockContent().editorContent
-        );
-    }, [content?.editorContent]);
+    const handleItemUpdate = (index: number, field: "title" | "description", value: string) => {
+        if (readOnly) return;
+        const newItems = [...items];
+        newItems[index] = {
+            ...newItems[index],
+            [field]: value,
+        };
+        onUpdate({
+            ...content,
+            items: newItems,
+        });
+    };
 
-    const handleEditorChange = useCallback(
-        (newEditorContent: any) => {
-            if (readOnly) return;
-            const newContent: LeafBlockContent = {
-                type: "leaf-block",
-                editorContent: newEditorContent,
-            };
-            onUpdate(newContent);
-        },
-        [onUpdate, readOnly]
-    );
+    const handleAddItem = () => {
+        if (readOnly) return;
+        onUpdate({
+            ...content,
+            items: [...items, createLeafItem()],
+        });
+    };
+
+    const handleRemoveItem = (index: number) => {
+        if (readOnly) return;
+        const newItems = items.filter((_, i) => i !== index);
+        onUpdate({
+            ...content,
+            items: newItems,
+        });
+    };
 
     return (
-        <CommonCard
-            theme={theme}
-            className="w-full h-full"
-        >
-            <div
-                className="relative w-full h-full group overflow-hidden flex flex-col p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                style={{
-                    borderRadius: "0px 24px 0px 24px",
-                    backgroundColor: theme.cardBackground,
-                    border: theme.borderColor
-                        ? `${theme.cardBorderWidth || "1px"} solid ${theme.borderColor}`
-                        : theme.themeType === "dark"
-                            ? "1px solid rgba(255,255,255,0.1)"
-                            : "1px solid rgba(0,0,0,0.1)",
-                    boxShadow: theme.cardBoxShadow || "0 2px 8px rgba(0,0,0,0.05)",
-                }}
-            >
+        <div className="group relative w-full h-full min-h-[300px] p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {items.map((item, index) => (
+                    <div
+                        key={item.id}
+                        className="relative group/leaf p-8 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
+                        style={{
+                            borderRadius: "0px 48px 0px 48px",
+                            backgroundColor: theme.cardBackground,
+                            border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"}`,
+                            boxShadow: isDark 
+                                ? "0 10px 30px -5px rgba(0,0,0,0.5)" 
+                                : `0 10px 30px -5px ${theme.primary}15`,
+                        }}
+                    >
+                        {/* Premium Glow Effect */}
+                        <div
+                            className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover/leaf:opacity-20 transition-opacity duration-700 pointer-events-none"
+                            style={{
+                                background: `radial-gradient(circle at 70% 30%, ${theme.primary}, transparent 70%)`,
+                                filter: "blur(20px)",
+                            }}
+                        />
 
+                        {/* Remove Button */}
+                        {!readOnly && (
+                            <button
+                                onClick={() => handleRemoveItem(index)}
+                                className="absolute top-4 right-4 z-30 opacity-0 group-hover/leaf:opacity-100 transition-all p-1.5 rounded-full hover:bg-red-500/10 hover:text-red-500 text-gray-400"
+                            >
+                                <IconX size={14} stroke={2.5} />
+                            </button>
+                        )}
 
-                <div
-                    className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                        background: `radial-gradient(circle at top right, ${theme.primary}0D, transparent 60%)`,
-                    }}
-                />
+                        {/* Animated Accent Line */}
+                        <div
+                            className="absolute bottom-0 left-0 w-full h-1.5 opacity-30 group-hover/leaf:opacity-100 transition-all duration-500 transform translate-y-1 group-hover/leaf:translate-y-0"
+                            style={{
+                                background: `linear-gradient(to right, ${theme.primary}, transparent)`,
+                            }}
+                        />
 
-                {/* Content */}
-                <div className="relative z-10 flex-1 min-w-0">
-                    <ProseMirrorEditor
-                        key={block.id}
-                        blockId={block.id}
-                        value={editorContent}
-                        onChange={handleEditorChange}
-                        placeholder={placeholder ?? "Type content..."}
-                        className="text-base leading-relaxed tracking-tight"
-                        theme={theme}
-                        readOnly={readOnly}
-                    />
-                </div>
+                        {/* Title Section */}
+                        <div className="mb-4 relative z-10">
+                            <ProseMirrorEditor
+                                key={`${item.id}-title`}
+                                blockId={`${item.id}-title`}
+                                value={item.title}
+                                onChange={(value) => handleItemUpdate(index, "title", value)}
+                                placeholder="Leaf Title"
+                                className="text-xl font-bold tracking-tight"
+                                theme={{
+                                    ...theme,
+                                    headingColor: theme.primary,
+                                }}
+                                readOnly={readOnly}
+                            />
+                        </div>
 
-                {/* Accent Line */}
-                <div
-                    className="absolute bottom-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    style={{
-                        background: `linear-gradient(to right, ${theme.primary}40, transparent)`,
-                        borderRadius: "0 0 0 24px"
-                    }}
-                />
+                        {/* Description Section */}
+                        <div className="relative z-10">
+                            <ProseMirrorEditor
+                                key={`${item.id}-description`}
+                                blockId={`${item.id}-description`}
+                                value={item.description}
+                                onChange={(value) => handleItemUpdate(index, "description", value)}
+                                placeholder="Describe this leaf..."
+                                className="text-sm leading-relaxed opacity-80"
+                                theme={theme}
+                                readOnly={readOnly}
+                            />
+                        </div>
+
+                        {/* Corner Decoration */}
+                        <div className="absolute top-4 left-4 w-2 h-2 rounded-full opacity-20" style={{ background: theme.primary }} />
+                    </div>
+                ))}
             </div>
-        </CommonCard>
+
+            {/* Float Add Button - Bottom Right */}
+            {!readOnly && (
+                <button
+                    onClick={handleAddItem}
+                    className="absolute bottom-10 right-10 h-10 w-10 flex items-center justify-center rounded-full shadow-2xl border transition-all hover:scale-125 active:scale-95 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                        background: theme.cardBackground,
+                        borderColor: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
+                        color: theme.primary,
+                        boxShadow: `0 0 20px ${theme.primary}40`,
+                    }}
+                >
+                    <IconPlus size={20} stroke={3} />
+                </button>
+            )}
+        </div>
     );
 });

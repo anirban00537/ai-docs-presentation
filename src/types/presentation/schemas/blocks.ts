@@ -79,10 +79,17 @@ export const ButtonBlockContentSchema = z.object({
 });
 export type ButtonBlockContent = z.infer<typeof ButtonBlockContentSchema>;
 
+export const LeafItemSchema = z.object({
+  id: z.string(),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
+});
+
 export const LeafBlockContentSchema = z.object({
   type: z.literal("leaf-block"),
-  editorContent: ProseMirrorDocumentSchema,
+  items: z.array(LeafItemSchema).default([]),
 });
+export type LeafItem = z.infer<typeof LeafItemSchema>;
 export type LeafBlockContent = z.infer<typeof LeafBlockContentSchema>;
 
 // Timeline Bento Block
