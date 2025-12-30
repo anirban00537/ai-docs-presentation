@@ -23,9 +23,7 @@ interface BlockContainerProps {
   rowIndex: number;
   totalRowsInSlide: number;
   onUpdate: (blockId: string, content: any) => void;
-  onAddColumn: (rowId: string, afterBlockId: string) => void;
   isLastBlock: boolean;
-  canAddColumn: boolean;
   hideDragHandle?: boolean;
   readOnly?: boolean;
   /** Optional theme prop. If not provided, falls back to Redux store theme */
@@ -41,9 +39,7 @@ export const BlockContainer = memo(function BlockContainer({
   rowIndex,
   totalRowsInSlide,
   onUpdate,
-  onAddColumn,
   isLastBlock,
-  canAddColumn,
   hideDragHandle = false,
   readOnly = false,
   theme: themeProp,
@@ -153,8 +149,6 @@ export const BlockContainer = memo(function BlockContainer({
             isVisible={isFocused}
             onDuplicate={handleDuplicate}
             onDelete={handleDelete}
-            onAddColumn={() => onAddColumn(rowId, block.id)}
-            canAddColumn={isLastBlock && canAddColumn}
           />
         )}
 

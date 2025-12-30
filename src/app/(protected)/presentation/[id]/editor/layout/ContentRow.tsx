@@ -7,7 +7,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME, type Theme } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
 import { InsertionIndicator } from "./InsertionIndicator";
-import { IconTrash } from "@tabler/icons-react";
+import { IconTrash, IconPlus } from "@tabler/icons-react";
 
 // Wrapper to safely use useDndMonitor only when inside DndContext
 const DragMonitorBridge: React.FC<{
@@ -336,6 +336,44 @@ export const ContentRow = memo(function ContentRow({
           />
         )}
       </div>
+
+      {/* Row-level Add Button - Right Side Center */}
+      {!readOnly && (
+        <button
+          onClick={() => {
+            const lastBlock = row.blocks[row.blocks.length - 1];
+            if (!lastBlock) return;
+
+            // If row already has 3 blocks (MAX_COLUMNS), create a new row below
+            if (row.blocks.length >= MAX_COLUMNS) {
+              // We need to use the Redux action to add a new row with the same block type
+              // Import and dispatch addRowWithColumnsAtIndex
+              // For now, use onAddColumn which will trigger the existing logic
+              onAddColumn(row.id, lastBlock.id);
+            } else {
+              // Row has space, add to current row
+              onAddColumn(row.id, lastBlock.id);
+            }
+          }}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-30 opacity-0 group-hover/row:opacity-100 transition-all duration-200 hover:scale-110"
+          style={{
+            backgroundColor: theme.primary,
+            color: "#ffffff",
+            width: "24px",
+            height: "24px",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: isDark 
+              ? "0 2px 8px rgba(0,0,0,0.3)" 
+              : "0 2px 8px rgba(0,0,0,0.15)",
+          }}
+          title={row.blocks.length >= MAX_COLUMNS ? "Add new row with same block type" : "Add same block type"}
+        >
+          <IconPlus size={14} stroke={2.5} />
+        </button>
+      )}
     </div>
   );
 });

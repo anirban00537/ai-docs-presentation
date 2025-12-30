@@ -194,14 +194,43 @@ const slidesSlice = createSlice({
       const row = slide.rows.find((r) => r.id === rowId);
       if (!row) return;
 
-      // If row already has 3 blocks, create a new row at the bottom
+      // Check if row already has blocks of a different type
+      // Enforce "one block type per row" rule
+      if (row.blocks.length > 0) {
+        const existingBlockType = row.blocks[0].type;
+        if (existingBlockType !== blockType) {
+          // Block type mismatch - create new row instead
+          const newBlock = createBlockInstance(blockType as any, initialContent);
+          const newRow = createRow([newBlock]);
+          const currentRowIndex = slide.rows.findIndex((r) => r.id === rowId);
+          slide.rows.splice(currentRowIndex + 1, 0, newRow);
+          return;
+        }
+      }
+
+      // If row already has 3 blocks, try to add to next row if it has space and same type
       if (row.blocks.length >= MAX_BLOCKS_PER_ROW) {
         const newBlock = createBlockInstance(blockType as any, initialContent);
-        const newRow = createRow([newBlock]);
         const currentRowIndex = slide.rows.findIndex((r) => r.id === rowId);
-        slide.rows.splice(currentRowIndex + 1, 0, newRow);
+        const nextRow = slide.rows[currentRowIndex + 1];
+        
+        // Check if next row exists, has same block type, and has available space
+        if (nextRow && 
+            nextRow.blocks.length > 0 && 
+            nextRow.blocks.length < MAX_BLOCKS_PER_ROW &&
+            nextRow.blocks[0].type === blockType) {
+          // Add to existing next row
+          nextRow.blocks.push(newBlock);
+          // Recalculate column widths
+          nextRow.columnWidths = nextRow.blocks.map(() => 1);
+        } else {
+          // Create a new row below current row
+          const newRow = createRow([newBlock]);
+          slide.rows.splice(currentRowIndex + 1, 0, newRow);
+        }
         return;
       }
+
 
       const newBlock = createBlockInstance(blockType as any, initialContent);
 
@@ -366,6 +395,18 @@ const slidesSlice = createSlice({
 
       // Ensure we have a valid block
       if (!movedBlock) return;
+
+      // Enforce "one block type per row" rule for cross-row moves
+      // Check if target row has blocks of different type
+      if (targetRow.blocks.length > 0) {
+        const targetRowType = targetRow.blocks[0].type;
+        if (targetRowType !== movedBlock.type) {
+          // Cannot move to row with different block type - reject the move
+          // Put the block back in its original position
+          sourceRow.blocks.splice(blockIndex, 0, movedBlock);
+          return;
+        }
+      }
 
       if (targetBlockId) {
         const targetIndex = targetRow.blocks.findIndex(

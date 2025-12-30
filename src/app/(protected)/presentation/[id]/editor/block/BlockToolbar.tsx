@@ -14,16 +14,12 @@ interface BlockToolbarProps {
   isVisible: boolean;
   onDuplicate: () => void;
   onDelete: () => void;
-  onAddColumn?: () => void;
-  canAddColumn?: boolean;
 }
 
 export const BlockToolbar = memo(function BlockToolbar({
   isVisible,
   onDuplicate,
   onDelete,
-  onAddColumn,
-  canAddColumn,
 }: BlockToolbarProps) {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
@@ -51,18 +47,6 @@ export const BlockToolbar = memo(function BlockToolbar({
               borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)",
             }}
           >
-            {/* Add Column (Contextual) */}
-            {canAddColumn && onAddColumn && (
-              <button
-                onClick={onAddColumn}
-                className={buttonClass}
-                style={{ color: theme.primary }}
-                title="Add Column"
-              >
-                <IconPlus size={16} stroke={2.5} />
-              </button>
-            )}
-
             {/* Duplicate */}
             <button
               onClick={onDuplicate}
