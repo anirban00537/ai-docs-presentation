@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { IconPalette, IconBlocks, IconPhoto } from "@tabler/icons-react";
+import { IconPalette, IconBlocks, IconPhoto, IconLayoutGrid } from "@tabler/icons-react";
 import { ThemeSelectorPanel } from "./ThemeSelectorPanel";
 import { BlockLibraryPanel } from "./BlockLibraryPanel";
+import { LayoutsPanel } from "./LayoutsPanel";
 import { ImageLibraryPanel } from "./ImageLibraryPanel";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
@@ -16,6 +17,7 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
 }) => {
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
   const [isBlocksPanelOpen, setIsBlocksPanelOpen] = useState(false);
+  const [isLayoutsPanelOpen, setIsLayoutsPanelOpen] = useState(false);
   const [isImagesPanelOpen, setIsImagesPanelOpen] = useState(false);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
@@ -29,10 +31,12 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
           !target.closest('[data-floating-sidebar]') &&
           !target.closest('[data-theme-panel]') &&
           !target.closest('[data-blocks-panel]') &&
+          !target.closest('[data-layouts-panel]') &&
           !target.closest('[data-images-panel]')
         ) {
           setIsThemePanelOpen(false);
           setIsBlocksPanelOpen(false);
+          setIsLayoutsPanelOpen(false);
           setIsImagesPanelOpen(false);
         }
       };
@@ -42,17 +46,26 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }
-  }, [isThemePanelOpen, isBlocksPanelOpen, isImagesPanelOpen]);
+  }, [isThemePanelOpen, isBlocksPanelOpen, isLayoutsPanelOpen, isImagesPanelOpen]);
 
   const handleToggleThemePanel = () => {
     setIsThemePanelOpen(!isThemePanelOpen);
     setIsBlocksPanelOpen(false);
+    setIsLayoutsPanelOpen(false);
     setIsImagesPanelOpen(false);
   };
 
   const handleToggleBlocksPanel = () => {
     setIsBlocksPanelOpen(!isBlocksPanelOpen);
     setIsThemePanelOpen(false);
+    setIsLayoutsPanelOpen(false);
+    setIsImagesPanelOpen(false);
+  };
+
+  const handleToggleLayoutsPanel = () => {
+    setIsLayoutsPanelOpen(!isLayoutsPanelOpen);
+    setIsThemePanelOpen(false);
+    setIsBlocksPanelOpen(false);
     setIsImagesPanelOpen(false);
   };
 
@@ -60,6 +73,7 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
     setIsImagesPanelOpen(!isImagesPanelOpen);
     setIsThemePanelOpen(false);
     setIsBlocksPanelOpen(false);
+    setIsLayoutsPanelOpen(false);
   };
 
   const buttonClass = "p-2.5 rounded-xl transition-all";
@@ -126,6 +140,25 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
             style={{ backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }}
           />
 
+          {/* Layouts Button */}
+          <button
+            onClick={handleToggleLayoutsPanel}
+            className={`relative ${buttonClass}`}
+            style={{
+              backgroundColor: isLayoutsPanelOpen ? `${theme.primary}15` : "transparent",
+              color: isLayoutsPanelOpen ? theme.primary : (isDark ? "#fff" : "#000"),
+            }}
+            title="Add layouts"
+          >
+            <IconLayoutGrid size={20} stroke={1.5} />
+          </button>
+
+          {/* Divider */}
+          <div
+            className="mx-2 h-px"
+            style={{ backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }}
+          />
+
           {/* Images Button */}
           <button
             onClick={handleToggleImagesPanel}
@@ -173,6 +206,24 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
             <BlockLibraryPanel
               isOpen={isBlocksPanelOpen}
               onClose={() => setIsBlocksPanelOpen(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Layouts Panel */}
+      <AnimatePresence>
+        {isLayoutsPanelOpen && (
+          <motion.div
+            data-layouts-panel
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            className="fixed right-16 top-1/2 -translate-y-1/2 z-50"
+          >
+            <LayoutsPanel
+              isOpen={isLayoutsPanelOpen}
+              onClose={() => setIsLayoutsPanelOpen(false)}
             />
           </motion.div>
         )}

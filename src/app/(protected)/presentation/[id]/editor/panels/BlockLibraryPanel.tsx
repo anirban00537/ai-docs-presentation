@@ -166,42 +166,6 @@ const blockDefinitions: BlockDefinition[] = [
     category: "Callouts",
     initialContent: createCalloutContent("error"),
   },
-  // Cards & Boxes
-  {
-    type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
-    icon: <IconNumber size={18} />,
-    label: "Simple Number",
-    description: "Minimalist number with text",
-    category: "Cards & Boxes",
-  },
-  {
-    type: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
-    icon: <IconLayersIntersect size={18} />,
-    label: "Layered",
-    description: "Depth with large number",
-    category: "Cards & Boxes",
-  },
-  {
-    type: BLOCK_TYPES.SOLID_BOX_BLOCK,
-    icon: <IconBoxModel size={18} />,
-    label: "Solid Box",
-    description: "Simple solid colored box",
-    category: "Cards & Boxes",
-  },
-  {
-    type: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
-    icon: <IconStar size={18} />,
-    label: "Icon Box",
-    description: "Solid box with an icon",
-    category: "Cards & Boxes",
-  },
-  {
-    type: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
-    icon: <IconLayoutSidebarLeftCollapse size={18} />,
-    label: "Side Line",
-    description: "Vertical accent card",
-    category: "Cards & Boxes",
-  },
 ];
 
 

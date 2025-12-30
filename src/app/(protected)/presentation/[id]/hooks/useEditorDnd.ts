@@ -51,6 +51,12 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
       return;
     }
 
+    if (data?.type === "layout-option") {
+      setIsBlockDragging(true);
+      setDraggingBlockType(data.blockType);
+      return;
+    }
+
     if (data?.type === "image-option") {
       setIsBlockDragging(true);
       setDraggingBlockType("image"); // Use the IMAGE block type
@@ -92,12 +98,16 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
             attribution: draggingImageData.attribution,
           } : (activeData?.initialContent as Record<string, any> | undefined);
 
+          // Check if this is a layout (multiple columns) or single block
+          const isLayout = activeData?.type === "layout-option";
+          const columnCount = isLayout ? (activeData?.columnCount || 1) : 1;
+
           if (overData?.type === "row-insert") {
             const slideId = overData.slideId as string;
             const insertIndex = Number(overData.insertIndex ?? 0);
             commandBus.addRowWithColumnsAtIndex({
               slideId,
-              columnCount: 1,
+              columnCount,
               insertIndex,
               blockType: draggingBlockType,
               initialContent,
@@ -107,7 +117,16 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
             return;
           }
 
+          // Layouts can ONLY be dropped as new rows, not into existing rows
           if (overData?.type === "row") {
+            // Reject layout drops on existing rows
+            if (isLayout) {
+              setDraggingBlockType(null);
+              setDraggingImageData(null);
+              return;
+            }
+            
+            // Single block - add to existing row
             const rowId = overData.rowId as string;
             const slideId = overData.slideId as string;
             const insertIndex = overData.insertIndex as number | undefined;
@@ -115,7 +134,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
             commandBus.addBlockAfter({
               slideId,
               rowId,
-              insertIndex, // Use the new support for direct index insertion
+              insertIndex,
               blockType: draggingBlockType,
               initialContent,
             });
@@ -226,6 +245,13 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
           );
           if (insertCollision) return [insertCollision];
 
+          // For layouts, ONLY allow row-insert drops, skip row drops
+          const isDraggingLayout = args.active.data.current?.type === "layout-option";
+          if (isDraggingLayout) {
+            // Don't allow dropping into rows, only between them
+            return [];
+          }
+
           // Priority 2: Row Drop (inside a row)
           // We prefer the Row over the Block because the Row component handles
           // the fine-grained "insertion index" logic via mouse position.
@@ -245,6 +271,16 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
         // If we are "near" the row (e.g. right corner padding edge), pointerWithin might fail.
         // closestCenter finds the nearest rect.
         const centerCollisions = closestCenter(args);
+        
+        // For layouts, don't return row collisions even in fallback
+        const isDraggingLayout = args.active.data.current?.type === "layout-option";
+        if (isDraggingLayout) {
+          // Only allow row-insert collisions
+          const insertCollision = centerCollisions.find(
+            (c: any) => c.data?.droppableContainer?.data?.current?.type === "row-insert"
+          );
+          return insertCollision ? [insertCollision] : [];
+        }
         
         // Priority 3: Nearest Row (Fallback)
         // If we missed precise detection, find the closest Row.
