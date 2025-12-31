@@ -38,13 +38,24 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
 
   // Combine local templates with admin layouts from DB
   // We prioritize DB layouts but can fallback to local if needed
-  const displayLayouts = adminLayouts ? adminLayouts.map((l: any) => ({
-    id: l.id,
-    name: l.name,
-    description: l.description,
-    icon: l.icon,
-    dbId: l.id,
-  })) : layoutTemplates;
+  const displayLayouts = React.useMemo(() => {
+    const blank = layoutTemplates.find((t) => t.id === "blank");
+    
+    if (adminLayouts && adminLayouts.length > 0) {
+      const dbLayouts = adminLayouts.map((l: any) => ({
+        id: l.id,
+        name: l.name,
+        description: l.description,
+        icon: l.icon,
+        dbId: l.id,
+      }));
+      
+      // Always keep "Blank" at the start if it exists
+      return blank ? [blank, ...dbLayouts] : dbLayouts;
+    }
+    
+    return layoutTemplates;
+  }, [adminLayouts]);
 
   const handleSelect = async (template: any) => {
     if (template.dbId) {

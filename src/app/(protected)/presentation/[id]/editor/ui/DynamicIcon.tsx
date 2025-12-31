@@ -150,6 +150,7 @@ import {
   IconFirstAidKit,
   IconHeartbeat,
   IconStethoscope,
+  IconSquare,
 } from "@tabler/icons-react";
 
 // Icon map for O(1) lookup - maps icon name to component
@@ -300,6 +301,7 @@ const ICON_MAP: Record<string, React.ComponentType<any>> = {
   IconFirstAidKit,
   IconHeartbeat,
   IconStethoscope,
+  IconSquare,
 };
 
 // Export the icon names for use in IconPicker
