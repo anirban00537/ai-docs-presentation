@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2025-12-28T09:45:02.377Z
+ * Generated: 2025-12-31T09:33:07.298Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -15,98 +15,595 @@ const prisma = new PrismaClient();
  * Template data for seeding the Layout table
  */
 const layoutTemplates = [
-  {
-    name: "Introduction",
-    description: "Clean title slide with prominent heading and subtitle. Perfect for opening slides, section dividers, and document cover pages.",
-    data: {
-      "id": "introduction",
-      "name": "Introduction",
-      "description": "Clean title slide with prominent heading and subtitle. Perfect for opening slides, section dividers, and document cover pages.",
-      "icon": "IconHandWave",
-      "rows": [
-        {
-          "id": "row-0",
-          "blocks": [
-            {
-              "id": "block-0-0",
-              "type": "spacer",
-              "content": {
-                "type": "spacer",
-                "height": 120
+    {
+      name: "Blank",
+      description: "Start from scratch with a completely empty slide.",
+      data: {
+        "id": "blank",
+        "name": "Blank",
+        "description": "Start from scratch with a completely empty slide.",
+        "icon": "IconSquare",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": ""
               }
-            }
-          ]
-        },
-        {
-          "id": "row-1",
-          "blocks": [
-            {
-              "id": "block-1-0",
-              "type": "prosemirror",
-              "content": "# User Research Findings for Product Development {.center}\n\nKey insights, pain points, and actionable recommendations from our recent research study {.center}"
-            }
-          ]
-        },
-        {
-          "id": "row-2",
-          "blocks": [
-            {
-              "id": "block-2-0",
-              "type": "spacer",
-              "content": {
-                "type": "spacer",
-                "height": 120
-              }
-            }
-          ]
-        }
-      ]
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["blank"],
+      isAdmin: true,
     },
-    type: "admin",
-    tags: ["introduction"],
-    isAdmin: true,
-  },
-  {
-    name: "Code Example",
-    description: "Developer-focused slide with syntax-highlighted code block. Ideal for API integration demos and SDK walkthroughs.",
-    data: {
-      "id": "code-example-layout",
-      "name": "Code Example",
-      "description": "Developer-focused slide with syntax-highlighted code block. Ideal for API integration demos and SDK walkthroughs.",
-      "icon": "IconDeviceLaptop",
-      "rows": [
-        {
-          "id": "row-0",
-          "blocks": [
-            {
-              "id": "block-0-0",
-              "type": "prosemirror",
-              "content": "## Built for Developers {.center}\n\nIntegrate our full-featured SDK in less than 5 minutes. {.center}"
-            }
-          ]
-        },
-        {
-          "id": "row-1",
-          "blocks": [
-            {
-              "id": "block-1-0",
-              "type": "code",
-              "content": {
+    {
+      name: "Title, Description & Stacked Timeline",
+      description: "A vertical roadmap layout perfect for showing history, future steps, or a chronological journey.",
+      data: {
+        "id": "stacked-timeline-layout",
+        "name": "Title, Description & Stacked Timeline",
+        "description": "A vertical roadmap layout perfect for showing history, future steps, or a chronological journey.",
+        "icon": "IconClock",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Project Roadmap {.center}\n\nKey milestones and deliverables for the upcoming phases of development. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "stacked-timeline-block",
+                "content": {
+                  "type": "stacked-timeline-block",
+                  "items": [
+                    {
+                      "id": "22c2A-UHAxQLeavqeVPo2",
+                      "title": "## Item",
+                      "description": "Description"
+                    },
+                    {
+                      "id": "lcGoW6sfyE_mFA04YDW70",
+                      "title": "## Item",
+                      "description": "Description"
+                    },
+                    {
+                      "id": "XEqFQ5DtJkQLD4yI_hw18",
+                      "title": "## Item",
+                      "description": "Description"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "left",
+          "size": 30
+        }
+      },
+      type: "admin",
+      tags: ["stacked-timeline"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Description & 3 Icon Boxes",
+      description: "Display core features or services in a clean grid with illustrative icons.",
+      data: {
+        "id": "icon-box-layout",
+        "name": "Title, Description & 3 Icon Boxes",
+        "description": "Display core features or services in a clean grid with illustrative icons.",
+        "icon": "IconComponents",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Core Features {.center}\n\nExplore the powerful capabilities that drive our solution forward. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "solid-icon-box-block",
+                "content": {
+                  "type": "solid-icon-box-block",
+                  "items": [
+                    {
+                      "id": "csC03czZLss5VmTCKzSwj",
+                      "icon": "star",
+                      "title": "## Feature Title",
+                      "description": "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
+                    },
+                    {
+                      "id": "o99ewmCrYEXEh5SAz1CQH",
+                      "icon": "star",
+                      "title": "## Feature Title",
+                      "description": "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
+                    },
+                    {
+                      "id": "sVSd1eddbuJVP0oNoyzXj",
+                      "icon": "star",
+                      "title": "## Feature Title",
+                      "description": "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "right",
+          "size": 35
+        }
+      },
+      type: "admin",
+      tags: ["icon-box"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Description & 3 Number Cards",
+      description: "Highlight key performance indicators, growth metrics, or statistics.",
+      data: {
+        "id": "number-card-layout",
+        "name": "Title, Description & 3 Number Cards",
+        "description": "Highlight key performance indicators, growth metrics, or statistics.",
+        "icon": "IconChartBar",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## By The Numbers {.center}\n\nA quantitative look at our growth and market impact this quarter. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "simple-number-card",
+                "content": {
+                  "type": "simple-number-card",
+                  "items": [
+                    {
+                      "id": "IMpm-1KEtb997ivh05Wdw",
+                      "number": 1,
+                      "title": "## Point Title",
+                      "description": "Provide context and detail about this key point here."
+                    },
+                    {
+                      "id": "C4qEP3ywyFgFWH39lGIq2",
+                      "number": 2,
+                      "title": "## Point Title",
+                      "description": "Provide context and detail about this key point here."
+                    },
+                    {
+                      "id": "0stpSomXkawb7QOZOQTNb",
+                      "number": 3,
+                      "title": "## Point Title",
+                      "description": "Provide context and detail about this key point here."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "bottom",
+          "size": 25
+        }
+      },
+      type: "admin",
+      tags: ["number-card"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Description & 3 Layered Steps",
+      description: "Visualize a sequential process or funnel with depth-based numbering.",
+      data: {
+        "id": "layered-steps-layout",
+        "name": "Title, Description & 3 Layered Steps",
+        "description": "Visualize a sequential process or funnel with depth-based numbering.",
+        "icon": "IconStack",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Implementation Process {.center}\n\nA systematic approach to integrating our solution into your workflow. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "layered-number-block",
+                "content": {
+                  "type": "layered-number-block",
+                  "items": [
+                    {
+                      "id": "MP05kjdqx5VaG5HswBH72",
+                      "number": 1,
+                      "title": "## Core Objective",
+                      "description": "Define your core objective. The large background number adds depth and indicates sequence."
+                    },
+                    {
+                      "id": "19qMIyiOUtuJoS5zEgZJ4",
+                      "number": 2,
+                      "title": "## Core Objective",
+                      "description": "Define your core objective. The large background number adds depth and indicates sequence."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "right",
+          "size": 40
+        }
+      },
+      type: "admin",
+      tags: ["layered-steps"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Description & 3 Sideline Cards",
+      description: "Present a clean list of items, agenda topics, or key takeaways.",
+      data: {
+        "id": "sideline-card-layout",
+        "name": "Title, Description & 3 Sideline Cards",
+        "description": "Present a clean list of items, agenda topics, or key takeaways.",
+        "icon": "IconAdjustmentsHorizontal",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Meeting Agenda {.center}\n\nKey topics and discussion points for today's session. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "sideline-card-block",
+                "content": {
+                  "type": "sideline-card-block",
+                  "items": [
+                    {
+                      "id": "QsEUkaVFdvSUWtAf9vWue",
+                      "title": "## Key Insight",
+                      "description": "Highlight important takeaways here. The vertical accent draws attention."
+                    },
+                    {
+                      "id": "64tUhKhZgLttUi8cEdaHv",
+                      "title": "## Key Insight",
+                      "description": "Highlight important takeaways here. The vertical accent draws attention."
+                    },
+                    {
+                      "id": "gkxs3cGtp7y0oMWtBcqmF",
+                      "title": "## Key Insight",
+                      "description": "Highlight important takeaways here. The vertical accent draws attention."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "left",
+          "size": 28
+        }
+      },
+      type: "admin",
+      tags: ["sideline-card"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Description & 3 Leaf Cards",
+      description: "Showcase core values or organic concepts with a soft, flowing design.",
+      data: {
+        "id": "leaf-card-layout",
+        "name": "Title, Description & 3 Leaf Cards",
+        "description": "Showcase core values or organic concepts with a soft, flowing design.",
+        "icon": "IconLeaf",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Our Core Values {.center}\n\nThe fundamental beliefs that guide our company culture and decisions. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "leaf-block",
+                "content": {
+                  "type": "leaf-block",
+                  "items": [
+                    {
+                      "id": "My19nPG5zVy-_JSuGeAcM",
+                      "title": "## Title",
+                      "description": "This is a leaf card. It has a unique shape and style."
+                    },
+                    {
+                      "id": "oG_A8zqUqQ5D5wFD7WAAC",
+                      "title": "## Title",
+                      "description": "This is a leaf card. It has a unique shape and style."
+                    },
+                    {
+                      "id": "5-q3i3oq4imRL1o1cbjw4",
+                      "title": "## Title",
+                      "description": "This is a leaf card. It has a unique shape and style."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "right",
+          "size": 32
+        }
+      },
+      type: "admin",
+      tags: ["leaf-card"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Description & 3 Solid Boxes",
+      description: "Emphasize major focus points or gallery items with bold, solid cards.",
+      data: {
+        "id": "solid-box-layout",
+        "name": "Title, Description & 3 Solid Boxes",
+        "description": "Emphasize major focus points or gallery items with bold, solid cards.",
+        "icon": "IconAppWindow",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Focus Areas {.center}\n\nDeep diving into the three pillars of our strategic initiative. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "solid-box-block",
+                "content": {
+                  "type": "solid-box-block",
+                  "items": [
+                    {
+                      "id": "y7924edr33uEqBBhB_QQP",
+                      "title": "## Major Point",
+                      "description": "Standard content with a solid presence. Strong blocks build reliable structures."
+                    },
+                    {
+                      "id": "GHqBM8ahdyK4bk_anXx5b",
+                      "title": "## Major Point",
+                      "description": "Standard content with a solid presence. Strong blocks build reliable structures."
+                    },
+                    {
+                      "id": "go5VyeBXF0i7VYjpr3QIk",
+                      "title": "## Major Point",
+                      "description": "Standard content with a solid presence. Strong blocks build reliable structures."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "background",
+          "size": 15
+        }
+      },
+      type: "admin",
+      tags: ["solid-box"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Description & Timeline Bento",
+      description: "A rich, alternating timeline layout for detailed storytelling.",
+      data: {
+        "id": "timeline-bento-layout",
+        "name": "Title, Description & Timeline Bento",
+        "description": "A rich, alternating timeline layout for detailed storytelling.",
+        "icon": "IconLayout",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Journey Map {.center}\n\nTracing the evolution of our product from concept to launch. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "timeline-bento-block",
+                "content": {
+                  "type": "timeline-bento-block",
+                  "items": [
+                    {
+                      "id": "0Dz5Un4HOe8B4VWAl0OHB",
+                      "title": "## Item",
+                      "description": "Description"
+                    },
+                    {
+                      "id": "Wc7r0TsJE4P0h4zFpaYuw",
+                      "title": "## Item",
+                      "description": "Description"
+                    },
+                    {
+                      "id": "-UZGUeCaBn8hpraugkODC",
+                      "title": "## Item",
+                      "description": "Description"
+                    },
+                    {
+                      "id": "qHESvgBF-QRNuJtCpI4gs",
+                      "title": "## Item",
+                      "description": "Description"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "position": "top",
+          "size": 20
+        }
+      },
+      type: "admin",
+      tags: ["timeline-bento"],
+      isAdmin: true,
+    },
+    {
+      name: "Introduction",
+      description: "Clean title slide with prominent heading and subtitle. Perfect for opening slides, section dividers, and document cover pages.",
+      data: {
+        "id": "introduction",
+        "name": "Introduction",
+        "description": "Clean title slide with prominent heading and subtitle. Perfect for opening slides, section dividers, and document cover pages.",
+        "icon": "IconHandWave",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "spacer",
+                "content": {
+                  "type": "spacer",
+                  "height": 120
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "# User Research Findings for Product Development {.center}\n\nKey insights, pain points, and actionable recommendations from our recent research study {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "spacer",
+                "content": {
+                  "type": "spacer",
+                  "height": 120
+                }
+              }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["introduction"],
+      isAdmin: true,
+    },
+    {
+      name: "Code Example",
+      description: "Developer-focused slide with syntax-highlighted code block. Ideal for API integration demos and SDK walkthroughs.",
+      data: {
+        "id": "code-example-layout",
+        "name": "Code Example",
+        "description": "Developer-focused slide with syntax-highlighted code block. Ideal for API integration demos and SDK walkthroughs.",
+        "icon": "IconDeviceLaptop",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Built for Developers {.center}\n\nIntegrate our full-featured SDK in less than 5 minutes. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
                 "type": "code",
-                "language": "javascript",
-                "code": "import { Butterfast } from '@butterfast/sdk';\n\n// Initialize with your secure key\nconst client = new Butterfast(process.env.API_KEY);\n\n// Deploy scalable infrastructure instantly\nconst deployment = await client.deploy({\n  region: 'us-east-1',\n  scaling: 'auto',\n  security_level: 'strict',\n  monitoring: true\n});\n\nconsole.log(`[DEPLOYED] Deployed successfully at: ${deployment.url}`);",
-                "showLineNumbers": true,
-                "theme": "dark"
+                "content": {
+                  "type": "code",
+                  "language": "javascript",
+                  "code": "import { Butterfast } from '@butterfast/sdk';\n\n// Initialize with your secure key\nconst client = new Butterfast(process.env.API_KEY);\n\n// Deploy scalable infrastructure instantly\nconst deployment = await client.deploy({\n  region: 'us-east-1',\n  scaling: 'auto',\n  security_level: 'strict',\n  monitoring: true\n});\n\nconsole.log(`[DEPLOYED] Deployed successfully at: ${deployment.url}`);",
+                  "showLineNumbers": true,
+                  "theme": "dark"
+                }
               }
-            }
-          ]
-        }
-      ]
-    },
-    type: "admin",
-    tags: ["code-example"],
-    isAdmin: true,
-  }
+            ]
+          }
+        ]
+      },
+      type: "admin",
+      tags: ["code-example"],
+      isAdmin: true,
+    }
 ];
 
 /**
@@ -114,21 +611,21 @@ const layoutTemplates = [
  */
 export async function seedTemplates(): Promise<void> {
   console.log('🌱 Seeding layout templates...');
-
+  
   // Clear existing admin templates (user templates are preserved)
   await prisma.layout.deleteMany({
     where: { isAdmin: true }
   });
-
+  
   console.log('  ✓ Cleared existing admin templates');
-
+  
   // Insert all templates
   for (const template of layoutTemplates) {
     await prisma.layout.create({
-      data: template as any,
+      data: template,
     });
   }
-
+  
   console.log(`  ✓ Created ${layoutTemplates.length} layout templates`);
   console.log('✅ Template seeding complete!');
 }
@@ -147,8 +644,10 @@ async function main(): Promise<void> {
   }
 }
 
-// Run the seeding
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+// Only run if this is the main module
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
