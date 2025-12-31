@@ -16,6 +16,15 @@ import { SidelineCardLayout } from "../templates/SidelineCardLayout";
 import { LeafCardLayout } from "../templates/LeafCardLayout";
 import { SolidBoxLayout } from "../templates/SolidBoxLayout";
 import { TimelineBentoLayout } from "../templates/TimelineBentoLayout";
+import { ContentWithImageLayout } from "../templates/ContentWithImageLayout";
+import { QuoteLayout } from "../templates/QuoteLayout";
+import { CalloutWithButtonLayout } from "../templates/CalloutWithButtonLayout";
+import { SimpleCodeLayout } from "../templates/SimpleCodeLayout";
+import { DetailedContentLeftLayout } from "../templates/DetailedContentLeftLayout";
+import { DetailedContentRightLayout } from "../templates/DetailedContentRightLayout";
+import { DetailedContentTopLayout } from "../templates/DetailedContentTopLayout";
+import { DetailedContentBottomLayout } from "../templates/DetailedContentBottomLayout";
+import { DetailedContentBackgroundLayout } from "../templates/DetailedContentBackgroundLayout";
 
 // JSON mapping of layout IDs to Tabler icon components
 export const layoutIconsMap: Record<string, Icon> = {
@@ -26,6 +35,15 @@ export const layoutIconsMap: Record<string, Icon> = {
 
 export const layoutTemplates: LayoutTemplate[] = [
   BlankLayout,
+  DetailedContentLeftLayout,
+  DetailedContentRightLayout,
+  DetailedContentTopLayout,
+  DetailedContentBottomLayout,
+  DetailedContentBackgroundLayout,
+  ContentWithImageLayout,
+  QuoteLayout,
+  CalloutWithButtonLayout,
+  SimpleCodeLayout,
   StackedTimelineLayout,
   IconBoxLayout,
   NumberCardLayout,
