@@ -66,7 +66,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
               height: "60vh",
               top: "-20%",
               left: "-10%",
-              background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '20' : '15'} 0%, ${theme.primary}${isDark ? '08' : '05'} 40%, transparent 70%)`,
+              background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '12' : '08'} 0%, ${theme.primary}${isDark ? '05' : '03'} 40%, transparent 70%)`,
               filter: "blur(80px)",
               transform: "rotate(-15deg)",
             }}
@@ -80,7 +80,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
               height: "50vh",
               top: "-15%",
               right: "-15%",
-              background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.headingColor}${isDark ? '12' : '08'} 0%, ${theme.primary}${isDark ? '06' : '04'} 50%, transparent 70%)`,
+              background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '10' : '06'} 0%, ${theme.primary}${isDark ? '04' : '02'} 50%, transparent 70%)`,
               filter: "blur(100px)",
               transform: "rotate(20deg)",
             }}
@@ -94,12 +94,12 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
               height: "70vh",
               top: "20%",
               left: "-15%",
-              background: `radial-gradient(ellipse at center, ${theme.secondaryColors?.[1] || theme.primary}${isDark ? '15' : '10'} 0%, transparent 70%)`,
+              background: `radial-gradient(ellipse at center, ${theme.secondaryColors?.[1] || theme.primary}${isDark ? '10' : '06'} 0%, transparent 70%)`,
               filter: "blur(90px)",
             }}
           />
           
-          {/* Card background blob - Right Center */}
+          {/* Primary glow - Right Center */}
           <div
             className="fixed -z-10 pointer-events-none"
             style={{
@@ -107,22 +107,9 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
               height: "60vh",
               top: "30%",
               right: "-10%",
-              background: `radial-gradient(ellipse at center, ${theme.cardBackground}${isDark ? '18' : '12'} 0%, ${theme.primary}${isDark ? '05' : '03'} 50%, transparent 70%)`,
+              background: `radial-gradient(ellipse at center, ${theme.primary}${isDark ? '08' : '05'} 0%, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '03' : '02'} 50%, transparent 70%)`,
               filter: "blur(110px)",
               transform: "rotate(-10deg)",
-            }}
-          />
-          
-          {/* Body color - Center */}
-          <div
-            className="fixed -z-10 pointer-events-none"
-            style={{
-              width: "50vw",
-              height: "50vh",
-              top: "25%",
-              left: "25%",
-              background: `radial-gradient(circle at center, ${theme.bodyColor}${isDark ? '06' : '04'} 0%, transparent 60%)`,
-              filter: "blur(120px)",
             }}
           />
           
@@ -134,7 +121,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
               height: "55vh",
               bottom: "-20%",
               left: "-10%",
-              background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '18' : '12'} 0%, ${theme.headingColor}${isDark ? '06' : '04'} 50%, transparent 70%)`,
+              background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '12' : '08'} 0%, ${theme.secondaryColors?.[1] || theme.primary}${isDark ? '04' : '02'} 50%, transparent 70%)`,
               filter: "blur(100px)",
               transform: "rotate(25deg)",
             }}
@@ -148,7 +135,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
               height: "50vh",
               bottom: "-15%",
               right: "-10%",
-              background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.headingColor}${isDark ? '10' : '06'} 0%, ${theme.cardBackground}${isDark ? '08' : '05'} 40%, transparent 70%)`,
+              background: `radial-gradient(circle at center, ${theme.secondaryColors?.[0] || theme.primary}${isDark ? '08' : '05'} 0%, ${theme.secondaryColors?.[1] || theme.primary}${isDark ? '04' : '02'} 40%, transparent 70%)`,
               filter: "blur(90px)",
               transform: "rotate(-20deg)",
             }}
@@ -163,7 +150,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '08' : '05'} 0%, transparent 70%)`,
+              background: `radial-gradient(circle at center, ${theme.primary}${isDark ? '06' : '04'} 0%, transparent 70%)`,
               filter: "blur(80px)",
             }}
           />

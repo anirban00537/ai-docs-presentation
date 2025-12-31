@@ -97,11 +97,17 @@ export const SlideFrame = memo(function SlideFrame({
   };
 
   const getStyle = (): React.CSSProperties => {
+    // Process opacity and backdrop blur settings first (apply to both modes)
+    const opacity = theme.cardOpacity !== undefined ? theme.cardOpacity : 1;
+    const backdropBlur = theme.cardBackdropBlur || "0px";
+    
     const baseStyle: React.CSSProperties = {
       transition: isResizingAccent ? "none" : "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-      backgroundColor: theme.cardBackground,
+      backgroundColor: style.backgroundColor || (opacity < 1 ? `rgba(${isDark ? '0, 0, 0' : '255, 255, 255'}, ${opacity})` : theme.cardBackground),
       fontFamily: getFontFamily(theme.fontFamily || "Inter"),
       position: "relative",
+      backdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
+      WebkitBackdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
       ...(fullWidth
         ? { width: "100%", minHeight: "100vh", overflow: "visible" }
         : { minWidth: `${SLIDE_MAX_WIDTH}px`, maxWidth: `${SLIDE_MAX_WIDTH}px`, overflow: "visible" }),
@@ -114,17 +120,12 @@ export const SlideFrame = memo(function SlideFrame({
 
     const borderRadius = theme.cardBorderRadius || "12px";
     const boxShadow = theme.cardBoxShadow || (isDark ? "0 4px 20px rgba(0, 0, 0, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.08)");
-    const backdropBlur = theme.cardBackdropBlur || "0px";
-    const opacity = theme.cardOpacity !== undefined ? theme.cardOpacity : 1;
 
     return {
       ...baseStyle,
-      backgroundColor: style.backgroundColor || (opacity < 1 ? `rgba(${isDark ? '0, 0, 0' : '255, 255, 255'}, ${opacity})` : theme.cardBackground),
       borderRadius,
       boxShadow: style.boxShadow || boxShadow,
       border: "none",
-      backdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
-      WebkitBackdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
     };
   };
 
