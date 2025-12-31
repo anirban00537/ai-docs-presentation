@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2025-12-31T09:33:07.298Z
+ * Generated: 2025-12-31T09:57:28.414Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -41,6 +41,479 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
+      name: "Detailed Content - Left Accent",
+      description: "Text-heavy layout with multiple paragraphs and left accent.",
+      data: {
+        "id": "detailed-content-left",
+        "name": "Detailed Content - Left Accent",
+        "description": "Text-heavy layout with multiple paragraphs and left accent.",
+        "icon": "IconAlignLeft",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "### Main Topic\n\nA comprehensive overview of the subject matter at hand."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "#### Key Points\n\nThis section provides detailed information about the core concepts. We explore multiple dimensions of the topic, examining various perspectives and implications.\n\nThe first major consideration involves understanding the foundational principles. These principles form the basis for all subsequent analysis and decision-making processes.\n\nSecondly, we must consider the practical applications. Real-world implementation requires careful planning, resource allocation, and stakeholder coordination."
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "#### Additional Context\n\nFurther elaboration on supporting details and contextual factors that influence outcomes. This includes historical precedents, current trends, and future projections.\n\n*Important note: All data should be verified against primary sources.*"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1974&auto=format&fit=crop",
+          "position": "left",
+          "size": 28
+        }
+      },
+      type: "admin",
+      tags: ["detailed-content-left"],
+      isAdmin: true,
+    },
+    {
+      name: "Detailed Content - Right Accent",
+      description: "Text-heavy layout with extensive explanations and right accent.",
+      data: {
+        "id": "detailed-content-right",
+        "name": "Detailed Content - Right Accent",
+        "description": "Text-heavy layout with extensive explanations and right accent.",
+        "icon": "IconAlignRight",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "### Comprehensive Analysis\n\nAn in-depth examination of complex issues and methodologies."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "#### Detailed Breakdown\n\nThis analysis encompasses multiple layers of investigation. We begin with foundational research, examining primary sources and establishing a baseline understanding of the domain.\n\nThe methodology employed combines qualitative and quantitative approaches, ensuring comprehensive coverage of all relevant aspects. Data collection follows rigorous protocols, with validation checks at each stage.\n\nOur findings reveal several significant patterns. First, there is a clear correlation between input variables and output metrics. Second, temporal factors play a crucial role in determining outcomes. Third, contextual elements cannot be overlooked when interpreting results."
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "#### Implications and Recommendations\n\nBased on these findings, we recommend a multi-faceted approach that addresses both immediate concerns and long-term strategic objectives. Implementation should proceed in phases, with continuous monitoring and adaptation as conditions evolve.\n\n**Next Steps:** Review findings with stakeholders, establish implementation timeline, allocate resources accordingly."
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop",
+          "position": "right",
+          "size": 30
+        }
+      },
+      type: "admin",
+      tags: ["detailed-content-right"],
+      isAdmin: true,
+    },
+    {
+      name: "Detailed Content - Top Accent",
+      description: "Article-style layout with header accent and flowing content.",
+      data: {
+        "id": "detailed-content-top",
+        "name": "Detailed Content - Top Accent",
+        "description": "Article-style layout with header accent and flowing content.",
+        "icon": "IconLayoutNavbar",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "### Article Title\n\nSubheading providing context and framing for the content below."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "The opening paragraph sets the stage for what follows. It introduces key concepts, establishes the narrative framework, and prepares readers for the detailed discussion ahead. This section should be engaging yet informative, balancing accessibility with depth.\n\nAs we delve deeper into the subject matter, several themes emerge. These themes interconnect in complex ways, creating a rich tapestry of meaning that rewards careful examination. The relationship between theory and practice becomes particularly evident when we consider specific case studies and real-world applications.\n\nFurthermore, it is essential to acknowledge the broader context within which these developments occur. Historical precedents inform current understanding, while emerging trends point toward future possibilities. The interplay between continuity and change defines much of what we observe in this domain."
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "#### Concluding Thoughts\n\nIn summary, the evidence supports a nuanced interpretation that recognizes both opportunities and challenges. Moving forward, a balanced approach that incorporates lessons from past experience while remaining open to innovation will likely prove most effective.\n\n*For further reading, consult the reference materials provided in the appendix.*"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+          "position": "top",
+          "size": 22
+        }
+      },
+      type: "admin",
+      tags: ["detailed-content-top"],
+      isAdmin: true,
+    },
+    {
+      name: "Detailed Content - Bottom Accent",
+      description: "Dense information layout with bottom accent for emphasis.",
+      data: {
+        "id": "detailed-content-bottom",
+        "name": "Detailed Content - Bottom Accent",
+        "description": "Dense information layout with bottom accent for emphasis.",
+        "icon": "IconLayoutBottombar",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "### Research Findings\n\nDetailed presentation of data analysis and insights."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "#### Methodology and Approach\n\nOur research methodology combines established frameworks with innovative techniques to ensure both rigor and relevance. The study was conducted over an extended period, allowing for longitudinal observations and trend analysis.\n\nData was collected from multiple sources, including primary interviews, secondary literature reviews, and quantitative surveys. This triangulated approach enhances the validity and reliability of our conclusions.\n\nThe analytical framework employed incorporates both deductive and inductive reasoning, enabling us to test existing hypotheses while remaining open to emergent patterns and unexpected insights."
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "#### Results and Discussion\n\nThe results demonstrate clear patterns across multiple variables. Statistical significance was achieved in key metrics, supporting our initial hypotheses while also revealing unexpected correlations that warrant further investigation.\n\nParticularly noteworthy is the relationship between environmental factors and performance outcomes. This finding has important implications for both theory and practice, suggesting new avenues for intervention and optimization.\n\n*Statistical confidence level: 95%. Margin of error: ±3%.*"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
+          "position": "bottom",
+          "size": 26
+        }
+      },
+      type: "admin",
+      tags: ["detailed-content-bottom"],
+      isAdmin: true,
+    },
+    {
+      name: "Detailed Content - Background Accent",
+      description: "Full-page text layout with subtle background accent.",
+      data: {
+        "id": "detailed-content-background",
+        "name": "Detailed Content - Background Accent",
+        "description": "Full-page text layout with subtle background accent.",
+        "icon": "IconPhoto",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "### Executive Summary\n\nA comprehensive overview of strategic initiatives and outcomes."
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "#### Strategic Overview\n\nThis document presents a thorough analysis of our strategic position, examining both current state and future trajectories. The assessment encompasses multiple dimensions including operational efficiency, market positioning, competitive dynamics, and organizational capabilities.\n\nOur analysis reveals several critical success factors. First, maintaining technological leadership requires continuous investment in research and development. Second, customer-centricity must remain at the core of all decision-making processes. Third, agile organizational structures enable rapid response to market changes.\n\nThe competitive landscape continues to evolve at an unprecedented pace. Traditional boundaries between industries are blurring, creating both opportunities and threats. Organizations that successfully navigate this complexity will be those that embrace adaptability, foster innovation, and cultivate strategic partnerships."
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "#### Implementation Roadmap\n\nExecution of this strategy requires coordinated effort across all organizational levels. The implementation roadmap spans multiple quarters and includes specific milestones, resource requirements, and success metrics.\n\nPhase 1 focuses on foundational capabilities, establishing the infrastructure and processes necessary for sustainable growth. Phase 2 expands market presence through targeted initiatives. Phase 3 consolidates gains and scales successful programs.\n\nRegular review cycles ensure alignment between strategic objectives and operational realities, with adjustments made as circumstances warrant.\n\n**Critical Success Factors:** Leadership commitment, resource adequacy, stakeholder engagement, performance monitoring.**"
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1618005891825-37449c57c799?q=80&w=1932&auto=format&fit=crop",
+          "position": "background",
+          "size": 12
+        }
+      },
+      type: "admin",
+      tags: ["detailed-content-background"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Text & Image",
+      description: "Classic content slide with heading, body text, and supporting image.",
+      data: {
+        "id": "content-with-image-layout",
+        "name": "Title, Text & Image",
+        "description": "Classic content slide with heading, body text, and supporting image.",
+        "icon": "IconPhoto",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Content Title {.center}\n\nSupporting subtitle or context for the slide content. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "Add your main content here. This is a flexible text area where you can write paragraphs, add formatting, and structure your message.\n\nYou can include multiple paragraphs to organize your thoughts clearly."
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "image",
+                "content": {
+                  "type": "image",
+                  "url": "",
+                  "alt": "",
+                  "caption": "",
+                  "objectFit": "cover"
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1618005891919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+          "position": "right",
+          "size": 35
+        }
+      },
+      type: "admin",
+      tags: ["content-with-image"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Quote & Text",
+      description: "Inspirational slide featuring a prominent quote with supporting context.",
+      data: {
+        "id": "quote-layout",
+        "name": "Title, Quote & Text",
+        "description": "Inspirational slide featuring a prominent quote with supporting context.",
+        "icon": "IconQuote",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Words of Wisdom {.center}\n\nInsights that drive our thinking forward. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "prosemirror",
+                "content": "> \"The best way to predict the future is to invent it.\"\n>\n> — Alan Kay"
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "This quote reminds us that innovation requires action, vision, and courage. Add your own interpretation or context here."
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1618556450991-2f1af64e8191?q=80&w=1964&auto=format&fit=crop",
+          "position": "left",
+          "size": 30
+        }
+      },
+      type: "admin",
+      tags: ["quote"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Callout & Button",
+      description: "Action-oriented slide with a highlighted callout box and CTA button.",
+      data: {
+        "id": "callout-with-button-layout",
+        "name": "Title, Callout & Button",
+        "description": "Action-oriented slide with a highlighted callout box and CTA button.",
+        "icon": "IconAlertCircle",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Important Announcement {.center}\n\nKey information you need to know. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "callout-block",
+                "content": {
+                  "type": "callout-block",
+                  "variant": "note",
+                  "editorContent": "Just a quick note to remember for later."
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "button-block",
+                "content": {
+                  "type": "button-block",
+                  "text": "Click here",
+                  "link": "",
+                  "style": "filled",
+                  "alignment": "center",
+                  "color": "default"
+                }
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1618004652321-13a63e576b80?q=80&w=1974&auto=format&fit=crop",
+          "position": "bottom",
+          "size": 25
+        }
+      },
+      type: "admin",
+      tags: ["callout-with-button"],
+      isAdmin: true,
+    },
+    {
+      name: "Title, Code & Description",
+      description: "Technical slide with code snippet and explanation text.",
+      data: {
+        "id": "simple-code-layout",
+        "name": "Title, Code & Description",
+        "description": "Technical slide with code snippet and explanation text.",
+        "icon": "IconCode",
+        "rows": [
+          {
+            "id": "row-0",
+            "blocks": [
+              {
+                "id": "block-0-0",
+                "type": "prosemirror",
+                "content": "## Code Example {.center}\n\nUnderstanding the implementation details. {.center}"
+              }
+            ]
+          },
+          {
+            "id": "row-1",
+            "blocks": [
+              {
+                "id": "block-1-0",
+                "type": "code",
+                "content": {
+                  "type": "code",
+                  "language": "javascript",
+                  "code": "function greet(name) {\n  return `Hello, ${name}!`;\n}",
+                  "showLineNumbers": true,
+                  "theme": "light"
+                }
+              }
+            ]
+          },
+          {
+            "id": "row-2",
+            "blocks": [
+              {
+                "id": "block-2-0",
+                "type": "prosemirror",
+                "content": "This code demonstrates a key concept. Add your explanation here to help the audience understand the logic, purpose, and any important nuances."
+              }
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?q=80&w=1964&auto=format&fit=crop",
+          "position": "right",
+          "size": 32
+        }
+      },
+      type: "admin",
+      tags: ["simple-code"],
+      isAdmin: true,
+    },
+    {
       name: "Title, Description & Stacked Timeline",
       description: "A vertical roadmap layout perfect for showing history, future steps, or a chronological journey.",
       data: {
@@ -69,17 +542,17 @@ const layoutTemplates = [
                   "type": "stacked-timeline-block",
                   "items": [
                     {
-                      "id": "22c2A-UHAxQLeavqeVPo2",
+                      "id": "8vm-3X7gIugYg7WHFl7x_",
                       "title": "## Item",
                       "description": "Description"
                     },
                     {
-                      "id": "lcGoW6sfyE_mFA04YDW70",
+                      "id": "FFfH3-0MAno7BqkmNoeej",
                       "title": "## Item",
                       "description": "Description"
                     },
                     {
-                      "id": "XEqFQ5DtJkQLD4yI_hw18",
+                      "id": "B3m84Kht2bcQrbjDx93ef",
                       "title": "## Item",
                       "description": "Description"
                     }
@@ -90,6 +563,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
+          "url": "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1974&auto=format&fit=crop",
           "position": "left",
           "size": 30
         }
@@ -127,19 +601,19 @@ const layoutTemplates = [
                   "type": "solid-icon-box-block",
                   "items": [
                     {
-                      "id": "csC03czZLss5VmTCKzSwj",
+                      "id": "rrhtcpty_QzSShTHg0i1w",
                       "icon": "star",
                       "title": "## Feature Title",
                       "description": "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
                     },
                     {
-                      "id": "o99ewmCrYEXEh5SAz1CQH",
+                      "id": "yuDsj1P5zKsNb8eFxmLTL",
                       "icon": "star",
                       "title": "## Feature Title",
                       "description": "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
                     },
                     {
-                      "id": "sVSd1eddbuJVP0oNoyzXj",
+                      "id": "_noyymdS5JUpShWYhacY2",
                       "icon": "star",
                       "title": "## Feature Title",
                       "description": "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
@@ -151,6 +625,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
+          "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop",
           "position": "right",
           "size": 35
         }
@@ -188,19 +663,19 @@ const layoutTemplates = [
                   "type": "simple-number-card",
                   "items": [
                     {
-                      "id": "IMpm-1KEtb997ivh05Wdw",
+                      "id": "MR-IW-RZCnVnj72WMbSJ9",
                       "number": 1,
                       "title": "## Point Title",
                       "description": "Provide context and detail about this key point here."
                     },
                     {
-                      "id": "C4qEP3ywyFgFWH39lGIq2",
+                      "id": "s5kvjej2aEMdBjgso0JFl",
                       "number": 2,
                       "title": "## Point Title",
                       "description": "Provide context and detail about this key point here."
                     },
                     {
-                      "id": "0stpSomXkawb7QOZOQTNb",
+                      "id": "p1ccIVax352AQvjygQepo",
                       "number": 3,
                       "title": "## Point Title",
                       "description": "Provide context and detail about this key point here."
@@ -212,6 +687,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
+          "url": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
           "position": "bottom",
           "size": 25
         }
@@ -249,13 +725,13 @@ const layoutTemplates = [
                   "type": "layered-number-block",
                   "items": [
                     {
-                      "id": "MP05kjdqx5VaG5HswBH72",
+                      "id": "oBw5qdTBPRmgG8rc5drV_",
                       "number": 1,
                       "title": "## Core Objective",
                       "description": "Define your core objective. The large background number adds depth and indicates sequence."
                     },
                     {
-                      "id": "19qMIyiOUtuJoS5zEgZJ4",
+                      "id": "nRy1sOcGwJLHawa115Mpf",
                       "number": 2,
                       "title": "## Core Objective",
                       "description": "Define your core objective. The large background number adds depth and indicates sequence."
@@ -267,6 +743,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
+          "url": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
           "position": "right",
           "size": 40
         }
@@ -304,17 +781,17 @@ const layoutTemplates = [
                   "type": "sideline-card-block",
                   "items": [
                     {
-                      "id": "QsEUkaVFdvSUWtAf9vWue",
+                      "id": "dHLU0bJl39yOelEO0gl4a",
                       "title": "## Key Insight",
                       "description": "Highlight important takeaways here. The vertical accent draws attention."
                     },
                     {
-                      "id": "64tUhKhZgLttUi8cEdaHv",
+                      "id": "SLQZYTHkNJ-1iL0K9dwIt",
                       "title": "## Key Insight",
                       "description": "Highlight important takeaways here. The vertical accent draws attention."
                     },
                     {
-                      "id": "gkxs3cGtp7y0oMWtBcqmF",
+                      "id": "MHY0TTGWGFU5_pOJXMUw8",
                       "title": "## Key Insight",
                       "description": "Highlight important takeaways here. The vertical accent draws attention."
                     }
@@ -325,6 +802,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
+          "url": "https://images.unsplash.com/photo-1618005198914-c3b6f1f11ac6?q=80&w=1974&auto=format&fit=crop",
           "position": "left",
           "size": 28
         }
@@ -362,17 +840,17 @@ const layoutTemplates = [
                   "type": "leaf-block",
                   "items": [
                     {
-                      "id": "My19nPG5zVy-_JSuGeAcM",
+                      "id": "w0OL2Ac4joXDSrF9UMmoR",
                       "title": "## Title",
                       "description": "This is a leaf card. It has a unique shape and style."
                     },
                     {
-                      "id": "oG_A8zqUqQ5D5wFD7WAAC",
+                      "id": "UF4ogMCQnIlExvuBN-phX",
                       "title": "## Title",
                       "description": "This is a leaf card. It has a unique shape and style."
                     },
                     {
-                      "id": "5-q3i3oq4imRL1o1cbjw4",
+                      "id": "EGPJbpxZYJSBIs5y2NrOK",
                       "title": "## Title",
                       "description": "This is a leaf card. It has a unique shape and style."
                     }
@@ -383,6 +861,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
+          "url": "https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?q=80&w=1964&auto=format&fit=crop",
           "position": "right",
           "size": 32
         }
@@ -420,17 +899,17 @@ const layoutTemplates = [
                   "type": "solid-box-block",
                   "items": [
                     {
-                      "id": "y7924edr33uEqBBhB_QQP",
+                      "id": "HO9ZwLYsapC9tZYhlXBDY",
                       "title": "## Major Point",
                       "description": "Standard content with a solid presence. Strong blocks build reliable structures."
                     },
                     {
-                      "id": "GHqBM8ahdyK4bk_anXx5b",
+                      "id": "57SV_FxGYE2IALbfmQtPz",
                       "title": "## Major Point",
                       "description": "Standard content with a solid presence. Strong blocks build reliable structures."
                     },
                     {
-                      "id": "go5VyeBXF0i7VYjpr3QIk",
+                      "id": "4Upd9BQ8uatYG27Nb6ehx",
                       "title": "## Major Point",
                       "description": "Standard content with a solid presence. Strong blocks build reliable structures."
                     }
@@ -441,6 +920,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
+          "url": "https://images.unsplash.com/photo-1618005891825-37449c57c799?q=80&w=1932&auto=format&fit=crop",
           "position": "background",
           "size": 15
         }
@@ -478,22 +958,22 @@ const layoutTemplates = [
                   "type": "timeline-bento-block",
                   "items": [
                     {
-                      "id": "0Dz5Un4HOe8B4VWAl0OHB",
+                      "id": "aYjYs4VnlwJ6j6YZfF-9B",
                       "title": "## Item",
                       "description": "Description"
                     },
                     {
-                      "id": "Wc7r0TsJE4P0h4zFpaYuw",
+                      "id": "0KcIFHoHOlyB2X9mAByOT",
                       "title": "## Item",
                       "description": "Description"
                     },
                     {
-                      "id": "-UZGUeCaBn8hpraugkODC",
+                      "id": "-IDc-HIaUErB2CScpXKGq",
                       "title": "## Item",
                       "description": "Description"
                     },
                     {
-                      "id": "qHESvgBF-QRNuJtCpI4gs",
+                      "id": "ilwu0j9wH826D-W_oQd9N",
                       "title": "## Item",
                       "description": "Description"
                     }
@@ -504,6 +984,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
+          "url": "https://images.unsplash.com/photo-1618556658017-c3b0c1d87a69?q=80&w=1964&auto=format&fit=crop",
           "position": "top",
           "size": 20
         }
