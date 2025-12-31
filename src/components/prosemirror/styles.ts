@@ -18,31 +18,38 @@ export const PROSEMIRROR_STYLES = `
   .ProseMirror h1 {
     font-size: 3rem;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
   }
   .ProseMirror h2 {
     font-size: 2.25rem;
     font-weight: 600;
-    line-height: 1.25;
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
   }
   .ProseMirror h3 {
     font-size: 1.875rem;
     font-weight: 600;
-    line-height: 1.3;
+    line-height: 1.45;
+    margin-bottom: 0.3rem;
   }
   .ProseMirror h4 {
     font-size: 1.5rem;
     font-weight: 600;
-    line-height: 1.35;
+    line-height: 1.5;
+    margin-bottom: 0.25rem;
   }
   .ProseMirror p,
   .ProseMirror li {
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.75;
+  }
+  .ProseMirror p {
+    margin-bottom: 0.5rem;
   }
   .ProseMirror ul, .ProseMirror ol {
     padding-left: 1.5rem;
-    margin: 0.5rem 0;
+    margin: 0.6rem 0;
   }
   .ProseMirror ul {
     list-style: disc;
@@ -51,14 +58,15 @@ export const PROSEMIRROR_STYLES = `
     list-style: decimal;
   }
   .ProseMirror li {
-    margin: 0.25rem 0;
+    margin: 0.3rem 0;
   }
   .ProseMirror blockquote {
     border-left: 3px solid #e5e7eb;
     padding-left: 1rem;
-    margin: 0.5rem 0;
+    margin: 0.6rem 0;
     color: #6b7280;
     font-style: italic;
+    line-height: 1.75;
   }
   .ProseMirror pre {
     background: #f3f4f6;
