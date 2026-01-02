@@ -38,7 +38,7 @@ function migrateBlockContent(block: Block): Block {
 function migrateRow(row: Row): Row {
   return {
     ...row,
-    blocks: row.blocks.map(migrateBlockContent),
+    blocks: Array.isArray(row.blocks) ? row.blocks.map(migrateBlockContent) : [],
   };
 }
 
