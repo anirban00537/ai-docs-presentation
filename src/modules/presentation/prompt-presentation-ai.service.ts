@@ -343,9 +343,17 @@ The following image URLs have been pre-fetched from Unsplash. You MUST include t
 ${imageInstructions}
 
 HOW TO APPLY:
-1. For "accent.url" - Set the accent object's url property to the provided URL
-2. For "rows[X].blocks[Y].content.url" - Set the block's content url to the provided URL
-3. For avatar/profile fields - Set the avatar or profileImage field to the provided URL
+1. For "accent.url" - Add a top-level "accent" object to your JSON response with these properties:
+   {
+     "accent": {
+       "url": "the-provided-url",
+       "position": "right",
+       "size": 40
+     },
+     "rows": [...]
+   }
+2. For "rows[X].blocks[Y].content.url" - Set the block's content url to the provided URL within the rows array
+3. For avatar/profile fields - Set the avatar or profileImage field to the provided URL within the appropriate block
 
 DO NOT change these URLs. Copy them exactly as provided above into the appropriate fields in your JSON output.
 `;
@@ -592,11 +600,12 @@ You MUST generate ONLY a JSON object with a "rows" array that matches the layout
    - Keep everything else exactly as it appears in the template
 
 REQUIRED JSON FORMAT:
-Generate ONLY this structure: { "rows": [...] }
+${imageInjectionPrompt ? 'If accent.url was provided above, generate: { "accent": { "url": "...", "position": "right", "size": 40 }, "rows": [...] }' : 'Generate: { "rows": [...] }'}
 - The "rows" array must match the template exactly
 - Preserve all row IDs, block IDs, and structure from the template
 - ⚠️ IMPORTANT: Preserve the EXACT formatting from each block's "content" field in the template
 - ⚠️ IMPORTANT: Only replace text content, keep all formatting (HTML tags, Markdown syntax) exactly as in template
+${imageInjectionPrompt ? '- ⚠️ IMPORTANT: If accent.url was provided in the IMAGE INJECTION section above, you MUST include the accent object at the top level of your response' : ''}
 - Do NOT wrap it in a "data" object
 - Do NOT add any other properties
 
@@ -606,7 +615,8 @@ Generate ONLY this structure: { "rows": [...] }
 - Only replace text content
 
 IMPORTANT: 
-- Generate ONLY the raw JSON object: { "rows": [...] }
+${imageInjectionPrompt ? '- If accent.url was provided, include: { "accent": { "url": "...", "position": "right", "size": 40 }, "rows": [...] }' : ''}
+- Generate ONLY the raw JSON object: { "rows": [...] } ${imageInjectionPrompt ? '(plus "accent" if provided)' : ''}
 - Do NOT include \`\`\`json or \`\`\` markers
 - Output starts with { and ends with }
 - Ensure valid JSON format
@@ -640,6 +650,27 @@ IMPORTANT:
                       type: 'object',
                       additionalProperties: true,
                     },
+                  },
+                  accent: {
+                    type: 'object',
+                    description: 'Optional accent image configuration for the slide',
+                    properties: {
+                      url: {
+                        type: 'string',
+                        description: 'URL of the accent image',
+                      },
+                      position: {
+                        type: 'string',
+                        enum: ['left', 'right', 'top', 'bottom', 'background'],
+                        description: 'Position of the accent image',
+                      },
+                      size: {
+                        type: 'number',
+                        description: 'Size of the accent image as a percentage (1-100)',
+                      },
+                    },
+                    required: ['url'],
+                    additionalProperties: false,
                   },
                 },
                 required: ['rows'],
