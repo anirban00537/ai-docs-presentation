@@ -103,7 +103,7 @@ export const SlideFrame = memo(function SlideFrame({
     
     const baseStyle: React.CSSProperties = {
       transition: isResizingAccent ? "none" : "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-      backgroundColor: style.backgroundColor || (opacity < 1 ? `rgba(${isDark ? '0, 0, 0' : '255, 255, 255'}, ${opacity})` : theme.cardBackground),
+      backgroundColor: style.backgroundColor || (opacity < 1 ? `rgba(${isDark ? '0, 0, 0' : '255, 255, 255'}, ${opacity})` : theme.pageBackground),
       fontFamily: getFontFamily(theme.fontFamily || "Inter"),
       position: "relative",
       backdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
