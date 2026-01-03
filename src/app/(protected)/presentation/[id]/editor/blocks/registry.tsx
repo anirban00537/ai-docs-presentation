@@ -20,6 +20,7 @@ import { LeafBlock } from "./leaf-block/LeafBlock";
 import { TimelineBentoBlock } from "./timeline-bento/TimelineBentoBlock";
 import { StackedTimelineBlock } from "./stacked-timeline/StackedTimelineBlock";
 import { ConnectedStepsBlock } from "./connected-steps/ConnectedStepsBlock";
+import { CircleStatsBlock } from "./circle-stats/CircleStatsBlock";
 
 
 export interface BlockRendererProps {
@@ -126,6 +127,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: ConnectedStepsBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.CONNECTED_STEPS_BLOCK, content),
+  },
+  [BLOCK_TYPES.CIRCLE_STATS_BLOCK]: {
+    type: BLOCK_TYPES.CIRCLE_STATS_BLOCK,
+    component: CircleStatsBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.CIRCLE_STATS_BLOCK, content),
   },
 };
 

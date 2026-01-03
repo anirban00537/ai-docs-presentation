@@ -14,6 +14,7 @@ import {
   IconLeaf,
   IconTimelineEvent,
   IconListNumbers,
+  IconChartDonut,
 } from "@tabler/icons-react";
 import { LayoutOption } from "../block/LayoutOption";
 
@@ -105,6 +106,14 @@ const masterLayouts: LayoutDefinition[] = [
     icon: <IconListNumbers size={18} />,
     label: "Connected Steps",
     description: "Vertical connected step list",
+    columnCount: 1,
+  },
+  {
+    id: "circle-stats",
+    blockType: BLOCK_TYPES.CIRCLE_STATS_BLOCK,
+    icon: <IconChartDonut size={18} />,
+    label: "Circle Stats",
+    description: "Circular progress indicators",
     columnCount: 1,
   },
 ];

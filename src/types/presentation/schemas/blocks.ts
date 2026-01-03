@@ -174,6 +174,23 @@ export const ConnectedStepsContentSchema = z.object({
 export type ConnectedStepsItem = z.infer<typeof ConnectedStepsItemSchema>;
 export type ConnectedStepsContent = z.infer<typeof ConnectedStepsContentSchema>;
 
+// Circle Stats Block
+export const CircleStatsItemSchema = z.object({
+  id: z.string(),
+  value: z.number().min(0).max(100).default(0),
+  suffix: z.string().optional().default("%"),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
+});
+
+export const CircleStatsContentSchema = z.object({
+  type: z.literal("circle-stats-block"),
+  items: z.array(CircleStatsItemSchema).default([]),
+});
+
+export type CircleStatsItem = z.infer<typeof CircleStatsItemSchema>;
+export type CircleStatsContent = z.infer<typeof CircleStatsContentSchema>;
+
 export const BlockContentSchema = z.union([
   z.string(),
   ImageContentSchema,
@@ -189,6 +206,7 @@ export const BlockContentSchema = z.union([
   TimelineBentoContentSchema,
   StackedTimelineContentSchema,
   ConnectedStepsContentSchema,
+  CircleStatsContentSchema,
   SpacerContentSchema,
 ]);
 
