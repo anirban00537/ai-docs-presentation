@@ -70,7 +70,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
       }}
     >
       {/* Container for the timeline */}
-      <div className="relative max-w-4xl mx-auto">
+      <div className="relative w-full mx-auto">
         
         {/* Continuous Vertical Line Background */}
         <div 

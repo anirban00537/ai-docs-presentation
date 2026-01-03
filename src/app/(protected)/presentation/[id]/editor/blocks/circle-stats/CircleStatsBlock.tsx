@@ -119,7 +119,7 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
       `}</style>
       <div className="flex flex-wrap justify-center items-start gap-12 md:gap-16">
         {items.map((item, index) => (
-          <div key={item.id} className="relative group/item flex flex-col items-center max-w-[240px] text-center">
+          <div key={item.id} className="relative group/item flex flex-col items-center min-w-[200px] flex-1 text-center">
              
              {/* Progress Circle Container */}
              <div className="relative mb-6">

@@ -239,7 +239,7 @@ export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
                   >
                     Master Layouts
                   </h3>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-4 gap-2">
                     {masterLayouts.map((layout) => (
                       <div
                         key={layout.id}
