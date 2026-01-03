@@ -12,6 +12,7 @@ import {
   updateSlide,
   updatePresentation,
   deleteSlide,
+  reorderSlides,
 } from "@/services/presentation";
 import { presentationKeys } from "@/hooks/use-presentation";
 import { queryClient } from "@/lib/query-client";
@@ -258,6 +259,29 @@ export const slidesApiMiddleware: Middleware<object, any, any> =
         .catch((error) => {
           console.error("Failed to delete slide:", error);
           toast.error("Failed to delete slide");
+        });
+      return result;
+    }
+
+    // Handle reorderSlides action immediately (no debounce for reordering)
+    if (action.type === "slides/reorderSlides") {
+      if (!currentPresentationId) return result;
+      
+      const currentSlides = state.slides.present.slides;
+      // Send new order to backend
+      const slideOrders = currentSlides.map((slide: Slide, index: number) => ({
+        slideId: slide.id,
+        order: index,
+      }));
+      
+      reorderSlides(currentPresentationId, slideOrders)
+        .then(() => {
+          // Update previous state after successful reorder
+          previousSlidesState = JSON.parse(JSON.stringify(currentSlides));
+        })
+        .catch((error) => {
+          console.error("Failed to reorder slides:", error);
+          toast.error("Failed to reorder slides");
         });
       return result;
     }

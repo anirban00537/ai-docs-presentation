@@ -69,13 +69,11 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
             key={item.id}
             className="relative group/sideline overflow-hidden transition-all duration-700"
             style={{
-              borderRadius: "20px",
-              backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.6)",
-              backdropFilter: "blur(16px)",
+              borderRadius: "12px",
+              backgroundColor: theme.cardBackground,
+              boxShadow: "sm",
             }}
           >
-            {/* Top Shine Accent */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-1000" />
 
             <div 
               className="absolute left-0 top-0 bottom-0 w-1.5 transition-all duration-700"
@@ -128,9 +126,7 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
               </div>
             </div>
 
-            {/* Subtle Gradient Glow */}
-            <div className="absolute -bottom-10 -right-10 w-24 h-24 blur-2xl pointer-events-none rounded-full"
-                 style={{ backgroundColor: theme.primary }} />
+
           </div>
         ))}
       </div>

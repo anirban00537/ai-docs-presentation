@@ -1,29 +1,50 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { SlideContainer } from "./SlideContainer";
 import type { Slide } from "@/store/slices/slidesSlice";
-import { useAppSelector } from "@/store/hooks";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectTheme,
   selectActiveSlideId,
   DEFAULT_THEME,
+  setActiveSlide,
+  addSlide,
+  deleteSlide,
+  replaceSlideWithLayout,
+  reorderSlides,
 } from "@/store/slices/slidesSlice";
 import {
   IconChevronRight,
   IconPlus,
   IconTrash,
+  IconGripVertical,
 } from "@tabler/icons-react";
-import {
-  setActiveSlide,
-  addSlide,
-  deleteSlide,
-  replaceSlideWithLayout,
-} from "@/store/slices/slidesSlice";
-import { useAppDispatch } from "@/store/hooks";
 import { SlideLayoutSelector } from "./SlideLayoutSelector";
 import type { LayoutTemplate } from "@/types/presentation";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+  defaultDropAnimationSideEffects,
+  DragStartEvent,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+// --- Types ---
 
 interface SlideNavigatorProps {
   slides: Slide[];
@@ -39,6 +60,141 @@ interface SlideNavigatorProps {
   ) => void;
 }
 
+// --- Sortable Slide Item Component ---
+
+interface SortableSlideItemProps {
+  slide: Slide;
+  index: number;
+  isActive: boolean;
+  theme: any;
+  isDark: boolean;
+  scale: number;
+  slideHeight: number;
+  thumbnailHeight: number;
+  onSlideClick: (id: string) => void;
+  onDeleteSlide: (e: React.MouseEvent, id: string) => void;
+  slideCount: number;
+  // Slide rendering props
+  renderSlideProps: any;
+}
+
+const SortableSlideItem = ({
+  slide,
+  index,
+  isActive,
+  theme,
+  isDark,
+  scale,
+  slideHeight,
+  thumbnailHeight,
+  onSlideClick,
+  onDeleteSlide,
+  slideCount,
+  renderSlideProps,
+}: SortableSlideItemProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: slide.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.3 : 1,
+    zIndex: isDragging ? 999 : "auto",
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="relative mb-3 group touch-none"
+    >
+      <div
+        onClick={() => onSlideClick(slide.id)}
+        className="relative cursor-pointer transition-transform duration-200"
+      >
+        {/* Slide Preview Container */}
+        <div
+          className="relative overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-200 hover:shadow-md"
+          style={{
+            height: `${thumbnailHeight}px`,
+            outline: isActive ? `2px solid ${theme.primary}` : "2px solid transparent",
+            outlineOffset: "2px",
+            backgroundColor: theme.cardBackground,
+          }}
+        >
+          {/* Scaled SlideContainer */}
+          <div
+            className="absolute top-0 left-0 pointer-events-none origin-top-left"
+            style={{
+              transform: `scale(${scale})`,
+              width: `${SLIDE_MAX_WIDTH}px`,
+              height: `${slideHeight}px`,
+            }}
+          >
+            <SlideContainer slide={slide} {...renderSlideProps} enableDragHints={false} readOnly={true} />
+          </div>
+
+          {/* Hover Overlay with Controls */}
+          <div
+            className={`absolute inset-0 flex items-center justify-center gap-2 transition-opacity duration-200
+              ${isDragging ? "opacity-0" : "opacity-0 group-hover:opacity-100"}
+            `}
+            style={{
+              background: isDark ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.4)",
+              backdropFilter: "blur(2px)",
+            }}
+          >
+            {/* Drag Handle */}
+            <div
+              {...attributes}
+              {...listeners}
+              className="p-2 rounded-lg cursor-grab active:cursor-grabbing hover:scale-105 transition-transform shadow-sm"
+              style={{
+                backgroundColor: theme.primary,
+                color: "#ffffff",
+              }}
+              title="Drag to reorder"
+            >
+              <IconGripVertical size={16} />
+            </div>
+
+            {/* Delete Button */}
+            {slideCount > 1 && (
+              <button
+                onClick={(e) => onDeleteSlide(e, slide.id)}
+                className="p-2 rounded-lg hover:scale-105 transition-transform shadow-sm bg-red-500 text-white"
+                title="Delete slide"
+              >
+                <IconTrash size={16} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Slide Number Badge */}
+        <div
+          className="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold shadow-sm z-10"
+          style={{
+            backgroundColor: isActive ? theme.primary : (isDark ? "rgba(30,30,35,0.9)" : "rgba(255,255,255,0.9)"),
+            color: isActive ? "#ffffff" : (isDark ? "#ffffff" : "#000000"),
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          {index + 1}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Main Component ---
+
 export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
   slides,
   onUpdateBlock,
@@ -48,35 +204,60 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
   onAddRowAtBottom,
   onUpdateColumnWidths,
 }) => {
+  // State
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLayoutModalOpen, setIsLayoutModalOpen] = useState(false);
   const [pendingLayout, setPendingLayout] = useState<LayoutTemplate | null>(null);
+  const [activeDragId, setActiveDragId] = useState<string | null>(null);
+  
+  // Redux & Theme
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const dispatch = useAppDispatch();
-  const sidebarRef = useRef<HTMLDivElement>(null);
   const previousActiveSlideIdRef = useRef<string | null>(null);
-  
-  // Ref for the scrollable container (for virtualization)
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Calculate proper scale to show full slide (16:9 aspect ratio)
+  // Measurements
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const containerWidth = 220;
   const scale = containerWidth / SLIDE_MAX_WIDTH;
   const slideHeight = SLIDE_MAX_WIDTH * (9 / 16);
   const thumbnailHeight = slideHeight * scale;
-  const itemHeight = thumbnailHeight + 12; // Height + gap
 
-  // Virtualized list configuration
-  const virtualizer = useVirtualizer({
+  // Dnd Sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5, // Require slight movement to start drag, prevents accidental drags on clicks
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Virtualizer
+  const rowVirtualizer = useVirtualizer({
     count: slides.length,
     getScrollElement: () => scrollContainerRef.current,
-    estimateSize: () => itemHeight,
-    overscan: 2, // Render 2 items above and below the visible area
+    estimateSize: () => thumbnailHeight + 12, // Height + margin
+    overscan: 5,
   });
 
-  // Apply pending layout when a new slide becomes active
+  // Derived Props for Slide Render
+  const renderSlideProps = useMemo(() => ({
+    onUpdateBlock,
+    onDeleteRow,
+    onAddColumn,
+    onAddRowAtTop,
+    onAddRowAtBottom,
+    onUpdateColumnWidths,
+  }), [onUpdateBlock, onDeleteRow, onAddColumn, onAddRowAtTop, onAddRowAtBottom, onUpdateColumnWidths]);
+
+  // --- Effects ---
+
+  // Handle pending layout application
   useEffect(() => {
     if (
       pendingLayout &&
@@ -94,25 +275,45 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
     previousActiveSlideIdRef.current = activeSlideId;
   }, [activeSlideId, pendingLayout, dispatch]);
 
-  // Scroll to active slide when it changes
+  // Scroll active slide into view
   useEffect(() => {
-    if (activeSlideId && !isCollapsed) {
+    if (activeSlideId && !isCollapsed && !activeDragId) {
       const activeIndex = slides.findIndex(s => s.id === activeSlideId);
       if (activeIndex !== -1) {
-        // Scroll the virtualizer to the active slide
+        // Simple timeout to ensure virtualizer is ready
         setTimeout(() => {
-          virtualizer.scrollToIndex(activeIndex, { align: 'center', behavior: 'smooth' });
+          try {
+            rowVirtualizer.scrollToIndex(activeIndex, { align: 'center', behavior: 'smooth' });
+          } catch(e) {
+            // Ignore scroll errors during render/mount
+          }
         }, 100);
       }
     }
-  }, [activeSlideId, isCollapsed, slides, virtualizer]);
+  }, [activeSlideId, isCollapsed, activeDragId, slides, rowVirtualizer]);
+
+  // --- Handlers ---
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveDragId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveDragId(null);
+
+    if (over && active.id !== over.id) {
+      const oldIndex = slides.findIndex((s) => s.id === active.id);
+      const newIndex = slides.findIndex((s) => s.id === over.id);
+      
+      if (oldIndex !== -1 && newIndex !== -1) {
+        dispatch(reorderSlides({ slideId: active.id as string, newIndex }));
+      }
+    }
+  };
 
   const handleSlideClick = useCallback((slideId: string) => {
     dispatch(setActiveSlide(slideId));
-    const slideElement = document.querySelector(`[data-slide-id="${slideId}"]`);
-    if (slideElement) {
-      slideElement.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
   }, [dispatch]);
 
   const handleAddSlide = useCallback(() => {
@@ -125,12 +326,25 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
   }, [dispatch]);
 
   const handleDeleteSlide = useCallback((e: React.MouseEvent, slideId: string) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Prevent slide selection
     if (slides.length <= 1) return;
     dispatch(deleteSlide(slideId));
   }, [dispatch, slides.length]);
 
-  const virtualItems = virtualizer.getVirtualItems();
+  const activeDragSlide = useMemo(() => 
+    slides.find((s) => s.id === activeDragId),
+  [slides, activeDragId]);
+
+  // Drop animation config
+  const dropAnimation = {
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        active: {
+          opacity: '0.4',
+        },
+      },
+    }),
+  };
 
   return (
     <>
@@ -151,13 +365,14 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
           >
             <button
               onClick={() => setIsCollapsed(false)}
-              className="p-2 rounded-xl transition-all hover:scale-105"
+              className="p-3 rounded-xl transition-all hover:scale-105 shadow-md flex items-center justify-center group"
               style={{
-                backgroundColor: isDark ? "rgba(30,30,35,0.9)" : "rgba(255,255,255,0.95)",
+                backgroundColor: isDark ? "rgba(30,30,40,0.9)" : "rgba(255,255,255,0.95)",
                 backdropFilter: "blur(12px)",
+                border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)"}`,
               }}
             >
-              <IconChevronRight size={18} style={{ color: theme.primary }} />
+              <IconChevronRight size={20} className="text-gray-500 group-hover:text-primary transition-colors" style={{ color: theme.primary }} />
             </button>
           </motion.div>
         )}
@@ -171,185 +386,144 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed left-4 top-1/2 -translate-y-1/2 z-40"
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed left-4 top-1/2 -translate-y-1/2 z-40 font-sans"
+            style={{ height: '75vh', maxHeight: '800px' }}
           >
             <div
-              className="relative w-[260px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
+              className="relative w-[260px] h-full flex flex-col rounded-3xl overflow-hidden shadow-2xl"
               style={{
-                backgroundColor: isDark 
-                  ? "rgba(30, 30, 40, 0.5)" 
-                  : "rgba(255, 255, 255, 0.5)",
-                backdropFilter: "blur(32px) saturate(200%)",
-                WebkitBackdropFilter: "blur(32px) saturate(200%)",
+                backgroundColor: isDark ? "rgba(20, 20, 25, 0.85)" : "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.6)"}`,
                 boxShadow: isDark
-                  ? `
-                    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
-                    0 -1px 0 0 rgba(0, 0, 0, 0.2) inset,
-                    0 8px 40px rgba(0, 0, 0, 0.4),
-                    0 2px 8px rgba(0, 0, 0, 0.2)
-                  `
-                  : `
-                    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
-                    0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-                    0 8px 40px rgba(0, 0, 0, 0.08),
-                    0 2px 8px rgba(0, 0, 0, 0.04)
-                  `,
+                  ? "0 20px 50px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.2)"
+                  : "0 20px 50px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.05)",
               }}
             >
-              {/* Glass shine overlay */}
-              <div 
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: isDark
-                    ? "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.02) 100%)"
-                    : "linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.3) 100%)",
-                }}
-              />
               {/* Header */}
               <div 
-                className="relative py-2.5 flex items-center justify-between"
-                style={{ paddingLeft: 14, paddingRight: 14 }}
+                className="relative flex items-center justify-between px-5 pt-5 pb-4 z-10 shrink-0"
               >
-                <span
-                  className="text-xs font-medium uppercase tracking-wider opacity-50"
-                  style={{ color: isDark ? "#fff" : "#000" }}
-                >
-                  Slides ({slides.length})
-                </span>
-                <div className="flex items-center gap-1">
+                <div className="flex flex-col">
+                    <span
+                    className="text-xs font-bold uppercase tracking-widest opacity-40 mb-0.5"
+                    style={{ color: isDark ? "#fff" : "#000" }}
+                    >
+                    OUTLINE
+                    </span>
+                    <span className="text-sm font-semibold opacity-90" style={{ color: isDark ? "#fff" : "#1a1a1a" }}>
+                        {slides.length} {slides.length === 1 ? 'Slide' : 'Slides'}
+                    </span>
+                </div>
+                
+                <div className="flex items-center gap-1.5">
                   <button
                     onClick={handleAddSlide}
-                    className="p-1.5 rounded-lg transition-all hover:scale-105"
+                    className="p-2 rounded-xl transition-all hover:scale-105 hover:bg-opacity-20 active:scale-95 flex items-center justify-center shadow-sm"
                     style={{
-                      backgroundColor: `${theme.primary}15`,
-                      color: theme.primary,
+                      backgroundColor: theme.primary,
+                      color: "#ffffff",
                     }}
                     title="Add slide"
                   >
-                    <IconPlus size={14} stroke={2.5} />
+                    <IconPlus size={16} stroke={3} />
                   </button>
                   <button
                     onClick={() => setIsCollapsed(true)}
-                    className="p-1.5 rounded-lg transition-all opacity-40 hover:opacity-100"
+                    className="p-2 rounded-xl transition-all opacity-40 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
                     style={{ color: isDark ? "#fff" : "#000" }}
                     title="Collapse sidebar"
                   >
-                    <IconChevronRight size={14} className="rotate-180" />
+                    <IconChevronRight size={16} className="rotate-180" />
                   </button>
                 </div>
               </div>
 
-              {/* Virtualized Slides List */}
+              {/* Scrollable List */}
               <div 
                 ref={scrollContainerRef}
-                className={`relative flex-1 overflow-y-auto pb-3 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
-                style={{ paddingLeft: 18, paddingRight: 14, paddingTop: 8 }}
+                className={`relative flex-1 overflow-y-auto px-4 pb-4 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
               >
-                {/* Virtualized container with total height */}
-                <div
-                  style={{
-                    height: `${virtualizer.getTotalSize()}px`,
-                    width: '100%',
-                    position: 'relative',
-                  }}
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                 >
-                  {/* Only render visible items */}
-                  {virtualItems.map((virtualItem) => {
-                    const slide = slides[virtualItem.index];
-                    const index = virtualItem.index;
-                    const isActive = slide.id === activeSlideId;
-
-                    return (
-                      <div
-                        key={slide.id}
-                        data-slide-preview-id={slide.id}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: `${virtualItem.size}px`,
-                          transform: `translateY(${virtualItem.start}px)`,
-                        }}
-                      >
+                    <SortableContext
+                        items={slides.map(s => s.id)}
+                        strategy={verticalListSortingStrategy}
+                    >
                         <div
-                          onClick={() => handleSlideClick(slide.id)}
-                          className="relative cursor-pointer group"
-                          style={{ paddingBottom: 12 }}
+                            style={{
+                                height: `${rowVirtualizer.getTotalSize()}px`,
+                                width: '100%',
+                                position: 'relative',
+                            }}
                         >
-                          {/* Slide Preview Container */}
-                          <div
-                            className="relative overflow-hidden rounded-xl transition-all duration-200"
-                            style={{
-                              height: `${thumbnailHeight}px`,
-                              outline: isActive ? `2px solid ${theme.primary}` : "none",
-                              outlineOffset: "2px",
-                            }}
-                          >
-                            {/* Scaled SlideContainer */}
-                            <div
-                              className="absolute top-0 left-0 pointer-events-none"
-                              style={{
-                                transform: `scale(${scale})`,
-                                transformOrigin: "top left",
-                                width: `${SLIDE_MAX_WIDTH}px`,
-                                height: `${slideHeight}px`,
-                              }}
-                            >
-                              <SlideContainer
-                                slide={slide}
-                                onUpdateBlock={onUpdateBlock}
-                                onDeleteRow={onDeleteRow}
-                                onAddColumn={onAddColumn}
-                                onAddRowAtTop={onAddRowAtTop}
-                                onAddRowAtBottom={onAddRowAtBottom}
-                                onUpdateColumnWidths={onUpdateColumnWidths}
-                                enableDragHints={false}
-                                readOnly={true}
-                              />
-                            </div>
-
-                            {/* Hover Overlay */}
-                            <div
-                              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
-                              style={{
-                                background: isDark
-                                  ? "rgba(0,0,0,0.4)"
-                                  : "rgba(0,0,0,0.2)",
-                              }}
-                            >
-                              {slides.length > 1 && (
-                                <button
-                                  onClick={(e) => handleDeleteSlide(e, slide.id)}
-                                  className="p-2 rounded-lg transition-all hover:scale-110"
-                                  style={{
-                                    backgroundColor: "rgba(239,68,68,0.9)",
-                                    color: "white",
-                                  }}
-                                  title="Delete slide"
-                                >
-                                  <IconTrash size={14} />
-                                </button>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Slide Number */}
-                          <div
-                            className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-[10px] font-semibold"
-                            style={{
-                              backgroundColor: isActive ? theme.primary : (isDark ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.9)"),
-                              color: isActive ? "white" : (isDark ? "white" : "#000"),
-                            }}
-                          >
-                            {index + 1}
-                          </div>
+                            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                                const slide = slides[virtualRow.index];
+                                if (!slide) return null;
+                                
+                                return (
+                                    <div
+                                        key={slide.id}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            transform: `translateY(${virtualRow.start}px)`,
+                                        }}
+                                    >
+                                        <SortableSlideItem
+                                            slide={slide}
+                                            index={virtualRow.index}
+                                            isActive={slide.id === activeSlideId}
+                                            theme={theme}
+                                            isDark={isDark}
+                                            scale={scale}
+                                            slideHeight={slideHeight}
+                                            thumbnailHeight={thumbnailHeight}
+                                            onSlideClick={handleSlideClick}
+                                            onDeleteSlide={handleDeleteSlide}
+                                            slideCount={slides.length}
+                                            renderSlideProps={renderSlideProps}
+                                        />
+                                    </div>
+                                );
+                            })}
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                    </SortableContext>
+
+                    {/* Drag Overlay - Shows what we are dragging */}
+                    <DragOverlay dropAnimation={dropAnimation}>
+                        {activeDragSlide ? (
+                           <div className="w-[220px] opacity-90 cursor-grabbing">
+                                <div
+                                    className="relative overflow-hidden rounded-xl shadow-2xl ring-2 ring-primary ring-offset-2 ring-offset-transparent transform scale-105"
+                                    style={{
+                                        height: `${thumbnailHeight}px`,
+                                        backgroundColor: theme.cardBackground,
+                                    }}
+                                >
+                                    <div
+                                        className="absolute top-0 left-0 pointer-events-none origin-top-left"
+                                        style={{
+                                            transform: `scale(${scale})`,
+                                            width: `${SLIDE_MAX_WIDTH}px`,
+                                            height: `${slideHeight}px`,
+                                        }}
+                                    >
+                                        <SlideContainer slide={activeDragSlide} {...renderSlideProps} enableDragHints={false} readOnly={true} />
+                                    </div>
+                                </div>
+                           </div> 
+                        ) : null}
+                    </DragOverlay>
+                </DndContext>
               </div>
             </div>
           </motion.div>
@@ -358,4 +532,5 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
     </>
   );
 };
+
 
