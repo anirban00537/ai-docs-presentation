@@ -18,6 +18,7 @@ import { createButtonBlockContent, normalizeButtonBlockContent } from "./button-
 import { createLeafBlockContent, normalizeLeafBlockContent } from "./leaf-block";
 import { createTimelineBentoContent, normalizeTimelineBentoContent } from "./timeline-bento-block";
 import { createStackedTimelineContent, normalizeStackedTimelineContent } from "./stacked-timeline-block";
+import { createConnectedStepsContent, normalizeConnectedStepsContent } from "./connected-steps-block";
 
 
 // Re-export factories and normalizers
@@ -35,6 +36,7 @@ export {
   createLeafBlockContent, normalizeLeafBlockContent,
   createTimelineBentoContent, normalizeTimelineBentoContent,
   createStackedTimelineContent, normalizeStackedTimelineContent,
+  createConnectedStepsContent, normalizeConnectedStepsContent,
 };
 
 import {
@@ -73,6 +75,8 @@ export const createBlockContentForType = (
       return createTimelineBentoContent();
     case BLOCK_TYPES.STACKED_TIMELINE_BLOCK:
       return createStackedTimelineContent();
+    case BLOCK_TYPES.CONNECTED_STEPS_BLOCK:
+      return createConnectedStepsContent();
 
     case BLOCK_TYPES.PROSEMIRROR:
     default:
@@ -111,6 +115,8 @@ export const normalizeBlockContent = (
       return normalizeTimelineBentoContent(content);
     case BLOCK_TYPES.STACKED_TIMELINE_BLOCK:
       return normalizeStackedTimelineContent(content);
+    case BLOCK_TYPES.CONNECTED_STEPS_BLOCK:
+      return normalizeConnectedStepsContent(content);
 
     default:
       if (isMarkdownFormat(content)) {

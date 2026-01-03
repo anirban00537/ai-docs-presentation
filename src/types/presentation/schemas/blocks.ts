@@ -159,6 +159,21 @@ export const StackedTimelineContentSchema = z.object({
 export type StackedTimelineItem = z.infer<typeof StackedTimelineItemSchema>;
 export type StackedTimelineContent = z.infer<typeof StackedTimelineContentSchema>;
 
+// Connected Steps Block
+export const ConnectedStepsItemSchema = z.object({
+  id: z.string(),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
+});
+
+export const ConnectedStepsContentSchema = z.object({
+  type: z.literal("connected-steps-block"),
+  items: z.array(ConnectedStepsItemSchema).default([]),
+});
+
+export type ConnectedStepsItem = z.infer<typeof ConnectedStepsItemSchema>;
+export type ConnectedStepsContent = z.infer<typeof ConnectedStepsContentSchema>;
+
 export const BlockContentSchema = z.union([
   z.string(),
   ImageContentSchema,
@@ -173,6 +188,7 @@ export const BlockContentSchema = z.union([
   LeafBlockContentSchema,
   TimelineBentoContentSchema,
   StackedTimelineContentSchema,
+  ConnectedStepsContentSchema,
   SpacerContentSchema,
 ]);
 

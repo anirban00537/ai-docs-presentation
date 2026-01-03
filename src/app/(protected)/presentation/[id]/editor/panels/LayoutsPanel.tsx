@@ -13,6 +13,7 @@ import {
   IconColumns3,
   IconLeaf,
   IconTimelineEvent,
+  IconListNumbers,
 } from "@tabler/icons-react";
 import { LayoutOption } from "../block/LayoutOption";
 
@@ -96,6 +97,14 @@ const masterLayouts: LayoutDefinition[] = [
     icon: <IconBoxModel size={18} />,
     label: "Focus Grid",
     description: "Grid of clean focus cards",
+    columnCount: 1,
+  },
+  {
+    id: "connected-steps",
+    blockType: BLOCK_TYPES.CONNECTED_STEPS_BLOCK,
+    icon: <IconListNumbers size={18} />,
+    label: "Connected Steps",
+    description: "Vertical connected step list",
     columnCount: 1,
   },
 ];

@@ -19,6 +19,7 @@ import { ButtonBlock } from "./button-block/ButtonBlock";
 import { LeafBlock } from "./leaf-block/LeafBlock";
 import { TimelineBentoBlock } from "./timeline-bento/TimelineBentoBlock";
 import { StackedTimelineBlock } from "./stacked-timeline/StackedTimelineBlock";
+import { ConnectedStepsBlock } from "./connected-steps/ConnectedStepsBlock";
 
 
 export interface BlockRendererProps {
@@ -119,6 +120,12 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     component: StackedTimelineBlock,
     normalize: (content) =>
       normalizeBlockContent(BLOCK_TYPES.STACKED_TIMELINE_BLOCK, content),
+  },
+  [BLOCK_TYPES.CONNECTED_STEPS_BLOCK]: {
+    type: BLOCK_TYPES.CONNECTED_STEPS_BLOCK,
+    component: ConnectedStepsBlock,
+    normalize: (content) =>
+      normalizeBlockContent(BLOCK_TYPES.CONNECTED_STEPS_BLOCK, content),
   },
 };
 
