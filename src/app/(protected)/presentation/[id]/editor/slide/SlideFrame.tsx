@@ -120,12 +120,21 @@ export const SlideFrame = memo(function SlideFrame({
 
     const borderRadius = theme.cardBorderRadius || "12px";
     const boxShadow = theme.cardBoxShadow || (isDark ? "0 4px 20px rgba(0, 0, 0, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.08)");
+    
+    // Check border properties
+    const borderWidth = theme.cardBorderWidth || "0px";
+    const borderStyle = theme.cardBorderStyle || "solid";
+    const borderColor = theme.borderColor || (isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)");
+    
+    const border = (borderWidth !== "0px" && borderStyle !== "none")
+      ? `${borderWidth} ${borderStyle} ${borderColor}`
+      : "none";
 
     return {
       ...baseStyle,
       borderRadius,
       boxShadow: style.boxShadow || boxShadow,
-      border: "none",
+      border,
     };
   };
 
