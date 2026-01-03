@@ -67,9 +67,8 @@ export const UniversalIconPicker = memo(function UniversalIconPicker({
       <div
         className={`rounded-2xl flex items-center justify-center border shadow-sm ${sizeClasses[size]} ${className}`}
         style={{
-          backgroundColor: `${theme.primary}10`,
-          borderColor: `${theme.primary}20`,
-          color: theme.primary,
+          backgroundColor: theme.primary,
+          color: theme.cardBackground || "#fff",
           ...style
         }}
       >
@@ -88,9 +87,8 @@ export const UniversalIconPicker = memo(function UniversalIconPicker({
         <button
           className={`rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 border shadow-sm outline-none group ${sizeClasses[size]} ${className}`}
           style={{
-            backgroundColor: `${theme.primary}10`,
-            borderColor: `${theme.primary}20`,
-            color: theme.primary,
+            backgroundColor: theme.primary,
+            color: theme.cardBackground || "#fff",
             backdropFilter: "blur(8px)",
             ...style
           }}

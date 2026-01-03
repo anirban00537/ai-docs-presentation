@@ -106,9 +106,9 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black shadow-inner border transition-transform"
                   style={{
-                    backgroundColor: theme.cardBackground,
+                    backgroundColor: theme.primary,
                     borderColor: `${theme.primary}40`,
-                    color: theme.primary,
+                    color: theme.cardBackground,
                   }}
                 >
                   <input
@@ -116,8 +116,8 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
                     value={item.number}
                     onChange={(e) => handleItemUpdate(index, "number", parseInt(e.target.value, 10) || 0)}
                     disabled={readOnly}
-                    className="no-spinner bg-transparent border-none outline-none text-center w-full font-black selection:bg-primary/20"
-                    style={{ color: theme.primary }}
+                    className="no-spinner bg-transparent border-none outline-none text-center w-full font-black selection:bg-white/20"
+                    style={{ color: theme.cardBackground }}
                   />
                 </div>
               </div>

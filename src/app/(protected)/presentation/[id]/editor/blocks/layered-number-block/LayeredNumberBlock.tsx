@@ -112,9 +112,9 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
                 <div 
                     className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border shadow-lg transition-transform"
                     style={{
-                        backgroundColor: theme.cardBackground,
+                        backgroundColor: theme.primary,
                         borderColor: `${theme.primary}40`,
-                        color: theme.primary,
+                        color: theme.cardBackground,
                     }}
                 >
                     <input 
@@ -123,7 +123,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
                         onChange={(e) => handleItemUpdate(index, "number", parseInt(e.target.value, 10) || 0)}
                         disabled={readOnly}
                         className="bg-transparent text-center w-full h-full outline-none no-spinner font-black"
-                        style={{ color: theme.primary }}
+                        style={{ color: theme.cardBackground }}
                     />
                 </div>
               </div>
