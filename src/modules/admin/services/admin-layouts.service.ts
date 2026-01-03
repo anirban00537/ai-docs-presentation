@@ -68,4 +68,60 @@ export class AdminLayoutsService {
       return processException(error);
     }
   }
+
+  /**
+   * Update a layout
+   */
+  async updateLayout(id: string, updateData: {
+    name?: string;
+    description?: string;
+    tags?: string[];
+    thumbnail?: string;
+    data?: any;
+  }): Promise<ResponseModel> {
+    try {
+      const layout = await this.prisma.layout.findUnique({
+        where: { id },
+      });
+
+      if (!layout) {
+        return errorResponse('Layout not found');
+      }
+
+      // Build update payload
+      const updatePayload: any = {};
+      
+      if (updateData.name !== undefined) {
+        updatePayload.name = updateData.name;
+      }
+      
+      if (updateData.description !== undefined) {
+        updatePayload.description = updateData.description;
+      }
+      
+      if (updateData.tags !== undefined) {
+        updatePayload.tags = updateData.tags;
+      }
+      
+      if (updateData.thumbnail !== undefined) {
+        updatePayload.thumbnail = updateData.thumbnail;
+      }
+      
+      if (updateData.data !== undefined) {
+        updatePayload.data = updateData.data;
+      }
+
+      // Update the layout
+      const updatedLayout = await this.prisma.layout.update({
+        where: { id },
+        data: updatePayload,
+      });
+
+      this.logger.log(`Layout updated: ${id}`);
+      return successResponse('Layout updated successfully', updatedLayout);
+    } catch (error) {
+      this.logger.error(`Error updating layout ${id}:`, error);
+      return processException(error);
+    }
+  }
 }
