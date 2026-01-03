@@ -88,9 +88,9 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                             <div 
                                 className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold z-20 transition-transform group-hover/item:scale-110 border"
                                 style={{
-                                    background: theme.cardBackground,
+                                    background: theme.primary,
                                     borderColor: `${theme.primary}40`,
-                                    color: theme.primary,
+                                    color: theme.cardBackground,
                                 }}
                             >
                                 {index + 1}
