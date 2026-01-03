@@ -93,11 +93,15 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
 
         const handleTypeChange = (value: string) => {
           const { state, dispatch } = view;
+          const { $from } = state.selection;
+          const parentNode = $from.parent;
+          const textAlign = parentNode.attrs.textAlign || "left";
+
           if (value === "p") {
-            setBlockType(schema.nodes.paragraph)(state, dispatch);
+            setBlockType(schema.nodes.paragraph, { textAlign })(state, dispatch);
           } else {
             const level = parseInt(value.substring(1));
-            setBlockType(schema.nodes.heading, { level })(state, dispatch);
+            setBlockType(schema.nodes.heading, { level, textAlign })(state, dispatch);
           }
           // Use setTimeout to ensure focus is returned after select animation/interaction
           setTimeout(() => view.focus(), 10);
@@ -264,49 +268,7 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
         </svg>
       </button>
 
-      {/* Link */}
-      <button
-        onMouseDown={(e) => {
-          e.preventDefault();
-          toggleMark(schema.marks.link, { href: "" })(
-            view.state,
-            view.dispatch
-          );
-          view.focus();
-        }}
-        className={cn(
-          "w-8 h-8 rounded flex items-center justify-center transition-colors"
-        )}
-        style={{
-          backgroundColor: activeMarks.has("link")
-            ? theme.primary + "30"
-            : "transparent",
-          color: activeMarks.has("link") ? theme.primary : theme.bodyColor,
-        }}
-        onMouseEnter={(e) => {
-          if (!activeMarks.has("link")) {
-            e.currentTarget.style.backgroundColor = theme.primary + "15";
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!activeMarks.has("link")) {
-            e.currentTarget.style.backgroundColor = "transparent";
-          }
-        }}
-        title="Link"
-      >
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-        </svg>
-      </button>
+
 
       {/* Separator */}
       <div
