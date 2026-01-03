@@ -81,9 +81,8 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
             key={item.id}
             className="relative group/layered p-4 transition-all duration-700 overflow-hidden"
             style={{
-              borderRadius: "32px",
-              backgroundColor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.4)",
-              backdropFilter: "blur(20px)",
+              borderRadius: "0px",
+              backgroundColor: "transparent",
             }}
           >
             {/* Massive Background Number Indicator */}
@@ -161,9 +160,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
               </div>
             </div>
 
-            {/* Premium Accent Corner Glow */}
-            <div className="absolute -top-10 -left-10 w-24 h-24 blur-3xl opacity-0 group-hover/layered:opacity-20 transition-opacity pointer-events-none"
-                 style={{ backgroundColor: theme.primary }} />
+
           </div>
         ))}
       </div>

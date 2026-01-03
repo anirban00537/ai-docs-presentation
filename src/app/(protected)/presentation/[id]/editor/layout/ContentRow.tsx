@@ -242,55 +242,61 @@ export const ContentRow = memo(function ContentRow({
         />
       )}
       
-      {/* Row Menu Handle - Minimal */}
+      {/* Row Menu Handle */}
       {!readOnly && (
-        <div className="relative flex items-center">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-4 h-full flex items-center justify-center opacity-0 group-hover/row:opacity-40 hover:opacity-100 transition-all"
-            style={{ color: isDark ? "#fff" : "#000" }}
-            title="Row options"
-            aria-label="Row options menu"
-            aria-haspopup="true"
-            aria-expanded={isMenuOpen}
-          >
-            <svg width="3" height="12" viewBox="0 0 3 12" fill="currentColor">
-              <circle cx="1.5" cy="1.5" r="1.5" />
-              <circle cx="1.5" cy="6" r="1.5" />
-              <circle cx="1.5" cy="10.5" r="1.5" />
-            </svg>
-          </button>
+        <div className="relative flex items-center px-1 z-20">
+          <div className="relative">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-1.5 rounded-lg flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all hover:bg-black/5 dark:hover:bg-white/10 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              title="Row options"
+              aria-label="Row options menu"
+              aria-haspopup="true"
+              aria-expanded={isMenuOpen}
+            >
+              <svg width="3" height="12" viewBox="0 0 3 12" fill="currentColor">
+                <circle cx="1.5" cy="1.5" r="1.5" />
+                <circle cx="1.5" cy="6" r="1.5" />
+                <circle cx="1.5" cy="10.5" r="1.5" />
+              </svg>
+            </button>
 
-          {/* Dropdown Menu - Minimal */}
-          {isMenuOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-30"
-                onClick={() => setIsMenuOpen(false)}
-              />
-              <div
-                className="absolute left-5 top-0 rounded-xl py-1 z-40 min-w-[100px] overflow-hidden"
-                style={{
-                  backgroundColor: isDark ? "rgba(30,30,35,0.98)" : "rgba(255,255,255,0.98)",
-                  backdropFilter: "blur(12px)",
-                }}
-              >
-                <button
-                  onClick={() => {
-                    onDeleteRow(row.id);
-                    setIsMenuOpen(false);
+            {/* Dropdown Menu */}
+            {isMenuOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-30"
+                  onClick={() => setIsMenuOpen(false)}
+                />
+                <div
+                  className="absolute left-full top-0 ml-2 rounded-xl p-1 z-40 min-w-[140px] shadow-xl border origin-top-left animate-in fade-in zoom-in-95 duration-100"
+                  style={{
+                    backgroundColor: isDark
+                      ? "rgba(30,30,35,0.95)"
+                      : "rgba(255,255,255,0.95)",
+                    backdropFilter: "blur(12px)",
+                    borderColor: isDark
+                      ? "rgba(255,255,255,0.1)"
+                      : "rgba(0,0,0,0.1)",
                   }}
-                  disabled={rowCount <= 1}
-                  className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition-colors disabled:opacity-30"
-                  style={{ color: "#ef4444" }}
-                  aria-label="Delete row"
                 >
-                  <IconTrash size={14} />
-                  Delete
-                </button>
-              </div>
-            </>
-          )}
+                  <button
+                    onClick={() => {
+                      onDeleteRow(row.id);
+                      setIsMenuOpen(false);
+                    }}
+                    disabled={rowCount <= 1}
+                    className="w-full px-3 py-2 text-left text-sm font-medium flex items-center gap-2.5 rounded-lg transition-colors hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50"
+                    style={{ color: "#ef4444" }}
+                    aria-label="Delete row"
+                  >
+                    <IconTrash size={16} stroke={2} />
+                    Delete Row
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
 
