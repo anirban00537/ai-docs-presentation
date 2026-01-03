@@ -1,10 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import { EditorView } from "prosemirror-view";
-import { toggleMark } from "prosemirror-commands";
+import { toggleMark, setBlockType } from "prosemirror-commands";
 import { cn } from "@/lib/utils";
 import { schema } from "./schema";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SelectionToolbarProps {
   visible: boolean;
@@ -31,10 +38,17 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
     if (!visible || !onClose) return;
 
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      // Check if target is inside a portal (like SelectContent)
+      const isPortal = (target as HTMLElement).closest?.('[data-radix-portal]') || 
+                      (target as HTMLElement).closest?.('[role="listbox"]') ||
+                      (target as HTMLElement).closest?.('[role="option"]');
+
       if (
         toolbarRef.current &&
-        !toolbarRef.current.contains(event.target as Node) &&
-        !view?.dom.contains(event.target as Node)
+        !toolbarRef.current.contains(target) &&
+        !view?.dom.contains(target) &&
+        !isPortal
       ) {
         onClose();
       }
@@ -65,6 +79,68 @@ export const SelectionToolbar: React.FC<SelectionToolbarProps> = ({
       }}
       onMouseDown={(e) => e.preventDefault()}
     >
+      {/* Block Type Helper - Shadcn Select */}
+      {(() => {
+        const { state, dispatch } = view;
+        const { $from } = state.selection;
+        const parent = $from.parent;
+        const isHeading = parent.type === schema.nodes.heading;
+        const currentLevel = isHeading ? parent.attrs.level : null;
+        const isParagraph = parent.type === schema.nodes.paragraph;
+
+        let currentValue = "p";
+        if (isHeading) currentValue = `h${currentLevel}`;
+
+        const handleTypeChange = (value: string) => {
+          const { state, dispatch } = view;
+          if (value === "p") {
+            setBlockType(schema.nodes.paragraph)(state, dispatch);
+          } else {
+            const level = parseInt(value.substring(1));
+            setBlockType(schema.nodes.heading, { level })(state, dispatch);
+          }
+          // Use setTimeout to ensure focus is returned after select animation/interaction
+          setTimeout(() => view.focus(), 10);
+        };
+
+        return (
+          <>
+            <div className="px-1 min-w-[80px]">
+              <Select value={currentValue} onValueChange={handleTypeChange}>
+                <SelectTrigger 
+                  onMouseDown={(e) => e.stopPropagation()} 
+                  className="h-7 border-none bg-transparent hover:bg-black/5 dark:hover:bg-white/5 text-[10px] font-bold focus:ring-0 focus:ring-offset-0 gap-1 px-2 pointer-events-auto"
+                  style={{ color: theme.primary }}
+                >
+                  <SelectValue placeholder="Style" />
+                </SelectTrigger>
+                <SelectContent 
+                  onCloseAutoFocus={(e) => e.preventDefault()}
+                  className="rounded-xl border-none shadow-2xl z-[60]"
+                  style={{ 
+                    backgroundColor: theme.cardBackground,
+                    color: theme.bodyColor,
+                    borderColor: `${theme.primary}20`
+                  }}
+                >
+                  <SelectItem value="p" className="text-[10px] font-bold cursor-pointer">Paragraph</SelectItem>
+                  <SelectItem value="h1" className="text-[10px] font-bold cursor-pointer">Heading 1</SelectItem>
+                  <SelectItem value="h2" className="text-[10px] font-bold cursor-pointer">Heading 2</SelectItem>
+                  <SelectItem value="h3" className="text-[10px] font-bold cursor-pointer">Heading 3</SelectItem>
+                  <SelectItem value="h4" className="text-[10px] font-bold cursor-pointer">Heading 4</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* Separator */}
+            <div
+                className="w-px h-5 mx-0.5"
+                style={{ backgroundColor: theme.primary + "30" }}
+            />
+          </>
+        );
+      })()}
+
       {/* Bold */}
       <button
         onMouseDown={(e) => {
