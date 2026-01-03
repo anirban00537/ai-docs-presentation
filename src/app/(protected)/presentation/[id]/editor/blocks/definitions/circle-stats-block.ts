@@ -11,7 +11,7 @@ export const createCircleStatsItem = (value: number = 75): CircleStatsItem => ({
   id: nanoid(),
   value,
   suffix: "",
-  title: "Statistic",
+  title: "#### Statistic",
   description: "Add a short description regarding this statistic.",
 });
 
