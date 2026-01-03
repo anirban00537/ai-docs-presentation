@@ -71,7 +71,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
         `}} />
 
       <div 
-        className="grid gap-8"
+        className="grid gap-3"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))"
         }}
