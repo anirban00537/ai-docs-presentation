@@ -71,6 +71,7 @@ interface SortableSlideItemProps {
   scale: number;
   slideHeight: number;
   thumbnailHeight: number;
+  containerWidth: number;
   onSlideClick: (id: string) => void;
   onDeleteSlide: (e: React.MouseEvent, id: string) => void;
   slideCount: number;
@@ -87,6 +88,7 @@ const SortableSlideItem = ({
   scale,
   slideHeight,
   thumbnailHeight,
+  containerWidth,
   onSlideClick,
   onDeleteSlide,
   slideCount,
@@ -112,7 +114,7 @@ const SortableSlideItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="relative mb-3 group touch-none"
+      className="relative mb-3 group touch-none px-1 pt-1"
     >
       <div
         onClick={() => onSlideClick(slide.id)}
@@ -120,12 +122,14 @@ const SortableSlideItem = ({
       >
         {/* Slide Preview Container */}
         <div
-          className="relative overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-200 hover:shadow-md"
+          className="relative rounded-xl bg-white shadow-sm transition-all duration-200 hover:shadow-md mx-auto"
           style={{
             height: `${thumbnailHeight}px`,
+            width: `${containerWidth}px`,
             outline: isActive ? `2px solid ${theme.primary}` : "2px solid transparent",
             outlineOffset: "2px",
             backgroundColor: theme.cardBackground,
+            overflow: "hidden",
           }}
         >
           {/* Scaled SlideContainer */}
@@ -220,7 +224,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
   // Measurements
   const sidebarRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const containerWidth = 220;
+  const containerWidth = 240; // Increased from 220 for better visibility
   const scale = containerWidth / SLIDE_MAX_WIDTH;
   const slideHeight = SLIDE_MAX_WIDTH * (9 / 16);
   const thumbnailHeight = slideHeight * scale;
@@ -391,7 +395,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
             style={{ height: '75vh', maxHeight: '800px' }}
           >
             <div
-              className="relative w-[260px] h-full flex flex-col rounded-3xl overflow-hidden shadow-2xl"
+              className="relative w-[280px] h-full flex flex-col rounded-3xl overflow-hidden shadow-2xl"
               style={{
                 backgroundColor: isDark ? "rgba(20, 20, 25, 0.85)" : "rgba(255, 255, 255, 0.85)",
                 backdropFilter: "blur(20px)",
@@ -443,7 +447,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
               {/* Scrollable List */}
               <div 
                 ref={scrollContainerRef}
-                className={`relative flex-1 overflow-y-auto px-4 pb-4 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
+                className={`relative flex-1 overflow-y-auto px-5 pt-1 pb-4 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}
               >
                 <DndContext
                     sensors={sensors}
@@ -486,6 +490,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                                             scale={scale}
                                             slideHeight={slideHeight}
                                             thumbnailHeight={thumbnailHeight}
+                                            containerWidth={containerWidth}
                                             onSlideClick={handleSlideClick}
                                             onDeleteSlide={handleDeleteSlide}
                                             slideCount={slides.length}
@@ -500,11 +505,12 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                     {/* Drag Overlay - Shows what we are dragging */}
                     <DragOverlay dropAnimation={dropAnimation}>
                         {activeDragSlide ? (
-                           <div className="w-[220px] opacity-90 cursor-grabbing">
+                           <div className="opacity-90 cursor-grabbing" style={{ width: `${containerWidth}px` }}>
                                 <div
                                     className="relative overflow-hidden rounded-xl shadow-2xl ring-2 ring-primary ring-offset-2 ring-offset-transparent transform scale-105"
                                     style={{
                                         height: `${thumbnailHeight}px`,
+                                        width: `${containerWidth}px`,
                                         backgroundColor: theme.cardBackground,
                                     }}
                                 >
