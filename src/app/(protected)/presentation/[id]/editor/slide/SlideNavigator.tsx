@@ -422,13 +422,12 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                   <button
                     onClick={handleAddSlide}
                     className="p-2 rounded-xl transition-all hover:scale-105 hover:bg-opacity-20 active:scale-95 flex items-center justify-center shadow-sm"
-                    style={{
-                      backgroundColor: theme.primary,
-                      color: "#ffffff",
-                    }}
+                  
                     title="Add slide"
                   >
-                    <IconPlus size={16} stroke={3} />
+                    <IconPlus size={16} stroke={3}
+                      style={{ color: isDark ? "#fff" : "#000" }}
+                    />
                   </button>
                   <button
                     onClick={() => setIsCollapsed(true)}

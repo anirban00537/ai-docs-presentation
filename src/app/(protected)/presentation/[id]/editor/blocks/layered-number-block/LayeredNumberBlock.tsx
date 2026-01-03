@@ -79,7 +79,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/layered p-6 transition-all duration-700 overflow-hidden"
+            className="relative group/layered p-4 transition-all duration-700 overflow-hidden"
             style={{
               borderRadius: "32px",
               backgroundColor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.4)",
@@ -109,7 +109,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
 
             <div className="relative z-10 flex flex-col h-full">
               {/* Floating Small Number Input */}
-              <div className="mb-6">
+              <div className="mb-2">
                 <div 
                     className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border shadow-lg transition-transform"
                     style={{
@@ -130,7 +130,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
               </div>
 
               {/* Title Section */}
-              <div className="mb-4">
+              <div className="mb-1">
                 <ProseMirrorEditor
                   key={`${item.id}-title`}
                   blockId={`${item.id}-title`}
