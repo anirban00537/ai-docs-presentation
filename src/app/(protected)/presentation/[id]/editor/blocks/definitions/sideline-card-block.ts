@@ -3,7 +3,7 @@ import { SidelineCardContentSchema } from "@/types/presentation/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createSidelineCardItem = (
-  title: string = "## Key Insight",
+  title: string = "#### Key Insight",
   description: string = "Highlight important takeaways here. The vertical accent draws attention."
 ): SidelineCardItem => ({
   id: nanoid(),

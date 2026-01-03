@@ -86,7 +86,7 @@ export const ImageBlock = memo(function ImageBlock({
         <CommonCard
           theme={theme}
           onClick={openModal}
-          className={`w-full h-64 flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:shadow-lg relative overflow-hidden group/empty ${!readOnly ? 'cursor-pointer' : ''}`}
+          className={`w-full h-64 flex flex-col items-center justify-center gap-4 transition-all duration-300 relative overflow-hidden group/empty ${!readOnly ? 'cursor-pointer' : ''}`}
           style={{
             borderRadius: "24px",
             color: theme.bodyColor,
@@ -94,10 +94,10 @@ export const ImageBlock = memo(function ImageBlock({
         >
           {/* Minimal Gradient Background Blob */}
           <div
-            className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.05] blur-2xl pointer-events-none transition-transform duration-700 ease-out group-hover/empty:scale-150"
+            className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.05] blur-2xl pointer-events-none transition-transform duration-700 ease-out"
             style={{ backgroundColor: theme.primary }}
           />
-          <div className="w-16 h-16 rounded-3xl flex items-center justify-center border shadow-sm transition-all group-hover/empty:scale-110 group-hover/empty:rotate-3"
+          <div className="w-16 h-16 rounded-3xl flex items-center justify-center border shadow-sm transition-all"
             style={{ 
               backgroundColor: `${theme.primary}10`,
               borderColor: `${theme.primary}20`,
@@ -132,7 +132,7 @@ export const ImageBlock = memo(function ImageBlock({
     <>
       <CommonCard 
         theme={theme}
-        className="w-full h-full min-w-0 flex flex-col gap-0 group/image relative p-0 overflow-hidden border-none transition-all duration-500 hover:shadow-2xl"
+        className="w-full h-full min-w-0 flex flex-col gap-0 group/image relative p-0 overflow-hidden border-none transition-all duration-500"
         style={{ borderRadius: "24px" }}
       >
         {/* Image Container */}
@@ -152,7 +152,7 @@ export const ImageBlock = memo(function ImageBlock({
             src={url}
             alt={alt || caption || "Image"}
             className={cn(
-              "w-full h-full transition-transform duration-700 ease-out group-hover/image:scale-105",
+              "w-full h-full transition-transform duration-700 ease-out",
               height === 0 ? "object-contain" : "object-cover"
             )}
             onError={(e) => {

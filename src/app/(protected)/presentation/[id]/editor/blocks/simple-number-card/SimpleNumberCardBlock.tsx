@@ -58,7 +58,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
   };
 
   return (
-    <div className="group relative w-full h-full min-h-[250px] p-0">
+    <div className="group relative w-full h-full min-h-[200px] p-0">
         <style dangerouslySetInnerHTML={{ __html: `
           .no-spinner::-webkit-outer-spin-button,
           .no-spinner::-webkit-inner-spin-button {
@@ -79,7 +79,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/num-card p-4 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
+            className="relative group/num-card p-4 transition-all duration-500 overflow-hidden"
             style={{
               borderRadius: "20px",
               backgroundColor: theme.cardBackground,
@@ -104,7 +104,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
               <div className="mb-6 inline-flex p-1 rounded-2xl border" 
                    style={{ borderColor: `${theme.primary}20`, background: `${theme.primary}05` }}>
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black shadow-inner border transition-transform group-hover/num-card:scale-105"
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black shadow-inner border transition-transform"
                   style={{
                     backgroundColor: theme.cardBackground,
                     borderColor: `${theme.primary}40`,
@@ -130,7 +130,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
                   value={item.title}
                   onChange={(value) => handleItemUpdate(index, "title", value)}
                   placeholder="Point Title"
-                  className="text-xl font-bold tracking-tight opacity-90 group-hover/num-card:opacity-100 transition-opacity"
+                  className="text-base font-bold tracking-tight opacity-90 group-hover/num-card:opacity-100 transition-opacity"
                   theme={{
                       ...theme,
                       headingColor: theme.primary,

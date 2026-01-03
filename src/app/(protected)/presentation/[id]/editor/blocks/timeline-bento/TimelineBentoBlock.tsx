@@ -58,7 +58,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
     };
 
     return (
-        <div className="group relative w-full h-full min-h-[400px] py-12">
+        <div className="group relative w-full h-full min-h-[280px] py-12">
             {/* Responsive Vertical Timeline Line */}
             <div
                 className="absolute left-8 md:left-1/2 top-0 bottom-0 md:-translate-x-1/2"
@@ -81,7 +81,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                 {isLeft && (
                                     <div className="w-full md:max-w-[90%]">
                                         <div
-                                            className="relative group/timeline-card rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1"
+                                            className="relative group/timeline-card rounded-2xl p-6 transition-all duration-700"
                                             style={{
                                                 backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.6)",
                                                 backdropFilter: "blur(16px)",
@@ -110,7 +110,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                                         ...theme,
                                                         headingColor: theme.primary,
                                                     }}
-                                                    className="text-xl font-bold tracking-tight"
+                                                    className="text-base font-bold tracking-tight"
                                                 />
                                             </div>
 
@@ -182,7 +182,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                                         ...theme,
                                                         headingColor: theme.primary,
                                                     }}
-                                                    className="text-xl font-bold tracking-tight"
+                                                    className="text-base font-bold tracking-tight"
                                                 />
                                             </div>
 

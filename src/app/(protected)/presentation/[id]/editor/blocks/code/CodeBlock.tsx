@@ -143,7 +143,7 @@ export const CodeBlock = memo(function CodeBlock({
   return (
     <BlockWrapper onEdit={handleOpenEdit} theme={theme}>
       <div
-        className="relative w-full overflow-hidden text-left h-full flex flex-col group transition-all duration-500 hover:shadow-2xl"
+        className="relative w-full overflow-hidden text-left h-full flex flex-col group transition-all duration-500"
         onClick={handleOpenEdit}
         style={{ 
           borderRadius: "16px",

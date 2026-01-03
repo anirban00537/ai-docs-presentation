@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 
 export const createSimpleNumberCardItem = (
   number: number = 1,
-  title: string = "## Point Title",
+  title: string = "#### Point Title",
   description: string = "Provide context and detail about this key point here."
 ): SimpleNumberCardItem => ({
   id: nanoid(),

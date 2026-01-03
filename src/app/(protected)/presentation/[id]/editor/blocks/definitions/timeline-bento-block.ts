@@ -7,7 +7,7 @@ import {
 
 export const createTimelineBentoItem = (): TimelineBentoItem => ({
     id: nanoid(),
-    title: "## Item",
+    title: "#### Item",
     description: "Description",
 });
 

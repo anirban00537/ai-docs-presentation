@@ -58,7 +58,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
   };
 
   return (
-    <div className="group relative w-full h-full min-h-[300px] p-4">
+    <div className="group relative w-full h-full min-h-[220px] p-4">
         <style dangerouslySetInnerHTML={{ __html: `
           .no-spinner::-webkit-outer-spin-button,
           .no-spinner::-webkit-inner-spin-button {
@@ -79,7 +79,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/layered p-10 transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
+            className="relative group/layered p-6 transition-all duration-700 overflow-hidden"
             style={{
               borderRadius: "32px",
               backgroundColor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.4)",
@@ -88,7 +88,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
           >
             {/* Massive Background Number Indicator */}
             <div 
-                className="absolute -right-4 -bottom-10 text-[200px] font-black leading-none pointer-events-none select-none z-0 opacity-[0.03] group-hover/layered:opacity-[0.08] group-hover/layered:scale-110 transition-all duration-1000"
+                className="absolute -right-4 -bottom-10 text-[200px] font-black leading-none pointer-events-none select-none z-0 opacity-[0.03] transition-all duration-1000"
                 style={{
                     color: theme.primary,
                     fontFamily: "var(--font-heading)",
@@ -111,7 +111,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
               {/* Floating Small Number Input */}
               <div className="mb-6">
                 <div 
-                    className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border shadow-lg transition-transform group-hover/layered:rotate-6"
+                    className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border shadow-lg transition-transform"
                     style={{
                         backgroundColor: theme.cardBackground,
                         borderColor: `${theme.primary}40`,
@@ -137,7 +137,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
                   value={item.title}
                   onChange={(value) => handleItemUpdate(index, "title", value)}
                   placeholder="Core Step"
-                  className="text-2xl font-black tracking-tight"
+                  className="text-lg font-black tracking-tight"
                   theme={{
                       ...theme,
                       headingColor: theme.primary,

@@ -57,7 +57,7 @@ export const SolidBoxBlock = memo(function SolidBoxBlock({
   };
 
   return (
-    <div className="group relative w-full h-full min-h-[300px] p-4">
+    <div className="group relative w-full h-full min-h-[220px] p-4">
       <div 
         className="grid gap-6"
         style={{
@@ -67,14 +67,13 @@ export const SolidBoxBlock = memo(function SolidBoxBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/box-card p-8 transition-all duration-500 hover:-translate-y-2 overflow-hidden"
+            className="relative group/box-card p-5 transition-all duration-500 overflow-hidden"
             style={{
               borderRadius: "20px",
               backgroundColor: theme.cardBackground,
             }}
           >
-            {/* Background Decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 opacity-[0.03] group-hover/box-card:opacity-[0.08] transition-opacity duration-1000"
+            <div className="absolute top-0 right-0 w-32 h-32 opacity-[0.03] transition-opacity duration-1000"
                  style={{ background: `radial-gradient(circle at top right, ${theme.primary}, transparent)` }} />
 
             {/* Remove Button */}
@@ -96,7 +95,7 @@ export const SolidBoxBlock = memo(function SolidBoxBlock({
                   value={item.title}
                   onChange={(value) => handleItemUpdate(index, "title", value)}
                   placeholder="Focus Title"
-                  className="text-xl font-bold tracking-tight opacity-90 group-hover/box-card:opacity-100 transition-opacity"
+                  className="text-base font-bold tracking-tight opacity-90 group-hover/box-card:opacity-100 transition-opacity"
                   theme={{
                       ...theme,
                       headingColor: theme.primary,
@@ -120,9 +119,8 @@ export const SolidBoxBlock = memo(function SolidBoxBlock({
               </div>
             </div>
 
-            {/* Bottom Glow Accent */}
             <div
-                className="absolute bottom-0 left-0 w-full h-1 opacity-0 group-hover/box-card:opacity-100 transition-all duration-700"
+                className="absolute bottom-0 left-0 w-full h-1 opacity-0 transition-all duration-700"
                 style={{ background: `linear-gradient(to right, ${theme.primary}00, ${theme.primary}, ${theme.primary}00)` }}
             />
           </div>

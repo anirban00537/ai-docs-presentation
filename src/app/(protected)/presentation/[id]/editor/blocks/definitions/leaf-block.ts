@@ -2,7 +2,7 @@ import { LeafBlockContentSchema, type LeafBlockContent, type LeafItem } from "@/
 import { nanoid } from "nanoid";
 
 export const createLeafItem = (
-    title: string = "## Title",
+    title: string = "#### Title",
     description: string = "This is a leaf card. It has a unique shape and style."
 ): LeafItem => ({
     id: nanoid(),

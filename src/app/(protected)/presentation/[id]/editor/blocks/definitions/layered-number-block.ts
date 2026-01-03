@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 
 export const createLayeredNumberItem = (
   number: number = 1,
-  title: string = "## Core Objective",
+  title: string = "#### Core Objective",
   description: string = "Define your core objective. The large background number adds depth and indicates sequence."
 ): LayeredNumberItem => ({
   id: nanoid(),

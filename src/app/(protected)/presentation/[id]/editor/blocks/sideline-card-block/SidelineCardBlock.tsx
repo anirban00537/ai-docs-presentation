@@ -57,7 +57,7 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
   };
 
   return (
-    <div className="group relative w-full h-full min-h-[250px] p-4">
+    <div className="group relative w-full h-full min-h-[200px] p-4">
       <div 
         className="grid gap-6"
         style={{
@@ -67,7 +67,7 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/sideline overflow-hidden transition-all duration-700 hover:shadow-2xl hover:-translate-y-2"
+            className="relative group/sideline overflow-hidden transition-all duration-700"
             style={{
               borderRadius: "20px",
               backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.6)",
@@ -75,11 +75,10 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
             }}
           >
             {/* Top Shine Accent */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover/sideline:opacity-100 transition-opacity duration-1000" />
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-1000" />
 
-            {/* Side Accent Line */}
             <div 
-              className="absolute left-0 top-0 bottom-0 w-1.5 transition-all duration-700 group-hover/sideline:w-2.5 group-hover/sideline:shadow-[4px_0_20px_rgba(0,0,0,0.1)]"
+              className="absolute left-0 top-0 bottom-0 w-1.5 transition-all duration-700"
               style={{
                 backgroundColor: theme.primary,
                 opacity: 0.9,
@@ -96,7 +95,7 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
                 </button>
             )}
 
-            <div className="p-6 pl-8">
+            <div className="p-4 pl-6">
               {/* Title Section */}
               <div className="mb-2">
                 <ProseMirrorEditor
@@ -105,7 +104,7 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
                   value={item.title}
                   onChange={(value) => handleItemUpdate(index, "title", value)}
                   placeholder="Key Point"
-                  className="text-lg font-bold tracking-tight"
+                  className="text-base font-bold tracking-tight"
                   theme={{
                       ...theme,
                       headingColor: theme.primary,
@@ -130,7 +129,7 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
             </div>
 
             {/* Subtle Gradient Glow */}
-            <div className="absolute -bottom-10 -right-10 w-24 h-24 blur-2xl opacity-0 group-hover/sideline:opacity-10 transition-opacity pointer-events-none rounded-full"
+            <div className="absolute -bottom-10 -right-10 w-24 h-24 blur-2xl pointer-events-none rounded-full"
                  style={{ backgroundColor: theme.primary }} />
           </div>
         ))}

@@ -57,7 +57,7 @@ export const LeafBlock = memo(function LeafBlock({
     };
 
     return (
-        <div className="group relative w-full h-full min-h-[300px] p-4">
+        <div className="group relative w-full h-full min-h-[220px] p-4">
             <div 
                 className="grid gap-6"
                 style={{
@@ -67,7 +67,7 @@ export const LeafBlock = memo(function LeafBlock({
                 {items.map((item, index) => (
                     <div
                         key={item.id}
-                        className="relative group/leaf p-8 transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
+                        className="relative group/leaf p-5 transition-all duration-700 overflow-hidden"
                         style={{
                             borderRadius: "0px 48px 0px 48px",
                             backgroundColor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.5)",
@@ -76,7 +76,7 @@ export const LeafBlock = memo(function LeafBlock({
                     >
                         {/* Premium Glow Effect */}
                         <div
-                            className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover/leaf:opacity-20 transition-opacity duration-700 pointer-events-none"
+                            className="absolute top-0 right-0 w-32 h-32 opacity-0 transition-opacity duration-700 pointer-events-none"
                             style={{
                                 background: `radial-gradient(circle at 70% 30%, ${theme.primary}, transparent 70%)`,
                                 filter: "blur(20px)",
@@ -95,7 +95,7 @@ export const LeafBlock = memo(function LeafBlock({
 
                         {/* Animated Accent Line */}
                         <div
-                            className="absolute bottom-0 left-0 w-full h-1.5 opacity-30 group-hover/leaf:opacity-100 transition-all duration-500 transform translate-y-1 group-hover/leaf:translate-y-0"
+                            className="absolute bottom-0 left-0 w-full h-1.5 opacity-30 transition-all duration-500 transform"
                             style={{
                                 background: `linear-gradient(to right, ${theme.primary}, transparent)`,
                             }}
@@ -109,7 +109,7 @@ export const LeafBlock = memo(function LeafBlock({
                                 value={item.title}
                                 onChange={(value) => handleItemUpdate(index, "title", value)}
                                 placeholder="Leaf Title"
-                                className="text-xl font-bold tracking-tight"
+                                className="text-base font-bold tracking-tight"
                                 theme={{
                                     ...theme,
                                     headingColor: theme.primary,

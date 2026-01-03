@@ -3,7 +3,7 @@ import { SolidBoxContentSchema } from "@/types/presentation/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createSolidBoxItem = (
-  title: string = "## Major Point",
+  title: string = "#### Major Point",
   description: string = "Standard content with a solid presence. Strong blocks build reliable structures."
 ): SolidBoxItem => ({
   id: nanoid(),

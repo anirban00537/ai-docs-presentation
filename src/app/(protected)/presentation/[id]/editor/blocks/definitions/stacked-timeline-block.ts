@@ -7,7 +7,7 @@ import {
 
 export const createStackedTimelineItem = (): StackedTimelineItem => ({
     id: nanoid(),
-    title: "## Item",
+    title: "#### Item",
     description: "Description",
 });
 

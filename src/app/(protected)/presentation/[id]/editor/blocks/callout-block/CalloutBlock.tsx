@@ -99,7 +99,7 @@ export const CalloutBlock = memo(function CalloutBlock({
 
   return (
     <div
-      className="w-full transition-all duration-300 hover:shadow-sm"
+      className="w-full transition-all duration-300"
       style={{
           borderRadius: theme.cardBorderRadius ?? "12px",
           backgroundColor: colors.bg,

@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 
 export const createSolidIconBoxItem = (
   icon: string = "star",
-  title: string = "## Feature Title",
+  title: string = "#### Feature Title",
   description: string = "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
 ): SolidIconBoxItem => ({
   id: nanoid(),
