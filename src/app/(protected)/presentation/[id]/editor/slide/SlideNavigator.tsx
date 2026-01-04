@@ -18,6 +18,7 @@ import {
   IconPlus,
   IconTrash,
   IconGripVertical,
+  IconCopy,
 } from "@tabler/icons-react";
 import { SlideLayoutSelector } from "./SlideLayoutSelector";
 import type { LayoutTemplate } from "@/types/presentation";
@@ -43,6 +44,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { toast } from "sonner";
 
 // --- Types ---
 
@@ -74,6 +76,7 @@ interface SortableSlideItemProps {
   containerWidth: number;
   onSlideClick: (id: string) => void;
   onDeleteSlide: (e: React.MouseEvent, id: string) => void;
+  onCopySlide: (e: React.MouseEvent, slide: Slide) => void;
   slideCount: number;
   // Slide rendering props
   renderSlideProps: any;
@@ -91,6 +94,7 @@ const SortableSlideItem = ({
   containerWidth,
   onSlideClick,
   onDeleteSlide,
+  onCopySlide,
   slideCount,
   renderSlideProps,
 }: SortableSlideItemProps) => {
@@ -167,6 +171,15 @@ const SortableSlideItem = ({
             >
               <IconGripVertical size={16} />
             </div>
+
+            {/* Copy JSON Button */}
+            {/* <button
+              onClick={(e) => onCopySlide(e, slide)}
+              className="p-2 rounded-lg hover:scale-105 transition-transform shadow-sm bg-blue-500 text-white"
+              title="Copy slide JSON"
+            >
+              <IconCopy size={16} />
+            </button> */}
 
             {/* Delete Button */}
             {slideCount > 1 && (
@@ -335,6 +348,25 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
     dispatch(deleteSlide(slideId));
   }, [dispatch, slides.length]);
 
+  const handleCopySlide = useCallback((e: React.MouseEvent, slide: Slide) => {
+    e.stopPropagation(); // Prevent slide selection
+    
+    try {
+      // Create a clean JSON copy of the slide
+      const slideData = {
+        rows: slide.rows,
+        accent: slide.accent,
+      };
+      
+      const jsonString = JSON.stringify(slideData, null, 2);
+      navigator.clipboard.writeText(jsonString);
+      toast.success("Slide JSON copied to clipboard!");
+    } catch (error) {
+      console.error("Failed to copy slide JSON:", error);
+      toast.error("Failed to copy slide JSON");
+    }
+  }, []);
+
   const activeDragSlide = useMemo(() => 
     slides.find((s) => s.id === activeDragId),
   [slides, activeDragId]);
@@ -493,6 +525,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                                             containerWidth={containerWidth}
                                             onSlideClick={handleSlideClick}
                                             onDeleteSlide={handleDeleteSlide}
+                                            onCopySlide={handleCopySlide}
                                             slideCount={slides.length}
                                             renderSlideProps={renderSlideProps}
                                         />
