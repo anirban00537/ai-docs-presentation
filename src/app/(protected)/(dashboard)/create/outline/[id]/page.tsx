@@ -185,7 +185,7 @@ export default function OutlinePage() {
 
   if (isLoading) {
     return (
-      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden bg-gradient-to-b from-primary/5 via-white to-secondary/10">
+      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden ">
         <div className="relative w-full max-w-4xl px-4">
           <div className="animate-pulse space-y-6">
             <div className="rounded-[32px] p-8 bg-white/40 border border-secondary/20 shadow-sm backdrop-blur-md">
@@ -230,7 +230,7 @@ export default function OutlinePage() {
   }
 
   return (
-    <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] bg-gradient-to-b from-primary/5 via-white to-secondary/10">
+    <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] ">
       {/* Background Blobs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />

@@ -5,7 +5,6 @@ const layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div 
       className="relative flex min-h-screen w-full overflow-hidden"
-      style={{ backgroundColor: "var(--background)" }}
     >
 
       {/* App Sidebar */}
