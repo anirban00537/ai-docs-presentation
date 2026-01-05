@@ -18,21 +18,21 @@ export function createHeadingDoc(text: string, level: 1 | 2 | 3 | 4 | 5 | 6 = 3)
 }
 
 /**
- * Creates a centered heading using {.center} attribute syntax
+ * Creates a centered heading using <align> tag syntax
  * @param text - The heading text
  * @param level - Heading level (1-6)
  */
 export function createCenteredHeading(text: string, level: 1 | 2 | 3 = 2): string {
   const hashes = "#".repeat(level);
-  return `${hashes} ${text} {.center}`;
+  return `<align="center">${hashes} ${text}</align>`;
 }
 
 /**
- * Creates a centered paragraph using {.center} attribute syntax
+ * Creates a centered paragraph using <align> tag syntax
  * @param text - The paragraph text
  */
 export function createCenteredParagraph(text: string): string {
-  return `${text} {.center}`;
+  return `<align="center">${text}</align>`;
 }
 
 /**

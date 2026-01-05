@@ -19,7 +19,7 @@ function serializeNodeToMarkdown(node: any): string {
 
   const parts: string[] = [];
 
-  // Handle alignment for paragraphs and headings using {.alignment} attribute syntax
+  // Handle alignment for paragraphs and headings using <align="..."> tag syntax
   if (node.type === "paragraph" || node.type === "heading") {
     const textAlign = node.attrs?.textAlign;
     const text =
@@ -31,14 +31,14 @@ function serializeNodeToMarkdown(node: any): string {
         })
         .join("") || "";
 
-    // Add {.alignment} attribute if alignment is not left
+    // Wrap in <align> tag if alignment is not left
     if (textAlign && textAlign !== "left") {
       if (node.type === "heading") {
         const level = node.attrs?.level || 1;
         const prefix = "#".repeat(level);
-        parts.push(`${prefix} ${text} {.${textAlign}}`);
+        parts.push(`<align="${textAlign}">${prefix} ${text}</align>`);
       } else {
-        parts.push(`${text} {.${textAlign}}`);
+        parts.push(`<align="${textAlign}">${text}</align>`);
       }
     } else {
       // Default alignment - use standard markdown
@@ -163,9 +163,43 @@ export function markdownToProseMirror(
     const alignmentMap = new Map<string, string>(); // Maps text content to alignment
     let processedMarkdown = markdown;
 
-    // ===== STEP 1: Parse new {.alignment} attribute syntax =====
-    // Match patterns like "## Heading {.center}" or "Some text {.right}"
-    const attributeRegex = /^(#{1,6}\s+)?(.+?)\s+\{\.(center|right|justify|left)\}\s*$/gm;
+    // ===== STEP 1: Parse <align="..."> tag syntax =====
+    // Match patterns like <align="center">Content</align>
+    const alignTagRegex = /<align="(center|right|left|justify)">([\s\S]*?)<\/align>/gi;
+    let alignMatch;
+    const alignReplacements: Array<{
+      original: string;
+      replacement: string;
+      contentKey: string;
+      alignment: string;
+    }> = [];
+
+    alignTagRegex.lastIndex = 0;
+    while ((alignMatch = alignTagRegex.exec(markdown)) !== null) {
+      const [fullMatch, alignment, content] = alignMatch;
+      const trimmedContent = content.trim();
+      
+      // For the mapping key, we need to match the text as it will appear in the ProseMirror node.
+      // We strip heading prefixes (e.g., "## ") but keep them in the markdown replacement.
+      const contentKey = trimmedContent.replace(/^#{1,6}\s+/, "").trim();
+      alignmentMap.set(contentKey, alignment.toLowerCase());
+
+      // Create replacement (remove the <align> tags but keep the content including markdown symbols)
+      alignReplacements.push({
+        original: fullMatch,
+        replacement: trimmedContent,
+        contentKey,
+        alignment: alignment.toLowerCase(),
+      });
+    }
+
+    // Apply align tag replacements
+    alignReplacements.forEach(({ original, replacement }) => {
+      processedMarkdown = processedMarkdown.replace(original, replacement);
+    });
+
+    // ===== STEP 2: Parse legacy {.alignment} attribute syntax (for backward compatibility) =====
+    const attributeRegex = /^(#{1,6}\s+)?(.+?)\s+\{\.( center|right|justify|left)\}\s*$/gm;
     let attrMatch;
     const attrReplacements: Array<{
       original: string;
@@ -175,7 +209,7 @@ export function markdownToProseMirror(
     }> = [];
 
     attributeRegex.lastIndex = 0;
-    while ((attrMatch = attributeRegex.exec(markdown)) !== null) {
+    while ((attrMatch = attributeRegex.exec(processedMarkdown)) !== null) {
       const [fullMatch, headingPrefix, content, alignment] = attrMatch;
       const contentKey = content.trim();
       alignmentMap.set(contentKey, alignment);
