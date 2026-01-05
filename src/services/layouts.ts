@@ -36,8 +36,24 @@ export const layoutsService = {
     thumbnail?: string;
     data: any;
     tags?: string[];
+    type?: string;
   }) => {
     const response = await request.post("/layouts/create", data);
+    return response.data;
+  },
+
+  updateLayout: async (
+    id: string,
+    data: {
+      name: string;
+      description?: string;
+      thumbnail?: string;
+      data: any;
+      tags?: string[];
+      type?: string;
+    }
+  ) => {
+    const response = await request.post(`/layouts/${id}/update`, data);
     return response.data;
   },
 
