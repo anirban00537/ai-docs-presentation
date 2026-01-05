@@ -186,26 +186,6 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
               </motion.button>
             ))}
           </div>
-
-          {/* Demo Button - Smaller and subtle */}
-          <div 
-            className="mt-6 pt-4 border-t flex justify-center" 
-            style={{ borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)" }}
-          >
-            <button
-              onClick={async () => {
-                onClose();
-                for (let i = 0; i < adminLayouts.length; i++) {
-                  onSelectLayout(adminLayouts[i]);
-                  await new Promise((resolve) => setTimeout(resolve, 300));
-                }
-              }}
-              className="text-xs font-medium px-4 py-2 rounded-lg transition-all opacity-50 hover:opacity-100"
-              style={{ color: isDark ? "#fff" : "#000" }}
-            >
-              Insert all templates (demo)
-            </button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
