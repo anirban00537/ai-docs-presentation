@@ -245,67 +245,6 @@ export function LayoutMetadataPanel({
                   </div>
                 </div>
 
-                {/* Type */}
-                <div>
-                  <label
-                    className="flex items-center gap-2 text-sm font-medium mb-2"
-                    style={{ color: theme.headingColor }}
-                  >
-                    Layout Type
-                  </label>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setLocalMetadata({ ...localMetadata, type: "admin" })}
-                      className={`flex-1 px-4 py-2 rounded-lg border font-medium transition-all ${
-                        localMetadata.type === "admin"
-                          ? "ring-2"
-                          : "hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                      style={{
-                        borderColor:
-                          localMetadata.type === "admin"
-                            ? theme.primary
-                            : isDark
-                            ? "rgba(255, 255, 255, 0.1)"
-                            : "rgba(0, 0, 0, 0.1)",
-                        backgroundColor:
-                          localMetadata.type === "admin"
-                            ? theme.primary + "10"
-                            : "transparent",
-                        color:
-                          localMetadata.type === "admin"
-                            ? theme.primary
-                            : theme.bodyColor,
-                      }}
-                    >
-                      Admin
-                    </button>
-                    <button
-                      onClick={() => setLocalMetadata({ ...localMetadata, type: "user" })}
-                      className={`flex-1 px-4 py-2 rounded-lg border font-medium transition-all ${
-                        localMetadata.type === "user"
-                          ? "ring-2"
-                          : "hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                      style={{
-                        borderColor:
-                          localMetadata.type === "user"
-                            ? theme.primary
-                            : isDark
-                            ? "rgba(255, 255, 255, 0.1)"
-                            : "rgba(0, 0, 0, 0.1)",
-                        backgroundColor:
-                          localMetadata.type === "user"
-                            ? theme.primary + "10"
-                            : "transparent",
-                        color:
-                          localMetadata.type === "user" ? theme.primary : theme.bodyColor,
-                      }}
-                    >
-                      User
-                    </button>
-                  </div>
-                </div>
 
                 {/* Icon (optional) */}
                 <div>
