@@ -51,8 +51,6 @@ const LayoutEditorPage = () => {
     handleResetLayout,
   } = useLayoutEditor();
 
-  console.log("📋 Layout Editor Page - Current layoutData:", layoutData);
-
   const isDark = theme.themeType === "dark";
 
   const handleCreateNew = () => {

@@ -474,13 +474,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
 
   // Accent Operations
   const handleUpdateAccent = useCallback((slideId: string, accent: SlideAccent | undefined) => {
-    console.log("🎨 Layout Editor - handleUpdateAccent called:", { slideId, accent });
-    setLayoutData((prev) => {
-      console.log("🎨 Previous layoutData:", prev);
-      const updated = { ...prev, accent };
-      console.log("🎨 Updated layoutData:", updated);
-      return updated;
-    });
+    setLayoutData((prev) => ({ ...prev, accent }));
   }, []);
 
   // Metadata Operations

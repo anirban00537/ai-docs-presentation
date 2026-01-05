@@ -122,12 +122,6 @@ export const SlideContainer = memo(function SlideContainer({
   const dragActive = enableDragHints ? isDragging : false;
 
   const handleAccentImageSelect = useCallback((image: SelectedImage) => {
-    console.log("🖼️ SlideContainer - Accent image selected:", { 
-      slideId: slide.id, 
-      imageUrl: image.url, 
-      hasCustomHandler: !!onUpdateAccent 
-    });
-    
     if (onUpdateAccent) {
       // Use custom handler if provided (for layout editor)
       const updatedAccent = { 
@@ -135,11 +129,9 @@ export const SlideContainer = memo(function SlideContainer({
         size: slide.accent?.size || 40,
         url: image.url 
       };
-      console.log("🖼️ Using custom onUpdateAccent handler:", updatedAccent);
       onUpdateAccent(slide.id, updatedAccent);
     } else {
       // Use Redux dispatch (for presentation editor)
-      console.log("🖼️ Using Redux dispatch");
       dispatch(updateSlideAccent({ 
         slideId: slide.id, 
         update: { url: image.url } 
@@ -149,12 +141,6 @@ export const SlideContainer = memo(function SlideContainer({
   }, [dispatch, slide.id, slide.accent, onUpdateAccent]);
 
   const handleAccentResize = useCallback((size: number) => {
-    console.log("📏 SlideContainer - Accent resize:", { 
-      slideId: slide.id, 
-      size, 
-      hasCustomHandler: !!onUpdateAccent 
-    });
-    
     if (onUpdateAccent) {
       // Use custom handler if provided (for layout editor)
       const updatedAccent = { 
@@ -162,11 +148,9 @@ export const SlideContainer = memo(function SlideContainer({
         size,
         url: slide.accent?.url 
       };
-      console.log("📏 Using custom onUpdateAccent handler:", updatedAccent);
       onUpdateAccent(slide.id, updatedAccent);
     } else {
       // Use Redux dispatch (for presentation editor)
-      console.log("📏 Using Redux dispatch");
       dispatch(setSlideAccentSize({ slideId: slide.id, size }));
     }
   }, [dispatch, slide.id, slide.accent, onUpdateAccent]);
