@@ -192,6 +192,7 @@ interface UseLayoutEditorReturn {
   handleAddRowAtTop: (slideId: string) => void;
   handleAddRowAtBottom: (slideId: string) => void;
   handleUpdateColumnWidths: (slideId: string, rowId: string, columnWidths: number[]) => void;
+  handleUpdateAccent: (slideId: string, accent: SlideAccent | undefined) => void;
 
   // Metadata & Persistence
   handleUpdateMetadata: (updates: Partial<LayoutMetadata>) => void;
@@ -471,6 +472,17 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
     []
   );
 
+  // Accent Operations
+  const handleUpdateAccent = useCallback((slideId: string, accent: SlideAccent | undefined) => {
+    console.log("🎨 Layout Editor - handleUpdateAccent called:", { slideId, accent });
+    setLayoutData((prev) => {
+      console.log("🎨 Previous layoutData:", prev);
+      const updated = { ...prev, accent };
+      console.log("🎨 Updated layoutData:", updated);
+      return updated;
+    });
+  }, []);
+
   // Metadata Operations
   const handleUpdateMetadata = useCallback((updates: Partial<LayoutMetadata>) => {
     setLayoutMetadata((prev) => ({ ...prev, ...updates }));
@@ -566,6 +578,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
     handleAddRowAtTop,
     handleAddRowAtBottom,
     handleUpdateColumnWidths,
+    handleUpdateAccent,
     handleUpdateMetadata,
     handleSaveLayout,
     handleLoadLayout,

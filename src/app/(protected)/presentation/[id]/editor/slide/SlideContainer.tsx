@@ -1,7 +1,7 @@
 import React, { useState, memo, useCallback, lazy, Suspense } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { ContentRow } from "../layout/ContentRow";
-import type { Slide, Theme } from "@/store/slices/slidesSlice";
+import type { Slide, Theme, SlideAccent } from "@/store/slices/slidesSlice";
 import type { BlockContent } from "@/types/presentation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
@@ -90,6 +90,7 @@ interface SlideContainerProps {
     rowId: string,
     columnWidths: number[]
   ) => void;
+  onUpdateAccent?: (slideId: string, accent: SlideAccent | undefined) => void;
   enableDragHints?: boolean;
   readOnly?: boolean;
   fullWidth?: boolean;
@@ -104,6 +105,7 @@ export const SlideContainer = memo(function SlideContainer({
   onAddRowAtTop,
   onAddRowAtBottom,
   onUpdateColumnWidths,
+  onUpdateAccent,
   enableDragHints = true,
   readOnly = false,
   fullWidth = false,
@@ -120,12 +122,54 @@ export const SlideContainer = memo(function SlideContainer({
   const dragActive = enableDragHints ? isDragging : false;
 
   const handleAccentImageSelect = useCallback((image: SelectedImage) => {
-    dispatch(updateSlideAccent({ 
+    console.log("🖼️ SlideContainer - Accent image selected:", { 
       slideId: slide.id, 
-      update: { url: image.url } 
-    }));
+      imageUrl: image.url, 
+      hasCustomHandler: !!onUpdateAccent 
+    });
+    
+    if (onUpdateAccent) {
+      // Use custom handler if provided (for layout editor)
+      const updatedAccent = { 
+        position: slide.accent?.position || 'right' as const,
+        size: slide.accent?.size || 40,
+        url: image.url 
+      };
+      console.log("🖼️ Using custom onUpdateAccent handler:", updatedAccent);
+      onUpdateAccent(slide.id, updatedAccent);
+    } else {
+      // Use Redux dispatch (for presentation editor)
+      console.log("🖼️ Using Redux dispatch");
+      dispatch(updateSlideAccent({ 
+        slideId: slide.id, 
+        update: { url: image.url } 
+      }));
+    }
     setIsImagePickerOpen(false);
-  }, [dispatch, slide.id]);
+  }, [dispatch, slide.id, slide.accent, onUpdateAccent]);
+
+  const handleAccentResize = useCallback((size: number) => {
+    console.log("📏 SlideContainer - Accent resize:", { 
+      slideId: slide.id, 
+      size, 
+      hasCustomHandler: !!onUpdateAccent 
+    });
+    
+    if (onUpdateAccent) {
+      // Use custom handler if provided (for layout editor)
+      const updatedAccent = { 
+        position: slide.accent?.position || 'right' as const,
+        size,
+        url: slide.accent?.url 
+      };
+      console.log("📏 Using custom onUpdateAccent handler:", updatedAccent);
+      onUpdateAccent(slide.id, updatedAccent);
+    } else {
+      // Use Redux dispatch (for presentation editor)
+      console.log("📏 Using Redux dispatch");
+      dispatch(setSlideAccentSize({ slideId: slide.id, size }));
+    }
+  }, [dispatch, slide.id, slide.accent, onUpdateAccent]);
 
   const accentControls = (
     <button
@@ -146,7 +190,7 @@ export const SlideContainer = memo(function SlideContainer({
         onMouseEnter={!readOnly ? () => setIsHovered(true) : undefined}
         onMouseLeave={!readOnly ? () => setIsHovered(false) : undefined}
         accent={slide.accent}
-        onAccentResize={(size) => dispatch(setSlideAccentSize({ slideId: slide.id, size }))}
+        onAccentResize={handleAccentResize}
         accentControls={accentControls}
         readOnly={readOnly}
         className={`group/slide relative transition-all duration-300 ease-out z-0 hover:z-20 ${

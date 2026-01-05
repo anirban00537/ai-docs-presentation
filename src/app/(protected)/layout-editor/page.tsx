@@ -44,11 +44,14 @@ const LayoutEditorPage = () => {
     handleAddRowAtTop,
     handleAddRowAtBottom,
     handleUpdateColumnWidths,
+    handleUpdateAccent,
     handleSaveLayout,
     handleUpdateMetadata,
     handleLoadLayout,
     handleResetLayout,
   } = useLayoutEditor();
+
+  console.log("📋 Layout Editor Page - Current layoutData:", layoutData);
 
   const isDark = theme.themeType === "dark";
 
@@ -144,6 +147,7 @@ const LayoutEditorPage = () => {
                     onAddRowAtTop={handleAddRowAtTop}
                     onAddRowAtBottom={handleAddRowAtBottom}
                     onUpdateColumnWidths={handleUpdateColumnWidths}
+                    onUpdateAccent={handleUpdateAccent}
                     enableDragHints={true}
                     readOnly={false}
                     theme={theme}
