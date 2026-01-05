@@ -113,6 +113,44 @@ export class LayoutsService {
     }
   }
 
+  async update(
+    id: string,
+    userId: string,
+    payload: any,
+  ): Promise<ResponseModel> {
+    try {
+      // Check if layout exists
+      const existingLayout = await this.prisma.layout.findFirst({
+        where: {
+          id,
+          deletedAt: null,
+        },
+      });
+
+      if (!existingLayout) {
+        return errorResponse('Layout not found');
+      }
+
+      // Update layout
+      const layout = await this.prisma.layout.update({
+        where: { id },
+        data: {
+          name: payload.name,
+          description: payload.description,
+          thumbnail: payload.thumbnail,
+          data: payload.data as any,
+          type: payload.type || existingLayout.type,
+          tags: payload.tags || existingLayout.tags,
+        },
+      });
+
+      return successResponse('Layout updated successfully', layout);
+    } catch (error) {
+      console.error('Error updating layout:', error);
+      return errorResponse('Failed to update layout', []);
+    }
+  }
+
   async remove(id: string, userId: string): Promise<ResponseModel> {
     try {
       // TODO: For testing - allow deleting any admin layout. Will verify userId ownership later

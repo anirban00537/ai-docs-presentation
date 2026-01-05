@@ -39,6 +39,15 @@ export class LayoutsController {
     return this.layoutsService.findOne(id);
   }
 
+  @Post(':id/update')
+  update(
+    @Param('id') id: string,
+    @UserInfo() user: User,
+    @Body() updateLayoutDto: UpdateLayoutDto,
+  ) {
+    return this.layoutsService.update(id, user.id, updateLayoutDto);
+  }
+
   @Delete(':id/delete')
   remove(@Param('id') id: string, @UserInfo() user: User) {
     return this.layoutsService.remove(id, user.id);
