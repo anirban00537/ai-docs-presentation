@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Plus, Search, Edit, Trash2, Calendar, Tag } from "lucide-react";
+import { X, Plus, Search, Edit, Trash2, Calendar, Tag, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Theme } from "@/types/presentation";
 import { useLayouts, useDeleteLayout } from "../hooks/useLayoutEditor";
@@ -10,6 +10,7 @@ interface LayoutListPanelProps {
   onSelectLayout: (layoutId: string) => void;
   onCreateNew: () => void;
   theme: Theme;
+  currentLayoutId?: string;
 }
 
 export function LayoutListPanel({
@@ -18,6 +19,7 @@ export function LayoutListPanel({
   onSelectLayout,
   onCreateNew,
   theme,
+  currentLayoutId,
 }: LayoutListPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "admin" | "user">("all");
@@ -216,25 +218,33 @@ export function LayoutListPanel({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {filteredLayouts.map((layout) => (
-                      <motion.div
-                        key={layout.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="p-4 rounded-xl border hover:shadow-lg transition-all cursor-pointer group"
-                        style={{
-                          backgroundColor: isDark
-                            ? "rgba(255, 255, 255, 0.03)"
-                            : "rgba(0, 0, 0, 0.02)",
-                          borderColor: isDark
-                            ? "rgba(255, 255, 255, 0.1)"
-                            : "rgba(0, 0, 0, 0.1)",
-                        }}
-                        onClick={() => {
-                          onSelectLayout(layout.id);
-                          onClose();
-                        }}
-                      >
+                    {filteredLayouts.map((layout) => {
+                      const isSelected = currentLayoutId === layout.id;
+                      return (
+                        <motion.div
+                          key={layout.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`p-4 rounded-xl border transition-all cursor-pointer group ${
+                            isSelected ? 'ring-2 shadow-lg' : 'hover:shadow-lg'
+                          }`}
+                          style={{
+                            backgroundColor: isSelected
+                              ? theme.primary + '08'
+                              : isDark
+                              ? "rgba(255, 255, 255, 0.03)"
+                              : "rgba(0, 0, 0, 0.02)",
+                            borderColor: isSelected
+                              ? theme.primary
+                              : isDark
+                              ? "rgba(255, 255, 255, 0.1)"
+                              : "rgba(0, 0, 0, 0.1)",
+                          }}
+                          onClick={() => {
+                            onSelectLayout(layout.id);
+                            onClose();
+                          }}
+                        >
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <h3
@@ -320,7 +330,8 @@ export function LayoutListPanel({
                           </div>
                         </div>
                       </motion.div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>

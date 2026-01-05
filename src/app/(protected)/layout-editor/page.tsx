@@ -187,6 +187,7 @@ const LayoutEditorPage = () => {
         onClose={() => setShowLayoutList(false)}
         onSelectLayout={handleLoadLayout}
         onCreateNew={handleCreateNew}
+        currentLayoutId={layoutMetadata.id}
         theme={theme}
       />
     </>

@@ -32,13 +32,27 @@ export function LayoutEditorHeader({
           >
             <ArrowLeft size={20} className="text-gray-600 dark:text-gray-400" />
           </button>
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {metadata.name || "Untitled Layout"}
-            </h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Layout Editor {metadata.id && `• ID: ${metadata.id.slice(0, 8)}`}
-            </p>
+          <div className="flex items-center gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {metadata.name || "Untitled Layout"}
+                </h1>
+                {metadata.id ? (
+                  <span className="px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
+                    Saved
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full">
+                    New
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {metadata.id ? `ID: ${metadata.id.slice(0, 8)}...` : "Not saved yet"}
+                {metadata.description && ` • ${metadata.description.slice(0, 50)}${metadata.description.length > 50 ? '...' : ''}`}
+              </p>
+            </div>
           </div>
         </div>
 
