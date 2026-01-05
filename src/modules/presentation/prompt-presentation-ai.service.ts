@@ -49,6 +49,28 @@ export class PromptPresentationAIService implements OnModuleInit {
   }
 
   /**
+   * Sanitize malformed URLs in JSON strings (e.g., double query string separators)
+   */
+  private sanitizeJsonUrls(jsonString: string): string {
+    // Fix Unsplash URLs with duplicate query strings: ?...?... -> ?...&...
+    let sanitized = jsonString.replace(
+      /(https:\/\/[^\s"]*\?)([^\s"]*?)\?([^\s"]*)/g,
+      '$1$2&$3'
+    );
+
+    // Fix multiple consecutive ? in any URL
+    sanitized = sanitized.replace(
+      /(https?:\/\/[^\s"]*)\?+/g,
+      (match, prefix) => {
+        const questionMarks = match.match(/\?/g)?.length || 0;
+        return questionMarks > 1 ? prefix + '?' : match;
+      }
+    );
+
+    return sanitized;
+  }
+
+  /**
    * Clean markdown code block wrappers and other malformed patterns from JSON content
    */
   private cleanJsonContent(content: string): string {
@@ -123,7 +145,10 @@ export class PromptPresentationAIService implements OnModuleInit {
     const originalContent = content?.substring(0, 200) || '';
 
     // Step 1: Clean markdown wrappers and malformed patterns
-    const cleanedContent = this.cleanJsonContent(content);
+    let cleanedContent = this.cleanJsonContent(content);
+
+    // Step 1.5: Sanitize URLs before parsing
+    cleanedContent = this.sanitizeJsonUrls(cleanedContent);
 
     this.logger.debug(`JSON extraction - Original starts with: "${originalContent.substring(0, 50)}..."`);
     this.logger.debug(`JSON extraction - Cleaned starts with: "${cleanedContent.substring(0, 50)}..."`);
@@ -545,7 +570,17 @@ TEXT ALIGNMENT SYNTAX (IMPORTANT):
   * <align="right">Right-aligned text</align>
   * <align="justify">Justified paragraph</align>
 - DO NOT use inline styles unless absolutely necessary
-- The <align> tags will be automatically converted to proper text alignment`;
+- The <align> tags will be automatically converted to proper text alignment
+
+⚠️ CRITICAL: URL FORMATTING RULES (MUST FOLLOW):
+- Accent image URLs must be valid, well-formed URLs
+- Use this EXACT Unsplash format: https://images.unsplash.com/photo-[ID]?auto=format&fit=crop&w=1200&q=80
+- DO NOT duplicate query parameters (e.g., ?auto=format?auto=format is INVALID)
+- DO NOT add multiple ? characters to URLs
+- Only ONE ? is allowed per URL, followed by & for additional parameters
+- Example CORRECT: "https://images.unsplash.com/photo-123?auto=format&fit=crop&w=1200&q=80"
+- Example WRONG: "https://images.unsplash.com/photo-123?auto=format?fit=crop" (TWO ? marks)
+- If unsure, use a simple Unsplash photo ID URL without extra parameters`;
 
         const slidePrompt = `You are generating slide ${slideNumber} of ${totalSlides} for a presentation titled "${title}".
 
@@ -699,11 +734,30 @@ ${imageInjectionPrompt ? '- If accent.url was provided, include: { "accent": { "
 
         // Use robust JSON extraction with cleanup, fallback, and repair strategies
         let slideData;
+        let parseSuccessful = false;
+
         try {
           slideData = this.extractValidJson(content as string);
+          parseSuccessful = true;
         } catch (parseError) {
-          this.logger.error(`[Slide ${slideNumber}] JSON extraction failed:`, parseError);
-          throw new Error(`Failed to parse slide content: ${(parseError as Error).message}`);
+          this.logger.warn(
+            `[Slide ${slideNumber}] JSON parsing failed, using template fallback structure...`
+          );
+          
+          // Fallback: Use template structure with minimal content
+          slideData = {
+            rows: templateRows.map((row: any) => ({
+              ...row,
+              blocks: row.blocks.map((block: any) => ({
+                ...block,
+                content: block.type === 'prosemirror' 
+                  ? '## Generated Content\n\nContent generation incomplete. Please edit this slide.'
+                  : block.content
+              }))
+            }))
+          };
+          
+          this.logger.log(`[Slide ${slideNumber}] Using template fallback structure (parse error: ${(parseError as Error).message})`);
         }
 
         // Extract rows if nested in data object
