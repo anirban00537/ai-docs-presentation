@@ -536,17 +536,16 @@ CRITICAL INSTRUCTIONS FOR USING THE LAYOUT TEMPLATE:
 - Keep the same row and block organization as shown in the template
 - Generate ONLY: { "rows": [...] } - nothing else, no nested "data" objects
 
-FORMATTING PRESERVATION (MOST CRITICAL):
-- You MUST preserve the EXACT formatting structure from the template's "content" field
-- If the template uses {.center}, {.right}, or {.justify} alignment attributes, you MUST keep them
-- The format is: "## Heading Text {.center}" or "Paragraph text. {.center}" - the {.alignment} goes at the END of the line
-- If the template uses plain Markdown (like ## Title), you MUST use the SAME Markdown format
-- DO NOT add any alignment attributes that are not in the template
-- DO NOT add any Markdown formatting that is not in the template
-- DO NOT change the formatting style - only replace the text content
-- For example: If template has "## Title {.center}", you should have "## Your New Title {.center}" - keep the exact same format
-- For example: If template has "Description text. {.center}", you should have "Your description. {.center}" - keep the {.center} at the end
-- DO NOT add extra formatting like bold, italic, lists, etc. unless they exist in the template`;
+TEXT ALIGNMENT SYNTAX (IMPORTANT):
+- To align text, use <align="..."> tags wrapping the content
+- Available alignments: center, right, left, justify
+- Examples:
+  * <align="center">## Centered Heading</align>
+  * <align="center">Centered paragraph text</align>
+  * <align="right">Right-aligned text</align>
+  * <align="justify">Justified paragraph</align>
+- DO NOT use inline styles unless absolutely necessary
+- The <align> tags will be automatically converted to proper text alignment`;
 
         const slidePrompt = `You are generating slide ${slideNumber} of ${totalSlides} for a presentation titled "${title}".
 
@@ -555,49 +554,41 @@ ${outlineItem.content}
 ${layoutStructureSection}
 ${imageInjectionPrompt}
 
-⚠️⚠️⚠️ CRITICAL: EXACT FORMATTING PRESERVATION - THIS IS THE MOST IMPORTANT RULE ⚠️⚠️⚠️
+⚠️⚠️⚠️ CRITICAL: CONTENT GENERATION RULES ⚠️⚠️⚠️
 
-YOU MUST FOLLOW THE EXACT FORMATTING FROM THE TEMPLATE - DO NOT ADD ANY EXTRA FORMATTING:
+FORMATTING GUIDELINES:
 
-1. Look at each block's "content" field in the template above
-2. You MUST use the EXACT SAME formatting structure that exists in the template
-3. DO NOT add any formatting (HTML or Markdown) that is not already in the template
-4. DO NOT remove any formatting that exists in the template
-5. ONLY replace the text content, keeping the exact same formatting wrapper
-6. If template has HTML tags, keep the SAME HTML tags with SAME attributes
-7. If template has Markdown, keep the SAME Markdown format
-8. DO NOT add bold, italic, lists, or any other formatting unless it exists in the template
+1. TEXT ALIGNMENT:
+   - Use <align="center">, <align="right">, <align="left">, or <align="justify"> tags
+   - Wrap entire content blocks that need alignment
+   - Example: <align="center">## Title Text</align>
+   - Example: <align="center">Paragraph content here</align>
+   - DO NOT use inline styles for alignment
+
+2. MARKDOWN BASICS:
+   - Use ## for headings (level 2), ### for subheadings (level 3)
+   - Use **bold** for emphasis
+   - Use *italic* for subtle emphasis
+   - Use - for bullet lists
+   - Keep markdown clean and simple
+
+3. CONTENT STRUCTURE:
+   - Match the template's block structure exactly
+   - Only change the text content, not the structure
+   - Preserve row and block organization
+   - Use the same block types as the template
+
+⚠️ HTML TAG RESTRICTION (CRITICAL):
+- You may ONLY use the <align> tag for text alignment
+- DO NOT use any other HTML tags: NO <div>, <span>, <p>, <h1>, <center>, <b>, <i>, <strong>, <em>, etc.
+- DO NOT use inline styles: NO style="..." attributes
+- DO NOT use class attributes: NO class="..." 
+- Use pure Markdown formatting instead (##, **, *, -, etc.)
+- The ONLY exception is <align="..."></align> for text alignment
+- Any other HTML will break the slide rendering
 
 CRITICAL INSTRUCTIONS:
 You MUST generate ONLY a JSON object with a "rows" array that matches the layout template structure above. The structure (rows, blocks, IDs) must be identical. Only adapt the ProseMirror content inside each block's "content" field based on the outline content.
-
-⚠️ FORMATTING RULES (FOLLOW EXACTLY) ⚠️:
-
-1. IF TEMPLATE HAS ALIGNMENT ATTRIBUTES (e.g., {.center}, {.right}, {.justify}):
-   - ⚠️ IMPORTANT: Preserve the EXACT alignment attribute at the END of the line
-   - The format is: "Content text {.alignment}" where alignment is center, right, justify, or left
-   - Only change the text content, keep the {.alignment} at the end
-   - Example: Template has "## Title {.center}" → You output "## New Title {.center}"
-   - Example: Template has "Description text. {.center}" → You output "Your new description. {.center}"
-   - ⚠️ DO NOT add any {.alignment} attributes that are not in the template
-
-2. IF TEMPLATE HAS MARKDOWN:
-   - ⚠️ IMPORTANT: Preserve the EXACT Markdown format (e.g., ## Title, **bold**, - list item)
-   - Keep the same Markdown syntax
-   - Only change the text content
-   - Example: Template has "## Title" → You output "## New Title"
-   - ⚠️ DO NOT add any Markdown formatting that is not in the template
-
-3. ⚠️ DO NOT ADD EXTRA FORMATTING (CRITICAL):
-   - DO NOT add alignment attributes if the template doesn't have them
-   - DO NOT add Markdown formatting (bold, italic, lists) if the template doesn't have them
-   - DO NOT wrap content in additional formatting
-   - Use what's in the template exactly
-
-4. TEXT CONTENT ONLY:
-   - Extract the text from the outline content
-   - Replace only the text portion in the template's formatting
-   - Keep everything else exactly as it appears in the template
 
 REQUIRED JSON FORMAT:
 ${imageInjectionPrompt ? 'If accent.url was provided above, generate: { "accent": { "url": "...", "position": "right", "size": 40 }, "rows": [...] }' : 'Generate: { "rows": [...] }'}

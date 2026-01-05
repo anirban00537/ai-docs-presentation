@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2025-12-31T09:57:28.414Z
+ * Generated: 2026-01-05T06:45:25.309Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -305,7 +305,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Content Title {.center}\n\nSupporting subtitle or context for the slide content. {.center}"
+                "content": "<align=\"center\">## Content Title</align>\n\n<align=\"center\">Supporting subtitle or context for the slide content.</align>"
               }
             ]
           },
@@ -361,7 +361,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Words of Wisdom {.center}\n\nInsights that drive our thinking forward. {.center}"
+                "content": "<align=\"center\">## Words of Wisdom</align>\n\n<align=\"center\">Insights that drive our thinking forward.</align>"
               }
             ]
           },
@@ -411,7 +411,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Important Announcement {.center}\n\nKey information you need to know. {.center}"
+                "content": "<align=\"center\">## Important Announcement</align>\n\n<align=\"center\">Key information you need to know.</align>"
               }
             ]
           },
@@ -472,7 +472,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Code Example {.center}\n\nUnderstanding the implementation details. {.center}"
+                "content": "<align=\"center\">## Code Example</align>\n\n<align=\"center\">Understanding the implementation details.</align>"
               }
             ]
           },
@@ -528,7 +528,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Project Roadmap {.center}\n\nKey milestones and deliverables for the upcoming phases of development. {.center}"
+                "content": "<align=\"center\">## Project Roadmap</align>\n\n<align=\"center\">Key milestones and deliverables for the upcoming phases of development.</align>"
               }
             ]
           },
@@ -542,18 +542,18 @@ const layoutTemplates = [
                   "type": "stacked-timeline-block",
                   "items": [
                     {
-                      "id": "8vm-3X7gIugYg7WHFl7x_",
-                      "title": "## Item",
+                      "id": "cusWZHB6TZ-hgT-iqKnsI",
+                      "title": "#### Item",
                       "description": "Description"
                     },
                     {
-                      "id": "FFfH3-0MAno7BqkmNoeej",
-                      "title": "## Item",
+                      "id": "mzOXnkZ0w5_hkTt4AQ8OC",
+                      "title": "#### Item",
                       "description": "Description"
                     },
                     {
-                      "id": "B3m84Kht2bcQrbjDx93ef",
-                      "title": "## Item",
+                      "id": "4_my0PTPilVuf2qCaVN3A",
+                      "title": "#### Item",
                       "description": "Description"
                     }
                   ]
@@ -587,7 +587,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Core Features {.center}\n\nExplore the powerful capabilities that drive our solution forward. {.center}"
+                "content": "<align=\"center\">## Core Features</align>\n\n<align=\"center\">Explore the powerful capabilities that drive our solution forward.</align>"
               }
             ]
           },
@@ -601,21 +601,21 @@ const layoutTemplates = [
                   "type": "solid-icon-box-block",
                   "items": [
                     {
-                      "id": "rrhtcpty_QzSShTHg0i1w",
+                      "id": "6kaBJVnc2mZ05A_B59zEM",
                       "icon": "star",
-                      "title": "## Feature Title",
+                      "title": "#### Feature Title",
                       "description": "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
                     },
                     {
-                      "id": "yuDsj1P5zKsNb8eFxmLTL",
+                      "id": "DYx6s9PyqPjmitaMDW2OI",
                       "icon": "star",
-                      "title": "## Feature Title",
+                      "title": "#### Feature Title",
                       "description": "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
                     },
                     {
-                      "id": "_noyymdS5JUpShWYhacY2",
+                      "id": "Udardm8fWa913Nyj4GnpK",
                       "icon": "star",
-                      "title": "## Feature Title",
+                      "title": "#### Feature Title",
                       "description": "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
                     }
                   ]
@@ -649,7 +649,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## By The Numbers {.center}\n\nA quantitative look at our growth and market impact this quarter. {.center}"
+                "content": "<align=\"center\">## By The Numbers</align>\n\n<align=\"center\">A quantitative look at our growth and market impact this quarter.</align>"
               }
             ]
           },
@@ -663,21 +663,21 @@ const layoutTemplates = [
                   "type": "simple-number-card",
                   "items": [
                     {
-                      "id": "MR-IW-RZCnVnj72WMbSJ9",
+                      "id": "UBwu5AlzwPOfnp6WbFaxM",
                       "number": 1,
-                      "title": "## Point Title",
+                      "title": "#### Point Title",
                       "description": "Provide context and detail about this key point here."
                     },
                     {
-                      "id": "s5kvjej2aEMdBjgso0JFl",
+                      "id": "JV5Qv605ru8ju5czGYxOZ",
                       "number": 2,
-                      "title": "## Point Title",
+                      "title": "#### Point Title",
                       "description": "Provide context and detail about this key point here."
                     },
                     {
-                      "id": "p1ccIVax352AQvjygQepo",
+                      "id": "jDO32dg3GSTcw8P5DYTlH",
                       "number": 3,
-                      "title": "## Point Title",
+                      "title": "#### Point Title",
                       "description": "Provide context and detail about this key point here."
                     }
                   ]
@@ -711,7 +711,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Implementation Process {.center}\n\nA systematic approach to integrating our solution into your workflow. {.center}"
+                "content": "<align=\"center\">## Implementation Process</align>\n\n<align=\"center\">A systematic approach to integrating our solution into your workflow.</align>"
               }
             ]
           },
@@ -725,15 +725,15 @@ const layoutTemplates = [
                   "type": "layered-number-block",
                   "items": [
                     {
-                      "id": "oBw5qdTBPRmgG8rc5drV_",
+                      "id": "wD-lMRd_ScUeAu3go-RZa",
                       "number": 1,
-                      "title": "## Core Objective",
+                      "title": "#### Core Objective",
                       "description": "Define your core objective. The large background number adds depth and indicates sequence."
                     },
                     {
-                      "id": "nRy1sOcGwJLHawa115Mpf",
+                      "id": "egCckz0ZW2G_9NfYigJTT",
                       "number": 2,
-                      "title": "## Core Objective",
+                      "title": "#### Core Objective",
                       "description": "Define your core objective. The large background number adds depth and indicates sequence."
                     }
                   ]
@@ -767,7 +767,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Meeting Agenda {.center}\n\nKey topics and discussion points for today's session. {.center}"
+                "content": "<align=\"center\">## Meeting Agenda</align>\n\n<align=\"center\">Key topics and discussion points for today's session.</align>"
               }
             ]
           },
@@ -781,18 +781,18 @@ const layoutTemplates = [
                   "type": "sideline-card-block",
                   "items": [
                     {
-                      "id": "dHLU0bJl39yOelEO0gl4a",
-                      "title": "## Key Insight",
+                      "id": "fuiSoNdGC-FlXPoItqYAX",
+                      "title": "#### Key Insight",
                       "description": "Highlight important takeaways here. The vertical accent draws attention."
                     },
                     {
-                      "id": "SLQZYTHkNJ-1iL0K9dwIt",
-                      "title": "## Key Insight",
+                      "id": "N313TkcFhzh2MsBZPUCnM",
+                      "title": "#### Key Insight",
                       "description": "Highlight important takeaways here. The vertical accent draws attention."
                     },
                     {
-                      "id": "MHY0TTGWGFU5_pOJXMUw8",
-                      "title": "## Key Insight",
+                      "id": "t9YolvL2dZ2GQj6gg1Tk_",
+                      "title": "#### Key Insight",
                       "description": "Highlight important takeaways here. The vertical accent draws attention."
                     }
                   ]
@@ -826,7 +826,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Our Core Values {.center}\n\nThe fundamental beliefs that guide our company culture and decisions. {.center}"
+                "content": "<align=\"center\">## Our Core Values</align>\n\n<align=\"center\">The fundamental beliefs that guide our company culture and decisions.</align>"
               }
             ]
           },
@@ -840,18 +840,18 @@ const layoutTemplates = [
                   "type": "leaf-block",
                   "items": [
                     {
-                      "id": "w0OL2Ac4joXDSrF9UMmoR",
-                      "title": "## Title",
+                      "id": "dTPvCm6iHl5aATee9xowb",
+                      "title": "#### Title",
                       "description": "This is a leaf card. It has a unique shape and style."
                     },
                     {
-                      "id": "UF4ogMCQnIlExvuBN-phX",
-                      "title": "## Title",
+                      "id": "PCM-cKB5HyjxrxZ2Eyd2Z",
+                      "title": "#### Title",
                       "description": "This is a leaf card. It has a unique shape and style."
                     },
                     {
-                      "id": "EGPJbpxZYJSBIs5y2NrOK",
-                      "title": "## Title",
+                      "id": "6naiJ46pqSFf5mINDQh8i",
+                      "title": "#### Title",
                       "description": "This is a leaf card. It has a unique shape and style."
                     }
                   ]
@@ -885,7 +885,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Focus Areas {.center}\n\nDeep diving into the three pillars of our strategic initiative. {.center}"
+                "content": "<align=\"center\">## Focus Areas</align>\n\n<align=\"center\">Deep diving into the three pillars of our strategic initiative.</align>"
               }
             ]
           },
@@ -899,18 +899,18 @@ const layoutTemplates = [
                   "type": "solid-box-block",
                   "items": [
                     {
-                      "id": "HO9ZwLYsapC9tZYhlXBDY",
-                      "title": "## Major Point",
+                      "id": "fleFQgCfxSK-89sz1GIop",
+                      "title": "#### Major Point",
                       "description": "Standard content with a solid presence. Strong blocks build reliable structures."
                     },
                     {
-                      "id": "57SV_FxGYE2IALbfmQtPz",
-                      "title": "## Major Point",
+                      "id": "yPbDCrO3k6Z5Yuxar_iPF",
+                      "title": "#### Major Point",
                       "description": "Standard content with a solid presence. Strong blocks build reliable structures."
                     },
                     {
-                      "id": "4Upd9BQ8uatYG27Nb6ehx",
-                      "title": "## Major Point",
+                      "id": "4SokymPYfBqx5qWvJmRPe",
+                      "title": "#### Major Point",
                       "description": "Standard content with a solid presence. Strong blocks build reliable structures."
                     }
                   ]
@@ -944,7 +944,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Journey Map {.center}\n\nTracing the evolution of our product from concept to launch. {.center}"
+                "content": "<align=\"center\">## Journey Map</align>\n\n<align=\"center\">Tracing the evolution of our product from concept to launch.</align>"
               }
             ]
           },
@@ -958,23 +958,23 @@ const layoutTemplates = [
                   "type": "timeline-bento-block",
                   "items": [
                     {
-                      "id": "aYjYs4VnlwJ6j6YZfF-9B",
-                      "title": "## Item",
+                      "id": "Lfata5edxyOLbt8NFNm6M",
+                      "title": "#### Item",
                       "description": "Description"
                     },
                     {
-                      "id": "0KcIFHoHOlyB2X9mAByOT",
-                      "title": "## Item",
+                      "id": "QEUZPf7_0daJD_ppQbWDJ",
+                      "title": "#### Item",
                       "description": "Description"
                     },
                     {
-                      "id": "-IDc-HIaUErB2CScpXKGq",
-                      "title": "## Item",
+                      "id": "OLD1Lj16FtPpbk7KjWqjA",
+                      "title": "#### Item",
                       "description": "Description"
                     },
                     {
-                      "id": "ilwu0j9wH826D-W_oQd9N",
-                      "title": "## Item",
+                      "id": "f9NnfM0KZ4IRsdsvOTH6A",
+                      "title": "#### Item",
                       "description": "Description"
                     }
                   ]
@@ -1021,7 +1021,7 @@ const layoutTemplates = [
               {
                 "id": "block-1-0",
                 "type": "prosemirror",
-                "content": "# User Research Findings for Product Development {.center}\n\nKey insights, pain points, and actionable recommendations from our recent research study {.center}"
+                "content": "<align=\"center\"># User Research Findings for Product Development</align>\n\n<align=\"center\">Key insights, pain points, and actionable recommendations from our recent research study</align>"
               }
             ]
           },
@@ -1059,7 +1059,7 @@ const layoutTemplates = [
               {
                 "id": "block-0-0",
                 "type": "prosemirror",
-                "content": "## Built for Developers {.center}\n\nIntegrate our full-featured SDK in less than 5 minutes. {.center}"
+                "content": "<align=\"center\">## Built for Developers</align>\n\n<align=\"center\">Integrate our full-featured SDK in less than 5 minutes.</align>"
               }
             ]
           },
