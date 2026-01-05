@@ -46,7 +46,6 @@ export { ProgressIndicator } from "./ui/ProgressIndicator";
 
 // Utils
 export { getBlockTypeIcon, getBlockTypeLabel } from "./utils/blockTypeUtils";
-export { layoutTemplates, layoutIconsMap } from "./utils/layoutTemplates";
 
 // Export block components (keep as-is)
 export { ProseMirrorBlock } from "./blocks/prosemirror/ProseMirrorBlock";

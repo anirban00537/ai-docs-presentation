@@ -6,10 +6,7 @@ import {
   DialogTitle,
   DialogOverlay,
 } from "@/components/ui/dialog";
-import {
-  layoutTemplates,
-  layoutIconsMap,
-} from "../utils/layoutTemplates";
+
 import type { LayoutTemplate } from "@/types/presentation";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { useAppSelector } from "@/store/hooks";
@@ -39,7 +36,6 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
   // Combine local templates with admin layouts from DB
   // We prioritize DB layouts but can fallback to local if needed
   const displayLayouts = React.useMemo(() => {
-    const blank = layoutTemplates.find((t) => t.id === "blank");
     
     if (adminLayouts && adminLayouts.length > 0) {
       const dbLayouts = adminLayouts.map((l: any) => ({
@@ -50,11 +46,10 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
         dbId: l.id,
       }));
       
-      // Always keep "Blank" at the start if it exists
-      return blank ? [blank, ...dbLayouts] : dbLayouts;
+      return dbLayouts;
     }
     
-    return layoutTemplates;
+    return [];
   }, [adminLayouts]);
 
   const handleSelect = async (template: any) => {
@@ -205,8 +200,8 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
             <button
               onClick={async () => {
                 onClose();
-                for (let i = 0; i < layoutTemplates.length; i++) {
-                  onSelectLayout(layoutTemplates[i]);
+                for (let i = 0; i < adminLayouts.length; i++) {
+                  onSelectLayout(adminLayouts[i]);
                   await new Promise((resolve) => setTimeout(resolve, 300));
                 }
               }}
