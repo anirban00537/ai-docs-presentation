@@ -173,13 +173,13 @@ const SortableSlideItem = ({
             </div>
 
             {/* Copy JSON Button */}
-            {/* <button
+            <button
               onClick={(e) => onCopySlide(e, slide)}
               className="p-2 rounded-lg hover:scale-105 transition-transform shadow-sm bg-blue-500 text-white"
               title="Copy slide JSON"
             >
               <IconCopy size={16} />
-            </button> */}
+            </button>
 
             {/* Delete Button */}
             {slideCount > 1 && (

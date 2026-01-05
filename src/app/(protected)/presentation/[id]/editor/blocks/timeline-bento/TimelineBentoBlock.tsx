@@ -13,6 +13,7 @@ interface TimelineBentoBlockProps {
     readOnly?: boolean;
 }
 
+
 export const TimelineBentoBlock = memo(function TimelineBentoBlock({
     block,
     onUpdate,
@@ -25,18 +26,35 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
 
     const content = block.content as TimelineBentoContent;
     const items = content.items || [];
+    
+    // Use ref to always have the latest content to prevent stale closures
+    const contentRef = React.useRef(content);
+    React.useEffect(() => {
+        contentRef.current = content;
+    }, [content]);
 
     const handleItemUpdate = (index: number, field: "title" | "description", value: string) => {
         if (readOnly) return;
-        const newItems = [...items];
+        
+        // Get the latest content from ref to avoid stale closure
+        const latestContent = contentRef.current;
+        const latestItems = latestContent.items || [];
+        
+        const newItems = [...latestItems];
         newItems[index] = {
             ...newItems[index],
             [field]: value,
         };
-        onUpdate({
-            ...content,
+        
+        const updatedContent = {
+            ...latestContent,
             items: newItems,
-        });
+        };
+        
+        // Update the ref immediately
+        contentRef.current = updatedContent;
+        
+        onUpdate(updatedContent);
     };
 
     const handleAddItem = () => {
@@ -70,7 +88,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
             />
 
             {/* Timeline Items */}
-            <div className="relative space-y-8">
+            <div className="relative space-y-4">
                 {items.map((item, index) => {
                     const isLeft = index % 2 === 0;
 
@@ -100,8 +118,8 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                             {/* Title Editor */}
                                             <div className="mb-2">
                                                 <ProseMirrorEditor
-                                                    key={`${item.id}-title`}
-                                                    blockId={`${item.id}-title`}
+                                                    key={`${item.id}-title-left-${index}`}
+                                                    blockId={`${item.id}-title-left-${index}`}
                                                     value={item.title}
                                                     onChange={(value) => handleItemUpdate(index, "title", value)}
                                                     placeholder="Event"
@@ -117,8 +135,8 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                             {/* Description Editor */}
                                             <div className="">
                                                 <ProseMirrorEditor
-                                                    key={`${item.id}-description`}
-                                                    blockId={`${item.id}-description`}
+                                                    key={`${item.id}-description-left-${index}`}
+                                                    blockId={`${item.id}-description-left-${index}`}
                                                     value={item.description}
                                                     onChange={(value) => handleItemUpdate(index, "description", value)}
                                                     placeholder="Details..."
@@ -172,8 +190,8 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                             {/* Title Editor */}
                                             <div className="mb-2">
                                                 <ProseMirrorEditor
-                                                    key={`${item.id}-title`}
-                                                    blockId={`${item.id}-title`}
+                                                    key={`${item.id}-title-right-${index}`}
+                                                    blockId={`${item.id}-title-right-${index}`}
                                                     value={item.title}
                                                     onChange={(value) => handleItemUpdate(index, "title", value)}
                                                     placeholder="Event"
@@ -189,8 +207,8 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                             {/* Description Editor */}
                                             <div className="">
                                                 <ProseMirrorEditor
-                                                    key={`${item.id}-description`}
-                                                    blockId={`${item.id}-description`}
+                                                    key={`${item.id}-description-right-${index}`}
+                                                    blockId={`${item.id}-description-right-${index}`}
                                                     value={item.description}
                                                     onChange={(value) => handleItemUpdate(index, "description", value)}
                                                     placeholder="Details..."
