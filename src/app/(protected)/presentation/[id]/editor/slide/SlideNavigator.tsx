@@ -271,11 +271,14 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
       activeSlideId &&
       activeSlideId !== previousActiveSlideIdRef.current
     ) {
-      const rows = pendingLayout.getRows();
+      // Extract rows from the layout data property
+      const rows = pendingLayout.data?.rows ||[];
+      const accent = pendingLayout.data?.accent;
+      
       dispatch(replaceSlideWithLayout({ 
         slideId: activeSlideId, 
         rows,
-        accent: pendingLayout.accent 
+        accent 
       }));
       setTimeout(() => setPendingLayout(null), 0);
     }

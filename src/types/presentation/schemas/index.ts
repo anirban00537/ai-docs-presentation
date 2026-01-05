@@ -38,11 +38,18 @@ export type CalloutContent = z.infer<typeof CalloutContentSchema>;
 export type LayoutTemplate = {
   id: string;
   name: string;
-  description: string;
-  icon: string | any;
-  getRows: () => Row[];
-  /** Optional accent configuration for the slide */
-  accent?: SlideAccent;
+  description?: string;
+  icon?: string | any;
+  tags?: string[];
+  type?: 'admin' | 'user';
+  thumbnail?: string;
+  data: {
+    rows: Row[];
+    accent?: SlideAccent;
+    icon?: string;
+  };
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type BlockContent = z.infer<typeof BlockContentSchema>;

@@ -59,13 +59,8 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
         const response = await layoutsService.getLayout(template.dbId);
         if (response.success) {
           const fullLayout = response.data;
-          // Transform DB layout to LayoutTemplate format
-          const formattedTemplate: LayoutTemplate = {
-            ...fullLayout.data,
-            id: fullLayout.id,
-            getRows: () => fullLayout.data.rows
-          };
-          onSelectLayout(formattedTemplate);
+          // Pass the full layout object with data property
+          onSelectLayout(fullLayout);
           onClose();
         } else {
           toast.error("Failed to load layout details");
