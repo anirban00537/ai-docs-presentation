@@ -14,6 +14,8 @@ interface SlideToolbarProps {
   fullWidth: boolean;
   onOpenImagePicker: () => void;
   onAddRow: () => void;
+  onUpdateAccent?: (slideId: string, accent: any) => void;
+  onToggleAccent?: (slideId: string) => void;
 }
 
 export const SlideToolbar: React.FC<SlideToolbarProps> = ({
@@ -23,6 +25,8 @@ export const SlideToolbar: React.FC<SlideToolbarProps> = ({
   fullWidth,
   onOpenImagePicker,
   onAddRow,
+  onUpdateAccent,
+  onToggleAccent,
 }) => {
   const dispatch = useAppDispatch();
   const isDark = theme.themeType === "dark";
@@ -38,6 +42,14 @@ export const SlideToolbar: React.FC<SlideToolbarProps> = ({
     "h-8 w-8 rounded-lg transition-all flex items-center justify-center hover:text-primary hover:bg-black/5 dark:hover:bg-white/10",
     isDark ? "text-white/60" : "text-muted-foreground"
   );
+
+  const handleToggleAccent = () => {
+    if (onToggleAccent) {
+      onToggleAccent(slide.id);
+    } else {
+      dispatch(toggleSlideAccent({ slideId: slide.id }));
+    }
+  };
 
   return (
     <motion.div 
@@ -59,7 +71,9 @@ export const SlideToolbar: React.FC<SlideToolbarProps> = ({
         <SlideOptions 
           slide={slide} 
           theme={theme} 
-          onOpenImagePicker={onOpenImagePicker} 
+          onOpenImagePicker={onOpenImagePicker}
+          onUpdateAccent={onUpdateAccent}
+          onToggleAccent={onToggleAccent}
         />
         
         <div 
@@ -69,7 +83,7 @@ export const SlideToolbar: React.FC<SlideToolbarProps> = ({
         <Button
           variant="ghost" 
           size="icon"
-          onClick={() => dispatch(toggleSlideAccent({ slideId: slide.id }))}
+          onClick={handleToggleAccent}
           className={buttonClass}
           style={slide.accent ? { color: theme.primary } : {}}
           title="Toggle Accent Layout"

@@ -26,12 +26,16 @@ interface SlideOptionsProps {
   slide: Slide;
   theme: Theme;
   onOpenImagePicker: () => void;
+  onUpdateAccent?: (slideId: string, accent: any) => void;
+  onToggleAccent?: (slideId: string) => void;
 }
 
 export const SlideOptions: React.FC<SlideOptionsProps> = ({
   slide,
   theme,
   onOpenImagePicker,
+  onUpdateAccent,
+  onToggleAccent,
 }) => {
   const dispatch = useAppDispatch();
   const accent = slide.accent;
@@ -45,20 +49,36 @@ export const SlideOptions: React.FC<SlideOptionsProps> = ({
   ];
 
   const handlePositionChange = (pos: "left" | "right" | "top" | "bottom" | "background") => {
-    if (!accent) {
-      dispatch(toggleSlideAccent({ slideId: slide.id }));
-      // The toggleSlideAccent currently defaults to "left", we might need to update it
-      // but for now let's just update the position right after if it exists
-      setTimeout(() => {
-        dispatch(updateSlideAccent({ slideId: slide.id, update: { position: pos } }));
-      }, 0);
+    if (onUpdateAccent) {
+      // Use custom handler (for layout editor)
+      if (!accent) {
+        // Create new accent with the selected position
+        onUpdateAccent(slide.id, { position: pos, size: 40, url: undefined });
+      } else {
+        // Update existing accent position
+        onUpdateAccent(slide.id, { ...accent, position: pos });
+      }
     } else {
-      dispatch(updateSlideAccent({ slideId: slide.id, update: { position: pos } }));
+      // Use Redux dispatch (for presentation editor)
+      if (!accent) {
+        dispatch(toggleSlideAccent({ slideId: slide.id }));
+        setTimeout(() => {
+          dispatch(updateSlideAccent({ slideId: slide.id, update: { position: pos } }));
+        }, 0);
+      } else {
+        dispatch(updateSlideAccent({ slideId: slide.id, update: { position: pos } }));
+      }
     }
   };
 
   const handleToggleAccent = () => {
-    dispatch(toggleSlideAccent({ slideId: slide.id }));
+    if (onToggleAccent) {
+      // Use custom handler (for layout editor)
+      onToggleAccent(slide.id);
+    } else {
+      // Use Redux dispatch (for presentation editor)
+      dispatch(toggleSlideAccent({ slideId: slide.id }));
+    }
   };
 
   return (

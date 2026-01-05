@@ -196,6 +196,15 @@ export const SlideContainer = memo(function SlideContainer({
             fullWidth={fullWidth}
             onOpenImagePicker={() => setIsImagePickerOpen(true)}
             onAddRow={() => onAddRowAtBottom(slide.id)}
+            onUpdateAccent={onUpdateAccent}
+            onToggleAccent={onUpdateAccent ? (slideId) => {
+              // Toggle by setting or removing accent
+              if (slide.accent) {
+                onUpdateAccent(slideId, undefined);
+              } else {
+                onUpdateAccent(slideId, { position: 'right', size: 40, url: undefined });
+              }
+            } : undefined}
           />
         )}
 
