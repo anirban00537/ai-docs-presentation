@@ -55,11 +55,11 @@ export const coreConstant = {
 
   AI_MODELS: {
     OUTLINE: {
-      NAME: 'x-ai/grok-4.1-fast',
+      NAME: 'deepseek/deepseek-v3.2',
       PRICING: { prompt: 0.20, completion: 0.50 }, // $ per 1M tokens
     },
     SLIDES: {
-      NAME: 'openai/gpt-oss-120b',
+      NAME: 'deepseek/deepseek-v3.2',
       PRICING: { prompt: 0.039, completion: 0.19 },
     },
     IMAGE: {
