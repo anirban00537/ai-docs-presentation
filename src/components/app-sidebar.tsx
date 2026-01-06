@@ -122,16 +122,7 @@ export function AppSidebar() {
         className="fixed inset-y-0 left-0 z-50 w-[280px] flex flex-col"
       >
         {/* Main Glass Container - Updated Gradient */}
-        <div 
-          className="absolute inset-0 w-full h-full overflow-hidden border-r border-secondary/20"
-          style={{
-             background: "rgba(255, 255, 255, 0.8)",
-             backdropFilter: "blur(20px)",
-             WebkitBackdropFilter: "blur(20px)",
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-white to-secondary/10 pointer-events-none" />
-        </div>
+        <div className="absolute inset-0 w-full h-full overflow-hidden border-r bg-secondary/30" />
 
         {/* Content wrapper */}
         <div className="relative z-10 flex flex-col h-full overflow-hidden">
@@ -158,7 +149,7 @@ export function AppSidebar() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto custom-scrollbar-light">
+          <nav className="flex-1 px-2 py-2 space-y-1.5 overflow-y-auto custom-scrollbar-light">
             <p className="px-3 text-[10px] font-bold text-foreground/40 uppercase tracking-widest mb-3 select-none">
               Menu
             </p>
@@ -176,7 +167,7 @@ export function AppSidebar() {
                     className={cn(
                       "relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-300 ease-out",
                       isActive 
-                        ? "bg-white shadow-sm border border-secondary/20 text-primary" 
+                        ? "bg-secondary/20 shadow-sm border border-secondary/20 " 
                         : "hover:bg-secondary/10 text-muted-foreground hover:text-foreground"
                     )}
                   >
@@ -186,8 +177,8 @@ export function AppSidebar() {
                         size={20}
                         stroke={1.5}
                         className={cn(
-                          "transition-colors duration-300",
-                          isActive ? "text-primary" : "text-foreground/50 group-hover:text-foreground/80"
+                          "transition-colors duration-300 text-foreground/50 group-hover:text-foreground/80",
+                          
                         )}
                       />
                     </span>
@@ -333,13 +324,7 @@ export function AppSidebar() {
                   align="start"
                   side="right"
                   sideOffset={16}
-                  className="w-56 rounded-2xl border-0 p-1.5"
-                  style={{
-                    backgroundColor: "color-mix(in srgb, var(--popover) 85%, var(--secondary))",
-                    backdropFilter: "blur(20px) saturate(180%)",
-                    WebkitBackdropFilter: "blur(20px) saturate(180%)",
-                    boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.4) inset"
-                  }}
+                  className="w-56 rounded-2xl border-0 p-1.5 popover-glass"
                 >
                    <div className="px-2 py-1.5 mb-1 bg-secondary/20 rounded-xl">
                       <p className="text-xs font-medium text-foreground">{primaryName}</p>
