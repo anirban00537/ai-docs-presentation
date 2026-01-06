@@ -6,25 +6,17 @@ A beautifully organized, modular service for AI-powered presentation slide gener
 
 ```
 prompt-presentation-ai/
-├── constants/              # AI schemas and configuration
-│   ├── ai-schema.constants.ts
-│   └── index.ts
 ├── generators/             # Image processing services
 │   ├── image-analyzer.service.ts
-│   ├── image-fetcher.service.ts
-│   └── index.ts
+│   └── image-fetcher.service.ts
 ├── interfaces/             # TypeScript interfaces
 │   ├── image-analysis.interface.ts
-│   ├── outline.interface.ts
-│   └── index.ts
+│   └── outline.interface.ts
 ├── prompts/                # AI prompt builders
-│   ├── prompt-builder.service.ts
-│   └── index.ts
+│   └── prompt-builder.service.ts
 ├── utils/                  # Utility functions
-│   ├── json-cleaner.util.ts
-│   └── index.ts
+│   └── json-cleaner.util.ts
 ├── prompt-presentation-ai.service.ts  # Main orchestration service
-├── index.ts                # Barrel export
 └── README.md               # This file
 ```
 
@@ -68,15 +60,13 @@ prompt-presentation-ai/
 
 ## 🔧 Usage
 
-Import the service in your module:
+Import the services directly from their files:
 
 ```typescript
-import {
-  PromptPresentationAIService,
-  ImageAnalyzerService,
-  ImageFetcherService,
-  PromptBuilderService,
-} from './prompt-presentation-ai';
+import { PromptPresentationAIService } from './prompt-presentation-ai/prompt-presentation-ai.service';
+import { ImageAnalyzerService } from './prompt-presentation-ai/generators/image-analyzer.service';
+import { ImageFetcherService } from './prompt-presentation-ai/generators/image-fetcher.service';
+import { PromptBuilderService } from './prompt-presentation-ai/prompts/prompt-builder.service';
 ```
 
 ### Generating Slides
@@ -188,3 +178,6 @@ Each service has a single, well-defined responsibility:
 - Logging uses NestJS Logger
 - Configured via environment variables
 - Uses AI model defined in `coreConstant.AI_MODELS.SLIDES.NAME`
+- Uses plain JSON object mode (not strict JSON Schema) for flexible AI responses
+- No barrel exports - all imports are direct file paths for clarity
+

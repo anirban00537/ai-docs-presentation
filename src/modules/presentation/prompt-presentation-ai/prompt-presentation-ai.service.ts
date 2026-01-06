@@ -11,7 +11,6 @@ import { JsonCleanerUtil } from './utils/json-cleaner.util';
 import { ImageAnalyzerService } from './generators/image-analyzer.service';
 import { ImageFetcherService } from './generators/image-fetcher.service';
 import { PromptBuilderService } from './prompts/prompt-builder.service';
-import { SLIDE_CONTENT_JSON_SCHEMA } from './constants/ai-schema.constants';
 
 /**
  * Main service for AI-powered presentation slide generation
@@ -337,10 +336,9 @@ export class PromptPresentationAIService implements OnModuleInit {
           content: slidePrompt,
         },
       ],
-      // Use structured JSON output to prevent malformed responses
+      // Use simple JSON object mode for flexible responses
       responseFormat: {
-        type: 'json_schema',
-        jsonSchema: SLIDE_CONTENT_JSON_SCHEMA,
+        type: 'json_object',
       },
       stream: false,
     });

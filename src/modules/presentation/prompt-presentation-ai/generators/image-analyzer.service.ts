@@ -13,7 +13,7 @@ export class ImageAnalyzerService {
 
   /**
    * Analyze a layout schema to detect image fields and generate Unsplash search queries
-   * Uses structured JSON schema output for reliable parsing
+   * Uses plain JSON output mode for flexible parsing
    */
   async analyzeLayoutForImages(
     openRouter: any,
@@ -64,52 +64,9 @@ If no image fields are found, return hasImages as false with an empty imageField
             content: analysisPrompt,
           },
         ],
+        // Use simple JSON object mode
         responseFormat: {
-          type: 'json_schema',
-          jsonSchema: {
-            name: 'image_analysis',
-            strict: true,
-            schema: {
-              type: 'object',
-              properties: {
-                hasImages: {
-                  type: 'boolean',
-                  description: 'Whether the layout has any image fields that need to be populated',
-                },
-                imageFields: {
-                  type: 'array',
-                  description: 'Array of image fields found in the layout',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      fieldPath: {
-                        type: 'string',
-                        description: 'The JSON path to the URL field (e.g., "accent.url", "rows[0].blocks[0].content.avatar")',
-                      },
-                      fieldType: {
-                        type: 'string',
-                        enum: ['accent', 'image', 'avatar', 'gallery'],
-                        description: 'The type of image field',
-                      },
-                      searchQuery: {
-                        type: 'string',
-                        description: 'A specific, descriptive Unsplash search query based on the slide content and field purpose',
-                      },
-                      orientation: {
-                        type: 'string',
-                        enum: ['landscape', 'portrait', 'squarish'],
-                        description: 'The preferred image orientation',
-                      },
-                    },
-                    required: ['fieldPath', 'fieldType', 'searchQuery', 'orientation'],
-                    additionalProperties: false,
-                  },
-                },
-              },
-              required: ['hasImages', 'imageFields'],
-              additionalProperties: false,
-            },
-          },
+          type: 'json_object',
         },
         stream: false,
       });
