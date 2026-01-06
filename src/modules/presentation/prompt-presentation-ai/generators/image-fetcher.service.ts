@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ImagesService } from '../../../images/images.service';
-import { ImageFieldInfo } from '../interfaces';
+import { ImageFieldInfo } from '../interfaces/image-analysis.interface';
 
 /**
  * Service for fetching images from Unsplash

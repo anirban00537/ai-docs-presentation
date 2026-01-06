@@ -24,7 +24,7 @@ import { UpdatePresentationTitleDto } from './dto/update-presentation-title.dto'
 import { CreateSlideDto } from './dto/create-slide.dto';
 import { UpdateSlideDto } from './dto/update-slide.dto';
 import { CreateOutlineDto, UpdateOutlineDto } from './dto/create-outline.dto';
-import { PromptPresentationAIService } from './prompt-presentation-ai';
+import { PromptPresentationAIService } from './prompt-presentation-ai/prompt-presentation-ai.service';
 import { OutlineService } from './outline.service';
 import { CreditService } from '../subscription/services/credit.service';
 import { BadRequestException } from '@nestjs/common';

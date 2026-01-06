@@ -6,11 +6,12 @@ import { AiUsageService } from '../../subscription/services/ai-usage.service';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
 
 // Internal imports
-import { OutlineItem } from './interfaces';
-import { JsonCleanerUtil } from './utils';
-import { ImageAnalyzerService, ImageFetcherService } from './generators';
-import { PromptBuilderService } from './prompts';
-import { SLIDE_CONTENT_JSON_SCHEMA } from './constants';
+import { OutlineItem } from './interfaces/outline.interface';
+import { JsonCleanerUtil } from './utils/json-cleaner.util';
+import { ImageAnalyzerService } from './generators/image-analyzer.service';
+import { ImageFetcherService } from './generators/image-fetcher.service';
+import { PromptBuilderService } from './prompts/prompt-builder.service';
+import { SLIDE_CONTENT_JSON_SCHEMA } from './constants/ai-schema.constants';
 
 /**
  * Main service for AI-powered presentation slide generation

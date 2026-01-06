@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ImageFieldInfo } from '../interfaces';
+import { ImageFieldInfo } from '../interfaces/image-analysis.interface';
 
 /**
  * Service for building AI prompts

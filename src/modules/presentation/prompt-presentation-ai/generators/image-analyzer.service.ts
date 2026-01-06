@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ImageAnalysisResult } from '../interfaces';
-import { JsonCleanerUtil } from '../utils';
+import { ImageAnalysisResult } from '../interfaces/image-analysis.interface';
+import { JsonCleanerUtil } from '../utils/json-cleaner.util';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
 
 /**
