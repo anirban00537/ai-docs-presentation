@@ -50,6 +50,9 @@ export const useEditorPage = ({
   const [slideGenerationProgress, setSlideGenerationProgress] = useState<{
     current: number;
     total: number;
+    stage?: string;
+    message?: string;
+    estimatedSeconds?: number;
   } | null>(null);
 
   const hasLoadedPresentation = useRef(false);
@@ -241,7 +244,19 @@ export const useEditorPage = ({
                 setSlideGenerationProgress({
                   current: chunk.slideNumber || 0,
                   total: chunk.totalSlides || 0,
+                  stage: chunk.stage,
+                  estimatedSeconds: chunk.estimatedSeconds,
+                  message: `Starting slide ${chunk.slideNumber}...`,
                 });
+              } else if (chunk.type === "slide-progress") {
+                // NEW: Handle progress updates
+                setSlideGenerationProgress(prev => ({
+                  current: chunk.slideNumber || prev?.current || 0,
+                  total: prev?.total || chunk.totalSlides || 0,
+                  stage: chunk.stage,
+                  message: chunk.message || 'Processing...',
+                  estimatedSeconds: prev?.estimatedSeconds,
+                }));
               } else if (chunk.type === "slide" && chunk.data) {
                 const slide = {
                   id: chunk.slideId || nanoid(),
@@ -323,7 +338,19 @@ export const useEditorPage = ({
             setSlideGenerationProgress({
               current: chunk.slideNumber || 0,
               total: chunk.totalSlides || 0,
+              stage: chunk.stage,
+              estimatedSeconds: chunk.estimatedSeconds,
+              message: `Starting slide ${chunk.slideNumber}...`,
             });
+          } else if (chunk.type === "slide-progress") {
+            // Handle progress updates
+            setSlideGenerationProgress(prev => ({
+              current: chunk.slideNumber || prev?.current || 0,
+              total: prev?.total || chunk.totalSlides || 0,
+              stage: chunk.stage,
+              message: chunk.message || 'Processing...',
+              estimatedSeconds: prev?.estimatedSeconds,
+            }));
           } else if (chunk.type === "slide" && chunk.data) {
             const slide = {
               id: chunk.slideId || nanoid(),
