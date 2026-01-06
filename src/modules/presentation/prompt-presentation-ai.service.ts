@@ -622,6 +622,15 @@ FORMATTING GUIDELINES:
 - The ONLY exception is <align="..."></align> for text alignment
 - Any other HTML will break the slide rendering
 
+***** CRITICAL: NEVER USE DEMO/PLACEHOLDER DATA *****
+- DO NOT keep any demo text, placeholder text, or example content from the template
+- DO NOT leave any fields empty or with placeholder values like "Your text here", "Example content", etc.
+- ALWAYS generate fresh, relevant, meaningful content based on the outline
+- Replace ALL content with real, presentation-appropriate text
+- Every field must contain actual content related to the presentation topic
+- Empty fields or placeholder text will result in an unusable slide
+***** END CRITICAL INSTRUCTION *****
+
 CRITICAL INSTRUCTIONS:
 You MUST generate ONLY a JSON object with a "rows" array that matches the layout template structure above. The structure (rows, blocks, IDs) must be identical. Only adapt the ProseMirror content inside each block's "content" field based on the outline content.
 
