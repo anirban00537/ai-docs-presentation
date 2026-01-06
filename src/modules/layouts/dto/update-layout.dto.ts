@@ -4,7 +4,9 @@ import {
   IsObject,
   IsArray,
   MaxLength,
+  IsBoolean,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateLayoutDto {
   @IsOptional()
@@ -36,6 +38,8 @@ export class UpdateLayoutDto {
   tags?: string[];
 
   @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
   published?: boolean;
 }
 

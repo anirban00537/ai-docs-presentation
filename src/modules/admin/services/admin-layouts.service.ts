@@ -77,6 +77,7 @@ export class AdminLayoutsService {
     description?: string;
     tags?: string[];
     thumbnail?: string;
+    published?: boolean;
     data?: any;
   }): Promise<ResponseModel> {
     try {
@@ -109,6 +110,10 @@ export class AdminLayoutsService {
       
       if (updateData.data !== undefined) {
         updatePayload.data = updateData.data;
+      }
+      
+      if (updateData.published !== undefined) {
+        updatePayload.published = updateData.published;
       }
 
       // Update the layout

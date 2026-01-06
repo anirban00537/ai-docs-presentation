@@ -135,18 +135,37 @@ export class LayoutsService {
         return errorResponse('Layout not found');
       }
 
+      // Debug logging for published field
+      console.log('Update payload received:', {
+        published: payload.published,
+        publishedType: typeof payload.published,
+        hasPublished: 'published' in payload,
+      });
+
+      // Prepare update data
+      const updateData: any = {
+        name: payload.name,
+        description: payload.description,
+        thumbnail: payload.thumbnail,
+        type: payload.type || existingLayout.type,
+        tags: payload.tags || existingLayout.tags,
+      };
+
+      // Only update data if provided
+      if (payload.data !== undefined) {
+        updateData.data = payload.data as any;
+      }
+
+      // Handle published field explicitly
+      if ('published' in payload) {
+        updateData.published = payload.published;
+        console.log('Setting published to:', payload.published);
+      }
+
       // Update layout
       const layout = await this.prisma.layout.update({
         where: { id },
-        data: {
-          name: payload.name,
-          description: payload.description,
-          thumbnail: payload.thumbnail,
-          data: payload.data as any,
-          type: payload.type || existingLayout.type,
-          tags: payload.tags || existingLayout.tags,
-          published: payload.published !== undefined ? payload.published : existingLayout.published,
-        },
+        data: updateData,
       });
 
       return successResponse('Layout updated successfully', layout);

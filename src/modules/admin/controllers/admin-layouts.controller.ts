@@ -36,6 +36,7 @@ export class AdminLayoutsController {
       description?: string;
       tags?: string[];
       thumbnail?: string;
+      published?: boolean;
       data?: any;
     },
   ): Promise<ResponseModel> {
