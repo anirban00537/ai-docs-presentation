@@ -152,6 +152,7 @@ export class PromptPresentationAIService implements OnModuleInit {
   ): AsyncGenerator<string, void, unknown> {
     const schemaId = outlineItem.schemaId || outlineItem.layoutId;
     const slideStartTime = Date.now();
+    const estimatedSeconds = 10; // Average time per slide
 
     this.logger.log(
       `▶ [Slide ${slideNumber}/${totalSlides}] Starting generation...`,
@@ -179,14 +180,24 @@ export class PromptPresentationAIService implements OnModuleInit {
       }
     }
 
+    // Initial slide-start event with estimated time
     yield JSON.stringify({
       type: 'slide-start',
       slideNumber,
       totalSlides,
+      estimatedSeconds,
+      stage: 'initializing',
     });
 
     try {
       // Step 1: Analyze layout and fetch images
+      yield JSON.stringify({
+        type: 'slide-progress',
+        slideNumber,
+        stage: 'analyzing-layout',
+        message: 'Analyzing layout structure...',
+      });
+
       const imageInjectionPrompt = await this.processImages(
         layoutData,
         outlineItem.content,
@@ -194,7 +205,14 @@ export class PromptPresentationAIService implements OnModuleInit {
         slideNumber,
       );
 
-      // Step 2: Build prompts and generate slide content
+      // Step 2: Generate slide content
+      yield JSON.stringify({
+        type: 'slide-progress',
+        slideNumber,
+        stage: 'generating-content',
+        message: 'AI is creating slide content...',
+      });
+
       const slideData = await this.generateSlideContent(
         slideNumber,
         totalSlides,
@@ -207,6 +225,13 @@ export class PromptPresentationAIService implements OnModuleInit {
       );
 
       // Step 3: Save slide to database
+      yield JSON.stringify({
+        type: 'slide-progress',
+        slideNumber,
+        stage: 'saving-slide',
+        message: 'Saving slide to database...',
+      });
+
       const savedSlide = await this.saveSlide(presentationId, slideData);
 
       const slideDuration = ((Date.now() - slideStartTime) / 1000).toFixed(2);
@@ -220,6 +245,7 @@ export class PromptPresentationAIService implements OnModuleInit {
         slideNumber,
         slideId: savedSlide.id,
         data: slideData,
+        duration: slideDuration,
       });
     } catch (error: any) {
       this.logger.error(
