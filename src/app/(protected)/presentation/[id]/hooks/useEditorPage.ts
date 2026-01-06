@@ -277,11 +277,21 @@ export const useEditorPage = ({
                 setIsGeneratingSlides(false);
                 setSlideGenerationProgress(null);
                 toast.success("Presentation created successfully!");
-              } else if (
-                chunk.type === "slide-error" ||
-                chunk.type === "error"
-              ) {
-                console.log("[useEditorPage] Error chunk received:", chunk);
+              } else if (chunk.type === "slide-error") {
+                // FIXED: Don't stop the whole generation on individual slide error
+                // Just show a toast but keep generating remaining slides
+                console.log("[useEditorPage] Slide error received:", chunk);
+                const errorMessage = chunk.message || "Unknown error";
+                toast.error(
+                  `Slide ${chunk.slideNumber} failed: ${errorMessage}`,
+                  {
+                    duration: 5000,
+                  }
+                );
+                // Continue showing progress for remaining slides
+              } else if (chunk.type === "error") {
+                // FATAL error - stop everything
+                console.log("[useEditorPage] Fatal error received:", chunk);
                 setIsGeneratingSlides(false);
                 setSlideGenerationProgress(null);
                 const errorMessage = chunk.message || "Unknown error";
@@ -371,11 +381,21 @@ export const useEditorPage = ({
             setIsGeneratingSlides(false);
             setSlideGenerationProgress(null);
             toast.success("Presentation created successfully!");
-          } else if (chunk.type === "slide-error" || chunk.type === "error") {
+          } else if (chunk.type === "slide-error") {
+            // FIXED: Don't stop generation on individual slide error
+            console.log("[useEditorPage] Slide error received:", chunk);
+            toast.error(
+              `Slide ${chunk.slideNumber} failed: ${chunk.message || "Unknown error"}`,
+              { duration: 5000 }
+            );
+            // Continue showing progress
+          } else if (chunk.type === "error") {
+            // FATAL error - stop everything
             setIsGeneratingSlides(false);
             setSlideGenerationProgress(null);
             toast.error(
-              `Error generating slides: ${chunk.message || "Unknown error"}`
+              `Error generating slides: ${chunk.message || "Unknown error"}`,
+              { duration: 10000 }
             );
           }
         },
