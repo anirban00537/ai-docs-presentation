@@ -34,5 +34,8 @@ export class UpdateLayoutDto {
   @IsArray()
   @IsString({ each: true })
   tags?: string[];
+
+  @IsOptional()
+  published?: boolean;
 }
 

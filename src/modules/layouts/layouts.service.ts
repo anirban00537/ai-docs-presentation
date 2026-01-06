@@ -28,6 +28,7 @@ export class LayoutsService {
           type: 'admin', // TODO: For testing - will change later
           tags: payload.tags || [],
           isAdmin: true, // TODO: For testing - will change later
+          published: payload.published !== undefined ? payload.published : true,
         },
       });
       return successResponse('Layout created successfully', layout);
@@ -60,6 +61,7 @@ export class LayoutsService {
       const layouts = await this.prisma.layout.findMany({
         where: {
           isAdmin: true,
+          published: true,
           deletedAt: null,
         },
         select: {
@@ -68,6 +70,7 @@ export class LayoutsService {
           description: true,
           thumbnail: true,
           data: true,
+          published: true,
         },
         orderBy: [{ usageCount: 'desc' }, { createdAt: 'desc' }],
       });
@@ -79,6 +82,7 @@ export class LayoutsService {
           name: layout.name,
           description: layout.description,
           thumbnail: layout.thumbnail,
+          published: layout.published,
           icon: data?.icon || 'IconLayout',
         };
       });
@@ -141,6 +145,7 @@ export class LayoutsService {
           data: payload.data as any,
           type: payload.type || existingLayout.type,
           tags: payload.tags || existingLayout.tags,
+          published: payload.published !== undefined ? payload.published : existingLayout.published,
         },
       });
 

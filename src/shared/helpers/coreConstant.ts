@@ -56,11 +56,11 @@ export const coreConstant = {
   AI_MODELS: {
     OUTLINE: {
       NAME: 'deepseek/deepseek-v3.2',
-      PRICING: { prompt: 0.20, completion: 0.50 }, // $ per 1M tokens
+      PRICING: { prompt: 0.25, completion: 0.38 }, // $ per 1M tokens
     },
     SLIDES: {
       NAME: 'deepseek/deepseek-v3.2',
-      PRICING: { prompt: 0.039, completion: 0.19 },
+      PRICING: { prompt: 0.25, completion: 0.38 },
     },
     IMAGE: {
       NAME: 'black-forest-labs/flux-1.1-pro',

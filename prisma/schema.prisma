@@ -332,6 +332,7 @@ model Layout {
   usageCount Int @default(0)
 
   isAdmin Boolean @default(true)
+  published Boolean @default(true)
 
   deletedAt DateTime?
 
@@ -343,6 +344,7 @@ model Layout {
   @@index([deletedAt])
   @@index([createdAt])
   @@index([usageCount])
+  @@index([published])
   @@map("layouts")
 }
 

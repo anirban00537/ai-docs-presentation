@@ -32,5 +32,8 @@ export class CreateLayoutDto {
   @IsArray()
   @IsString({ each: true })
   tags?: string[];
+
+  @IsOptional()
+  published?: boolean;
 }
 

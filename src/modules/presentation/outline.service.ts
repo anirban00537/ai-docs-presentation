@@ -136,6 +136,7 @@ export class OutlineService implements OnModuleInit {
           const allLayouts = await this.prisma.layout.findMany({
             where: {
               isAdmin: true,
+              published: true,
               deletedAt: null,
             },
             select: {
