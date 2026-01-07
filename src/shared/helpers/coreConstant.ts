@@ -55,11 +55,11 @@ export const coreConstant = {
 
   AI_MODELS: {
     OUTLINE: {
-      NAME: 'deepseek/deepseek-v3.2',
+      NAME: 'openai/gpt-5-nano',
       PRICING: { prompt: 0.25, completion: 0.38 }, // $ per 1M tokens
     },
     SLIDES: {
-      NAME: 'deepseek/deepseek-v3.2',
+      NAME: 'openai/gpt-5-nano',
       PRICING: { prompt: 0.25, completion: 0.38 },
     },
     IMAGE: {
