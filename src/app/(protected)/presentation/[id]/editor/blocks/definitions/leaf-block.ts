@@ -1,9 +1,9 @@
-import { LeafBlockContentSchema, type LeafBlockContent, type LeafItem } from "@/types/presentation";
+import { LeafBlockContentSchema, type LeafBlockContent, type LeafItem, createProseMirrorDoc } from "@/types/presentation";
 import { nanoid } from "nanoid";
 
 export const createLeafItem = (
-    title: string = "#### Title",
-    description: string = "This is a leaf card. It has a unique shape and style."
+    title: any = createProseMirrorDoc("Title", "heading", 4),
+    description: any = createProseMirrorDoc("This is a leaf card. It has a unique shape and style.")
 ): LeafItem => ({
     id: nanoid(),
     title,
@@ -26,7 +26,7 @@ export const normalizeLeafBlockContent = (
     if (content.editorContent && !content.items) {
         return {
             type: "leaf-block",
-            items: [createLeafItem("## Title", content.editorContent)],
+            items: [createLeafItem(createProseMirrorDoc("Title", "heading", 2), content.editorContent)],
         };
     }
 
@@ -37,7 +37,7 @@ export const normalizeLeafBlockContent = (
             if (item.editorContent && (!item.title || !item.description)) {
                 return {
                     id: item.id || nanoid(),
-                    title: item.title || "## Title",
+                    title: item.title || createProseMirrorDoc("Title", "heading", 2),
                     description: item.description || item.editorContent,
                 };
             }

@@ -4,13 +4,14 @@ import {
   BlockType, 
   ConnectedStepsContent, 
   ConnectedStepsItem,
-  getDefaultHeadingContent 
+  getDefaultHeadingContent,
+  createProseMirrorDoc
 } from "@/types/presentation";
 
 export const createConnectedStepItem = (index: number = 0): ConnectedStepsItem => ({
   id: nanoid(),
-  title: index === -1 ? "" : `Step ${index + 1}`,
-  description: "This is a placeholder description. You can edit this text to provide more details about this specific step in the process.",
+  title: createProseMirrorDoc(index === -1 ? "" : `Step ${index + 1}`, "heading", 4) as any,
+  description: createProseMirrorDoc("This is a placeholder description. You can edit this text to provide more details about this specific step in the process.") as any,
 });
 
 export const createConnectedStepsContent = (): ConnectedStepsContent => ({

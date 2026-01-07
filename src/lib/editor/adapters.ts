@@ -1,34 +1,14 @@
 import type { Slide as ReduxSlide, Block, Row } from "@/types/presentation";
-import {
-  normalizeToMarkdown,
-  isLegacyProseMirrorFormat,
-  isMarkdownFormat,
-} from "@/lib/markdown/prosemirror-converter";
 import { BLOCK_TYPES } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
 
 /**
- * Migrate a single block's content from legacy JSON to Markdown if needed
+ * Migration helper for block content. 
+ * Now that we support both Markdown and original ProseMirror JSON, 
+ * we mostly preserve the content as-is.
  */
 function migrateBlockContent(block: Block): Block {
-  // Check if this is a prosemirror block (default type or explicitly prosemirror)
-  const isProseMirrorBlock =
-    !block.type || block.type === BLOCK_TYPES.PROSEMIRROR;
-
-  if (isProseMirrorBlock && block.content) {
-    // If content is already Markdown, keep it
-    if (isMarkdownFormat(block.content)) {
-      return block;
-    }
-
-    // If content is legacy JSON format, convert to Markdown
-    if (isLegacyProseMirrorFormat(block.content)) {
-      return {
-        ...block,
-        content: normalizeToMarkdown(block.content),
-      };
-    }
-  }
-
+  // If it's a ProseMirror block, we now accept both string (markdown) and object (JSON)
+  // No forced conversion is needed anymore.
   return block;
 }
 

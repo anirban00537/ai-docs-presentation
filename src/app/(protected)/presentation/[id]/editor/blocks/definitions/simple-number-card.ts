@@ -1,10 +1,10 @@
-import { SimpleNumberCardContentSchema, type SimpleNumberCardContent, type SimpleNumberCardItem } from "@/types/presentation";
+import { SimpleNumberCardContentSchema, type SimpleNumberCardContent, type SimpleNumberCardItem, createProseMirrorDoc } from "@/types/presentation";
 import { nanoid } from "nanoid";
 
 export const createSimpleNumberCardItem = (
   number: number = 1,
-  title: string = "#### Point Title",
-  description: string = "Provide context and detail about this key point here."
+  title: any = createProseMirrorDoc("Point Title", "heading", 4),
+  description: any = createProseMirrorDoc("Provide context and detail about this key point here.")
 ): SimpleNumberCardItem => ({
   id: nanoid(),
   number,
@@ -28,7 +28,7 @@ export const normalizeSimpleNumberCardContent = (
   if (content.number !== undefined && content.editorContent && !content.items) {
     return {
       type: "simple-number-card",
-      items: [createSimpleNumberCardItem(content.number, "## Title", content.editorContent)],
+      items: [createSimpleNumberCardItem(content.number, createProseMirrorDoc("Title", "heading", 2), content.editorContent)],
     };
   }
 
@@ -40,15 +40,15 @@ export const normalizeSimpleNumberCardContent = (
             return {
                 id: item.id || nanoid(),
                 number: item.number ?? 1,
-                title: item.title || "## Title",
+                title: item.title || createProseMirrorDoc("Title", "heading", 2),
                 description: item.description || item.editorContent,
             };
         }
         return {
             id: item.id || nanoid(),
             number: item.number ?? 1,
-            title: item.title || "## Title",
-            description: item.description || "Description",
+            title: item.title || createProseMirrorDoc("Title", "heading", 2),
+            description: item.description || createProseMirrorDoc("Description"),
         };
     });
   }

@@ -3,12 +3,13 @@ import {
     StackedTimelineContentSchema,
     type StackedTimelineContent,
     type StackedTimelineItem,
+    createProseMirrorDoc,
 } from "@/types/presentation";
 
 export const createStackedTimelineItem = (): StackedTimelineItem => ({
     id: nanoid(),
-    title: "#### Item",
-    description: "Description",
+    title: createProseMirrorDoc("Item", "heading", 4) as any,
+    description: createProseMirrorDoc("Description") as any,
 });
 
 export const createStackedTimelineContent = (): StackedTimelineContent => ({

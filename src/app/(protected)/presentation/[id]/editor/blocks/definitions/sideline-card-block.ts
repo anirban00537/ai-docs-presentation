@@ -1,10 +1,10 @@
-import { BLOCK_TYPES, type SidelineCardContent, type SidelineCardItem } from "@/types/presentation";
+import { BLOCK_TYPES, type SidelineCardContent, type SidelineCardItem, createProseMirrorDoc } from "@/types/presentation";
 import { SidelineCardContentSchema } from "@/types/presentation/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createSidelineCardItem = (
-  title: string = "#### Key Insight",
-  description: string = "Highlight important takeaways here. The vertical accent draws attention."
+  title: any = createProseMirrorDoc("Key Insight", "heading", 4),
+  description: any = createProseMirrorDoc("Highlight important takeaways here. The vertical accent draws attention.")
 ): SidelineCardItem => ({
   id: nanoid(),
   title,
@@ -23,7 +23,7 @@ export const normalizeSidelineCardContent = (content: any): SidelineCardContent 
   if (content.editorContent && !content.items) {
     return {
       type: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
-      items: [createSidelineCardItem("## Insight", content.editorContent)],
+      items: [createSidelineCardItem(createProseMirrorDoc("Insight", "heading", 2), content.editorContent)],
     };
   }
 
@@ -34,14 +34,14 @@ export const normalizeSidelineCardContent = (content: any): SidelineCardContent 
         if (item.editorContent && (!item.title || !item.description)) {
             return {
                 id: item.id || nanoid(),
-                title: item.title || "## Title",
+                title: item.title || createProseMirrorDoc("Title", "heading", 2),
                 description: item.description || item.editorContent,
             };
         }
         return {
             id: item.id || nanoid(),
-            title: item.title || "## Title",
-            description: item.description || "Description",
+            title: item.title || createProseMirrorDoc("Title", "heading", 2),
+            description: item.description || createProseMirrorDoc("Description"),
         };
     });
   }

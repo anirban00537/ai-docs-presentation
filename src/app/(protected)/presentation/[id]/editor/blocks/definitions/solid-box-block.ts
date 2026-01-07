@@ -1,10 +1,10 @@
-import { BLOCK_TYPES, type SolidBoxContent, type SolidBoxItem } from "@/types/presentation";
+import { BLOCK_TYPES, type SolidBoxContent, type SolidBoxItem, createProseMirrorDoc } from "@/types/presentation";
 import { SolidBoxContentSchema } from "@/types/presentation/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createSolidBoxItem = (
-  title: string = "#### Major Point",
-  description: string = "Standard content with a solid presence. Strong blocks build reliable structures."
+  title: any = createProseMirrorDoc("Major Point", "heading", 4),
+  description: any = createProseMirrorDoc("Standard content with a solid presence. Strong blocks build reliable structures.")
 ): SolidBoxItem => ({
   id: nanoid(),
   title,
@@ -23,7 +23,7 @@ export const normalizeSolidBoxContent = (content: any): SolidBoxContent => {
   if (content.editorContent && !content.items) {
     return {
       type: BLOCK_TYPES.SOLID_BOX_BLOCK,
-      items: [createSolidBoxItem("## Point", content.editorContent)],
+      items: [createSolidBoxItem(createProseMirrorDoc("Point", "heading", 2), content.editorContent)],
     };
   }
 
@@ -34,14 +34,14 @@ export const normalizeSolidBoxContent = (content: any): SolidBoxContent => {
         if (item.editorContent && (!item.title || !item.description)) {
             return {
                 id: item.id || nanoid(),
-                title: item.title || "## Title",
+                title: item.title || createProseMirrorDoc("Title", "heading", 2),
                 description: item.description || item.editorContent,
             };
         }
         return {
             id: item.id || nanoid(),
-            title: item.title || "## Title",
-            description: item.description || "Description",
+            title: item.title || createProseMirrorDoc("Title", "heading", 2),
+            description: item.description || createProseMirrorDoc("Description"),
         };
     });
   }

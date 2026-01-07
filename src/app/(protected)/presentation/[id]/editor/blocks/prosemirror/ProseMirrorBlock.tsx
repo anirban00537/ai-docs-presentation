@@ -18,8 +18,8 @@ export const ProseMirrorBlock = memo(function ProseMirrorBlock({
   readOnly,
   theme,
 }: ProseMirrorBlockProps) {
-  // The onUpdate expects BlockContent, and ProseMirrorDocument (string) is valid BlockContent
-  const handleChange = useCallback((content: string) => {
+  // The onUpdate expects BlockContent, and ProseMirrorDocument (string or JSON) is valid BlockContent
+  const handleChange = useCallback((content: any) => {
     onUpdate(content);
   }, [onUpdate]);
 

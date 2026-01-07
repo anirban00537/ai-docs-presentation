@@ -1,11 +1,11 @@
-import { BLOCK_TYPES, type SolidIconBoxContent, type SolidIconBoxItem } from "@/types/presentation";
+import { BLOCK_TYPES, type SolidIconBoxContent, type SolidIconBoxItem, createProseMirrorDoc } from "@/types/presentation";
 import { SolidIconBoxContentSchema } from "@/types/presentation/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createSolidIconBoxItem = (
   icon: string = "star",
-  title: string = "#### Feature Title",
-  description: string = "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
+  title: any = createProseMirrorDoc("Feature Title", "heading", 4),
+  description: any = createProseMirrorDoc("Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition.")
 ): SolidIconBoxItem => ({
   id: nanoid(),
   icon,
@@ -25,7 +25,7 @@ export const normalizeSolidIconBoxContent = (content: any): SolidIconBoxContent 
   if ((content.editorContent || content.icon) && !content.items) {
     return {
       type: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
-      items: [createSolidIconBoxItem(content.icon || "star", "## Feature", content.editorContent || "Description")],
+      items: [createSolidIconBoxItem(content.icon || "star", createProseMirrorDoc("Feature", "heading", 2), content.editorContent || createProseMirrorDoc("Description"))],
     };
   }
 
@@ -37,15 +37,15 @@ export const normalizeSolidIconBoxContent = (content: any): SolidIconBoxContent 
             return {
                 id: item.id || nanoid(),
                 icon: item.icon || "star",
-                title: item.title || "## Title",
+                title: item.title || createProseMirrorDoc("Title", "heading", 2),
                 description: item.description || item.editorContent,
             };
         }
         return {
             id: item.id || nanoid(),
             icon: item.icon || "star",
-            title: item.title || "## Title",
-            description: item.description || "Description",
+            title: item.title || createProseMirrorDoc("Title", "heading", 2),
+            description: item.description || createProseMirrorDoc("Description"),
         };
     });
   }

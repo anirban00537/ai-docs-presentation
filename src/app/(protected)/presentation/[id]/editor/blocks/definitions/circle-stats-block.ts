@@ -4,15 +4,16 @@ import {
   BlockType, 
   CircleStatsContent, 
   CircleStatsItem,
-  getDefaultHeadingContent 
+  getDefaultHeadingContent, 
+  createProseMirrorDoc
 } from "@/types/presentation";
 
 export const createCircleStatsItem = (value: number = 75): CircleStatsItem => ({
   id: nanoid(),
   value,
   suffix: "",
-  title: "#### Statistic",
-  description: "Add a short description regarding this statistic.",
+  title: createProseMirrorDoc("Statistic", "heading", 4) as any,
+  description: createProseMirrorDoc("Add a short description regarding this statistic.") as any,
 });
 
 export const createCircleStatsContent = (): CircleStatsContent => ({

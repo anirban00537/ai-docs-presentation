@@ -3,12 +3,13 @@ import {
     TimelineBentoContentSchema,
     type TimelineBentoContent,
     type TimelineBentoItem,
+    createProseMirrorDoc,
 } from "@/types/presentation";
 
 export const createTimelineBentoItem = (): TimelineBentoItem => ({
     id: nanoid(),
-    title: "#### Item",
-    description: "Description",
+    title: createProseMirrorDoc("Item", "heading", 4) as any,
+    description: createProseMirrorDoc("Description") as any,
 });
 
 export const createTimelineBentoContent = (): TimelineBentoContent => ({

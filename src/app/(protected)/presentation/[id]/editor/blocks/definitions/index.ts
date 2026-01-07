@@ -41,11 +41,7 @@ export {
   createCircleStatsContent, normalizeCircleStatsContent,
 };
 
-import {
-  normalizeToMarkdown,
-  isLegacyProseMirrorFormat,
-  isMarkdownFormat,
-} from "@/lib/markdown/prosemirror-converter";
+
 
 export const createBlockContentForType = (
   type: BlockType | undefined
@@ -125,10 +121,10 @@ export const normalizeBlockContent = (
       return normalizeCircleStatsContent(content);
 
     default:
-      if (isMarkdownFormat(content)) {
+      if (typeof content === "string") {
         return content;
-      } else if (isLegacyProseMirrorFormat(content)) {
-        return normalizeToMarkdown(content);
+      } else if (content && typeof content === "object" && (content as any).type === "doc") {
+        return content as unknown as BlockContent;
       }
       return getDefaultHeadingContent();
   }

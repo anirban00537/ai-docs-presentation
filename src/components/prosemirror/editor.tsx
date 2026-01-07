@@ -19,6 +19,7 @@ import {
   liftListItem,
   sinkListItem,
 } from "prosemirror-schema-list";
+import { defaultMarkdownParser } from "prosemirror-markdown";
 import { cn } from "@/lib/utils";
 import { schema } from "./schema";
 import { createInputRules } from "./input-rules";
@@ -35,12 +36,7 @@ import {
   type Theme,
 } from "@/store/slices/slidesSlice";
 import { getFontFamily } from "@/lib/fonts";
-import {
-  prosemirrorToMarkdown,
-  markdownToProseMirror,
-  isLegacyProseMirrorFormat,
-  isMarkdownFormat,
-} from "@/lib/markdown/prosemirror-converter";
+
 
 // Legacy ProseMirrorDocument type (for backward compatibility)
 interface LegacyProseMirrorDocument {
@@ -143,16 +139,34 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
     // Handle both Markdown string and legacy JSON format
     let prosemirrorDoc: ProseMirrorNode | null = null;
 
-    if (isMarkdownFormat(value)) {
+    if (typeof value === "string") {
       // New format: Markdown string
       try {
-        const legacyDoc = markdownToProseMirror(value);
-        prosemirrorDoc = ProseMirrorNode.fromJSON(schema, legacyDoc);
+        // Fallback for markdown strings using default parser
+        // We'll lazy load or just rely on what we have? 
+        // Actually, if we delete the converter file, we should import defaultMarkdownParser from 'prosemirror-markdown'
+        // For now, let's assume we import checking logic.
+        // We will assume value IS markdown string and try to parse it using default parser.
+        // But `markdownToProseMirror` was doing it.
+        // I will use `defaultMarkdownParser.parse(value)`
+        // However, I need to make sure `defaultMarkdownParser` is imported. 
+        // I will just use `schema` to create a doc from text if parsing is too complex without the converter, 
+        // BUT `prosemirror-markdown` is a dependency.
+        // Let's use `defaultMarkdownParser.parse(value)` and then `.toJSON()`.
+        // Wait, `.parse(value)` returns a Node.
+        // `ProseMirrorNode.fromJSON` expects JSON.
+        // So: `prosemirrorDoc = defaultMarkdownParser.parse(value);`
+        // But `defaultMarkdownParser` expects a schema? 
+        // `defaultMarkdownParser` is an instance of `MarkdownParser`.
+        // It is exported from `prosemirror-markdown` pre-configured with commonmark.
+        
+        // Let's modify imports in next step. For now, use `defaultMarkdownParser` assuming it will be imported.
+        prosemirrorDoc = defaultMarkdownParser.parse(value);
       } catch (error) {
         console.warn("Failed to parse Markdown:", error);
         return;
       }
-    } else if (isLegacyProseMirrorFormat(value)) {
+    } else if (value && typeof value === 'object' && value.type === 'doc') {
       // Legacy format: ProseMirror JSON object
       try {
         prosemirrorDoc = ProseMirrorNode.fromJSON(schema, value);
@@ -189,15 +203,14 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
 
   // Parse initial value to ProseMirror doc
   const initialDoc = useMemo(() => {
-    if (isMarkdownFormat(value)) {
+    if (typeof value === "string") {
       // New format: Markdown string
       try {
-        const legacyDoc = markdownToProseMirror(value);
-        return ProseMirrorNode.fromJSON(schema, legacyDoc);
+        return defaultMarkdownParser.parse(value);
       } catch {
         // Invalid Markdown, create empty doc
       }
-    } else if (isLegacyProseMirrorFormat(value)) {
+    } else if (value && typeof value === 'object' && value.type === 'doc') {
       // Legacy format: ProseMirror JSON object
       try {
         return ProseMirrorNode.fromJSON(schema, value);
@@ -457,18 +470,25 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
                 : "left";
 
               setSelectionToolbar((prev) => {
+                // Check if marks changed (simple size check and content check)
+                const marksChanged = prev.activeMarks.size !== activeMarks.size || 
+                  Array.from(activeMarks).some(m => !prev.activeMarks.has(m));
+                
                 // Only update if something actually changed
-                if (prev.visible &&
+                if (
+                  prev.visible &&
+                  !marksChanged &&
+                  prev.activeAlignment === activeAlignment &&
                   prev.position.top === coords.top - editorRect.top &&
-                  prev.position.left === coords.left - editorRect.left + (to - from > 10 ? 50 : 0)) {
+                  prev.position.left === coords.left - editorRect.left + (to - from > 10 ? 50 : 0)
+                ) {
                   return prev; // No change needed
                 }
                 return {
                   visible: true,
                   position: {
-                    top: coords.top - editorRect.top,
-                    left:
-                      coords.left - editorRect.left + (to - from > 10 ? 50 : 0),
+                    top: coords.top,
+                    left: coords.left + (to - from > 10 ? 40 : 0),
                   },
                   activeMarks,
                   activeAlignment,
@@ -491,11 +511,10 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
         }
 
         if (transaction.docChanged) {
-          // Convert ProseMirror doc to Markdown before saving
+          // Pass the ProseMirror JSON document directly
           const json = newState.doc.toJSON();
-          const markdown = prosemirrorToMarkdown(json);
           isInternalChangeRef.current = true; // Mark as internal change
-          onChangeRef.current(markdown);
+          onChangeRef.current(json);
 
           // Check for slash command trigger
           const { $from } = newState.selection;

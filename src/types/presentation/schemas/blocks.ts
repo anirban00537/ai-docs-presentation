@@ -2,7 +2,12 @@ import { z } from "zod";
 
 // --- Base Types ---
 
-export const ProseMirrorDocumentSchema = z.string();
+export const ProseMirrorDocObjectSchema = z.object({
+  type: z.literal("doc"),
+  content: z.array(z.any()).optional(),
+}).passthrough();
+
+export const ProseMirrorDocumentSchema = z.union([z.string(), ProseMirrorDocObjectSchema]);
 
 // --- Block Content Schemas ---
 
@@ -193,6 +198,7 @@ export type CircleStatsContent = z.infer<typeof CircleStatsContentSchema>;
 
 export const BlockContentSchema = z.union([
   z.string(),
+  ProseMirrorDocObjectSchema,
   ImageContentSchema,
   CodeContentSchema,
   SimpleNumberCardContentSchema,
@@ -212,7 +218,41 @@ export const BlockContentSchema = z.union([
 
 
 // Utilities
-export const getDefaultHeadingContent = (): string => "";
+export const getDefaultHeadingContent = (): any => createProseMirrorDoc("", "heading", 2);
+
+export const createProseMirrorDoc = (text: string, type: 'paragraph' | 'heading' = 'paragraph', level: number = 1) => {
+  if (type === 'heading') {
+    return {
+      type: 'doc',
+      content: [
+        {
+          type: 'heading',
+          attrs: { level },
+          content: [
+            {
+              type: 'text',
+              text,
+            },
+          ],
+        },
+      ],
+    };
+  }
+  return {
+    type: 'doc',
+    content: [
+      {
+        type: 'paragraph',
+        content: [
+          {
+            type: 'text',
+            text,
+          },
+        ],
+      },
+    ],
+  };
+};
 
 export const withAlpha = (color: string, opacity: number): string => {
   if (color.startsWith("#")) {

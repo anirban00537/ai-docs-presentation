@@ -14,11 +14,11 @@ import type {
   ProseMirrorDocument,
 } from "./schemas";
 
-// Type guard for string content (ProseMirror markdown)
+// Type guard for string content (ProseMirror markdown) or JSON doc
 export const isProseMirrorDocument = (
   content: BlockContent
 ): content is ProseMirrorDocument => {
-  return typeof content === "string";
+  return typeof content === "string" || (typeof content === "object" && content !== null && "type" in content && content.type === "doc");
 };
 
 // Type guard helper for checking object content type discriminator
@@ -74,6 +74,7 @@ export const getBlockContentType = (
     "type" in content &&
     typeof content.type === "string"
   ) {
+    if (content.type === "doc") return "prosemirror";
     return content.type;
   }
   return "unknown";

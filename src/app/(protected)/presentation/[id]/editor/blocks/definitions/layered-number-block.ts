@@ -1,10 +1,10 @@
-import { LayeredNumberContentSchema, type LayeredNumberContent, type LayeredNumberItem } from "@/types/presentation";
+import { LayeredNumberContentSchema, type LayeredNumberContent, type LayeredNumberItem, createProseMirrorDoc } from "@/types/presentation";
 import { nanoid } from "nanoid";
 
 export const createLayeredNumberItem = (
   number: number = 1,
-  title: string = "#### Core Objective",
-  description: string = "Define your core objective. The large background number adds depth and indicates sequence."
+  title: any = createProseMirrorDoc("Core Objective", "heading", 4),
+  description: any = createProseMirrorDoc("Define your core objective. The large background number adds depth and indicates sequence.")
 ): LayeredNumberItem => ({
   id: nanoid(),
   number,
@@ -24,7 +24,7 @@ export const normalizeLayeredNumberContent = (content: any): LayeredNumberConten
   if (content.number !== undefined && content.editorContent && !content.items) {
     return {
       type: "layered-number-block",
-      items: [createLayeredNumberItem(content.number, "## Title", content.editorContent)],
+      items: [createLayeredNumberItem(content.number, createProseMirrorDoc("Title", "heading", 2), content.editorContent)],
     };
   }
 
@@ -36,15 +36,15 @@ export const normalizeLayeredNumberContent = (content: any): LayeredNumberConten
             return {
                 id: item.id || nanoid(),
                 number: item.number ?? 1,
-                title: item.title || "## Title",
+                title: item.title || createProseMirrorDoc("Title", "heading", 2),
                 description: item.description || item.editorContent,
             };
         }
         return {
             id: item.id || nanoid(),
             number: item.number ?? 1,
-            title: item.title || "## Title",
-            description: item.description || "Description",
+            title: item.title || createProseMirrorDoc("Title", "heading", 2),
+            description: item.description || createProseMirrorDoc("Description"),
         };
     });
   }
