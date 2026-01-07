@@ -12,14 +12,9 @@ export const createTimelineBentoItem = (): TimelineBentoItem => ({
     description: createProseMirrorDoc("Description") as any,
 });
 
-export const createTimelineBentoContent = (): TimelineBentoContent => ({
+export const createTimelineBentoContent = (itemCount: number = 4): TimelineBentoContent => ({
     type: "timeline-bento-block",
-    items: [
-        createTimelineBentoItem(),
-        createTimelineBentoItem(),
-        createTimelineBentoItem(),
-        createTimelineBentoItem(),
-    ],
+    items: Array.from({ length: itemCount }, () => createTimelineBentoItem()),
 });
 
 export const normalizeTimelineBentoContent = (

@@ -14,13 +14,9 @@ export const createConnectedStepItem = (index: number = 0): ConnectedStepsItem =
   description: createProseMirrorDoc("This is a placeholder description. You can edit this text to provide more details about this specific step in the process.") as any,
 });
 
-export const createConnectedStepsContent = (): ConnectedStepsContent => ({
+export const createConnectedStepsContent = (itemCount: number = 3): ConnectedStepsContent => ({
   type: "connected-steps-block",
-  items: [
-    createConnectedStepItem(0),
-    createConnectedStepItem(1),
-    createConnectedStepItem(2),
-  ],
+  items: Array.from({ length: itemCount }, (_, i) => createConnectedStepItem(i)),
 });
 
 export const normalizeConnectedStepsContent = (content: unknown): ConnectedStepsContent => {

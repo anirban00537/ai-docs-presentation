@@ -12,13 +12,9 @@ export const createStackedTimelineItem = (): StackedTimelineItem => ({
     description: createProseMirrorDoc("Description") as any,
 });
 
-export const createStackedTimelineContent = (): StackedTimelineContent => ({
+export const createStackedTimelineContent = (itemCount: number = 3): StackedTimelineContent => ({
     type: "stacked-timeline-block",
-    items: [
-        createStackedTimelineItem(),
-        createStackedTimelineItem(),
-        createStackedTimelineItem(),
-    ],
+    items: Array.from({ length: itemCount }, () => createStackedTimelineItem()),
 });
 
 export const normalizeStackedTimelineContent = (

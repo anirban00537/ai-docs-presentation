@@ -16,13 +16,11 @@ export const createCircleStatsItem = (value: number = 75): CircleStatsItem => ({
   description: createProseMirrorDoc("Add a short description regarding this statistic.") as any,
 });
 
-export const createCircleStatsContent = (): CircleStatsContent => ({
+export const createCircleStatsContent = (itemCount: number = 3): CircleStatsContent => ({
   type: "circle-stats-block",
-  items: [
-    createCircleStatsItem(88),
-    createCircleStatsItem(11),
-    createCircleStatsItem(55),
-  ],
+  items: Array.from({ length: itemCount }, (_, i) => 
+    createCircleStatsItem(70 + (i * 10) % 30)
+  ),
 });
 
 export const normalizeCircleStatsContent = (content: unknown): CircleStatsContent => {
