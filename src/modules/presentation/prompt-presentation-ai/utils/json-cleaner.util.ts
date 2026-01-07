@@ -41,6 +41,10 @@ export class JsonCleanerUtil {
       }
     }
 
+    // Strip alignment tags if they were generated (legacy/pattern follow)
+    cleaned = cleaned.replace(/<align="[^"]*">/g, '');
+    cleaned = cleaned.replace(/<\/align>/g, '');
+
     return cleaned.trim();
   }
 

@@ -11,24 +11,27 @@ export interface PresentationTheme {
   [key: string]: any;
 }
 
-export interface Widget {
+export interface Block {
   id: string;
   type: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  [key: string]: any;
+  content: any;
+}
+
+export interface Row {
+  id: string;
+  blocks: Block[];
+  columnWidths?: number[];
 }
 
 export interface Slide {
-  title: string;
-  widgets: Widget[];
-  backgroundColor?: string;
-  backgroundImage?: string;
-  showSlideNumber?: boolean;
-  slideStyle?: string;
-  backgroundBlur?: boolean;
+  id?: string;
+  rows: Row[];
+  accent?: {
+    url: string;
+    position: 'left' | 'right' | 'top' | 'bottom' | 'background';
+    size: number;
+    objectFit?: 'cover' | 'contain';
+  };
   order?: number;
   [key: string]: any;
 }
@@ -39,3 +42,4 @@ export interface PresentationStructure {
   theme?: PresentationTheme;
   [key: string]: any;
 }
+

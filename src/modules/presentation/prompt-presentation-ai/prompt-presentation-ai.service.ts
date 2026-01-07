@@ -395,12 +395,10 @@ export class PromptPresentationAIService implements OnModuleInit {
     }
 
     // Parse and normalize slide data
-    let slideData;
-    let parseSuccessful = false;
+    let slideData: any;
 
     try {
       slideData = JsonCleanerUtil.extractValidJson(content as string);
-      parseSuccessful = true;
     } catch (parseError) {
       this.logger.warn(
         `[Slide ${slideNumber}] JSON parsing failed, using template fallback structure...`,
@@ -414,28 +412,52 @@ export class PromptPresentationAIService implements OnModuleInit {
             ...block,
             content:
               block.type === 'prosemirror'
-                ? '## Generated Content\n\nContent generation incomplete. Please edit this slide.'
+                ? {
+                    type: 'doc',
+                    content: [
+                      {
+                        type: 'heading',
+                        attrs: { level: 2 },
+                        content: [{ type: 'text', text: 'Generated Content' }],
+                      },
+                      {
+                        type: 'paragraph',
+                        content: [
+                          {
+                            type: 'text',
+                            text: 'Content generation incomplete. Please edit this slide.',
+                          },
+                        ],
+                      },
+                    ],
+                  }
                 : block.content,
           })),
         })),
       };
-
-      this.logger.log(
-        `[Slide ${slideNumber}] Using template fallback structure (parse error: ${(parseError as Error).message})`,
-      );
     }
 
-    // Extract rows if nested in data object
-    if (slideData?.data?.rows) {
-      slideData = { rows: slideData.data.rows };
-    } else if (slideData?.data) {
-      slideData = { rows: slideData.data };
-    } else if (!slideData?.rows && slideData) {
-      slideData = { rows: Array.isArray(slideData) ? slideData : [] };
+    // Normalize: Handle nested "data" or different wrapper styles
+    // We want to extract both "rows" AND "accent" if they exist
+    const finalSlideData: any = {
+      rows: [],
+    };
+
+    const source = slideData?.data || slideData;
+
+    if (source?.rows && Array.isArray(source.rows)) {
+      finalSlideData.rows = source.rows;
+    } else if (Array.isArray(source)) {
+      finalSlideData.rows = source;
     }
 
-    return slideData;
+    if (source?.accent) {
+      finalSlideData.accent = source.accent;
+    }
+
+    return finalSlideData;
   }
+
 
   /**
    * Save a slide to the database
