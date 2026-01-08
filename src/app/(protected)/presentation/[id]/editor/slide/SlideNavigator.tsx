@@ -60,6 +60,8 @@ interface SlideNavigatorProps {
     rowId: string,
     columnWidths: number[]
   ) => void;
+  onAddSlide: (afterSlideId?: string) => void;
+  onDeleteSlide: (slideId: string) => void;
 }
 
 // --- Sortable Slide Item Component ---
@@ -210,6 +212,8 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
   onAddRowAtTop,
   onAddRowAtBottom,
   onUpdateColumnWidths,
+  onAddSlide: onAddSlideProp,
+  onDeleteSlide: onDeleteSlideProp,
 }) => {
   // State
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -332,14 +336,14 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
 
   const handleSelectLayout = useCallback((template: LayoutTemplate) => {
     setPendingLayout(template);
-    dispatch(addSlide({}));
-  }, [dispatch]);
+    onAddSlideProp();
+  }, [onAddSlideProp]);
 
   const handleDeleteSlide = useCallback((e: React.MouseEvent, slideId: string) => {
     e.stopPropagation(); // Prevent slide selection
     if (slides.length <= 1) return;
-    dispatch(deleteSlide(slideId));
-  }, [dispatch, slides.length]);
+    onDeleteSlideProp(slideId);
+  }, [onDeleteSlideProp, slides.length]);
 
   const activeDragSlide = useMemo(() => 
     slides.find((s) => s.id === activeDragId),

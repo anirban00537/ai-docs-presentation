@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+"use client";
+
+import { useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   DEFAULT_THEME,
-  addSlide,
   selectActiveSlideId,
   selectSlides,
   selectTheme,
@@ -11,713 +12,117 @@ import {
   setSlides,
   setTheme,
 } from "@/store/slices/slidesSlice";
-import { setPresentationId } from "@/store/middleware/slidesApiMiddleware";
-import { detectRowBlockType } from "@/app/(protected)/presentation/[id]/editor/blocks/utils";
-import {
-  convertApiSlideToRedux,
-  convertReduxSlideToApi,
-} from "@/lib/editor/adapters";
+import { convertApiSlideToRedux } from "@/lib/editor/adapters";
 import { createEditorCommandBus } from "@/lib/editor/commands";
-import {
-  usePresentation,
-  useCreatePresentation,
-} from "@/hooks/use-presentation";
-import {
-  useGenerateAndCreateSlides,
-  useOutline,
-} from "@/app/(protected)/presentation/[id]/hooks/use-outline";
-import { toast } from "sonner";
-import { nanoid } from "nanoid";
-import { parse as parsePartialJson } from "partial-json";
+import { usePresentation } from "@/hooks/use-presentation";
+import { useOutline } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
 import { useEditorDnd } from "./useEditorDnd";
+import { useSlideGeneration } from "./useSlideGeneration";
+import { useEditorSync } from "./useEditorSync";
+import { useSlideActions } from "./useSlideActions";
+import { detectRowBlockType } from "@/app/(protected)/presentation/[id]/editor/blocks/utils";
 
 interface UseEditorPageParams {
   presentationId: string | null;
   outlineId: string | null;
 }
 
-export const useEditorPage = ({
-  presentationId,
-  outlineId,
-}: UseEditorPageParams) => {
+export const useEditorPage = ({ presentationId, outlineId }: UseEditorPageParams) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   const slides = useAppSelector(selectSlides);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const activeSlideId = useAppSelector(selectActiveSlideId);
-
-  const [isGeneratingSlides, setIsGeneratingSlides] = useState(false);
-  const [slideGenerationProgress, setSlideGenerationProgress] = useState<{
-    current: number;
-    total: number;
-    stage?: string;
-    message?: string;
-    estimatedSeconds?: number;
-  } | null>(null);
-
-  const hasLoadedPresentation = useRef(false);
-  const hasStartedGeneration = useRef(false);
   const slidesRef = useRef(slides);
 
-  useEffect(() => {
-    slidesRef.current = slides;
-  }, [slides]);
+  useEffect(() => { slidesRef.current = slides; }, [slides]);
 
-  useEffect(() => {
-    if (activeSlideId) {
-      setTimeout(() => {
-        const slideElement = document.querySelector(
-          `[data-slide-id="${activeSlideId}"]`
-        );
-        if (slideElement) {
-          slideElement.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      }, 100);
-    }
-  }, [activeSlideId, slides.length]);
-
-  const { data: presentationResponse, isLoading: isLoadingPresentation } =
-    usePresentation(presentationId);
-  const createPresentationMutation = useCreatePresentation();
-  const generateAndCreateSlidesMutation = useGenerateAndCreateSlides();
+  // --- Sub-Hooks (The Logic Layers) ---
+  const { data: presentationResponse, isLoading: isLoadingPresentation } = usePresentation(presentationId);
   const { data: outlineResponse } = useOutline(outlineId);
+  
+  // 1. Generation Logic
+  const { isGenerating, progress, startGeneration } = useSlideGeneration({ 
+    presentationId, 
+    slidesRef 
+  });
 
-  const commandBus = useMemo(
-    () => createEditorCommandBus(dispatch),
-    [dispatch]
-  );
+  // 2. Sync Logic (Auto-save)
+  useEditorSync(presentationId);
 
-  const {
-    sensors,
-    activeBlock,
-    isBlockDragging,
-    draggingBlockType,
-    handleDragStart,
-    handleDragEnd,
-    customCollisionDetection,
-  } = useEditorDnd({ slides, commandBus });
+  // 4. Slide Actions (Add/Delete)
+  const { handleAddSlide, handleDeleteSlide } = useSlideActions(presentationId);
 
+  const commandBus = useMemo(() => createEditorCommandBus(dispatch), [dispatch]);
+
+  // 3. Interaction Logic (DnD)
+  const dnd = useEditorDnd({ slides, commandBus });
+
+  // --- Initialization Logic ---
+  const hasLoaded = useRef(false);
+
+  // Load presentation from DB
   useEffect(() => {
-    setPresentationId(presentationId);
-    return () => {
-      setPresentationId(null);
-    };
-  }, [presentationId]);
-
-  const saveAllSlidesToPresentation = useMemo(
-    () => async (presId: string) => {
-      if (!presId || slides.length === 0) return;
-      try {
-        const { createSlide } = await import("@/services/presentation");
-        for (let i = 0; i < slides.length; i++) {
-          const slide = slides[i];
-          const apiData = convertReduxSlideToApi(slide);
-          await createSlide(presId, {
-            ...apiData,
-            order: i,
-          });
-        }
-      } catch (error) {
-        console.error("Failed to save slides:", error);
-        toast.error("Failed to save slides to presentation");
-      }
-    },
-    [slides]
-  );
-
-  useEffect(() => {
-    hasLoadedPresentation.current = false;
-  }, [presentationId]);
-
-  useEffect(() => {
-    if (
-      presentationResponse?.success &&
-      presentationResponse.data?.slides &&
-      !hasLoadedPresentation.current
-    ) {
-      const apiSlides = presentationResponse.data.slides;
+    if (presentationResponse?.success && presentationResponse.data && !hasLoaded.current) {
+      const apiSlides = presentationResponse.data.slides || [];
       const reduxSlides = apiSlides
         .sort((a: any, b: any) => a.order - b.order)
         .map(convertApiSlideToRedux);
+      
       dispatch(setSlides(reduxSlides));
-
-      if (presentationResponse.data?.globalTheme) {
+      if (presentationResponse.data.globalTheme) {
         dispatch(setTheme(presentationResponse.data.globalTheme as any));
       }
+      dispatch(setPresentation(presentationResponse.data as any));
+      
+      hasLoaded.current = true;
 
-      if (presentationResponse.data) {
-        const presentationData = {
-          id: presentationResponse.data.id,
-          userId: presentationResponse.data.userId,
-          title: presentationResponse.data.title || "Untitled Presentation",
-          description: presentationResponse.data.description ?? null,
-          thumbnail: presentationResponse.data.thumbnail ?? null,
-          isPublic: presentationResponse.data.isPublic || false,
-          isTemplate: presentationResponse.data.isTemplate || false,
-          tags: presentationResponse.data.tags || [],
-          version: presentationResponse.data.version || 1,
-          parentId: presentationResponse.data.parentId ?? null,
-          forkedFrom: presentationResponse.data.forkedFrom ?? null,
-          sharedWith: presentationResponse.data.sharedWith || [],
-          ownerId:
-            presentationResponse.data.ownerId ||
-            presentationResponse.data.userId,
-          deletedAt: presentationResponse.data.deletedAt ?? null,
-          createdAt: presentationResponse.data.createdAt,
-          updatedAt: presentationResponse.data.updatedAt,
-          lastViewedAt: presentationResponse.data.lastViewedAt ?? null,
-        };
-        dispatch(setPresentation(presentationData));
-      }
-
-      hasLoadedPresentation.current = true;
-    } else if (
-      presentationResponse?.success &&
-      (!presentationResponse.data?.slides ||
-        presentationResponse.data.slides.length === 0) &&
-      !hasLoadedPresentation.current
-    ) {
-      dispatch(setSlides([]));
-
-      if (presentationResponse.data?.globalTheme) {
-        dispatch(setTheme(presentationResponse.data.globalTheme as any));
-      }
-
-      if (presentationResponse.data) {
-        const presentationData = {
-          id: presentationResponse.data.id,
-          userId: presentationResponse.data.userId,
-          title: presentationResponse.data.title || "Untitled Presentation",
-          description: presentationResponse.data.description ?? null,
-          thumbnail: presentationResponse.data.thumbnail ?? null,
-          isPublic: presentationResponse.data.isPublic || false,
-          isTemplate: presentationResponse.data.isTemplate || false,
-          tags: presentationResponse.data.tags || [],
-          version: presentationResponse.data.version || 1,
-          parentId: presentationResponse.data.parentId ?? null,
-          forkedFrom: presentationResponse.data.forkedFrom ?? null,
-          sharedWith: presentationResponse.data.sharedWith || [],
-          ownerId:
-            presentationResponse.data.ownerId ||
-            presentationResponse.data.userId,
-          deletedAt: presentationResponse.data.deletedAt ?? null,
-          createdAt: presentationResponse.data.createdAt,
-          updatedAt: presentationResponse.data.updatedAt,
-          lastViewedAt: presentationResponse.data.lastViewedAt ?? null,
-        };
-        dispatch(setPresentation(presentationData));
-      }
-
-      hasLoadedPresentation.current = true;
-
-      // If outlineId exists and presentation has no slides, trigger generation
-      if (
-        outlineId &&
-        presentationId &&
-        !generateAndCreateSlidesMutation.isPending &&
-        !hasStartedGeneration.current &&
-        outlineResponse?.success
-      ) {
-        // Check credits before starting generation
-        const outlineItems = outlineResponse.data?.outlines || [];
-        const estimatedSlides = outlineItems.length;
-        const creditsPerSlide = 1; // Should match backend
-        const requiredCredits = estimatedSlides * creditsPerSlide;
-
-        // Note: Backend will also check credits, but we can show a better UX here
-        // The backend will return an error if credits are insufficient
-
-        hasStartedGeneration.current = true;
-        setIsGeneratingSlides(true);
-        dispatch(setSlides([]));
-        setTimeout(() => {
-          generateAndCreateSlidesMutation.mutate({
-            presentationId: presentationId,
-            onChunk: (chunk) => {
-              if (chunk.type === "start") {
-                setSlideGenerationProgress({
-                  current: 0,
-                  total: chunk.totalSlides || 0,
-                });
-                dispatch(setSlides([]));
-              } else if (chunk.type === "slide-start") {
-                setSlideGenerationProgress({
-                  current: chunk.slideNumber || 0,
-                  total: chunk.totalSlides || 0,
-                  stage: chunk.stage,
-                  estimatedSeconds: chunk.estimatedSeconds,
-                  message: `Starting slide ${chunk.slideNumber}...`,
-                });
-              } else if (chunk.type === "slide-progress") {
-                // Handle progress updates
-                setSlideGenerationProgress(prev => ({
-                  current: chunk.slideNumber || prev?.current || 0,
-                  total: prev?.total || chunk.totalSlides || 0,
-                  stage: chunk.stage,
-                  message: chunk.message || 'Processing...',
-                  estimatedSeconds: prev?.estimatedSeconds,
-                }));
-              } else if (chunk.type === "slide-streaming") {
-                // Handle real-time streaming updates using partial JSON parser
-                if (chunk.accumulatedText && chunk.slideNumber) {
-                  console.log("[Streaming] Handler entered, text length:", chunk.accumulatedText.length);
-                  const currentSlides = slidesRef.current;
-                  const slideIndex = chunk.slideNumber - 1;
-                  
-                  // Use partial JSON parser to extract valid data from incomplete JSON
-                  try {
-                    const partialData = parsePartialJson(chunk.accumulatedText);
-                    console.log("[Streaming] Parsed partial data:", {
-                      hasRows: !!partialData?.rows,
-                      rowCount: partialData?.rows?.length,
-                      textLength: chunk.accumulatedText.length
-                    });
-                    
-                    if (partialData && partialData.rows && Array.isArray(partialData.rows)) {
-                      // Filter rows that have at least some data
-                      const validRows = partialData.rows.filter((row: any) => 
-                        row && (row.id || row.blocks)
-                      );
-                      
-                      console.log("[Streaming] Valid rows:", validRows.length);
-                      
-                      if (validRows.length > 0) {
-                        // Create partial slide from partially parsed data
-                        const partialSlide = {
-                          id: `temp-${chunk.slideNumber}`,
-                          rows: validRows.map((row: any) => ({
-                            id: row.id || nanoid(),
-                            columnWidths: row.columnWidths,
-                            blocks: (row.blocks || [])
-                              .filter((block: any) => block && block.type)
-                              .map((block: any) => ({
-                                id: block.id || nanoid(),
-                                type: block.type,
-                                content: block.content || {},
-                              })),
-                          })),
-                          accent: partialData.accent,
-                          isStreaming: true,
-                        };
-                        
-                        console.log("[Streaming] Creating partial slide:", {
-                          slideId: partialSlide.id,
-                          rowCount: partialSlide.rows.length,
-                          blockCounts: partialSlide.rows.map((r: any) => r.blocks.length)
-                        });
-                        
-                        // Update or add the partial slide
-                        const newSlides = [...currentSlides];
-                        if (newSlides[slideIndex]) {
-                          newSlides[slideIndex] = partialSlide;
-                        } else {
-                          newSlides.push(partialSlide);
-                        }
-                        dispatch(setSlides(newSlides));
-                      }
-                    }
-                  } catch (e) {
-                    console.log("[Streaming] Parse error:", e);
-                  }
-                  
-                  // Update progress with raw chunk info
-                  setSlideGenerationProgress(prev => ({
-                    ...prev!,
-                    message: `Building slide ${chunk.slideNumber}... (${chunk.accumulatedText?.length || 0} chars)`,
-                  }));
-                }
-              } else if (chunk.type === "slide" && chunk.data) {
-                const slide = {
-                  id: chunk.slideId || nanoid(),
-                  rows: chunk.data.rows.map((row: any) => ({
-                    id: row.id || nanoid(),
-                    columnWidths: row.columnWidths,
-                    blocks: row.blocks.map((block: any) => ({
-                      id: block.id || nanoid(),
-                      type: block.type,
-                      content: block.content,
-                    })),
-                  })),
-                  accent: chunk.data.accent,
-                };
-                const currentSlides = slidesRef.current;
-                dispatch(setSlides([...currentSlides, slide]));
-              } else if (chunk.type === "complete") {
-                setIsGeneratingSlides(false);
-                setSlideGenerationProgress(null);
-                toast.success("Presentation created successfully!");
-              } else if (chunk.type === "slide-error") {
-                // FIXED: Don't stop the whole generation on individual slide error
-                // Just show a toast but keep generating remaining slides
-                console.log("[useEditorPage] Slide error received:", chunk);
-                const errorMessage = chunk.message || "Unknown error";
-                toast.error(
-                  `Slide ${chunk.slideNumber} failed: ${errorMessage}`,
-                  {
-                    duration: 5000,
-                  }
-                );
-                // Continue showing progress for remaining slides
-              } else if (chunk.type === "error") {
-                // FATAL error - stop everything
-                console.log("[useEditorPage] Fatal error received:", chunk);
-                setIsGeneratingSlides(false);
-                setSlideGenerationProgress(null);
-                const errorMessage = chunk.message || "Unknown error";
-
-                // Check if it's a credit-related error
-                if (
-                  errorMessage.toLowerCase().includes("insufficient credits") ||
-                  errorMessage.toLowerCase().includes("credits")
-                ) {
-                  console.log("[useEditorPage] Showing credits error toast");
-                  toast.error(errorMessage, {
-                    duration: 10000,
-                    action: {
-                      label: "View Subscription",
-                      onClick: () => {
-                        window.location.href = "/subscription";
-                      },
-                    },
-                  });
-                } else {
-                  console.log("[useEditorPage] Showing generic error toast");
-                  toast.error(`Error generating slides: ${errorMessage}`, {
-                    duration: 10000,
-                  });
-                }
-              }
-            },
-          });
-        }, 100);
+      // Auto-trigger generation if presentation is empty and outline exists
+      if (reduxSlides.length === 0 && outlineId && outlineResponse?.success) {
+        startGeneration(presentationId!);
       }
     }
-  }, [
-    presentationResponse,
-    dispatch,
-    outlineId,
-    presentationId,
-    outlineResponse,
-    generateAndCreateSlidesMutation,
-  ]);
+  }, [presentationResponse, outlineResponse, outlineId, presentationId, dispatch, startGeneration]);
 
-  const startSlideGeneration = useMemo(
-    () => (presId: string) => {
-      dispatch(setSlides([]));
-      generateAndCreateSlidesMutation.mutate({
-        presentationId: presId,
-        onChunk: (chunk) => {
-          if (chunk.type === "start") {
-            setSlideGenerationProgress({
-              current: 0,
-              total: chunk.totalSlides || 0,
-            });
-            dispatch(setSlides([]));
-          } else if (chunk.type === "slide-start") {
-            setSlideGenerationProgress({
-              current: chunk.slideNumber || 0,
-              total: chunk.totalSlides || 0,
-              stage: chunk.stage,
-              estimatedSeconds: chunk.estimatedSeconds,
-              message: `Starting slide ${chunk.slideNumber}...`,
-            });
-          } else if (chunk.type === "slide-progress") {
-            // Handle progress updates
-            setSlideGenerationProgress(prev => ({
-              current: chunk.slideNumber || prev?.current || 0,
-              total: prev?.total || chunk.totalSlides || 0,
-              stage: chunk.stage,
-              message: chunk.message || 'Processing...',
-              estimatedSeconds: prev?.estimatedSeconds,
-            }));
-          } else if (chunk.type === "slide" && chunk.data) {
-            const slide = {
-              id: chunk.slideId || nanoid(),
-              rows: chunk.data.rows.map((row: any) => ({
-                id: row.id || nanoid(),
-                columnWidths: row.columnWidths,
-                blocks: row.blocks.map((block: any) => ({
-                  id: block.id || nanoid(),
-                  type: block.type,
-                  content: block.content,
-                })),
-              })),
-              accent: chunk.data.accent,
-            };
-            const currentSlides = slidesRef.current;
-            const slideIndex = chunk.slideNumber ? chunk.slideNumber - 1 : currentSlides.length;
-            
-            // Check if there's a temp streaming slide at this index to replace
-            const newSlides = [...currentSlides];
-            if (slideIndex < newSlides.length && newSlides[slideIndex]?.id?.startsWith('temp-')) {
-              // Replace the temp streaming slide with the final slide
-              newSlides[slideIndex] = slide;
-              dispatch(setSlides(newSlides));
-            } else {
-              // No temp slide, append normally
-              dispatch(setSlides([...currentSlides, slide]));
-            }
-          } else if (chunk.type === "slide-streaming") {
-            // Real-time streaming updates using partial JSON parser
-            if (chunk.accumulatedText && chunk.slideNumber) {
-              console.log("[Streaming] Handler entered, text length:", chunk.accumulatedText.length);
-              const currentSlides = slidesRef.current;
-              const slideIndex = chunk.slideNumber - 1;
-              
-              try {
-                const partialData = parsePartialJson(chunk.accumulatedText);
-                console.log("[Streaming] Parsed:", {
-                  hasRows: !!partialData?.rows,
-                  rowCount: partialData?.rows?.length
-                });
-                
-                if (partialData && partialData.rows && Array.isArray(partialData.rows)) {
-                  const validRows = partialData.rows.filter((row: any) => 
-                    row && (row.id || row.blocks)
-                  );
-                  
-                  if (validRows.length > 0) {
-                    const partialSlide = {
-                      id: `temp-${chunk.slideNumber}`,
-                      rows: validRows.map((row: any) => ({
-                        id: row.id || nanoid(),
-                        columnWidths: row.columnWidths,
-                        blocks: (row.blocks || [])
-                          .filter((block: any) => block && block.type)
-                          .map((block: any) => ({
-                            id: block.id || nanoid(),
-                            type: block.type,
-                            content: block.content || {},
-                          })),
-                      })),
-                      accent: partialData.accent,
-                      isStreaming: true,
-                    };
-                    
-                    console.log("[Streaming] Updating slide:", partialSlide.id, "rows:", partialSlide.rows.length);
-                    
-                    const newSlides = [...currentSlides];
-                    if (newSlides[slideIndex]) {
-                      newSlides[slideIndex] = partialSlide;
-                    } else {
-                      // New slide being added - scroll to it after a short delay
-                      newSlides.push(partialSlide);
-                    }
-                    dispatch(setSlides(newSlides));
-                    
-                    // Keep scrolling to bottom of slide as content grows
-                    // Use requestAnimationFrame for smooth scrolling without blocking
-                    requestAnimationFrame(() => {
-                      const slideElement = document.querySelector(`[data-slide-index="${slideIndex}"]`);
-                      if (slideElement) {
-                        const rect = slideElement.getBoundingClientRect();
-                        const viewportHeight = window.innerHeight;
-                        // If the bottom of the slide is below the viewport, scroll down
-                        if (rect.bottom > viewportHeight - 100) {
-                          window.scrollBy({ top: rect.bottom - viewportHeight + 150, behavior: 'auto' });
-                        }
-                      }
-                    });
-                  }
-                }
-              } catch (e) {
-                console.log("[Streaming] Parse error:", e);
-              }
-              
-              setSlideGenerationProgress(prev => ({
-                ...prev!,
-                message: `Building slide ${chunk.slideNumber}... (${chunk.accumulatedText?.length || 0} chars)`,
-              }));
-            }
-          } else if (chunk.type === "complete") {
-            setIsGeneratingSlides(false);
-            setSlideGenerationProgress(null);
-            toast.success("Presentation created successfully!");
-          } else if (chunk.type === "slide-error") {
-            // FIXED: Don't stop generation on individual slide error
-            console.log("[useEditorPage] Slide error received:", chunk);
-            toast.error(
-              `Slide ${chunk.slideNumber} failed: ${chunk.message || "Unknown error"}`,
-              { duration: 5000 }
-            );
-            // Continue showing progress
-          } else if (chunk.type === "error") {
-            // FATAL error - stop everything
-            setIsGeneratingSlides(false);
-            setSlideGenerationProgress(null);
-            toast.error(
-              `Error generating slides: ${chunk.message || "Unknown error"}`,
-              { duration: 10000 }
-            );
-          }
-        },
-      });
-    },
-    [dispatch, generateAndCreateSlidesMutation]
-  );
-
-  useEffect(() => {
-    // This effect is a backup that only triggers if the first effect didn't handle it
-    // Only run if presentation has been loaded and has no slides in the API response
-    if (
-      outlineId &&
-      presentationId &&
-      !generateAndCreateSlidesMutation.isPending &&
-      !hasStartedGeneration.current &&
-      hasLoadedPresentation.current &&
-      outlineResponse?.success &&
-      presentationResponse?.success
-    ) {
-      // IMPORTANT: Only check API response, not Redux state (which might be empty initially)
-      const hasNoSlidesInApi =
-        !presentationResponse.data?.slides ||
-        presentationResponse.data.slides.length === 0;
-
-      if (hasNoSlidesInApi) {
-        hasStartedGeneration.current = true;
-        setIsGeneratingSlides(true);
-        startSlideGeneration(presentationId);
-      }
-    } else if (
-      outlineId &&
-      !presentationId &&
-      !generateAndCreateSlidesMutation.isPending &&
-      !hasStartedGeneration.current &&
-      outlineResponse?.success
-    ) {
-      // Legacy case: if no presentationId, create one from outline
-      const outline = outlineResponse.data as any;
-      const linkedPresentationId = outline?.presentationId;
-      if (!linkedPresentationId) {
-        toast.error("Outline does not have a linked presentation");
-        return;
-      }
-      hasStartedGeneration.current = true;
-      setTimeout(() => {
-        setIsGeneratingSlides(true);
-        router.replace(`/presentation/${linkedPresentationId}`);
-        startSlideGeneration(linkedPresentationId);
-      }, 0);
-    }
-  }, [
-    outlineId,
-    presentationId,
-    outlineResponse,
-    presentationResponse,
-    generateAndCreateSlidesMutation,
-    router,
-    startSlideGeneration,
-  ]);
-
-  useEffect(() => {
-    if (
-      !outlineId &&
-      !presentationId &&
-      slides.length > 0 &&
-      !createPresentationMutation.isPending &&
-      !hasLoadedPresentation.current
-    ) {
-      const hasValidSlides = slides.some(
-        (slide) => slide.rows && slide.rows.length > 0
-      );
-      if (hasValidSlides) {
-        createPresentationMutation.mutate(
-          { title: "Untitled Presentation" },
-          {
-            onSuccess: (response) => {
-              if (response.success && response.data?.id) {
-                const newPresentationId = response.data.id;
-                router.replace(`/presentation/${newPresentationId}`);
-                saveAllSlidesToPresentation(newPresentationId);
-              }
-            },
-            onError: (error) => {
-              console.error("Failed to create presentation:", error);
-              toast.error("Failed to create presentation");
-            },
-          }
-        );
-      }
-    }
-  }, [
-    slides,
-    presentationId,
-    outlineId,
-    createPresentationMutation,
-    router,
-    saveAllSlidesToPresentation,
-  ]);
-
-  const handleUpdateBlock = (
-    slideId: string,
-    blockId: string,
-    content: any
-  ) => {
+  // --- Action Handlers ---
+  const handleUpdateBlock = (slideId: string, blockId: string, content: any) => 
     commandBus.updateBlock({ slideId, blockId, content });
-  };
 
-  const handleDeleteRow = (slideId: string, rowId: string) => {
+  const handleDeleteRow = (slideId: string, rowId: string) => 
     commandBus.deleteRow({ slideId, rowId });
-  };
 
-  const handleAddColumn = (
-    slideId: string,
-    rowId: string,
-    afterBlockId: string
-  ) => {
+  const handleAddColumn = (slideId: string, rowId: string, afterBlockId: string) => {
     const slide = slides.find((s) => s.id === slideId);
-    let blockType: string | undefined;
-    if (slide) {
-      const row = slide.rows.find((r) => r.id === rowId);
-      if (row) {
-        blockType = detectRowBlockType(row);
-      }
-    }
+    const row = slide?.rows.find((r) => r.id === rowId);
+    const blockType = row ? detectRowBlockType(row) : undefined;
     commandBus.addBlockAfter({ slideId, rowId, afterBlockId, blockType });
   };
 
-  const handleAddRowAtTop = (slideId: string) => {
+  const handleAddRowAtTop = (slideId: string) => 
     commandBus.addRowAtTop({ slideId, columnCount: 1 });
-  };
 
-  const handleAddRowAtBottom = (slideId: string) => {
-    commandBus.addRowWithColumns({
-      slideId,
-      columnCount: 1,
-      blockType: "prosemirror"
-    });
-  };
+  const handleAddRowAtBottom = (slideId: string) => 
+    commandBus.addRowWithColumns({ slideId, columnCount: 1, blockType: "prosemirror" });
 
-  const handleUpdateColumnWidths = (
-    slideId: string,
-    rowId: string,
-    columnWidths: number[]
-  ) => {
+  const handleUpdateColumnWidths = (slideId: string, rowId: string, columnWidths: number[]) => 
     commandBus.updateColumnWidths({ slideId, rowId, columnWidths });
-  };
 
-  const handleAddSlide = () => {
-    dispatch(addSlide({}));
-  };
+  const handleAddSlideAtOrder = (afterSlideId?: string) => 
+    handleAddSlide(afterSlideId);
 
   return {
     // state
     slides,
     theme,
     activeSlideId,
-    isGeneratingSlides,
-    slideGenerationProgress,
+    isGeneratingSlides: isGenerating,
+    slideGenerationProgress: progress,
     isLoadingPresentation,
+    presentationId,
 
     // dnd
-    sensors,
-    activeBlock,
-    isBlockDragging,
-    draggingBlockType,
-    handleDragStart,
-    handleDragEnd,
-    customCollisionDetection,
+    ...dnd,
 
     // actions
     handleUpdateBlock,
@@ -726,6 +131,7 @@ export const useEditorPage = ({
     handleAddRowAtTop,
     handleAddRowAtBottom,
     handleUpdateColumnWidths,
-    presentationId,
+    handleAddSlide: handleAddSlideAtOrder,
+    handleDeleteSlide,
   };
 };

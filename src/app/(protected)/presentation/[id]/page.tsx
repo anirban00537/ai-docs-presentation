@@ -47,6 +47,8 @@ const PresentationEditorPage = () => {
     handleAddRowAtTop,
     handleAddRowAtBottom,
     handleUpdateColumnWidths,
+    handleAddSlide,
+    handleDeleteSlide,
     isLoadingPresentation,
     isGeneratingSlides,
     slideGenerationProgress,
@@ -146,6 +148,8 @@ const PresentationEditorPage = () => {
           onAddRowAtTop={handleAddRowAtTop}
           onAddRowAtBottom={handleAddRowAtBottom}
           onUpdateColumnWidths={handleUpdateColumnWidths}
+          onAddSlide={handleAddSlide}
+          onDeleteSlide={handleDeleteSlide}
         />
 
         <div className="w-full mx-auto px-6 py-10 pr-16">

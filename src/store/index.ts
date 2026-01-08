@@ -2,7 +2,6 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import slidesReducer from "@/store/slices/slidesSlice";
 import userReducer from "@/store/slices/userSlice";
 import subscriptionReducer from "@/store/slices/subscriptionSlice";
-import { slidesApiMiddleware } from "@/store/middleware/slidesApiMiddleware";
 
 const rootReducer = combineReducers({
   slides: slidesReducer,
@@ -19,7 +18,7 @@ const store = configureStore({
         // Ignore these action types
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
-    }).concat(slidesApiMiddleware),
+    }),
 });
 
 export { store };

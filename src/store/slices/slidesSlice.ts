@@ -69,8 +69,12 @@ const slidesSlice = createSlice({
     setActiveSlide: (state, action: PayloadAction<string>) => {
       state.activeSlideId = action.payload;
     },
-    addSlide: (state, action: PayloadAction<{ afterSlideId?: string }>) => {
+    addSlide: (state, action: PayloadAction<{ afterSlideId?: string; id?: string }>) => {
       const newSlide = createSlide();
+      if (action.payload.id) {
+        newSlide.id = action.payload.id;
+      }
+      
       if (action.payload.afterSlideId) {
         const index = state.slides.findIndex(
           (s) => s.id === action.payload.afterSlideId

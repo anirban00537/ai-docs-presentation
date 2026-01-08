@@ -3,10 +3,13 @@ import {
   addRowAtTop,
   addRowWithColumns,
   addRowWithColumnsAtIndex,
+  addSlide,
   deleteRow,
+  deleteSlide,
   moveBlock,
   moveBlockToNewRow,
   reorderBlocksInRow,
+  reorderSlides,
   updateBlockContent,
   updateColumnWidths,
 } from "@/store/slices/slidesSlice";
@@ -65,6 +68,10 @@ export interface EditorCommandBus {
     rowId: string;
     columnWidths: number[];
   }) => void;
+  // Slide level operations
+  addSlide: (params: { afterSlideId?: string }) => void;
+  deleteSlide: (params: { slideId: string }) => void;
+  reorderSlides: (params: { slideId: string; newIndex: number }) => void;
 }
 
 export const createEditorCommandBus = (
@@ -99,4 +106,7 @@ export const createEditorCommandBus = (
     dispatch(reorderBlocksInRow({ slideId, rowId, oldIndex, newIndex })),
   updateColumnWidths: ({ slideId, rowId, columnWidths }) =>
     dispatch(updateColumnWidths({ slideId, rowId, columnWidths })),
+  addSlide: ({ afterSlideId }) => dispatch(addSlide({ afterSlideId })),
+  deleteSlide: ({ slideId }) => dispatch(deleteSlide(slideId)),
+  reorderSlides: ({ slideId, newIndex }) => dispatch(reorderSlides({ slideId, newIndex })),
 });
