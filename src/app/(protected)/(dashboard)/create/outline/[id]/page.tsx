@@ -4,7 +4,8 @@ import React, { useCallback, useRef, useState, useEffect, useMemo } from "react"
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useOutline, useUpdateOutline } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
+import { parse as parsePartialJson } from "partial-json";
+import { useOutline, useUpdateOutline, useGenerateOutlineStream } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
 import { useAdminThemesList } from "@/app/(protected)/presentation/[id]/hooks/use-themes";
 import { updatePresentation } from "@/services/presentation";
 import { OutlineViewer } from "@/components/outline-viewer";
@@ -24,8 +25,16 @@ export default function OutlinePage() {
     data: outlineResponse,
     isLoading,
     error: outlineError,
+    refetch,
   } = useOutline(outlineId);
   const updateOutlineMutation = useUpdateOutline();
+  const generateOutlineStreamMutation = useGenerateOutlineStream();
+
+  // Streaming state
+  const [streamingContent, setStreamingContent] = useState<string>("");
+  const [completedOutline, setCompletedOutline] = useState<any>(null);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const hasStartedStreaming = useRef(false);
 
   // Fetch admin themes
   const { data: themesResponse, isLoading: themesLoading } = useAdminThemesList();
@@ -46,8 +55,68 @@ export default function OutlinePage() {
       : null);
   const displayError = error;
 
-  // Get outline data from the fetched outline
+  // Auto-start streaming if outline is generating/empty
+  useEffect(() => {
+    if (outline && outline.status === 'generating' && !hasStartedStreaming.current && !outline.outlines?.length) {
+      hasStartedStreaming.current = true;
+      setIsStreaming(true);
+      
+      generateOutlineStreamMutation.mutate({
+        outlineId,
+        onChunk: (chunk) => {
+          if (chunk.type === 'chunk' && chunk.accumulated) {
+            setStreamingContent(chunk.accumulated);
+          } else if (chunk.type === 'complete') {
+            if (chunk.data) {
+                setCompletedOutline(chunk.data);
+            }
+            setIsStreaming(false);
+            refetch(); // Refresh to get cleanup/canonical data
+          } else if (chunk.type === 'error') {
+            setIsStreaming(false);
+            console.error("Streaming error:", chunk.message);
+          }
+        }
+      });
+    }
+  }, [outline, outlineId, generateOutlineStreamMutation, refetch]);
+
+  // Get outline data from the fetched outline or stream
   const outlineData = React.useMemo(() => {
+    // 1. Prefer explicitly completed data (prevents flicker before refetch)
+    if (completedOutline) {
+        let displayTitle = completedOutline.title;
+         if (!displayTitle || displayTitle.match(/^[\.\s]+$/)) {
+             displayTitle = outline?.title || "Untitled Presentation";
+         }
+        return {
+            title: displayTitle,
+            outlines: completedOutline.outlines
+        };
+    }
+
+    // 2. Prefer streaming data if active
+    if (isStreaming && streamingContent) {
+        try {
+            const partial = parsePartialJson(streamingContent);
+            if (partial && partial.outlines) {
+                let displayTitle = partial.title || outline?.title || "Generating...";
+                // Clean up "..." titles from AI
+                if (displayTitle.match(/^[\.\s]+$/)) {
+                    displayTitle = "Generating...";
+                }
+                
+                return {
+                    title: displayTitle,
+                    outlines: partial.outlines
+                };
+            }
+        } catch (e) {
+            // Ignore parse errors
+        }
+    }
+
+    // 3. Fallback to fetched data
     if (outline?.outlines && Array.isArray(outline.outlines)) {
       return {
         title: outline.title || "Untitled Presentation",
@@ -55,7 +124,7 @@ export default function OutlinePage() {
       };
     }
     return null;
-  }, [outline?.title, outline?.outlines]);
+  }, [outline?.title, outline?.outlines, isStreaming, streamingContent, completedOutline]);
 
   // Get presentationId early for theme saving
   const presentationId =
@@ -177,6 +246,17 @@ export default function OutlinePage() {
     };
   }, []);
 
+  // Ref for auto-scrolling
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll effect
+  useEffect(() => {
+    if (isStreaming && bottomRef.current) {
+        bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [streamingContent, isStreaming]);
+
   // Build presentation URL for navigation
   const presentationUrl =
     presentationId && outlineId
@@ -236,7 +316,10 @@ export default function OutlinePage() {
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
 
       {/* === SCROLLABLE CONTENT LAYER === */}
-      <div className="relative z-10 w-full max-w-7xl flex flex-col gap-8 px-4 py-8 overflow-y-auto">
+      <div 
+        ref={scrollContainerRef}
+        className="relative z-10 w-full max-w-7xl flex flex-col gap-8 px-4 py-8 overflow-y-auto"
+      >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -561,6 +644,8 @@ export default function OutlinePage() {
             ))}
           </motion.div>
         )}
+        {/* Auto-scroll anchor */}
+        <div ref={bottomRef} className="h-10 w-full" />
       </div>
     </div>
   );

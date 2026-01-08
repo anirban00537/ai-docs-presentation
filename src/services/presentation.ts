@@ -82,11 +82,13 @@ export const updateOutline = async (
 };
 
 export interface StreamChunk {
-  type: "chunk" | "title" | "outline" | "complete" | "error";
+  type: "start" | "chunk" | "title" | "outline" | "complete" | "error";
   content?: string;
   data?: any;
   index?: number;
   message?: string;
+  accumulated?: string;
+  delta?: string;
 }
 
 export interface SlideGenerationChunk {
@@ -390,6 +392,105 @@ export const generateAndCreateSlides = async (
     onChunk({
       type: "error",
       message: error.message || "Failed to connect to the server. Please check your connection.",
+    });
+  }
+};
+
+export const generateOutlineStream = async (
+  outlineId: string,
+  onChunk: (chunk: StreamChunk) => void
+): Promise<void> => {
+  const baseURL = process.env.NEXT_PUBLIC_API_URL || "";
+  const apiSecretKey = process.env.NEXT_PUBLIC_API_SECRET_KEY || "";
+
+  const getCookie = (name: string) => {
+    if (typeof document === "undefined") return "";
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(";").shift() || "";
+    return "";
+  };
+
+  const token = getCookie("token");
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "text/event-stream",
+    apisecretkeycheck: apiSecretKey,
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await fetch(
+      `${baseURL}/presentation/outline/${outlineId}/generate-stream`,
+      {
+        method: "POST",
+        headers,
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      onChunk({
+        type: "error",
+        message: `Request failed with status ${response.status}. Please try again.`,
+      });
+      return;
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) {
+      onChunk({
+        type: "error",
+        message: "No response body received from server.",
+      });
+      return;
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (value) {
+          buffer += decoder.decode(value, { stream: !done });
+        }
+        
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6).trim();
+            if (data) {
+              try {
+                const chunk: StreamChunk = JSON.parse(data);
+                onChunk(chunk);
+                
+                if (chunk.type === "error") {
+                  reader.releaseLock();
+                  return;
+                }
+              } catch (e) {
+                console.error("Error parsing SSE chunk:", e, "Data:", data);
+              }
+            }
+          }
+        }
+
+        if (done) break;
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  } catch (error: any) {
+    onChunk({
+      type: "error",
+      message: error.message || "Failed to connect to the server.",
     });
   }
 };

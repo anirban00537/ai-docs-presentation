@@ -108,3 +108,26 @@ export const useGenerateAndCreateSlides = () => {
   });
 };
 
+// Generate outline stream hook
+import { generateOutlineStream, type StreamChunk } from "@/services/presentation";
+
+export const useGenerateOutlineStream = () => {
+  const dispatch = useAppDispatch();
+
+  return useMutation({
+    mutationFn: ({
+      outlineId,
+      onChunk,
+    }: {
+      outlineId: string;
+      onChunk: (chunk: StreamChunk) => void;
+    }) => generateOutlineStream(outlineId, onChunk),
+    onSuccess: () => {
+      dispatch(fetchCreditBalance());
+    },
+    onError: (error: any) => {
+      console.error("[useGenerateOutlineStream] Mutation error:", error);
+    },
+  });
+};
+
