@@ -19,6 +19,18 @@ export class UpdateOutlineDto {
   title?: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  prompt?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(50)
+  @Type(() => Number)
+  numberOfSlides?: number;
+
+  @IsOptional()
   outlines?: Array<{ 
     content: string; 
     schemaId?: string; 

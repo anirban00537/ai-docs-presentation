@@ -140,6 +140,8 @@ export class OutlineService implements OnModuleInit {
         where: { id },
         data: {
           ...(payload.title && { title: payload.title }),
+          ...(payload.prompt && { prompt: payload.prompt }),
+          ...(payload.numberOfSlides && { numberOfSlides: payload.numberOfSlides }),
           ...(payload.outlines && { outlines: payload.outlines as any }),
           status: 'completed',
         },
