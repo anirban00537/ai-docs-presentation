@@ -354,12 +354,20 @@ IMPORTANT RULES:
 - If you have multiple slides with similar content, use the most appropriate layout available even if you have to reuse one
 - Focus on high-quality content that matches the slide purpose
 
-For each outline item, generate markdown content that includes:
-- A heading with "# Section Title"
-- Bullet points (-) for details/sub-items
+For each outline item, the "content" field MUST strictly follow this Markdown format:
+1. One main title using a single hash (# Title)
+2. Followed ONLY by bullet points (- Point 1)
+3. No short descriptions, no intro text, no other paragraphs.
+4. JUST Title and Points. Both are COMPULSORY.
+
+Example of valid content:
+"# Slide Title
+- First key point
+- Second key point
+- Third key point"
 
 Generate exactly ${numberOfSlides} outline items. Each item must have:
-- A "content" field containing the markdown-formatted content for that slide section
+- A "content" field containing the STRICT markdown-formatted content as defined above
 - A "layoutId" field with a UNIQUE id (case-sensitive) from the available layouts list that best matches this slide's content type and purpose
 
 REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
@@ -388,7 +396,7 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
                       content: {
                         type: 'string',
                         description:
-                          'Markdown-formatted content for this slide section. Should include a heading (# Title) and bullet points (-) for details.',
+                          'Strict Markdown: "# Title" followed ONLY by bullet points "- Point". No other text allowed.',
                       },
                       layoutId: {
                         type: 'string',
