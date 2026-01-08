@@ -284,7 +284,7 @@ const LoadingSkeleton = () => (
     {Array.from({ length: 10 }).map((_, i) => (
       <div
         key={i}
-        className="animate-pulse rounded-2xl overflow-hidden bg-white/40 border border-secondary/20"
+        className="animate-pulse rounded-2xl overflow-hidden bg-white/40 border border-secondary/40"
       >
         <div className="aspect-square bg-secondary/10" />
         <div className="p-3 space-y-2">

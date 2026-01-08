@@ -69,8 +69,8 @@ export default function MyPresentationsPage() {
   return (
     <div className="relative flex-1 flex flex-col min-h-[calc(100vh-80px)] ">
       {/* Background Blobs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-slate-100 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/40 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
 
       {/* === SCROLLABLE CONTENT LAYER === */}
       <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">

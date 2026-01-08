@@ -62,7 +62,7 @@ const SuggestionCard: React.FC<{
       whileHover={{ scale: 1.02, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(suggestion.prompt)}
-      className="group relative flex items-center gap-4 p-4 rounded-2xl text-left transition-all duration-300 overflow-hidden bg-white/40 hover:bg-white border border-secondary/20 hover:border-primary/20 hover:shadow-depth-3"
+      className="group relative flex bg-secondary/10 items-center gap-4 p-4 rounded-2xl text-left transition-all duration-300 overflow-hidden  border border-secondary/20 hover:border-primary/20 hover:shadow-depth-3"
     >
       <div 
         className={cn(
@@ -123,6 +123,7 @@ export default function HomePage() {
             name="message"
             defaultValue={promptValue}
             onError={(errorMessage) => setError(errorMessage)}
+               className="border border-slate-200 bg-slate-50 shadow-none"
           />
 
           {error && (
