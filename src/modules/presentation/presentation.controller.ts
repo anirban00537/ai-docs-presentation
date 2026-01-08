@@ -261,4 +261,38 @@ export class PresentationController {
       res.end();
     }
   }
+
+  @Post('outline/:id/generate-stream')
+  @Header('Content-Type', 'text/event-stream')
+  @Header('Cache-Control', 'no-cache')
+  @Header('Connection', 'keep-alive')
+  async generateOutlineStream(
+    @Param('id') id: string,
+    @UserInfo() user: User,
+    @Res() res: Response,
+  ): Promise<void> {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
+
+    try {
+      const stream = this.outlineService.generateOutlineStream(id, user);
+
+      for await (const chunk of stream) {
+        res.write(`data: ${chunk}\n\n`);
+        if ((res as any).flush) {
+          (res as any).flush();
+        }
+      }
+
+      res.end();
+    } catch (error: any) {
+      res.write(
+        `data: ${JSON.stringify({ type: 'error', message: error.message })}\n\n`,
+      );
+      res.end();
+    }
+  }
 }

@@ -55,8 +55,8 @@ export const coreConstant = {
 
   AI_MODELS: {
     OUTLINE: {
-      NAME: 'openai/gpt-4.1-mini',
-      PRICING: { prompt: 0.25, completion: 0.38 }, // $ per 1M tokens
+      NAME: 'google/gemini-2.5-flash-lite',
+      PRICING: { prompt: 0.0, completion: 0.0 }, // Free
     },
     SLIDES: {
       NAME: 'openai/gpt-oss-120b',
