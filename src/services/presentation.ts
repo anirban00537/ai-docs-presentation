@@ -29,6 +29,8 @@ export interface CreateOutlineDto {
 
 export interface UpdateOutlineDto {
   title?: string;
+  prompt?: string;
+  numberOfSlides?: number;
   outlines?: OutlineItem[];
 }
 

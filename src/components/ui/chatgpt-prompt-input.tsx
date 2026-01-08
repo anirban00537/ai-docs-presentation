@@ -76,10 +76,11 @@ interface PromptBoxProps {
   name?: string;
   defaultValue?: string;
   onError?: (error: string) => void;
+  onSubmit?: (value: string, numberOfSlides: number) => void;
 }
 
 export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
-  ({ className, onError, defaultValue = "", ...props }, ref) => {
+  ({ className, onError, onSubmit, defaultValue = "", ...props }, ref) => {
     const router = useRouter();
     const savePromptMutation = useSavePrompt();
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -119,6 +120,11 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
       const slides = parseInt(numberOfSlides);
       if (isNaN(slides) || slides < 1 || slides > 50) {
         onError?.("Number of slides must be between 1 and 50");
+        return;
+      }
+
+      if (onSubmit) {
+        onSubmit(value.trim(), slides);
         return;
       }
 
