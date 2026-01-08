@@ -55,7 +55,7 @@ export const coreConstant = {
 
   AI_MODELS: {
     OUTLINE: {
-      NAME: 'google/gemini-2.5-flash-lite',
+      NAME: 'openai/gpt-4.1-nano',
       PRICING: { prompt: 0.10, completion: 0.40 }, // Free
     },
     SLIDES: {
