@@ -59,7 +59,7 @@ export const coreConstant = {
       PRICING: { prompt: 0.0, completion: 0.0 }, // Free
     },
     SLIDES: {
-      NAME: 'openai/gpt-oss-120b',
+      NAME: 'deepseek/deepseek-v3.2',
       PRICING: { prompt: 0.25, completion: 0.38 },
     },
     IMAGE: {
