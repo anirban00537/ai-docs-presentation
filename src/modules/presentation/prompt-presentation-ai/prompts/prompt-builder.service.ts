@@ -115,19 +115,21 @@ Example structure:
   "rows": [ ...identical structure to template... ]
 }
 
-⚠️⚠️⚠️ CRITICAL: NO EMPTY FIELDS ALLOWED ⚠️⚠️⚠️
+⚠️⚠️⚠️ CRITICAL: NO EMPTY FIELDS OR DEMO TEXT ALLOWED ⚠️⚠️⚠️
 - EVERY text field MUST contain meaningful, relevant content.
 - DO NOT leave ANY "text" field as an empty string ("").
 - DO NOT leave ANY "title" or "description" fields empty.
-- If a field exists in the template, you MUST populate it with content based on the outline.
+- ⛔️ NEVER OUTPUT DEMO TEXT from the template (e.g. "Presentation Title", "Supporting subtitle", "Feature Title", "Point Title").
+- ⛔️ You MUST replace ALL template placeholder text with fresh content derived from the outline.
+- If a field exists in the template, you MUST overwrite it with new content.
 - Generate professional, contextually appropriate text for EVERY field.
-- Empty fields will break the presentation and are NOT acceptable.
+- Empty fields or preserved demo text will break the presentation and are NOT acceptable.
 
 FINAL CHECKLIST:
 1. Is it valid JSON?
 2. Does "rows" match the template structure exactly?
 3. Are all block IDs and types preserved?
-4. Is ALL placeholder text replaced with meaningful content?
+4. Is ALL placeholder/demo text replaced with meaningful content?
 5. Did you verify NO text fields are empty?
 6. Did you use the specific URLs provided for images?
 
