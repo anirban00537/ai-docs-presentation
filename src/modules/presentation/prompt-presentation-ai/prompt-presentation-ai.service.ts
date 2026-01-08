@@ -427,7 +427,13 @@ export class PromptPresentationAIService implements OnModuleInit {
     }
 
     // Final parse
-    if (!slideData && accumulatedContent) {
+    if (!slideData) {
+      if (!accumulatedContent) {
+        throw new Error(
+          `AI returned empty response. Finish Reason: ${finishReason || 'unknown'}`
+        );
+      }
+
       try {
         slideData = JSON.parse(accumulatedContent);
       } catch (e: any) {
@@ -443,7 +449,6 @@ export class PromptPresentationAIService implements OnModuleInit {
              // Very naive repair: close string if open, then close object
              const repaired = accumulatedContent + '"}\n]}'; 
              // Note: accurate repair requires a stack parser, but this might save a simple case
-             // For now, let's just throw a better error so the frontend knows what happened.
            } catch (repairError) {}
         }
 
