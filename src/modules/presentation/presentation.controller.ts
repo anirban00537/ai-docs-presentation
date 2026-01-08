@@ -157,6 +157,7 @@ export class PresentationController {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders(); // Start the stream immediately
 
     try {
       // Check if user has enough credits (estimate: 1 credit per slide)
@@ -219,6 +220,11 @@ export class PresentationController {
       for await (const chunk of stream) {
         const data = JSON.parse(chunk);
         
+        // Log streaming chunks for debugging
+        if (data.type === 'slide-streaming') {
+          this.logger.debug(`[SSE] Sending streaming chunk: ${data.accumulatedText?.length || 0} chars`);
+        }
+        
         // Track successful slide generation
         if (data.type === 'slide') {
           slidesGenerated++;
@@ -241,6 +247,10 @@ export class PresentationController {
         }
 
         res.write(`data: ${chunk}\n\n`);
+        // Force flush to prevent buffering
+        if ((res as any).flush) {
+          (res as any).flush();
+        }
       }
 
       res.end();

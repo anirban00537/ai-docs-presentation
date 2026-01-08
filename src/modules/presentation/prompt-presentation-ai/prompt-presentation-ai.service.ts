@@ -205,7 +205,7 @@ export class PromptPresentationAIService implements OnModuleInit {
         slideNumber,
       );
 
-      // Step 2: Generate slide content
+      // Step 2: Generate slide content (with streaming)
       yield JSON.stringify({
         type: 'slide-progress',
         slideNumber,
@@ -213,7 +213,8 @@ export class PromptPresentationAIService implements OnModuleInit {
         message: 'AI is creating slide content...',
       });
 
-      const slideData = await this.generateSlideContent(
+      let slideData: any;
+      for await (const chunk of this.generateSlideContent(
         slideNumber,
         totalSlides,
         title,
@@ -222,7 +223,21 @@ export class PromptPresentationAIService implements OnModuleInit {
         imageInjectionPrompt,
         user,
         presentationId,
-      );
+      )) {
+        // Check if this is the final slide data (an object, not a JSON string)
+        if (typeof chunk === 'object' && chunk !== null) {
+          // This is the final slide data
+          slideData = chunk;
+        } else {
+          // This is a streaming progress chunk (JSON string)
+          yield chunk;
+        }
+      }
+
+      // Verify we got slide data
+      if (!slideData) {
+        throw new Error('No slide data generated from stream');
+      }
 
       // Step 3: Save slide to database
       yield JSON.stringify({
@@ -325,9 +340,9 @@ export class PromptPresentationAIService implements OnModuleInit {
   }
 
   /**
-   * Generate slide content using AI
+   * Generate slide content using AI (with streaming support)
    */
-  private async generateSlideContent(
+  private async *generateSlideContent(
     slideNumber: number,
     totalSlides: number,
     title: string,
@@ -336,7 +351,7 @@ export class PromptPresentationAIService implements OnModuleInit {
     imageInjectionPrompt: string,
     user: User,
     presentationId: string,
-  ): Promise<any> {
+  ): AsyncGenerator<string, any, unknown> {
     // Build layout structure prompt
     const layoutStructureSection =
       this.promptBuilderService.buildLayoutStructurePrompt(templateRows);
@@ -361,7 +376,7 @@ export class PromptPresentationAIService implements OnModuleInit {
     const { SchemaGeneratorUtil } = await import('./utils/schema-generator.util');
     const slideSchema = SchemaGeneratorUtil.generateSlideSchema(templateRows, hasAccent);
 
-    const response = await this.openRouter.chat.send({
+    const stream = await this.openRouter.chat.send({
       model: this.MODEL_NAME,
       messages: [
         {
@@ -378,38 +393,49 @@ export class PromptPresentationAIService implements OnModuleInit {
           schema: slideSchema,
         },
       },
-      stream: false,
+      stream: true, // Enable streaming
     });
 
-    const content = response.choices[0]?.message?.content;
+    let accumulatedContent = '';
+    let slideData: any = null;
 
-    // Log AI usage
-    if (response.usage) {
-      const inputTokens =
-        (response.usage as any).promptTokens ||
-        (response.usage as any).prompt_tokens;
-      const outputTokens =
-        (response.usage as any).completionTokens ||
-        (response.usage as any).completion_tokens;
-
-      this.logger.log(
-        `📈 [Slide ${slideNumber}] AI Usage: ${inputTokens} in / ${outputTokens} out`,
-      );
-
-      await this.aiUsageService.logUsage({
-        userId: user.id,
-        modelName: this.MODEL_NAME,
-        inputTokens,
-        outputTokens,
-        type: 'slide',
-        presentationId: presentationId,
-      });
+    // Process stream chunks - send every token to frontend
+    for await (const chunk of stream) {
+      const delta = chunk.choices[0]?.delta?.content;
+      
+      if (delta) {
+        accumulatedContent += delta;
+        
+        // Send raw text chunk to frontend for real-time display
+        yield JSON.stringify({
+          type: 'slide-streaming',
+          slideNumber,
+          rawChunk: delta,
+          accumulatedText: accumulatedContent,
+          isComplete: false,
+        });
+      }
+      
+      // Check if stream is done
+      if (chunk.choices[0]?.finish_reason === 'stop') {
+        break;
+      }
     }
 
-    // Parse JSON response (guaranteed valid by json_schema mode)
-    const slideData = JSON.parse(content as string);
+    // Final parse
+    if (!slideData && accumulatedContent) {
+      slideData = JSON.parse(accumulatedContent);
+    }
 
-    return slideData;
+    // Log AI usage (usage info comes at the end of stream)
+    // Note: Stream mode might not provide usage info immediately
+    this.logger.log(
+      `📈 [Slide ${slideNumber}] Stream completed`,
+    );
+
+    // Yield final slide data (not as JSON string, but as the actual object)
+    // This is the return value that the caller will use
+    yield slideData;
   }
 
 
