@@ -94,6 +94,7 @@ export interface SlideGenerationChunk {
     | "start"
     | "slide-start"
     | "slide-progress"
+    | "slide-streaming"
     | "slide"
     | "slide-error"
     | "complete"
@@ -102,6 +103,10 @@ export interface SlideGenerationChunk {
   totalSlides?: number;
   slideId?: string;
   data?: any;
+  partialData?: any;
+  rawChunk?: string;
+  accumulatedText?: string;
+  isComplete?: boolean;
   message?: string;
   estimatedSeconds?: number;
   stage?: 'initializing' | 'analyzing-layout' | 'generating-content' | 'saving-slide';

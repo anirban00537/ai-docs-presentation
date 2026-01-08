@@ -170,6 +170,7 @@ const PresentationEditorPage = () => {
                     <motion.div
                       key={slide.id}
                       data-slide-id={slide.id}
+                      data-slide-index={index}
                       className="relative"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}

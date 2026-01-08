@@ -28,6 +28,7 @@ import {
 } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
+import { parse as parsePartialJson } from "partial-json";
 import { useEditorDnd } from "./useEditorDnd";
 
 interface UseEditorPageParams {
@@ -249,7 +250,7 @@ export const useEditorPage = ({
                   message: `Starting slide ${chunk.slideNumber}...`,
                 });
               } else if (chunk.type === "slide-progress") {
-                // NEW: Handle progress updates
+                // Handle progress updates
                 setSlideGenerationProgress(prev => ({
                   current: chunk.slideNumber || prev?.current || 0,
                   total: prev?.total || chunk.totalSlides || 0,
@@ -257,6 +258,75 @@ export const useEditorPage = ({
                   message: chunk.message || 'Processing...',
                   estimatedSeconds: prev?.estimatedSeconds,
                 }));
+              } else if (chunk.type === "slide-streaming") {
+                // Handle real-time streaming updates using partial JSON parser
+                if (chunk.accumulatedText && chunk.slideNumber) {
+                  console.log("[Streaming] Handler entered, text length:", chunk.accumulatedText.length);
+                  const currentSlides = slidesRef.current;
+                  const slideIndex = chunk.slideNumber - 1;
+                  
+                  // Use partial JSON parser to extract valid data from incomplete JSON
+                  try {
+                    const partialData = parsePartialJson(chunk.accumulatedText);
+                    console.log("[Streaming] Parsed partial data:", {
+                      hasRows: !!partialData?.rows,
+                      rowCount: partialData?.rows?.length,
+                      textLength: chunk.accumulatedText.length
+                    });
+                    
+                    if (partialData && partialData.rows && Array.isArray(partialData.rows)) {
+                      // Filter rows that have at least some data
+                      const validRows = partialData.rows.filter((row: any) => 
+                        row && (row.id || row.blocks)
+                      );
+                      
+                      console.log("[Streaming] Valid rows:", validRows.length);
+                      
+                      if (validRows.length > 0) {
+                        // Create partial slide from partially parsed data
+                        const partialSlide = {
+                          id: `temp-${chunk.slideNumber}`,
+                          rows: validRows.map((row: any) => ({
+                            id: row.id || nanoid(),
+                            columnWidths: row.columnWidths,
+                            blocks: (row.blocks || [])
+                              .filter((block: any) => block && block.type)
+                              .map((block: any) => ({
+                                id: block.id || nanoid(),
+                                type: block.type,
+                                content: block.content || {},
+                              })),
+                          })),
+                          accent: partialData.accent,
+                          isStreaming: true,
+                        };
+                        
+                        console.log("[Streaming] Creating partial slide:", {
+                          slideId: partialSlide.id,
+                          rowCount: partialSlide.rows.length,
+                          blockCounts: partialSlide.rows.map((r: any) => r.blocks.length)
+                        });
+                        
+                        // Update or add the partial slide
+                        const newSlides = [...currentSlides];
+                        if (newSlides[slideIndex]) {
+                          newSlides[slideIndex] = partialSlide;
+                        } else {
+                          newSlides.push(partialSlide);
+                        }
+                        dispatch(setSlides(newSlides));
+                      }
+                    }
+                  } catch (e) {
+                    console.log("[Streaming] Parse error:", e);
+                  }
+                  
+                  // Update progress with raw chunk info
+                  setSlideGenerationProgress(prev => ({
+                    ...prev!,
+                    message: `Building slide ${chunk.slideNumber}... (${chunk.accumulatedText?.length || 0} chars)`,
+                  }));
+                }
               } else if (chunk.type === "slide" && chunk.data) {
                 const slide = {
                   id: chunk.slideId || nanoid(),
@@ -376,7 +446,90 @@ export const useEditorPage = ({
               accent: chunk.data.accent,
             };
             const currentSlides = slidesRef.current;
-            dispatch(setSlides([...currentSlides, slide]));
+            const slideIndex = chunk.slideNumber ? chunk.slideNumber - 1 : currentSlides.length;
+            
+            // Check if there's a temp streaming slide at this index to replace
+            const newSlides = [...currentSlides];
+            if (slideIndex < newSlides.length && newSlides[slideIndex]?.id?.startsWith('temp-')) {
+              // Replace the temp streaming slide with the final slide
+              newSlides[slideIndex] = slide;
+              dispatch(setSlides(newSlides));
+            } else {
+              // No temp slide, append normally
+              dispatch(setSlides([...currentSlides, slide]));
+            }
+          } else if (chunk.type === "slide-streaming") {
+            // Real-time streaming updates using partial JSON parser
+            if (chunk.accumulatedText && chunk.slideNumber) {
+              console.log("[Streaming] Handler entered, text length:", chunk.accumulatedText.length);
+              const currentSlides = slidesRef.current;
+              const slideIndex = chunk.slideNumber - 1;
+              
+              try {
+                const partialData = parsePartialJson(chunk.accumulatedText);
+                console.log("[Streaming] Parsed:", {
+                  hasRows: !!partialData?.rows,
+                  rowCount: partialData?.rows?.length
+                });
+                
+                if (partialData && partialData.rows && Array.isArray(partialData.rows)) {
+                  const validRows = partialData.rows.filter((row: any) => 
+                    row && (row.id || row.blocks)
+                  );
+                  
+                  if (validRows.length > 0) {
+                    const partialSlide = {
+                      id: `temp-${chunk.slideNumber}`,
+                      rows: validRows.map((row: any) => ({
+                        id: row.id || nanoid(),
+                        columnWidths: row.columnWidths,
+                        blocks: (row.blocks || [])
+                          .filter((block: any) => block && block.type)
+                          .map((block: any) => ({
+                            id: block.id || nanoid(),
+                            type: block.type,
+                            content: block.content || {},
+                          })),
+                      })),
+                      accent: partialData.accent,
+                      isStreaming: true,
+                    };
+                    
+                    console.log("[Streaming] Updating slide:", partialSlide.id, "rows:", partialSlide.rows.length);
+                    
+                    const newSlides = [...currentSlides];
+                    if (newSlides[slideIndex]) {
+                      newSlides[slideIndex] = partialSlide;
+                    } else {
+                      // New slide being added - scroll to it after a short delay
+                      newSlides.push(partialSlide);
+                    }
+                    dispatch(setSlides(newSlides));
+                    
+                    // Keep scrolling to bottom of slide as content grows
+                    // Use requestAnimationFrame for smooth scrolling without blocking
+                    requestAnimationFrame(() => {
+                      const slideElement = document.querySelector(`[data-slide-index="${slideIndex}"]`);
+                      if (slideElement) {
+                        const rect = slideElement.getBoundingClientRect();
+                        const viewportHeight = window.innerHeight;
+                        // If the bottom of the slide is below the viewport, scroll down
+                        if (rect.bottom > viewportHeight - 100) {
+                          window.scrollBy({ top: rect.bottom - viewportHeight + 150, behavior: 'auto' });
+                        }
+                      }
+                    });
+                  }
+                }
+              } catch (e) {
+                console.log("[Streaming] Parse error:", e);
+              }
+              
+              setSlideGenerationProgress(prev => ({
+                ...prev!,
+                message: `Building slide ${chunk.slideNumber}... (${chunk.accumulatedText?.length || 0} chars)`,
+              }));
+            }
           } else if (chunk.type === "complete") {
             setIsGeneratingSlides(false);
             setSlideGenerationProgress(null);
