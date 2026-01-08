@@ -15,7 +15,7 @@ prompt-presentation-ai/
 ├── prompts/                # AI prompt builders
 │   └── prompt-builder.service.ts
 ├── utils/                  # Utility functions
-│   └── json-cleaner.util.ts
+│   └── schema-generator.util.ts
 ├── prompt-presentation-ai.service.ts  # Main orchestration service
 └── README.md               # This file
 ```
@@ -48,15 +48,10 @@ prompt-presentation-ai/
 - Ensures consistent formatting and instructions
 
 ### Utilities
-**`JsonCleanerUtil`**
-- Cleans markdown code block wrappers
-- Repairs malformed JSON
-- Extracts valid JSON with multiple fallback strategies
-
-**`UrlSanitizerUtil`**
-- Sanitizes malformed URLs in JSON
-- Fixes duplicate query string separators
-- Ensures valid URL format
+**`SchemaGeneratorUtil`**
+- Dynamically generates JSON schemas for slide content
+- Ensures AI output strictly follows layout requirements
+- Enables standard JSON parsing without custom cleaning
 
 ## 🔧 Usage
 
@@ -122,10 +117,9 @@ The generator yields JSON-stringified events:
 - Supports multiple image types (accent, avatar, gallery, etc.)
 
 ### Robust JSON Processing
-- Handles malformed AI responses
-- Cleans markdown wrappers
-- Repairs incomplete JSON
-- Sanitizes URLs
+- Uses native JSON Schema / Structured Output
+- Guranteed valid JSON directly from the LLM
+- Standard JSON parsing with no maintenance overhead
 
 ### Comprehensive Logging
 - Detailed progress logging for each slide
@@ -178,6 +172,6 @@ Each service has a single, well-defined responsibility:
 - Logging uses NestJS Logger
 - Configured via environment variables
 - Uses AI model defined in `coreConstant.AI_MODELS.SLIDES.NAME`
-- Uses plain JSON object mode (not strict JSON Schema) for flexible AI responses
+- Uses Structured Output (JSON Schema) for guaranteed type safety and reliability
 - No barrel exports - all imports are direct file paths for clarity
 

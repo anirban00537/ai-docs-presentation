@@ -7,7 +7,6 @@ import { coreConstant } from 'src/shared/helpers/coreConstant';
 
 // Internal imports
 import { OutlineItem } from './interfaces/outline.interface';
-import { JsonCleanerUtil } from './utils/json-cleaner.util';
 import { ImageAnalyzerService } from './generators/image-analyzer.service';
 import { ImageFetcherService } from './generators/image-fetcher.service';
 import { PromptBuilderService } from './prompts/prompt-builder.service';
@@ -228,7 +227,7 @@ export class PromptPresentationAIService implements OnModuleInit {
         if (typeof chunk === 'object' && chunk !== null) {
           // This is the final slide data
           slideData = chunk;
-        } else {
+        } else if (typeof chunk === 'string') {
           // This is a streaming progress chunk (JSON string)
           yield chunk;
         }
@@ -398,10 +397,15 @@ export class PromptPresentationAIService implements OnModuleInit {
 
     let accumulatedContent = '';
     let slideData: any = null;
+    let finishReason: string | null = null;
 
     // Process stream chunks - send every token to frontend
     for await (const chunk of stream) {
       const delta = chunk.choices[0]?.delta?.content;
+      
+      if (chunk.choices[0]?.finish_reason) {
+        finishReason = chunk.choices[0].finish_reason;
+      }
       
       if (delta) {
         accumulatedContent += delta;
@@ -424,7 +428,29 @@ export class PromptPresentationAIService implements OnModuleInit {
 
     // Final parse
     if (!slideData && accumulatedContent) {
-      slideData = JSON.parse(accumulatedContent);
+      try {
+        slideData = JSON.parse(accumulatedContent);
+      } catch (e: any) {
+        this.logger.error(
+          `❌ [Slide ${slideNumber}] JSON Parse Error: ${e.message}. Finish Reason: ${finishReason}`,
+        );
+        this.logger.debug(`Failed Content (last 100 chars): ${accumulatedContent.slice(-100)}`);
+        
+        // Naive repair for simple truncation if length was the reason
+        if (finishReason === 'length' || e.message.includes('Unterminated string')) {
+           // Attempt to close string and object
+           try {
+             // Very naive repair: close string if open, then close object
+             const repaired = accumulatedContent + '"}\n]}'; 
+             // Note: accurate repair requires a stack parser, but this might save a simple case
+             // For now, let's just throw a better error so the frontend knows what happened.
+           } catch (repairError) {}
+        }
+
+        throw new Error(
+          `Slide generation incomplete (${finishReason || 'interrupted'}). Please try again.`
+        );
+      }
     }
 
     // Log AI usage (usage info comes at the end of stream)
@@ -435,7 +461,9 @@ export class PromptPresentationAIService implements OnModuleInit {
 
     // Yield final slide data (not as JSON string, but as the actual object)
     // This is the return value that the caller will use
-    yield slideData;
+    if (slideData) {
+      yield slideData;
+    }
   }
 
 

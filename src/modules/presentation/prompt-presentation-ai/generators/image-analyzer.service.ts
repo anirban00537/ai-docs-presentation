@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ImageAnalysisResult } from '../interfaces/image-analysis.interface';
-import { JsonCleanerUtil } from '../utils/json-cleaner.util';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
 
 /**
@@ -13,7 +12,7 @@ export class ImageAnalyzerService {
 
   /**
    * Analyze a layout schema to detect image fields and generate Unsplash search queries
-   * Uses plain JSON output mode for flexible parsing
+   * Uses structured output for guaranteed valid JSON
    */
   async analyzeLayoutForImages(
     openRouter: any,
@@ -64,9 +63,35 @@ If no image fields are found, return hasImages as false with an empty imageField
             content: analysisPrompt,
           },
         ],
-        // Use simple JSON object mode
+        // Use structured output with strict schema
         responseFormat: {
-          type: 'json_object',
+          type: 'json_schema',
+          jsonSchema: {
+            name: 'image_analysis',
+            strict: true,
+            schema: {
+              type: 'object',
+              properties: {
+                hasImages: { type: 'boolean' },
+                imageFields: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      fieldPath: { type: 'string' },
+                      fieldType: { type: 'string', enum: ['image', 'accent', 'avatar', 'gallery'] },
+                      searchQuery: { type: 'string' },
+                      orientation: { type: 'string', enum: ['landscape', 'portrait', 'squarish'] },
+                    },
+                    required: ['fieldPath', 'fieldType', 'searchQuery', 'orientation'],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ['hasImages', 'imageFields'],
+              additionalProperties: false,
+            },
+          },
         },
         stream: false,
       });
@@ -78,8 +103,8 @@ If no image fields are found, return hasImages as false with an empty imageField
         return { hasImages: false, imageFields: [] };
       }
 
-      // Use robust JSON extraction to handle markdown wrappers and malformed JSON
-      const result: ImageAnalysisResult = JsonCleanerUtil.extractValidJson(content);
+      // Parse directly since structured output guarantees valid JSON
+      const result: ImageAnalysisResult = JSON.parse(content);
 
       this.logger.debug(
         `Image analysis result: ${result.hasImages ? result.imageFields.length : 0} image fields found`,
