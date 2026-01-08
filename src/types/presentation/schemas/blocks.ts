@@ -152,8 +152,8 @@ export type TimelineBentoContent = z.infer<typeof TimelineBentoContentSchema>;
 // Stacked Timeline Block
 export const StackedTimelineItemSchema = z.object({
   id: z.string(),
-  title: z.string(),
-  description: z.string(),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
 });
 
 export const StackedTimelineContentSchema = z.object({
