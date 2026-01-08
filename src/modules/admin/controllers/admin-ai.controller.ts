@@ -24,4 +24,9 @@ export class AdminAiController {
   async setAiConfig(@Body() body: { key: string; value: string }): Promise<ResponseModel> {
     return this.aiService.setAiConfig(body.key, body.value);
   }
+
+  @Post('ai-usage/reset')
+  async resetAiUsage(): Promise<ResponseModel> {
+    return this.aiService.resetAiUsage();
+  }
 }

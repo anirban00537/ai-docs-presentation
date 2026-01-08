@@ -97,4 +97,12 @@ export class AdminAiService {
       return processException(error);
     }
   }
+  async resetAiUsage(): Promise<ResponseModel> {
+    try {
+      await this.prisma.aiUsage.deleteMany({});
+      return successResponse('AI usage logs reset successfully');
+    } catch (error) {
+      return processException(error);
+    }
+  }
 }

@@ -56,11 +56,11 @@ export const coreConstant = {
   AI_MODELS: {
     OUTLINE: {
       NAME: 'google/gemini-2.5-flash-lite',
-      PRICING: { prompt: 0.0, completion: 0.0 }, // Free
+      PRICING: { prompt: 0.10, completion: 0.40 }, // Free
     },
     SLIDES: {
-      NAME: 'deepseek/deepseek-v3.2',
-      PRICING: { prompt: 0.25, completion: 0.38 },
+      NAME: 'minimax/minimax-m2.1',
+      PRICING: { prompt: 0.28, completion: 1.20},
     },
     IMAGE: {
       NAME: 'black-forest-labs/flux-1.1-pro',
