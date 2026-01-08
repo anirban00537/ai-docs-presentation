@@ -354,6 +354,13 @@ export class PromptPresentationAIService implements OnModuleInit {
       `🤖 [Slide ${slideNumber}] Calling LLM for content generation...`,
     );
 
+    // Check if accent image is being injected
+    const hasAccent = imageInjectionPrompt.includes('accent.url');
+
+    // Generate dynamic JSON schema from template
+    const { SchemaGeneratorUtil } = await import('./utils/schema-generator.util');
+    const slideSchema = SchemaGeneratorUtil.generateSlideSchema(templateRows, hasAccent);
+
     const response = await this.openRouter.chat.send({
       model: this.MODEL_NAME,
       messages: [
@@ -362,9 +369,14 @@ export class PromptPresentationAIService implements OnModuleInit {
           content: slidePrompt,
         },
       ],
-      // Use simple JSON object mode for flexible responses
+      // Use structured output with dynamic schema
       responseFormat: {
-        type: 'json_object',
+        type: 'json_schema',
+        jsonSchema: {
+          name: 'slide_structure',
+          strict: true,
+          schema: slideSchema,
+        },
       },
       stream: false,
     });

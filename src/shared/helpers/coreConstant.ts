@@ -59,7 +59,7 @@ export const coreConstant = {
       PRICING: { prompt: 0.25, completion: 0.38 }, // $ per 1M tokens
     },
     SLIDES: {
-      NAME: 'openai/gpt-4.1-mini',
+      NAME: 'minimax/minimax-m2.1',
       PRICING: { prompt: 0.25, completion: 0.38 },
     },
     IMAGE: {
