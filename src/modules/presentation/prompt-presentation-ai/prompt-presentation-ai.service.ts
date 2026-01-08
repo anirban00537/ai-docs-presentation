@@ -406,68 +406,10 @@ export class PromptPresentationAIService implements OnModuleInit {
       });
     }
 
-    // Parse and normalize slide data
-    let slideData: any;
+    // Parse JSON response (guaranteed valid by json_schema mode)
+    const slideData = JSON.parse(content as string);
 
-    try {
-      slideData = JsonCleanerUtil.extractValidJson(content as string);
-    } catch (parseError) {
-      this.logger.warn(
-        `[Slide ${slideNumber}] JSON parsing failed, using template fallback structure...`,
-      );
-
-      // Fallback: Use template structure with minimal content
-      slideData = {
-        rows: templateRows.map((row: any) => ({
-          ...row,
-          blocks: row.blocks.map((block: any) => ({
-            ...block,
-            content:
-              block.type === 'prosemirror'
-                ? {
-                    type: 'doc',
-                    content: [
-                      {
-                        type: 'heading',
-                        attrs: { level: 2 },
-                        content: [{ type: 'text', text: 'Generated Content' }],
-                      },
-                      {
-                        type: 'paragraph',
-                        content: [
-                          {
-                            type: 'text',
-                            text: 'Content generation incomplete. Please edit this slide.',
-                          },
-                        ],
-                      },
-                    ],
-                  }
-                : block.content,
-          })),
-        })),
-      };
-    }
-
-    // Normalize: Handle nested "data" or different wrapper styles
-    // We want to extract both "rows" AND "accent" if they exist
-    const finalSlideData: any = {
-      rows: [],
-    };
-
-    const source = slideData?.data || slideData;
-
-    if (source?.rows && Array.isArray(source.rows)) {
-      finalSlideData.rows = source.rows;
-    } else if (Array.isArray(source)) {
-      finalSlideData.rows = source;
-    }
-
-    if (source?.accent) {
-      finalSlideData.accent = source.accent;
-    }
-
-    return finalSlideData;
+    return slideData;
   }
 
 
