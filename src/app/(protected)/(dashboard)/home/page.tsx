@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { PromptBox } from "@/components/ui/chatgpt-prompt-input";
+import { PromptBox } from "@/components/ui/prompt-input";
 import { cn } from "@/lib/utils";
 import {
   IconRobot,

@@ -8,7 +8,7 @@ import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
 import { IconSparkles, IconArrowLeft, IconCheck, IconLoader2, IconChevronDown } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { PromptBox } from "@/components/ui/chatgpt-prompt-input";
+import { PromptBox } from "@/components/ui/prompt-input";
 
 export default function OutlinePage() {
   const params = useParams();
