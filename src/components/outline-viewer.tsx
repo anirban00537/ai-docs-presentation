@@ -120,10 +120,10 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
               setLocalOutline(updated);
               onUpdate?.(updated);
             }}
-            className="text-3xl md:text-4xl font-serif font-bold text-foreground bg-transparent border-b-2 border-transparent hover:border-secondary/20 focus:border-primary focus:outline-none w-full transition-all"
+            className="text-xl md:text-2xl font-serif font-bold text-foreground bg-transparent border-b-2 border-transparent hover:border-secondary/20 focus:border-primary focus:outline-none w-full transition-all"
           />
         ) : (
-          <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground tracking-tight">
+          <h1 className="text-xl md:text-2xl font-serif font-bold text-foreground tracking-tight">
             {localOutline.title}
           </h1>
         )}
@@ -139,7 +139,7 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
             <div
               key={index}
               className={cn(
-                "relative rounded-[32px] p-8 overflow-hidden transition-all duration-300",
+                "relative rounded-md px-3 py-4 overflow-hidden transition-all duration-300",
                 "bg-white/40 border border-secondary/20 shadow-sm",
                 "hover:shadow-depth-3 hover:bg-white hover:scale-[1.005]",
                 !isLoading && "animate-in fade-in-0 slide-in-from-bottom-4"
@@ -152,7 +152,7 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
                 {/* Number Badge */}
                 <div className="shrink-0">
                   <div 
-                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white font-bold text-xl shadow-coral-glow"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white font-bold text-base shadow-coral-glow"
                   >
                     {index + 1}
                   </div>

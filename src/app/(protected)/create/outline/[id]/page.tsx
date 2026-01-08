@@ -292,7 +292,7 @@ export default function OutlinePage() {
                     {saveStatus === 'saving' && <span className="text-xs text-muted-foreground flex gap-1 items-center"><IconLoader2 size={10} className="animate-spin"/> Saving...</span>}
                  </div>
                  
-                 <div className="bg-white/50 border border-secondary/10 rounded-[24px] overflow-hidden shadow-sm">
+                 <div className="border border-secondary/10 rounded-[24px] overflow-hidden shadow-sm">
                     <OutlineViewer
                         outline={outlineData || { title: "Generating...", outlines: [] }}
                         isLoading={isStreaming}
