@@ -34,7 +34,28 @@ export const useOutlineGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [streamingContent, setStreamingContent] = useState<string>("");
   const [completedOutline, setCompletedOutline] = useState<any>(null);
+  const [generationSpeed, setGenerationSpeed] = useState(0);
+  
   const hasStartedStreaming = useRef(false);
+  const lastContentLengthRef = useRef(0);
+  const lastUpdateTimestampRef = useRef(Date.now());
+
+  // Decay speed effect: if no updates for >200ms, start decaying the speed visual
+  useEffect(() => {
+    if (!isGenerating) {
+        setGenerationSpeed(0);
+        return;
+    }
+    const interval = setInterval(() => {
+        const now = Date.now();
+        const timeSinceLastUpdate = now - lastUpdateTimestampRef.current;
+        if (timeSinceLastUpdate > 150) {
+             // Rapid decay if stalled
+             setGenerationSpeed(prev => Math.max(0, prev * 0.8)); 
+        }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [isGenerating]);
 
   const startGeneration = useCallback((outlineId: string) => {
     // Prevent double-start
@@ -43,22 +64,41 @@ export const useOutlineGeneration = () => {
     setIsGenerating(true);
     setStreamingContent("");
     setCompletedOutline(null);
+    setGenerationSpeed(0);
     hasStartedStreaming.current = true;
+    lastContentLengthRef.current = 0;
+    lastUpdateTimestampRef.current = Date.now();
 
     generateOutlineStreamMutation.mutate({
       outlineId,
       onChunk: (chunk) => {
         if (chunk.type === 'chunk' && chunk.accumulated) {
+           const now = Date.now();
+           const deltaChars = chunk.accumulated.length - lastContentLengthRef.current;
+           const timeDiff = now - lastUpdateTimestampRef.current;
+           
+           // Calculate chars/sec
+           if (timeDiff > 0 && deltaChars >= 0) {
+               // Smoothed instant speed
+               const instantSpeed = (deltaChars / Math.max(timeDiff, 1)) * 1000;
+               setGenerationSpeed(prev => (prev * 0.3) + (instantSpeed * 0.7)); // simple moving average
+           }
+
+           lastContentLengthRef.current = chunk.accumulated.length;
+           lastUpdateTimestampRef.current = now;
+
            setStreamingContent(chunk.accumulated);
         } else if (chunk.type === 'complete') {
            if (chunk.data) {
                setCompletedOutline(chunk.data);
            }
            setIsGenerating(false);
+           setGenerationSpeed(0);
            // Refresh credits on completion
            dispatch(fetchCreditBalance());
         } else if (chunk.type === 'error') {
            setIsGenerating(false);
+           setGenerationSpeed(0);
            console.error("Streaming error:", chunk.message);
         }
       }
@@ -69,6 +109,7 @@ export const useOutlineGeneration = () => {
       setIsGenerating(false);
       setStreamingContent("");
       setCompletedOutline(null);
+      setGenerationSpeed(0);
       hasStartedStreaming.current = false;
   }, []);
 
@@ -76,6 +117,7 @@ export const useOutlineGeneration = () => {
     isGenerating,
     streamingContent,
     completedOutline,
+    generationSpeed,
     startGeneration,
     resetGeneration,
     hasStartedStreaming
@@ -200,6 +242,7 @@ export const useOutlineEditor = (outlineId: string) => {
     isGenerating: isStreaming, 
     streamingContent, 
     completedOutline, 
+    generationSpeed,
     startGeneration,
     resetGeneration 
   } = useOutlineGeneration();
@@ -361,6 +404,8 @@ export const useOutlineEditor = (outlineId: string) => {
     // Status
     isLoading,
     isStreaming,
+    generationSpeed,
+    streamingContent,
     themesLoading: false, // themesLoading was removed from useOutlineEditor, assuming it's not needed or handled elsewhere
     saveStatus,
     themeSaveStatus,

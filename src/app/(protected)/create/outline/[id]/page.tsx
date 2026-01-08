@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { IconSparkles, IconArrowLeft, IconCheck, IconLoader2, IconChevronDown } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { PromptBox } from "@/components/ui/prompt-input";
+import { LoaderOverlay } from "@/components/ui/loader-overlay";
 
 export default function OutlinePage() {
   const params = useParams();
@@ -26,6 +27,8 @@ export default function OutlinePage() {
     // Status
     isLoading,
     isStreaming,
+    generationSpeed,
+    streamingContent,
     saveStatus,
     themeSaveStatus,
     
@@ -186,6 +189,19 @@ export default function OutlinePage() {
         </div>
 
       </div>
+      
+      {/* Full Screen Blocking Overlay during Generation */}
+      <LoaderOverlay 
+        isLoading={isStreaming} 
+        message="Generating Outline..." 
+        streamSpeed={generationSpeed}
+        theme={selectedTheme}
+        progress={{
+          current: streamingContent ? streamingContent.length : 0,
+          total: 0,
+          message: "Generating Outline..."
+        }}
+      />
     </div>
   );
 }

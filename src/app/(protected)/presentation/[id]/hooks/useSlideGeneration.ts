@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { setSlides, Slide } from "@/store/slices/slidesSlice";
 import { useGenerateAndCreateSlides } from "./use-outline";
@@ -35,6 +35,25 @@ export function useSlideGeneration({
   
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState<SlideGenerationProgress | null>(null);
+  const [generationSpeed, setGenerationSpeed] = useState(0);
+
+  const lastContentLengthRef = useRef(0);
+  const lastUpdateTimestampRef = useRef(Date.now());
+
+  // Decay speed effect
+  useEffect(() => {
+    if (!isGenerating) {
+        setGenerationSpeed(0);
+        return;
+    }
+    const interval = setInterval(() => {
+        const now = Date.now();
+        if (now - lastUpdateTimestampRef.current > 150) {
+             setGenerationSpeed(prev => Math.max(0, prev * 0.8)); 
+        }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [isGenerating]);
 
   /**
    * Handles individual chunks from the streaming SSE
@@ -47,10 +66,14 @@ export function useSlideGeneration({
           total: chunk.totalSlides || 0,
           message: "Starting generation...",
         });
+        setGenerationSpeed(0);
+        lastContentLengthRef.current = 0;
+        lastUpdateTimestampRef.current = Date.now();
         // dispatch(setSlides([])); // Don't clear slides to allow appending/resuming
       } 
       
       else if (chunk.type === "slide-start") {
+        lastContentLengthRef.current = 0; // Reset for new slide
         setProgress({
           current: chunk.slideNumber || 0,
           total: chunk.totalSlides || progress?.total || 0,
@@ -72,6 +95,18 @@ export function useSlideGeneration({
       
       else if (chunk.type === "slide-streaming") {
         if (chunk.accumulatedText && chunk.slideNumber) {
+          // Speed calc
+          const now = Date.now();
+          const deltaChars = chunk.accumulatedText.length - lastContentLengthRef.current;
+          const timeDiff = now - lastUpdateTimestampRef.current;
+          
+          if (timeDiff > 0 && deltaChars >= 0) {
+             const instantSpeed = (deltaChars / Math.max(timeDiff, 1)) * 1000;
+             setGenerationSpeed(prev => (prev * 0.3) + (instantSpeed * 0.7));
+          }
+          lastContentLengthRef.current = chunk.accumulatedText.length;
+          lastUpdateTimestampRef.current = now;
+          
           const slideIndex = chunk.slideNumber - 1;
           const currentSlides = slidesRef.current;
 
@@ -190,6 +225,7 @@ export function useSlideGeneration({
   return {
     isGenerating,
     progress,
+    generationSpeed,
     startGeneration,
     isPending: generateAndCreateSlidesMutation.isPending,
   };

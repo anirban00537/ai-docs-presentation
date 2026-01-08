@@ -43,7 +43,7 @@ export const useEditorPage = ({ presentationId, outlineId }: UseEditorPageParams
   const { data: outlineResponse } = useOutline(outlineId);
   
   // 1. Generation Logic
-  const { isGenerating, progress, startGeneration } = useSlideGeneration({ 
+  const { isGenerating, progress, startGeneration, generationSpeed } = useSlideGeneration({ 
     presentationId, 
     slidesRef 
   });
@@ -118,6 +118,7 @@ export const useEditorPage = ({ presentationId, outlineId }: UseEditorPageParams
     activeSlideId,
     isGeneratingSlides: isGenerating,
     slideGenerationProgress: progress,
+    slideGenerationSpeed: generationSpeed,
     isLoadingPresentation,
     presentationId,
 

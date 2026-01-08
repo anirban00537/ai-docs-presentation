@@ -10,7 +10,6 @@ import {
   SlideContainer,
   SlideNavigator,
   EditorHeader,
-  ProgressIndicator,
   PresentationView,
   DragPreview,
   EditorBackground,
@@ -18,6 +17,7 @@ import {
   ToolbarPanel,
 } from "@/app/(protected)/presentation/[id]/editor";
 import { LoadingOverlay } from "@/app/(protected)/presentation/[id]/editor/ui/LoadingOverlay";
+import { LoaderOverlay } from "@/components/ui/loader-overlay";
 import { useEditorPage } from "./hooks/useEditorPage";
 import { usePresentationMode } from "./hooks/usePresentationMode";
 import { useAppSelector } from "@/store/hooks";
@@ -52,6 +52,7 @@ const PresentationEditorPage = () => {
     isLoadingPresentation,
     isGeneratingSlides,
     slideGenerationProgress,
+    slideGenerationSpeed,
   } = useEditorPage({ presentationId, outlineId });
 
   const presentation = useAppSelector(selectPresentation);
@@ -220,11 +221,13 @@ const PresentationEditorPage = () => {
         </div>
       </div>
 
-      {/* Generating Indicator */}
-      <ProgressIndicator
-        isGenerating={isGeneratingSlides}
+      {/* Generating Indicator (Combined overlay) */}
+      <LoaderOverlay 
+        isLoading={isGeneratingSlides} 
         progress={slideGenerationProgress}
         theme={theme}
+        mode={isDark ? "dark" : "light"}
+        streamSpeed={slideGenerationSpeed}
       />
     </>
   );

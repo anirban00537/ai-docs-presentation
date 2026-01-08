@@ -42,7 +42,6 @@ export { PresentationView } from "./presentation/PresentationView";
 
 // UI
 export { LoadingOverlay } from "./ui/LoadingOverlay";
-export { ProgressIndicator } from "./ui/ProgressIndicator";
 
 // Utils
 export { getBlockTypeIcon, getBlockTypeLabel } from "./utils/blockTypeUtils";
