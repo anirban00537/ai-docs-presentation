@@ -1,235 +1,43 @@
 "use client";
 
-import React, { useCallback, useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { parse as parsePartialJson } from "partial-json";
-import { useOutline, useUpdateOutline, useGenerateOutlineStream } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
-import { useAdminThemesList } from "@/app/(protected)/presentation/[id]/hooks/use-themes";
-import { updatePresentation } from "@/services/presentation";
+import { useOutlineEditor } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
 import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
-import { IconFileText, IconSparkles, IconArrowLeft, IconCheck, IconLoader2, IconPalette, IconChevronDown } from "@tabler/icons-react";
-import type { OutlineResponse } from "@/services/presentation";
-import type { ThemeResponse } from "@/services/themes";
+import { IconSparkles, IconArrowLeft, IconCheck, IconLoader2, IconChevronDown } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-
 import { PromptBox } from "@/components/ui/chatgpt-prompt-input";
 
 export default function OutlinePage() {
   const params = useParams();
-  const router = useRouter();
   const outlineId = params.id as string;
 
-  // TanStack Query hooks
+  // Use the consolidated hook for all logic
   const {
-    data: outlineResponse,
-    isLoading,
-    error: outlineError,
-    refetch,
-  } = useOutline(outlineId);
-  const updateOutlineMutation = useUpdateOutline();
-  const generateOutlineStreamMutation = useGenerateOutlineStream();
-
-  // Streaming state
-  const [streamingContent, setStreamingContent] = useState<string>("");
-  const [completedOutline, setCompletedOutline] = useState<any>(null);
-  const [isStreaming, setIsStreaming] = useState(false);
-  const hasStartedStreaming = useRef(false);
-
-  // Fetch admin themes
-  const { data: themesResponse, isLoading: themesLoading } = useAdminThemesList();
-  const themes = useMemo(() => themesResponse?.data?.list || [], [themesResponse]);
-
-  // Theme selection state
-  const [selectedTheme, setSelectedTheme] = useState<ThemeResponse | null>(null);
-  const hasAutoSelectedTheme = useRef(false);
-  const [themeSaveStatus, setThemeSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
-  const [showAllThemes, setShowAllThemes] = useState(false);
-
-  const outline = outlineResponse?.data || null;
-  // Only show error if there's a query error or API returned failure
-  const error =
-    outlineError?.message ||
-    (outlineResponse && !outlineResponse.success
-      ? outlineResponse.message
-      : null);
-  const displayError = error;
-
-  // Auto-start streaming if outline is generating/empty
-  useEffect(() => {
-    if (outline && outline.status === 'generating' && !hasStartedStreaming.current && !outline.outlines?.length) {
-      hasStartedStreaming.current = true;
-      setIsStreaming(true);
-      
-      generateOutlineStreamMutation.mutate({
-        outlineId,
-        onChunk: (chunk) => {
-          if (chunk.type === 'chunk' && chunk.accumulated) {
-            setStreamingContent(chunk.accumulated);
-          } else if (chunk.type === 'complete') {
-            if (chunk.data) {
-                setCompletedOutline(chunk.data);
-            }
-            setIsStreaming(false);
-            refetch(); // Refresh to get cleanup/canonical data
-          } else if (chunk.type === 'error') {
-            setIsStreaming(false);
-            console.error("Streaming error:", chunk.message);
-          }
-        }
-      });
-    }
-  }, [outline, outlineId, generateOutlineStreamMutation, refetch]);
-
-  // Get outline data from the fetched outline or stream
-  const outlineData = React.useMemo(() => {
-    // 1. Prefer explicitly completed data (prevents flicker before refetch)
-    if (completedOutline) {
-        let displayTitle = completedOutline.title;
-         if (!displayTitle || displayTitle.match(/^[\.\s]+$/)) {
-             displayTitle = outline?.title || "Untitled Presentation";
-         }
-        return {
-            title: displayTitle,
-            outlines: completedOutline.outlines
-        };
-    }
-
-    // 2. Prefer streaming data if active
-    if (isStreaming && streamingContent) {
-        try {
-            const partial = parsePartialJson(streamingContent);
-            if (partial && partial.outlines) {
-                let displayTitle = partial.title || outline?.title || "Generating...";
-                // Clean up "..." titles from AI
-                if (displayTitle.match(/^[\.\s]+$/)) {
-                    displayTitle = "Generating...";
-                }
-                
-                return {
-                    title: displayTitle,
-                    outlines: partial.outlines
-                };
-            }
-        } catch (e) {
-            // Ignore parse errors
-        }
-    }
-
-    // 3. Fallback to fetched data
-    if (outline?.outlines && Array.isArray(outline.outlines)) {
-      return {
-        title: outline.title || "Untitled Presentation",
-        outlines: outline.outlines as any,
-      };
-    }
-    return null;
-  }, [outline?.title, outline?.outlines, isStreaming, streamingContent, completedOutline]);
-
-  // Get presentationId early for theme saving
-  const presentationId =
-    outlineResponse?.data?.presentationId || outline?.presentationId;
-
-  // Auto-select random theme on page load
-  useEffect(() => {
-    if (
-      !hasAutoSelectedTheme.current &&
-      themes.length > 0 &&
-      presentationId &&
-      !selectedTheme
-    ) {
-      hasAutoSelectedTheme.current = true;
-      const randomIndex = Math.floor(Math.random() * themes.length);
-      const randomTheme = themes[randomIndex];
-      setSelectedTheme(randomTheme);
-      
-      // Auto-save the random theme to presentation
-      saveThemeToPresentation(randomTheme);
-    }
-  }, [themes, presentationId, selectedTheme]);
-
-  // Save theme to presentation
-  const saveThemeToPresentation = async (theme: ThemeResponse) => {
-    if (!presentationId) return;
+    outline,
+    outlineData,
+    themes,
+    selectedTheme,
+    presentationUrl,
+    displayError,
     
-    setThemeSaveStatus('saving');
-    try {
-      await updatePresentation(presentationId, {
-        globalTheme: theme.themeData,
-      });
-      setThemeSaveStatus('saved');
-      setTimeout(() => setThemeSaveStatus('idle'), 2000);
-    } catch (err) {
-      console.error("Failed to save theme:", err);
-      setThemeSaveStatus('idle');
-    }
-  };
+    // Status
+    isLoading,
+    isStreaming,
+    saveStatus,
+    themeSaveStatus,
+    
+    // Actions
+    handleRegenerate,
+    debouncedSave,
+    setSelectedTheme,
+    saveThemeToPresentation,
+  } = useOutlineEditor(outlineId);
 
-  const handleRegenerate = (newPrompt: string, newSlideCount: number) => {
-    setIsStreaming(true);
-    setStreamingContent("");
-    setCompletedOutline(null);
-    hasStartedStreaming.current = true;
-
-    updateOutlineMutation.mutate(
-      {
-        id: outlineId,
-        payload: {
-          prompt: newPrompt,
-          numberOfSlides: newSlideCount,
-          outlines: [] // Clear previous outlines
-        }
-      },
-      {
-        onSuccess: () => {
-             // Trigger stream
-             generateOutlineStreamMutation.mutate({
-                outlineId,
-                onChunk: (chunk) => {
-                  if (chunk.type === 'chunk' && chunk.accumulated) {
-                    setStreamingContent(chunk.accumulated);
-                  } else if (chunk.type === 'complete') {
-                    if (chunk.data) {
-                        setCompletedOutline(chunk.data);
-                    }
-                    setIsStreaming(false);
-                    refetch();
-                  } else if (chunk.type === 'error') {
-                    setIsStreaming(false);
-                    console.error("Streaming error:", chunk.message);
-                  }
-                }
-             });
-        }
-      }
-    );
-  };
-
-  // Auto-save state (for editor manual changes)
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Debounced auto-save interaction
-  const debouncedSave = useCallback((updatedOutline: OutlineResponse) => {
-      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
-      debounceTimerRef.current = setTimeout(() => {
-        setSaveStatus('saving');
-        updateOutlineMutation.mutate(
-          { id: outlineId, payload: updatedOutline },
-          {
-            onSuccess: () => {
-              setSaveStatus('saved');
-              setTimeout(() => setSaveStatus('idle'), 2000);
-            },
-            onError: () => setSaveStatus('idle')
-          }
-        );
-      }, 1500);
-    }, [outlineId, updateOutlineMutation]);
-
-  // Ref for auto-scrolling
+  // UI-only state
+  const [showAllThemes, setShowAllThemes] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll effect
@@ -237,13 +45,7 @@ export default function OutlinePage() {
     if (isStreaming && bottomRef.current) {
         bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
-  }, [streamingContent, isStreaming]);
-
-  // Build presentation URL for navigation
-  const presentationUrl =
-    presentationId && outlineId
-      ? `/presentation/${presentationId}?outlineId=${outlineId}`
-      : null;
+  }, [isStreaming]);
 
   if (isLoading) {
     return (
@@ -254,7 +56,7 @@ export default function OutlinePage() {
   }
 
   return (
-    <div className="flex-1 min-h-[calc(100vh-80px)] bg-gradient-to-br from-primary/40 to-secondary/40 flex flex-col items-center py-8">
+    <div className="flex-1 min-h-[calc(100vh-80px)] bg-gradient-to-b from-primary/40 to-secondary/40 flex flex-col items-center py-8">
       {/* Container */}
       <div className="w-full max-w-5xl px-6 py-8 bg-white/60 backdrop-blur-xl border border-white/20 shadow-2xl rounded-[32px] flex flex-col gap-8">
         
