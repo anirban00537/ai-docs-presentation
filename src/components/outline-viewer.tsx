@@ -61,7 +61,7 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
     }
   }, [localOutline, isLoading, revealedItems]);
 
-  if (isLoading) {
+  if (isLoading && !localOutline) {
     return (
       <div className={cn("w-full space-y-6", className)}>
         <div className="h-10 w-3/4 animate-pulse rounded-2xl bg-secondary/10" />

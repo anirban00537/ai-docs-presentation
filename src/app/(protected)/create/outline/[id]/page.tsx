@@ -45,9 +45,9 @@ export default function OutlinePage() {
     if (isStreaming && bottomRef.current) {
         bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
-  }, [isStreaming]);
+  }, [isStreaming, outlineData?.outlines?.length]);
 
-  if (isLoading) {
+  if (isLoading && !isStreaming && !outlineData) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
          <IconLoader2 className="animate-spin text-primary" size={32} />
@@ -97,7 +97,7 @@ export default function OutlinePage() {
                  <div className="border border-secondary/10 rounded-[24px] overflow-hidden shadow-sm">
                     <OutlineViewer
                         outline={outlineData || { title: "Generating...", outlines: [] }}
-                        isLoading={isStreaming}
+                        isLoading={false}
                         editable={!isStreaming}
                         onUpdate={debouncedSave}
                     />

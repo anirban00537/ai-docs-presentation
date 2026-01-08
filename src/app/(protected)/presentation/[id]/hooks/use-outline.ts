@@ -18,11 +18,68 @@ import { useAppDispatch } from "@/store/hooks";
 import { fetchCreditBalance } from "@/store/slices/subscriptionSlice";
 import { useAdminThemesList } from "./use-themes";
 import { type ThemeResponse } from "@/services/themes";
+import { useRouter } from "next/navigation";
 
 // Query keys
 export const outlineKeys = {
   all: ["outlines"] as const,
   detail: (id: string) => [...outlineKeys.all, id] as const,
+};
+
+// --- Sub-Hook: Outline Generation (Streaming) ---
+export const useOutlineGeneration = () => {
+  const dispatch = useAppDispatch();
+  const generateOutlineStreamMutation = useGenerateOutlineStream();
+  
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [streamingContent, setStreamingContent] = useState<string>("");
+  const [completedOutline, setCompletedOutline] = useState<any>(null);
+  const hasStartedStreaming = useRef(false);
+
+  const startGeneration = useCallback((outlineId: string) => {
+    // Prevent double-start
+    if (isGenerating) return;
+    
+    setIsGenerating(true);
+    setStreamingContent("");
+    setCompletedOutline(null);
+    hasStartedStreaming.current = true;
+
+    generateOutlineStreamMutation.mutate({
+      outlineId,
+      onChunk: (chunk) => {
+        if (chunk.type === 'chunk' && chunk.accumulated) {
+           setStreamingContent(chunk.accumulated);
+        } else if (chunk.type === 'complete') {
+           if (chunk.data) {
+               setCompletedOutline(chunk.data);
+           }
+           setIsGenerating(false);
+           // Refresh credits on completion
+           dispatch(fetchCreditBalance());
+        } else if (chunk.type === 'error') {
+           setIsGenerating(false);
+           console.error("Streaming error:", chunk.message);
+        }
+      }
+    });
+  }, [isGenerating, generateOutlineStreamMutation, dispatch]);
+
+  const resetGeneration = useCallback(() => {
+      setIsGenerating(false);
+      setStreamingContent("");
+      setCompletedOutline(null);
+      hasStartedStreaming.current = false;
+  }, []);
+
+  return {
+    isGenerating,
+    streamingContent,
+    completedOutline,
+    startGeneration,
+    resetGeneration,
+    hasStartedStreaming
+  };
 };
 
 // Get outline query
@@ -89,7 +146,6 @@ export const useUpdateOutline = () => {
 
 // Generate outline stream hook
 export const useGenerateOutlineStream = () => {
-  const dispatch = useAppDispatch();
   return useMutation({
     mutationFn: ({
       outlineId,
@@ -98,12 +154,6 @@ export const useGenerateOutlineStream = () => {
       outlineId: string;
       onChunk: (chunk: StreamChunk) => void;
     }) => generateOutlineStream(outlineId, onChunk),
-    onSuccess: () => {
-      dispatch(fetchCreditBalance());
-    },
-    onError: (error: any) => {
-      console.error("[useGenerateOutlineStream] Mutation error:", error);
-    },
   });
 };
 
@@ -130,28 +180,36 @@ export const useGenerateAndCreateSlides = () => {
 /**
  * Consolidated hook for the Outline Editor Page logic
  */
+// --- Main Hook: Outline Editor ---
 export const useOutlineEditor = (outlineId: string) => {
-  // Queries & Mutations
+  const router = useRouter();
+  const updateOutlineMutation = useUpdateOutline();
+
+  // 1. Data Fetching
   const {
     data: outlineResponse,
     isLoading,
     error: outlineError,
     refetch,
   } = useOutline(outlineId);
-  const updateOutlineMutation = useUpdateOutline();
-  const generateOutlineStreamMutation = useGenerateOutlineStream();
-  const { data: themesResponse, isLoading: themesLoading } = useAdminThemesList();
 
-  // State
-  const [streamingContent, setStreamingContent] = useState<string>("");
-  const [completedOutline, setCompletedOutline] = useState<any>(null);
-  const [isStreaming, setIsStreaming] = useState(false);
+  const { data: themesResponse } = useAdminThemesList();
+  
+  // 2. Generation Hook
+  const { 
+    isGenerating: isStreaming, 
+    streamingContent, 
+    completedOutline, 
+    startGeneration,
+    resetGeneration 
+  } = useOutlineGeneration();
+
+  // 3. Local State
   const [selectedTheme, setSelectedTheme] = useState<ThemeResponse | null>(null);
   const [themeSaveStatus, setThemeSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   // Refs
-  const hasStartedStreaming = useRef(false);
   const hasAutoSelectedTheme = useRef(false);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -159,7 +217,7 @@ export const useOutlineEditor = (outlineId: string) => {
   const outline = outlineResponse?.data || null;
   const themes = useMemo(() => themesResponse?.data?.list || [], [themesResponse]);
   
-  const error = outlineError?.message || 
+  const displayError = outlineError?.message || 
     (outlineResponse && !outlineResponse.success ? outlineResponse.message : null);
 
   const presentationId = outlineResponse?.data?.presentationId || outline?.presentationId;
@@ -167,49 +225,46 @@ export const useOutlineEditor = (outlineId: string) => {
     ? `/presentation/${presentationId}?outlineId=${outlineId}` 
     : null;
 
-  // 1. Auto-start streaming
+  // Auto-start streaming logic
   useEffect(() => {
-    if (outline && outline.status === 'generating' && !hasStartedStreaming.current && !outline.outlines?.length) {
-      hasStartedStreaming.current = true;
-      setIsStreaming(true);
-      
-      generateOutlineStreamMutation.mutate({
-        outlineId,
-        onChunk: (chunk) => {
-          if (chunk.type === 'chunk' && chunk.accumulated) {
-            setStreamingContent(chunk.accumulated);
-          } else if (chunk.type === 'complete') {
-            if (chunk.data) setCompletedOutline(chunk.data);
-            setIsStreaming(false);
-            refetch();
-          } else if (chunk.type === 'error') {
-            setIsStreaming(false);
-            console.error("Streaming error:", chunk.message);
-          }
-        }
-      });
+    // Only start if: 
+    // 1. We have outline data
+    // 2. Status is 'generating'
+    // 3. We haven't started streaming yet (handled by hook, but double check here)
+    // 4. outline.outlines is empty (meaning we need to generate content)
+    if (outline && outline.status === 'generating' && !outline.outlines?.length && !isStreaming && !streamingContent) {
+       startGeneration(outlineId);
     }
-  }, [outline, outlineId, generateOutlineStreamMutation, refetch]);
+  }, [outline, outlineId, isStreaming, streamingContent, startGeneration]);
 
-  // 2. Computed Outline Data (Merging stream vs fetched)
+  // When stream completes, refetch to ensure we have canonical DB state
+  useEffect(() => {
+      if (completedOutline) {
+          refetch();
+      }
+  }, [completedOutline, refetch]);
+
+  // Computed Outline Data (Merging stream vs fetched)
   const outlineData = useMemo(() => {
-    // A. Explicit completed data
+    // A. Explicit completed data (Prioritize this)
     if (completedOutline) {
         let displayTitle = completedOutline.title;
          if (!displayTitle || displayTitle.match(/^[\.\s]+$/)) {
              displayTitle = outline?.title || "Untitled Presentation";
          }
+        // Filter empty outlines
+        const validOutlines = (completedOutline.outlines || []).filter((o: any) => o.content && o.content.trim());
         return {
             title: displayTitle,
-            outlines: completedOutline.outlines
+            outlines: validOutlines
         };
     }
 
-    // B. Streaming data
-    if (isStreaming && streamingContent) {
+    // B. Streaming data (Use if we have content)
+    if (streamingContent) {
         try {
             const partial = parsePartialJson(streamingContent);
-            if (partial && partial.outlines) {
+            if (partial && partial.outlines && partial.outlines.length > 0) {
                 let displayTitle = partial.title || outline?.title || "Generating...";
                 if (displayTitle.match(/^[\.\s]+$/)) displayTitle = "Generating...";
                 return {
@@ -218,7 +273,7 @@ export const useOutlineEditor = (outlineId: string) => {
                 };
             }
         } catch (e) {
-            // Ignore parse errors
+            // Ignore parse errors, fall through to DB data
         }
     }
 
@@ -230,9 +285,9 @@ export const useOutlineEditor = (outlineId: string) => {
       };
     }
     return null;
-  }, [outline?.title, outline?.outlines, isStreaming, streamingContent, completedOutline]);
+  }, [outline?.title, outline?.outlines, streamingContent, completedOutline]);
 
-  // 3. Theme Logic
+  // Theme Logic
   const saveThemeToPresentation = useCallback(async (theme: ThemeResponse) => {
     if (!presentationId) return;
     setThemeSaveStatus('saving');
@@ -256,61 +311,43 @@ export const useOutlineEditor = (outlineId: string) => {
     }
   }, [themes, presentationId, selectedTheme, saveThemeToPresentation]);
 
-  // 4. Regeneration Logic
-  const handleRegenerate = useCallback((newPrompt: string, newSlideCount: number) => {
-    setIsStreaming(true);
-    setStreamingContent("");
-    setCompletedOutline(null);
-    hasStartedStreaming.current = true;
-
+  // Regenerate Handler
+  const handleRegenerate = (newPrompt: string, newSlideCount: number) => {
+    resetGeneration();
     updateOutlineMutation.mutate(
       {
         id: outlineId,
         payload: {
           prompt: newPrompt,
           numberOfSlides: newSlideCount,
-          outlines: [] 
+          outlines: [] // Clear previous outlines
         }
       },
       {
         onSuccess: () => {
-             generateOutlineStreamMutation.mutate({
-                outlineId,
-                onChunk: (chunk) => {
-                  if (chunk.type === 'chunk' && chunk.accumulated) {
-                    setStreamingContent(chunk.accumulated);
-                  } else if (chunk.type === 'complete') {
-                    if (chunk.data) setCompletedOutline(chunk.data);
-                    setIsStreaming(false);
-                    refetch();
-                  } else if (chunk.type === 'error') {
-                    setIsStreaming(false);
-                    console.error("Streaming error:", chunk.message);
-                  }
-                }
-             });
+             startGeneration(outlineId);
         }
       }
     );
-  }, [outlineId, updateOutlineMutation, generateOutlineStreamMutation, refetch]);
+  };
 
-  // 5. Debounced Save Logic
+  // Debounced auto-save
   const debouncedSave = useCallback((updatedOutline: OutlineResponse) => {
-      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
-      debounceTimerRef.current = setTimeout(() => {
-        setSaveStatus('saving');
-        updateOutlineMutation.mutate(
-          { id: outlineId, payload: updatedOutline },
-          {
-            onSuccess: () => {
-              setSaveStatus('saved');
-              setTimeout(() => setSaveStatus('idle'), 2000);
-            },
-            onError: () => setSaveStatus('idle')
-          }
-        );
-      }, 1500);
-    }, [outlineId, updateOutlineMutation]);
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    debounceTimerRef.current = setTimeout(() => {
+      setSaveStatus('saving');
+      updateOutlineMutation.mutate(
+        { id: outlineId, payload: updatedOutline },
+        {
+          onSuccess: () => {
+            setSaveStatus('saved');
+            setTimeout(() => setSaveStatus('idle'), 2000);
+          },
+          onError: () => setSaveStatus('idle')
+        }
+      );
+    }, 1500);
+  }, [outlineId, updateOutlineMutation]);
 
   return {
     // Data
@@ -319,12 +356,12 @@ export const useOutlineEditor = (outlineId: string) => {
     themes,
     selectedTheme,
     presentationUrl,
-    displayError: error,
+    displayError,
     
     // Status
     isLoading,
     isStreaming,
-    themesLoading,
+    themesLoading: false, // themesLoading was removed from useOutlineEditor, assuming it's not needed or handled elsewhere
     saveStatus,
     themeSaveStatus,
     
@@ -333,6 +370,7 @@ export const useOutlineEditor = (outlineId: string) => {
     debouncedSave,
     setSelectedTheme,
     saveThemeToPresentation,
+    refetch
   };
 };
 
