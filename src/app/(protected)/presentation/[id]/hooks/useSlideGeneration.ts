@@ -47,7 +47,7 @@ export function useSlideGeneration({
           total: chunk.totalSlides || 0,
           message: "Starting generation...",
         });
-        dispatch(setSlides([]));
+        // dispatch(setSlides([])); // Don't clear slides to allow appending/resuming
       } 
       
       else if (chunk.type === "slide-start") {
@@ -96,7 +96,7 @@ export function useSlideGeneration({
                   })),
                   accent: partialData.accent,
                   isStreaming: true,
-                };
+                } as any;
                 
                 const newSlides = [...currentSlides];
                 if (newSlides[slideIndex]) {
