@@ -385,7 +385,9 @@ export class PromptPresentationAIService implements OnModuleInit {
           content: slidePrompt,
         },
       ],
-      temperature: 0.1, // Low creativity for strict adherence to structure
+      temperature: 0, // Zero creativity for deterministic structured output
+      seed: 42, // Consistent results across runs
+      top_p: 1, // Focus on top probability tokens
       // Use structured output with dynamic schema
       responseFormat: {
         type: 'json_schema',
@@ -393,7 +395,6 @@ export class PromptPresentationAIService implements OnModuleInit {
           name: 'slide_structure',
           strict: true,
           schema: slideSchema,
-          
         },
       },
       strict: true,
