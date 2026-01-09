@@ -56,7 +56,48 @@ type ProseMirrorEditorProps = {
   theme?: Theme | (Theme & { bodyColor?: string });
 };
 
-// Helper to normalize JSON structure (fix legacy types, case issues)
+// Helper to parse markdown syntax in text and convert to marks
+const parseMarkdownInText = (text: string): Array<{ text: string; marks?: any[] }> => {
+  const segments: Array<{ text: string; marks?: any[] }> = [];
+  let currentPos = 0;
+  
+  // Regex to match **bold** or *italic*
+  const markdownRegex = /(\*\*([^*]+)\*\*)|(\*([^*]+)\*)/g;
+  let match;
+  
+  while ((match = markdownRegex.exec(text)) !== null) {
+    // Add text before the match (if any)
+    if (match.index > currentPos) {
+      segments.push({ text: text.substring(currentPos, match.index) });
+    }
+    
+    // Add the matched text with appropriate mark
+    if (match[1]) {
+      // **bold**
+      segments.push({ 
+        text: match[2], 
+        marks: [{ type: 'strong' }] 
+      });
+    } else if (match[3]) {
+      // *italic*
+      segments.push({ 
+        text: match[4], 
+        marks: [{ type: 'em' }] 
+      });
+    }
+    
+    currentPos = match.index + match[0].length;
+  }
+  
+  // Add remaining text (if any)
+  if (currentPos < text.length) {
+    segments.push({ text: text.substring(currentPos) });
+  }
+  
+  return segments.length > 0 ? segments : [{ text }];
+};
+
+// Helper to normalize JSON structure (fix legacy types, case issues, and markdown syntax)
 const normalizeProseMirrorJSON = (json: any): any => {
   if (!json || typeof json !== 'object') return json;
   
@@ -92,8 +133,34 @@ const normalizeProseMirrorJSON = (json: any): any => {
   }
 
   // Recursive normalize content
-  if (newJson.content) {
-    newJson.content = normalizeProseMirrorJSON(newJson.content);
+  if (newJson.content && Array.isArray(newJson.content)) {
+    // First, normalize all children
+    newJson.content = newJson.content.map(normalizeProseMirrorJSON);
+    
+    // Then, expand text nodes that contain markdown syntax
+    // This applies to parent nodes like paragraph, heading, list_item
+    if (['paragraph', 'heading', 'list_item'].includes(newJson.type)) {
+      const expandedContent: any[] = [];
+      
+      for (const child of newJson.content) {
+        if (child.type === 'text' && typeof child.text === 'string' && /\*\*|\*/.test(child.text)) {
+          // This text node contains markdown - expand it
+          const segments = parseMarkdownInText(child.text);
+          segments.forEach(segment => {
+            expandedContent.push({
+              type: 'text',
+              text: segment.text,
+              ...(segment.marks && segment.marks.length > 0 ? { marks: segment.marks } : {})
+            });
+          });
+        } else {
+          // No markdown, keep as is
+          expandedContent.push(child);
+        }
+      }
+      
+      newJson.content = expandedContent;
+    }
   }
 
   return newJson;
@@ -944,18 +1011,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       </style>
       
       {parseError && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-red-50/90 p-4 text-center backdrop-blur-sm rounded-lg border-2 border-red-200">
-           <div className="max-w-md">
-             <h4 className="text-red-700 font-semibold mb-2">Content Loading Error</h4>
-             <p className="text-red-600/90 text-sm mb-4">{parseError}</p>
-             <button 
-               onClick={() => setParseError(null)}
-               className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm transition-colors"
-             >
-               Dismiss
-             </button>
-           </div>
-        </div>
+        <div className="w-full h-full min-h-[40px]" />
       )}
 
       <div
