@@ -1,5 +1,5 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/presentation/[id]/editor/engine/registry/factories";
+import { createBlockInstance, createRow } from "@/app/(protected)/presentation/[id]/engine/registry/factories";
 import { Slide } from "@/store/slices/slidesSlice";
 
 export const blankTemplate: Slide = {

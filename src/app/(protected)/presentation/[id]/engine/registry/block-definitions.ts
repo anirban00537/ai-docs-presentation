@@ -24,7 +24,7 @@ import {
 } from "@tabler/icons-react";
 
 import { BLOCK_TYPES, BlockType, BlockContent, getDefaultHeadingContent, Block } from "@/types/presentation";
-import type { BlockRendererProps } from "@/app/(protected)/presentation/[id]/editor/engine/types";
+import type { BlockRendererProps } from "@/app/(protected)/presentation/[id]/engine/types";
 
 // Import factories and normalizers directly
 import { createImageContent, normalizeImageContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/image";

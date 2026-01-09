@@ -1,6 +1,6 @@
 import React from "react";
 import { type Slide, updateSlideAccent, toggleSlideAccent } from "@/store/slices/slidesSlice";
-import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/engine/theme/EditorThemeProvider";
 import { useAppDispatch } from "@/store/hooks";
 import {
   Popover,

@@ -16,7 +16,7 @@ import {
 } from "@dnd-kit/core";
 import type { Block, BlockContent, Row, SlideAccent, Theme } from "@/types/presentation";
 import { DEFAULT_THEME } from "@/store/slices/slidesSlice";
-import { createRow, createBlockInstance } from "@/app/(protected)/presentation/[id]/editor/engine/registry/factories";
+import { createRow, createBlockInstance } from "@/app/(protected)/presentation/[id]/engine/registry/factories";
 import { toast } from "sonner";
 import { 
   layoutsService, 

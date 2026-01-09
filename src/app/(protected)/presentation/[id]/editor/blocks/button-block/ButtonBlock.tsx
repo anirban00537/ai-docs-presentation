@@ -13,7 +13,7 @@ import {
   IconTrash
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { BlockRendererProps } from "../../engine";
+import { BlockRendererProps } from "@/app/(protected)/presentation/[id]/engine";
 
 export const ButtonBlock: React.FC<BlockRendererProps> = ({
   block,

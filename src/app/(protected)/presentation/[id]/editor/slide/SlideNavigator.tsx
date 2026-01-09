@@ -44,7 +44,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
-import { SlideCanvas } from "../engine";
+import { SlideCanvas } from "@/app/(protected)/presentation/[id]/engine";
 
 // --- Types ---
 

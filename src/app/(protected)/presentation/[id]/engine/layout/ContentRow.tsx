@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, memo, useMemo, useEffect } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
-import { BlockCell } from "@/app/(protected)/presentation/[id]/editor/engine/layout/BlockCell";
+import { BlockCell } from "@/app/(protected)/presentation/[id]/engine/layout/BlockCell";
 import type { Row } from "@/store/slices/slidesSlice";
 import type { BlockContent } from "@/types/presentation";
 import { useAppSelector } from "@/store/hooks";
@@ -8,9 +8,9 @@ import {
   selectTheme,
   DEFAULT_THEME,
 } from "@/store/slices/slidesSlice";
-import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/engine/theme/EditorThemeProvider";
 import { getFontFamily } from "@/lib/fonts";
-import { InsertionIndicator } from "@/app/(protected)/presentation/[id]/editor/engine/layout/InsertionIndicator";
+import { InsertionIndicator } from "@/app/(protected)/presentation/[id]/engine/layout/InsertionIndicator";
 import { IconTrash } from "@tabler/icons-react";
 import { getBlockTypeLabel } from "@/app/(protected)/presentation/[id]/editor/utils/blockTypeUtils";
 

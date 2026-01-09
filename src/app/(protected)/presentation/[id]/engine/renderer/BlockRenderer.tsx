@@ -1,8 +1,8 @@
 import React, { memo, useMemo, useCallback } from "react";
 import type { Block, BlockContent, BlockType } from "@/types/presentation";
-import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/engine/theme/EditorThemeProvider";
 import { BlockErrorBoundary } from "./BlockErrorBoundary";
-import { BLOCK_DEFINITIONS } from "@/app/(protected)/presentation/[id]/editor/engine/registry/block-definitions";
+import { BLOCK_DEFINITIONS } from "@/app/(protected)/presentation/[id]/engine/registry/block-definitions";
 import { BLOCK_TYPES } from "@/types/presentation";
 
 interface BlockRendererProps {

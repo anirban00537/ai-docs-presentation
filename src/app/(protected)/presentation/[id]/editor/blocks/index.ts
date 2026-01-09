@@ -5,8 +5,8 @@ export * from "./image/ImageBlock";
 export * from "./prosemirror/ProseMirrorBlock";
 
 // Re-export from engine for convenience
-export { BLOCK_DEFINITIONS, type BlockDefinition } from "../engine";
-export { createBlockInstance, createRow, createRowWithColumns, createSlide } from "../engine";
+export { BLOCK_DEFINITIONS, type BlockDefinition } from "@/app/(protected)/presentation/[id]/engine";
+export { createBlockInstance, createRow, createRowWithColumns, createSlide } from "@/app/(protected)/presentation/[id]/engine";
 
 // Utilities
 export * from "./utils";

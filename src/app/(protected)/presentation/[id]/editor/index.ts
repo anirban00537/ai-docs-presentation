@@ -34,7 +34,7 @@ export {
   // Types
   type BlockDefinition,
   type BlockRendererProps,
-} from "./engine";
+} from "@/app/(protected)/presentation/[id]/engine";
 
 // Slide UI
 export { SlideNavigator } from "./slide/SlideNavigator";

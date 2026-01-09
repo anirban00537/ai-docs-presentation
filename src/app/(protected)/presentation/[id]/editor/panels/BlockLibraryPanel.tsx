@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BlockOption } from "../block-ui/BlockOption";
 import type { BlockType } from "@/types/presentation";
-import { BLOCK_DEFINITIONS } from "../engine";
+import { BLOCK_DEFINITIONS } from "@/app/(protected)/presentation/[id]/engine";
 
 interface BlockLibraryPanelProps {
   isOpen: boolean;

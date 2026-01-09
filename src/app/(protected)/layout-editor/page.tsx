@@ -18,7 +18,7 @@ import {
   LayoutListPanel, 
   LayoutEditorHeader 
 } from "@/components/layout-editor";
-import { EditorThemeProvider } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
+import { EditorThemeProvider } from "@/app/(protected)/presentation/[id]/engine/theme/EditorThemeProvider";
 
 /**
  * Layout Editor Page - Admin tool for creating and editing layout templates

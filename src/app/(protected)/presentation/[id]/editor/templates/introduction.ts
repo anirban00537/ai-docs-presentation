@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/presentation/[id]/editor/engine/registry/factories";
+import { createBlockInstance, createRow } from "@/app/(protected)/presentation/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { Slide } from "@/store/slices/slidesSlice";
 
