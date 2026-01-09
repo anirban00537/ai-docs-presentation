@@ -55,10 +55,11 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden w-full"
+      className="relative overflow-hidden w-full flex items-center justify-center"
       style={{
         aspectRatio: "16/9",
         borderRadius: "0.75rem 0.75rem 0 0",
+        backgroundColor: theme.pageBackground,
       }}
     >
       {/* Subtle gradient overlay at top for depth */}
@@ -73,17 +74,19 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
       {/* Only render the slide content once we have a valid width */}
       {containerWidth > 0 && (
         <div
-          className="absolute top-0 left-0 pointer-events-none"
+          className="pointer-events-none"
           style={{
             transform: `scale(${scale})`,
-            transformOrigin: "top left",
+            transformOrigin: "center center",
             width: `${SLIDE_MAX_WIDTH}px`,
-            height: `${slideHeight}px`,
+            minHeight: `${slideHeight}px`,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
           }}
         >
           <div
             style={{
-              backgroundColor: theme.pageBackground,
               fontFamily: `${theme.fontFamily}, sans-serif`,
             }}
           >
