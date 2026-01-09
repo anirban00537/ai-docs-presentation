@@ -33,10 +33,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ImagePreviewModal } from "@/components/ImagePreviewModal";
 
+// Shared components
+import { EmptyState } from "@/components/shared/EmptyState";
+import { GridSkeleton } from "@/components/shared/DashboardSkeleton";
+import { IconPhoto } from "@tabler/icons-react";
+
 // Sub-components
 import { MediaCard } from "@/components/media/MediaCard";
-import { EmptyState } from "@/components/media/EmptyState";
-import { LoadingSkeleton } from "@/components/media/LoadingSkeleton";
 import { MediaHeader } from "@/components/media/MediaHeader";
 import { MediaFilters, type CategoryFilter } from "@/components/media/MediaFilters";
 
@@ -229,13 +232,19 @@ export default function MediaPage() {
         )}
 
         {isLoading ? (
-          <LoadingSkeleton />
+          <GridSkeleton count={10} aspectRatio="square" />
         ) : error ? (
           <div className="rounded-2xl border border-destructive/30 p-6 text-sm text-destructive bg-destructive/10 backdrop-blur-md">
             Failed to load media. Please try again.
           </div>
         ) : mediaItems.length === 0 ? (
-          <EmptyState onUpload={handleUpload} />
+          <EmptyState 
+            icon={IconPhoto}
+            title="No media yet"
+            description="Upload images to use in your presentations. They'll be stored securely and accessible from anywhere."
+            actionText="Upload Media"
+            onAction={handleUpload}
+          />
         ) : (
           <motion.div
             initial={{ opacity: 0 }}

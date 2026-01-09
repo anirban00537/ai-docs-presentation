@@ -6,6 +6,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectSubscriptionStatus } from "@/store/slices/subscriptionSlice";
 import { createCheckout } from "@/services/pricing";
 import { PricingCard } from "@/components/pricing-card";
+import { PageSkeleton } from "@/components/shared/DashboardSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
@@ -66,12 +67,15 @@ export default function PricingPage() {
 
   if (productsLoading) {
     return (
-      <div className="container mx-auto px-4 py-12 max-w-7xl h-full flex items-center justify-center">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-[500px] w-full rounded-3xl bg-slate-100 shadow-xl" />
-          ))}
-        </div>
+      <div className="container mx-auto px-4 py-32 max-w-7xl h-full">
+        <PageSkeleton>
+          <Skeleton className="h-12 w-1/3 mx-auto rounded-2xl" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full pt-10">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-[500px] w-full rounded-3xl" />
+            ))}
+          </div>
+        </PageSkeleton>
       </div>
     );
   }

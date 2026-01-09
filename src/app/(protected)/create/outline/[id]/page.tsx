@@ -9,6 +9,12 @@ import { Button } from "@/components/ui/button";
 import { IconSparkles, IconLoader2 } from "@tabler/icons-react";
 import { LoaderOverlay } from "@/components/ui/loader-overlay";
 
+// Shared components
+import { EmptyState } from "@/components/shared/EmptyState";
+import { PageSkeleton } from "@/components/shared/DashboardSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
+import { IconWriting } from "@tabler/icons-react";
+
 // Sub-components
 import { OutlineHeader } from "@/components/outline/OutlineHeader";
 import { ThemeSelector } from "@/components/outline/ThemeSelector";
@@ -49,8 +55,12 @@ export default function OutlinePage() {
 
   if (isLoading && !isStreaming && !outlineData) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-         <IconLoader2 className="animate-spin text-primary" size={32} />
+      <div className="flex-1 w-full p-8 max-w-5xl mx-auto">
+         <PageSkeleton>
+            <Skeleton className="h-16 w-full rounded-3xl" />
+            <Skeleton className="h-[400px] w-full rounded-[32px]" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
+         </PageSkeleton>
       </div>
     );
   }
@@ -63,9 +73,12 @@ export default function OutlinePage() {
 
         {/* Outline Content */}
         {!outlineData && !isStreaming ? (
-            <div className="text-center py-20 text-muted-foreground border-2 border-dashed border-secondary/20 rounded-3xl">
-                Enter a prompt above to generate your outline
-            </div>
+            <EmptyState 
+              icon={IconWriting}
+              title="Ready to generate"
+              description="Enter a prompt in the box above to generate your presentation outline. Our AI will help you structure your thoughts."
+              className="py-12 border-2 border-dashed border-secondary/20 rounded-[32px]"
+            />
         ) : (
             <div className="space-y-4">
                  <div className="flex items-center justify-between px-2">

@@ -13,6 +13,8 @@ import {
   selectSubscriptionLoading,
   fetchSubscriptionInfo,
 } from "@/store/slices/subscriptionSlice";
+import { PageSkeleton } from "@/components/shared/DashboardSkeleton";
+
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Sub-components
@@ -23,10 +25,10 @@ import { UsageStatsBar } from "@/components/subscription/UsageStatsBar";
 
 export default function SubscriptionPage() {
   const dispatch = useAppDispatch();
-  const status = useAppSelector(selectSubscriptionStatus);
+  const subscriptionStatus = useAppSelector(selectSubscriptionStatus);
   const creditBalance = useAppSelector(selectCreditBalance);
-  const statusLoading = useAppSelector(selectSubscriptionLoading);
-  const isActive = useAppSelector(selectIsSubscribed);
+  const isSubscribed = useAppSelector(selectIsSubscribed);
+  const isLoading = useAppSelector(selectSubscriptionLoading);
 
   const syncMutation = useSyncSubscription();
   const cancelMutation = useCancelSubscription();
@@ -39,6 +41,10 @@ export default function SubscriptionPage() {
     });
   };
 
+  const handleSyncStatus = async () => {
+    await dispatch(fetchSubscriptionInfo());
+  };
+
   const handleCancel = () => {
     cancelMutation.mutate(undefined, {
       onSuccess: () => {
@@ -47,16 +53,16 @@ export default function SubscriptionPage() {
     });
   };
 
-  if (statusLoading) {
+  if (isLoading) {
     return (
-      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4">
-        <div className="w-full max-w-4xl space-y-8">
+      <div className="flex-1 w-full p-4 md:p-8 space-y-8">
+        <PageSkeleton>
           <Skeleton className="h-12 w-1/3 rounded-2xl" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Skeleton className="h-64 rounded-[32px] border border-secondary/10 shadow-sm" />
             <Skeleton className="h-64 rounded-[32px] border border-secondary/10 shadow-sm" />
           </div>
-        </div>
+        </PageSkeleton>
       </div>
     );
   }
@@ -75,9 +81,9 @@ export default function SubscriptionPage() {
               quota={creditBalance?.quota || 0} 
             />
            <PlanStatusCard 
-              subscription={status?.subscription}
-              features={status?.features}
-              isActive={isActive}
+              subscription={subscriptionStatus?.subscription}
+              features={subscriptionStatus?.features}
+              isActive={isSubscribed}
               onCancel={handleCancel}
               isCanceling={cancelMutation.isPending}
             />

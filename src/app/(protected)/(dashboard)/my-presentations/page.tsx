@@ -18,9 +18,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { IconPresentation, IconPlus } from "@tabler/icons-react";
+
+// Shared components
+import { EmptyState } from "@/components/shared/EmptyState";
+import { GridSkeleton } from "@/components/shared/DashboardSkeleton";
+
 import {
-  LoadingSkeleton,
-  EmptyState,
   PresentationCard,
   PresentationsHeader,
 } from "../../../../components/my-presentations";
@@ -60,7 +64,7 @@ export default function MyPresentationsPage() {
     }
   };
 
-  if (isLoading) return <LoadingSkeleton />;
+  if (isLoading) return <GridSkeleton count={12} aspectRatio="video" />;
 
   return (
     <div className="relative flex-1 flex flex-col min-h-[calc(100vh-80px)] ">
@@ -74,7 +78,13 @@ export default function MyPresentationsPage() {
         />
 
         {presentations.length === 0 ? (
-          <EmptyState onCreateClick={() => router.push("/home")} />
+          <EmptyState 
+            icon={IconPresentation}
+            title="No presentations yet"
+            description="Create your first presentation to get started. Our AI will help you design beautiful slides in seconds."
+            actionText="Create Presentation"
+            onAction={() => router.push("/home")}
+          />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
             <AnimatePresence mode="popLayout">
