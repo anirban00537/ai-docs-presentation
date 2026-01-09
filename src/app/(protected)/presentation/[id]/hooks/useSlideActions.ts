@@ -82,28 +82,10 @@ export function useSlideActions(presentationId: string | null) {
     }
   };
 
-  const handleDuplicateSlide = async (slideId: string) => {
-    if (!presentationId) return;
-
-    const originalSlide = dispatch((_dispatch, getState) => {
-      const state = getState() as any;
-      return state.slides.present.slides.find((s: Slide) => s.id === slideId);
-    });
-
-    if (!originalSlide) return;
-
-    const tempId = `temp-${nanoid()}`;
-    dispatch({ type: "slides/duplicateSlide", payload: slideId }); 
-    // Wait, slidesSlice has duplicateSlide, but it generates its own random ID. 
-    // I should probably pass an ID or capture it.
-    // For now, let's just use addSlide with content for simplicity, 
-    // or update duplicateSlide action to accept an ID.
-  };
-
   return {
     handleAddSlide,
     handleDeleteSlide,
-    handleDuplicateSlide,
+
     isDeleting: deleteSlideMutation.isPending,
     isAdding: addSlideMutation.isPending,
   };
