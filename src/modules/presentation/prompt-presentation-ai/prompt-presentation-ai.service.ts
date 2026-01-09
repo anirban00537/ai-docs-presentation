@@ -385,7 +385,7 @@ export class PromptPresentationAIService implements OnModuleInit {
           content: slidePrompt,
         },
       ],
-      temperature: 0.2, // Low creativity for strict adherence to structure
+      temperature: 0.1, // Low creativity for strict adherence to structure
       // Use structured output with dynamic schema
       responseFormat: {
         type: 'json_schema',
@@ -393,8 +393,10 @@ export class PromptPresentationAIService implements OnModuleInit {
           name: 'slide_structure',
           strict: true,
           schema: slideSchema,
+          
         },
       },
+      strict: true,
       stream: true, // Enable streaming
       streamOptions: {
         includeUsage: true, // Include token usage in the final chunk

@@ -59,13 +59,13 @@ export const coreConstant = {
       // PRICING: { prompt: 0.20, completion: 0.50 }, 
 
        NAME: 'mistralai/ministral-14b-2512',
-      PRICING: { prompt: 0.10, completion: 0.40 }, // Free
+      PRICING: { prompt: 0.20, completion: 0.20},
     },
     SLIDES: {
       // NAME: 'x-ai/grok-4.1-fast',
       // PRICING: { prompt: 0.20, completion: 0.50 }, 
        NAME: 'mistralai/ministral-14b-2512',
-      PRICING: { prompt: 0.28, completion: 1.20},
+      PRICING: { prompt: 0.20, completion: 0.20},
     },
     IMAGE: {
       NAME: 'black-forest-labs/flux-1.1-pro',
