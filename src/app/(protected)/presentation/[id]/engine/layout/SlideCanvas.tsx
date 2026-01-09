@@ -136,22 +136,23 @@ export const SlideCanvas = memo(function SlideCanvas({
       justifyContent: fullWidth ? "center" : undefined,
     };
 
-    const borderRadius = theme.cardBorderRadius || "12px";
+    const borderRadius = fullWidth ? "0px" : (theme.cardBorderRadius || "12px");
     const boxShadow = theme.cardBoxShadow || (isDark ? "0 4px 20px rgba(0, 0, 0, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.08)");
     
     const borderWidth = theme.cardBorderWidth || "0px";
-    const borderStyle = theme.cardBorderStyle || "solid";
+    const borderStyle = fullWidth ? "none" : (theme.cardBorderStyle || "solid");
     const borderColor = theme.borderColor || (isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)");
     
-    const border = (borderWidth !== "0px" && borderStyle !== "none")
+    const border = (!fullWidth && borderWidth !== "0px" && borderStyle !== "none")
       ? `${borderWidth} ${borderStyle} ${borderColor}`
       : "none";
 
     return {
       ...baseStyle,
       borderRadius,
-      boxShadow,
+      boxShadow: fullWidth ? "none" : boxShadow,
       border,
+      backgroundColor: fullWidth ? "transparent" : baseStyle.backgroundColor,
     };
   };
 
@@ -279,7 +280,7 @@ export const SlideCanvas = memo(function SlideCanvas({
               style={{ 
                 width: isVertical ? "100%" : `${localAccentSize}%`,
                 height: isVertical ? `${localAccentSize}%` : "auto",
-                minHeight: isVertical ? "200px" : "auto",
+                minHeight: isVertical ? "200px" : "100%",
                 overflow: "hidden", 
                 borderTopLeftRadius: (slide.accent.position === "left" || slide.accent.position === "top") ? borderRadius : "0",
                 borderBottomLeftRadius: (slide.accent.position === "left" || slide.accent.position === "bottom") ? borderRadius : "0",
