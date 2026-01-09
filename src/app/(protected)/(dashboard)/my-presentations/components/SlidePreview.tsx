@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import { SlideContainer } from "@/app/(protected)/presentation/[id]/editor/slide/SlideContainer";
 import { Theme } from "@/store/slices/slidesSlice";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
@@ -11,10 +11,34 @@ interface SlidePreviewProps {
 }
 
 export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
-  const containerWidth = 360;
-  const scale = containerWidth / SLIDE_MAX_WIDTH;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  // Measure container width dynamically using ResizeObserver
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Initial measurement
+    setContainerWidth(container.offsetWidth);
+
+    // Setup ResizeObserver for responsive updates
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        if (width > 0) {
+          setContainerWidth(width);
+        }
+      }
+    });
+
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Calculate scale based on actual container width
+  const scale = containerWidth > 0 ? containerWidth / SLIDE_MAX_WIDTH : 0;
   const slideHeight = SLIDE_MAX_WIDTH * (9 / 16);
-  const thumbnailHeight = slideHeight * scale;
 
   // Convert API slide data to Redux format
   const reduxSlide = useMemo(
@@ -30,9 +54,10 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
 
   return (
     <div
-      className="relative overflow-hidden"
+      ref={containerRef}
+      className="relative overflow-hidden w-full"
       style={{
-        height: `${thumbnailHeight}px`,
+        aspectRatio: "16/9",
         borderRadius: "0.75rem 0.75rem 0 0",
       }}
     >
@@ -45,35 +70,38 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
         }}
       />
 
-      <div
-        className="absolute top-0 left-0 pointer-events-none"
-        style={{
-          transform: `scale(${scale})`,
-          transformOrigin: "top left",
-          width: `${SLIDE_MAX_WIDTH}px`,
-          height: `${slideHeight}px`,
-        }}
-      >
+      {/* Only render the slide content once we have a valid width */}
+      {containerWidth > 0 && (
         <div
+          className="absolute top-0 left-0 pointer-events-none"
           style={{
-            backgroundColor: theme.pageBackground,
-            fontFamily: `${theme.fontFamily}, sans-serif`,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            width: `${SLIDE_MAX_WIDTH}px`,
+            height: `${slideHeight}px`,
           }}
         >
-          <SlideContainer
-            slide={reduxSlide}
-            onUpdateBlock={noop}
-            onDeleteRow={noop}
-            onAddColumn={noop}
-            onAddRowAtTop={noop}
-            onAddRowAtBottom={noop}
-            onUpdateColumnWidths={noop}
-            enableDragHints={false}
-            readOnly={true}
-            theme={theme}
-          />
+          <div
+            style={{
+              backgroundColor: theme.pageBackground,
+              fontFamily: `${theme.fontFamily}, sans-serif`,
+            }}
+          >
+            <SlideContainer
+              slide={reduxSlide}
+              onUpdateBlock={noop}
+              onDeleteRow={noop}
+              onAddColumn={noop}
+              onAddRowAtTop={noop}
+              onAddRowAtBottom={noop}
+              onUpdateColumnWidths={noop}
+              enableDragHints={false}
+              readOnly={true}
+              theme={theme}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
