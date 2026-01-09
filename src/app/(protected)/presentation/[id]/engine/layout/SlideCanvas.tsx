@@ -264,7 +264,7 @@ export const SlideCanvas = memo(function SlideCanvas({
 
         <div 
           id={`card-content-${slide.id}`}
-          className={`relative z-10 w-full flex items-stretch ${
+          className={`relative z-10 w-full flex-1 flex items-stretch ${
             slide.accent?.position === "right" ? "flex-row-reverse" : 
             slide.accent?.position === "bottom" ? "flex-col-reverse" : 
             slide.accent?.position === "top" ? "flex-col" : "flex-row"

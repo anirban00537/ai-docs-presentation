@@ -59,9 +59,9 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
   return (
     <div className="group relative w-full h-full min-h-[200px] p-4">
       <div 
-        className="grid gap-3"
+        className="grid gap-4"
         style={{
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))"
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))"
         }}
       >
         {items.map((item, index) => (
