@@ -55,11 +55,11 @@ export const coreConstant = {
 
   AI_MODELS: {
     OUTLINE: {
-      NAME: 'openai/gpt-4.1-nano',
+      NAME: 'deepseek/deepseek-v3.2',
       PRICING: { prompt: 0.10, completion: 0.40 }, // Free
     },
     SLIDES: {
-      NAME: 'minimax/minimax-m2.1',
+      NAME: 'deepseek/deepseek-v3.2',
       PRICING: { prompt: 0.28, completion: 1.20},
     },
     IMAGE: {

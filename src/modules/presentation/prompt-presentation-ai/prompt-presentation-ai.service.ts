@@ -385,6 +385,7 @@ export class PromptPresentationAIService implements OnModuleInit {
           content: slidePrompt,
         },
       ],
+      temperature: 0.2, // Low creativity for strict adherence to structure
       // Use structured output with dynamic schema
       responseFormat: {
         type: 'json_schema',

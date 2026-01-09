@@ -63,8 +63,10 @@ CRITICAL INSTRUCTIONS:
    - Keep the "id" field (you may generate a new UUID or reuse the template's)
    - Keep the "type" field EXACTLY as shown (e.g., "prosemirror", "simple-number-card")
    - Transform the "content" field with new, relevant content
-4. If an array has N items in the template, you should output N items (adjustable via context).
+4. If an array has N items in the template, you MUST output N items. DO NOT ADD OR REMOVE ITEMS.
 5. ProseMirror content fields use the format: { "type": "doc", "content": [...] }
+6. DO NOT CHANGE THE LAYOUT. DO NOT ADD BLOCKS. DO NOT REMOVE BLOCKS.
+7. FILL IN THE CONTENT ONLY. KEEP THE STRUCTURE IDENTICAL.
 
 The JSON Schema enforcing your output was GENERATED DYNAMICALLY FROM THIS TEMPLATE.
 Any structural deviation will cause a validation error.`;
@@ -109,6 +111,17 @@ Example structure:
 - If a field exists in the template, you MUST overwrite it with new content.
 - Generate professional, contextually appropriate text for EVERY field.
 - Empty fields or preserved demo text will break the presentation and are NOT acceptable.
+- STRICT RULE: Check every "text" field. If it is "", you MUST populate it.
+- For ProseMirror text nodes: { "type": "text", "text": "MUST NOT BE EMPTY" }.
+- Ensure every paragraph or heading node implies a child text node with content.
+- For standard fields (title, description, button text): "text": "MUST NOT BE EMPTY".
+- If the outline doesn't have specific details, INVENT realistic, professional filler content.
+- NEVER return an empty string "" for any content field.
+- NEVER return an empty paragraph without a text node.
+- ALWAYS include the "type" property for every node (especially "type": "text").
+- Use "strong" mark for bold text (not "bold").
+- Use "bullet_list" for unordered lists (not "bulletList").
+- Use "list_item" for list items (not "listItem").
 
 FINAL CHECKLIST:
 1. Is it valid JSON?
