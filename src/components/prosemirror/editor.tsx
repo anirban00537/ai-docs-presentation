@@ -56,6 +56,49 @@ type ProseMirrorEditorProps = {
   theme?: Theme | (Theme & { bodyColor?: string });
 };
 
+// Helper to normalize JSON structure (fix legacy types, case issues)
+const normalizeProseMirrorJSON = (json: any): any => {
+  if (!json || typeof json !== 'object') return json;
+  
+  // Array traversal
+  if (Array.isArray(json)) {
+    return json.map(normalizeProseMirrorJSON);
+  }
+
+  // Create a new object to avoid mutating the original
+  const newJson: any = {};
+  
+  // Copy all properties first
+  Object.keys(json).forEach(key => {
+    newJson[key] = json[key];
+  });
+
+  // Fix node type names (CamelCase -> SnakeCase)
+  if (newJson.type === 'bulletList') newJson.type = 'bullet_list';
+  if (newJson.type === 'orderedList') newJson.type = 'ordered_list';
+  if (newJson.type === 'listItem') newJson.type = 'list_item';
+  
+  // Fix missing type for text nodes
+  if (!newJson.type && typeof newJson.text === 'string') {
+    newJson.type = 'text';
+  }
+  
+  // Fix mark names
+  if (newJson.marks && Array.isArray(newJson.marks)) {
+    newJson.marks = newJson.marks.map((m: any) => {
+       if (m.type === 'bold') return { ...m, type: 'strong' };
+       return m;
+    });
+  }
+
+  // Recursive normalize content
+  if (newJson.content) {
+    newJson.content = normalizeProseMirrorJSON(newJson.content);
+  }
+
+  return newJson;
+};
+
 export const ProseMirrorEditor = memo(function ProseMirrorEditor({
   value,
   onChange,
@@ -110,6 +153,9 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
     activeAlignment: "left",
   });
 
+  // Error state for parsing failures
+  const [parseError, setParseError] = useState<string | null>(null);
+
   // Image modal state
   const [imageModal, setImageModal] = useState<{
     open: boolean;
@@ -140,38 +186,39 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
     let prosemirrorDoc: ProseMirrorNode | null = null;
 
     if (typeof value === "string") {
-      // New format: Markdown string
-      try {
-        // Fallback for markdown strings using default parser
-        // We'll lazy load or just rely on what we have? 
-        // Actually, if we delete the converter file, we should import defaultMarkdownParser from 'prosemirror-markdown'
-        // For now, let's assume we import checking logic.
-        // We will assume value IS markdown string and try to parse it using default parser.
-        // But `markdownToProseMirror` was doing it.
-        // I will use `defaultMarkdownParser.parse(value)`
-        // However, I need to make sure `defaultMarkdownParser` is imported. 
-        // I will just use `schema` to create a doc from text if parsing is too complex without the converter, 
-        // BUT `prosemirror-markdown` is a dependency.
-        // Let's use `defaultMarkdownParser.parse(value)` and then `.toJSON()`.
-        // Wait, `.parse(value)` returns a Node.
-        // `ProseMirrorNode.fromJSON` expects JSON.
-        // So: `prosemirrorDoc = defaultMarkdownParser.parse(value);`
-        // But `defaultMarkdownParser` expects a schema? 
-        // `defaultMarkdownParser` is an instance of `MarkdownParser`.
-        // It is exported from `prosemirror-markdown` pre-configured with commonmark.
-        
-        // Let's modify imports in next step. For now, use `defaultMarkdownParser` assuming it will be imported.
-        prosemirrorDoc = defaultMarkdownParser.parse(value);
-      } catch (error) {
-        console.warn("Failed to parse Markdown:", error);
-        return;
+      // Check if the string is actually a JSON string (AI sometimes returns stringified JSON)
+      const trimmed = value.trim();
+      if ((trimmed.startsWith('{') && trimmed.endsWith('}'))) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (parsed && parsed.type === 'doc') {
+             const normalized = normalizeProseMirrorJSON(parsed);
+             prosemirrorDoc = ProseMirrorNode.fromJSON(schema, normalized);
+             setParseError(null); 
+          }
+        } catch (e) {
+          // Not valid JSON, proceed to Markdown parsing
+        }
+      }
+
+      // If not successfully parsed as JSON, treat as Markdown
+      if (!prosemirrorDoc) {
+        try {
+          prosemirrorDoc = defaultMarkdownParser.parse(value);
+        } catch (error) {
+          console.warn("Failed to parse Markdown:", error);
+          return;
+        }
       }
     } else if (value && typeof value === 'object' && value.type === 'doc') {
       // Legacy format: ProseMirror JSON object
       try {
-        prosemirrorDoc = ProseMirrorNode.fromJSON(schema, value);
-      } catch (error) {
-        console.warn("Failed to parse legacy ProseMirror JSON:", error);
+        const normalized = normalizeProseMirrorJSON(value);
+        prosemirrorDoc = ProseMirrorNode.fromJSON(schema, normalized);
+        setParseError(null); // Clear any previous error
+      } catch (error: any) {
+        console.error("Failed to parse legacy ProseMirror JSON:", error);
+        setParseError(`Failed to load content: ${error.message}`);
         return;
       }
     } else {
@@ -204,7 +251,21 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
   // Parse initial value to ProseMirror doc
   const initialDoc = useMemo(() => {
     if (typeof value === "string") {
-      // New format: Markdown string
+      // Check if the string is actually a JSON string (AI sometimes returns stringified JSON)
+      const trimmed = value.trim();
+      if ((trimmed.startsWith('{') && trimmed.endsWith('}'))) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (parsed && parsed.type === 'doc') {
+             const normalized = normalizeProseMirrorJSON(parsed);
+             return ProseMirrorNode.fromJSON(schema, normalized);
+          }
+        } catch (e) {
+          // Not valid JSON, proceed to Markdown
+        }
+      }
+      
+      // Markdown fallback
       try {
         return defaultMarkdownParser.parse(value);
       } catch {
@@ -213,9 +274,12 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
     } else if (value && typeof value === 'object' && value.type === 'doc') {
       // Legacy format: ProseMirror JSON object
       try {
-        return ProseMirrorNode.fromJSON(schema, value);
-      } catch {
+        const normalized = normalizeProseMirrorJSON(value);
+        // Note: usage of 'schema' inside useMemo is fine as it's imported constant
+        return ProseMirrorNode.fromJSON(schema, normalized);
+      } catch (e) {
         // Invalid JSON, create empty doc
+        // We can't set state here (pure function), so useEffect will handle error reporting
       }
     }
     return schema.node("doc", null, [schema.node("heading", { level: 2 })]);
@@ -878,6 +942,22 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       <style key={`prosemirror-styles-${editorIdRef.current}`}>
         {dynamicStyles}
       </style>
+      
+      {parseError && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-red-50/90 p-4 text-center backdrop-blur-sm rounded-lg border-2 border-red-200">
+           <div className="max-w-md">
+             <h4 className="text-red-700 font-semibold mb-2">Content Loading Error</h4>
+             <p className="text-red-600/90 text-sm mb-4">{parseError}</p>
+             <button 
+               onClick={() => setParseError(null)}
+               className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm transition-colors"
+             >
+               Dismiss
+             </button>
+           </div>
+        </div>
+      )}
+
       <div
         ref={editorRef}
         className="w-full wrap-break-word whitespace-pre-wrap"

@@ -131,7 +131,9 @@ export const createSchema = () => {
           ["code", 0],
         ],
       }),
-    marks: basicSchema.spec.marks,
+    marks: basicSchema.spec.marks.append({
+      bold: basicSchema.spec.marks.get("strong")!,
+    }),
   });
 };
 
