@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect, memo } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { BlockRenderer } from "@/app/(protected)/presentation/[id]/editor/engine/renderer/BlockRenderer";
-import { BlockToolbar } from "@/app/(protected)/presentation/[id]/editor/block/BlockToolbar";
+import { BlockToolbar } from "@/app/(protected)/presentation/[id]/editor/block-ui/BlockToolbar";
 import { useBlockFocus } from "@/app/(protected)/presentation/[id]/editor/engine/selection/BlockSelectionContext";
 import type { Block, BlockContent } from "@/types/presentation";
 import { useAppDispatch } from "@/store/hooks";

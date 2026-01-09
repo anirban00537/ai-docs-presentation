@@ -4,33 +4,49 @@
 export { EditorHeader } from "./core/EditorHeader";
 export { EditorBackground } from "./core/EditorBackground";
 
-// Providers
-export { EditorThemeProvider, useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
-export { EditorDndProvider, useEditorDndContext } from "@/app/(protected)/presentation/[id]/editor/engine/dnd/EditorDndProvider";
+// Engine - Core Architecture
+export {
+  // Providers
+  EditorThemeProvider,
+  useEditorTheme,
+  EditorDndProvider,
+  useEditorDndContext,
+  // Selection
+  BlockSelectionProvider,
+  useBlockFocus,
+  // Layout
+  SlideCanvas,
+  ContentRow,
+  BlockCell,
+  InsertionIndicator,
+  DragPreview,
+  // Renderer
+  BlockRenderer,
+  BlockErrorBoundary,
+  // Registry
+  BLOCK_DEFINITIONS,
+  createBlockInstance,
+  createRow,
+  createRowWithColumns,
+  createSlide,
+  // Hooks
+  useResize,
+  // Types
+  type BlockDefinition,
+  type BlockRendererProps,
+} from "./engine";
 
-// Slide
-export { SlideCanvas } from "@/app/(protected)/presentation/[id]/editor/engine/layout/SlideCanvas";
+// Slide UI
 export { SlideNavigator } from "./slide/SlideNavigator";
 export { SlideToolbar } from "./slide/SlideToolbar";
 export { SlideOptions } from "./slide/SlideOptions";
 export { SlideLayoutSelector } from "./slide/SlideLayoutSelector";
 
-// Block
-export { BlockCell } from "@/app/(protected)/presentation/[id]/editor/engine/layout/BlockCell";
-export { BlockToolbar } from "./block/BlockToolbar";
-export { BlockTypeSelector } from "./block/BlockTypeSelector";
-export { BlockOption } from "./block/BlockOption";
-export { BlockRenderer } from "@/app/(protected)/presentation/[id]/editor/engine/renderer/BlockRenderer";
-export { BlockWrapper } from "./block/BlockWrapper";
-export {
-  BlockSelectionProvider,
-  useBlockFocus,
-} from "@/app/(protected)/presentation/[id]/editor/engine/selection/BlockSelectionContext";
-
-// Layout
-export { ContentRow } from "@/app/(protected)/presentation/[id]/editor/engine/layout/ContentRow";
-export { InsertionIndicator } from "@/app/(protected)/presentation/[id]/editor/engine/layout/InsertionIndicator";
-export { DragPreview } from "@/app/(protected)/presentation/[id]/editor/engine/layout/DragPreview";
+// Block UI
+export { BlockToolbar } from "./block-ui/BlockToolbar";
+export { BlockTypeSelector } from "./block-ui/BlockTypeSelector";
+export { BlockOption } from "./block-ui/BlockOption";
+export { LayoutOption } from "./block-ui/LayoutOption";
 
 // Panels
 export { ToolbarPanel } from "./panels/ToolbarPanel";
@@ -48,6 +64,6 @@ export { LoadingOverlay } from "./ui/LoadingOverlay";
 // Utils
 export { getBlockTypeIcon, getBlockTypeLabel } from "./utils/blockTypeUtils";
 
-// Export block components (keep as-is)
+// Block Components
 export { ProseMirrorBlock } from "./blocks/prosemirror/ProseMirrorBlock";
 export { SimpleNumberCardBlock } from "./blocks/simple-number-card/SimpleNumberCardBlock";

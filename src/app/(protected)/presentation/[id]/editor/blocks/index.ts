@@ -1,7 +1,12 @@
+// Block component exports
 export * from "./spacer/SpacerBlock";
 export * from "./code/CodeBlock";
 export * from "./image/ImageBlock";
 export * from "./prosemirror/ProseMirrorBlock";
-export * from "@/app/(protected)/presentation/[id]/editor/engine/registry/block-definitions";
-export * from "@/app/(protected)/presentation/[id]/editor/engine/registry/factories";
+
+// Re-export from engine for convenience
+export { BLOCK_DEFINITIONS, type BlockDefinition } from "../engine";
+export { createBlockInstance, createRow, createRowWithColumns, createSlide } from "../engine";
+
+// Utilities
 export * from "./utils";

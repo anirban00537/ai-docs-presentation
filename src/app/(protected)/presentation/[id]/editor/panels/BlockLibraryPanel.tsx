@@ -3,7 +3,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BlockOption } from "../block/BlockOption";
+import { BlockOption } from "../block-ui/BlockOption";
 import type { BlockType } from "@/types/presentation";
 import { BLOCK_DEFINITIONS } from "../engine";
 

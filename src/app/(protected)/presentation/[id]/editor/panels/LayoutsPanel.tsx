@@ -16,7 +16,7 @@ import {
   IconListNumbers,
   IconChartDonut,
 } from "@tabler/icons-react";
-import { LayoutOption } from "../block/LayoutOption";
+import { LayoutOption } from "../block-ui/LayoutOption";
 
 interface LayoutsPanelProps {
   isOpen: boolean;
