@@ -128,9 +128,12 @@ export const SlideCanvas = memo(function SlideCanvas({
       position: "relative",
       backdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
       WebkitBackdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
-      minWidth: `${SLIDE_MAX_WIDTH}px`, 
-      maxWidth: `${SLIDE_MAX_WIDTH}px`, 
+      minWidth: fullWidth ? "100%" : `${SLIDE_MAX_WIDTH}px`, 
+      maxWidth: fullWidth ? "100%" : `${SLIDE_MAX_WIDTH}px`, 
       overflow: "visible",
+      display: fullWidth ? "flex" : "block",
+      flexDirection: fullWidth ? "column" : undefined,
+      justifyContent: fullWidth ? "center" : undefined,
     };
 
     const borderRadius = theme.cardBorderRadius || "12px";
@@ -318,7 +321,9 @@ export const SlideCanvas = memo(function SlideCanvas({
 
           <div className={`relative flex-1 flex flex-col justify-center min-w-0 z-10 ${isBackground ? "z-20" : ""}`}>
             <div 
-              className={`relative min-w-0 max-w-full ${fullWidth ? "w-full" : "flex-1"}`}
+              className={`relative min-w-0 max-w-full ${
+                fullWidth ? "w-full max-w-[1200px] mx-auto flex-1 self-center flex flex-col justify-center" : "flex-1"
+              }`}
               style={{ 
                 padding: fullWidth ? "4rem 6rem" : "2rem 2.5rem",
               }}
