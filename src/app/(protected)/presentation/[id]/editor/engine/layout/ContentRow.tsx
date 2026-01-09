@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, memo, useMemo, useEffect } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
-import { BlockCell } from "../components/BlockCell";
+import { BlockCell } from "@/app/(protected)/presentation/[id]/editor/engine/layout/BlockCell";
 import type { Row } from "@/store/slices/slidesSlice";
 import type { BlockContent } from "@/types/presentation";
 import { useAppSelector } from "@/store/hooks";
@@ -8,11 +8,11 @@ import {
   selectTheme,
   DEFAULT_THEME,
 } from "@/store/slices/slidesSlice";
-import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
 import { getFontFamily } from "@/lib/fonts";
-import { InsertionIndicator } from "./InsertionIndicator";
+import { InsertionIndicator } from "@/app/(protected)/presentation/[id]/editor/engine/layout/InsertionIndicator";
 import { IconTrash } from "@tabler/icons-react";
-import { getBlockTypeLabel } from "../utils/blockTypeUtils";
+import { getBlockTypeLabel } from "@/app/(protected)/presentation/[id]/editor/utils/blockTypeUtils";
 
 // Wrapper to safely use useDndMonitor only when inside DndContext
 const DragMonitorBridge: React.FC<{

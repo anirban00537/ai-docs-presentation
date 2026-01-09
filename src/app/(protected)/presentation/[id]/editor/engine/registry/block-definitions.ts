@@ -24,24 +24,24 @@ import {
 } from "@tabler/icons-react";
 
 import { BLOCK_TYPES, BlockType, BlockContent, getDefaultHeadingContent, Block } from "@/types/presentation";
-import type { BlockRendererProps } from '../types';
+import type { BlockRendererProps } from "@/app/(protected)/presentation/[id]/editor/engine/types";
 
 // Import factories and normalizers directly
-import { createImageContent, normalizeImageContent } from "./definitions/image";
-import { createCodeContent, normalizeCodeContent } from "./definitions/code";
-import { createSpacerContent, normalizeSpacerContent } from "./definitions/spacer";
-import { createSimpleNumberCardContent, normalizeSimpleNumberCardContent } from "./definitions/simple-number-card";
-import { createLayeredNumberContent, normalizeLayeredNumberContent } from "./definitions/layered-number-block";
-import { createCalloutContent, normalizeCalloutContent } from "./definitions/callout-block";
-import { createSolidBoxContent, normalizeSolidBoxContent } from "./definitions/solid-box-block";
-import { createSolidIconBoxContent, normalizeSolidIconBoxContent } from "./definitions/solid-icon-box-block";
-import { createSidelineCardContent, normalizeSidelineCardContent } from "./definitions/sideline-card-block";
-import { createButtonBlockContent, normalizeButtonBlockContent } from "./definitions/button-block";
-import { createLeafBlockContent, normalizeLeafBlockContent } from "./definitions/leaf-block";
-import { createTimelineBentoContent, normalizeTimelineBentoContent } from "./definitions/timeline-bento-block";
-import { createStackedTimelineContent, normalizeStackedTimelineContent } from "./definitions/stacked-timeline-block";
-import { createConnectedStepsContent, normalizeConnectedStepsContent } from "./definitions/connected-steps-block";
-import { createCircleStatsContent, normalizeCircleStatsContent } from "./definitions/circle-stats-block";
+import { createImageContent, normalizeImageContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/image";
+import { createCodeContent, normalizeCodeContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/code";
+import { createSpacerContent, normalizeSpacerContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/spacer";
+import { createSimpleNumberCardContent, normalizeSimpleNumberCardContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/simple-number-card";
+import { createLayeredNumberContent, normalizeLayeredNumberContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/layered-number-block";
+import { createCalloutContent, normalizeCalloutContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/callout-block";
+import { createSolidBoxContent, normalizeSolidBoxContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/solid-box-block";
+import { createSolidIconBoxContent, normalizeSolidIconBoxContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/solid-icon-box-block";
+import { createSidelineCardContent, normalizeSidelineCardContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/sideline-card-block";
+import { createButtonBlockContent, normalizeButtonBlockContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/button-block";
+import { createLeafBlockContent, normalizeLeafBlockContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/leaf-block";
+import { createTimelineBentoContent, normalizeTimelineBentoContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/timeline-bento-block";
+import { createStackedTimelineContent, normalizeStackedTimelineContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/stacked-timeline-block";
+import { createConnectedStepsContent, normalizeConnectedStepsContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/connected-steps-block";
+import { createCircleStatsContent, normalizeCircleStatsContent } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions/circle-stats-block";
 
 export interface BlockPreset {
   label: string;
@@ -67,7 +67,7 @@ export interface BlockDefinition {
 export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
   [BLOCK_TYPES.PROSEMIRROR]: {
     type: BLOCK_TYPES.PROSEMIRROR,
-    component: lazy(() => import('./prosemirror/ProseMirrorBlock').then(m => ({ default: m.ProseMirrorBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/prosemirror/ProseMirrorBlock').then(m => ({ default: m.ProseMirrorBlock }))),
     icon: IconHeading,
     label: 'Text',
     description: 'Rich text with headings, lists, and formatting',
@@ -99,7 +99,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.IMAGE]: {
     type: BLOCK_TYPES.IMAGE,
-    component: lazy(() => import('./image/ImageBlock').then(m => ({ default: m.ImageBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/image/ImageBlock').then(m => ({ default: m.ImageBlock }))),
     icon: IconPhoto,
     label: 'Image',
     description: 'Upload or search for images',
@@ -111,7 +111,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.CODE]: {
     type: BLOCK_TYPES.CODE,
-    component: lazy(() => import('./code/CodeBlock').then(m => ({ default: m.CodeBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/code/CodeBlock').then(m => ({ default: m.CodeBlock }))),
     icon: IconCode,
     label: 'Code',
     description: 'Syntax-highlighted code snippets',
@@ -123,7 +123,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.SPACER]: {
     type: BLOCK_TYPES.SPACER,
-    component: lazy(() => import('./spacer/SpacerBlock').then(m => ({ default: m.SpacerBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/spacer/SpacerBlock').then(m => ({ default: m.SpacerBlock }))),
     icon: IconSeparator,
     label: 'Spacer',
     description: 'Adjustable vertical space',
@@ -135,7 +135,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.CALLOUT_BLOCK]: {
     type: BLOCK_TYPES.CALLOUT_BLOCK,
-    component: lazy(() => import('./callout-block/CalloutBlock').then(m => ({ default: m.CalloutBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/callout-block/CalloutBlock').then(m => ({ default: m.CalloutBlock }))),
     icon: IconInfoCircle,
     label: 'Callout',
     description: 'Highlighted box for emphasis',
@@ -173,7 +173,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.BUTTON_BLOCK]: {
     type: BLOCK_TYPES.BUTTON_BLOCK,
-    component: lazy(() => import('./button-block/ButtonBlock').then(m => ({ default: m.ButtonBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/button-block/ButtonBlock').then(m => ({ default: m.ButtonBlock }))),
     icon: IconClick,
     label: 'Button',
     description: 'Clickable button',
@@ -185,7 +185,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.SIMPLE_NUMBER_CARD]: {
     type: BLOCK_TYPES.SIMPLE_NUMBER_CARD,
-    component: lazy(() => import('./simple-number-card/SimpleNumberCardBlock').then(m => ({ default: m.SimpleNumberCardBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/simple-number-card/SimpleNumberCardBlock').then(m => ({ default: m.SimpleNumberCardBlock }))),
     icon: IconBadge,
     label: 'Number Card',
     description: 'Big number with label',
@@ -197,7 +197,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.LAYERED_NUMBER_BLOCK]: {
     type: BLOCK_TYPES.LAYERED_NUMBER_BLOCK,
-    component: lazy(() => import('./layered-number-block/LayeredNumberBlock').then(m => ({ default: m.LayeredNumberBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/layered-number-block/LayeredNumberBlock').then(m => ({ default: m.LayeredNumberBlock }))),
     icon: IconLayersIntersect,
     label: 'Layered Number',
     description: 'Stylish layered number display',
@@ -209,7 +209,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.SOLID_BOX_BLOCK]: {
     type: BLOCK_TYPES.SOLID_BOX_BLOCK,
-    component: lazy(() => import('./solid-box-block/SolidBoxBlock').then(m => ({ default: m.SolidBoxBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/solid-box-block/SolidBoxBlock').then(m => ({ default: m.SolidBoxBlock }))),
     icon: IconBoxModel,
     label: 'Solid Box',
     description: 'Colored box with content',
@@ -221,7 +221,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.SOLID_ICON_BOX_BLOCK]: {
     type: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
-    component: lazy(() => import('./solid-icon-box-block/SolidIconBoxBlock').then(m => ({ default: m.SolidIconBoxBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/solid-icon-box-block/SolidIconBoxBlock').then(m => ({ default: m.SolidIconBoxBlock }))),
     icon: IconContrast,
     label: 'Icon Box',
     description: 'Box with an icon header',
@@ -233,7 +233,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.SIDELINE_CARD_BLOCK]: {
     type: BLOCK_TYPES.SIDELINE_CARD_BLOCK,
-    component: lazy(() => import('./sideline-card-block/SidelineCardBlock').then(m => ({ default: m.SidelineCardBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/sideline-card-block/SidelineCardBlock').then(m => ({ default: m.SidelineCardBlock }))),
     icon: IconLayoutSidebarLeftCollapse,
     label: 'Sideline Card',
     description: 'Card with side accent line',
@@ -245,7 +245,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.LEAF_BLOCK]: {
     type: BLOCK_TYPES.LEAF_BLOCK,
-    component: lazy(() => import('./leaf-block/LeafBlock').then(m => ({ default: m.LeafBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/leaf-block/LeafBlock').then(m => ({ default: m.LeafBlock }))),
     icon: IconPolygon,
     label: 'Leaf Grid',
     description: 'Grid of leaf-shaped cards',
@@ -257,7 +257,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.TIMELINE_BENTO_BLOCK]: {
     type: BLOCK_TYPES.TIMELINE_BENTO_BLOCK,
-    component: lazy(() => import('./timeline-bento/TimelineBentoBlock').then(m => ({ default: m.TimelineBentoBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/timeline-bento/TimelineBentoBlock').then(m => ({ default: m.TimelineBentoBlock }))),
     icon: IconTimeline,
     label: 'Timeline Bento',
     description: 'Alternating timeline layout',
@@ -269,7 +269,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.STACKED_TIMELINE_BLOCK]: {
     type: BLOCK_TYPES.STACKED_TIMELINE_BLOCK,
-    component: lazy(() => import('./stacked-timeline/StackedTimelineBlock').then(m => ({ default: m.StackedTimelineBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/stacked-timeline/StackedTimelineBlock').then(m => ({ default: m.StackedTimelineBlock }))),
     icon: IconLayersIntersect,
     label: 'Stacked Timeline',
     description: 'Vertical stacked timeline',
@@ -281,7 +281,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.CONNECTED_STEPS_BLOCK]: {
     type: BLOCK_TYPES.CONNECTED_STEPS_BLOCK,
-    component: lazy(() => import('./connected-steps/ConnectedStepsBlock').then(m => ({ default: m.ConnectedStepsBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/connected-steps/ConnectedStepsBlock').then(m => ({ default: m.ConnectedStepsBlock }))),
     icon: IconTimeline, // Reusing timeline icon for steps
     label: 'Connected Steps',
     description: 'Points connected by a line',
@@ -293,7 +293,7 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
 
   [BLOCK_TYPES.CIRCLE_STATS_BLOCK]: {
     type: BLOCK_TYPES.CIRCLE_STATS_BLOCK,
-    component: lazy(() => import('./circle-stats/CircleStatsBlock').then(m => ({ default: m.CircleStatsBlock }))),
+    component: lazy(() => import('@/app/(protected)/presentation/[id]/editor/blocks/circle-stats/CircleStatsBlock').then(m => ({ default: m.CircleStatsBlock }))),
     icon: IconBadge, // Reusing badge
     label: 'Circle Stats',
     description: 'Circular statistics display',

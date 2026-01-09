@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { type Slide, toggleSlideAccent } from "@/store/slices/slidesSlice";
-import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
 import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
 import { IconPlus, IconPhoto } from "@tabler/icons-react";

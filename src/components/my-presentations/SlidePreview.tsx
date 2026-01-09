@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { SlideCanvas } from "@/app/(protected)/presentation/[id]/editor/components/SlideCanvas";
-import { EditorThemeProvider } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
+import { SlideCanvas } from "@/app/(protected)/presentation/[id]/editor/engine/layout/SlideCanvas";
+import { EditorThemeProvider } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
 import { Theme } from "@/store/slices/slidesSlice";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 

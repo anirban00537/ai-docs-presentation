@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 // import { type Theme } from "@/types/presentation";
-import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
 import { X, Search, Upload, Loader2, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +15,7 @@ import {
   useTrackUnsplashDownload,
 } from "@/hooks/use-images";
 import type { UnsplashPhoto, MediaItem } from "@/services/images";
+import { useEditorTheme } from "..";
 
 export interface SelectedImage {
   url: string;

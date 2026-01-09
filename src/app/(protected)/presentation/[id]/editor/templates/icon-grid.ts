@@ -1,5 +1,5 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "../blocks/factories";
+import { createBlockInstance, createRow } from "@/app/(protected)/presentation/[id]/editor/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { createSolidIconBoxContent } from "../blocks/definitions/solid-icon-box-block";
 import { Slide } from "@/store/slices/slidesSlice";

@@ -3,13 +3,9 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  BLOCK_DEFINITIONS,
-  type BlockDefinition as Def,
-  type BlockPreset
-} from "../blocks/block-definitions";
 import { BlockOption } from "../block/BlockOption";
 import type { BlockType } from "@/types/presentation";
+import { BLOCK_DEFINITIONS } from "../engine";
 
 interface BlockLibraryPanelProps {
   isOpen: boolean;

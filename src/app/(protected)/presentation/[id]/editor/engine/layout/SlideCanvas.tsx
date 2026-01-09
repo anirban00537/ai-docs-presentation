@@ -1,21 +1,21 @@
 import React, { useState, memo, useCallback, lazy, Suspense, useEffect, useRef } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
-import { ContentRow } from "../layout/ContentRow";
+import { ContentRow } from "./ContentRow";
 import type { Slide, SlideAccent } from "@/store/slices/slidesSlice";
 import type { BlockContent } from "@/types/presentation";
 import { useAppDispatch } from "@/store/hooks";
 import { setSlideAccentSize, updateSlideAccent } from "@/store/slices/slidesSlice";
-import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
-import { SlideToolbar } from "../slide/SlideToolbar";
-import type { SelectedImage } from "../panels/ImagePickerModal";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
+import { SlideToolbar } from "@/app/(protected)/presentation/[id]/editor/slide/SlideToolbar";
+import type { SelectedImage } from "@/app/(protected)/presentation/[id]/editor/panels/ImagePickerModal";
 import { getFontFamily } from "@/lib/fonts";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
-import * as Patterns from "../patterns";
-import { useResize } from "../../hooks/useResize";
+import * as Patterns from "@/app/(protected)/presentation/[id]/editor/patterns";
+import { useResize } from "@/app/(protected)/presentation/[id]/editor/engine/hooks/useResize";
 
 // Lazy load the heavy ImagePickerModal
 const ImagePickerModal = lazy(() => 
-  import("../panels/ImagePickerModal").then(mod => ({ default: mod.ImagePickerModal }))
+  import("@/app/(protected)/presentation/[id]/editor/panels/ImagePickerModal").then(mod => ({ default: mod.ImagePickerModal }))
 );
 
 const DragStateBridge = memo(function DragStateBridge({

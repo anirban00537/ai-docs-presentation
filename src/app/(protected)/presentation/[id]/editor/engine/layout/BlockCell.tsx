@@ -1,15 +1,15 @@
 import React, { useState, useRef, useCallback, useEffect, memo } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { BlockRenderer } from "../block/BlockRenderer";
-import { BlockToolbar } from "../block/BlockToolbar";
-import { useBlockFocus } from "../block/BlockSelectionContext";
+import { BlockRenderer } from "@/app/(protected)/presentation/[id]/editor/engine/renderer/BlockRenderer";
+import { BlockToolbar } from "@/app/(protected)/presentation/[id]/editor/block/BlockToolbar";
+import { useBlockFocus } from "@/app/(protected)/presentation/[id]/editor/engine/selection/BlockSelectionContext";
 import type { Block, BlockContent } from "@/types/presentation";
 import { useAppDispatch } from "@/store/hooks";
 import { duplicateBlock, deleteBlock } from "@/store/slices/slidesSlice";
-import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/engine/theme/EditorThemeProvider";
 import { IconGripHorizontal } from "@tabler/icons-react";
-import { useResize } from "../../hooks/useResize";
+import { useResize } from "@/app/(protected)/presentation/[id]/editor/engine/hooks/useResize";
 
 interface BlockCellProps {
   block: Block;

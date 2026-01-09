@@ -3,8 +3,8 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconChevronLeft, IconChevronRight, IconX } from "@tabler/icons-react";
-import { SlideCanvas } from "../components/SlideCanvas";
 import { Theme, Slide } from "@/store/slices/slidesSlice";
+import { SlideCanvas } from "..";
 
 interface PresentationViewProps {
   isPresenting: boolean;

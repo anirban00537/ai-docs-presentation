@@ -13,14 +13,14 @@ import {
   BLOCK_TYPES,
   MAX_BLOCKS_PER_ROW,
 } from "@/types/presentation";
-import { BLOCK_DEFINITIONS } from "@/app/(protected)/presentation/[id]/editor/blocks/block-definitions";
+import { BLOCK_DEFINITIONS } from "@/app/(protected)/presentation/[id]/editor/engine/registry/block-definitions";
 
 import {
   createBlockInstance,
   createRow,
   createRowWithColumns,
   createSlide,
-} from "@/app/(protected)/presentation/[id]/editor/blocks/factories";
+} from "@/app/(protected)/presentation/[id]/editor/engine/registry/factories";
 import { 
   findSlide, 
   findRow, 

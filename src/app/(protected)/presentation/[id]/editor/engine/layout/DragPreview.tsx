@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Theme, Block } from "@/store/slices/slidesSlice";
-import { getBlockTypeIcon, getBlockTypeLabel } from "../utils/blockTypeUtils";
+import { getBlockTypeIcon, getBlockTypeLabel } from "@/app/(protected)/presentation/[id]/editor/utils/blockTypeUtils";
 
 interface DragPreviewProps {
   block?: Block | null;

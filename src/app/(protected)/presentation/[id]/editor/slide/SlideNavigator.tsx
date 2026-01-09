@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { SlideCanvas } from "../components/SlideCanvas";
 import type { Slide } from "@/store/slices/slidesSlice";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
@@ -45,6 +44,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
+import { SlideCanvas } from "../engine";
 
 // --- Types ---
 
