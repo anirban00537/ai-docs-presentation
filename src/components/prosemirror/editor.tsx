@@ -132,6 +132,15 @@ const normalizeProseMirrorJSON = (json: any): any => {
     });
   }
 
+  // Fix image attributes (url -> src compatibility)
+  if (newJson.type === 'image' && newJson.attrs) {
+    // Clone attrs to avoid mutation
+    newJson.attrs = { ...newJson.attrs };
+    if (newJson.attrs.url && !newJson.attrs.src) {
+       newJson.attrs.src = newJson.attrs.url;
+    }
+  }
+
   // Recursive normalize content
   if (newJson.content && Array.isArray(newJson.content)) {
     // First, normalize all children
@@ -251,10 +260,16 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
 
     // Handle both Markdown string and legacy JSON format
     let prosemirrorDoc: ProseMirrorNode | null = null;
+    
+    // Normalize value: If it's a ProseMirror JSON object, stringify it to use the robust string parsing path
+    let stringValue = value;
+    if (value && typeof value === 'object' && value.type === 'doc') {
+       stringValue = JSON.stringify(value);
+    }
 
-    if (typeof value === "string") {
+    if (typeof stringValue === "string") {
       // Check if the string is actually a JSON string (AI sometimes returns stringified JSON)
-      const trimmed = value.trim();
+      const trimmed = stringValue.trim();
       if ((trimmed.startsWith('{') && trimmed.endsWith('}'))) {
         try {
           const parsed = JSON.parse(trimmed);
@@ -271,22 +286,11 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       // If not successfully parsed as JSON, treat as Markdown
       if (!prosemirrorDoc) {
         try {
-          prosemirrorDoc = defaultMarkdownParser.parse(value);
+          prosemirrorDoc = defaultMarkdownParser.parse(stringValue);
         } catch (error) {
           console.warn("Failed to parse Markdown:", error);
           return;
         }
-      }
-    } else if (value && typeof value === 'object' && value.type === 'doc') {
-      // Legacy format: ProseMirror JSON object
-      try {
-        const normalized = normalizeProseMirrorJSON(value);
-        prosemirrorDoc = ProseMirrorNode.fromJSON(schema, normalized);
-        setParseError(null); // Clear any previous error
-      } catch (error: any) {
-        console.error("Failed to parse legacy ProseMirror JSON:", error);
-        setParseError(`Failed to load content: ${error.message}`);
-        return;
       }
     } else {
       // Invalid format, skip
@@ -317,9 +321,14 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
 
   // Parse initial value to ProseMirror doc
   const initialDoc = useMemo(() => {
-    if (typeof value === "string") {
-      // Check if the string is actually a JSON string (AI sometimes returns stringified JSON)
-      const trimmed = value.trim();
+    // Normalize value: If it's a ProseMirror JSON object, stringify it
+    let stringValue = value;
+    if (value && typeof value === 'object' && value.type === 'doc') {
+       stringValue = JSON.stringify(value);
+    }
+
+    if (typeof stringValue === "string") {
+      const trimmed = stringValue.trim();
       if ((trimmed.startsWith('{') && trimmed.endsWith('}'))) {
         try {
           const parsed = JSON.parse(trimmed);
@@ -328,27 +337,18 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
              return ProseMirrorNode.fromJSON(schema, normalized);
           }
         } catch (e) {
-          // Not valid JSON, proceed to Markdown
+          // Ignore
         }
       }
       
       // Markdown fallback
       try {
-        return defaultMarkdownParser.parse(value);
+        return defaultMarkdownParser.parse(stringValue);
       } catch {
-        // Invalid Markdown, create empty doc
-      }
-    } else if (value && typeof value === 'object' && value.type === 'doc') {
-      // Legacy format: ProseMirror JSON object
-      try {
-        const normalized = normalizeProseMirrorJSON(value);
-        // Note: usage of 'schema' inside useMemo is fine as it's imported constant
-        return ProseMirrorNode.fromJSON(schema, normalized);
-      } catch (e) {
-        // Invalid JSON, create empty doc
-        // We can't set state here (pure function), so useEffect will handle error reporting
+        // Invalid Markdown
       }
     }
+    
     return schema.node("doc", null, [schema.node("heading", { level: 2 })]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -113,7 +113,7 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                             <ProseMirrorEditor
                                 key={`${item.id}-title`}
                                 blockId={`${item.id}-title`}
-                                value={item.title}
+                                value={typeof item.title === 'string' ? item.title : JSON.stringify(item.title)}
                                 onChange={(value) => handleItemUpdate(index, "title", value)}
                                 placeholder="Item"
                                 readOnly={readOnly}
@@ -127,7 +127,7 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                             <ProseMirrorEditor
                                 key={`${item.id}-description`}
                                 blockId={`${item.id}-description`}
-                                value={item.description}
+                                value={typeof item.description === 'string' ? item.description : JSON.stringify(item.description)}
                                 onChange={(value) => handleItemUpdate(index, "description", value)}
                                 placeholder="Description"
                                 readOnly={readOnly}
