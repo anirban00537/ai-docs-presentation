@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, Save, Tag, FileText, Type } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Theme } from "@/types/presentation";
-import type { LayoutMetadata } from "../hooks/useLayoutEditor";
+import type { LayoutMetadata } from "@/app/(protected)/layout-editor/hooks/useLayoutEditor";
 
 interface LayoutMetadataPanelProps {
   isOpen: boolean;
@@ -222,21 +222,25 @@ export function LayoutMetadataPanel({
                     </button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {localMetadata.tags.map((tag) => (
+                    {localMetadata.tags.map((tag: string) => (
                       <span
                         key={tag}
-                        className="px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                        className="px-2 py-1 rounded-md text-sm flex items-center gap-1.5"
                         style={{
-                          backgroundColor: isDark
-                            ? "rgba(255, 255, 255, 0.1)"
-                            : "rgba(0, 0, 0, 0.05)",
-                          color: theme.bodyColor,
+                          backgroundColor: theme.primary + "15",
+                          color: theme.primary,
                         }}
                       >
                         {tag}
                         <button
-                          onClick={() => handleRemoveTag(tag)}
-                          className="hover:opacity-70 transition-opacity"
+                          onClick={() => {
+                            const newTags = localMetadata.tags.filter((t: string) => t !== tag);
+                            setLocalMetadata({
+                              ...localMetadata,
+                              tags: newTags
+                            });
+                          }}
+                          className="hover:scale-110 transition-transform"
                         >
                           <X size={14} />
                         </button>

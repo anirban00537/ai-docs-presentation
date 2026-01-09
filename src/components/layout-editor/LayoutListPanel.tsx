@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { X, Plus, Search, Edit, Trash2, Calendar, Tag, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Theme } from "@/types/presentation";
-import { useLayouts, useDeleteLayout } from "../hooks/useLayoutEditor";
+import type { LayoutTemplate } from "@/services/layouts";
+import { useLayouts, useDeleteLayout } from "@/app/(protected)/layout-editor/hooks/useLayoutEditor";
 
 interface LayoutListPanelProps {
   isOpen: boolean;
@@ -27,7 +28,7 @@ export function LayoutListPanel({
   const isDark = theme.themeType === "dark";
 
   // TanStack Query hooks
-  const { data: layouts = [], isLoading, refetch } = useLayouts();
+  const { data: layouts = [] as LayoutTemplate[], isLoading, refetch } = useLayouts();
   const deleteLayoutMutation = useDeleteLayout();
 
   const handleDeleteLayout = async (layoutId: string, layoutName: string) => {
@@ -45,7 +46,7 @@ export function LayoutListPanel({
   };
 
   // Filter layouts
-  const filteredLayouts = layouts.filter((layout) => {
+  const filteredLayouts = layouts.filter((layout: LayoutTemplate) => {
     const matchesSearch =
       layout.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       layout.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -218,7 +219,7 @@ export function LayoutListPanel({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {filteredLayouts.map((layout) => {
+                    {filteredLayouts.map((layout: LayoutTemplate) => {
                       const isSelected = currentLayoutId === layout.id;
                       return (
                         <motion.div
@@ -286,7 +287,7 @@ export function LayoutListPanel({
                             </div>
                             {layout.tags.length > 0 && (
                               <div className="flex flex-wrap gap-1 mt-2">
-                                {layout.tags.map((tag) => (
+                                {layout.tags.map((tag: string) => (
                                   <span
                                     key={tag}
                                     className="px-2 py-0.5 rounded text-xs flex items-center gap-1"

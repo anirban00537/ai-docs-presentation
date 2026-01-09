@@ -2,13 +2,11 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { IconPlus } from "@tabler/icons-react";
+import { AnimatePresence } from "framer-motion";
 import {
   usePresentationsList,
   useDeletePresentation,
 } from "@/hooks/use-presentation";
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +22,7 @@ import {
   LoadingSkeleton,
   EmptyState,
   PresentationCard,
+  PresentationsHeader,
 } from "../../../../components/my-presentations";
 
 export default function MyPresentationsPage() {
@@ -51,7 +50,6 @@ export default function MyPresentationsPage() {
 
   const confirmDelete = async () => {
     if (!presentationToDelete) return;
-
     try {
       await deletePresentationMutation.mutateAsync(presentationToDelete.id);
       toast.success("Presentation deleted successfully");
@@ -62,53 +60,19 @@ export default function MyPresentationsPage() {
     }
   };
 
-  if (isLoading) {
-    return <LoadingSkeleton />;
-  }
+  if (isLoading) return <LoadingSkeleton />;
 
   return (
     <div className="relative flex-1 flex flex-col min-h-[calc(100vh-80px)] ">
-      {/* Background Blobs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-slate-100 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/40 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
 
-      {/* === SCROLLABLE CONTENT LAYER === */}
       <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">
-        {/* Header */}
-        <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-12 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6"
-        >
-            <div className="space-y-4">
-                <h1 className="font-serif text-3xl md:text-5xl text-foreground tracking-tight leading-tight">
-                My <span className="italic text-primary">presentations</span>
-                </h1>
-                <p className="text-sm md:text-base text-muted-foreground/80 font-medium max-w-md">
-                {presentations.length > 0
-                    ? `You have ${presentations.length} presentation${presentations.length !== 1 ? 's' : ''} in your library.`
-                    : "Create and manage your professional presentations."
-                }
-                </p>
-            </div>
-            
-            <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-            >
-            <Button
-                onClick={() => router.push("/home")}
-                variant="default"
-                className="shadow-coral-glow hover:scale-105 transition-transform"
-            >
-                <IconPlus size={18} className="mr-2" />
-                New Project
-            </Button>
-            </motion.div>
-        </motion.div>
+        <PresentationsHeader 
+          count={presentations.length} 
+          onNew={() => router.push("/home")} 
+        />
 
-        {/* Content */}
         {presentations.length === 0 ? (
           <EmptyState onCreateClick={() => router.push("/home")} />
         ) : (
@@ -128,20 +92,8 @@ export default function MyPresentationsPage() {
         )}
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent
-          className="rounded-2xl border-0"
-          style={{
-            backgroundColor: "color-mix(in srgb, var(--secondary) 15%, transparent)",
-            backdropFilter: "blur(24px) saturate(180%)",
-            WebkitBackdropFilter: "blur(24px) saturate(180%)",
-            boxShadow: `
-              0 1px 0 0 color-mix(in srgb, var(--secondary) 20%, transparent) inset,
-              0 25px 50px rgba(0, 0, 0, 0.15)
-            `,
-          }}
-        >
+        <AlertDialogContent className="rounded-2xl border-0 bg-card/90 backdrop-blur-3xl shadow-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Presentation</AlertDialogTitle>
             <AlertDialogDescription>
