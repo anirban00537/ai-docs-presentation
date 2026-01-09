@@ -1,5 +1,7 @@
 import {
   addBlockToRow,
+  addRow,
+  repositionBlock,
   addRowAtTop,
   addRowWithColumns,
   addRowWithColumnsAtIndex,
@@ -30,6 +32,14 @@ export interface EditorCommandBus {
     blockType?: string;
     initialContent?: any;
   }) => void;
+  // Consolidated Row Actions
+  addRow: (params: {
+    slideId: string;
+    insertAt: "top" | "bottom" | number;
+    columnCount?: number;
+    blockType?: string;
+    initialContent?: any;
+  }) => void;
   addRowAtTop: (params: { slideId: string; columnCount?: number }) => void;
   addRowWithColumns: (params: {
     slideId: string;
@@ -44,6 +54,18 @@ export interface EditorCommandBus {
     initialContent?: any;
   }) => void;
   deleteRow: (params: { slideId: string; rowId: string }) => void;
+  // Consolidated Movement Actions
+  repositionBlock: (params: {
+    slideId: string;
+    sourceRowId: string;
+    blockId: string;
+    target: {
+      rowId?: string;
+      insertIndex?: number;
+      createNewRow?: boolean;
+      targetBlockId?: string;
+    };
+  }) => void;
   moveBlock: (params: {
     slideId: string;
     sourceRowId: string;
@@ -81,10 +103,12 @@ export const createEditorCommandBus = (
     dispatch(updateBlockContent({ slideId, blockId, content })),
   addBlockAfter: ({ slideId, rowId, afterBlockId, insertIndex, blockType, initialContent }) =>
     dispatch(addBlockToRow({ slideId, rowId, afterBlockId, insertIndex, blockType, initialContent })),
+  
+  addRow: (params) => dispatch(addRow(params)),
   addRowAtTop: ({ slideId, columnCount = 1 }) =>
-    dispatch(addRowAtTop({ slideId, columnCount })),
+    dispatch(addRow({ slideId, insertAt: "top", columnCount })),
   addRowWithColumns: ({ slideId, columnCount, blockType }) =>
-    dispatch(addRowWithColumns({ slideId, columnCount, blockType })),
+    dispatch(addRow({ slideId, insertAt: "bottom", columnCount, blockType })),
   addRowWithColumnsAtIndex: ({
     slideId,
     columnCount,
@@ -93,15 +117,29 @@ export const createEditorCommandBus = (
     initialContent,
   }) =>
     dispatch(
-      addRowWithColumnsAtIndex({ slideId, columnCount, insertIndex, blockType, initialContent })
+      addRow({ slideId, insertAt: insertIndex, columnCount, blockType, initialContent })
     ),
   deleteRow: ({ slideId, rowId }) => dispatch(deleteRow({ slideId, rowId })),
+
+  repositionBlock: (params) => dispatch(repositionBlock(params)),
   moveBlock: ({ slideId, sourceRowId, targetRowId, blockId, targetBlockId }) =>
     dispatch(
-      moveBlock({ slideId, sourceRowId, targetRowId, blockId, targetBlockId })
+      repositionBlock({ 
+        slideId, 
+        sourceRowId, 
+        blockId, 
+        target: { rowId: targetRowId, targetBlockId } 
+      })
     ),
   moveBlockToNewRow: ({ slideId, sourceRowId, blockId, insertIndex }) =>
-    dispatch(moveBlockToNewRow({ slideId, sourceRowId, blockId, insertIndex })),
+    dispatch(
+      repositionBlock({ 
+        slideId, 
+        sourceRowId, 
+        blockId, 
+        target: { createNewRow: true, insertIndex } 
+      })
+    ),
   reorderBlocksInRow: ({ slideId, rowId, oldIndex, newIndex }) =>
     dispatch(reorderBlocksInRow({ slideId, rowId, oldIndex, newIndex })),
   updateColumnWidths: ({ slideId, rowId, columnWidths }) =>

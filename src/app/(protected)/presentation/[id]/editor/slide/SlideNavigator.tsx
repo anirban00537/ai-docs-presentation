@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { SlideContainer } from "./SlideContainer";
+import { SlideCanvas } from "../components/SlideCanvas";
 import type { Slide } from "@/store/slices/slidesSlice";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
@@ -144,7 +144,7 @@ const SortableSlideItem = ({
               height: `${slideHeight}px`,
             }}
           >
-            <SlideContainer slide={slide} {...renderSlideProps} enableDragHints={false} readOnly={true} />
+            <SlideCanvas slide={slide} {...renderSlideProps} enableDragHints={false} readOnly={true} />
           </div>
 
           {/* Hover Overlay with Controls */}
@@ -532,7 +532,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                                             height: `${slideHeight}px`,
                                         }}
                                     >
-                                        <SlideContainer slide={activeDragSlide} {...renderSlideProps} enableDragHints={false} readOnly={true} />
+                                        <SlideCanvas slide={activeDragSlide} {...renderSlideProps} enableDragHints={false} readOnly={true} />
                                     </div>
                                 </div>
                            </div> 

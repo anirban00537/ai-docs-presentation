@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { type Theme } from "@/types/presentation";
+// import { type Theme } from "@/types/presentation";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
 import { X, Search, Upload, Loader2, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,15 +30,14 @@ interface ImagePickerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (image: SelectedImage) => void;
-  theme: Theme;
 }
 
 export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   isOpen,
   onClose,
   onSelect,
-  theme,
 }) => {
+  const theme = useEditorTheme();
   const isDark = theme.themeType === "dark";
   const [activeTab, setActiveTab] = useState<"unsplash" | "uploads">("unsplash");
   const [searchQuery, setSearchQuery] = useState("");

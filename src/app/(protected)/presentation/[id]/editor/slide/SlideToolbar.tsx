@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { type Slide, type Theme, toggleSlideAccent } from "@/store/slices/slidesSlice";
+import { type Slide, toggleSlideAccent } from "@/store/slices/slidesSlice";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
 import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
 import { IconPlus, IconPhoto } from "@tabler/icons-react";
@@ -9,7 +10,6 @@ import { cn } from "@/lib/utils";
 
 interface SlideToolbarProps {
   slide: Slide;
-  theme: Theme;
   isHovered: boolean;
   fullWidth: boolean;
   onOpenImagePicker: () => void;
@@ -20,7 +20,6 @@ interface SlideToolbarProps {
 
 export const SlideToolbar: React.FC<SlideToolbarProps> = ({
   slide,
-  theme,
   isHovered,
   fullWidth,
   onOpenImagePicker,
@@ -28,6 +27,7 @@ export const SlideToolbar: React.FC<SlideToolbarProps> = ({
   onUpdateAccent,
   onToggleAccent,
 }) => {
+  const theme = useEditorTheme();
   const dispatch = useAppDispatch();
   const isDark = theme.themeType === "dark";
 
@@ -70,7 +70,6 @@ export const SlideToolbar: React.FC<SlideToolbarProps> = ({
       >
         <SlideOptions 
           slide={slide} 
-          theme={theme} 
           onOpenImagePicker={onOpenImagePicker}
           onUpdateAccent={onUpdateAccent}
           onToggleAccent={onToggleAccent}

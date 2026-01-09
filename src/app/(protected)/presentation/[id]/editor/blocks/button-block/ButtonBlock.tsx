@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { BlockRendererProps } from "../registry";
+import type { BlockRendererProps } from "../../types";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { ButtonBlockContent } from "@/types/presentation/schemas/blocks";

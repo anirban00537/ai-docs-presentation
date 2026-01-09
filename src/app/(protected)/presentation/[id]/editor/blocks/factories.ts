@@ -1,20 +1,25 @@
 import { nanoid } from "nanoid";
-import type { Block, Row, Slide } from "@/types/presentation";
 import {
+  type Block,
+  type Row,
+  type Slide,
   BLOCK_TYPES,
   MAX_BLOCKS_PER_ROW,
   type BlockType,
-  createBlockContentForType,
-} from "./definitions";
+} from "@/types/presentation";
+import { BLOCK_DEFINITIONS } from "./block-definitions";
 
 export const createBlockInstance = (
-  type: BlockType | undefined = BLOCK_TYPES.PROSEMIRROR,
+  type: BlockType = BLOCK_TYPES.PROSEMIRROR,
   content?: any
-): Block => ({
+): Block => {
+  const definition = BLOCK_DEFINITIONS[type] || BLOCK_DEFINITIONS[BLOCK_TYPES.PROSEMIRROR];
+ return {
   id: nanoid(),
   type,
-  content: content ?? createBlockContentForType(type),
-});
+  content: content ?? definition.createContent(),
+ };
+};
 
 export const createRow = (blocks?: Block[]): Row => {
   const rowBlocks = blocks?.length ? blocks : [createBlockInstance()];

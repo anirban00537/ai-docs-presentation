@@ -121,7 +121,6 @@ export const ImageBlock = memo(function ImageBlock({
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onSelect={handleImageSelect}
-            theme={theme}
           />
         )}
       </>
@@ -201,7 +200,6 @@ export const ImageBlock = memo(function ImageBlock({
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSelect={handleImageSelect}
-          theme={theme}
         />
       )}
     </>

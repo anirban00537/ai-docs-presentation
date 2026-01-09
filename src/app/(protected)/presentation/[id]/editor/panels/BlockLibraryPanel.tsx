@@ -4,197 +4,58 @@ import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  BLOCK_TYPES,
-  createCalloutContent,
-  createButtonBlockContent,
-  createTimelineBentoContent,
-  createStackedTimelineContent,
-  createLeafBlockContent,
-} from "../blocks/definitions";
-import {
-  IconFileText,
-  IconPhoto,
-  IconCode,
-  IconSeparator,
-  IconHash,
-  IconNumber,
-  IconLayoutSidebarLeftCollapse,
-  IconBadge,
-  IconContrast,
-  IconBoxModel,
-  IconLayersIntersect,
-  IconPolygon,
-  IconInfoCircle,
-  IconAlertTriangle,
-  IconAlertOctagon,
-  IconNote,
-  IconCircleNumber1,
-  IconFolder,
-  IconLayout,
-  IconStar,
-  IconHeading,
-  IconH1,
-  IconH2,
-  IconH3,
-  IconH4,
-  IconQuote,
-  IconTimeline,
-  IconClick,
-} from "@tabler/icons-react";
+  BLOCK_DEFINITIONS,
+  type BlockDefinition as Def,
+  type BlockPreset
+} from "../blocks/block-definitions";
 import { BlockOption } from "../block/BlockOption";
+import type { BlockType } from "@/types/presentation";
 
 interface BlockLibraryPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface BlockDefinition {
+interface LibraryItem {
   type: string;
   icon: React.ReactNode;
   label: string;
   description: string;
-  category: "Core" | "Callouts" | "Cards & Boxes" | "Interactive";
+  category: "Core" | "Callouts" | "Cards & Boxes" | "Interactive" | "Format" | "Data";
   initialContent?: any;
 }
 
-const blockDefinitions: BlockDefinition[] = [
-  // Core
-  {
-    type: BLOCK_TYPES.PROSEMIRROR,
-    icon: <IconHeading size={18} />,
-    label: "Title",
-    description: "Title of the slide",
-    category: "Core",
-    initialContent: "# Slide Title"
-  },
-  {
-    type: BLOCK_TYPES.PROSEMIRROR,
-    icon: <IconH1 size={18} />,
-    label: "Heading 1",
-    description: "Large section heading",
-    category: "Core",
-    initialContent: "# Heading 1"
-  },
-  {
-    type: BLOCK_TYPES.PROSEMIRROR,
-    icon: <IconH2 size={18} />,
-    label: "Heading 2",
-    description: "Medium section heading",
-    category: "Core",
-    initialContent: "## Heading 2"
-  },
-  {
-    type: BLOCK_TYPES.PROSEMIRROR,
-    icon: <IconH3 size={18} />,
-    label: "Heading 3",
-    description: "Small section heading",
-    category: "Core",
-    initialContent: "### Heading 3"
-  },
-  {
-    type: BLOCK_TYPES.PROSEMIRROR,
-    icon: <IconH4 size={18} />,
-    label: "Heading 4",
-    description: "Extra small section heading",
-    category: "Core",
-    initialContent: "#### Heading 4"
-  },
-  {
-    type: BLOCK_TYPES.PROSEMIRROR,
-    icon: <IconQuote size={18} />,
-    label: "Quote",
-    description: "Block quotation",
-    category: "Core",
-    initialContent: "> Your quote here"
-  },
-  {
-    type: BLOCK_TYPES.IMAGE,
-    icon: <IconPhoto size={18} />,
-    label: "Image",
-    description: "Single image with caption",
-    category: "Core",
-  },
-  {
-    type: BLOCK_TYPES.CODE,
-    icon: <IconCode size={18} />,
-    label: "Code",
-    description: "Syntax-highlighted code snippets",
-    category: "Core",
-  },
-  {
-    type: BLOCK_TYPES.SPACER,
-    icon: <IconSeparator size={18} />,
-    label: "Spacer",
-    description: "Adjustable vertical space",
-    category: "Core",
-  },
-  // Callouts
-  {
-    type: BLOCK_TYPES.CALLOUT_BLOCK,
-    icon: <IconNote size={18} />,
-    label: "Note box",
-    description: "Neutral note box",
-    category: "Callouts",
-    initialContent: createCalloutContent("note"),
-  },
-  {
-    type: BLOCK_TYPES.CALLOUT_BLOCK,
-    icon: <IconInfoCircle size={18} />,
-    label: "Info box",
-    description: "Blue info callout",
-    category: "Callouts",
-    initialContent: createCalloutContent("info"),
-  },
-  {
-    type: BLOCK_TYPES.CALLOUT_BLOCK,
-    icon: <IconAlertTriangle size={18} />,
-    label: "Warning box",
-    description: "Yellow warning alert",
-    category: "Callouts",
-    initialContent: createCalloutContent("warning"),
-  },
-  // Interactive
-  {
-    type: BLOCK_TYPES.BUTTON_BLOCK,
-    icon: <IconClick size={18} />,
-    label: "Button",
-    description: "Clickable button",
-    category: "Interactive",
-    initialContent: createButtonBlockContent(),
-  },
-  {
-    type: BLOCK_TYPES.CALLOUT_BLOCK,
-    icon: <IconAlertOctagon size={18} />,
-    label: "Error box",
-    description: "Red error/caution",
-    category: "Callouts",
-    initialContent: createCalloutContent("error"),
-  },
-  {
-    type: BLOCK_TYPES.TIMELINE_BENTO_BLOCK,
-    icon: <IconTimeline size={18} />,
-    label: "Timeline Bento",
-    description: "Alternating timeline layout",
-    category: "Cards & Boxes",
-    initialContent: createTimelineBentoContent(),
-  },
-  {
-    type: BLOCK_TYPES.STACKED_TIMELINE_BLOCK,
-    icon: <IconLayersIntersect size={18} />,
-    label: "Stacked Timeline",
-    description: "Vertical stacked timeline",
-    category: "Cards & Boxes",
-    initialContent: createStackedTimelineContent(),
-  },
-  {
-    type: BLOCK_TYPES.LEAF_BLOCK,
-    icon: <IconPolygon size={18} />,
-    label: "Leaf Grid",
-    description: "Grid of leaf-shaped cards",
-    category: "Cards & Boxes",
-    initialContent: createLeafBlockContent(),
-  },
-];
+const generateLibraryItems = (): LibraryItem[] => {
+  return Object.values(BLOCK_DEFINITIONS).flatMap((def) => {
+    // If definition has presets, use them
+    if (def.presets && def.presets.length > 0) {
+      return def.presets.map((preset) => {
+        const Icon = preset.icon || def.icon;
+        return {
+          type: def.type,
+          icon: Icon ? <Icon size={18} /> : null,
+          label: preset.label,
+          description: preset.description,
+          category: def.category,
+          initialContent: preset.createContent(),
+        };
+      });
+    }
+
+    // Otherwise use the definition itself
+    const Icon = def.icon;
+    return [{
+      type: def.type,
+      icon: Icon ? <Icon size={18} /> : null,
+      label: def.label,
+      description: def.description,
+      category: def.category,
+      initialContent: def.createContent(),
+    }];
+  });
+};
+
+const blockDefinitions = generateLibraryItems();
 
 
 export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({

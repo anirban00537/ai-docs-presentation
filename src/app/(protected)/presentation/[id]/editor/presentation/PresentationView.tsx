@@ -3,7 +3,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconChevronLeft, IconChevronRight, IconX } from "@tabler/icons-react";
-import { SlideContainer } from "../slide/SlideContainer";
+import { SlideCanvas } from "../components/SlideCanvas";
 import { Theme, Slide } from "@/store/slices/slidesSlice";
 
 interface PresentationViewProps {
@@ -230,7 +230,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
                   transition={{ duration: 0.25 }}
                   className="w-full my-auto"
                 >
-                  <SlideContainer
+                  <SlideCanvas
                     slide={slides[currentSlideIndex]}
                     onUpdateBlock={onUpdateBlock}
                     onDeleteRow={onDeleteRow}

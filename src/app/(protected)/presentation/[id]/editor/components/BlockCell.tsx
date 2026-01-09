@@ -1,14 +1,17 @@
 import React, { useState, useRef, useCallback, useEffect, memo } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { BlockContainer } from "../block/BlockContainer";
-import type { Block, BlockContent } from "@/types/presentation";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME, deleteBlock, type Theme } from "@/store/slices/slidesSlice";
-import { IconGripHorizontal } from "@tabler/icons-react";
+import { BlockRenderer } from "../block/BlockRenderer";
+import { BlockToolbar } from "../block/BlockToolbar";
 import { useBlockFocus } from "../block/BlockSelectionContext";
+import type { Block, BlockContent } from "@/types/presentation";
+import { useAppDispatch } from "@/store/hooks";
+import { duplicateBlock, deleteBlock } from "@/store/slices/slidesSlice";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
+import { IconGripHorizontal } from "@tabler/icons-react";
+import { useResize } from "../hooks/useResize";
 
-interface BlockColumnProps {
+interface BlockCellProps {
   block: Block;
   slideId: string;
   rowId: string;
@@ -25,11 +28,9 @@ interface BlockColumnProps {
   onResizeStart?: () => void;
   onResizeEnd?: () => void;
   readOnly?: boolean;
-  /** Optional theme prop. If not provided, falls back to Redux store theme */
-  theme?: Theme;
 }
 
-export const BlockColumn = memo(function BlockColumn({
+export const BlockCell = memo(function BlockCell({
   block,
   slideId,
   rowId,
@@ -46,26 +47,31 @@ export const BlockColumn = memo(function BlockColumn({
   onResizeStart,
   onResizeEnd,
   readOnly = false,
-  theme: themeProp,
-}: BlockColumnProps) {
+}: BlockCellProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isBorderHovered, setIsBorderHovered] = useState(false);
-  const [isResizingActive, setIsResizingActive] = useState(false);
+  const blockRef = useRef<HTMLDivElement>(null);
   
-  const reduxTheme = useAppSelector(selectTheme);
-  const theme = themeProp || reduxTheme || DEFAULT_THEME;
+  const theme = useEditorTheme();
   const isDark = theme.themeType === "dark";
   const dispatch = useAppDispatch();
-  const { setFocusedBlock } = useBlockFocus();
+  const { focusedBlockId, focusedSlideId, setFocusedBlock } = useBlockFocus();
   const handleStartRef = useRef<{ x: number; y: number } | null>(null);
   const wasDraggingRef = useRef(false);
 
-  // Resize logic variables
-  const borderResizeRef = useRef<HTMLDivElement>(null);
-  const lastXRef = useRef<number>(0);
-  const mouseMoveHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
-  const mouseUpHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
+  const isFocused = focusedBlockId === block.id && focusedSlideId === slideId;
 
+  // Use the resize hook for column resizing
+  const { isResizing: isResizingActive, handleMouseDown: handleBorderMouseDown } = useResize({
+    direction: "horizontal",
+    onResize: (delta) => {
+      if (onResize) onResize(index, delta);
+    },
+    onResizeStart,
+    onResizeEnd,
+  });
+
+  // Draggable setup
   const {
     attributes,
     listeners,
@@ -81,73 +87,80 @@ export const BlockColumn = memo(function BlockColumn({
   const dragStyle = {
     transform: CSS.Translate.toString(transform),
     opacity: isDragging ? 0.4 : 1,
-    zIndex: isDragging ? 200 : undefined,
+    zIndex: isDragging ? 200 : isFocused ? 20 : undefined,
   };
 
-  // Resize Handlers
-  const handleBorderMouseDown = useCallback(
+  // Block click handler
+  const handleBlockClick = useCallback(
     (e: React.MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        readOnly ||
+        target.closest(".ProseMirror") ||
+        target.closest("[data-block-action-bar]") ||
+        target.closest("[data-transform-menu]")
+      ) {
+        return;
+      }
+
       e.preventDefault();
       e.stopPropagation();
-      
-      if (onResizeStart) onResizeStart();
-      setIsResizingActive(true);
-      lastXRef.current = e.clientX;
-
-      const handleMouseMove = (moveEvent: MouseEvent) => {
-        const deltaX = moveEvent.clientX - lastXRef.current;
-        lastXRef.current = moveEvent.clientX;
-        if (onResize) onResize(index, deltaX);
-      };
-
-      const handleMouseUp = (upEvent: MouseEvent) => {
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-        mouseMoveHandlerRef.current = null;
-        mouseUpHandlerRef.current = null;
-        setIsResizingActive(false);
-        if (onResizeEnd) onResizeEnd();
-      };
-
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      mouseMoveHandlerRef.current = handleMouseMove;
-      mouseUpHandlerRef.current = handleMouseUp;
+      setFocusedBlock(slideId, block.id);
     },
-    [index, onResize, onResizeStart, onResizeEnd]
+    [block.id, setFocusedBlock, readOnly, slideId]
   );
-  
-  // Cleanup resize listeners on unmount
+
+  // Click outside handler
   useEffect(() => {
-    return () => {
-      if (mouseMoveHandlerRef.current) {
-        document.removeEventListener("mousemove", mouseMoveHandlerRef.current);
-      }
-      if (mouseUpHandlerRef.current) {
-        document.removeEventListener("mouseup", mouseUpHandlerRef.current);
+    if (!isFocused) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        blockRef.current &&
+        !blockRef.current.contains(e.target as Node) &&
+        !(e.target as HTMLElement).closest("[data-block-action-bar]") &&
+        !(e.target as HTMLElement).closest("[data-transform-menu]")
+      ) {
+        setFocusedBlock(null, null);
       }
     };
-  }, []);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isFocused, setFocusedBlock]);
+
+  // Block actions
+  const handleDuplicate = useCallback(() => {
+    dispatch(duplicateBlock({ slideId, rowId, blockId: block.id }));
+  }, [dispatch, slideId, rowId, block.id]);
+
+  const handleDelete = useCallback(() => {
+    dispatch(deleteBlock({ slideId, rowId, blockId: block.id }));
+    setFocusedBlock(null, null);
+  }, [dispatch, slideId, rowId, block.id, setFocusedBlock]);
 
   return (
     <div
-      ref={!readOnly ? setNodeRef : undefined}
+      ref={(node) => {
+        if (!readOnly) setNodeRef(node);
+        blockRef.current = node;
+      }}
       className="group/column relative h-full w-full min-w-0 rounded-xl transition-all"
       style={!readOnly ? dragStyle : {}}
       onMouseEnter={() => !readOnly && setIsHovered(true)}
       onMouseLeave={() => !readOnly && setIsHovered(false)}
+      onClick={!readOnly ? handleBlockClick : undefined}
     >
       <div className="relative h-full w-full flex flex-col">
         {/* Resize Handle - Only shows between blocks */}
         {!readOnly && !isLastBlock && onResize && (
           <div
-            ref={borderResizeRef}
             className="absolute top-4 bottom-4 z-50 flex items-center justify-center cursor-col-resize touch-none"
             style={{ 
               left: "100%",
               width: "24px",
               transform: "translateX(-50%)",
-              marginLeft: "2px" // Exactly centered in the gap-1 (4px gap)
+              marginLeft: "2px"
             }}
             onMouseEnter={() => setIsBorderHovered(true)}
             onMouseLeave={() => setIsBorderHovered(false)}
@@ -217,20 +230,33 @@ export const BlockColumn = memo(function BlockColumn({
           </div>
         )}
 
-        <BlockContainer
-          block={block}
-          slideId={slideId}
-          rowId={rowId}
-          blockIndex={index}
-          totalBlocksInRow={totalBlocksInRow}
-          rowIndex={rowIndex}
-          totalRowsInSlide={totalRowsInSlide}
-          onUpdate={onUpdate}
-          isLastBlock={isLastBlock}
-          hideDragHandle={true}
-          readOnly={readOnly}
-          theme={theme}
-        />
+        {/* Block Content */}
+        <div
+          className={`relative p-1 transition-all h-full w-full flex flex-col flex-1 min-w-0 rounded-xl ${
+            isDragging && !readOnly ? "opacity-50" : ""
+          }`}
+          style={{
+            outline: !readOnly && isFocused ? `2px solid ${theme.primary}` : "none",
+            outlineOffset: "2px",
+            overflow: "visible",
+          }}
+        >
+          {/* Block Toolbar */}
+          {!readOnly && (
+            <BlockToolbar
+              isVisible={isFocused}
+              onDuplicate={handleDuplicate}
+              onDelete={handleDelete}
+            />
+          )}
+
+          {/* Block Renderer */}
+          <BlockRenderer
+            block={block}
+            onUpdate={(content) => onUpdate(block.id, content)}
+            readOnly={readOnly}
+          />
+        </div>
       </div>
     </div>
   );

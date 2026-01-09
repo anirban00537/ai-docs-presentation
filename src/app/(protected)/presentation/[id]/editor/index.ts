@@ -4,16 +4,19 @@
 export { EditorHeader } from "./core/EditorHeader";
 export { EditorBackground } from "./core/EditorBackground";
 
+// Providers
+export { EditorThemeProvider, useEditorTheme } from "./providers/EditorThemeProvider";
+export { EditorDndProvider, useEditorDndContext } from "./providers/EditorDndProvider";
+
 // Slide
-export { SlideContainer } from "./slide/SlideContainer";
-export { SlideFrame } from "./slide/SlideFrame";
+export { SlideCanvas } from "./components/SlideCanvas";
 export { SlideNavigator } from "./slide/SlideNavigator";
 export { SlideToolbar } from "./slide/SlideToolbar";
 export { SlideOptions } from "./slide/SlideOptions";
 export { SlideLayoutSelector } from "./slide/SlideLayoutSelector";
 
 // Block
-export { BlockContainer } from "./block/BlockContainer";
+export { BlockCell } from "./components/BlockCell";
 export { BlockToolbar } from "./block/BlockToolbar";
 export { BlockTypeSelector } from "./block/BlockTypeSelector";
 export { BlockOption } from "./block/BlockOption";
@@ -26,7 +29,6 @@ export {
 
 // Layout
 export { ContentRow } from "./layout/ContentRow";
-export { BlockColumn } from "./layout/BlockColumn";
 export { InsertionIndicator } from "./layout/InsertionIndicator";
 export { DragPreview } from "./layout/DragPreview";
 
@@ -49,6 +51,3 @@ export { getBlockTypeIcon, getBlockTypeLabel } from "./utils/blockTypeUtils";
 // Export block components (keep as-is)
 export { ProseMirrorBlock } from "./blocks/prosemirror/ProseMirrorBlock";
 export { SimpleNumberCardBlock } from "./blocks/simple-number-card/SimpleNumberCardBlock";
-
-
-

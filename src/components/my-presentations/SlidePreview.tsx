@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { SlideContainer } from "@/app/(protected)/presentation/[id]/editor/slide/SlideContainer";
+import { SlideCanvas } from "@/app/(protected)/presentation/[id]/editor/components/SlideCanvas";
+import { EditorThemeProvider } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
 import { Theme } from "@/store/slices/slidesSlice";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 
@@ -90,18 +91,19 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
               fontFamily: `${theme.fontFamily}, sans-serif`,
             }}
           >
-            <SlideContainer
-              slide={reduxSlide}
-              onUpdateBlock={noop}
-              onDeleteRow={noop}
-              onAddColumn={noop}
-              onAddRowAtTop={noop}
-              onAddRowAtBottom={noop}
-              onUpdateColumnWidths={noop}
-              enableDragHints={false}
-              readOnly={true}
-              theme={theme}
-            />
+            <EditorThemeProvider themeOverride={theme}>
+              <SlideCanvas
+                slide={reduxSlide}
+                onUpdateBlock={noop}
+                onDeleteRow={noop}
+                onAddColumn={noop}
+                onAddRowAtTop={noop}
+                onAddRowAtBottom={noop}
+                onUpdateColumnWidths={noop}
+                enableDragHints={false}
+                readOnly={true}
+              />
+            </EditorThemeProvider>
           </div>
         </div>
       )}

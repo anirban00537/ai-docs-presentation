@@ -1,10 +1,14 @@
 import React, { useState, useRef, useCallback, memo, useMemo, useEffect } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
-import { BlockColumn } from "./BlockColumn";
+import { BlockCell } from "../components/BlockCell";
 import type { Row } from "@/store/slices/slidesSlice";
 import type { BlockContent } from "@/types/presentation";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME, type Theme } from "@/store/slices/slidesSlice";
+import {
+  selectTheme,
+  DEFAULT_THEME,
+} from "@/store/slices/slidesSlice";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
 import { getFontFamily } from "@/lib/fonts";
 import { InsertionIndicator } from "./InsertionIndicator";
 import { IconTrash } from "@tabler/icons-react";
@@ -37,8 +41,6 @@ interface ContentRowProps {
   onUpdateColumnWidths: (rowId: string, columnWidths: number[]) => void;
   rowCount: number;
   readOnly?: boolean;
-  /** Optional theme prop. If not provided, falls back to Redux store theme */
-  theme?: Theme;
 }
 
 export const ContentRow = memo(function ContentRow({
@@ -54,7 +56,6 @@ export const ContentRow = memo(function ContentRow({
   onUpdateColumnWidths,
   rowCount,
   readOnly = false,
-  theme: themeProp,
 }: ContentRowProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnyDragActive, setIsAnyDragActive] = useState(false);
@@ -88,8 +89,7 @@ export const ContentRow = memo(function ContentRow({
   }, [row.columnWidths, row.blocks.length, isResizing]);
 
   const rowContainerRef = useRef<HTMLDivElement>(null);
-  const reduxTheme = useAppSelector(selectTheme);
-  const theme = themeProp || reduxTheme || DEFAULT_THEME;
+  const theme = useEditorTheme();
   const isDark = theme.themeType === "dark";
 
   const { setNodeRef, isOver } = useDroppable({
@@ -315,7 +315,7 @@ export const ContentRow = memo(function ContentRow({
         }}
       >
         {row.blocks.map((block, index) => (
-          <BlockColumn
+          <BlockCell
             key={block.id}
             block={block}
             slideId={slideId}
@@ -329,7 +329,6 @@ export const ContentRow = memo(function ContentRow({
             isLastBlock={index === row.blocks.length - 1}
             canAddColumn={canAddColumn}
             readOnly={readOnly}
-            theme={theme}
             // Resize props
             onResize={handleResize}
             isResizing={isResizing}

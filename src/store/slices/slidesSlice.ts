@@ -13,9 +13,7 @@ import {
   BLOCK_TYPES,
   MAX_BLOCKS_PER_ROW,
 } from "@/types/presentation";
-import {
-  createBlockContentForType,
-} from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
+import { BLOCK_DEFINITIONS } from "@/app/(protected)/presentation/[id]/editor/blocks/block-definitions";
 
 import {
   createBlockInstance,
@@ -23,6 +21,13 @@ import {
   createRowWithColumns,
   createSlide,
 } from "@/app/(protected)/presentation/[id]/editor/blocks/factories";
+import { 
+  findSlide, 
+  findRow, 
+  findBlock, 
+  recalculateWidths, 
+  ensureRowExists 
+} from "../utils/sliceHelpers";
 
 export interface SlidesState {
   slides: Slide[];
@@ -193,10 +198,9 @@ const slidesSlice = createSlice({
         blockType,
         initialContent,
       } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
-      if (!slide) return;
-      const row = slide.rows.find((r) => r.id === rowId);
-      if (!row) return;
+      const slide = findSlide(state, slideId);
+      const row = findRow(slide, rowId);
+      if (!row || !slide) return;
 
       // If row already has 3 blocks, create a new row below it with the same block type
       if (row.blocks.length >= MAX_BLOCKS_PER_ROW) {
@@ -232,24 +236,45 @@ const slidesSlice = createSlice({
       // Recalculate column widths to be equal (fractional units for CSS Grid)
       row.columnWidths = row.blocks.map(() => 1);
     },
+    addRow: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        insertAt: "top" | "bottom" | number;
+        columnCount?: number;
+        blockType?: string;
+        initialContent?: any;
+      }>
+    ) => {
+      const { slideId, insertAt, columnCount = 1, blockType, initialContent } = action.payload;
+      const slide = findSlide(state, slideId);
+      if (!slide) return;
+      
+      const newRow = createRowWithColumns(
+        columnCount,
+        blockType as any,
+        initialContent
+      );
+
+      if (insertAt === "top") {
+        slide.rows.unshift(newRow);
+      } else if (insertAt === "bottom") {
+        slide.rows.push(newRow);
+      } else if (typeof insertAt === "number") {
+        const targetIndex = Math.max(0, Math.min(insertAt, slide.rows.length));
+        slide.rows.splice(targetIndex, 0, newRow);
+      }
+    },
+    // Keep backward compatible aliases
     addRowToSlide: (
       state,
       action: PayloadAction<{ slideId: string; afterRowId: string }>
     ) => {
       const { slideId, afterRowId } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const slide = findSlide(state, slideId);
       if (!slide) return;
       const index = slide.rows.findIndex((r) => r.id === afterRowId);
       slide.rows.splice(index + 1, 0, createRow());
-    },
-    deleteRow: (
-      state,
-      action: PayloadAction<{ slideId: string; rowId: string }>
-    ) => {
-      const { slideId, rowId } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
-      if (!slide || slide.rows.length <= 1) return;
-      slide.rows = slide.rows.filter((r) => r.id !== rowId);
     },
     addRowWithColumns: (
       state,
@@ -260,10 +285,9 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, columnCount, blockType } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const slide = findSlide(state, slideId);
       if (!slide) return;
-      const newRow = createRowWithColumns(columnCount, blockType as any);
-      slide.rows.push(newRow);
+      slide.rows.push(createRowWithColumns(columnCount, blockType as any));
     },
     addRowWithColumnsAtIndex: (
       state,
@@ -275,15 +299,10 @@ const slidesSlice = createSlice({
         initialContent?: any;
       }>
     ) => {
-      const { slideId, columnCount, insertIndex, blockType, initialContent } =
-        action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const { slideId, columnCount, insertIndex, blockType, initialContent } = action.payload;
+      const slide = findSlide(state, slideId);
       if (!slide) return;
-      const newRow = createRowWithColumns(
-        columnCount,
-        blockType as any,
-        initialContent
-      );
+      const newRow = createRowWithColumns(columnCount, blockType as any, initialContent);
       const targetIndex = Math.max(0, Math.min(insertIndex, slide.rows.length));
       slide.rows.splice(targetIndex, 0, newRow);
     },
@@ -292,16 +311,24 @@ const slidesSlice = createSlice({
       action: PayloadAction<{ slideId: string; columnCount?: number }>
     ) => {
       const { slideId, columnCount = 1 } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const slide = findSlide(state, slideId);
       if (!slide) return;
-      const newRow = createRowWithColumns(columnCount);
-      slide.rows.unshift(newRow);
+      slide.rows.unshift(createRowWithColumns(columnCount));
+    },
+    deleteRow: (
+      state,
+      action: PayloadAction<{ slideId: string; rowId: string }>
+    ) => {
+      const { slideId, rowId } = action.payload;
+      const slide = findSlide(state, slideId);
+      if (!slide || slide.rows.length <= 1) return;
+      slide.rows = slide.rows.filter((r) => r.id !== rowId);
     },
     setSlideRows: (
       state,
       action: PayloadAction<{ slideId: string; rows: Row[] }>
     ) => {
-      const slide = state.slides.find((s) => s.id === action.payload.slideId);
+      const slide = findSlide(state, action.payload.slideId);
       if (slide) {
         slide.rows = action.payload.rows;
       }
@@ -310,7 +337,7 @@ const slidesSlice = createSlice({
       state,
       action: PayloadAction<{ slideId: string; rows: Row[]; accent?: SlideAccent }>
     ) => {
-      const slide = state.slides.find((s) => s.id === action.payload.slideId);
+      const slide = findSlide(state, action.payload.slideId);
       if (slide) {
         slide.rows = action.payload.rows;
         // Apply accent if provided by template
@@ -320,6 +347,99 @@ const slidesSlice = createSlice({
         state.activeSlideId = slide.id;
       }
     },
+    repositionBlock: (
+      state,
+      action: PayloadAction<{
+        slideId: string;
+        sourceRowId: string;
+        blockId: string;
+        target: {
+          rowId?: string;
+          insertIndex?: number;
+          createNewRow?: boolean;
+          targetBlockId?: string;
+        };
+      }>
+    ) => {
+      const { slideId, sourceRowId, blockId, target } = action.payload;
+      const slide = findSlide(state, slideId);
+      if (!slide) return;
+
+      const sourceRow = findRow(slide, sourceRowId);
+      if (!sourceRow) return;
+
+      const blockIndex = sourceRow.blocks.findIndex((b) => b.id === blockId);
+      if (blockIndex === -1) return;
+
+      // 1. Extract block and its width
+      const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
+      let movedWidth = 1;
+      if (sourceRow.columnWidths && sourceRow.columnWidths.length > blockIndex) {
+        [movedWidth] = sourceRow.columnWidths.splice(blockIndex, 1);
+      }
+
+      // Cleanup source row widths if it still has blocks
+      if (sourceRow.blocks.length > 0) {
+        // If we didn't have widths or they got out of sync, reset them
+        if (!sourceRow.columnWidths || sourceRow.columnWidths.length !== sourceRow.blocks.length) {
+          recalculateWidths(sourceRow);
+        }
+      }
+
+      // 2. Handle Target
+      if (target.createNewRow) {
+        const newRow = createRow([movedBlock]);
+        let insertIndex = target.insertIndex ?? slide.rows.length;
+        
+        // Clean up source row if empty before inserting new one to avoid index shifts
+        if (sourceRow.blocks.length === 0) {
+          const sourceRowIndex = slide.rows.findIndex(r => r.id === sourceRowId);
+          slide.rows.splice(sourceRowIndex, 1);
+          if (sourceRowIndex < insertIndex) {
+            insertIndex = Math.max(0, insertIndex - 1);
+          }
+        }
+        
+        const finalInsertIndex = Math.max(0, Math.min(insertIndex, slide.rows.length));
+        slide.rows.splice(finalInsertIndex, 0, newRow);
+      } else if (target.rowId) {
+        const targetRow = findRow(slide, target.rowId);
+        if (!targetRow) {
+          // Fallback or error: if target row not found, put it back or handle gracefully
+          sourceRow.blocks.splice(blockIndex, 0, movedBlock);
+          recalculateWidths(sourceRow);
+          return;
+        }
+
+        let finalInsertIndex: number;
+        if (typeof target.insertIndex === 'number') {
+          finalInsertIndex = Math.max(0, Math.min(target.insertIndex, targetRow.blocks.length));
+        } else if (target.targetBlockId) {
+          const idx = targetRow.blocks.findIndex(b => b.id === target.targetBlockId);
+          finalInsertIndex = idx === -1 ? targetRow.blocks.length : idx;
+        } else {
+          finalInsertIndex = targetRow.blocks.length;
+        }
+
+        targetRow.blocks.splice(finalInsertIndex, 0, movedBlock);
+        
+        // Handle widths for target row
+        if (!targetRow.columnWidths) {
+          recalculateWidths(targetRow);
+        } else {
+          targetRow.columnWidths.splice(finalInsertIndex, 0, movedWidth);
+        }
+
+        // Clean up empty rows
+        slide.rows = slide.rows.filter((r) => r.blocks.length > 0);
+        ensureRowExists(slide, createRow);
+      }
+
+      // Ensure some row exists
+      ensureRowExists(slide, createRow);
+    },
+
+    // Legacy move actions (can be deprecated eventually)
     moveBlock: (
       state,
       action: PayloadAction<{
@@ -330,63 +450,38 @@ const slidesSlice = createSlice({
         targetBlockId?: string;
       }>
     ) => {
-      const { slideId, sourceRowId, targetRowId, blockId, targetBlockId } =
-        action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const { slideId, sourceRowId, targetRowId, blockId, targetBlockId } = action.payload;
+      const slide = findSlide(state, slideId);
       if (!slide) return;
 
-      const sourceRow = slide.rows.find((r) => r.id === sourceRowId);
-      const targetRow = slide.rows.find((r) => r.id === targetRowId);
+      const sourceRow = findRow(slide, sourceRowId);
+      const targetRow = findRow(slide, targetRowId);
       if (!sourceRow || !targetRow) return;
 
       const blockIndex = sourceRow.blocks.findIndex((b) => b.id === blockId);
       if (blockIndex === -1) return;
 
-      // Same row reordering
-      if (sourceRowId === targetRowId && targetBlockId) {
-        const targetIndex = sourceRow.blocks.findIndex(
-          (b) => b.id === targetBlockId
-        );
-        if (targetIndex === -1 || blockIndex === targetIndex) return;
-
-        const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
-        const adjustedTargetIndex =
-          blockIndex < targetIndex ? targetIndex - 1 : targetIndex;
-        sourceRow.blocks.splice(adjustedTargetIndex, 0, movedBlock);
-
-        if (sourceRow.columnWidths && sourceRow.columnWidths.length > 0) {
-          const [movedWidth] = sourceRow.columnWidths.splice(blockIndex, 1);
-          sourceRow.columnWidths.splice(adjustedTargetIndex, 0, movedWidth);
-        }
-        return;
-      }
-
-      // Different row move
+      // Extract
       const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
-      if (!movedBlock) return;
-
+      
+      // Target index
+      let targetIndex = targetRow.blocks.length;
       if (targetBlockId) {
-        const targetIndex = targetRow.blocks.findIndex(
-          (b) => b.id === targetBlockId
-        );
-        if (targetIndex === -1) {
-          targetRow.blocks.push(movedBlock);
-        } else {
-          targetRow.blocks.splice(targetIndex, 0, movedBlock);
+        const idx = targetRow.blocks.findIndex(b => b.id === targetBlockId);
+        if (idx !== -1) {
+          targetIndex = (sourceRowId === targetRowId && blockIndex < idx) ? idx - 1 : idx;
         }
-      } else {
-        targetRow.blocks.push(movedBlock);
       }
 
-      // Recalculate widths
-      sourceRow.columnWidths = sourceRow.blocks.map(() => 1);
-      targetRow.columnWidths = targetRow.blocks.map(() => 1);
+      targetRow.blocks.splice(targetIndex, 0, movedBlock);
+      
+      // Recalculate
+      recalculateWidths(sourceRow);
+      recalculateWidths(targetRow);
 
-      // Clean up empty rows
+      // Clean up
       slide.rows = slide.rows.filter((r) => r.blocks.length > 0);
-      if (slide.rows.length === 0) {
-        slide.rows.push(createRow());
-      }
+      ensureRowExists(slide, createRow);
     },
     setTheme: (state, action: PayloadAction<Partial<Theme>>) => {
       state.theme = { ...state.theme, ...action.payload };
@@ -412,34 +507,30 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, rowId, oldIndex, newIndex } = action.payload;
-
-      const slide = state.slides.find((s) => s.id === slideId);
+      const slide = findSlide(state, slideId);
       if (!slide) return;
-
-      const row = slide.rows.find((r) => r.id === rowId);
+      const row = findRow(slide, rowId);
       if (!row) return;
+
       if (oldIndex < 0 || oldIndex >= row.blocks.length) return;
       if (newIndex < 0 || newIndex > row.blocks.length) return;
       if (oldIndex === newIndex) return;
 
-      const blockToMove = row.blocks[oldIndex];
       const [movedBlock] = row.blocks.splice(oldIndex, 1);
-      
-      let movedWidth: number | undefined;
+      let movedWidth = 1;
       if (row.columnWidths && row.columnWidths.length > oldIndex) {
-        movedWidth = row.columnWidths.splice(oldIndex, 1)[0];
+        [movedWidth] = row.columnWidths.splice(oldIndex, 1);
       }
 
-      let adjustedNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
+      const adjustedNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
       const finalIndex = Math.max(0, Math.min(adjustedNewIndex, row.blocks.length));
 
       row.blocks.splice(finalIndex, 0, movedBlock);
 
       if (row.columnWidths) {
-        const widthToInsert = movedWidth !== undefined ? movedWidth : 1;
-        row.columnWidths.splice(finalIndex, 0, widthToInsert);
+        row.columnWidths.splice(finalIndex, 0, movedWidth);
       } else {
-        row.columnWidths = row.blocks.map(() => 1);
+        recalculateWidths(row);
       }
     },
     updateColumnWidths: (
@@ -451,11 +542,12 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, rowId, columnWidths } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const slide = findSlide(state, slideId);
       if (!slide) return;
-      const row = slide.rows.find((r) => r.id === rowId);
-      if (!row) return;
-      row.columnWidths = columnWidths;
+      const row = findRow(slide, rowId);
+      if (row) {
+        row.columnWidths = columnWidths;
+      }
     },
 
     // Block actions
@@ -468,10 +560,11 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, rowId, blockId } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const slide = findSlide(state, slideId);
       if (!slide) return;
-      const row = slide.rows.find((r) => r.id === rowId);
+      const row = findRow(slide, rowId);
       if (!row) return;
+      
       const blockIndex = row.blocks.findIndex((b) => b.id === blockId);
       if (blockIndex === -1) return;
 
@@ -480,7 +573,7 @@ const slidesSlice = createSlice({
       duplicatedBlock.id = nanoid();
 
       row.blocks.splice(blockIndex + 1, 0, duplicatedBlock);
-      row.columnWidths = row.blocks.map(() => 1);
+      recalculateWidths(row);
     },
 
     deleteBlock: (
@@ -492,21 +585,16 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, rowId, blockId } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const slide = findSlide(state, slideId);
       if (!slide) return;
-      const row = slide.rows.find((r) => r.id === rowId);
+      const row = findRow(slide, rowId);
       if (!row) return;
 
       row.blocks = row.blocks.filter((b) => b.id !== blockId);
-
-      if (row.blocks.length > 0) {
-        row.columnWidths = row.blocks.map(() => 1);
-      }
+      recalculateWidths(row);
 
       slide.rows = slide.rows.filter((r) => r.blocks.length > 0);
-      if (slide.rows.length === 0) {
-        slide.rows.push(createRow());
-      }
+      ensureRowExists(slide, createRow);
     },
 
     transformBlock: (
@@ -519,15 +607,15 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, rowId, blockId, newType } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const slide = findSlide(state, slideId);
       if (!slide) return;
-      const row = slide.rows.find((r) => r.id === rowId);
-      if (!row) return;
-      const block = row.blocks.find((b) => b.id === blockId);
+      const row = findRow(slide, rowId);
+      const block = findBlock(row, blockId);
       if (!block) return;
 
       block.type = newType;
-      block.content = createBlockContentForType(newType as any);
+      const definition = BLOCK_DEFINITIONS[newType] || BLOCK_DEFINITIONS[BLOCK_TYPES.PROSEMIRROR];
+      block.content = definition.createContent();
     },
     moveBlockToNewRow: (
       state,
@@ -539,26 +627,23 @@ const slidesSlice = createSlice({
       }>
     ) => {
       const { slideId, sourceRowId, blockId, insertIndex } = action.payload;
-      const slide = state.slides.find((s) => s.id === slideId);
+      const slide = findSlide(state, slideId);
       if (!slide) return;
 
-      const sourceRowIndex = slide.rows.findIndex((r) => r.id === sourceRowId);
-      if (sourceRowIndex === -1) return;
+      const sourceRow = findRow(slide, sourceRowId);
+      if (!sourceRow) return;
 
-      const sourceRow = slide.rows[sourceRowIndex];
       const blockIndex = sourceRow.blocks.findIndex((b) => b.id === blockId);
       if (blockIndex === -1) return;
 
       const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
-      if (!movedBlock) return;
-
-      if (sourceRow.blocks.length > 0) {
-        sourceRow.columnWidths = sourceRow.blocks.map(() => 1);
-      }
+      recalculateWidths(sourceRow);
 
       let targetIndex = Math.max(0, Math.min(insertIndex, slide.rows.length));
 
+      // Clean up source row if empty
       if (sourceRow.blocks.length === 0) {
+        const sourceRowIndex = slide.rows.findIndex(r => r.id === sourceRowId);
         slide.rows.splice(sourceRowIndex, 1);
         if (sourceRowIndex < targetIndex) {
           targetIndex = Math.max(0, targetIndex - 1);
@@ -567,14 +652,12 @@ const slidesSlice = createSlice({
 
       const newRow = createRow([movedBlock]);
       slide.rows.splice(targetIndex, 0, newRow);
-
-      if (slide.rows.length === 0) {
-        slide.rows.push(createRow());
-      }
+      ensureRowExists(slide, createRow);
     },
+
     // Slide Accent actions
     toggleSlideAccent: (state, action: PayloadAction<{ slideId: string }>) => {
-      const slide = state.slides.find((s) => s.id === action.payload.slideId);
+      const slide = findSlide(state, action.payload.slideId);
       if (!slide) return;
 
       if (slide.accent) {
@@ -597,7 +680,7 @@ const slidesSlice = createSlice({
         };
       }>
     ) => {
-      const slide = state.slides.find((s) => s.id === action.payload.slideId);
+      const slide = findSlide(state, action.payload.slideId);
       if (!slide || !slide.accent) return;
 
       slide.accent = { ...slide.accent, ...action.payload.update };
@@ -606,7 +689,7 @@ const slidesSlice = createSlice({
       state,
       action: PayloadAction<{ slideId: string; size: number }>
     ) => {
-      const slide = state.slides.find((s) => s.id === action.payload.slideId);
+      const slide = findSlide(state, action.payload.slideId);
       if (!slide || !slide.accent) return;
 
       slide.accent.size = Math.max(5, Math.min(100, action.payload.size));
@@ -625,6 +708,7 @@ export const {
   replaceSlideWithServerData,
   updateBlockContent,
   addBlockToRow,
+  addRow,
   addRowToSlide,
   deleteRow,
   addRowWithColumns,
@@ -632,6 +716,7 @@ export const {
   addRowAtTop,
   setSlideRows,
   replaceSlideWithLayout,
+  repositionBlock,
   moveBlock,
   moveBlockToNewRow,
   reorderBlocksInRow,

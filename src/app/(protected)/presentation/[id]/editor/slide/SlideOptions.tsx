@@ -1,5 +1,6 @@
 import React from "react";
-import { type Slide, type Theme, updateSlideAccent, toggleSlideAccent } from "@/store/slices/slidesSlice";
+import { type Slide, updateSlideAccent, toggleSlideAccent } from "@/store/slices/slidesSlice";
+import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
 import { useAppDispatch } from "@/store/hooks";
 import {
   Popover,
@@ -24,7 +25,6 @@ import { cn } from "@/lib/utils";
 
 interface SlideOptionsProps {
   slide: Slide;
-  theme: Theme;
   onOpenImagePicker: () => void;
   onUpdateAccent?: (slideId: string, accent: any) => void;
   onToggleAccent?: (slideId: string) => void;
@@ -32,11 +32,11 @@ interface SlideOptionsProps {
 
 export const SlideOptions: React.FC<SlideOptionsProps> = ({
   slide,
-  theme,
   onOpenImagePicker,
   onUpdateAccent,
   onToggleAccent,
 }) => {
+  const theme = useEditorTheme();
   const dispatch = useAppDispatch();
   const accent = slide.accent;
 

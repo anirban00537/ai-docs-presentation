@@ -66,7 +66,7 @@ export const useEditorPage = ({ presentationId, outlineId }: UseEditorPageParams
   useEffect(() => {
     if (presentationResponse?.success && presentationResponse.data && !hasLoaded.current) {
       const apiSlides = presentationResponse.data.slides || [];
-      const reduxSlides = apiSlides
+      const reduxSlides = [...apiSlides]
         .sort((a: any, b: any) => a.order - b.order)
         .map(convertApiSlideToRedux);
       
@@ -134,5 +134,8 @@ export const useEditorPage = ({ presentationId, outlineId }: UseEditorPageParams
     handleUpdateColumnWidths,
     handleAddSlide: handleAddSlideAtOrder,
     handleDeleteSlide,
+    
+    // internals
+    commandBus, 
   };
 };

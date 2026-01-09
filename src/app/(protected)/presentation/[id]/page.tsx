@@ -7,7 +7,7 @@ import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { motion } from "framer-motion";
 import {
-  SlideContainer,
+  SlideCanvas,
   SlideNavigator,
   EditorHeader,
   PresentationView,
@@ -16,6 +16,10 @@ import {
   BlockSelectionProvider,
   ToolbarPanel,
   LoadingOverlay,
+  EditorThemeProvider,
+  EditorDndProvider,
+  useEditorDndContext,
+  useEditorTheme,
 } from "@/app/(protected)/presentation/[id]/editor";
 import { LoaderOverlay } from "@/components/ui";
 import { useEditorPage } from "./hooks/useEditorPage";
@@ -31,16 +35,29 @@ const PresentationEditorPage = () => {
   const presentationId = params?.id as string;
   const outlineId = searchParams.get("outlineId");
 
+  const commandBus = useEditorPage({ presentationId, outlineId }).commandBus;
+
+  return (
+    <EditorThemeProvider>
+      {/* 
+        We need to access state inside providers, so we create an inner component 
+        or use hooks inside the children. 
+        However, for this refactor, we can wrap the main content.
+      */}
+      <EditorContent 
+        presentationId={presentationId}
+        outlineId={outlineId}
+      />
+    </EditorThemeProvider>
+  );
+};
+
+// Separate component to consume the Theme context
+const EditorContent = ({ presentationId, outlineId }: { presentationId: string, outlineId: string | null }) => {
   const {
     slides,
-    theme,
-    sensors,
-    activeBlock,
-    isBlockDragging,
-    draggingBlockType,
-    handleDragStart,
-    handleDragEnd,
-    customCollisionDetection,
+    commandBus, // exposing commandBus from hook for the provider
+    // Actions
     handleUpdateBlock,
     handleDeleteRow,
     handleAddColumn,
@@ -49,21 +66,22 @@ const PresentationEditorPage = () => {
     handleUpdateColumnWidths,
     handleAddSlide,
     handleDeleteSlide,
+    // Loading state
     isLoadingPresentation,
     isGeneratingSlides,
     slideGenerationProgress,
     slideGenerationSpeed,
   } = useEditorPage({ presentationId, outlineId });
 
+  const theme = useEditorTheme();
   const presentation = useAppSelector(selectPresentation);
   const activeSlideId = useAppSelector(selectActiveSlideId);
+  const isDark = theme.themeType === "dark";
 
   // Enable undo/redo keyboard shortcuts (Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z)
   useUndoRedoKeyboardShortcuts();
 
-  const isDark = theme.themeType === "dark";
-
-  // Presentation mode hook - handles all presentation state and navigation
+  // Presentation mode hook
   const {
     isPresenting,
     currentSlideIndex,
@@ -98,7 +116,6 @@ const PresentationEditorPage = () => {
     }
   }, [isGeneratingSlides, slides.length]);
 
-  // Only show loading screen during initial presentation load
   const showLoading = isLoadingPresentation && !isGeneratingSlides;
 
   if (showLoading) {
@@ -114,7 +131,6 @@ const PresentationEditorPage = () => {
     <>
       <GoogleFontsLoader />
 
-      {/* Presentation Mode Overlay */}
       <PresentationView
         isPresenting={isPresenting}
         slides={slides}
@@ -138,7 +154,6 @@ const PresentationEditorPage = () => {
 
       {/* Scrollable content container */}
       <div className="min-h-screen overflow-y-auto pt-16 relative">
-        {/* Slides Sidebar */}
         <SlideNavigator
           slides={slides.filter(
             (slide) => slide && slide.rows && Array.isArray(slide.rows)
@@ -154,16 +169,8 @@ const PresentationEditorPage = () => {
         />
 
         <div className="w-full mx-auto px-6 py-10 pr-16">
-          {/* All Slides */}
-          <DndContext
-            sensors={sensors}
-            collisionDetection={customCollisionDetection}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            {/* Block Focus Provider for keyboard navigation */}
+          <EditorDndProvider slides={slides} commandBus={commandBus}>
             <BlockSelectionProvider>
-              {/* Blocks Panel needs to be inside DndContext for drag to work */}
               <ToolbarPanel presentationId={presentationId} />
 
               <div className="flex flex-col gap-16">
@@ -181,7 +188,6 @@ const PresentationEditorPage = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05, duration: 0.3 }}
                     >
-                      {/* Slide number indicator */}
                       <div
                         className="absolute -left-12 top-6 text-xs font-medium opacity-40"
                         style={{ color: theme.bodyColor }}
@@ -189,7 +195,7 @@ const PresentationEditorPage = () => {
                         {index + 1}
                       </div>
                       
-                      <SlideContainer
+                      <SlideCanvas
                         slide={slide}
                         onUpdateBlock={handleUpdateBlock}
                         onDeleteRow={handleDeleteRow}
@@ -202,26 +208,12 @@ const PresentationEditorPage = () => {
                   ))}
               </div>
             </BlockSelectionProvider>
-
-            {/* Drag Overlay */}
-            <DragOverlay
-              dropAnimation={{
-                duration: 200,
-                easing: "cubic-bezier(0.25, 0.1, 0.25, 1)",
-              }}
-            >
-              {activeBlock && (
-                <DragPreview block={activeBlock} theme={theme} />
-              )}
-              {isBlockDragging && draggingBlockType && (
-                <DragPreview blockType={draggingBlockType} theme={theme} />
-              )}
-            </DragOverlay>
-          </DndContext>
+            
+            <DragOverlayWrapper />
+          </EditorDndProvider>
         </div>
       </div>
 
-      {/* Generating Indicator (Combined overlay) */}
       <LoaderOverlay 
         isLoading={isGeneratingSlides} 
         progress={slideGenerationProgress}
@@ -230,6 +222,28 @@ const PresentationEditorPage = () => {
         streamSpeed={slideGenerationSpeed}
       />
     </>
+  );
+};
+
+// Separated DragOverlay to use the context
+const DragOverlayWrapper = () => {
+  const { activeBlock, isDragging, draggingBlockType } = useEditorDndContext();
+  const theme = useEditorTheme();
+  
+  return (
+    <DragOverlay
+      dropAnimation={{
+        duration: 200,
+        easing: "cubic-bezier(0.25, 0.1, 0.25, 1)",
+      }}
+    >
+      {activeBlock && (
+        <DragPreview block={activeBlock} theme={theme} />
+      )}
+      {isDragging && draggingBlockType && (
+        <DragPreview blockType={draggingBlockType} theme={theme} />
+      )}
+    </DragOverlay>
   );
 };
 

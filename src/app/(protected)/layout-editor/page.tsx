@@ -5,7 +5,7 @@ import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { motion } from "framer-motion";
 import {
-  SlideContainer,
+  SlideCanvas,
   EditorBackground,
   BlockSelectionProvider,
   ToolbarPanel,
@@ -18,6 +18,7 @@ import {
   LayoutListPanel, 
   LayoutEditorHeader 
 } from "@/components/layout-editor";
+import { EditorThemeProvider } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
 
 /**
  * Layout Editor Page - Admin tool for creating and editing layout templates
@@ -25,6 +26,14 @@ import {
  * but operates on a single layout template instead of multiple slides.
  */
 const LayoutEditorPage = () => {
+  return (
+    <EditorThemeProvider>
+      <LayoutEditorContent />
+    </EditorThemeProvider>
+  );
+};
+
+const LayoutEditorContent = () => {
   const [showMetadataPanel, setShowMetadataPanel] = useState(false);
   const [showLayoutList, setShowLayoutList] = useState(false);
 
@@ -136,7 +145,7 @@ const LayoutEditorPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  <SlideContainer
+                  <SlideCanvas
                     slide={{
                       id: "layout-preview",
                       rows: layoutData.rows,
@@ -151,7 +160,6 @@ const LayoutEditorPage = () => {
                     onUpdateAccent={handleUpdateAccent}
                     enableDragHints={true}
                     readOnly={false}
-                    theme={theme}
                   />
                 </motion.div>
               </div>
