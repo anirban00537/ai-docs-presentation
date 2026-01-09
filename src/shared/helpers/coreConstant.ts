@@ -55,7 +55,7 @@ export const coreConstant = {
 
   AI_MODELS: {
     OUTLINE: {
-      NAME: 'deepseek/deepseek-v3.2',
+      NAME: 'x-ai/grok-4.1-fast',
       PRICING: { prompt: 0.10, completion: 0.40 }, // Free
     },
     SLIDES: {
