@@ -396,11 +396,15 @@ export class PromptPresentationAIService implements OnModuleInit {
         },
       },
       stream: true, // Enable streaming
+      streamOptions: {
+        includeUsage: true, // Include token usage in the final chunk
+      },
     });
 
     let accumulatedContent = '';
     let slideData: any = null;
     let finishReason: string | null = null;
+    let usageData: any = null;
 
     // Process stream chunks - send every token to frontend
     for await (const chunk of stream) {
@@ -421,6 +425,12 @@ export class PromptPresentationAIService implements OnModuleInit {
           accumulatedText: accumulatedContent,
           isComplete: false,
         });
+      }
+      
+      // Capture usage data from the final chunk
+      if (chunk.usage) {
+        usageData = chunk.usage;
+        this.logger.log(`📊 [Slide ${slideNumber}] Token usage - Prompt: ${usageData.promptTokens}, Completion: ${usageData.completionTokens}, Total: ${usageData.totalTokens}`);
       }
       
       // Check if stream is done
@@ -461,11 +471,25 @@ export class PromptPresentationAIService implements OnModuleInit {
       }
     }
 
-    // Log AI usage (usage info comes at the end of stream)
-    // Note: Stream mode might not provide usage info immediately
-    this.logger.log(
-      `📈 [Slide ${slideNumber}] Stream completed`,
-    );
+    // Log AI usage to database
+    if (usageData) {
+      try {
+        await this.aiUsageService.logUsage({
+          userId: user.id,
+          modelName: this.MODEL_NAME,
+          inputTokens: usageData.promptTokens || 0,
+          outputTokens: usageData.completionTokens || 0,
+          type: 'slide',
+          presentationId: presentationId,
+        });
+        
+        this.logger.log(`💾 [Slide ${slideNumber}] AI usage logged successfully`);
+      } catch (usageError) {
+        this.logger.error(`❌ [Slide ${slideNumber}] Failed to log AI usage:`, usageError);
+      }
+    } else {
+      this.logger.warn(`⚠️ [Slide ${slideNumber}] No usage data available to log`);
+    }
 
     // Yield final slide data (not as JSON string, but as the actual object)
     // This is the return value that the caller will use

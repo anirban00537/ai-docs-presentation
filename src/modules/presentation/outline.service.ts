@@ -415,11 +415,15 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
           },
         },
         stream: true,
+        streamOptions: {
+          includeUsage: true, // Include token usage in the final chunk
+        },
         max_tokens: 16000, // Ensure enough tokens for 50+ slides
       });
 
       let accumulatedContent = '';
       let finishReason = null;
+      let usageData: any = null;
 
       for await (const chunk of stream) {
         const delta = chunk.choices[0]?.delta?.content;
@@ -432,6 +436,12 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
             delta,
             accumulated: accumulatedContent,
           });
+        }
+        
+        // Capture usage data from the final chunk
+        if (chunk.usage) {
+          usageData = chunk.usage;
+          this.logger.log(`📊 [Outline ${id}] Token usage - Prompt: ${usageData.promptTokens}, Completion: ${usageData.completionTokens}, Total: ${usageData.totalTokens}`);
         }
       }
 
@@ -484,6 +494,26 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
         );
       } catch (creditError) {
         this.logger.error(`❌ [Outline ${id}] Failed to deduct credit:`, creditError);
+      }
+
+      // Log AI usage to database
+      if (usageData) {
+        try {
+          await this.aiUsageService.logUsage({
+            userId: user.id,
+            modelName: this.MODEL_NAME,
+            inputTokens: usageData.promptTokens || 0,
+            outputTokens: usageData.completionTokens || 0,
+            type: 'outline',
+            presentationId: outline.presentationId || undefined,
+          });
+          
+          this.logger.log(`💾 [Outline ${id}] AI usage logged successfully`);
+        } catch (usageError) {
+          this.logger.error(`❌ [Outline ${id}] Failed to log AI usage:`, usageError);
+        }
+      } else {
+        this.logger.warn(`⚠️ [Outline ${id}] No usage data available to log`);
       }
 
       // Update presentation title

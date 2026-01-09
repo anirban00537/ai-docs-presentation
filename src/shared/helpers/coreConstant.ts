@@ -56,11 +56,14 @@ export const coreConstant = {
   AI_MODELS: {
     OUTLINE: {
       // NAME: 'x-ai/grok-4.1-fast',
+      // PRICING: { prompt: 0.20, completion: 0.50 }, 
+
        NAME: 'mistralai/ministral-14b-2512',
       PRICING: { prompt: 0.10, completion: 0.40 }, // Free
     },
     SLIDES: {
       // NAME: 'x-ai/grok-4.1-fast',
+      // PRICING: { prompt: 0.20, completion: 0.50 }, 
        NAME: 'mistralai/ministral-14b-2512',
       PRICING: { prompt: 0.28, completion: 1.20},
     },
