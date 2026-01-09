@@ -1,64 +1,54 @@
-import request from "@/lib/request";
+import { api } from "@/lib/api";
+import type { Row, SlideAccent } from "@/types/presentation";
+
+export interface LayoutData {
+  rows: Row[];
+  accent?: SlideAccent;
+  icon?: string;
+}
 
 export interface LayoutTemplate {
   id: string;
   name: string;
   description?: string;
   thumbnail?: string;
-  data: any;
-  type: string;
+  icon?: string | any;
+  data: LayoutData;
+  type: 'admin' | 'user';
   tags: string[];
-  isAdmin: boolean;
-  usageCount: number;
-  createdAt: string;
-  updatedAt: string;
+  isAdmin?: boolean;
+  usageCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type CreateLayoutDto = {
+  name: string;
+  description?: string;
+  thumbnail?: string;
+  data: any;
+  tags?: string[];
+  type?: string;
+};
+
+export interface CreateLayoutPayload {
+  name: string;
+  description?: string;
+  thumbnail?: string;
+  data: any;
+  tags?: string[];
+  type?: string;
+}
+
+export interface UpdateLayoutPayload extends CreateLayoutPayload {
+  id: string;
 }
 
 export const layoutsService = {
-  getAdminLayouts: async () => {
-    const response = await request.get("/layouts/admin-list");
-    return response.data;
-  },
-
-  getLayout: async (id: string) => {
-    const response = await request.get(`/layouts/${id}/get`);
-    return response.data;
-  },
-
-  getUserLayouts: async () => {
-    const response = await request.get("/layouts/list");
-    return response.data;
-  },
-
-  createLayout: async (data: {
-    name: string;
-    description?: string;
-    thumbnail?: string;
-    data: any;
-    tags?: string[];
-    type?: string;
-  }) => {
-    const response = await request.post("/layouts/create", data);
-    return response.data;
-  },
-
-  updateLayout: async (
-    id: string,
-    data: {
-      name: string;
-      description?: string;
-      thumbnail?: string;
-      data: any;
-      tags?: string[];
-      type?: string;
-    }
-  ) => {
-    const response = await request.post(`/layouts/${id}/update`, data);
-    return response.data;
-  },
-
-  deleteLayout: async (id: string) => {
-    const response = await request.delete(`/layouts/${id}/delete`);
-    return response.data;
-  },
+  getAdminLayouts: () => api.get<LayoutTemplate[]>("/layouts/admin-list"),
+  getLayout: (id: string) => api.get<LayoutTemplate>(`/layouts/${id}/get`),
+  getUserLayouts: () => api.get<LayoutTemplate[]>("/layouts/list"),
+  createLayout: (data: CreateLayoutDto) => api.post<LayoutTemplate>("/layouts/create", data),
+  updateLayout: (id: string, data: Partial<CreateLayoutDto>) => api.post<LayoutTemplate>(`/layouts/${id}/update`, data),
+  deleteLayout: (id: string) => api.delete<void>(`/layouts/${id}/delete`),
 };

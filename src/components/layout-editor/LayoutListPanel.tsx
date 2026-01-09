@@ -265,7 +265,7 @@ export function LayoutListPanel({
                             <div className="flex flex-wrap items-center gap-2 text-xs opacity-60">
                               <span className="flex items-center gap-1">
                                 <Calendar size={12} />
-                                {new Date(layout.updatedAt).toLocaleDateString()}
+                                {layout.updatedAt ? new Date(layout.updatedAt).toLocaleDateString() : "Unknown"}
                               </span>
                               <span
                                 className="px-2 py-0.5 rounded-full"
@@ -281,7 +281,7 @@ export function LayoutListPanel({
                               >
                                 {layout.type}
                               </span>
-                              {layout.usageCount > 0 && (
+                              {layout.usageCount !== undefined && layout.usageCount > 0 && (
                                 <span>Used {layout.usageCount}×</span>
                               )}
                             </div>

@@ -67,15 +67,17 @@ export default function PricingPage() {
 
   if (productsLoading) {
     return (
-      <div className="container mx-auto px-4 py-32 max-w-7xl h-full">
-        <PageSkeleton>
-          <Skeleton className="h-12 w-1/3 mx-auto rounded-2xl" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full pt-10">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-[500px] w-full rounded-3xl" />
-            ))}
-          </div>
-        </PageSkeleton>
+      <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] px-4 py-16 w-full">
+        <div className="relative z-10 w-full max-w-7xl">
+          <PageSkeleton>
+            <Skeleton className="h-12 w-1/3 mx-auto rounded-2xl" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full pt-10">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-[500px] w-full rounded-3xl" />
+              ))}
+            </div>
+          </PageSkeleton>
+        </div>
       </div>
     );
   }

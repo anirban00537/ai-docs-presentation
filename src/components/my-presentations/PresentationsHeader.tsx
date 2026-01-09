@@ -24,12 +24,6 @@ export const PresentationsHeader: React.FC<PresentationsHeaderProps> = ({
             <h1 className="font-serif text-3xl md:text-5xl text-foreground tracking-tight leading-tight">
             My <span className="italic text-primary">presentations</span>
             </h1>
-            <p className="text-sm md:text-base text-muted-foreground/80 font-medium max-w-md">
-            {count > 0
-                ? `You have ${count} presentation${count !== 1 ? 's' : ''} in your library.`
-                : "Create and manage your professional presentations."
-            }
-            </p>
         </div>
         
         <motion.div

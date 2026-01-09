@@ -18,141 +18,25 @@ import type { Block, BlockContent, Row, SlideAccent, Theme } from "@/types/prese
 import { DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { createRow, createBlockInstance } from "../../presentation/[id]/editor/blocks/factories";
 import { toast } from "sonner";
-import { layoutsService, type LayoutTemplate } from "@/services/layouts";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { 
+  layoutsService, 
+  type LayoutTemplate,
+  type LayoutData,
+  type CreateLayoutPayload,
+  type UpdateLayoutPayload
+} from "@/services/layouts";
+import { 
+  useCreateLayout, 
+  useUpdateLayout 
+} from "@/hooks/queries/use-layouts";
 
-// ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
-export interface LayoutData {
-  rows: Row[];
-  accent?: SlideAccent;
-}
-
-export interface CreateLayoutPayload {
-  name: string;
-  description?: string;
-  thumbnail?: string;
-  data: LayoutData;
-  tags?: string[];
-  type?: string;
-}
-
-export interface UpdateLayoutPayload extends CreateLayoutPayload {
-  id: string;
-}
-
-// ============================================================================
-// TANSTACK QUERY - QUERY KEYS
-// ============================================================================
-
-export const layoutKeys = {
-  all: ["layouts"] as const,
-  lists: () => [...layoutKeys.all, "list"] as const,
-  list: (filters?: any) => [...layoutKeys.lists(), filters] as const,
-  details: () => [...layoutKeys.all, "detail"] as const,
-  detail: (id: string) => [...layoutKeys.details(), id] as const,
-};
-
-// ============================================================================
-// TANSTACK QUERY - HOOKS
-// ============================================================================
-
-// Fetch all layouts
-export function useLayouts() {
-  return useQuery({
-    queryKey: layoutKeys.list(),
-    queryFn: async () => {
-      const response = await layoutsService.getUserLayouts();
-      // Handle both { success: true, data: [...] } and direct array response
-      if (Array.isArray(response)) {
-        return response as LayoutTemplate[];
-      }
-      return (response?.data || []) as LayoutTemplate[];
-    },
-  });
-}
-
-// Fetch single layout
-export function useLayout(id: string | undefined) {
-  return useQuery({
-    queryKey: layoutKeys.detail(id!),
-    queryFn: async () => {
-      if (!id) throw new Error("Layout ID is required");
-      const response = await layoutsService.getLayout(id);
-      // Handle both { success: true, data: {...} } and direct object response
-      if (response?.data) {
-        return response.data as LayoutTemplate;
-      }
-      return response as LayoutTemplate;
-    },
-    enabled: !!id,
-  });
-}
-
-// Create layout mutation
-export function useCreateLayout() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (payload: CreateLayoutPayload) => {
-      const response = await layoutsService.createLayout(payload);
-      return response;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: layoutKeys.lists() });
-      toast.success("Layout created successfully!");
-      return data;
-    },
-    onError: (error: any) => {
-      console.error("Error creating layout:", error);
-      toast.error(error?.message || "Failed to create layout");
-    },
-  });
-}
-
-// Update layout mutation
-export function useUpdateLayout() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ id, ...payload }: UpdateLayoutPayload) => {
-      const response = await layoutsService.updateLayout(id, payload);
-      return response;
-    },
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: layoutKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: layoutKeys.detail(variables.id) });
-      toast.success("Layout updated successfully!");
-      return data;
-    },
-    onError: (error: any) => {
-      console.error("Error updating layout:", error);
-      toast.error(error?.message || "Failed to update layout");
-    },
-  });
-}
-
-// Delete layout mutation
-export function useDeleteLayout() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const response = await layoutsService.deleteLayout(id);
-      return response;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: layoutKeys.lists() });
-      toast.success("Layout deleted successfully!");
-    },
-    onError: (error: any) => {
-      console.error("Error deleting layout:", error);
-      toast.error(error?.message || "Failed to delete layout");
-    },
-  });
-}
+// Re-export query-related items for backward compatibility
+export { 
+  useLayouts, 
+  useLayout, 
+  useDeleteLayout,
+  layoutKeys 
+} from "@/hooks/queries/use-layouts";
 
 // ============================================================================
 // LAYOUT EDITOR HOOK
@@ -284,7 +168,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
           const newBlock = createBlockInstance(blockType);
           const newRow = createRow([newBlock]);
 
-          setLayoutData((prev) => {
+          setLayoutData((prev: LayoutData) => {
             const newRows = [...prev.rows];
             newRows.splice(insertIndex, 0, newRow);
             return { ...prev, rows: newRows };
@@ -293,8 +177,8 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
           const { rowId } = over.data.current;
           const newBlock = createBlockInstance(blockType);
 
-          setLayoutData((prev) => {
-            const newRows = prev.rows.map((row) => {
+          setLayoutData((prev: LayoutData) => {
+            const newRows = prev.rows.map((row: Row) => {
               if (row.id === rowId) {
                 return {
                   ...row,
@@ -317,12 +201,12 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
         if (over.data.current?.type === "row-insert") {
           const { insertIndex } = over.data.current;
 
-          setLayoutData((prev) => {
+          setLayoutData((prev: LayoutData) => {
             const newRows = [...prev.rows];
             let movedBlock: Block | null = null;
 
             // Remove from source
-            newRows.forEach((row) => {
+            newRows.forEach((row: Row) => {
               if (row.id === sourceRowId) {
                 const blockIndex = row.blocks.findIndex((b: Block) => b.id === blockId);
                 if (blockIndex !== -1) {
@@ -339,7 +223,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
             }
 
             // Clean up empty rows
-            const filteredRows = newRows.filter((r) => r.blocks.length > 0);
+            const filteredRows = newRows.filter((r: Row) => r.blocks.length > 0);
             return {
               ...prev,
               rows: filteredRows.length > 0 ? filteredRows : [createRow()],
@@ -349,12 +233,12 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
           const targetRowId = over.data.current.rowId;
           const targetBlockId = over.data.current.blockId;
 
-          setLayoutData((prev) => {
+          setLayoutData((prev: LayoutData) => {
             const newRows = [...prev.rows];
             let movedBlock: Block | null = null;
 
             // Remove from source
-            newRows.forEach((row) => {
+            newRows.forEach((row: Row) => {
               if (row.id === sourceRowId) {
                 const blockIndex = row.blocks.findIndex((b: Block) => b.id === blockId);
                 if (blockIndex !== -1) {
@@ -399,8 +283,8 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
   // Layout Operations
   const handleUpdateBlock = useCallback(
     (slideId: string, blockId: string, content: BlockContent) => {
-      setLayoutData((prev) => {
-        const newRows = prev.rows.map((row) => ({
+      setLayoutData((prev: LayoutData) => {
+        const newRows = prev.rows.map((row: Row) => ({
           ...row,
           blocks: row.blocks.map((block: Block) =>
             block.id === blockId ? { ...block, content } : block
@@ -413,8 +297,8 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
   );
 
   const handleDeleteRow = useCallback((slideId: string, rowId: string) => {
-    setLayoutData((prev) => {
-      const newRows = prev.rows.filter((r) => r.id !== rowId);
+    setLayoutData((prev: LayoutData) => {
+      const newRows = prev.rows.filter((r: Row) => r.id !== rowId);
       return {
         ...prev,
         rows: newRows.length > 0 ? newRows : [createRow()],
@@ -424,8 +308,8 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
 
   const handleAddColumn = useCallback(
     (slideId: string, rowId: string, afterBlockId: string) => {
-      setLayoutData((prev) => {
-        const newRows = prev.rows.map((row) => {
+      setLayoutData((prev: LayoutData) => {
+        const newRows = prev.rows.map((row: Row) => {
           if (row.id === rowId) {
             const blockIndex = row.blocks.findIndex((b: Block) => b.id === afterBlockId);
             const newBlock = createBlockInstance("prosemirror");
@@ -447,14 +331,14 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
   );
 
   const handleAddRowAtTop = useCallback((slideId: string) => {
-    setLayoutData((prev) => ({
+    setLayoutData((prev: LayoutData) => ({
       ...prev,
       rows: [createRow(), ...prev.rows],
     }));
   }, []);
 
   const handleAddRowAtBottom = useCallback((slideId: string) => {
-    setLayoutData((prev) => ({
+    setLayoutData((prev: LayoutData) => ({
       ...prev,
       rows: [...prev.rows, createRow()],
     }));
@@ -462,8 +346,8 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
 
   const handleUpdateColumnWidths = useCallback(
     (slideId: string, rowId: string, columnWidths: number[]) => {
-      setLayoutData((prev) => {
-        const newRows = prev.rows.map((row) =>
+      setLayoutData((prev: LayoutData) => {
+        const newRows = prev.rows.map((row: Row) =>
           row.id === rowId ? { ...row, columnWidths } : row
         );
         return { ...prev, rows: newRows };
@@ -474,7 +358,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
 
   // Accent Operations
   const handleUpdateAccent = useCallback((slideId: string, accent: SlideAccent | undefined) => {
-    setLayoutData((prev) => ({ ...prev, accent }));
+    setLayoutData((prev: LayoutData) => ({ ...prev, accent }));
   }, []);
 
   // Metadata Operations

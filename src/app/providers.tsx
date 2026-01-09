@@ -6,39 +6,31 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { store } from "@/store";
 import { queryClient } from "@/lib/query-client";
-import { UserLoaderProvider } from "@/components/providers/user-loader.provider";
-import { SubscriptionLoaderProvider } from "@/components/providers/subscription-loader.provider";
+import { AuthProvider } from "@/components/providers/auth-provider";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
+import { CONFIG } from "@/lib/config";
 
 type ProvidersProps = {
   children: React.ReactNode;
 };
 
 const Providers: React.FC<ProvidersProps> = ({ children }) => {
-  // NEXT_PUBLIC_ prefix is required for client-side environment variables in Next.js
-  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-
-  if (!googleClientId) {
-    console.warn(
-      "NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set. Google authentication will not work."
-    );
-  }
-
   const content = (
     <Provider store={store}>
-      <UserLoaderProvider>
-        <SubscriptionLoaderProvider>
+      <ErrorBoundary>
+        <AuthProvider>
           <div className="h-full">{children}</div>
           <Toaster richColors position="top-right" />
-        </SubscriptionLoaderProvider>
-      </UserLoaderProvider>
+        </AuthProvider>
+      </ErrorBoundary>
     </Provider>
   );
 
   return (
     <QueryClientProvider client={queryClient}>
-      {googleClientId ? (
-        <GoogleOAuthProvider clientId={googleClientId}>
+      {CONFIG.GOOGLE_CLIENT_ID ? (
+        <GoogleOAuthProvider clientId={CONFIG.GOOGLE_CLIENT_ID}>
           {content}
         </GoogleOAuthProvider>
       ) : (

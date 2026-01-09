@@ -55,14 +55,17 @@ export default function SubscriptionPage() {
 
   if (isLoading) {
     return (
-      <div className="flex-1 w-full p-4 md:p-8 space-y-8">
-        <PageSkeleton>
-          <Skeleton className="h-12 w-1/3 rounded-2xl" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Skeleton className="h-64 rounded-[32px] border border-secondary/10 shadow-sm" />
-            <Skeleton className="h-64 rounded-[32px] border border-secondary/10 shadow-sm" />
-          </div>
-        </PageSkeleton>
+      <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] px-4 py-16 w-full">
+        <div className="relative z-10 w-full max-w-7xl">
+          <PageSkeleton>
+            <Skeleton className="h-12 w-1/3 rounded-2xl" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <Skeleton className="h-64 rounded-[32px] border border-secondary/10 shadow-sm" />
+              <Skeleton className="h-64 rounded-[32px] border border-secondary/10 shadow-sm" />
+            </div>
+            <Skeleton className="h-12 w-full rounded-2xl" />
+          </PageSkeleton>
+        </div>
       </div>
     );
   }

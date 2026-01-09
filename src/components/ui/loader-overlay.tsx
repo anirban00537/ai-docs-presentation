@@ -23,10 +23,10 @@ interface LoaderOverlayProps {
 // Helper function to get human-readable stage names
 const getStageDisplay = (stage?: string): string => {
   const stageMap: Record<string, string> = {
-    'initializing': '🚀 Initializing',
-    'analyzing-layout': '🔍 Analyzing layout',
-    'generating-content': '✨ AI creating content',
-    'saving-slide': '💾 Saving slide',
+    'initializing': 'Initializing',
+    'analyzing-layout': 'Analyzing layout',
+    'generating-content': 'AI creating content',
+    'saving-slide': 'Saving slide',
   };
   return stage ? stageMap[stage] || stage : '';
 };

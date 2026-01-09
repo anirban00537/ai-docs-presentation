@@ -64,8 +64,6 @@ export default function MyPresentationsPage() {
     }
   };
 
-  if (isLoading) return <GridSkeleton count={12} aspectRatio="video" />;
-
   return (
     <div className="relative flex-1 flex flex-col min-h-[calc(100vh-80px)] ">
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-slate-100 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
@@ -73,11 +71,13 @@ export default function MyPresentationsPage() {
 
       <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">
         <PresentationsHeader 
-          count={presentations.length} 
+          count={isLoading ? 0 : presentations.length} 
           onNew={() => router.push("/home")} 
         />
 
-        {presentations.length === 0 ? (
+        {isLoading ? (
+          <GridSkeleton count={12} aspectRatio="video" />
+        ) : presentations.length === 0 ? (
           <EmptyState 
             icon={IconPresentation}
             title="No presentations yet"

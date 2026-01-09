@@ -1,10 +1,6 @@
-import request from "@/lib/request";
-
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+import { api } from "@/lib/api";
+import { CONFIG } from "@/lib/config";
+import type { ApiResponse } from "@/types/api.types";
 
 export interface OutlineItem {
   content: string;
@@ -52,36 +48,19 @@ export interface SavePromptResponse {
   presentationId?: string;
 }
 
-export const reorderSlides = async (
+export const reorderSlides = (
   presentationId: string,
   slideOrders: { slideId: string; order: number }[]
-): Promise<ApiResponse<void>> => {
-  const response = await request.post(
-    `/presentation/${presentationId}/slides/reorder`,
-    { slideOrders }
-  );
-  return response.data;
-};
+) => api.post<void>(`/presentation/${presentationId}/slides/reorder`, { slideOrders });
 
-export const savePrompt = async (
-  payload: CreateOutlineDto
-): Promise<ApiResponse<SavePromptResponse>> => {
-  const response = await request.post(`/presentation/save-prompt`, payload);
-  return response.data;
-};
+export const savePrompt = (payload: CreateOutlineDto) => 
+  api.post<SavePromptResponse>(`/presentation/save-prompt`, payload);
 
-export const getOutline = async (id: string): Promise<ApiResponse<Outline>> => {
-  const response = await request.get(`/presentation/outline/${id}`);
-  return response.data;
-};
+export const getOutline = (id: string) => 
+  api.get<Outline>(`/presentation/outline/${id}`);
 
-export const updateOutline = async (
-  id: string,
-  payload: UpdateOutlineDto
-): Promise<ApiResponse<Outline>> => {
-  const response = await request.patch(`/presentation/outline/${id}`, payload);
-  return response.data;
-};
+export const updateOutline = (id: string, payload: UpdateOutlineDto) => 
+  api.patch<Outline>(`/presentation/outline/${id}`, payload);
 
 export interface StreamChunk {
   type: "start" | "chunk" | "title" | "outline" | "complete" | "error";
@@ -180,104 +159,38 @@ export interface UpdateSlidePayload {
 }
 
 // Presentation API functions
-export const getPresentationsList = async (filters?: {
-  page?: number;
-  limit?: number;
-}): Promise<ApiResponse<{ list: Presentation[]; meta: any }>> => {
-  const response = await request.get("/presentation/list", { params: filters });
-  return response.data;
-};
+export const getPresentationsList = (filters?: { page?: number; limit?: number }) => 
+  api.get<{ list: Presentation[]; meta: any }>("/presentation/list", { params: filters });
 
-export const getPresentation = async (
-  id: string
-): Promise<ApiResponse<Presentation>> => {
-  const response = await request.get(`/presentation/${id}/get`);
-  return response.data;
-};
+export const getPresentation = (id: string) => 
+  api.get<Presentation>(`/presentation/${id}/get`);
 
-export const createPresentation = async (
-  payload: CreatePresentationPayload
-): Promise<ApiResponse<Presentation>> => {
-  const response = await request.post("/presentation/create", payload);
-  return response.data;
-};
+export const createPresentation = (payload: CreatePresentationPayload) => 
+  api.post<Presentation>("/presentation/create", payload);
 
-export const createPresentationFromPrompt = async (
-  payload: CreatePlanFromPromptDto
-): Promise<ApiResponse<Presentation>> => {
-  const response = await request.post(
-    "/presentation/create-from-prompt",
-    payload
-  );
-  return response.data;
-};
+export const createPresentationFromPrompt = (payload: CreatePlanFromPromptDto) => 
+  api.post<Presentation>("/presentation/create-from-prompt", payload);
 
-export const updatePresentation = async (
-  id: string,
-  payload: UpdatePresentationPayload
-): Promise<ApiResponse<Presentation>> => {
-  const response = await request.patch(`/presentation/${id}/update`, payload);
-  return response.data;
-};
+export const updatePresentation = (id: string, payload: UpdatePresentationPayload) => 
+  api.patch<Presentation>(`/presentation/${id}/update`, payload);
 
-export const updatePresentationTitle = async (
-  id: string,
-  title: string
-): Promise<ApiResponse<Presentation>> => {
-  const response = await request.patch(`/presentation/${id}/update-title`, {
-    title,
-  });
-  return response.data;
-};
+export const updatePresentationTitle = (id: string, title: string) => 
+  api.patch<Presentation>(`/presentation/${id}/update-title`, { title });
 
-export const deletePresentation = async (
-  id: string
-): Promise<ApiResponse<void>> => {
-  const response = await request.delete(`/presentation/${id}/delete`);
-  return response.data;
-};
+export const deletePresentation = (id: string) => 
+  api.delete<void>(`/presentation/${id}/delete`);
 
-export const createSlide = async (
-  presentationId: string,
-  payload: CreateSlidePayload
-): Promise<ApiResponse<Slide>> => {
-  const response = await request.post(
-    `/presentation/${presentationId}/slides/add`,
-    payload
-  );
-  return response.data;
-};
+export const createSlide = (presentationId: string, payload: CreateSlidePayload) => 
+  api.post<Slide>(`/presentation/${presentationId}/slides/add`, payload);
 
-export const updateSlide = async (
-  presentationId: string,
-  slideId: string,
-  payload: UpdateSlidePayload
-): Promise<ApiResponse<Slide>> => {
-  const response = await request.patch(
-    `/presentation/${presentationId}/slides/${slideId}/update`,
-    payload
-  );
-  return response.data;
-};
+export const updateSlide = (presentationId: string, slideId: string, payload: UpdateSlidePayload) => 
+  api.patch<Slide>(`/presentation/${presentationId}/slides/${slideId}/update`, payload);
 
-export const deleteSlide = async (
-  presentationId: string,
-  slideId: string
-): Promise<ApiResponse<void>> => {
-  const response = await request.delete(
-    `/presentation/${presentationId}/slides/${slideId}/delete`
-  );
-  return response.data;
-};
+export const deleteSlide = (presentationId: string, slideId: string) => 
+  api.delete<void>(`/presentation/${presentationId}/slides/${slideId}/delete`);
 
-export const generateAndCreateSlides = async (
-  presentationId: string,
-  onChunk: (chunk: SlideGenerationChunk) => void
-): Promise<void> => {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL || "";
-  const apiSecretKey = process.env.NEXT_PUBLIC_API_SECRET_KEY || "";
-
-  // Get token from cookie (same way as request interceptor)
+// Reusable SSE Stream Handler
+const handleSSEStream = async (url: string, onChunk: (chunk: any) => void) => {
   const getCookie = (name: string) => {
     if (typeof document === "undefined") return "";
     const value = `; ${document.cookie}`;
@@ -290,7 +203,7 @@ export const generateAndCreateSlides = async (
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     Accept: "text/event-stream",
-    apisecretkeycheck: apiSecretKey,
+    apisecretkeycheck: CONFIG.API_SECRET,
   };
 
   if (token) {
@@ -298,141 +211,11 @@ export const generateAndCreateSlides = async (
   }
 
   try {
-    const response = await fetch(
-      `${baseURL}/presentation/${presentationId}/slides/create`,
-      {
-        method: "POST",
-        headers,
-        credentials: "include",
-      }
-    );
-
-    if (!response.ok) {
-      // Handle HTTP errors
-      onChunk({
-        type: "error",
-        message: `Request failed with status ${response.status}. Please try again.`,
-      });
-      return;
-    }
-
-    const reader = response.body?.getReader();
-    if (!reader) {
-      onChunk({
-        type: "error",
-        message: "No response body received from server.",
-      });
-      return;
-    }
-
-    const decoder = new TextDecoder();
-    let buffer = "";
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        
-        if (value) {
-          buffer += decoder.decode(value, { stream: !done });
-        }
-        
-        // Process all complete lines in the buffer
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || ""; // Keep incomplete line in buffer
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const data = line.slice(6).trim();
-            if (data) {
-              try {
-                const chunk: SlideGenerationChunk = JSON.parse(data);
-                console.log("[SSE] Received chunk:", chunk.type, chunk.message || "");
-                onChunk(chunk);
-                
-                // If we received an error, we can stop processing
-                if (chunk.type === "error") {
-                  console.log("[SSE] Error chunk received, stopping stream");
-                  reader.releaseLock();
-                  return;
-                }
-              } catch (e) {
-                console.error("Error parsing SSE chunk:", e, "Data:", data);
-              }
-            }
-          }
-        }
-
-        if (done) {
-          console.log("[SSE] Stream done");
-          break;
-        }
-
-      }
-
-      // Process any remaining data in buffer after stream ends
-      if (buffer.trim()) {
-        const remainingLines = buffer.split("\n");
-        for (const line of remainingLines) {
-          if (line.startsWith("data: ")) {
-            const data = line.slice(6).trim();
-            if (data) {
-              try {
-                const chunk: SlideGenerationChunk = JSON.parse(data);
-                onChunk(chunk);
-              } catch (e) {
-                console.error("Error parsing final SSE chunk:", e, "Data:", data);
-              }
-            }
-          }
-        }
-      }
-    } finally {
-      reader.releaseLock();
-    }
-  } catch (error: any) {
-    // Network or other fetch errors
-    onChunk({
-      type: "error",
-      message: error.message || "Failed to connect to the server. Please check your connection.",
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      credentials: "include",
     });
-  }
-};
-
-export const generateOutlineStream = async (
-  outlineId: string,
-  onChunk: (chunk: StreamChunk) => void
-): Promise<void> => {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL || "";
-  const apiSecretKey = process.env.NEXT_PUBLIC_API_SECRET_KEY || "";
-
-  const getCookie = (name: string) => {
-    if (typeof document === "undefined") return "";
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(";").shift() || "";
-    return "";
-  };
-
-  const token = getCookie("token");
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "text/event-stream",
-    apisecretkeycheck: apiSecretKey,
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  try {
-    const response = await fetch(
-      `${baseURL}/presentation/outline/${outlineId}/generate-stream`,
-      {
-        method: "POST",
-        headers,
-        credentials: "include",
-      }
-    );
 
     if (!response.ok) {
       onChunk({
@@ -444,10 +227,7 @@ export const generateOutlineStream = async (
 
     const reader = response.body?.getReader();
     if (!reader) {
-      onChunk({
-        type: "error",
-        message: "No response body received from server.",
-      });
+      onChunk({ type: "error", message: "No response body received." });
       return;
     }
 
@@ -457,42 +237,40 @@ export const generateOutlineStream = async (
     try {
       while (true) {
         const { done, value } = await reader.read();
-        
-        if (value) {
-          buffer += decoder.decode(value, { stream: !done });
-        }
+        if (value) buffer += decoder.decode(value, { stream: !done });
         
         const lines = buffer.split("\n");
         buffer = lines.pop() || "";
 
         for (const line of lines) {
           if (line.startsWith("data: ")) {
-            const data = line.slice(6).trim();
-            if (data) {
+            const row = line.slice(6).trim();
+            if (row) {
               try {
-                const chunk: StreamChunk = JSON.parse(data);
+                const chunk = JSON.parse(row);
                 onChunk(chunk);
-                
                 if (chunk.type === "error") {
                   reader.releaseLock();
                   return;
                 }
               } catch (e) {
-                console.error("Error parsing SSE chunk:", e, "Data:", data);
+                console.error("SSE parse error", e);
               }
             }
           }
         }
-
         if (done) break;
       }
     } finally {
       reader.releaseLock();
     }
   } catch (error: any) {
-    onChunk({
-      type: "error",
-      message: error.message || "Failed to connect to the server.",
-    });
+    onChunk({ type: "error", message: error.message });
   }
 };
+
+export const generateAndCreateSlides = (presentationId: string, onChunk: (chunk: SlideGenerationChunk) => void) => 
+  handleSSEStream(`${CONFIG.API_URL}/presentation/${presentationId}/slides/create`, onChunk);
+
+export const generateOutlineStream = (outlineId: string, onChunk: (chunk: StreamChunk) => void) => 
+  handleSSEStream(`${CONFIG.API_URL}/presentation/outline/${outlineId}/generate-stream`, onChunk);
