@@ -24,7 +24,7 @@ import {
   LoadingSkeleton,
   EmptyState,
   PresentationCard,
-} from "./components";
+} from "../../../../components/my-presentations";
 
 export default function MyPresentationsPage() {
   const router = useRouter();

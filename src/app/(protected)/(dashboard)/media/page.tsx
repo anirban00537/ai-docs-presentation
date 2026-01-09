@@ -53,7 +53,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ImagePreviewModal } from "./components/ImagePreviewModal";
+import { ImagePreviewModal } from "../../../../components/ImagePreviewModal";
 
 // Category filter type
 type CategoryFilter = "all" | "recent" | "favorites";

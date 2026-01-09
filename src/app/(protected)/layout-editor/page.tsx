@@ -13,8 +13,8 @@ import {
 } from "@/app/(protected)/presentation/[id]/editor";
 import { LoadingOverlay } from "@/app/(protected)/presentation/[id]/editor/ui/LoadingOverlay";
 import { useLayoutEditor } from "./hooks/useLayoutEditor";
-import { LayoutMetadataPanel, LayoutListPanel } from "./components";
-import { LayoutEditorHeader } from "./components/LayoutEditorHeader";
+import { LayoutMetadataPanel, LayoutListPanel } from "./layout-editor";
+import { LayoutEditorHeader } from "./layout-editor/LayoutEditorHeader";
 
 /**
  * Layout Editor Page - Admin tool for creating and editing layout templates
