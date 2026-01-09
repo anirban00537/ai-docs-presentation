@@ -7,6 +7,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectSubscriptionStatus } from "@/store/slices/subscriptionSlice";
 import { createCheckout } from "@/services/pricing";
 import { PricingCard } from "@/components/pricing-card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -104,13 +105,9 @@ export default function PricingPage() {
       <div className="container mx-auto px-4 py-12 max-w-7xl h-full flex items-center justify-center">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
           {[1, 2, 3].map((i) => (
-            <div
+            <Skeleton
               key={i}
-              className="h-[500px] rounded-3xl animate-pulse border-0 shadow-xl"
-              style={{
-                backgroundColor:
-                  "color-mix(in srgb, var(--secondary) 15%, var(--card))",
-              }}
+              className="h-[500px] w-full rounded-3xl bg-slate-100 shadow-xl"
             />
           ))}
         </div>

@@ -53,6 +53,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ImagePreviewModal } from "../../../../components/ImagePreviewModal";
 
 // Category filter type
@@ -284,12 +285,12 @@ const LoadingSkeleton = () => (
     {Array.from({ length: 10 }).map((_, i) => (
       <div
         key={i}
-        className="animate-pulse rounded-2xl overflow-hidden bg-white/40 border border-secondary/40"
+        className="rounded-2xl overflow-hidden bg-white/40 border border-secondary/40 shadow-sm"
       >
-        <div className="aspect-square bg-secondary/10" />
+        <Skeleton className="aspect-square w-full" />
         <div className="p-3 space-y-2">
-          <div className="h-4 w-3/4 bg-secondary/20 rounded" />
-          <div className="h-3 w-1/2 bg-secondary/10 rounded" />
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-3 w-1/2" />
         </div>
       </div>
     ))}

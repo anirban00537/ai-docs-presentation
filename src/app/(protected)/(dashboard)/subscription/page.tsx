@@ -32,6 +32,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 export default function SubscriptionPage() {
@@ -115,11 +116,11 @@ export default function SubscriptionPage() {
   if (statusLoading) {
     return (
       <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4">
-        <div className="w-full max-w-4xl space-y-8 animate-pulse">
-          <div className="h-12 w-1/3 bg-white/20 rounded-2xl" />
+        <div className="w-full max-w-4xl space-y-8">
+          <Skeleton className="h-12 w-1/3 rounded-2xl" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="h-64 bg-white/20 rounded-[32px] border border-white/40" />
-            <div className="h-64 bg-white/20 rounded-[32px] border border-white/40" />
+            <Skeleton className="h-64 rounded-[32px] border border-secondary/10 shadow-sm" />
+            <Skeleton className="h-64 rounded-[32px] border border-secondary/10 shadow-sm" />
           </div>
         </div>
       </div>
