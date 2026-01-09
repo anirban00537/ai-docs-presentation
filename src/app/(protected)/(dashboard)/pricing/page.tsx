@@ -154,41 +154,7 @@ export default function PricingPage() {
           </p>
         </motion.div>
 
-        {/* Current Subscription Status */}
-        {currentSubscription && hasAccess && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex justify-center"
-          >
-            <div
-              className="px-5 py-2 rounded-2xl flex items-center gap-2.5 border border-secondary/30 text-xs font-semibold text-secondary-foreground"
-              style={{
-                backgroundColor:
-                  "color-mix(in srgb, var(--secondary) 80%, transparent)",
-                backdropFilter: "blur(8px)",
-              }}
-            >
-              <div
-                className={cn(
-                  "w-1.5 h-1.5 rounded-full animate-pulse",
-                  isCanceled ? "bg-orange-500" : "bg-secondary-foreground/60"
-                )}
-              />
-              {isCanceled ? "Expiring Plan: " : "Active Plan: "}{" "}
-              {currentSubscription.productId || "Pro"}
-              {isCanceled && currentSubscription.currentPeriodEnd && (
-                <span className="opacity-70 ml-1">
-                  (Ends{" "}
-                  {new Date(
-                    currentSubscription.currentPeriodEnd
-                  ).toLocaleDateString()}
-                  )
-                </span>
-              )}
-            </div>
-          </motion.div>
-        )}
+  
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">

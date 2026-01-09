@@ -122,7 +122,7 @@ export function AppSidebar() {
         className="fixed inset-y-0 left-0 z-50 w-[280px] flex flex-col"
       >
         {/* Main Glass Container - Updated Gradient */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden border-r bg-secondary/30" />
+        <div className="absolute inset-0 w-full h-full overflow-hidden " />
 
         {/* Content wrapper */}
         <div className="relative z-10 flex flex-col h-full overflow-hidden">
@@ -167,7 +167,7 @@ export function AppSidebar() {
                     className={cn(
                       "relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-300 ease-out",
                       isActive 
-                        ? "bg-secondary/20 shadow-sm border border-secondary/20 " 
+                        ? "bg-slate-50" 
                         : "hover:bg-secondary/10 text-muted-foreground hover:text-foreground"
                     )}
                   >
@@ -212,7 +212,7 @@ export function AppSidebar() {
                   className={cn(
                     "flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group",
                     isActive 
-                      ? "bg-white shadow-sm border border-secondary/20 text-primary font-medium" 
+                      ? "bg-slate-50 text-primary font-medium" 
                       : "hover:bg-secondary/10 text-muted-foreground hover:text-foreground"
                   )}
                 >

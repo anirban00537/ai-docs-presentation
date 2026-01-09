@@ -62,11 +62,11 @@ const SuggestionCard: React.FC<{
       whileHover={{ scale: 1.02, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(suggestion.prompt)}
-      className="group relative flex bg-secondary/10 items-center gap-4 p-4 rounded-2xl text-left transition-all duration-300 overflow-hidden  border border-secondary/20 hover:border-primary/20 hover:shadow-depth-3"
+      className="group relative flex bg-transparent items-center gap-4 p-4 rounded-2xl text-left transition-all duration-300 overflow-hidden  border border-slate-200 hover:border-primary/20 hover:shadow-depth-3"
     >
       <div 
         className={cn(
-          "relative w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 bg-secondary/20",
+          "relative w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 bg-primary/10",
           suggestion.iconColor
         )}
       >
@@ -94,10 +94,6 @@ export default function HomePage() {
 
   return (
     <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden px-4 ">
-      {/* Background Blobs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 pointer-events-none -translate-y-1/2" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
-
       {/* Content */}
       <div className="relative w-full max-w-4xl flex flex-col gap-12 z-10">
         {/* Header */}
@@ -123,7 +119,7 @@ export default function HomePage() {
             name="message"
             defaultValue={promptValue}
             onError={(errorMessage) => setError(errorMessage)}
-               className="border border-slate-200 bg-slate-50 shadow-none"
+               className="border border-slate-200 bg-slate-100 shadow-none"
           />
 
           {error && (
@@ -169,13 +165,13 @@ export default function HomePage() {
         >
           Press{" "}
           <kbd 
-            className="px-2 py-1 rounded-lg text-[10px] font-mono mx-0.5 bg-white border border-secondary/20 shadow-sm text-secondary-foreground"
+            className="px-2 py-1 rounded-lg text-[10px] font-mono mx-0.5 bg-white border border shadow-sm text-secondary-foreground"
           >
             ⌘
           </kbd>
           +
           <kbd 
-            className="px-2 py-1 rounded-lg text-[10px] font-mono mx-0.5 bg-white border border-secondary/20 shadow-sm text-secondary-foreground"
+            className="px-2 py-1 rounded-lg text-[10px] font-mono mx-0.5 bg-white border border-primary/10 shadow-sm text-secondary-foreground"
           >
             Enter
           </kbd>
