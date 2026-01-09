@@ -221,9 +221,9 @@ export class PresentationController {
         const data = JSON.parse(chunk);
         
         // Log streaming chunks for debugging
-        if (data.type === 'slide-streaming') {
-          this.logger.debug(`[SSE] Sending streaming chunk: ${data.accumulatedText?.length || 0} chars`);
-        }
+        // if (data.type === 'slide-streaming') {
+        //   this.logger.debug(`[SSE] Sending streaming chunk: ${data.accumulatedText?.length || 0} chars`);
+        // }
         
         // Track successful slide generation
         if (data.type === 'slide') {

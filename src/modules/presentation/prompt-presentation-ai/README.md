@@ -48,9 +48,10 @@ prompt-presentation-ai/
 - Ensures consistent formatting and instructions
 
 ### Utilities
-**`SchemaGeneratorUtil`**
-- Dynamically generates JSON schemas for slide content
-- Ensures AI output strictly follows layout requirements
+**`DynamicSchemaUtil`**
+- Dynamically generates JSON schemas by introspecting template data at runtime
+- Ensures AI output strictly follows the structure of ANY input layout template
+- No hardcoded block type mapping required
 - Enables standard JSON parsing without custom cleaning
 
 ## 🔧 Usage

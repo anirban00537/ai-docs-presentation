@@ -53,36 +53,21 @@ DO NOT change these URLs. Copy them exactly as provided above into the appropria
    */
   buildLayoutStructurePrompt(templateRows: any[]): string {
     return `
-LAYOUT STRUCTURE TEMPLATE (YOU MUST FOLLOW THIS EXACT STRUCTURE):
+LAYOUT STRUCTURE TEMPLATE:
 ${JSON.stringify({ rows: templateRows }, null, 2)}
 
-CRITICAL INSTRUCTION:
-- You MUST generate ONLY a JSON object with a "rows" array matching the template above.
-- Use the SAME number of rows and blocks.
-- Preserve all "id" and "type" fields exactly as they appear in the template.
-- Adapt the "content" of each block using the slide outline below.
-- Generating any other structure or missing blocks will break the presentation.
+CRITICAL INSTRUCTIONS:
+1. Your output MUST have the EXACT SAME structure as the template above.
+2. Preserve ALL field names exactly as shown (id, type, content, items, etc.)
+3. For each block:
+   - Keep the "id" field (you may generate a new UUID or reuse the template's)
+   - Keep the "type" field EXACTLY as shown (e.g., "prosemirror", "simple-number-card")
+   - Transform the "content" field with new, relevant content
+4. If an array has N items in the template, you should output N items (adjustable via context).
+5. ProseMirror content fields use the format: { "type": "doc", "content": [...] }
 
-BLOCK CONTENT RULES:
-1. "prosemirror" blocks:
-   - The "content" field MUST match the structure in the template (usually a JSON object).
-   - Follow the pattern: { "type": "doc", "content": [...] }.
-   - Use standard node types like "heading", "paragraph", "text".
-   - Do NOT use Markdown strings. Use the proper node structure.
-
-2. "image" blocks:
-   - "content" should be: { "url": "...", "alt": "...", "caption": "..." }
-
-3. Card/List blocks (e.g., "simple-number-card", "solid-icon-box", "stacked-timeline-block"):
-   - These blocks have an "items" array in their "content".
-   - Each item in the "items" array usually has a "title" and "description".
-   - ⚠️ IMPORTANT: In many of these blocks, "title" and "description" are NOT strings, they are ProseMirror JSON objects.
-   - HOWEVER, for your response, you should provide them as simple strings or simple ProseMirror doc objects if you can.
-   - BEST PRACTICE: If the template shows a complex object for "title", you should try to match that pattern or provide a high-quality string that we can convert.
-
-URL FORMATTING RULES:
-- Use this Unsplash format: https://images.unsplash.com/photo-[ID]?auto=format&fit=crop&w=1200&q=80
-- Match EXACT URLs provided in the IMAGE INJECTION section if available.`;
+The JSON Schema enforcing your output was GENERATED DYNAMICALLY FROM THIS TEMPLATE.
+Any structural deviation will cause a validation error.`;
   }
 
   /**

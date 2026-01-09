@@ -371,9 +371,11 @@ export class PromptPresentationAIService implements OnModuleInit {
     // Check if accent image is being injected
     const hasAccent = imageInjectionPrompt.includes('accent.url');
 
-    // Generate dynamic JSON schema from template
-    const { SchemaGeneratorUtil } = await import('./utils/schema-generator.util');
-    const slideSchema = SchemaGeneratorUtil.generateSlideSchema(templateRows, hasAccent);
+    // Generate dynamic JSON schema from template at runtime (no hardcoded types!)
+    const { DynamicSchemaUtil } = await import('./utils/dynamic-schema.util');
+    const slideSchema = DynamicSchemaUtil.generateSlideSchemaFromTemplate(templateRows, hasAccent);
+    
+    this.logger.debug(`[Slide ${slideNumber}] Generated dynamic schema for ${templateRows.length} rows`);
 
     const stream = await this.openRouter.chat.send({
       model: this.MODEL_NAME,
