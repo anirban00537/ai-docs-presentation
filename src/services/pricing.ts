@@ -1,10 +1,5 @@
-import request from "@/lib/request";
-
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+import { api } from "@/lib/api";
+import type { ApiResponse } from "@/types";
 
 export interface Price {
   id: string;
@@ -41,16 +36,10 @@ export interface Product {
 }
 
 // Get all products/pricing plans
-export const getProducts = async (): Promise<ApiResponse<Product[]>> => {
-  const response = await request.get("/subscription/products");
-  return response.data;
-};
+export const getProducts = () => api.get<Product[]>("/subscription/products");
 
 // Get product by ID
-export const getProduct = async (id: string): Promise<ApiResponse<Product>> => {
-  const response = await request.get(`/subscription/products/${id}`);
-  return response.data;
-};
+export const getProduct = (id: string) => api.get<Product>(`/subscription/products/${id}`);
 
 // Format price for display
 export const formatPrice = (price: Price): string => {
@@ -91,14 +80,10 @@ export const getRecurringText = (product: Product): string => {
 };
 
 // Create checkout session for a product
-export const createCheckout = async (
+export const createCheckout = (
   productId: string,
   successUrl?: string
-): Promise<ApiResponse<{ checkoutUrl: string; checkoutId: string }>> => {
-  const response = await request.post("/subscription/checkout", {
-    productId,
-    successUrl,
-  });
-  return response.data;
-};
-
+) => api.post<{ checkoutUrl: string; checkoutId: string }>("/subscription/checkout", {
+  productId,
+  successUrl,
+});

@@ -28,7 +28,7 @@ import {
 import { 
   useCreateLayout, 
   useUpdateLayout 
-} from "@/hooks/queries/use-layouts";
+} from "@/hooks/use-layouts";
 
 // Re-export query-related items for backward compatibility
 export { 
@@ -36,7 +36,7 @@ export {
   useLayout, 
   useDeleteLayout,
   layoutKeys 
-} from "@/hooks/queries/use-layouts";
+} from "@/hooks/use-layouts";
 
 // ============================================================================
 // LAYOUT EDITOR HOOK

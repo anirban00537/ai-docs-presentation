@@ -1,6 +1,6 @@
 export const SLIDE_MAX_WIDTH = 1000; // Maximum width for slides in pixels
 
-export const GOOGLE_FONTS = [
+export const GOOGLE_FONT_NAMES = [
   // Sans Serif
   "Albert Sans",
   "Figtree",
@@ -27,4 +27,4 @@ export const GOOGLE_FONTS = [
   "Crimson Text",
 ] as const;
 
-export type GoogleFont = typeof GOOGLE_FONTS[number];
+export type GoogleFont = typeof GOOGLE_FONT_NAMES[number];

@@ -6,7 +6,7 @@ import { AnimatePresence } from "framer-motion";
 import {
   usePresentationsList,
   useDeletePresentation,
-} from "@/hooks/use-presentation";
+} from "@/hooks";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,18 +16,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/components/ui";
 import { toast } from "sonner";
-import { IconPresentation, IconPlus } from "@tabler/icons-react";
+import { IconPresentation } from "@tabler/icons-react";
 
 // Shared components
-import { EmptyState } from "@/components/shared/EmptyState";
-import { GridSkeleton } from "@/components/shared/DashboardSkeleton";
+import { EmptyState, GridSkeleton } from "@/components/shared";
 
 import {
   PresentationCard,
   PresentationsHeader,
-} from "../../../../components/my-presentations";
+} from "@/components/my-presentations";
 
 export default function MyPresentationsPage() {
   const router = useRouter();

@@ -10,8 +10,8 @@ import {
   BlockSelectionProvider,
   ToolbarPanel,
   DragPreview,
+  LoadingOverlay,
 } from "@/app/(protected)/presentation/[id]/editor";
-import { LoadingOverlay } from "@/app/(protected)/presentation/[id]/editor/ui/LoadingOverlay";
 import { useLayoutEditor } from "./hooks/useLayoutEditor";
 import { 
   LayoutMetadataPanel, 

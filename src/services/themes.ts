@@ -1,11 +1,6 @@
-import request from "@/lib/request";
+import { api } from "@/lib/api";
+import type { ApiResponse } from "@/types";
 import type { Theme } from "@/store/slices/slidesSlice";
-
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  message: string;
-  data: T;
-}
 
 export interface ThemeResponse {
   id: string;
@@ -32,55 +27,36 @@ export interface ThemesListResponse {
 }
 
 // Fetch all admin themes (public endpoint)
-export const getAdminThemes = async (): Promise<ApiResponse<ThemesListResponse>> => {
-  const response = await request.get("/themes/public/admin/list");
-  return response.data;
-};
+export const getAdminThemes = () => api.get<ThemesListResponse>("/themes/public/admin/list");
 
 // Fetch all themes (requires auth)
-export const getThemes = async (filters?: {
+export const getThemes = (filters?: {
   includeAdmin?: boolean;
   includeUser?: boolean;
   page?: number;
   limit?: number;
-}): Promise<ApiResponse<ThemesListResponse>> => {
-  const response = await request.get("/themes/list", { params: filters });
-  return response.data;
-};
+}) => api.get<ThemesListResponse>("/themes/list", { params: filters });
 
 // Get a single theme
-export const getTheme = async (id: string): Promise<ApiResponse<ThemeResponse>> => {
-  const response = await request.get(`/themes/${id}/get`);
-  return response.data;
-};
+export const getTheme = (id: string) => api.get<ThemeResponse>(`/themes/${id}/get`);
 
 // Create a theme (requires auth)
-export const createTheme = async (payload: {
+export const createTheme = (payload: {
   name: string;
   description?: string;
   themeData: Theme;
   isAdmin?: boolean;
-}): Promise<ApiResponse<ThemeResponse>> => {
-  const response = await request.post("/themes/create", payload);
-  return response.data;
-};
+}) => api.post<ThemeResponse>("/themes/create", payload);
 
 // Update a theme (requires auth)
-export const updateTheme = async (
+export const updateTheme = (
   id: string,
   payload: {
     name?: string;
     description?: string;
     themeData?: Partial<Theme>;
   }
-): Promise<ApiResponse<ThemeResponse>> => {
-  const response = await request.patch(`/themes/${id}/update`, payload);
-  return response.data;
-};
+) => api.patch<ThemeResponse>(`/themes/${id}/update`, payload);
 
 // Delete a theme (requires auth)
-export const deleteTheme = async (id: string): Promise<ApiResponse<void>> => {
-  const response = await request.delete(`/themes/${id}/delete`);
-  return response.data;
-};
-
+export const deleteTheme = (id: string) => api.delete<void>(`/themes/${id}/delete`);

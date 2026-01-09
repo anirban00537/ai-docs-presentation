@@ -8,7 +8,7 @@ import {
   useUploadMedia,
   useUpdateMedia,
   useDeleteMedia,
-} from "@/hooks/use-images";
+} from "@/hooks";
 import { type MediaItem, type ListMediaParams } from "@/services/images";
 import { toast } from "sonner";
 import {
@@ -18,8 +18,6 @@ import {
   DialogTitle,
   DialogFooter,
   DialogDescription,
-} from "@/components/ui/dialog";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -28,20 +26,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+  Input,
+  Button,
+} from "@/components/ui";
 import { ImagePreviewModal } from "@/components/ImagePreviewModal";
 
 // Shared components
-import { EmptyState } from "@/components/shared/EmptyState";
-import { GridSkeleton } from "@/components/shared/DashboardSkeleton";
+import { EmptyState, GridSkeleton } from "@/components/shared";
 import { IconPhoto } from "@tabler/icons-react";
 
 // Sub-components
-import { MediaCard } from "@/components/media/MediaCard";
-import { MediaHeader } from "@/components/media/MediaHeader";
-import { MediaFilters, type CategoryFilter } from "@/components/media/MediaFilters";
+import { MediaCard, MediaHeader, MediaFilters, type CategoryFilter } from "@/components/media";
 
 // Main Media Page
 export default function MediaPage() {

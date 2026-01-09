@@ -5,15 +5,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogOverlay,
-} from "@/components/ui/dialog";
+} from "@/components/ui";
 
-import type { LayoutTemplate } from "@/types/presentation";
+import type { LayoutTemplate } from "@/types";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAdminLayouts } from "@/hooks/use-layouts";
-import { layoutsService } from "@/services/layouts";
+import { motion } from "framer-motion";
+import { useAdminLayouts } from "@/hooks";
+import { layoutsService } from "@/services";
 import { toast } from "sonner";
 
 interface SlideLayoutSelectorProps {

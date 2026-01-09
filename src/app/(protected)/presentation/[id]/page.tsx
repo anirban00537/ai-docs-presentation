@@ -15,9 +15,9 @@ import {
   EditorBackground,
   BlockSelectionProvider,
   ToolbarPanel,
+  LoadingOverlay,
 } from "@/app/(protected)/presentation/[id]/editor";
-import { LoadingOverlay } from "@/app/(protected)/presentation/[id]/editor/ui/LoadingOverlay";
-import { LoaderOverlay } from "@/components/ui/loader-overlay";
+import { LoaderOverlay } from "@/components/ui";
 import { useEditorPage } from "./hooks/useEditorPage";
 import { usePresentationMode } from "./hooks/usePresentationMode";
 import { useAppSelector } from "@/store/hooks";

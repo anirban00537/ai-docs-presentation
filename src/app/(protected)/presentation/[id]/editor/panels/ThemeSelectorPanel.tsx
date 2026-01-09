@@ -10,7 +10,7 @@ import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAdminThemes } from "@/services/themes";
 import { applyCardStylePreset } from "@/lib/editor/card-styles";
-import { GOOGLE_FONTS } from "@/lib/constants";
+import { GOOGLE_FONT_NAMES } from "@/lib/constants";
 
 // Pattern options as a const array for type safety
 const PATTERN_OPTIONS = [
@@ -433,7 +433,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                         }`}
                         style={{ fontFamily: currentTheme.fontFamily }}
                       >
-                        {GOOGLE_FONTS.map((font) => (
+                        {GOOGLE_FONT_NAMES.map((font: string) => (
                           <option key={font} value={font} style={{ fontFamily: font }}>
                             {font}
                           </option>

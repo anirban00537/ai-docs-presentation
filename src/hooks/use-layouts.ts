@@ -1,43 +1,100 @@
-import { useQuery } from "@tanstack/react-query";
-import { layoutsService } from "@/services/layouts";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { 
+  layoutsService, 
+  type LayoutTemplate, 
+  type CreateLayoutPayload, 
+  type UpdateLayoutPayload 
+} from "@/services/layouts";
+import { toast } from "sonner";
+
+export const layoutKeys = {
+  all: ["layouts"] as const,
+  lists: () => [...layoutKeys.all, "list"] as const,
+  list: (filters?: any) => [...layoutKeys.lists(), filters] as const,
+  admin: () => [...layoutKeys.all, "admin"] as const,
+  details: () => [...layoutKeys.all, "detail"] as const,
+  detail: (id: string) => [...layoutKeys.details(), id] as const,
+};
 
 export const useAdminLayouts = () => {
   return useQuery({
-    queryKey: ["admin-layouts"],
+    queryKey: layoutKeys.admin(),
     queryFn: async () => {
       const response = await layoutsService.getAdminLayouts();
-      if (response.success) {
-        return response.data;
-      }
-      throw new Error(response.message || "Failed to fetch admin layouts");
+      return response.data;
     },
   });
 };
 
 export const useUserLayouts = () => {
   return useQuery({
-    queryKey: ["user-layouts"],
+    queryKey: layoutKeys.list(),
     queryFn: async () => {
       const response = await layoutsService.getUserLayouts();
-      if (response.success) {
-        return response.data;
-      }
-      throw new Error(response.message || "Failed to fetch user layouts");
+      return response.data || [];
     },
   });
 };
 
-export const useLayout = (id: string | null) => {
+// Alias for useUserLayouts to maintain backward compatibility
+export const useLayouts = useUserLayouts;
+
+export const useLayout = (id: string | null | undefined) => {
   return useQuery({
-    queryKey: ["layout", id],
+    queryKey: layoutKeys.detail(id!),
     queryFn: async () => {
       if (!id) return null;
       const response = await layoutsService.getLayout(id);
-      if (response.success) {
-        return response.data;
-      }
-      throw new Error(response.message || "Failed to fetch layout");
+      return response.data;
     },
     enabled: !!id,
   });
 };
+
+export function useCreateLayout() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateLayoutPayload) => layoutsService.createLayout(payload),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: layoutKeys.lists() });
+      toast.success("Layout created successfully!");
+      return data;
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to create layout");
+    },
+  });
+}
+
+export function useUpdateLayout() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, ...payload }: UpdateLayoutPayload) => layoutsService.updateLayout(id, payload),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: layoutKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: layoutKeys.detail(variables.id) });
+      toast.success("Layout updated successfully!");
+      return data;
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to update layout");
+    },
+  });
+}
+
+export function useDeleteLayout() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => layoutsService.deleteLayout(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: layoutKeys.lists() });
+      toast.success("Layout deleted successfully!");
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to delete layout");
+    },
+  });
+}

@@ -2,10 +2,8 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { PromptBox } from "@/components/ui/prompt-input";
-import { HomeHeader } from "@/components/home/HomeHeader";
-import { SuggestionGrid } from "@/components/home/SuggestionGrid";
-import { KeyboardHint } from "@/components/home/KeyboardHint";
+import { PromptBox } from "@/components/ui";
+import { HomeHeader, SuggestionGrid, KeyboardHint } from "@/components/home";
 import { suggestions } from "./constants";
 
 export default function HomePage() {

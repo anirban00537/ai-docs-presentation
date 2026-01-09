@@ -4,7 +4,7 @@ import React from "react";
 import {
   useSyncSubscription,
   useCancelSubscription,
-} from "@/hooks/use-subscription";
+} from "@/hooks";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectSubscriptionStatus,
@@ -13,15 +13,16 @@ import {
   selectSubscriptionLoading,
   fetchSubscriptionInfo,
 } from "@/store/slices/subscriptionSlice";
-import { PageSkeleton } from "@/components/shared/DashboardSkeleton";
-
-import { Skeleton } from "@/components/ui/skeleton";
+import { PageSkeleton } from "@/components/shared";
+import { Skeleton } from "@/components/ui";
 
 // Sub-components
-import { SubscriptionHeader } from "@/components/subscription/SubscriptionHeader";
-import { CreditBalanceCard } from "@/components/subscription/CreditBalanceCard";
-import { PlanStatusCard } from "@/components/subscription/PlanStatusCard";
-import { UsageStatsBar } from "@/components/subscription/UsageStatsBar";
+import { 
+  SubscriptionHeader, 
+  CreditBalanceCard, 
+  PlanStatusCard, 
+  UsageStatsBar 
+} from "@/components/subscription";
 
 export default function SubscriptionPage() {
   const dispatch = useAppDispatch();

@@ -1,18 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useProducts } from "@/hooks/use-pricing";
+import { useProducts } from "@/hooks";
 import { useAppSelector } from "@/store/hooks";
 import { selectSubscriptionStatus } from "@/store/slices/subscriptionSlice";
-import { createCheckout } from "@/services/pricing";
+import { createCheckout } from "@/services";
 import { PricingCard } from "@/components/pricing-card";
-import { PageSkeleton } from "@/components/shared/DashboardSkeleton";
-import { Skeleton } from "@/components/ui/skeleton";
+import { PageSkeleton } from "@/components/shared";
+import { Skeleton } from "@/components/ui";
 import { toast } from "sonner";
 
 // Sub-components
-import { PricingHeader } from "@/components/pricing/PricingHeader";
-import { PricingFooter } from "@/components/pricing/PricingFooter";
+import { PricingHeader, PricingFooter } from "@/components/pricing";
 
 export default function PricingPage() {
   const { data: products, isLoading: productsLoading } = useProducts();

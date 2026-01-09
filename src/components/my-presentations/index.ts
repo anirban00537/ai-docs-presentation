@@ -1,3 +1,3 @@
-export { SlidePreview } from "./SlidePreview";
-export { PresentationCard } from "./PresentationCard";
-export { PresentationsHeader } from "./PresentationsHeader";
+export * from "./SlidePreview";
+export * from "./PresentationCard";
+export * from "./PresentationsHeader";
