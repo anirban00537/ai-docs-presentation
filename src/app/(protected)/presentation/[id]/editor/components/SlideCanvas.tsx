@@ -11,7 +11,7 @@ import type { SelectedImage } from "../panels/ImagePickerModal";
 import { getFontFamily } from "@/lib/fonts";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 import * as Patterns from "../patterns";
-import { useResize } from "../hooks/useResize";
+import { useResize } from "../../hooks/useResize";
 
 // Lazy load the heavy ImagePickerModal
 const ImagePickerModal = lazy(() => 

@@ -9,7 +9,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { duplicateBlock, deleteBlock } from "@/store/slices/slidesSlice";
 import { useEditorTheme } from "@/app/(protected)/presentation/[id]/editor/providers/EditorThemeProvider";
 import { IconGripHorizontal } from "@tabler/icons-react";
-import { useResize } from "../hooks/useResize";
+import { useResize } from "../../hooks/useResize";
 
 interface BlockCellProps {
   block: Block;
