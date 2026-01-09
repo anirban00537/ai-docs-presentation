@@ -6,6 +6,7 @@ import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { createCircleStatsItem } from "../definitions/circle-stats-block";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { getFontFamily } from "@/lib/fonts";
+import { ProgressCircle } from "./ProgressCircle";
 
 interface CircleStatsBlockProps {
   block: Block;
@@ -58,48 +59,6 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
     });
   };
 
-  // SVG Progress Circle Helper
-  const ProgressCircle = ({ value, size = 160, strokeWidth = 12 }: { value: number, size?: number, strokeWidth?: number }) => {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = radius * 2 * Math.PI;
-    const offset = circumference - (value / 100) * circumference;
-
-    return (
-      <div className="relative flex items-center justify-center">
-        <svg
-          width={size}
-          height={size}
-          viewBox={`0 0 ${size} ${size}`}
-          className="transform -rotate-90"
-        >
-          {/* Background Circle */}
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            stroke={theme.primary}
-            strokeWidth={strokeWidth}
-            fill="transparent"
-            className="opacity-20"
-          />
-          {/* Progress Circle */}
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            stroke={theme.primary}
-            strokeWidth={strokeWidth}
-            fill="transparent"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            strokeLinecap="round"
-            className="transition-all duration-1000 ease-out"
-          />
-        </svg>
-      </div>
-    );
-  };
-
   return (
     <div 
       className="group relative w-full h-full min-h-[300px] py-8"
@@ -123,7 +82,7 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
              
              {/* Progress Circle Container */}
              <div className="relative mb-6">
-                <ProgressCircle value={item.value} />
+                <ProgressCircle value={item.value} theme={theme} />
                 
                 {/* Center Value Input */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
