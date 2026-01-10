@@ -3,12 +3,21 @@ import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { IsAdmin } from 'src/shared/decorators/is-admin.decorator';
 import { ResponseModel } from 'src/shared/models/response.model';
 import { AdminUsersService } from '../services/admin-users.service';
+import { AdminAnalyticsService } from '../services/admin-analytics.service';
 
 @Controller('admin/users')
 @UseGuards(JwtAuthGuard)
 @IsAdmin()
 export class AdminUsersController {
-  constructor(private readonly usersService: AdminUsersService) {}
+  constructor(
+    private readonly usersService: AdminUsersService,
+    private readonly adminAnalyticsService: AdminAnalyticsService,
+  ) {}
+
+  @Get('analytics')
+  async getUserAnalytics(): Promise<ResponseModel> {
+    return this.adminAnalyticsService.getUserAnalytics();
+  }
 
   @Get()
   async getUsers(@Query() query: any): Promise<ResponseModel> {
