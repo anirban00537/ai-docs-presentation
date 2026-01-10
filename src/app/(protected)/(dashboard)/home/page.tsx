@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { PromptBox } from "@/components/ui";
-import { HomeHeader, SuggestionGrid, KeyboardHint } from "@/components/home";
+import { HomeHeader, SuggestionGrid } from "@/components/home";
 import { suggestions } from "./constants";
 
 export default function HomePage() {
@@ -17,7 +17,7 @@ export default function HomePage() {
   return (
     <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] overflow-hidden px-4 ">
       {/* Content */}
-      <div className="relative w-full max-w-4xl flex flex-col gap-12 z-10">
+      <div className="relative w-full max-w-4xl flex flex-col gap-4 z-10">
         <HomeHeader />
 
         {/* Prompt Box */}
@@ -45,12 +45,11 @@ export default function HomePage() {
           )}
         </motion.div>
 
-        <SuggestionGrid 
-          suggestions={suggestions} 
-          onSuggestionClick={handleSuggestionClick} 
+        <SuggestionGrid
+          suggestions={suggestions}
+          onSuggestionClick={handleSuggestionClick}
         />
 
-        <KeyboardHint />
       </div>
     </div>
   );
