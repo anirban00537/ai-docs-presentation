@@ -1,13 +1,67 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { successResponse, processException } from 'src/shared/helpers/functions';
 import { ResponseModel } from 'src/shared/models/response.model';
+import { Polar } from '@polar-sh/sdk';
 
 @Injectable()
 export class AdminUsersService {
   private readonly logger = new Logger(AdminUsersService.name);
+  private readonly polar: Polar;
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+  ) {
+    this.polar = new Polar({
+      accessToken: this.configService.get('POLAR_ACCESS_TOKEN'),
+      server: this.configService.get('POLAR_ENVIRONMENT') === 'production' 
+        ? 'production' 
+        : 'sandbox',
+    });
+  }
+
+  /**
+   * Enrich subscription data with product/price details from Polar
+   */
+  private async enrichSubscription(subscription: any) {
+    if (!subscription || !subscription.productId || !subscription.priceId) {
+      return subscription;
+    }
+
+    try {
+      // Fetch product details from Polar
+      const product = await this.polar.products.get({ id: subscription.productId });
+      
+      // Find the specific price from the product
+      const price = product.prices?.find(p => p.id === subscription.priceId);
+
+      // Extract price amount based on type
+      let priceAmount = 0;
+      if (price && 'amountType' in price) {
+        if (price.amountType === 'fixed') {
+          priceAmount = (price as any).priceAmount || 0;
+        }
+      }
+
+      return {
+        ...subscription,
+        planId: product.name || 'Unknown Plan',
+        price: priceAmount,
+        interval: price?.recurringInterval || 'month',
+      };
+    } catch (error) {
+      this.logger.warn(`Failed to enrich subscription ${subscription.id}:`, error.message);
+      // Return original subscription if enrichment fails
+      return {
+        ...subscription,
+        planId: 'Unknown Plan',
+        price: 0,
+        interval: 'month',
+      };
+    }
+  }
 
   async getUsers(query: any): Promise<ResponseModel> {
     try {
@@ -30,14 +84,48 @@ export class AdminUsersService {
           include: {
             Subscription: true,
             CreditBalance: true,
+            AiUsages: {
+              orderBy: { createdAt: 'desc' },
+            },
+            Presentations: {
+              select: {
+                id: true,
+                title: true,
+                createdAt: true,
+                _count: {
+                  select: { slides: true }
+                }
+              }
+            },
+            Outlines: {
+              select: {
+                id: true,
+                title: true,
+                createdAt: true,
+              }
+            },
           },
           orderBy: { createdAt: 'desc' },
         }),
         this.prisma.user.count({ where }),
       ]);
 
+      // Enrich subscriptions with Polar product data
+      const enrichedUsers = await Promise.all(
+        users.map(async (user) => {
+          if (user.Subscription) {
+            const enrichedSubscription = await this.enrichSubscription(user.Subscription);
+            return {
+              ...user,
+              Subscription: enrichedSubscription,
+            };
+          }
+          return user;
+        })
+      );
+
       return successResponse('Users retrieved successfully', {
-        users,
+        users: enrichedUsers,
         pagination: {
           page: Number(page),
           perPage: Number(perPage),
