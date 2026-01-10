@@ -1,36 +1,36 @@
 "use client";
 
-import { IconLayoutDashboard, IconWand, IconDownload, IconPalette, IconTypography, IconCheck } from "@tabler/icons-react";
+import { IconLayoutDashboard, IconWand, IconPresentation, IconPalette, IconTypography, IconCheck } from "@tabler/icons-react";
 
 const features = [
   {
-    title: "AI Layout Engine",
-    description: "Our intelligence engine analyzes your content structure and automatically selects the perfect layout for every slide, instantly.",
+    title: "Smart Layouts",
+    description: "Don't stress about where to put things. Our AI arranges your slides perfectly, every time.",
     icon: <IconLayoutDashboard className="w-6 h-6 text-primary" />,
   },
   {
-    title: "Smart Reformatting",
-    description: "Paste a blog post or a document, and watch it transform into a professional slide deck in seconds.",
+    title: "Instant Transformation",
+    description: "Turn your notes or old documents into a fresh presentation in just one click.",
     icon: <IconWand className="w-6 h-6 text-primary" />,
   },
   {
-    title: "Export Anywhere",
-    description: "Download your presentations as PDF, PowerPoint, or share a live web link with your audience.",
-    icon: <IconDownload className="w-6 h-6 text-primary" />,
+    title: "Instant Present",
+    description: "Present seamlessly right from your browser. Your audience sees exactly what you see.",
+    icon: <IconPresentation className="w-6 h-6 text-primary" />,
   },
   {
-    title: "Brand Consistency",
-    description: "Your fonts, your colors, and your logo applied automatically to every single slide you generate.",
+    title: "Your Brand",
+    description: "Upload your logo and colors once. We'll make sure every slide looks like you.",
     icon: <IconPalette className="w-6 h-6 text-primary" />,
   },
   {
-    title: "Cinematic Typography",
-    description: "We use editorial-grade font pairings to make your text readable, beautiful, and emotionally resonant.",
+    title: "Beautiful Text",
+    description: "We pick the best fonts so your words are easy to read and look great.",
     icon: <IconTypography className="w-6 h-6 text-primary" />,
   },
   {
-    title: "Auto-Styling",
-    description: "Our engine handles colors and contrast automatically, ensuring your content always looks its best.",
+    title: "Perfect Colors",
+    description: "Colors that match and look professional, chosen automatically for you.",
     icon: <IconCheck className="w-6 h-6 text-primary" />,
   }
 ];
@@ -63,7 +63,7 @@ export function FeaturesSection() {
         {/* Features Grid - Clean & Minimal */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {features.map((feature, index) => (
-            <div 
+            <div
               key={index}
               className="group p-8 rounded-3xl bg-white border border-secondary/20 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-gradient-to-b hover:from-white hover:to-primary/5"
             >
