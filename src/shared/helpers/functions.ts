@@ -106,7 +106,9 @@ export async function emailAppName(): Promise<string> {
 
 export async function formatLimitOffset(payload: any) {
   let limit = payload.limit ? Math.abs(parseInt(payload.limit)) : 10;
-  let offset = payload.offset ? Math.abs(parseInt(payload.offset)) : 1;
+  // Support 'page' as an alias for 'offset', defaulting to 1
+  let pageParam = payload.page || payload.offset;
+  let offset = pageParam ? Math.abs(parseInt(pageParam)) : 1;
 
   limit = isNaN(limit) ? 10 : limit;
   limit = limit > 0 ? limit : 10;
@@ -137,8 +139,13 @@ export async function paginatioOptions(payload: any) {
   return data;
 }
 
-export async function paginationMetaData(model: string, payload: any) {
-  const total = await PrismaClient[model].count();
+export async function paginationMetaData(
+  model: string,
+  payload: any,
+  totalCount?: number,
+) {
+  const total =
+    totalCount !== undefined ? totalCount : await PrismaClient[model].count();
 
   const limitOffset = await formatLimitOffset(payload);
 

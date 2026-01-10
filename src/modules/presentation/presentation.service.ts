@@ -18,7 +18,7 @@ import { Logger } from '@nestjs/common';
 @Injectable()
 export class PresentationService {
   private readonly logger = new Logger(PresentationService.name);
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(
     user: User,
@@ -81,7 +81,11 @@ export class PresentationService {
         },
       });
 
-      const paginationMeta = await paginationMetaData('presentation', query);
+      const paginationMeta = await paginationMetaData(
+        'presentation',
+        query,
+        total,
+      );
 
       const data = {
         list: presentations,
