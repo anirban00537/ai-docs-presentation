@@ -283,9 +283,10 @@ export class AdminAnalyticsService {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+      // Fetch base data
       const [
         totalUsers,
-        activeSubscriptions,
+        activeSubscriptionsCount,
         totalPresentations,
         totalMedia,
         totalTokensInput,
@@ -298,7 +299,8 @@ export class AdminAnalyticsService {
         subscriptionBreakdown,
         geoDistribution,
         typeDistribution,
-        statusDistribution
+        statusDistribution,
+        activeSubscriptionsList // NEW: For MRR calculation
       ] = await Promise.all([
         // Totals
         this.prisma.user.count(),
@@ -318,7 +320,7 @@ export class AdminAnalyticsService {
           ORDER BY 1 ASC
         ` as Promise<any[]>,
 
-        // Revenue
+        // Revenue Trend (from credit transactions)
         this.prisma.$queryRaw`
           SELECT DATE_TRUNC('day', "createdAt") as date, SUM("amount")::int as value
           FROM "credit_transactions"
@@ -365,23 +367,91 @@ export class AdminAnalyticsService {
         this.prisma.user.groupBy({
           by: ['role'],
           _count: { _all: true },
+        }),
+
+        // NEW: Active Subscriptions for Financials
+        this.prisma.subscription.findMany({
+          where: { status: 'active' },
+          select: { productId: true, priceId: true }
         })
       ]);
+
+      // Calculate Advanced Financials
+      const revenueData = await this.calculateRevenue(activeSubscriptionsList);
+      
+      const aiUsageTotal = {
+        totalCost: totalCost._sum.cost || 0,
+        totalInputTokens: totalTokensInput._sum.inputTokens || 0,
+        totalOutputTokens: totalTokensOutput._sum.outputTokens || 0
+      };
+
+      const costBreakdown = await this.calculateCostBreakdown(aiUsageTotal);
+      const profitability = this.calculateProfitability(revenueData, costBreakdown);
 
       const formatSQLTrend = (data: any[]) => data.map(item => ({
         date: new Date(item.date).toISOString().split('T')[0],
         value: item.value
       }));
 
+      // Generate Insights
+      const insights = [];
+      
+      // 1. Churn Risk / Payment Failures (Mock logic for now, or real if available)
+      // In a real app, we'd check for 'past_due' subscriptions
+      const failedPayments = subscriptionBreakdown.find(s => s.status === 'past_due')?._count._all || 0;
+      if (failedPayments > 0) {
+        insights.push({
+          type: 'alert',
+          title: 'Payment Failures',
+          message: `${failedPayments} subscriptions are past due.`,
+          action: 'Review'
+        });
+      }
+
+      // 2. Resource Usage
+      if (profitability.overallMargin < 0) {
+        insights.push({
+          type: 'warning',
+          title: 'Negative Margin',
+          message: 'AI costs exceeding revenue.',
+          action: 'Analyze'
+        });
+      } else if (profitability.overallMargin < 20) {
+         insights.push({
+          type: 'warning',
+          title: 'Low Margin',
+          message: `Profit margin is only ${profitability.overallMargin.toFixed(1)}%.`,
+          action: 'Optimize'
+        });
+      }
+
+      // 3. User Growth
+      const newUsersThisWeek = userGrowth.slice(-7).reduce((acc, curr) => acc + curr.value, 0);
+      if (newUsersThisWeek > 0) {
+        insights.push({
+           type: 'success',
+           title: 'User Growth',
+           message: `${newUsersThisWeek} new users this week.`,
+           action: 'View'
+        });
+      }
+
       return successResponse('Analytics retrieved successfully', {
         summary: {
           totalUsers,
-          activeSubscriptions,
+          activeSubscriptions: activeSubscriptionsCount,
           totalPresentations,
           totalMedia,
           totalTokens: (totalTokensInput._sum.inputTokens || 0) + (totalTokensOutput._sum.outputTokens || 0),
           totalCost: totalCost._sum.cost || 0,
         },
+        financials: {
+          mrr: revenueData.mrr,
+          arr: revenueData.arr,
+          margin: profitability.overallMargin,
+          profit: profitability.totalProfit
+        },
+        insights,
         trends: {
           registrations: formatSQLTrend(userGrowth),
           revenue: formatSQLTrend(revenueTrend),
