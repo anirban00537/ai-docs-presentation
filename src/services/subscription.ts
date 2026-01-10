@@ -49,5 +49,4 @@ export interface UseCreditsDto {
 export const getSubscriptionStatus = () => api.get<SubscriptionStatus>("/subscription/status");
 export const getCreditBalance = () => api.get<CreditBalance>("/subscription/credits");
 export const useCredits = (payload: UseCreditsDto) => api.post<CreditBalance>("/subscription/use-credits", payload);
-export const syncSubscription = () => api.get<SubscriptionStatus>("/subscription/sync");
 export const cancelSubscription = () => api.post<void>("/subscription/cancel");

@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getSubscriptionStatus,
-  syncSubscription,
   cancelSubscription,
   getCreditBalance,
   useCredits,
@@ -31,24 +30,6 @@ export const useSubscriptionStatus = () => {
     },
     staleTime: 30000, // 30 seconds
     refetchOnWindowFocus: true,
-  });
-};
-
-// Sync subscription
-export const useSyncSubscription = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: syncSubscription,
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: subscriptionKeys.all });
-      toast.success("Subscription synced successfully");
-    },
-    onError: (error: any) => {
-      toast.error(
-        error?.response?.data?.message || "Failed to sync subscription"
-      );
-    },
   });
 };
 

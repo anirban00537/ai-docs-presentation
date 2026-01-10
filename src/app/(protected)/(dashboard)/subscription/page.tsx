@@ -2,7 +2,6 @@
 
 import React from "react";
 import {
-  useSyncSubscription,
   useCancelSubscription,
 } from "@/hooks";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -15,8 +14,6 @@ import {
 } from "@/store/slices/subscriptionSlice";
 import { PageSkeleton, PageHeader } from "@/components/shared";
 import { Skeleton, Button } from "@/components/ui";
-import { IconRefresh } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
 
 // Sub-components
 import {
@@ -32,20 +29,7 @@ export default function SubscriptionPage() {
   const isSubscribed = useAppSelector(selectIsSubscribed);
   const isLoading = useAppSelector(selectSubscriptionLoading);
 
-  const syncMutation = useSyncSubscription();
   const cancelMutation = useCancelSubscription();
-
-  const handleSync = () => {
-    syncMutation.mutate(undefined, {
-      onSuccess: () => {
-        dispatch(fetchSubscriptionInfo());
-      },
-    });
-  };
-
-  const handleSyncStatus = async () => {
-    await dispatch(fetchSubscriptionInfo());
-  };
 
   const handleCancel = () => {
     cancelMutation.mutate(undefined, {
@@ -81,22 +65,6 @@ export default function SubscriptionPage() {
         <PageHeader
           title={<>Subscription & <span className="text-primary italic">Billing</span></>}
           subtitle="Manage your plan and usage."
-          action={
-            <Button
-              variant="outline"
-              onClick={handleSync}
-              disabled={syncMutation.isPending}
-              className="bg-white/50 border-secondary/20 hover:bg-white transition-all shadow-sm rounded-xl"
-            >
-              <IconRefresh
-                className={cn(
-                  "mr-2 h-4 w-4 text-primary/70",
-                  syncMutation.isPending && "animate-spin"
-                )}
-              />
-              {syncMutation.isPending ? "Syncing..." : "Sync status"}
-            </Button>
-          }
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
