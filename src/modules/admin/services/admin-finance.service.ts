@@ -1,13 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { successResponse, processException } from 'src/shared/helpers/functions';
 import { ResponseModel } from 'src/shared/models/response.model';
+import { Polar } from '@polar-sh/sdk';
 
 @Injectable()
 export class AdminFinanceService {
   private readonly logger = new Logger(AdminFinanceService.name);
+  private readonly polar: Polar;
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+  ) {
+    this.polar = new Polar({
+      accessToken: this.configService.get('POLAR_ACCESS_TOKEN'),
+      server: this.configService.get('POLAR_ENVIRONMENT') === 'production' 
+        ? 'production' 
+        : 'sandbox',
+    });
+  }
 
   async getSubscriptions(query: any): Promise<ResponseModel> {
     try {
@@ -46,7 +59,6 @@ export class AdminFinanceService {
 
       // Fetch AI usage statistics for these users
       const userIds = subscriptions.map(s => s.userId);
-      this.logger.log(`[getSubscriptions] Subscription userIds: ${JSON.stringify(userIds)}`);
       
       const usageStats = await this.prisma.aiUsage.groupBy({
         by: ['userId'],
@@ -58,8 +70,6 @@ export class AdminFinanceService {
         },
       });
       
-      this.logger.log(`[getSubscriptions] UsageStats results: ${JSON.stringify(usageStats)}`);
-
       // Map usage stats back to subscriptions
       const subscriptionsWithUsage = subscriptions.map(sub => {
         const usage = usageStats.find(u => u.userId === sub.userId)?._sum || {
@@ -96,21 +106,23 @@ export class AdminFinanceService {
 
   async getRevenueAnalytics(): Promise<ResponseModel> {
     try {
-      const [revenueData, activeSubs, churnedSubs] = await Promise.all([
-        this.prisma.creditTransaction.aggregate({
-          where: { type: 'purchase' },
-          _sum: { amount: true }
-        }),
+      const activeSubscriptions = await this.prisma.subscription.findMany({
+        where: { status: 'active' },
+        select: { productId: true, priceId: true }
+      });
+      
+      const [activeSubsCount, churnedSubsCount] = await Promise.all([
         this.prisma.subscription.count({ where: { status: 'active' } }),
         this.prisma.subscription.count({ where: { status: 'canceled' } }),
       ]);
 
-      // Note: amount is in cents/units, adjust if needed. Assuming it matches currency units for now.
-      // If it's cents, we should divide by 100.
+      const revenueData = await this.calculateRevenue(activeSubscriptions);
+
+      // Return MRR as revenue
       return successResponse('Revenue analytics retrieved', {
-        revenue: revenueData._sum.amount || 0,
-        activeSubscriptions: activeSubs,
-        churnedSubscriptions: churnedSubs,
+        revenue: revenueData.mrr / 100, // Convert cents to dollars
+        activeSubscriptions: activeSubsCount,
+        churnedSubscriptions: churnedSubsCount,
       });
     } catch (error) {
       return processException(error);
@@ -138,4 +150,59 @@ export class AdminFinanceService {
       return processException(error);
     }
   }
+
+  private async calculateRevenue(subscriptions: any[]) {
+    if (subscriptions.length === 0) {
+      return { mrr: 0, arr: 0, average: 0 };
+    }
+
+    // Identify unique products to fetch
+    const uniqueProductIds = [...new Set(subscriptions.map(s => s.productId).filter(Boolean))];
+    
+    // Fetch products and create a price map
+    const priceMap = new Map<string, any>(); // priceId -> price object
+    
+    // We'll cache product fetches to avoid duplicates
+    await Promise.all(uniqueProductIds.map(async (productId) => {
+      try {
+        const product = await this.polar.products.get({ id: productId });
+        if (product && product.prices) {
+          product.prices.forEach(price => {
+            priceMap.set(price.id, price);
+          });
+        }
+      } catch (err) {
+        this.logger.warn(`Failed to fetch product ${productId}`, err);
+      }
+    }));
+
+    let mrr = 0;
+    
+    for (const sub of subscriptions) {
+      if (sub.priceId && priceMap.has(sub.priceId)) {
+        const price = priceMap.get(sub.priceId);
+        let amount = 0;
+        
+        if ('priceAmount' in price) {
+           amount = price.priceAmount || 0;
+        } else if ('amountType' in price && price.amountType === 'fixed') {
+           amount = (price as any).priceAmount || 0;
+        }
+
+        // Normalize to monthly revenue
+        if (price.recurringInterval === 'year') {
+          mrr += Math.round(amount / 12);
+        } else {
+          mrr += amount;
+        }
+      }
+    }
+
+    const arr = mrr * 12;
+    const average = subscriptions.length > 0 ? Math.round(mrr / subscriptions.length) : 0;
+
+    return { mrr, arr, average };
+  }
 }
+
+

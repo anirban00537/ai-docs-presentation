@@ -17,14 +17,14 @@ export class AdminMediaService {
       const where: any = {};
       if (search) {
         where.OR = [
-          { filename: { contains: search, mode: 'insensitive' } },
+          { name: { contains: search, mode: 'insensitive' } },
           { mimeType: { contains: search, mode: 'insensitive' } },
         ];
       }
       if (userId) where.userId = userId;
-      if (type) where.mimeType = { startsWith: type }; // e.g., 'image/', 'video/'
+      if (type) where.mimeType = { startsWith: type };
 
-      const [media, total] = await Promise.all([
+      const [media, total, storageStats] = await Promise.all([
         this.prisma.media.findMany({
           where,
           skip: Number(skip),
@@ -35,6 +35,9 @@ export class AdminMediaService {
           orderBy: { createdAt: 'desc' },
         }),
         this.prisma.media.count({ where }),
+        this.prisma.media.aggregate({
+          _sum: { size: true }
+        })
       ]);
 
       return successResponse('Media retrieved successfully', {
@@ -44,8 +47,18 @@ export class AdminMediaService {
           perPage: Number(perPage),
           total,
           totalPages: Math.ceil(total / perPage),
+          totalSize: storageStats._sum.size || 0
         },
       });
+    } catch (error) {
+      return processException(error);
+    }
+  }
+
+  async deleteMedia(id: string): Promise<ResponseModel> {
+    try {
+      await this.prisma.media.delete({ where: { id } });
+      return successResponse('Media deleted successfully');
     } catch (error) {
       return processException(error);
     }
