@@ -16,16 +16,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  Button,
 } from "@/components/ui";
 import { toast } from "sonner";
-import { IconPresentation } from "@tabler/icons-react";
+import { IconPresentation, IconPlus } from "@tabler/icons-react";
 
 // Shared components
-import { EmptyState, GridSkeleton, Pagination } from "@/components/shared";
+import { EmptyState, GridSkeleton, Pagination, PageHeader } from "@/components/shared";
 
 import {
   PresentationCard,
-  PresentationsHeader,
 } from "@/components/my-presentations";
 
 export default function MyPresentationsPage() {
@@ -92,9 +92,18 @@ export default function MyPresentationsPage() {
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/40 rounded-full blur-3xl opacity-30 pointer-events-none translate-y-1/2" />
 
       <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">
-        <PresentationsHeader
-          count={meta?.total || (isLoading ? 0 : presentations.length)}
-          onNew={() => router.push("/home")}
+        <PageHeader
+          title={<>My <span className="text-primary italic">Presentations</span></>}
+          action={
+            <Button
+              onClick={() => router.push("/home")}
+              variant="default"
+              className="shadow-coral-glow hover:scale-105 transition-transform"
+            >
+              <IconPlus size={18} className="mr-2" />
+              New Project
+            </Button>
+          }
         />
 
         {isLoading ? (

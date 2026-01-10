@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { IconCheck, IconLoader2 } from "@tabler/icons-react";
+import { IconCheck, IconLoader2, IconPhoto, IconUpload } from "@tabler/icons-react";
 import {
   useListMedia,
   useUploadMedia,
@@ -32,11 +32,11 @@ import {
 import { ImagePreviewModal } from "@/components/ImagePreviewModal";
 
 // Shared components
-import { EmptyState, GridSkeleton, Pagination } from "@/components/shared";
-import { IconPhoto } from "@tabler/icons-react";
+import { EmptyState, GridSkeleton, Pagination, PageHeader } from "@/components/shared";
+
 
 // Sub-components
-import { MediaCard, MediaHeader, MediaFilters, type CategoryFilter } from "@/components/media";
+import { MediaCard, MediaFilters, type CategoryFilter } from "@/components/media";
 
 // Main Media Page
 export default function MediaPage() {
@@ -221,7 +221,25 @@ export default function MediaPage() {
       />
 
       <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">
-        <MediaHeader isUploading={uploadMutation.isPending} onUpload={handleUpload} />
+        <PageHeader
+          title={<>Media <span className="text-primary italic">Library</span></>}
+          subtitle="Manage your images and assets in one central place."
+          action={
+            <Button
+              onClick={handleUpload}
+              disabled={uploadMutation.isPending}
+              variant="default"
+              className="shadow-coral-glow hover:scale-105 transition-transform"
+            >
+              {uploadMutation.isPending ? (
+                <IconLoader2 size={18} className="mr-2 animate-spin" />
+              ) : (
+                <IconUpload size={18} className="mr-2" />
+              )}
+              Upload Media
+            </Button>
+          }
+        />
 
         <MediaFilters
           searchQuery={searchQuery}
