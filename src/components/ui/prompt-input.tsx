@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useSavePrompt } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
+import { useSavePrompt } from "@/app/(protected)/docs/[id]/hooks/use-outline";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 

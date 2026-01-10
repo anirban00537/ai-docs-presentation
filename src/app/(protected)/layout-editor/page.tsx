@@ -11,14 +11,14 @@ import {
   ToolbarPanel,
   DragPreview,
   LoadingOverlay,
-} from "@/app/(protected)/presentation/[id]/editor";
+} from "@/app/(protected)/docs/[id]/editor";
 import { useLayoutEditor } from "./hooks/useLayoutEditor";
 import { 
   LayoutMetadataPanel, 
   LayoutListPanel, 
   LayoutEditorHeader 
 } from "@/components/layout-editor";
-import { EditorThemeProvider } from "@/app/(protected)/presentation/[id]/engine/theme/EditorThemeProvider";
+import { EditorThemeProvider } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
 
 /**
  * Layout Editor Page - Admin tool for creating and editing layout templates

@@ -1,5 +1,5 @@
 import type { Slide as ReduxSlide, Block, Row } from "@/types/presentation";
-import { BLOCK_TYPES } from "@/app/(protected)/presentation/[id]/editor/blocks/definitions";
+import { BLOCK_TYPES } from "@/app/(protected)/docs/[id]/editor/blocks/definitions";
 
 /**
  * Migration helper for block content. 

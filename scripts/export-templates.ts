@@ -26,7 +26,7 @@ async function exportTemplates() {
   try {
     // We'll use the already defined templates from the src directory
     // We use dynamic import to avoid some top-level execution issues
-    const { templates } = await import("../src/app/(protected)/presentation/[id]/editor/templates/index.js");
+    const { templates } = await import("../src/app/(protected)/docs/[id]/editor/templates/index.js");
     
     // Ensure output directory exists
     if (!fs.existsSync(OUTPUT_DIR)) {

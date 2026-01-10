@@ -3,7 +3,7 @@
 import React, { useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useOutlineEditor } from "@/app/(protected)/presentation/[id]/hooks/use-outline";
+import { useOutlineEditor } from "@/app/(protected)/docs/[id]/hooks/use-outline";
 import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
 import { IconSparkles, IconLoader2 } from "@tabler/icons-react";
