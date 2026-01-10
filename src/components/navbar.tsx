@@ -9,9 +9,8 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 
 const menuItems = [
   { name: "Blog", href: "/blog" },
-  { name: "Research", href: "#research" },
-  { name: "Templates", href: "#templates" },
-  { name: "Pricing", href: "#pricing" },
+  { name: "About", href: "/about" },
+  { name: "Pricing", href: "/pricing" },
 ];
 
 export function Navbar() {

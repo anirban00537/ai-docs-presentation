@@ -108,17 +108,13 @@ export default function PricingPage() {
                 key={product.id}
                 product={product}
                 isPopular={isPopular}
-                isCurrentPlan={isCurrentPlan}
-                isCanceled={isCanceled}
+                isCurrentPlan={false}
+                isCanceled={false}
                 index={index}
-                onSelect={
-                  hasBlockingSubscription && (!isCurrentPlan || !isCanceled)
-                    ? undefined
-                    : handleSelectPlan
-                }
+                onSelect={handleSelectPlan}
                 loading={loadingCheckout === product.id}
-                href={hasBlockingSubscription && !isCurrentPlan ? "/subscription" : undefined}
-                cta={isCurrentPlan ? (isCanceled ? "Renew Plan" : "Current Plan") : (hasBlockingSubscription ? "View Subscription" : undefined)}
+                href={undefined}
+                cta={undefined}
               />
             );
           })}
