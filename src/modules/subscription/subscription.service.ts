@@ -315,7 +315,6 @@ export class SubscriptionService {
         await this.creditService.updateCreditsFromSubscription(
           user.id,
           CREDITS.FREE_TIER,
-          { previousPeriodEnd: null },
         );
 
         return successResponse('Subscription synced successfully', {
@@ -429,13 +428,10 @@ export class SubscriptionService {
           this.logger.log(
             `Credit sync triggered for user ${user.id}: newSubscription=${isNewSubscription}, newPeriod=${isNewPeriod}, planChange=${isPlanChange}`,
           );
-          // Pass the PREVIOUS period end date to determine rollover eligibility
+          // Reset credits with new monthly limit
           await this.creditService.updateCreditsFromSubscription(
             user.id,
             monthlyLimit,
-            {
-              previousPeriodEnd: existingSubscription?.currentPeriodEnd || null,
-            },
           );
         } else {
           this.logger.debug(
@@ -648,7 +644,6 @@ export class SubscriptionService {
       await this.creditService.updateCreditsFromSubscription(
         user.id,
         monthlyLimit,
-        { previousPeriodEnd: null },
       );
 
       this.logger.log(
@@ -722,11 +717,10 @@ export class SubscriptionService {
         );
 
       const monthlyLimit = await this.getMonthlyCreditLimit(newProductId, data);
-      // Pass the PREVIOUS period end (captured before update) to determine rollover eligibility
+      // Reset credits with new monthly limit
       await this.creditService.updateCreditsFromSubscription(
         subscription.userId,
         monthlyLimit,
-        { previousPeriodEnd: subscription.currentPeriodEnd },
       );
     } else {
       this.logger.debug(
@@ -811,7 +805,6 @@ export class SubscriptionService {
       await this.creditService.updateCreditsFromSubscription(
         subscription.userId,
         CREDITS.FREE_TIER,
-        { previousPeriodEnd: null },
       );
     }
   }
@@ -855,7 +848,6 @@ export class SubscriptionService {
     await this.creditService.updateCreditsFromSubscription(
       subscription.userId,
       CREDITS.FREE_TIER,
-      { previousPeriodEnd: null },
     );
 
     // Update subscription status to canceled/revoked
@@ -897,7 +889,6 @@ export class SubscriptionService {
           await this.creditService.updateCreditsFromSubscription(
             subscription.userId,
             CREDITS.FREE_TIER,
-            { previousPeriodEnd: null },
           );
         }
 
@@ -1013,7 +1004,6 @@ export class SubscriptionService {
         await this.creditService.updateCreditsFromSubscription(
           userId,
           CREDITS.FREE_TIER,
-          { previousPeriodEnd: null },
         );
 
         this.logger.log(
@@ -1105,7 +1095,6 @@ export class SubscriptionService {
     productId?: string,
     data?: any,
   ): Promise<number> {
-    const FREE_TIER_CREDITS = 10;
 
     // 1. Try to get from passed data (webhook/sync data)
     const metadata = data?.metadata || data?.product?.metadata || {};
@@ -1153,11 +1142,10 @@ export class SubscriptionService {
       }
     }
 
-    // 3. Fall back to free tier if nothing found
     this.logger.warn(
-      `CREDIT ASSIGNMENT [FREE_TIER]: No credit limit found for product ${productId}, defaulting to ${FREE_TIER_CREDITS} (free tier)`,
+      `CREDIT ASSIGNMENT [FREE_TIER]: No credit limit found for product ${productId}, defaulting to ${CREDITS.FREE_TIER} (free tier)`,
     );
-    return FREE_TIER_CREDITS;
+    return CREDITS.FREE_TIER;
   }
 
   /**
@@ -1165,7 +1153,6 @@ export class SubscriptionService {
    * Used when we already have the full product data (e.g., in getProducts list)
    */
   private extractCreditLimitFromProduct(product: any): number {
-    const FREE_TIER_CREDITS = 10;
     const metadata = product?.metadata || {};
     const aiCredits = metadata.ai_credits;
 
@@ -1176,7 +1163,7 @@ export class SubscriptionService {
       }
     }
 
-    return FREE_TIER_CREDITS;
+    return CREDITS.FREE_TIER;
   }
 
   /**

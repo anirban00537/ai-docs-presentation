@@ -159,9 +159,10 @@ export class PresentationController {
     res.setHeader('X-Accel-Buffering', 'no');
     res.flushHeaders(); // Start the stream immediately
 
+    let creditsDeducted = 0; // Track credits deducted for potential refund
+
     try {
-      // Check if user has enough credits (estimate: 1 credit per slide)
-      // First, get the outline to know how many slides will be generated
+      // Get the outline to know how many slides will be generated
       const outline = await this.outlineService.getOutlineByPresentationId(
         presentationId,
         user,
@@ -193,17 +194,22 @@ export class PresentationController {
       const creditsPerSlide = 2; // 2 credits per slide (updated Jan 2026)
       const requiredCredits = estimatedSlides * creditsPerSlide;
 
-      // Check if user has enough credits
-      const hasCredits = await this.creditService.hasEnoughCredits(
-        user.id,
-        requiredCredits,
-      );
-
-      if (!hasCredits) {
+      // UPFRONT DEDUCTION: Deduct credits before generation starts to prevent race conditions
+      try {
+        await this.creditService.useCredits(
+          user.id,
+          requiredCredits,
+          `Generating ${estimatedSlides} slides for presentation ${presentationId}`,
+          presentationId,
+        );
+        creditsDeducted = requiredCredits;
+        this.logger.log(`[Credits] Deducted ${requiredCredits} credits upfront for user ${user.id}`);
+      } catch (creditError: any) {
+        // Credit deduction failed (likely insufficient credits)
         res.write(
           `data: ${JSON.stringify({ 
             type: 'error', 
-            message: `Insufficient credits. Required: ${requiredCredits} credits to generate ${estimatedSlides} slides. Please upgrade your subscription or purchase more credits.` 
+            message: creditError.message || `Insufficient credits. Required: ${requiredCredits} credits to generate ${estimatedSlides} slides.` 
           })}\n\n`,
         );
         res.end();
@@ -211,50 +217,72 @@ export class PresentationController {
       }
 
       let slidesGenerated = 0;
-      const stream =
-        this.promptPresentationAIService.generateAndSaveSlidesFromPresentation(
-          presentationId,
-          user,
-        );
+      let generationError = false;
 
-      for await (const chunk of stream) {
-        const data = JSON.parse(chunk);
-        
-        // Log streaming chunks for debugging
-        // if (data.type === 'slide-streaming') {
-        //   this.logger.debug(`[SSE] Sending streaming chunk: ${data.accumulatedText?.length || 0} chars`);
-        // }
-        
-        // Track successful slide generation
-        if (data.type === 'slide') {
-          slidesGenerated++;
-        }
+      try {
+        const stream =
+          this.promptPresentationAIService.generateAndSaveSlidesFromPresentation(
+            presentationId,
+            user,
+          );
 
-        // If generation completed successfully, deduct credits
-        if (data.type === 'complete') {
-          const actualCreditsUsed = slidesGenerated * creditsPerSlide;
-          try {
-            await this.creditService.useCredits(
-              user.id,
-              actualCreditsUsed,
-              `Generated ${slidesGenerated} slides for presentation ${presentationId}`,
-              presentationId,
-            );
-          } catch (creditError) {
-            // Log error but don't fail the request since slides are already generated
-            this.logger.error('Failed to deduct credits:', creditError);
+        for await (const chunk of stream) {
+          const data = JSON.parse(chunk);
+          
+          // Track successful slide generation
+          if (data.type === 'slide') {
+            slidesGenerated++;
+          }
+
+          // Check for error in stream
+          if (data.type === 'error') {
+            generationError = true;
+          }
+
+          res.write(`data: ${chunk}\n\n`);
+          // Force flush to prevent buffering
+          if ((res as any).flush) {
+            (res as any).flush();
           }
         }
+      } catch (streamError: any) {
+        generationError = true;
+        res.write(
+          `data: ${JSON.stringify({ type: 'error', message: streamError.message })}\n\n`,
+        );
+      }
 
-        res.write(`data: ${chunk}\n\n`);
-        // Force flush to prevent buffering
-        if ((res as any).flush) {
-          (res as any).flush();
+      // If generation failed and we deducted credits, refund them
+      if (generationError && creditsDeducted > 0) {
+        try {
+          await this.creditService.refundCredits(
+            user.id,
+            creditsDeducted,
+            `Refund: Slide generation failed for presentation ${presentationId}`,
+            presentationId,
+          );
+          this.logger.log(`[Credits] Refunded ${creditsDeducted} credits to user ${user.id} due to generation failure`);
+        } catch (refundError) {
+          this.logger.error('Failed to refund credits:', refundError);
         }
       }
 
       res.end();
     } catch (error: any) {
+      // If we deducted credits but hit an unexpected error, try to refund
+      if (creditsDeducted > 0) {
+        try {
+          await this.creditService.refundCredits(
+            user.id,
+            creditsDeducted,
+            `Refund: Unexpected error during slide generation for presentation ${presentationId}`,
+            presentationId,
+          );
+          this.logger.log(`[Credits] Refunded ${creditsDeducted} credits to user ${user.id} due to unexpected error`);
+        } catch (refundError) {
+          this.logger.error('Failed to refund credits:', refundError);
+        }
+      }
       res.write(
         `data: ${JSON.stringify({ type: 'error', message: error.message })}\n\n`,
       );

@@ -64,8 +64,7 @@ export class SchedulingService {
         // Reset credits to free tier
         await this.creditService.updateCreditsFromSubscription(
           sub.userId, 
-          CREDITS.FREE_TIER, 
-          { previousPeriodEnd: null }
+          CREDITS.FREE_TIER,
         );
         
         this.logger.log(`[CRON] Successfully expired subscription for user ${sub.userId}`);

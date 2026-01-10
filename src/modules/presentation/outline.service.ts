@@ -277,15 +277,26 @@ export class OutlineService implements OnModuleInit {
     this.generatingOutlines.add(id);
     this.logger.log(`🚀 STARTING OUTLINE STREAM GENERATION: ID ${id}`);
 
+    let creditDeducted = false; // Track if credit was deducted for potential refund
+
     try {
       if (!this.openRouter) {
         throw new Error('OpenRouter service is not initialized');
       }
 
-      this.logger.log(`💳 [Outline ${id}] Checking credits...`);
-      const hasCredits = await this.creditService.hasEnoughCredits(user.id, 1);
-      if (!hasCredits) {
-        throw new BadRequestException('Insufficient credits to generate presentation outline.');
+      // UPFRONT DEDUCTION: Deduct credit before generation starts to prevent race conditions
+      this.logger.log(`💳 [Outline ${id}] Deducting 1 credit upfront...`);
+      try {
+        await this.creditService.useCredits(
+          user.id,
+          1,
+          `Generating AI outline for presentation ${outline.title || id}`,
+          outline.presentationId || undefined,
+        );
+        creditDeducted = true;
+        this.logger.log(`💳 [Outline ${id}] Credit deducted successfully`);
+      } catch (creditError: any) {
+        throw new BadRequestException(creditError.message || 'Insufficient credits to generate presentation outline.');
       }
 
       const userPrompt = outline.prompt;
@@ -484,17 +495,7 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
         outlines: outlinesWithLayoutId,
       });
 
-      // Credit deduction
-       try {
-        await this.creditService.useCredits(
-          user.id,
-          1,
-          `Generated AI outline for presentation ${outline.title || id}`,
-          outline.presentationId || undefined,
-        );
-      } catch (creditError) {
-        this.logger.error(`❌ [Outline ${id}] Failed to deduct credit:`, creditError);
-      }
+      // Credits were already deducted upfront - no need to deduct again
 
       // Log AI usage to database
       if (usageData) {
@@ -540,6 +541,22 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
     } catch (error: any) {
       this.logger.error(`❌ [Outline ${id}] GENERATION ERROR:`, error);
       await this.updateOutlineStatus(id, 'failed');
+      
+      // Refund credit if it was deducted and generation failed
+      if (creditDeducted) {
+        try {
+          await this.creditService.refundCredits(
+            user.id,
+            1,
+            `Refund: Outline generation failed for ${outline.title || id}`,
+            outline.presentationId || undefined,
+          );
+          this.logger.log(`💳 [Outline ${id}] Credit refunded due to generation failure`);
+        } catch (refundError) {
+          this.logger.error(`❌ [Outline ${id}] Failed to refund credit:`, refundError);
+        }
+      }
+      
       yield JSON.stringify({ type: 'error', message: error.message });
     } finally {
       this.generatingOutlines.delete(id);

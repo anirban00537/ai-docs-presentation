@@ -116,30 +116,71 @@ export class CreditService {
   }
 
   /**
-    * Update credits based on subscription change
-    * Logic: 
-    * 1. Active subscription with valid period (not expired) -> User upgrades/renews: ADD credits to remaining balance
-    * 2. Expired/No subscription -> New/Reactivation: REPLACE with new quota
-    * 
-    * @param userId - The user ID
-    * @param newLimit - The new credit limit from the plan
-    * @param options - Configuration options
-    * @param options.forceReplace - If true, always replace instead of adding
-    * @param options.previousPeriodEnd - The END date of the PREVIOUS subscription period (before update)
-    */
+   * Refund credits (used when generation fails after upfront deduction)
+   */
+  async refundCredits(
+    userId: string,
+    amount: number,
+    description?: string,
+    presentationId?: string,
+  ): Promise<void> {
+    if (!Number.isInteger(amount) || amount <= 0) {
+      throw new BadRequestException(
+        `Invalid refund amount: ${amount}. Must be a positive integer.`,
+      );
+    }
+
+    console.log(`[CREDIT_SERVICE] Refunding ${amount} credits to user ${userId}: ${description || 'No description'}`);
+    
+    await this.prisma.$transaction(async (tx) => {
+      const balance = await tx.creditBalance.findUnique({
+        where: { userId },
+      });
+
+      if (!balance) {
+        throw new NotFoundException('Credit balance not found');
+      }
+
+      const newBalance = balance.balance + amount;
+
+      await tx.creditBalance.update({
+        where: { userId },
+        data: {
+          balance: newBalance,
+          usedCredits: {
+            decrement: amount,
+          }
+        },
+      });
+
+      await tx.creditTransaction.create({
+        data: {
+          userId,
+          amount: amount, // Positive amount for refund
+          type: 'refund',
+          description: description || 'Credits refunded',
+          presentationId,
+          balanceAfter: newBalance,
+        },
+      });
+    });
+  }
+
+  /**
+   * Update credits based on subscription change
+   * 
+   * Business Rule: Credits reset every month (no rollover).
+   * Always replace balance with the new quota.
+   * 
+   * @param userId - The user ID
+   * @param newLimit - The new credit limit from the plan
+   */
   async updateCreditsFromSubscription(
     userId: string,
     newLimit: number,
-    options?: {
-      forceReplace?: boolean;
-      previousPeriodEnd?: Date | null;
-    },
   ): Promise<void> {
-    const forceReplace = options?.forceReplace ?? false;
-    const previousPeriodEnd = options?.previousPeriodEnd;
-    
     console.log(
-      `[CREDIT_SERVICE] Syncing credits for user ${userId} to ${newLimit} (forceReplace: ${forceReplace}, previousPeriodEnd: ${previousPeriodEnd})`,
+      `[CREDIT_SERVICE] Resetting credits for user ${userId} to ${newLimit}`,
     );
 
     await this.prisma.$transaction(async (tx) => {
@@ -147,49 +188,8 @@ export class CreditService {
         where: { userId },
       });
 
-      const now = new Date();
-
-      // Check if the PREVIOUS subscription period was still valid (not expired)
-      // This determines if we should roll over remaining credits
-      const hadValidActivePeriod = 
-        previousPeriodEnd && 
-        new Date(previousPeriodEnd) > now;
-
-      let finalBalance: number;
-      let updateDescription: string;
-      let isActuallyAdding: boolean = false;
-
-      console.log(
-        `[CREDIT_SERVICE] Rollover Decision: userId=${userId}, previousPeriodEnd=${previousPeriodEnd}, isStillValid=${hadValidActivePeriod}, existingBalance=${existingBalance?.balance}, existingQuota=${existingBalance?.quota}`,
-      );
-
-      // We ADD credits ONLY if:
-      // 1. The previous subscription period was still valid (not expired)
-      // 2. User has an existing balance
-      // 3. We're not forcing a replacement
-      if (hadValidActivePeriod && existingBalance && !forceReplace) {
-        // Upgrade/Mid-cycle renewal: Add to existing balance (rollover)
-        finalBalance = existingBalance.balance + newLimit;
-        updateDescription = `Plan upgrade: +${newLimit} credits added to existing ${existingBalance.balance} (rollover)`;
-        isActuallyAdding = true;
-        console.log(
-          `[CREDIT_SERVICE] Action: ADDING (rollover). Previous period still valid. New Balance: ${finalBalance}`,
-        );
-      } else {
-        // New subscription, expired period, or forced sync: Replace with new quota
-        finalBalance = newLimit;
-        if (forceReplace) {
-          updateDescription = `Plan sync: Adjusted balance to ${newLimit} credits`;
-        } else if (!previousPeriodEnd) {
-          updateDescription = `New subscription: Set balance to ${newLimit} credits`;
-        } else {
-          updateDescription = `New billing cycle: Set balance to ${newLimit} credits (previous period expired)`;
-        }
-        isActuallyAdding = false;
-        console.log(
-          `[CREDIT_SERVICE] Action: REPLACING. Reason: ${!previousPeriodEnd ? 'No previous period' : hadValidActivePeriod ? 'Force replace' : 'Previous period expired'}. New Balance: ${finalBalance}`,
-        );
-      }
+      const finalBalance = newLimit;
+      const updateDescription = `Credit balance reset to ${newLimit} credits`;
 
       if (!existingBalance) {
         console.log(`[CREDIT_SERVICE] Creating new credit balance record for user ${userId}`);
@@ -218,13 +218,13 @@ export class CreditService {
       await tx.creditTransaction.create({
         data: {
           userId,
-          amount: isActuallyAdding ? newLimit : finalBalance,
+          amount: finalBalance,
           type: 'purchase',
           description: updateDescription,
           balanceAfter: finalBalance,
         },
       });
-      console.log(`[CREDIT_SERVICE] Credit sync completed for user ${userId}. Final balance: ${finalBalance}`);
+      console.log(`[CREDIT_SERVICE] Credit reset completed for user ${userId}. Final balance: ${finalBalance}`);
     });
   }
 
@@ -244,8 +244,6 @@ export class CreditService {
    * Use this when a subscription is canceled, expired, or revoked
    */
   async resetToFreeTier(userId: string): Promise<void> {
-    await this.updateCreditsFromSubscription(userId, FREE_TIER_CREDITS, { 
-      previousPeriodEnd: null 
-    });
+    await this.updateCreditsFromSubscription(userId, FREE_TIER_CREDITS);
   }
 }
