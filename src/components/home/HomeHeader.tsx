@@ -8,9 +8,9 @@ interface HomeHeaderProps {
   subtitle?: React.ReactNode;
 }
 
-export const HomeHeader: React.FC<HomeHeaderProps> = ({ 
-  title = <>What would you like to <span className="text-primary/80 font-normal italic">build</span> today?</>,
-  subtitle 
+export const HomeHeader: React.FC<HomeHeaderProps> = ({
+  title = <>What Presentation to <span className="text-primary/80 font-normal italic">build</span> today?</>,
+  subtitle
 }) => {
   return (
     <motion.div

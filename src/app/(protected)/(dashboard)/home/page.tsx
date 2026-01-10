@@ -31,7 +31,7 @@ export default function HomePage() {
             name="message"
             defaultValue={promptValue}
             onError={(errorMessage) => setError(errorMessage)}
-            className="border border-slate-200 bg-slate-100 shadow-none"
+            className="border border-slate-200 bg-slate-50 shadow-none"
           />
 
           {error && (

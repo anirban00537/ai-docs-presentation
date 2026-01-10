@@ -141,7 +141,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
             } else {
               // Handle API response with success: false
               const errorMessage = response.message || "Failed to save prompt";
-              
+
               // Check if it's a credit-related error
               if (
                 errorMessage.toLowerCase().includes("insufficient credits") ||
@@ -159,7 +159,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
               } else {
                 toast.error(errorMessage, { duration: 5000 });
               }
-              
+
               onError?.(errorMessage);
             }
           },
@@ -167,9 +167,9 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
             const errorMessage = err?.response?.data?.message ||
               err?.message ||
               "An unexpected error occurred";
-            
+
             toast.error(errorMessage, { duration: 5000 });
-            
+
             onError?.(errorMessage);
           },
         }
@@ -225,7 +225,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
       <form onSubmit={handleSubmit}>
         <div
           className={cn(
-            "flex flex-col rounded-[24px] p-2 transition-all duration-300 bg-slate-100 shadow-depth-3 border border-secondary/20 focus-within:shadow-xl focus-within:border-secondary/40 focus-within:ring-1 focus-within:ring-secondary/20 cursor-text",
+            "flex flex-col rounded-[24px] p-2 transition-all duration-300 bg-slate-50 shadow-depth-3 border border-slate-200 focus-within:shadow-xl focus-within:border-slate-200 focus-within:ring-1 focus-within:ring-slate-200 cursor-text",
             className
           )}
         >
