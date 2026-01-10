@@ -16,6 +16,7 @@ import {
 } from "@/services/presentation";
 import { useAppDispatch } from "@/store/hooks";
 import { fetchCreditBalance } from "@/store/slices/subscriptionSlice";
+import { subscriptionKeys } from "@/hooks/use-subscription";
 import { useAdminThemesList } from "./use-themes";
 import { type ThemeResponse } from "@/services/themes";
 import { useRouter } from "next/navigation";
@@ -29,6 +30,7 @@ export const outlineKeys = {
 // --- Sub-Hook: Outline Generation (Streaming) ---
 export const useOutlineGeneration = () => {
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const generateOutlineStreamMutation = useGenerateOutlineStream();
   
   const [isGenerating, setIsGenerating] = useState(false);
@@ -94,8 +96,10 @@ export const useOutlineGeneration = () => {
            }
            setIsGenerating(false);
            setGenerationSpeed(0);
-           // Refresh credits on completion
+           // Refresh credits on completion (both Redux and React Query)
            dispatch(fetchCreditBalance());
+           queryClient.invalidateQueries({ queryKey: subscriptionKeys.credits() });
+           queryClient.invalidateQueries({ queryKey: subscriptionKeys.status() });
         } else if (chunk.type === 'error') {
            setIsGenerating(false);
            setGenerationSpeed(0);
@@ -103,7 +107,7 @@ export const useOutlineGeneration = () => {
         }
       }
     });
-  }, [isGenerating, generateOutlineStreamMutation, dispatch]);
+  }, [isGenerating, generateOutlineStreamMutation, dispatch, queryClient]);
 
   const resetGeneration = useCallback(() => {
       setIsGenerating(false);
@@ -202,6 +206,7 @@ export const useGenerateOutlineStream = () => {
 // Generate and create slides hook
 export const useGenerateAndCreateSlides = () => {
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       presentationId,
@@ -211,7 +216,10 @@ export const useGenerateAndCreateSlides = () => {
       onChunk: (chunk: SlideGenerationChunk) => void;
     }) => generateAndCreateSlides(presentationId, onChunk),
     onSuccess: () => {
+      // Refresh credits (both Redux and React Query)
       dispatch(fetchCreditBalance());
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.credits() });
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.status() });
     },
     onError: (error: any) => {
       console.error("[useGenerateAndCreateSlides] Mutation error:", error);
