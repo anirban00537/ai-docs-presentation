@@ -67,9 +67,9 @@ export const ContentRow = memo(function ContentRow({
   
   // Initialize widths
   const [localWidths, setLocalWidths] = useState<number[]>(
-    row.columnWidths && row.columnWidths.length === row.blocks.length
+    row.columnWidths && row.columnWidths.length === (row.blocks?.length || 0)
       ? row.columnWidths
-      : Array(row.blocks.length).fill(1)
+      : Array(row.blocks?.length || 0).fill(1)
   );
   
   // Keep tracks of widths without triggering effects during drag
@@ -79,14 +79,14 @@ export const ContentRow = memo(function ContentRow({
   useEffect(() => {
     if (!isResizing) {
       const newWidths =
-        row.columnWidths && row.columnWidths.length === row.blocks.length
+        row.columnWidths && row.columnWidths.length === (row.blocks?.length || 0)
           ? row.columnWidths
-          : Array(row.blocks.length).fill(1);
+          : Array(row.blocks?.length || 0).fill(1);
       
       setLocalWidths(newWidths);
       latestWidthsRef.current = newWidths;
     }
-  }, [row.columnWidths, row.blocks.length, isResizing]);
+  }, [row.columnWidths, row.blocks?.length, isResizing]);
 
   const rowContainerRef = useRef<HTMLDivElement>(null);
   const theme = useEditorTheme();
@@ -98,7 +98,7 @@ export const ContentRow = memo(function ContentRow({
       type: "row",
       rowId: row.id,
       slideId,
-      insertIndex: dropIndicator?.index ?? row.blocks.length,
+      insertIndex: dropIndicator?.index ?? (row.blocks?.length || 0),
     },
     disabled: readOnly,
   });
@@ -174,7 +174,7 @@ export const ContentRow = memo(function ContentRow({
       const mouseX = e.clientX;
       const relativeX = mouseX - rect.left;
 
-      const blockCount = row.blocks.length;
+      const blockCount = row.blocks?.length || 0;
       if (blockCount === 0) {
         setDropIndicator({ index: 0, leftPercent: 50 });
         return;
@@ -210,7 +210,7 @@ export const ContentRow = memo(function ContentRow({
         leftPercent: Math.min(100, Math.max(0, leftPercent)),
       });
     },
-    [isOver, isAnyDragActive, row.blocks.length, localWidths, isResizing]
+    [isOver, isAnyDragActive, row.blocks?.length, localWidths, isResizing]
   );
 
   const handleMouseLeave = useCallback(() => {}, []);
@@ -314,19 +314,19 @@ export const ContentRow = memo(function ContentRow({
           overflow: "visible",
         }}
       >
-        {row.blocks.map((block, index) => (
+        {(row.blocks || []).map((block, index) => (
           <BlockCell
             key={block.id}
             block={block}
             slideId={slideId}
             rowId={row.id}
             index={index}
-            totalBlocksInRow={row.blocks.length}
+            totalBlocksInRow={row.blocks?.length || 0}
             rowIndex={rowIndex}
             totalRowsInSlide={totalRowsInSlide}
             onUpdate={onUpdateBlock}
             onAddColumn={onAddColumn}
-            isLastBlock={index === row.blocks.length - 1}
+            isLastBlock={index === (row.blocks?.length || 0) - 1}
             canAddColumn={canAddColumn}
             readOnly={readOnly}
             // Resize props

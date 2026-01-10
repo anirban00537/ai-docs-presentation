@@ -45,7 +45,10 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
   const reduxSlide = useMemo(
     () => ({
       id: slide.id,
-      rows: slide.data?.rows || [],
+      rows: (slide.data?.rows || []).map((row: any) => ({
+        ...row,
+        blocks: row.blocks || [],
+      })),
     }),
     [slide]
   );
