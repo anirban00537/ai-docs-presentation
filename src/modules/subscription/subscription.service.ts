@@ -39,7 +39,7 @@ export class SubscriptionService {
     private readonly prisma: PrismaService,
     private readonly polarService: PolarService,
     private readonly creditService: CreditService,
-  ) {}
+  ) { }
 
   /**
    * Get subscription status for a user
@@ -110,12 +110,12 @@ export class SubscriptionService {
     hasAccess: boolean;
     subscription: any | null;
     reason:
-      | 'active'
-      | 'trialing'
-      | 'canceled_but_period_valid'
-      | 'no_subscription'
-      | 'period_ended'
-      | 'inactive';
+    | 'active'
+    | 'trialing'
+    | 'canceled_but_period_valid'
+    | 'no_subscription'
+    | 'period_ended'
+    | 'inactive';
     periodEnd: Date | null;
   }> {
     const subscription = await this.prisma.subscription.findUnique({
@@ -409,43 +409,37 @@ export class SubscriptionService {
         const isNewPeriod = newPeriodStart > existingPeriodStart;
         const isPlanChange = productId !== existingSubscription?.productId;
 
-        // NEW: Also check if current quota matches plan limit
-        const creditBalance = await this.creditService.getCreditBalance(
-          user.id,
-        );
+        // Get monthly limit for logging purposes
         const monthlyLimit = await this.getMonthlyCreditLimit(
           activeSubscription.product?.id,
           activeSubscription,
         );
-        const isQuotaMismatch =
-          creditBalance && creditBalance.quota !== monthlyLimit;
 
         this.logger.log(
-          `Sync Check [${user.id}]: hasActiveAccess=${hasActiveAccess}, isNewSub=${isNewSubscription}, isNewPeriod=${isNewPeriod}, isPlanChange=${isPlanChange}, isQuotaMismatch=${isQuotaMismatch} (BalanceQuota=${creditBalance?.quota}, PlanLimit=${monthlyLimit})`,
+          `Sync Check [${user.id}]: hasActiveAccess=${hasActiveAccess}, isNewSub=${isNewSubscription}, isNewPeriod=${isNewPeriod}, isPlanChange=${isPlanChange}`,
         );
 
+        // Only reset credits on actual subscription changes (new subscription, new period, or plan change)
+        // Do NOT reset credits just because of a quota mismatch during manual sync
         if (
           isNewSubscription ||
           isNewPeriod ||
-          isPlanChange ||
-          isQuotaMismatch
+          isPlanChange
         ) {
           this.logger.log(
-            `Credit sync triggered for user ${user.id}: newSubscription=${isNewSubscription}, newPeriod=${isNewPeriod}, planChange=${isPlanChange}, quotaMismatch=${isQuotaMismatch}`,
+            `Credit sync triggered for user ${user.id}: newSubscription=${isNewSubscription}, newPeriod=${isNewPeriod}, planChange=${isPlanChange}`,
           );
           // Pass the PREVIOUS period end date to determine rollover eligibility
-          // If forceReplace (quota mismatch), don't roll over credits
           await this.creditService.updateCreditsFromSubscription(
             user.id,
             monthlyLimit,
             {
-              forceReplace: isQuotaMismatch,
               previousPeriodEnd: existingSubscription?.currentPeriodEnd || null,
             },
           );
         } else {
           this.logger.debug(
-            `Sync: No credit reset needed for user ${user.id} - subscription data and quota are already in sync`,
+            `Sync: No credit reset needed for user ${user.id} - subscription data is already in sync`,
           );
         }
       } else {
@@ -779,7 +773,7 @@ export class SubscriptionService {
       // User canceled but period is still valid and they chose "at period end"
       this.logger.log(
         `Subscription ${polarSubscriptionId} canceled but period valid until ${periodEnd}. ` +
-          `Preserving access and credits for user ${subscription.userId}.`,
+        `Preserving access and credits for user ${subscription.userId}.`,
       );
 
       await this.prisma.subscription.update({
@@ -799,7 +793,7 @@ export class SubscriptionService {
       // Period has ended OR user chose "Immediately"
       this.logger.log(
         `Subscription ${polarSubscriptionId} ${!cancelAtPeriodEnd ? 'immediately canceled' : 'period has ended'} for user ${subscription.userId}. ` +
-          `Revoking access and resetting credits to free tier.`,
+        `Revoking access and resetting credits to free tier.`,
       );
 
       await this.prisma.subscription.update({
@@ -838,7 +832,7 @@ export class SubscriptionService {
 
     this.logger.log(
       `Handling subscription.revoked webhook: ${polarSubscriptionId} ` +
-        `(${isImmediateRevoke ? 'IMMEDIATE' : 'END-OF-PERIOD'} revocation)`,
+      `(${isImmediateRevoke ? 'IMMEDIATE' : 'END-OF-PERIOD'} revocation)`,
     );
 
     const subscription = await this.prisma.subscription.findUnique({
@@ -854,7 +848,7 @@ export class SubscriptionService {
 
     this.logger.log(
       `Subscription ${polarSubscriptionId} revoked for user ${subscription.userId}. ` +
-        `Access ended. Resetting credits to free tier.`,
+      `Access ended. Resetting credits to free tier.`,
     );
 
     // Reset credits to free tier - access has ended
@@ -1525,7 +1519,7 @@ export class SubscriptionService {
           );
           return errorResponse(
             'You already have an active subscription. ' +
-              'Please visit your subscription page to manage or change your plan.',
+            'Please visit your subscription page to manage or change your plan.',
           );
         }
         // If no active access (expired/canceled), allow new subscription
