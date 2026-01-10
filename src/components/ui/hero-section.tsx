@@ -134,7 +134,7 @@ export default function HeroSection() {
                transition={{ duration: 0.8, delay: 0.2 }}
                className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed"
             >
-               Butterfast transforms your notes into stunning, professional presentations. 
+               Butterfast transforms your prompts into stunning, professional presentations. 
                No design skills needed. Just pure storytelling.
             </motion.p>
 
