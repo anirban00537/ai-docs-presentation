@@ -18,6 +18,7 @@ import {
   uploadFile,
   deleteFileFromS3,
 } from 'src/shared/configs/multer-upload.config';
+import { coreConstant } from 'src/shared/helpers/coreConstant';
 
 @Injectable()
 export class ImagesService {
@@ -293,6 +294,33 @@ export class ImagesService {
     userId: string,
   ): Promise<ResponseModel> {
     try {
+      // 1. Check User Role & Subscription
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true },
+      });
+
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+      }
+
+      // If NOT Admin, enforce subscription check
+      if (user.role !== coreConstant.USER_ROLE_ADMIN) {
+        const subscription = await this.prisma.subscription.findFirst({
+          where: {
+            userId,
+            status: { in: Array.from(coreConstant.SUBSCRIPTION_ACTIVE_STATUSES) },
+          },
+        });
+
+        if (!subscription) {
+          throw new HttpException(
+            'Active subscription required to upload media',
+            HttpStatus.FORBIDDEN,
+          );
+        }
+      }
+
       if (!file) {
         return errorResponse('No file provided');
       }
@@ -335,6 +363,9 @@ export class ImagesService {
 
       return successResponse('Media uploaded successfully', media);
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       console.error('Error uploading media:', error);
       return errorResponse('Failed to upload media');
     }
