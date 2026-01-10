@@ -66,7 +66,7 @@ export default function PricingPage() {
 
   if (productsLoading) {
     return (
-      <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] px-4 py-16 w-full">
+      <div className="relative flex-1 overflow-y-auto flex flex-col items-center min-h-[calc(100vh-80px)] px-4 py-16 w-full">
         <div className="relative z-10 w-full max-w-7xl">
           <PageSkeleton>
             <Skeleton className="h-12 w-1/3 mx-auto rounded-2xl" />
@@ -94,7 +94,7 @@ export default function PricingPage() {
 
   return (
     <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] overflow-y-auto px-4 py-16">
-      <div className="relative z-10 w-full max-w-7xl flex flex-col gap-16">
+      <div className="relative z-10 w-full mt-16 max-w-7xl flex flex-col gap-16">
         <PricingHeader />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">

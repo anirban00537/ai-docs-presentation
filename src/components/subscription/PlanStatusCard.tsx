@@ -130,7 +130,7 @@ export const PlanStatusCard: React.FC<PlanStatusCardProps> = ({
           ) : isActive ? (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" className="text-red-500 hover:text-red-600 h-9 px-3 text-sm hover:bg-red-50 rounded-lg">Terminate Membership</Button>
+                <Button variant="ghost" className="text-red-500 hover:text-red-600 h-9 px-3 text-sm hover:bg-red-50 rounded-lg">Cancel Subscription</Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="rounded-2xl border border-secondary/20 shadow-2xl bg-white/95 backdrop-blur-3xl">
                 <AlertDialogHeader>
