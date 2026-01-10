@@ -32,7 +32,7 @@ import {
 import { ImagePreviewModal } from "@/components/ImagePreviewModal";
 
 // Shared components
-import { EmptyState, GridSkeleton } from "@/components/shared";
+import { EmptyState, GridSkeleton, Pagination } from "@/components/shared";
 import { IconPhoto } from "@tabler/icons-react";
 
 // Sub-components
@@ -49,12 +49,15 @@ export default function MediaPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [mediaToDelete, setMediaToDelete] = useState<string | null>(null);
   const [previewMedia, setPreviewMedia] = useState<MediaItem | null>(null);
+  const [page, setPage] = useState(1);
+  const PER_PAGE = 20;
 
   // API hooks
   const listParams: ListMediaParams = {
     search: searchQuery || undefined,
     category: category,
-    perPage: 50,
+    perPage: PER_PAGE,
+    page,
   };
 
   const { data: mediaResponse, isLoading, error } = useListMedia(listParams);
@@ -63,11 +66,22 @@ export default function MediaPage() {
   const deleteMutation = useDeleteMedia();
 
   const mediaItems = mediaResponse?.data?.list || [];
+  const pagination = mediaResponse?.data?.pagination;
+  const totalPages = pagination?.totalPages || 1;
 
   // Handle file upload
   const handleUpload = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    // Scroll to top when changing pages
+    const scrollContainer = document.querySelector('.overflow-y-auto');
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0;
+    }
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -209,8 +223,8 @@ export default function MediaPage() {
       <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">
         <MediaHeader isUploading={uploadMutation.isPending} onUpload={handleUpload} />
 
-        <MediaFilters 
-          searchQuery={searchQuery} 
+        <MediaFilters
+          searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           category={category}
           onCategoryChange={setCategory}
@@ -222,7 +236,7 @@ export default function MediaPage() {
             animate={{ opacity: 1 }}
             className="text-sm text-muted-foreground mb-4 font-medium"
           >
-            {mediaItems.length} item{mediaItems.length !== 1 ? "s" : ""}
+            {pagination?.total || mediaItems.length} item{pagination?.total !== 1 ? "s" : ""}
           </motion.p>
         )}
 
@@ -233,7 +247,7 @@ export default function MediaPage() {
             Failed to load media. Please try again.
           </div>
         ) : mediaItems.length === 0 ? (
-          <EmptyState 
+          <EmptyState
             icon={IconPhoto}
             title="No media yet"
             description="Upload images to use in your presentations. They'll be stored securely and accessible from anywhere."
@@ -241,25 +255,35 @@ export default function MediaPage() {
             onAction={handleUpload}
           />
         ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
-          >
-            <AnimatePresence mode="popLayout">
-              {mediaItems.map((media) => (
-                <MediaCard
-                  key={media.id}
-                  media={media}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onToggleFavorite={handleToggleFavorite}
-                  onClick={setPreviewMedia}
-                  isDeleting={deletingId === media.id}
-                />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+            >
+              <AnimatePresence mode="popLayout">
+                {mediaItems.map((media) => (
+                  <MediaCard
+                    key={media.id}
+                    media={media}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onToggleFavorite={handleToggleFavorite}
+                    onClick={setPreviewMedia}
+                    isDeleting={deletingId === media.id}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+
+            <div className="mt-8">
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          </>
         )}
       </div>
 
