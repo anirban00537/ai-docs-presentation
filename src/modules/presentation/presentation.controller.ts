@@ -190,7 +190,7 @@ export class PresentationController {
       }
 
       const estimatedSlides = outlineItems.length;
-      const creditsPerSlide = 1; // Configure this based on your pricing
+      const creditsPerSlide = 2; // 2 credits per slide (updated Jan 2026)
       const requiredCredits = estimatedSlides * creditsPerSlide;
 
       // Check if user has enough credits
