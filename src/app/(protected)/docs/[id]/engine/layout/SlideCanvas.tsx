@@ -14,6 +14,7 @@ import * as Patterns from "@/app/(protected)/docs/[id]/editor/patterns";
 import { useResize } from "@/app/(protected)/docs/[id]/engine/hooks/useResize";
 import { DragStateBridge } from "./DragStateBridge";
 import { InsertDropZone } from "./InsertDropZone";
+import { cn } from "@/lib/utils";
 
 // Lazy load the heavy ImagePickerModal
 const ImagePickerModal = lazy(() => 
@@ -322,12 +323,10 @@ export const SlideCanvas = memo(function SlideCanvas({
 
           <div className={`relative flex-1 flex flex-col justify-center min-w-0 z-10 ${isBackground ? "z-20" : ""}`}>
             <div 
-              className={`relative min-w-0 max-w-full ${
-                fullWidth ? "w-full max-w-[1200px] mx-auto flex-1 self-center flex flex-col justify-center" : ""
-              }`}
-              style={{ 
-                padding: fullWidth ? "4rem 6rem" : "2rem 2.5rem",
-              }}
+              className={cn(
+                "relative min-w-0 max-w-full outline-none",
+                fullWidth ? "w-full max-w-[1200px] mx-auto flex-1 self-center flex flex-col justify-center p-16 md:p-24" : "flex-1 p-5 md:p-10"
+              )}
             >
               <div className="flex flex-col gap-0 relative">
                 {!readOnly && (

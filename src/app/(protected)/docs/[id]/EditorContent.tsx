@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   SlideCanvas,
   SlideNavigator,
@@ -26,6 +26,7 @@ import { useUndoRedoKeyboardShortcuts } from "@/app/(protected)/docs/[id]/hooks/
 import DragOverlayWrapper from "./DragOverlayWrapper";
 import { Slide } from "@/store/slices/slidesSlice";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 
 const EditorContent = ({ presentationId, outlineId }: { presentationId: string, outlineId: string | null }) => {
@@ -51,6 +52,9 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const isDark = theme.themeType === "dark";
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Mobile UI States
+  const [isMobileNavigatorOpen, setIsMobileNavigatorOpen] = useState(false);
 
   useUndoRedoKeyboardShortcuts();
 
@@ -72,6 +76,9 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
           slideElement.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       }, 100);
+      
+      // Close mobile navigator when a slide is selected
+      setIsMobileNavigatorOpen(false);
     }
   }, [activeSlideId, isPresenting]);
 
@@ -120,24 +127,69 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
         onUpdateColumnWidths={handleUpdateColumnWidths}
       />
 
-      <EditorHeader onPresentClick={startPresentation} />
+      <EditorHeader 
+        onPresentClick={startPresentation} 
+        onMenuClick={() => setIsMobileNavigatorOpen(!isMobileNavigatorOpen)}
+      />
 
       <div className="fixed inset-0 pt-16 flex overflow-hidden">
         <EditorBackground theme={theme} />
 
-        <SlideNavigator
-          slides={slides.filter(
-            (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:flex h-full">
+          <SlideNavigator
+            slides={slides.filter(
+              (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+            )}
+            onUpdateBlock={handleUpdateBlock}
+            onDeleteRow={handleDeleteRow}
+            onAddColumn={handleAddColumn}
+            onAddRowAtTop={handleAddRowAtTop}
+            onAddRowAtBottom={handleAddRowAtBottom}
+            onUpdateColumnWidths={handleUpdateColumnWidths}
+            onAddSlide={handleAddSlide}
+            onDeleteSlide={handleDeleteSlide}
+          />
+        </div>
+
+        {/* Mobile Sidebar Overlay */}
+        <AnimatePresence>
+          {isMobileNavigatorOpen && (
+            <div className="lg:hidden fixed inset-0 z-[100]">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsMobileNavigatorOpen(false)}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              />
+              <motion.div
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="absolute top-0 left-0 bottom-0 w-[240px] bg-white dark:bg-[#121216] shadow-2xl"
+              >
+                <div className="h-full w-full overflow-hidden">
+                   <SlideNavigator
+                      slides={slides.filter(
+                        (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+                      )}
+                      onUpdateBlock={handleUpdateBlock}
+                      onDeleteRow={handleDeleteRow}
+                      onAddColumn={handleAddColumn}
+                      onAddRowAtTop={handleAddRowAtTop}
+                      onAddRowAtBottom={handleAddRowAtBottom}
+                      onUpdateColumnWidths={handleUpdateColumnWidths}
+                      onAddSlide={handleAddSlide}
+                      onDeleteSlide={handleDeleteSlide}
+                      isMobile={true}
+                    />
+                </div>
+              </motion.div>
+            </div>
           )}
-          onUpdateBlock={handleUpdateBlock}
-          onDeleteRow={handleDeleteRow}
-          onAddColumn={handleAddColumn}
-          onAddRowAtTop={handleAddRowAtTop}
-          onAddRowAtBottom={handleAddRowAtBottom}
-          onUpdateColumnWidths={handleUpdateColumnWidths}
-          onAddSlide={handleAddSlide}
-          onDeleteSlide={handleDeleteSlide}
-        />
+        </AnimatePresence>
 
         <div className="flex-1 overflow-hidden relative flex flex-col">
           <div ref={scrollContainerRef} className="flex-1 overflow-y-auto w-full relative">

@@ -16,6 +16,7 @@ import { SlideLayoutSelector } from "./SlideLayoutSelector";
 import type { LayoutTemplate } from "@/types/presentation";
 import { motion, AnimatePresence } from "framer-motion";
 import { SidebarList } from "./SidebarList";
+import { cn } from "@/lib/utils";
 
 // --- Types ---
 
@@ -33,6 +34,7 @@ interface SlideNavigatorProps {
   ) => void;
   onAddSlide: (afterSlideId?: string) => void;
   onDeleteSlide: (slideId: string) => void;
+  isMobile?: boolean;
 }
 
 // --- Main Component ---
@@ -47,6 +49,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
   onUpdateColumnWidths,
   onAddSlide: onAddSlideProp,
   onDeleteSlide: onDeleteSlideProp,
+  isMobile = false,
 }) => {
   // State
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -62,7 +65,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
 
   // Measurements
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const containerWidth = 180; // Compact width
+  const containerWidth = isMobile ? 240 : 180;
 
   // --- Effects ---
 
@@ -110,9 +113,12 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
         onSelectLayout={handleSelectLayout}
       />
 
-      <div className="relative h-full flex flex-col z-40 bg-transparent shrink-0">
+      <div className={cn(
+        "relative h-full flex flex-col z-40 bg-transparent shrink-0",
+        isMobile && "w-full"
+      )}>
         <AnimatePresence mode="wait" initial={false}>
-          {isCollapsed ? (
+          {isCollapsed && !isMobile ? (
             <motion.div
               key="collapsed"
               initial={{ width: 0, opacity: 0 }}
@@ -136,15 +142,18 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
             <motion.div
               key="expanded"
               ref={sidebarRef}
-              initial={{ width: 0, opacity: 0 }}
+              initial={isMobile ? false : { width: 0, opacity: 0 }}
               animate={{ width: containerWidth, opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
+              exit={isMobile ? { opacity: 0 } : { width: 0, opacity: 0 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="h-full relative flex flex-col border-r overflow-hidden"
+              className={cn(
+                "h-full relative flex flex-col overflow-hidden",
+                !isMobile && "border-r"
+              )}
               style={{
                 backgroundColor: isDark ? "rgba(20, 20, 25, 0.85)" : "rgba(255, 255, 255, 0.85)",
-                backdropFilter: "blur(20px)",
-                borderRight: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"}`,
+                backdropFilter: isMobile ? "none" : "blur(20px)",
+                borderRight: isMobile ? "none" : `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"}`,
               }}
             >
               <div
@@ -173,14 +182,16 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                       style={{ color: isDark ? "#fff" : "#000" }}
                     />
                   </button>
-                  <button
-                    onClick={() => setIsCollapsed(true)}
-                    className="p-2 rounded-xl transition-all opacity-40 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
-                    style={{ color: isDark ? "#fff" : "#000" }}
-                    title="Collapse sidebar"
-                  >
-                    <IconChevronRight size={16} className="rotate-180" />
-                  </button>
+                  {!isMobile && (
+                    <button
+                      onClick={() => setIsCollapsed(true)}
+                      className="p-2 rounded-xl transition-all opacity-40 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
+                      style={{ color: isDark ? "#fff" : "#000" }}
+                      title="Collapse sidebar"
+                    >
+                      <IconChevronRight size={16} className="rotate-180" />
+                    </button>
+                  )}
                 </div>
               </div>
 
