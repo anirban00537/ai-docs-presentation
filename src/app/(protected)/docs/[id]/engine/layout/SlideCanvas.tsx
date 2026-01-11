@@ -189,7 +189,7 @@ export const SlideCanvas = memo(function SlideCanvas({
   return (
     <>
       <div
-        className={`group/slide relative transition-all duration-300 ease-out z-0 hover:z-20 ${
+        className={`group/slide relative z-0 hover:z-20 ${
           fullWidth ? "w-full min-h-screen" : "mx-auto"
         }`}
         style={finalStyle}
@@ -264,14 +264,14 @@ export const SlideCanvas = memo(function SlideCanvas({
 
         <div 
           id={`card-content-${slide.id}`}
-          className={`relative z-10 w-full flex-1 flex items-stretch ${
+          className={`relative z-10 w-full flex items-stretch ${
             slide.accent?.position === "right" ? "flex-row-reverse" : 
             slide.accent?.position === "bottom" ? "flex-col-reverse" : 
             slide.accent?.position === "top" ? "flex-col" : "flex-row"
           }`}
           style={{ 
             borderRadius, 
-            minHeight: "100%" 
+            minHeight: fullWidth ? "100%" : "auto" 
           }}
         >
           {slide.accent && slide.accent.url && !isBackground && (
@@ -280,7 +280,7 @@ export const SlideCanvas = memo(function SlideCanvas({
               style={{ 
                 width: isVertical ? "100%" : `${localAccentSize}%`,
                 height: isVertical ? `${localAccentSize}%` : "auto",
-                minHeight: isVertical ? "200px" : "100%",
+                minHeight: isVertical ? "200px" : (fullWidth ? "100%" : "auto"),
                 overflow: "hidden", 
                 borderTopLeftRadius: (slide.accent.position === "left" || slide.accent.position === "top") ? borderRadius : "0",
                 borderBottomLeftRadius: (slide.accent.position === "left" || slide.accent.position === "bottom") ? borderRadius : "0",
@@ -323,7 +323,7 @@ export const SlideCanvas = memo(function SlideCanvas({
           <div className={`relative flex-1 flex flex-col justify-center min-w-0 z-10 ${isBackground ? "z-20" : ""}`}>
             <div 
               className={`relative min-w-0 max-w-full ${
-                fullWidth ? "w-full max-w-[1200px] mx-auto flex-1 self-center flex flex-col justify-center" : "flex-1"
+                fullWidth ? "w-full max-w-[1200px] mx-auto flex-1 self-center flex flex-col justify-center" : ""
               }`}
               style={{ 
                 padding: fullWidth ? "4rem 6rem" : "2rem 2.5rem",

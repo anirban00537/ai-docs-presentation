@@ -146,7 +146,7 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
                 <BlockSelectionProvider>
                   <ToolbarPanel presentationId={presentationId} />
 
-                  <div className="flex flex-col w-full items-center pb-32 gap-32">
+                  <div className="flex flex-col w-full items-center pb-32 gap-3">
                     {slides
                       .filter(
                         (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
@@ -157,7 +157,7 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
                           data-slide-id={slide.id}
                           data-slide-index={index}
                           className="w-full max-w-full relative"
-                          initial={{ opacity: 0, y: 20 }}
+                          initial={{ opacity: 0, y: 15 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05, duration: 0.3 }}
                         >

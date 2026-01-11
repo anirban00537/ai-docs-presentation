@@ -15,7 +15,7 @@ export const ScalableSlideContainer = ({ children }: ScalableSlideContainerProps
     const containerRef = useRef<HTMLDivElement>(null);
     const contentWrapRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
-    const [contentHeight, setContentHeight] = useState(SLIDE_MAX_WIDTH * (9 / 16));
+    const [contentHeight, setContentHeight] = useState(0);
 
     // 1. Determine Scale based on available width
     useEffect(() => {
@@ -45,18 +45,26 @@ export const ScalableSlideContainer = ({ children }: ScalableSlideContainerProps
                 const child = contentWrapRef.current.firstElementChild as HTMLElement;
                 if (child) {
                     // Use scrollHeight to capture full content area including bottom padding
-                    setContentHeight(child.scrollHeight);
+                    const height = child.scrollHeight;
+                    if (height > 0) {
+                        setContentHeight(height);
+                    }
                 } else {
                     setContentHeight(contentWrapRef.current.offsetHeight);
                 }
             }
         };
 
+        // Initial measurement
         updateHeight();
+        
+        // Polling measurement for a short period after mounting to catch images loading
+        const intervalId = setInterval(updateHeight, 300);
+        const timeoutId = setTimeout(() => clearInterval(intervalId), 3000);
+
         const observer = new ResizeObserver(updateHeight);
         observer.observe(contentWrapRef.current);
 
-        // Also watch for child changes to capture dynamic content updates
         const mutationObserver = new MutationObserver(updateHeight);
         mutationObserver.observe(contentWrapRef.current, {
             childList: true,
@@ -67,28 +75,27 @@ export const ScalableSlideContainer = ({ children }: ScalableSlideContainerProps
         return () => {
             observer.disconnect();
             mutationObserver.disconnect();
+            clearInterval(intervalId);
+            clearTimeout(timeoutId);
         };
     }, []);
 
-    const minHeight = SLIDE_MAX_WIDTH * (9 / 16);
-    // Ensure we at least show the 16:9 base aspect ratio
-    const finalContentHeight = Math.max(minHeight, contentHeight);
+    // We no longer enforce a large aspect-ratio minimum height to allow slides to hug their content.
+    // If we have no measurement yet, we fall back to a reasonable small height to avoid layout jump.
+    const finalContentHeight = contentHeight || 100;
 
     return (
         <div
             ref={containerRef}
-            className="w-full flex justify-center transition-all duration-300 ease-in-out"
+            className="w-full flex justify-center items-start overflow-hidden origin-top"
             style={{
-                // Add a tiny bit of extra buffer (4px) to avoid precision overlaps in rendering
-                height: Math.ceil(finalContentHeight * scale) + 4,
+                height: Math.ceil(finalContentHeight * scale),
+                transition: "height 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
             }}
         >
             <div
                 style={{
                     width: SLIDE_MAX_WIDTH,
-                    minHeight: minHeight,
-                    // transform scales purely visually, so flow layout needs to know the scaled space
-                    // which we handle in the parent wrapper height.
                     transform: `scale(${scale})`,
                     transformOrigin: 'top center',
                 }}
