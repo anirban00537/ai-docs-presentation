@@ -27,9 +27,9 @@ export const SlashMenu: React.FC<SlashMenuProps> = ({
 
   return (
     <div
-      className="absolute z-50 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 min-w-[220px] overflow-hidden"
+      className="fixed z-50 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 min-w-[220px] overflow-hidden animate-in fade-in zoom-in-95 duration-200"
       style={{
-        top: position.top + 24,
+        top: position.top + 10,
         left: Math.max(0, position.left),
       }}
     >

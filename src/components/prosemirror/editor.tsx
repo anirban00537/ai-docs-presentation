@@ -8,6 +8,7 @@ import React, {
   useMemo,
   memo,
 } from "react";
+import { createPortal } from "react-dom";
 import { EditorState, Transaction } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { Node as ProseMirrorNode } from "prosemirror-model";
@@ -610,8 +611,8 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
                   prev.visible &&
                   !marksChanged &&
                   prev.activeAlignment === activeAlignment &&
-                  prev.position.top === coords.top - editorRect.top &&
-                  prev.position.left === coords.left - editorRect.left + (to - from > 10 ? 50 : 0)
+                  prev.position.top === coords.top &&
+                  prev.position.left === coords.left + (to - from > 10 ? 40 : 0)
                 ) {
                   return prev; // No change needed
                 }
@@ -681,8 +682,8 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
                     open: true,
                     query,
                     position: {
-                      top: coords.bottom - editorRect.top,
-                      left: coords.left - editorRect.left,
+                      top: coords.bottom,
+                      left: coords.left,
                     },
                     selectedIndex: 0,
                   });
@@ -1026,23 +1027,29 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       {/* Edit UI - hidden in readOnly mode */}
       {!readOnly && (
         <>
-          <SlashMenu
-            open={menuState.open}
-            query={menuState.query}
-            position={menuState.position}
-            selectedIndex={menuState.selectedIndex}
-            onSelect={handleMenuClick}
-          />
-          <SelectionToolbar
-            visible={selectionToolbar.visible}
-            position={selectionToolbar.position}
-            activeMarks={selectionToolbar.activeMarks}
-            activeAlignment={selectionToolbar.activeAlignment}
-            view={viewRef.current}
-            onClose={() =>
-              setSelectionToolbar((prev) => ({ ...prev, visible: false }))
-            }
-          />
+          {menuState.open && typeof document !== 'undefined' && createPortal(
+            <SlashMenu
+              open={menuState.open}
+              query={menuState.query}
+              position={menuState.position}
+              selectedIndex={menuState.selectedIndex}
+              onSelect={handleMenuClick}
+            />,
+            document.body
+          )}
+          {selectionToolbar.visible && typeof document !== 'undefined' && createPortal(
+            <SelectionToolbar
+              visible={selectionToolbar.visible}
+              position={selectionToolbar.position}
+              activeMarks={selectionToolbar.activeMarks}
+              activeAlignment={selectionToolbar.activeAlignment}
+              view={viewRef.current}
+              onClose={() =>
+                setSelectionToolbar((prev) => ({ ...prev, visible: false }))
+              }
+            />,
+            document.body
+          )}
           {imageModal.open && (
             <ImageUrlModal
               open={imageModal.open}
