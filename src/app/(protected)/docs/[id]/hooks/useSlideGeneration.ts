@@ -140,18 +140,6 @@ export function useSlideGeneration({
                   newSlides.push(partialSlide);
                 }
                 dispatch(setSlides(newSlides));
-
-                // Auto-scroll logic
-                requestAnimationFrame(() => {
-                  const slideElement = document.querySelector(`[data-slide-index="${slideIndex}"]`);
-                  if (slideElement) {
-                    const rect = slideElement.getBoundingClientRect();
-                    const viewportHeight = window.innerHeight;
-                    if (rect.bottom > viewportHeight - 100) {
-                      window.scrollBy({ top: rect.bottom - viewportHeight + 150, behavior: 'auto' });
-                    }
-                  }
-                });
               }
             }
           } catch (e) {

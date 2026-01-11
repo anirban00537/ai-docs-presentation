@@ -69,7 +69,7 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
   } = usePresentationMode({ slidesCount: slides.length });
 
   useEffect(() => {
-    if (activeSlideId && !isPresenting) {
+    if (activeSlideId && !isPresenting && !isGeneratingSlides) {
       setTimeout(() => {
         const slideElement = document.querySelector(`[data-slide-id="${activeSlideId}"]`);
         if (slideElement) {
@@ -85,15 +85,19 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
   useEffect(() => {
     if (isGeneratingSlides && slides.length > 0) {
       const timeoutId = setTimeout(() => {
-        const allSlides = document.querySelectorAll('[data-slide-id]');
-        const lastSlide = allSlides[allSlides.length - 1];
-        if (lastSlide) {
-          lastSlide.scrollIntoView({ behavior: "smooth", block: "end" });
+        if (scrollContainerRef.current) {
+          const container = scrollContainerRef.current;
+          // Scroll to the absolute bottom of the container during generation.
+          // This follows streaming changes closely and keeps the latest content in view.
+          container.scrollTo({
+            top: container.scrollHeight,
+            behavior: "auto"
+          });
         }
-      }, 100);
+      }, 50);
       return () => clearTimeout(timeoutId);
     }
-  }, [isGeneratingSlides, slides.length]);
+  }, [isGeneratingSlides, slides]); // Watch 'slides' to follow streaming content updates
 
   const showLoading = isLoadingPresentation && !isGeneratingSlides;
 
