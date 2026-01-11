@@ -64,7 +64,7 @@ CRITICAL INSTRUCTIONS:
    - Keep the "type" field EXACTLY as shown (e.g., "prosemirror", "simple-number-card")
    - Transform the "content" field with new, relevant content
 4. If an array has N items in the template, you MUST output N items. DO NOT ADD OR REMOVE ITEMS.
-5. ProseMirror content fields use the format: { "type": "doc", "content": [...] }
+5. ProseMirror content fields MUST be a proper JSON object (not a string): { "type": "doc", "content": [...] }
 6. DO NOT CHANGE THE LAYOUT. DO NOT ADD BLOCKS. DO NOT REMOVE BLOCKS.
 7. FILL IN THE CONTENT ONLY. KEEP THE STRUCTURE IDENTICAL.
 
@@ -118,8 +118,10 @@ Example structure:
 - Generate professional, contextually appropriate text for EVERY field.
 - Empty fields or preserved demo text will break the presentation and are NOT acceptable.
 - STRICT RULE: Check every "text" field. If it is "", you MUST populate it.
-- For ProseMirror text nodes: { "type": "text", "text": "MUST NOT BE EMPTY" }.
+- ProseMirror text nodes: { "type": "text", "text": "MUST NOT BE EMPTY" }.
 - Ensure every paragraph or heading node implies a child text node with content.
+- EVERY content field for "prosemirror" blocks MUST be a valid JSON object matching the ProseMirror document structure (type: "doc", content: [...]).
+- DO NOT stringify or escape the ProseMirror content; output it as a native JSON sub-object.
 - For standard fields (title, description, button text): "text": "MUST NOT BE EMPTY".
 - ⛔️ NEVER invent facts, names, or data not present in the outline content.
 - NEVER return an empty string "" for any content field.

@@ -178,7 +178,10 @@ export class DynamicSchemaUtil {
     };
 
     // Infer content schema from the block's content
-    if (block.content !== undefined) {
+    // FORCED OVERRIDE: ProseMirror blocks MUST be structured objects, even if template is a string/null
+    if (block.type === 'prosemirror') {
+      schema.properties!.content = this.getProseMirrorSchema();
+    } else if (block.content !== undefined) {
       schema.properties!.content = this.inferSchema(block.content, {
         allowAdditionalProperties: true,
         enforceArrayLength: false,
