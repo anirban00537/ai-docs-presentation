@@ -50,7 +50,7 @@ export const EditorHeader = ({ onPresentClick, onMenuClick }: EditorHeaderProps)
           </button>
 
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push("/home")}
             className="hidden sm:flex p-2 md:p-2.5 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 group"
           >
             <IconChevronLeft
