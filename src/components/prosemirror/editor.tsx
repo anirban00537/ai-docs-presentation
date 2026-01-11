@@ -144,8 +144,10 @@ const normalizeProseMirrorJSON = (json: any): any => {
 
   // Recursive normalize content
   if (newJson.content && Array.isArray(newJson.content)) {
-    // First, normalize all children
-    newJson.content = newJson.content.map(normalizeProseMirrorJSON);
+    // First, normalize all children and Filter out empty text nodes (ProseMirror crashes on empty JSON text nodes)
+    newJson.content = newJson.content
+      .map(normalizeProseMirrorJSON)
+      .filter((child: any) => !(child.type === 'text' && !child.text));
     
     // Then, expand text nodes that contain markdown syntax
     // This applies to parent nodes like paragraph, heading, list_item
