@@ -67,7 +67,7 @@ export const LeafBlock = memo(function LeafBlock({
                 {items.map((item, index) => (
                     <div
                         key={item.id}
-                        className="relative group/leaf p-5 transition-all duration-700 overflow-hidden"
+                        className="relative group/leaf p-2 transition-all duration-700 overflow-hidden"
                         style={{
                             borderRadius: "0px 48px 0px 48px",
                             backgroundColor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.5)",
@@ -102,7 +102,7 @@ export const LeafBlock = memo(function LeafBlock({
                         />
 
                         {/* Title Section */}
-                        <div className="mb-4 relative z-10">
+                        <div className=" relative z-10">
                             <ProseMirrorEditor
                                 key={`${item.id}-title`}
                                 blockId={`${item.id}-title`}

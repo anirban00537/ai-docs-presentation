@@ -1,25 +1,24 @@
 import { Plugin } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 
-export const placeholderPlugin = new Plugin({
-  props: {
-    decorations: (state) => {
-      const decorations: Decoration[] = [];
-      const doc = state.doc;
+export const createPlaceholderPlugin = (text: string = "Type '/' for commands") => 
+  new Plugin({
+    props: {
+      decorations: (state) => {
+        const decorations: Decoration[] = [];
+        const doc = state.doc;
 
-      doc.descendants((node, pos) => {
-        if (node.isTextblock && node.content.size === 0) {
-           // It's an empty text block
-           // Add a decoration that adds a class to the node
-           decorations.push(
-            Decoration.node(pos, pos + node.nodeSize, {
+        // If the document is one empty text block, show the placeholder
+        if (doc.childCount === 1 && doc.firstChild?.isTextblock && doc.firstChild.content.size === 0) {
+          decorations.push(
+            Decoration.node(0, doc.firstChild.nodeSize, {
               class: "is-empty",
+              "data-placeholder": text,
             })
           );
         }
-      });
 
-      return DecorationSet.create(doc, decorations);
+        return DecorationSet.create(doc, decorations);
+      },
     },
-  },
-});
+  });

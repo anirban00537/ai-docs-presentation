@@ -87,25 +87,20 @@ export const PROSEMIRROR_STYLES = `
     background: none;
     padding: 0;
   }
-  .ProseMirror p.is-empty:first-child,
-  .ProseMirror h1.is-empty:first-child,
-  .ProseMirror h2.is-empty:first-child,
-  .ProseMirror h3.is-empty:first-child,
-  .ProseMirror h4.is-empty:first-child {
-    position: relative;
-  }
-  .ProseMirror p.is-empty:first-child::before,
-  .ProseMirror h1.is-empty:first-child::before,
-  .ProseMirror h2.is-empty:first-child::before,
-  .ProseMirror h3.is-empty:first-child::before,
-  .ProseMirror h4.is-empty:first-child::before {
-    content: "Type '/' for commands";
+  .ProseMirror .is-empty::before {
+    content: attr(data-placeholder);
     color: #9ca3af;
-    opacity: 0.5;
+    opacity: 0.4;
     pointer-events: none;
     position: absolute;
     left: 0;
     top: 0;
+    font-weight: 400;
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   /* Presentation mode: viewport-responsive font sizes */

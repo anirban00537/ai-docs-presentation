@@ -28,7 +28,7 @@ import { SlashCommand, SLASH_COMMANDS } from "./commands";
 import { SlashMenu } from "./slash-menu";
 import { SelectionToolbar } from "./selection-toolbar";
 import { injectBaseStyles } from "./styles";
-import { placeholderPlugin } from "./plugins/placeholder-plugin";
+import { createPlaceholderPlugin } from "./plugins/placeholder-plugin";
 import { ImageUrlModal } from "./plugins/image-plugin";
 import { useAppSelector } from "@/store/hooks";
 import {
@@ -544,6 +544,8 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
   useEffect(() => {
     if (!editorRef.current) return;
 
+    const placeholderText = placeholder || "Type '/' for commands";
+    
     const plugins = [
       history(),
       keymap({ "Mod-z": undo, "Mod-y": redo, "Mod-Shift-z": redo }),
@@ -554,7 +556,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       }),
       keymap(baseKeymap),
       createInputRules(schema),
-      placeholderPlugin,
+      createPlaceholderPlugin(placeholderText),
     ];
 
     const state = EditorState.create({
