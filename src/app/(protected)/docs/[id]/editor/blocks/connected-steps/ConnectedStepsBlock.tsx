@@ -64,7 +64,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
 
   return (
     <div 
-      className="group relative w-full h-full min-h-[300px] p-6"
+      className="group relative w-full h-full min-h-[220px] p-3"
       style={{
         fontFamily: getFontFamily(theme.fontFamily || "Inter"),
       }}
@@ -74,7 +74,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
         
         {/* Continuous Vertical Line Background */}
         <div 
-            className="absolute left-[26px] top-6 bottom-6 width-px w-0.5 opacity-30"
+            className="absolute left-[20px] top-6 bottom-6 width-px w-0.5 opacity-30"
             style={{ 
                 background: theme.primary,
                 // Don't show line below the last item?
@@ -84,11 +84,11 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
         />
 
         {items.map((item: any, index: number) => (
-          <div key={item.id} className="relative flex gap-8 mb-8 last:mb-0 group/item">
+          <div key={item.id} className="relative flex gap-4 mb-4 last:mb-0 group/item">
              {/* Left Column: Number Node */}
              <div className="relative z-10 flex-shrink-0">
                 <div 
-                    className="w-[52px] h-[52px] rounded-xl flex items-center justify-center text-xl font-bold border shadow-lg transition-transform duration-300 group-hover/item:scale-105"
+                    className="w-[40px] h-[40px] rounded-xl flex items-center justify-center text-lg font-bold border shadow-lg transition-transform duration-300 group-hover/item:scale-105"
                     style={{
                         backgroundColor: theme.primary,
                         borderColor: `${theme.primary}40`, // A bit lighter border
@@ -105,7 +105,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
 
              {/* Right Column: Content */}
              <div 
-                className="flex-1 pt-1 min-w-0 pb-6 border-b border-dashed border-opacity-20 last:border-none last:pb-0"
+                className="flex-1 pt-0.5 min-w-0 pb-3 border-b border-dashed border-opacity-20 last:border-none last:pb-0"
                 style={{ borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)" }}
              >
                 <div className="relative">
@@ -120,7 +120,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
                     )}
 
                     {/* Title */}
-                    <div className="mb-2 pr-8">
+                    <div className="mb-0.5 pr-8">
                         <ProseMirrorEditor
                             key={`${item.id}-title`}
                             blockId={`${item.id}-title`}
@@ -158,7 +158,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
         {!readOnly && (
             <div className="relative flex justify-center mt-8 pl-[18px]"> {/* Align slightly with the timeline center if we want centered line, but here we want it maybe just at the bottom */}
                  {/* Actually, let's put it inline with the vertical line logic */}
-                 <div className="absolute left-[26px] -translate-x-1/2 bottom-[-20px] z-20">
+                 <div className="absolute left-[20px] -translate-x-1/2 bottom-[-20px] z-20">
                      <button
                         onClick={handleAddItem}
                         className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-lg opacity-0 group-hover:opacity-100 duration-300"

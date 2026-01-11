@@ -61,7 +61,7 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
 
   return (
     <div 
-      className="group relative w-full h-full min-h-[300px] py-8"
+      className="group relative w-full h-full min-h-[220px] py-4"
       style={{
         fontFamily: getFontFamily(theme.fontFamily || "Inter"),
       }}
@@ -76,12 +76,12 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
           -moz-appearance: textfield;
         }
       `}</style>
-      <div className="flex flex-wrap justify-center items-start gap-12 md:gap-16">
+      <div className="flex flex-wrap justify-center items-start gap-6 md:gap-8">
         {items.map((item, index) => (
           <div key={item.id} className="relative group/item flex flex-col items-center min-w-[200px] flex-1 text-center">
              
              {/* Progress Circle Container */}
-             <div className="relative mb-6">
+             <div className="relative mb-3">
                 <ProgressCircle value={item.value} theme={theme} />
                 
                 {/* Center Value Input */}
@@ -117,7 +117,7 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
              </div>
 
              {/* Title */}
-             <div className="mb-2 w-full">
+             <div className="mb-1 w-full">
                 <ProseMirrorEditor
                     key={`${item.id}-title`}
                     blockId={`${item.id}-title`}

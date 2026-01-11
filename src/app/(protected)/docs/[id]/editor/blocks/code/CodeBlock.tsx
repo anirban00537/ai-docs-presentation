@@ -171,7 +171,7 @@ export const CodeBlock = memo(function CodeBlock({
 
         {/* Header */}
         <div
-          className="flex items-center justify-between px-5 py-3 relative z-10 select-none group/header"
+          className="flex items-center justify-between px-3 py-1.5 relative z-10 select-none group/header"
           style={{
             borderBottom: "1px solid rgba(255,255,255,0.08)",
             background: "rgba(255,255,255,0.02)"
@@ -216,7 +216,7 @@ export const CodeBlock = memo(function CodeBlock({
           <div className="flex h-full min-h-[140px]">
             {showLineNumbers && (
               <div
-                className="py-6 px-4 text-right select-none font-mono text-[13px] border-r border-[#ffffff08]"
+                className="py-3 px-2 text-right select-none font-mono text-[13px] border-r border-[#ffffff08]"
                 style={{
                   backgroundColor: "rgba(0,0,0,0.2)",
                   color: "rgba(255,255,255,0.2)",
@@ -233,7 +233,7 @@ export const CodeBlock = memo(function CodeBlock({
             <div className="relative flex-1 grid place-items-stretch">
               {/* Tokenized Layer (Syntax Highlighting) */}
               <pre
-                className="col-start-1 row-start-1 m-0 px-6 py-6 font-mono text-[13px] leading-7 whitespace-pre overflow-hidden pointer-events-none"
+                className="col-start-1 row-start-1 m-0 px-3 py-3 font-mono text-[13px] leading-7 whitespace-pre overflow-hidden pointer-events-none"
                 style={{
                   fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
                 }}
@@ -245,7 +245,7 @@ export const CodeBlock = memo(function CodeBlock({
               <textarea
                 value={code}
                 onChange={handleCodeChange}
-                className="col-start-1 row-start-1 w-full h-full px-6 py-6 font-mono text-[13px] leading-7 resize-none outline-none border-none bg-transparent text-transparent caret-white selection:bg-white/20"
+                className="col-start-1 row-start-1 w-full h-full px-3 py-3 font-mono text-[13px] leading-7 resize-none outline-none border-none bg-transparent text-transparent caret-white selection:bg-white/20"
                 style={{
                   minHeight: "100%",
                   fontFamily: "'JetBrains Mono', 'Fira Code', monospace",

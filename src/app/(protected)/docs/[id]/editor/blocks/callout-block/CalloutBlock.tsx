@@ -105,7 +105,7 @@ export const CalloutBlock = memo(function CalloutBlock({
           backgroundColor: colors.bg,
       }}
     >
-      <div className="flex flex-row items-center w-full py-2 px-3 gap-3">
+      <div className="flex flex-row items-center w-full py-1 px-2 gap-2">
          {/* Icon Section - Centered Vertically on the Left */}
          <div className="shrink-0 flex items-center justify-center">
             <Icon size={18} color={colors.icon} stroke={2.5} />

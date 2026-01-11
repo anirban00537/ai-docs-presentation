@@ -60,7 +60,7 @@ export const SolidIconBoxBlock = memo(function SolidIconBoxBlock({
   return (
     <div className="group relative w-full h-full min-h-[220px] p-4">
       <div 
-        className="grid gap-3"
+        className="grid gap-1.5"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))"
         }}
@@ -68,7 +68,7 @@ export const SolidIconBoxBlock = memo(function SolidIconBoxBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/icon-card p-5 transition-all duration-500 overflow-hidden"
+            className="relative group/icon-card p-2 transition-all duration-500 overflow-hidden"
             style={{
               borderRadius: "20px",
               backgroundColor: theme.cardBackground,
@@ -90,7 +90,7 @@ export const SolidIconBoxBlock = memo(function SolidIconBoxBlock({
 
             <div className="relative z-10">
               {/* Icon Container */}
-              <div className="mb-6 inline-flex p-3 rounded-2xl" 
+              <div className="mb-2 inline-flex p-2 rounded-2xl" 
                    style={{ backgroundColor: `${theme.primary}10` }}>
                 <UniversalIconPicker
                   value={item.icon || "star"}
@@ -102,7 +102,7 @@ export const SolidIconBoxBlock = memo(function SolidIconBoxBlock({
               </div>
 
               {/* Title Section */}
-              <div className="mb-3">
+              <div className="mb-0.5">
                 <ProseMirrorEditor
                   key={`${item.id}-title`}
                   blockId={`${item.id}-title`}

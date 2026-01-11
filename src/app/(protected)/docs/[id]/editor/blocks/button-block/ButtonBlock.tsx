@@ -44,7 +44,7 @@ export const ButtonBlock: React.FC<BlockRendererProps> = ({
 
   const getButtonStyle = () => {
     const baseStyle = {
-      padding: "10px 24px",
+      padding: "6px 16px",
       borderRadius: "8px",
       fontWeight: 500,
       fontSize: "14px",
@@ -96,7 +96,7 @@ export const ButtonBlock: React.FC<BlockRendererProps> = ({
   }
 
   return (
-    <div className={`w-full flex ${alignmentClasses[content.alignment] || "justify-center"} py-2`}>
+    <div className={`w-full flex ${alignmentClasses[content.alignment] || "justify-center"} py-1`}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <div className="relative group">

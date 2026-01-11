@@ -59,7 +59,7 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
 
     return (
         <div 
-            className="group relative w-full h-full min-h-[220px] px-10 py-0"
+            className="group relative w-full h-full min-h-[180px] px-4 py-0"
             style={{
                 fontFamily: getFontFamily(theme.fontFamily || "Inter"),
             }}
@@ -79,7 +79,7 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                     <React.Fragment key={item.id}>
                         {/* Item Card */}
                         <div 
-                            className="relative w-full pl-10 pr-8 py-5 transition-all duration-500 group/item"
+                            className="relative w-full pl-6 pr-4 py-2 transition-all duration-500 group/item"
                             style={{
                                 borderBottom: index < items.length - 1 ? `2px solid ${theme.primary}25` : "none",
                             }}
@@ -109,7 +109,7 @@ export const StackedTimelineBlock = memo(function StackedTimelineBlock({
                         </div>
 
                         {/* Title Editor */}
-                        <div className="mb-1">
+                        <div className="mb-0.5">
                             <ProseMirrorEditor
                                 key={`${item.id}-title`}
                                 blockId={`${item.id}-title`}

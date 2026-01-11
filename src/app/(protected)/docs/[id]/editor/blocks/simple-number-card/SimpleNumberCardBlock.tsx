@@ -79,7 +79,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/num-card p-4 transition-all duration-500 overflow-hidden"
+            className="relative group/num-card p-2 transition-all duration-500 overflow-hidden"
             style={{
               borderRadius: "20px",
               backgroundColor: theme.cardBackground,
@@ -101,10 +101,10 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
 
             <div className="relative z-10">
               {/* Number Badge with Outer Ring */}
-              <div className="mb-6 inline-flex p-1 rounded-2xl border" 
+              <div className="mb-2 inline-flex p-0.5 rounded-2xl border" 
                    style={{ borderColor: `${theme.primary}20`, background: `${theme.primary}05` }}>
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black shadow-inner border transition-transform"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-black shadow-inner border transition-transform"
                   style={{
                     backgroundColor: theme.primary,
                     borderColor: `${theme.primary}40`,
@@ -123,7 +123,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
               </div>
 
               {/* Title Section */}
-              <div className="mb-3">
+              <div className="mb-0.5">
                 <ProseMirrorEditor
                   key={`${item.id}-title`}
                   blockId={`${item.id}-title`}

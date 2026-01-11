@@ -57,9 +57,9 @@ export const LeafBlock = memo(function LeafBlock({
     };
 
     return (
-        <div className="group relative w-full h-full min-h-[220px] p-4">
+        <div className="group relative w-full h-full min-h-[220px] p-2">
             <div 
-                className="grid gap-3"
+                className="grid gap-1.5"
                 style={{
                     gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))"
                 }}
@@ -109,7 +109,7 @@ export const LeafBlock = memo(function LeafBlock({
                                 value={item.title}
                                 onChange={(value) => handleItemUpdate(index, "title", value)}
                                 placeholder="Leaf Title"
-                                className="text-base font-bold tracking-tight"
+                                className="text-base font-bold tracking-tight mb-0.5"
                                 theme={{
                                     ...theme,
                                     headingColor: theme.primary,

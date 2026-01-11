@@ -59,7 +59,7 @@ export const SolidBoxBlock = memo(function SolidBoxBlock({
   return (
     <div className="group relative w-full h-full min-h-[220px] p-4">
       <div 
-        className="grid gap-3"
+        className="grid gap-1.5"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))"
         }}
@@ -67,7 +67,7 @@ export const SolidBoxBlock = memo(function SolidBoxBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/box-card p-5 transition-all duration-500 overflow-hidden"
+            className="relative group/box-card p-2 transition-all duration-500 overflow-hidden"
             style={{
               borderRadius: "20px",
               backgroundColor: theme.cardBackground,
@@ -88,7 +88,7 @@ export const SolidBoxBlock = memo(function SolidBoxBlock({
 
             <div className="relative z-10">
               {/* Title Section */}
-              <div className="mb-3">
+              <div className="mb-0.5">
                 <ProseMirrorEditor
                   key={`${item.id}-title`}
                   blockId={`${item.id}-title`}

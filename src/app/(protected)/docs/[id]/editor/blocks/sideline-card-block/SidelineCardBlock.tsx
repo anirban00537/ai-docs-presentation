@@ -59,7 +59,7 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
   return (
     <div className="group relative w-full h-full min-h-[200px] p-4">
       <div 
-        className="grid gap-4"
+        className="grid gap-2"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))"
         }}
@@ -93,9 +93,9 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
                 </button>
             )}
 
-            <div className="p-4 pl-6">
+            <div className="p-2 pl-4">
               {/* Title Section */}
-              <div className="mb-2">
+              <div className="mb-0.5">
                 <ProseMirrorEditor
                   key={`${item.id}-title`}
                   blockId={`${item.id}-title`}
