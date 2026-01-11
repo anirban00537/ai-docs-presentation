@@ -92,6 +92,12 @@ ${layoutStructureSection}
 
 ${imageInjectionPrompt}
 
+⚠️ KNOWLEDGE SOURCE (STRICT RULE) ⚠️
+Use ONLY the provided OUTLINE CONTENT as your knowledge base. 
+DO NOT make up, invent, or hallucinate any information not found in the outline. 
+If you don't have enough data for a field, use ONLY what is available in the outline.
+
+
 ⚠️ MANDATORY OUTPUT FORMAT:
 Your response must be a SINGLE JSON object. 
 If an "accent" image was provided in the injection instructions, include it at the top level.
@@ -115,7 +121,7 @@ Example structure:
 - For ProseMirror text nodes: { "type": "text", "text": "MUST NOT BE EMPTY" }.
 - Ensure every paragraph or heading node implies a child text node with content.
 - For standard fields (title, description, button text): "text": "MUST NOT BE EMPTY".
-- If the outline doesn't have specific details, INVENT realistic, professional filler content.
+- ⛔️ NEVER invent facts, names, or data not present in the outline content.
 - NEVER return an empty string "" for any content field.
 - NEVER return an empty paragraph without a text node.
 - ALWAYS include the "type" property for every node (especially "type": "text").

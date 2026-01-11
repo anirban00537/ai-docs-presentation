@@ -338,9 +338,9 @@ export class OutlineService implements OnModuleInit {
         messages: [
           {
             role: 'user',
-            content: `Analyze the following prompt and generate a comprehensive presentation outline with exactly ${numberOfSlides} slides.
+            content: `Analyze the following prompt and generate a comprehensive and highly descriptive presentation outline with exactly ${numberOfSlides} slides.
             
-CRITICAL INSTRUCTION: You MUST generate EXACTLY ${numberOfSlides} slide items. Do not generate fewer. Do not generate more.
+CRITICAL INSTRUCTION: You MUST generate EXACTLY ${numberOfSlides} slide items. Each item should be detailed, descriptive, and provide substantial information for the slide builder to use.
 If the content is long, split it across multiple slides.
 If the content is short, expand on details to reach exactly ${numberOfSlides} slides.
 
@@ -407,7 +407,7 @@ REMINDER: Every single slide must have a DIFFERENT layoutId. No exceptions.`,
                       content: {
                         type: 'string',
                         description:
-                          'Strict Markdown: "# Title" followed ONLY by bullet points "- Point". No other text allowed.',
+                          'Strict Markdown: "# Title" followed ONLY by detailed and descriptive bullet points "- Point". Provide rich information for each slide.',
                       },
                       layoutId: {
                         type: 'string',
