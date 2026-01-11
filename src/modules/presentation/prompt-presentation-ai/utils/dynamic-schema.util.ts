@@ -16,6 +16,8 @@ interface JSONSchema {
   maxItems?: number;
   minimum?: number;
   maximum?: number;
+  minLength?: number;
+  maxLength?: number;
   enum?: (string | number)[];
   oneOf?: JSONSchema[];
   anyOf?: JSONSchema[];
@@ -338,7 +340,7 @@ export class DynamicSchemaUtil {
               attrs: { type: 'object', additionalProperties: true },
               content: { type: 'array' },
               marks: { type: 'array' },
-              text: { type: 'string' },
+              text: { type: 'string', minLength: 1 },
             },
             required: ['type'],
             additionalProperties: true,
