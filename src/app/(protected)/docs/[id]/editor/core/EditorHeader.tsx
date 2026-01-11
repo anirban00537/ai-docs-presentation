@@ -1,194 +1,132 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/store/hooks";
+import React, { useState, useEffect } from "react";
 import {
-  selectPresentation,
-  selectTheme,
-  DEFAULT_THEME,
-} from "@/store/slices/slidesSlice";
-import {
+  IconCloudCheck,
+  IconDots,
+  IconChevronLeft,
   IconShare,
-  IconPlayerPlay,
+  IconPlayerPlayFilled,
   IconArrowBackUp,
   IconArrowForwardUp,
-  IconChevronLeft,
+  IconCircleFilled,
 } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { useUndoRedo } from "@/app/(protected)/docs/[id]/hooks/useUndoRedo";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { selectPresentation } from "@/store/slices/slidesSlice";
+import { useAppSelector } from "@/store/hooks";
+import { useEditorTheme } from "../../engine";
 
-export const EditorHeader: React.FC<{
-  onPresentClick?: () => void;
-}> = ({ onPresentClick }) => {
+interface EditorHeaderProps {
+  onPresentClick: () => void;
+}
+
+export const EditorHeader = ({ onPresentClick }: EditorHeaderProps) => {
+  const theme = useEditorTheme();
   const router = useRouter();
   const presentation = useAppSelector(selectPresentation);
-  const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
+  const isDark = theme.themeType === "dark";
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
 
-  const isDark = theme.themeType === "dark";
-  const textPrimary = isDark ? "#f1f5f9" : "#0f172a";
-  const textSecondary = isDark ? "#94a3b8" : "#64748b";
+  const [scrolled, setScrolled] = useState(false);
 
-  const handleBack = () => {
-    router.push("/my-docs");
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-6xl px-4"
+      className="fixed top-0 left-0 z-50 w-full"
     >
       <div
-        className="relative w-full px-5 py-3 rounded-2xl overflow-hidden"
+        className="relative w-full px-6 h-16 flex items-center justify-between"
         style={{
-          backgroundColor: isDark
-            ? "rgba(30, 30, 40, 0.5)"
-            : "rgba(255, 255, 255, 0.5)",
-          backdropFilter: "blur(32px) saturate(200%)",
-          WebkitBackdropFilter: "blur(32px) saturate(200%)",
-          boxShadow: isDark
-            ? `
-              0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
-              0 -1px 0 0 rgba(0, 0, 0, 0.2) inset,
-              0 8px 40px rgba(0, 0, 0, 0.4),
-              0 2px 8px rgba(0, 0, 0, 0.2)
-            `
-            : `
-              0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
-              0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-              0 8px 40px rgba(0, 0, 0, 0.08),
-              0 2px 8px rgba(0, 0, 0, 0.04)
-            `,
+          backgroundColor: isDark ? "rgba(18, 18, 22, 0.8)" : "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(20px)",
+          borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)"}`,
         }}
       >
-        {/* Glass shine overlay */}
-        <div 
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: isDark
-              ? "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.02) 100%)"
-              : "linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.3) 100%)",
-          }}
-        />
-        
-        <div className="relative flex items-center justify-between">
-          {/* Left side - Back button & Title */}
-          <div className="flex items-center gap-2">
-            {/* Back Button */}
-            <TooltipProvider delayDuration={200}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={handleBack}
-                    className="p-2 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/10"
-                    style={{ color: textSecondary }}
-                  >
-                    <IconChevronLeft size={20} stroke={1.5} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-xs">
-                  Back to presentations
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            {/* Divider */}
-            <div
-              className="w-px h-5"
-              style={{
-                backgroundColor: isDark
-                  ? "rgba(255,255,255,0.1)"
-                  : "rgba(0,0,0,0.08)",
-              }}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="p-2.5 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 group"
+          >
+            <IconChevronLeft
+              size={20}
+              className="opacity-50 group-hover:opacity-100 transition-opacity"
+              style={{ color: theme.bodyColor }}
             />
+          </button>
 
-            {/* Title */}
+          <div className="h-4 w-[1px] bg-black/10 dark:bg-white/10 mx-1" />
+
+          <div className="flex flex-col">
             <h1
-              className="text-sm font-medium truncate max-w-md"
-              style={{ color: textPrimary }}
+              className="text-sm font-bold tracking-tight line-clamp-1"
+              style={{ color: theme.bodyColor }}
             >
               {presentation?.title || "Untitled Presentation"}
             </h1>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <IconCloudCheck size={12} className="text-emerald-500" />
+              <span
+                className="text-[10px] font-medium opacity-40 uppercase tracking-widest"
+                style={{ color: theme.bodyColor }}
+              >
+                Saved to cloud
+              </span>
+            </div>
           </div>
+        </div>
 
-          {/* Right side - Actions */}
-          <div className="flex items-center gap-1">
-            {/* Undo/Redo Buttons */}
-            <TooltipProvider delayDuration={200}>
-              <div className="flex items-center">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      className="p-2 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-30"
-                      onClick={undo}
-                      disabled={!canUndo}
-                      style={{ color: textSecondary }}
-                    >
-                      <IconArrowBackUp size={18} stroke={1.5} />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="text-xs">
-                    Undo <span className="opacity-50 ml-1">⌘Z</span>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      className="p-2 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-30"
-                      onClick={redo}
-                      disabled={!canRedo}
-                      style={{ color: textSecondary }}
-                    >
-                      <IconArrowForwardUp size={18} stroke={1.5} />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="text-xs">
-                    Redo <span className="opacity-50 ml-1">⌘⇧Z</span>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            </TooltipProvider>
-
-            {/* Divider */}
-            <div
-              className="w-px h-4 mx-2"
-              style={{
-                backgroundColor: isDark
-                  ? "rgba(255,255,255,0.1)"
-                  : "rgba(0,0,0,0.08)",
-              }}
-            />
-
-            {/* Share Button */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center bg-black/5 dark:bg-white/5 p-1 rounded-xl mr-2">
             <button
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:bg-black/5 dark:hover:bg-white/5"
-              style={{ color: textSecondary }}
+              onClick={undo}
+              disabled={!canUndo}
+              className="p-2 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-20 active:scale-90"
+              title="Undo (Ctrl+Z)"
             >
-              <IconShare size={16} stroke={1.5} />
-              <span>Share</span>
+              <IconArrowBackUp size={18} style={{ color: theme.bodyColor }} />
             </button>
-
-            {/* Present Button */}
             <button
-              onClick={onPresentClick}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-medium text-white transition-all hover:opacity-90"
-              style={{
-                backgroundColor: theme.primary,
-              }}
+              onClick={redo}
+              disabled={!canRedo}
+              className="p-2 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-20 active:scale-90"
+              title="Redo (Ctrl+Shift+Z)"
             >
-              <IconPlayerPlay size={16} stroke={1.5} />
-              <span>Present</span>
+              <IconArrowForwardUp size={18} style={{ color: theme.bodyColor }} />
             </button>
           </div>
+
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 text-xs font-semibold">
+            <IconShare size={16} style={{ color: theme.bodyColor }} />
+            <span style={{ color: theme.bodyColor }}>Share</span>
+          </button>
+
+          <button
+            onClick={onPresentClick}
+            className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl transition-all hover:shadow-lg active:scale-95 text-xs font-bold leading-none shadow-sm"
+            style={{
+              backgroundColor: theme.primary,
+              color: "#ffffff"
+            }}
+          >
+            <IconPlayerPlayFilled size={14} />
+            <span>Present</span>
+          </button>
+
+          <div className="h-4 w-[1px] bg-black/10 dark:bg-white/10 mx-1" />
+
+          <button className="p-2.5 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-95">
+            <IconDots size={20} style={{ color: theme.bodyColor }} />
+          </button>
         </div>
       </div>
     </div>
   );
 };
-

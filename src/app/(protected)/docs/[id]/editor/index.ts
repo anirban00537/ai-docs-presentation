@@ -41,6 +41,7 @@ export { SlideNavigator } from "./slide/SlideNavigator";
 export { SlideToolbar } from "./slide/SlideToolbar";
 export { SlideOptions } from "./slide/SlideOptions";
 export { SlideLayoutSelector } from "./slide/SlideLayoutSelector";
+export { ScalableSlideContainer } from "./slide/ScalableSlideContainer";
 
 // Block UI
 export { BlockToolbar } from "./block-ui/BlockToolbar";

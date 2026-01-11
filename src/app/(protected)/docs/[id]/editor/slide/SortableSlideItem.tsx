@@ -20,7 +20,7 @@ interface SortableSlideItemProps {
   thumbnailHeight: number;
   containerWidth: number;
   onSlideClick: (id: string) => void;
-  onDeleteSlide: (e: React.MouseEvent, id: string) => void;
+  onDeleteSlide: (id: string) => void; // Changed back to just ID
   slideCount: number;
   renderSlideProps: any;
 }
@@ -60,7 +60,7 @@ export const SortableSlideItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="relative mb-3 group touch-none px-1 pt-1"
+      className="relative mb-2 group touch-none px-1"
     >
       <div
         onClick={() => onSlideClick(slide.id)}
@@ -117,7 +117,10 @@ export const SortableSlideItem = ({
             {/* Delete Button */}
             {slideCount > 1 && (
               <button
-                onClick={(e) => onDeleteSlide(e, slide.id)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent slide selection
+                  onDeleteSlide(slide.id);
+                }}
                 className="p-2 rounded-lg hover:scale-105 transition-transform shadow-sm bg-red-500 text-white"
                 title="Delete slide"
               >

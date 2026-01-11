@@ -1,7 +1,6 @@
 "use client";
 
-
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   SlideCanvas,
@@ -14,6 +13,7 @@ import {
   EditorThemeProvider,
   EditorDndProvider,
   useEditorTheme,
+  ScalableSlideContainer,
 } from "@/app/(protected)/docs/[id]/editor";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { LoadingOverlay } from "@/app/(protected)/docs/[id]/editor";
@@ -25,13 +25,13 @@ import { selectPresentation, selectActiveSlideId } from "@/store/slices/slidesSl
 import { useUndoRedoKeyboardShortcuts } from "@/app/(protected)/docs/[id]/hooks/useUndoRedo";
 import DragOverlayWrapper from "./DragOverlayWrapper";
 import { Slide } from "@/store/slices/slidesSlice";
+import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 
 
 const EditorContent = ({ presentationId, outlineId }: { presentationId: string, outlineId: string | null }) => {
   const {
     slides,
-    commandBus, // exposing commandBus from hook for the provider
-    // Actions
+    commandBus,
     handleUpdateBlock,
     handleDeleteRow,
     handleAddColumn,
@@ -40,7 +40,6 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
     handleUpdateColumnWidths,
     handleAddSlide,
     handleDeleteSlide,
-    // Loading state
     isLoadingPresentation,
     isGeneratingSlides,
     slideGenerationProgress,
@@ -51,11 +50,10 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
   const presentation = useAppSelector(selectPresentation);
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const isDark = theme.themeType === "dark";
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Enable undo/redo keyboard shortcuts (Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z)
   useUndoRedoKeyboardShortcuts();
 
-  // Presentation mode hook
   const {
     isPresenting,
     currentSlideIndex,
@@ -66,17 +64,17 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
     goToPrevSlide,
   } = usePresentationMode({ slidesCount: slides.length });
 
-  // Scroll active slide into view
   useEffect(() => {
     if (activeSlideId && !isPresenting) {
-      const slideElement = document.querySelector(`[data-slide-id="${activeSlideId}"]`);
-      if (slideElement) {
-        slideElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+      setTimeout(() => {
+        const slideElement = document.querySelector(`[data-slide-id="${activeSlideId}"]`);
+        if (slideElement) {
+          slideElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 100);
     }
   }, [activeSlideId, isPresenting]);
 
-  // Auto-scroll to bottom when new slides arrive during generation
   useEffect(() => {
     if (isGeneratingSlides && slides.length > 0) {
       const timeoutId = setTimeout(() => {
@@ -123,11 +121,10 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
       />
 
       <EditorHeader onPresentClick={startPresentation} />
-      
-      <EditorBackground theme={theme} />
 
-      {/* Scrollable content container */}
-      <div className="min-h-screen overflow-y-auto pt-16 relative">
+      <div className="fixed inset-0 pt-16 flex overflow-hidden">
+        <EditorBackground theme={theme} />
+
         <SlideNavigator
           slides={slides.filter(
             (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
@@ -142,54 +139,60 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
           onDeleteSlide={handleDeleteSlide}
         />
 
-        <div className="w-full mx-auto px-6 py-10 pr-16">
-          <EditorDndProvider slides={slides} commandBus={commandBus}>
-            <BlockSelectionProvider>
-              <ToolbarPanel presentationId={presentationId} />
+        <div className="flex-1 overflow-hidden relative flex flex-col">
+          <div ref={scrollContainerRef} className="flex-1 overflow-y-auto w-full relative">
+            <div className="w-full max-w-[1400px] mx-auto px-4 py-8 flex flex-col items-center min-h-full">
+              <EditorDndProvider slides={slides} commandBus={commandBus}>
+                <BlockSelectionProvider>
+                  <ToolbarPanel presentationId={presentationId} />
 
-              <div className="flex flex-col gap-16">
-                {slides
-                  .filter(
-                    (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
-                  )
-                  .map((slide: Slide, index: number) => (
-                    <motion.div
-                      key={slide.id}
-                      data-slide-id={slide.id}
-                      data-slide-index={index}
-                      className="relative"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05, duration: 0.3 }}
-                    >
-                      <div
-                        className="absolute -left-12 top-6 text-xs font-medium opacity-40"
-                        style={{ color: theme.bodyColor }}
-                      >
-                        {index + 1}
-                      </div>
-                      
-                      <SlideCanvas
-                        slide={slide}
-                        onUpdateBlock={handleUpdateBlock}
-                        onDeleteRow={handleDeleteRow}
-                        onAddColumn={handleAddColumn}
-                        onAddRowAtTop={handleAddRowAtTop}
-                        onAddRowAtBottom={handleAddRowAtBottom}
-                        onUpdateColumnWidths={handleUpdateColumnWidths}
-                      />
-                    </motion.div>
-                  ))}
-              </div>
-            </BlockSelectionProvider>
-            
-            <DragOverlayWrapper />
-          </EditorDndProvider>
+                  <div className="flex flex-col w-full items-center pb-32 gap-32">
+                    {slides
+                      .filter(
+                        (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+                      )
+                      .map((slide: Slide, index: number) => (
+                        <motion.div
+                          key={slide.id}
+                          data-slide-id={slide.id}
+                          data-slide-index={index}
+                          className="w-full max-w-full relative"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05, duration: 0.3 }}
+                        >
+                          <div
+                            className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
+                            style={{ color: theme.bodyColor }}
+                          >
+                            {index + 1}
+                          </div>
+
+                          <ScalableSlideContainer>
+                            <SlideCanvas
+                              slide={slide}
+                              onUpdateBlock={handleUpdateBlock}
+                              onDeleteRow={handleDeleteRow}
+                              onAddColumn={handleAddColumn}
+                              onAddRowAtTop={handleAddRowAtTop}
+                              onAddRowAtBottom={handleAddRowAtBottom}
+                              onUpdateColumnWidths={handleUpdateColumnWidths}
+                            />
+                          </ScalableSlideContainer>
+                        </motion.div>
+                      ))}
+                  </div>
+                </BlockSelectionProvider>
+
+                <DragOverlayWrapper />
+              </EditorDndProvider>
+            </div>
+          </div>
         </div>
       </div>
 
-      <LoaderOverlay 
-        isLoading={isGeneratingSlides} 
+      <LoaderOverlay
+        isLoading={isGeneratingSlides}
         progress={slideGenerationProgress}
         theme={theme}
         mode={isDark ? "dark" : "light"}
