@@ -96,7 +96,7 @@ export const ButtonBlock: React.FC<BlockRendererProps> = ({
   }
 
   return (
-    <div className={`w-full flex ${alignmentClasses[content.alignment] || "justify-center"} py-1`}>
+    <div className={`w-full flex ${alignmentClasses[content.alignment] || "justify-center"} py-2`}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <div className="relative group">

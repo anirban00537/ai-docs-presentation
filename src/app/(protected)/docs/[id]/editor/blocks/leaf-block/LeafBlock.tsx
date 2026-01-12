@@ -57,9 +57,9 @@ export const LeafBlock = memo(function LeafBlock({
     };
 
     return (
-        <div className="group relative w-full h-full min-h-[220px] p-2">
+        <div className="group relative w-full h-full min-h-[220px] p-3">
             <div 
-                className="grid gap-1.5"
+                className="grid gap-3"
                 style={{
                     gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))"
                 }}
@@ -67,7 +67,7 @@ export const LeafBlock = memo(function LeafBlock({
                 {items.map((item, index) => (
                     <div
                         key={item.id}
-                        className="relative group/leaf p-2 transition-all duration-700 overflow-hidden"
+                        className="relative group/leaf p-3 transition-all duration-700 overflow-hidden"
                         style={{
                             borderRadius: "0px 48px 0px 48px",
                             backgroundColor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.5)",

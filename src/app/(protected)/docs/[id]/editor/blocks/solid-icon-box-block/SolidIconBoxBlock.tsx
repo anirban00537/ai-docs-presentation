@@ -58,9 +58,9 @@ export const SolidIconBoxBlock = memo(function SolidIconBoxBlock({
   };
 
   return (
-    <div className="group relative w-full h-full min-h-[220px] p-4">
+    <div className="group relative w-full h-full min-h-[220px] p-3">
       <div 
-        className="grid gap-1.5"
+        className="grid gap-3"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))"
         }}
@@ -68,7 +68,7 @@ export const SolidIconBoxBlock = memo(function SolidIconBoxBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/icon-card p-2 transition-all duration-500 overflow-hidden"
+            className="relative group/icon-card p-3 transition-all duration-500 overflow-hidden"
             style={{
               borderRadius: "20px",
               backgroundColor: theme.cardBackground,

@@ -142,6 +142,7 @@ export const CodeBlock = memo(function CodeBlock({
 
   return (
     <BlockWrapper onEdit={handleOpenEdit} theme={theme}>
+      <div className="p-3">
       <div
         className="relative w-full overflow-hidden text-left h-full flex flex-col group transition-all duration-500"
         onClick={handleOpenEdit}
@@ -336,6 +337,7 @@ export const CodeBlock = memo(function CodeBlock({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     </BlockWrapper>
   );
 });

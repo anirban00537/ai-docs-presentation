@@ -27,7 +27,7 @@ export const ProseMirrorBlock = memo(function ProseMirrorBlock({
   const value = isProseMirrorDocument(block.content) ? block.content : "";
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col p-3">
       <ProseMirrorEditor
         key={block.id}
         blockId={block.id}

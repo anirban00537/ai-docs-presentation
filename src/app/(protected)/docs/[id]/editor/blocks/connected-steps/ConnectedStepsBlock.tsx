@@ -84,7 +84,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
         />
 
         {items.map((item: any, index: number) => (
-          <div key={item.id} className="relative flex gap-4 mb-4 last:mb-0 group/item">
+          <div key={item.id} className="relative flex gap-3 mb-3 last:mb-0 group/item">
              {/* Left Column: Number Node */}
              <div className="relative z-10 flex-shrink-0">
                 <div 
@@ -105,7 +105,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
 
              {/* Right Column: Content */}
              <div 
-                className="flex-1 pt-0.5 min-w-0 pb-3 border-b border-dashed border-opacity-20 last:border-none last:pb-0"
+                className="flex-1 pt-1 min-w-0 pb-3 border-b border-dashed border-opacity-20 last:border-none last:pb-0"
                 style={{ borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)" }}
              >
                 <div className="relative">
@@ -120,7 +120,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
                     )}
 
                     {/* Title */}
-                    <div className="mb-0.5 pr-8">
+                    <div className="mb-1 pr-8">
                         <ProseMirrorEditor
                             key={`${item.id}-title`}
                             blockId={`${item.id}-title`}

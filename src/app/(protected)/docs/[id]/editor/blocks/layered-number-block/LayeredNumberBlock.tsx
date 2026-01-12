@@ -58,7 +58,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
   };
 
   return (
-    <div className="group relative w-full h-full min-h-[220px] p-4">
+    <div className="group relative w-full h-full min-h-[220px] p-3">
         <style dangerouslySetInnerHTML={{ __html: `
           .no-spinner::-webkit-outer-spin-button,
           .no-spinner::-webkit-inner-spin-button {
@@ -71,7 +71,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
         `}} />
 
       <div 
-        className="grid gap-1.5"
+        className="grid gap-3"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))"
         }}
@@ -79,7 +79,7 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/layered p-2 transition-all duration-700 overflow-hidden"
+            className="relative group/layered p-3 transition-all duration-700 overflow-hidden"
             style={{
               borderRadius: "0px",
               backgroundColor: "transparent",

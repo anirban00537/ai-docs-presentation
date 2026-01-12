@@ -76,7 +76,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
     };
 
     return (
-        <div className="group relative w-full h-full min-h-[220px] py-4">
+        <div className="group relative w-full h-full min-h-[220px] py-3">
             {/* Responsive Vertical Timeline Line */}
             <div
                 className="absolute left-8 md:left-1/2 top-0 bottom-0 md:-translate-x-1/2"
@@ -88,7 +88,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
             />
 
             {/* Timeline Items */}
-            <div className="relative space-y-2">
+            <div className="relative space-y-3">
                 {items.map((item, index) => {
                     const isLeft = index % 2 === 0;
 

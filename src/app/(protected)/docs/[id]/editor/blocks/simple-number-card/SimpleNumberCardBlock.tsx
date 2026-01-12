@@ -58,7 +58,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
   };
 
   return (
-    <div className="group relative w-full h-full min-h-[200px] p-0">
+    <div className="group relative w-full h-full min-h-[200px] p-3">
         <style dangerouslySetInnerHTML={{ __html: `
           .no-spinner::-webkit-outer-spin-button,
           .no-spinner::-webkit-inner-spin-button {
@@ -71,7 +71,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
         `}} />
 
       <div 
-        className="grid gap-2"
+        className="grid gap-3"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))"
         }}
@@ -79,7 +79,7 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/num-card p-2 transition-all duration-500 overflow-hidden"
+            className="relative group/num-card p-3 transition-all duration-500 overflow-hidden"
             style={{
               borderRadius: "20px",
               backgroundColor: theme.cardBackground,

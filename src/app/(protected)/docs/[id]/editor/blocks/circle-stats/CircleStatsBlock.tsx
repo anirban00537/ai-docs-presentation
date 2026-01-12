@@ -61,7 +61,7 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
 
   return (
     <div 
-      className="group relative w-full h-full min-h-[220px] py-4"
+      className="group relative w-full h-full min-h-[220px] py-3"
       style={{
         fontFamily: getFontFamily(theme.fontFamily || "Inter"),
       }}
@@ -76,7 +76,7 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
           -moz-appearance: textfield;
         }
       `}</style>
-      <div className="flex flex-wrap justify-center items-start gap-6 md:gap-8">
+      <div className="flex flex-wrap justify-center items-start gap-3">
         {items.map((item, index) => (
           <div key={item.id} className="relative group/item flex flex-col items-center min-w-[200px] flex-1 text-center">
              
