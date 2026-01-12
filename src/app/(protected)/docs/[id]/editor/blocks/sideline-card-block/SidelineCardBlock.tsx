@@ -67,19 +67,16 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/sideline overflow-hidden transition-all duration-700"
+            className="relative group/sideline overflow-hidden transition-all duration-500 rounded-3xl"
             style={{
-              borderRadius: "12px",
               backgroundColor: theme.cardBackground,
-              boxShadow: "sm",
             }}
           >
-
+            {/* Side Accent Line */}
             <div 
-              className="absolute left-0 top-0 bottom-0 w-1.5 transition-all duration-700"
+              className="absolute left-0 top-0 bottom-0 w-1.5 transition-all duration-300 group-hover/sideline:w-2"
               style={{
                 backgroundColor: theme.primary,
-                opacity: 0.9,
               }}
             />
 
@@ -87,22 +84,22 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
             {!readOnly && (
                 <button
                     onClick={() => handleRemoveItem(index)}
-                    className="absolute top-3 right-3 z-30 opacity-0 group-hover/sideline:opacity-100 transition-all p-1.5 rounded-full hover:bg-red-500/10 hover:text-red-500 text-gray-400"
+                    className="absolute top-4 right-4 z-30 opacity-0 group-hover/sideline:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500"
                 >
-                    <IconX size={14} stroke={2.5} />
+                    <IconX size={16} stroke={2.5} />
                 </button>
             )}
 
-            <div className="p-3 pl-5">
+            <div className="p-6 pl-8">
               {/* Title Section */}
-              <div className="mb-0.5">
+              <div className="mb-2">
                 <ProseMirrorEditor
                   key={`${item.id}-title`}
                   blockId={`${item.id}-title`}
                   value={item.title}
                   onChange={(value) => handleItemUpdate(index, "title", value)}
                   placeholder="Key Point"
-                  className="text-base font-bold tracking-tight"
+                  className="text-xl font-bold tracking-tight"
                   theme={{
                       ...theme,
                       headingColor: theme.primary,
@@ -112,39 +109,40 @@ export const SidelineCardBlock = memo(function SidelineCardBlock({
               </div>
 
               {/* Description Section */}
-              <div className="">
+              <div>
                 <ProseMirrorEditor
                   key={`${item.id}-description`}
                   blockId={`${item.id}-description`}
                   value={item.description}
                   onChange={(value) => handleItemUpdate(index, "description", value)}
                   placeholder="Add details..."
-                  className="text-sm leading-relaxed opacity-70 group-hover/sideline:opacity-90 transition-opacity"
+                  className="text-base leading-relaxed opacity-60"
                   theme={theme}
                   readOnly={readOnly}
                 />
               </div>
             </div>
-
-
           </div>
         ))}
       </div>
 
-      {/* Float Add Button */}
+      {/* Add Button */}
       {!readOnly && (
-        <button
-          onClick={handleAddItem}
-          className="absolute bottom-6 right-6 h-10 w-10 flex items-center justify-center rounded-full shadow-lg border transition-all hover:scale-110 active:scale-95 z-30 opacity-0 group-hover:opacity-100 duration-300"
-          style={{
-            background: theme.cardBackground,
-            borderColor: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
-            color: theme.primary,
-            boxShadow: `0 0 20px ${theme.primary}20`,
-          }}
-        >
-          <IconPlus size={20} stroke={2.5} />
-        </button>
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={handleAddItem}
+            className="group/add flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 duration-300 shadow-md hover:shadow-xl"
+            style={{
+              backgroundColor: theme.primary,
+              color: theme.cardBackground,
+            }}
+          >
+            <IconPlus size={18} stroke={3} />
+            <span className="text-sm font-black uppercase tracking-widest">
+              Add Card
+            </span>
+          </button>
+        </div>
       )}
     </div>
   );

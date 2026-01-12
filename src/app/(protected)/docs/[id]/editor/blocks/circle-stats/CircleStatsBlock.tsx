@@ -78,10 +78,11 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
       `}</style>
       <div className="flex flex-wrap justify-center items-start gap-3">
         {items.map((item, index) => (
-          <div key={item.id} className="relative group/item flex flex-col items-center min-w-[200px] flex-1 text-center">
+          <div key={item.id} className="relative group/item flex flex-col items-center min-w-[200px] flex-1 text-center p-6 rounded-3xl transition-all duration-500"
+               style={{ backgroundColor: theme.cardBackground }}>
              
              {/* Progress Circle Container */}
-             <div className="relative mb-3">
+             <div className="relative mb-4">
                 <ProgressCircle value={item.value} theme={theme} />
                 
                 {/* Center Value Input */}
@@ -109,15 +110,15 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
                 {!readOnly && (
                     <button
                         onClick={() => handleRemoveItem(index)}
-                        className="absolute -top-2 -right-2 opacity-0 group-hover/item:opacity-100 transition-opacity p-1.5 rounded-full bg-red-100 text-red-500 hover:bg-red-500 hover:text-white shadow-sm"
+                        className="absolute top-0 right-0 opacity-0 group-hover/item:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500"
                     >
-                        <IconX size={14} />
+                        <IconX size={16} stroke={2.5} />
                     </button>
                 )}
              </div>
 
              {/* Title */}
-             <div className="mb-1 w-full">
+             <div className="mb-2 w-full">
                 <ProseMirrorEditor
                     key={`${item.id}-title`}
                     blockId={`${item.id}-title`}
@@ -127,7 +128,7 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
                     readOnly={readOnly}
                     theme={{
                         ...theme,
-                        headingColor: isDark ? "#fff" : theme.headingColor,
+                        headingColor: theme.primary,
                     }}
                     className="text-xl font-bold tracking-tight text-center"
                 />
@@ -143,25 +144,28 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
                     placeholder="Description"
                     readOnly={readOnly}
                     theme={theme}
-                    className="text-sm opacity-70 leading-relaxed text-center"
+                    className="text-base opacity-60 leading-relaxed text-center"
                 />
              </div>
           </div>
         ))}
 
-        {/* Add Button - Top Right Hover */}
+        {/* Add Button */}
         {!readOnly && (
-             <div className="absolute top-0 right-0 z-20">
+             <div className="flex justify-center w-full mt-8">
                  <button
                     onClick={handleAddItem}
-                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-lg bg-neutral-100 dark:bg-neutral-800 opacity-0 group-hover:opacity-100 duration-300"
+                    className="group/add flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 duration-300 shadow-md hover:shadow-xl"
                     style={{
-                        color: theme.primary,
-                        boxShadow: isDark ? "0 4px 12px rgba(0,0,0,0.5)" : "0 4px 12px rgba(0,0,0,0.1)",
+                        backgroundColor: theme.primary,
+                        color: theme.cardBackground,
                     }}
                     title="Add Statistic"
                 >
-                    <IconPlus size={20} stroke={2.5} />
+                    <IconPlus size={18} stroke={3} />
+                    <span className="text-sm font-black uppercase tracking-widest">
+                        Add Stat
+                    </span>
                 </button>
              </div>
         )}

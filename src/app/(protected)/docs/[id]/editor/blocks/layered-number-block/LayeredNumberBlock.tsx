@@ -79,42 +79,30 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/layered p-3 transition-all duration-700 overflow-hidden"
+            className="relative group/layered p-6 transition-all duration-500 overflow-hidden rounded-3xl"
             style={{
-              borderRadius: "0px",
-              backgroundColor: "transparent",
+              backgroundColor: theme.cardBackground,
             }}
           >
-            {/* Massive Background Number Indicator */}
-            <div 
-                className="absolute -right-4 -bottom-10 text-[200px] font-black leading-none pointer-events-none select-none z-0 opacity-[0.03] transition-all duration-1000"
-                style={{
-                    color: theme.primary,
-                    fontFamily: "var(--font-heading)",
-                }}
-            >
-                {String(item.number).padStart(2, '0')}
-            </div>
-
             {/* Remove Button */}
             {!readOnly && (
                 <button
                     onClick={() => handleRemoveItem(index)}
-                    className="absolute top-6 right-6 z-30 opacity-0 group-hover/layered:opacity-100 transition-all p-2 rounded-full hover:bg-red-500/10 hover:text-red-500 text-gray-400"
+                    className="absolute top-4 right-4 z-30 opacity-0 group-hover/layered:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500"
                 >
-                    <IconX size={18} stroke={2.5} />
+                    <IconX size={16} stroke={2.5} />
                 </button>
             )}
 
             <div className="relative z-10 flex flex-col h-full">
-              {/* Floating Small Number Input */}
-              <div className="mb-1">
+              {/* Number Badge */}
+              <div className="mb-4">
                 <div 
-                    className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border shadow-lg transition-transform"
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black shadow-lg transition-transform duration-300 group-hover/layered:scale-110"
                     style={{
                         backgroundColor: theme.primary,
-                        borderColor: `${theme.primary}40`,
                         color: theme.cardBackground,
+                        boxShadow: `0 4px 12px ${theme.primary}40`,
                     }}
                 >
                     <input 
@@ -129,14 +117,14 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
               </div>
 
               {/* Title Section */}
-              <div className="mb-0.5">
+              <div className="mb-2">
                 <ProseMirrorEditor
                   key={`${item.id}-title`}
                   blockId={`${item.id}-title`}
                   value={item.title}
                   onChange={(value) => handleItemUpdate(index, "title", value)}
                   placeholder="Core Step"
-                  className="text-lg font-black tracking-tight"
+                  className="text-xl font-bold tracking-tight"
                   theme={{
                       ...theme,
                       headingColor: theme.primary,
@@ -153,32 +141,33 @@ export const LayeredNumberBlock = memo(function LayeredNumberBlock({
                   value={item.description}
                   onChange={(value) => handleItemUpdate(index, "description", value)}
                   placeholder="Explain the step..."
-                  className="text-base leading-relaxed opacity-70 group-hover/layered:opacity-90 transition-opacity"
+                  className="text-base leading-relaxed opacity-60"
                   theme={theme}
                   readOnly={readOnly}
                 />
               </div>
             </div>
-
-
           </div>
         ))}
       </div>
 
-      {/* Float Add Button */}
+      {/* Add Button */}
       {!readOnly && (
-        <button
-          onClick={handleAddItem}
-          className="absolute bottom-10 right-10 h-14 w-14 flex items-center justify-center rounded-2xl shadow-2xl border-2 transition-all hover:scale-110 active:scale-95 z-30 opacity-0 group-hover:opacity-100 duration-500 hover:rotate-6"
-          style={{
-            background: theme.cardBackground,
-            borderColor: theme.primary,
-            color: theme.primary,
-            boxShadow: `0 10px 30px ${theme.primary}40`,
-          }}
-        >
-          <IconPlus size={28} stroke={3} />
-        </button>
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={handleAddItem}
+            className="group/add flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 duration-300 shadow-md hover:shadow-xl"
+            style={{
+              backgroundColor: theme.primary,
+              color: theme.cardBackground,
+            }}
+          >
+            <IconPlus size={18} stroke={3} />
+            <span className="text-sm font-black uppercase tracking-widest">
+              Add Card
+            </span>
+          </button>
+        </div>
       )}
     </div>
   );

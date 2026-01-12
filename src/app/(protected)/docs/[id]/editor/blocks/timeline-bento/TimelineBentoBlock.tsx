@@ -99,24 +99,23 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                 {isLeft && (
                                     <div className="w-full md:max-w-[90%]">
                                         <div
-                                            className="relative group/timeline-card rounded-2xl p-3 transition-all duration-700"
+                                            className="relative group/timeline-card rounded-3xl p-6 transition-all duration-500"
                                             style={{
-                                                backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.6)",
-                                                backdropFilter: "blur(16px)",
+                                                backgroundColor: theme.cardBackground,
                                             }}
                                         >
                                             {/* Remove Button */}
                                             {!readOnly && (
                                                 <button
                                                     onClick={() => handleRemoveItem(index)}
-                                                    className="absolute top-3 right-3 z-30 opacity-0 group-hover/timeline-card:opacity-100 transition-all p-1.5 rounded-full hover:bg-red-500/10 hover:text-red-500 text-gray-400"
+                                                    className="absolute top-4 right-4 z-30 opacity-0 group-hover/timeline-card:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500"
                                                 >
-                                                    <IconX size={14} stroke={2.5} />
+                                                    <IconX size={16} stroke={2.5} />
                                                 </button>
                                             )}
 
                                             {/* Title Editor */}
-                                            <div className="mb-0.5">
+                                            <div className="mb-2">
                                                 <ProseMirrorEditor
                                                     key={`${item.id}-title-left-${index}`}
                                                     blockId={`${item.id}-title-left-${index}`}
@@ -128,12 +127,12 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                                         ...theme,
                                                         headingColor: theme.primary,
                                                     }}
-                                                    className="text-base font-bold tracking-tight"
+                                                    className="text-xl font-bold tracking-tight"
                                                 />
                                             </div>
 
                                             {/* Description Editor */}
-                                            <div className="">
+                                            <div>
                                                 <ProseMirrorEditor
                                                     key={`${item.id}-description-left-${index}`}
                                                     blockId={`${item.id}-description-left-${index}`}
@@ -142,7 +141,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                                     placeholder="Details..."
                                                     readOnly={readOnly}
                                                     theme={theme}
-                                                    className="text-sm leading-relaxed opacity-70"
+                                                    className="text-base leading-relaxed opacity-60"
                                                 />
                                             </div>
                                         </div>
@@ -171,24 +170,23 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                 {!isLeft && (
                                     <div className="w-full md:max-w-[90%]">
                                         <div
-                                            className="relative group/timeline-card rounded-2xl p-3 transition-all duration-700 hover:-translate-y-1"
+                                            className="relative group/timeline-card rounded-3xl p-6 transition-all duration-500"
                                             style={{
-                                                backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.6)",
-                                                backdropFilter: "blur(16px)",
+                                                backgroundColor: theme.cardBackground,
                                             }}
                                         >
                                             {/* Remove Button */}
                                             {!readOnly && (
                                                 <button
                                                     onClick={() => handleRemoveItem(index)}
-                                                    className="absolute top-3 right-3 z-30 opacity-0 group-hover/timeline-card:opacity-100 transition-all p-1.5 rounded-full hover:bg-red-500/10 hover:text-red-500 text-gray-400"
+                                                    className="absolute top-4 right-4 z-30 opacity-0 group-hover/timeline-card:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500"
                                                 >
-                                                    <IconX size={14} stroke={2.5} />
+                                                    <IconX size={16} stroke={2.5} />
                                                 </button>
                                             )}
 
                                             {/* Title Editor */}
-                                            <div className="mb-0.5">
+                                            <div className="mb-2">
                                                 <ProseMirrorEditor
                                                     key={`${item.id}-title-right-${index}`}
                                                     blockId={`${item.id}-title-right-${index}`}
@@ -200,12 +198,12 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                                         ...theme,
                                                         headingColor: theme.primary,
                                                     }}
-                                                    className="text-base font-bold tracking-tight"
+                                                    className="text-xl font-bold tracking-tight"
                                                 />
                                             </div>
 
                                             {/* Description Editor */}
-                                            <div className="">
+                                            <div>
                                                 <ProseMirrorEditor
                                                     key={`${item.id}-description-right-${index}`}
                                                     blockId={`${item.id}-description-right-${index}`}
@@ -214,7 +212,7 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                                                     placeholder="Details..."
                                                     readOnly={readOnly}
                                                     theme={theme}
-                                                    className="text-sm leading-relaxed opacity-70"
+                                                    className="text-base leading-relaxed opacity-60"
                                                 />
                                             </div>
                                         </div>
@@ -226,19 +224,23 @@ export const TimelineBentoBlock = memo(function TimelineBentoBlock({
                 })}
             </div>
 
-            {/* Float Add Button */}
+            {/* Add Button */}
             {!readOnly && (
-                <button
-                    onClick={handleAddItem}
-                    className="absolute bottom-6 left-1/2 -translate-x-1/2 h-10 w-10 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 z-30 opacity-0 group-hover:opacity-100 duration-300"
-                    style={{
-                        background: isDark ? "rgba(255, 255, 255, 0.05)" : "#fff",
-                        backdropFilter: "blur(12px)",
-                        color: theme.primary,
-                    }}
-                >
-                    <IconPlus size={20} stroke={2.5} />
-                </button>
+                <div className="flex justify-center mt-8">
+                    <button
+                        onClick={handleAddItem}
+                        className="group/add flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 duration-300 shadow-md hover:shadow-xl"
+                        style={{
+                            backgroundColor: theme.primary,
+                            color: theme.cardBackground,
+                        }}
+                    >
+                        <IconPlus size={18} stroke={3} />
+                        <span className="text-sm font-black uppercase tracking-widest">
+                            Add Event
+                        </span>
+                    </button>
+                </div>
             )}
         </div>
     );

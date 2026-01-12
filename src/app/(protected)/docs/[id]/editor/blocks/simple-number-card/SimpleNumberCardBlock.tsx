@@ -79,36 +79,30 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className="relative group/num-card p-3 transition-all duration-500 overflow-hidden"
+            className="relative group/num-card p-6 transition-all duration-500 overflow-hidden rounded-3xl"
             style={{
-              borderRadius: "20px",
               backgroundColor: theme.cardBackground,
             }}
           >
-            {/* Background Decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 opacity-[0.03] group-hover/num-card:opacity-[0.08] transition-opacity duration-1000"
-                 style={{ background: `radial-gradient(circle at top right, ${theme.primary}, transparent)` }} />
-
             {/* Remove Button */}
             {!readOnly && (
                 <button
                     onClick={() => handleRemoveItem(index)}
-                    className="absolute top-4 right-4 z-30 opacity-0 group-hover/num-card:opacity-100 transition-all p-2 rounded-full hover:bg-red-500/10 hover:text-red-500 text-gray-400"
+                    className="absolute top-4 right-4 z-30 opacity-0 group-hover/num-card:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500"
                 >
                     <IconX size={16} stroke={2.5} />
                 </button>
             )}
 
             <div className="relative z-10">
-              {/* Number Badge with Outer Ring */}
-              <div className="mb-2 inline-flex p-0.5 rounded-2xl border" 
-                   style={{ borderColor: `${theme.primary}20`, background: `${theme.primary}05` }}>
+              {/* Number Badge - Modern Design */}
+              <div className="mb-4 inline-flex">
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-black shadow-inner border transition-transform"
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black shadow-lg transition-transform duration-300 group-hover/num-card:scale-110"
                   style={{
                     backgroundColor: theme.primary,
-                    borderColor: `${theme.primary}40`,
                     color: theme.cardBackground,
+                    boxShadow: `0 4px 12px ${theme.primary}40`,
                   }}
                 >
                   <input
@@ -116,21 +110,21 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
                     value={item.number}
                     onChange={(e) => handleItemUpdate(index, "number", parseInt(e.target.value, 10) || 0)}
                     disabled={readOnly}
-                    className="no-spinner bg-transparent border-none outline-none text-center w-full font-black selection:bg-white/20"
+                    className="no-spinner bg-transparent border-none outline-none text-center w-full font-black"
                     style={{ color: theme.cardBackground }}
                   />
                 </div>
               </div>
 
               {/* Title Section */}
-              <div className="mb-0.5">
+              <div className="mb-2">
                 <ProseMirrorEditor
                   key={`${item.id}-title`}
                   blockId={`${item.id}-title`}
                   value={item.title}
                   onChange={(value) => handleItemUpdate(index, "title", value)}
                   placeholder="Point Title"
-                  className="text-base font-bold tracking-tight opacity-90 group-hover/num-card:opacity-100 transition-opacity"
+                  className="text-xl font-bold tracking-tight"
                   theme={{
                       ...theme,
                       headingColor: theme.primary,
@@ -140,43 +134,40 @@ export const SimpleNumberCardBlock = memo(function SimpleNumberCardBlock({
               </div>
 
               {/* Description Section */}
-              <div className="">
+              <div>
                 <ProseMirrorEditor
                   key={`${item.id}-description`}
                   blockId={`${item.id}-description`}
                   value={item.description}
                   onChange={(value) => handleItemUpdate(index, "description", value)}
                   placeholder="Details..."
-                  className="text-sm leading-relaxed opacity-60 group-hover/num-card:opacity-80 transition-opacity"
+                  className="text-base leading-relaxed opacity-60"
                   theme={theme}
                   readOnly={readOnly}
                 />
               </div>
             </div>
-
-            {/* Bottom Glow Accent */}
-            <div
-                className="absolute bottom-0 left-0 w-full h-1 opacity-0 group-hover/num-card:opacity-100 transition-all duration-700"
-                style={{ background: `linear-gradient(to right, ${theme.primary}00, ${theme.primary}, ${theme.primary}00)` }}
-            />
           </div>
         ))}
       </div>
 
-      {/* Float Add Button */}
+      {/* Add Button */}
       {!readOnly && (
-        <button
-          onClick={handleAddItem}
-          className="absolute bottom-10 right-10 h-12 w-12 flex items-center justify-center rounded-full shadow-2xl border-2 transition-all hover:scale-110 active:scale-95 z-30 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 duration-500"
-          style={{
-            background: theme.cardBackground,
-            borderColor: theme.primary,
-            color: theme.primary,
-            boxShadow: `0 0 30px ${theme.primary}30`,
-          }}
-        >
-          <IconPlus size={24} stroke={3} />
-        </button>
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={handleAddItem}
+            className="group/add flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 duration-300 shadow-md hover:shadow-xl"
+            style={{
+              backgroundColor: theme.primary,
+              color: theme.cardBackground,
+            }}
+          >
+            <IconPlus size={18} stroke={3} />
+            <span className="text-sm font-black uppercase tracking-widest">
+              Add Card
+            </span>
+          </button>
+        </div>
       )}
     </div>
   );
