@@ -87,7 +87,7 @@ export const ScalableSlideContainer = ({ children }: ScalableSlideContainerProps
     return (
         <div
             ref={containerRef}
-            className="w-full flex justify-center items-start overflow-hidden origin-top"
+            className="w-full flex justify-center items-start overflow-visible origin-top"
             style={{
                 height: Math.ceil(finalContentHeight * scale),
             }}
