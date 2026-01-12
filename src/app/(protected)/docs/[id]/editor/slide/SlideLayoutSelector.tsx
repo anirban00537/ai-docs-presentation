@@ -31,12 +31,13 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
   const isDark = theme.themeType === "dark";
 
   const { data: adminLayouts, isLoading, error } = useAdminLayouts();
-  const [isFetchingDetails, setIsFetchingDetails] = React.useState<string | null>(null);
+  const [isFetchingDetails, setIsFetchingDetails] = React.useState<
+    string | null
+  >(null);
 
   // Combine local templates with admin layouts from DB
   // We prioritize DB layouts but can fallback to local if needed
   const displayLayouts = React.useMemo(() => {
-    
     if (adminLayouts && adminLayouts.length > 0) {
       const dbLayouts = adminLayouts.map((l: any) => ({
         id: l.id,
@@ -45,10 +46,10 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
         icon: l.icon,
         dbId: l.id,
       }));
-      
+
       return dbLayouts;
     }
-    
+
     return [];
   }, [adminLayouts]);
 
@@ -58,9 +59,62 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
       try {
         const response = await layoutsService.getLayout(template.dbId);
         if (response.success) {
-          const fullLayout = response.data;
-          // Pass the full layout object with data property
-          onSelectLayout(fullLayout);
+          const apiData = response.data as any;
+
+          // Transform API response to LayoutTemplate format
+          // API returns a presentation with slides array, but we need a layout template
+          let layoutTemplate: LayoutTemplate;
+
+          if (
+            apiData.slides &&
+            Array.isArray(apiData.slides) &&
+            apiData.slides.length > 0
+          ) {
+            // Extract the first slide's data
+            const firstSlide = apiData.slides[0];
+            layoutTemplate = {
+              id: apiData.id || template.id,
+              name: (apiData as any).title || template.name,
+              description: apiData.description || template.description,
+              icon: template.icon,
+              type: "admin",
+              tags: apiData.tags || [],
+              data: {
+                rows: firstSlide.data?.rows || [],
+                accent: firstSlide.data?.accent,
+              },
+              createdAt: apiData.createdAt,
+              updatedAt: apiData.updatedAt,
+            };
+          } else if (apiData.data) {
+            // If it's already in the correct format
+            layoutTemplate = {
+              id: apiData.id || template.id,
+              name: apiData.name || (apiData as any).title || template.name,
+              description: apiData.description || template.description,
+              icon: apiData.icon || template.icon,
+              type: apiData.type || "admin",
+              tags: apiData.tags || [],
+              data: apiData.data,
+              createdAt: apiData.createdAt,
+              updatedAt: apiData.updatedAt,
+            };
+          } else {
+            // Fallback: create empty layout
+            layoutTemplate = {
+              id: apiData.id || template.id,
+              name: apiData.name || (apiData as any).title || template.name,
+              description: apiData.description || template.description,
+              icon: template.icon,
+              type: "admin",
+              tags: [],
+              data: {
+                rows: [],
+              },
+            };
+          }
+
+          onSelectLayout(layoutTemplate);
           onClose();
         } else {
           toast.error("Failed to load layout details");
@@ -83,8 +137,8 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
       <DialogContent
         className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-5xl w-[95vw] max-h-[85vh] overflow-hidden p-0 z-[100] rounded-2xl"
         style={{
-          backgroundColor: isDark 
-            ? "rgba(30, 30, 40, 0.6)" 
+          backgroundColor: isDark
+            ? "rgba(30, 30, 40, 0.6)"
             : "rgba(255, 255, 255, 0.6)",
           backdropFilter: "blur(32px) saturate(200%)",
           WebkitBackdropFilter: "blur(32px) saturate(200%)",
@@ -105,7 +159,7 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
         }}
       >
         {/* Glass shine overlay */}
-        <div 
+        <div
           className="absolute inset-0 pointer-events-none rounded-2xl"
           style={{
             background: isDark
@@ -126,18 +180,24 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
             className="text-sm mt-1 opacity-50"
             style={{ color: isDark ? "#fff" : "#000" }}
           >
-            {isLoading ? "Loading templates..." : "Select a template for your new slide"}
+            {isLoading
+              ? "Loading templates..."
+              : "Select a template for your new slide"}
           </p>
         </DialogHeader>
 
         {/* Layouts Grid */}
-        <div className={`relative px-6 pb-6 overflow-y-auto max-h-[calc(85vh-100px)] ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}>
+        <div
+          className={`relative px-6 pb-6 overflow-y-auto max-h-[calc(85vh-100px)] ${
+            isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+          }`}
+        >
           {error && (
             <div className="text-center py-10 text-red-500">
               Failed to load templates. Showing local fallback.
             </div>
           )}
-          
+
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
             {displayLayouts.map((template: any, index: number) => (
               <motion.button
@@ -148,7 +208,9 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
                 onClick={() => handleSelect(template)}
                 disabled={isFetchingDetails !== null}
                 className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
-                  isFetchingDetails === template.id ? "scale-95 opacity-50" : "hover:scale-105"
+                  isFetchingDetails === template.id
+                    ? "scale-95 opacity-50"
+                    : "hover:scale-105"
                 }`}
                 style={{
                   backgroundColor: "transparent",
@@ -169,10 +231,10 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
                     color: theme.primary,
                   }}
                 >
-                  <DynamicIcon 
-                    name={template.icon as string} 
-                    size={24} 
-                    stroke={2} 
+                  <DynamicIcon
+                    name={template.icon as string}
+                    size={24}
+                    stroke={2}
                   />
                 </div>
 
@@ -191,4 +253,3 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
     </Dialog>
   );
 };
-

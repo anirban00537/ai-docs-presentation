@@ -21,12 +21,12 @@ import {
   createRowWithColumns,
   createSlide,
 } from "@/app/(protected)/docs/[id]/engine/registry/factories";
-import { 
-  findSlide, 
-  findRow, 
-  findBlock, 
-  recalculateWidths, 
-  ensureRowExists 
+import {
+  findSlide,
+  findRow,
+  findBlock,
+  recalculateWidths,
+  ensureRowExists,
 } from "../utils/sliceHelpers";
 
 export interface SlidesState {
@@ -74,12 +74,15 @@ const slidesSlice = createSlice({
     setActiveSlide: (state, action: PayloadAction<string>) => {
       state.activeSlideId = action.payload;
     },
-    addSlide: (state, action: PayloadAction<{ afterSlideId?: string; id?: string }>) => {
+    addSlide: (
+      state,
+      action: PayloadAction<{ afterSlideId?: string; id?: string }>
+    ) => {
       const newSlide = createSlide();
       if (action.payload.id) {
         newSlide.id = action.payload.id;
       }
-      
+
       if (action.payload.afterSlideId) {
         const index = state.slides.findIndex(
           (s) => s.id === action.payload.afterSlideId
@@ -154,8 +157,49 @@ const slidesSlice = createSlice({
       const { clientId, serverSlide } = action.payload;
       const slideIndex = state.slides.findIndex((s) => s.id === clientId);
       if (slideIndex !== -1) {
-        // Replace the client-side slide with server-side slide
-        state.slides[slideIndex] = serverSlide;
+        const currentSlide = state.slides[slideIndex];
+
+        // Preserve normalized content if server data has empty blocks
+        // Check if server slide has empty blocks but current slide has valid content
+        const serverHasEmptyBlocks = serverSlide.rows.some((row) =>
+          row.blocks.some(
+            (block) =>
+              !block.content ||
+              (typeof block.content === "object" &&
+                Object.keys(block.content).length === 0)
+          )
+        );
+        const currentHasValidContent = currentSlide.rows.some((row) =>
+          row.blocks.some(
+            (block) =>
+              block.content &&
+              (typeof block.content === "string" ||
+                (typeof block.content === "object" &&
+                  "type" in block.content &&
+                  block.content.type === "doc"))
+          )
+        );
+
+        if (serverHasEmptyBlocks && currentHasValidContent) {
+          // Preserve current slide's rows (with normalized content) and accent if present
+          // but update ID and other metadata from server
+          state.slides[slideIndex] = {
+            ...serverSlide,
+            rows: currentSlide.rows, // Keep the normalized rows
+            accent: currentSlide.accent || serverSlide.accent, // Preserve current accent if it exists, otherwise use server's
+          };
+        } else {
+          // Replace the client-side slide with server-side slide
+          // But preserve accent if current slide has one and server doesn't
+          if (currentSlide.accent && !serverSlide.accent) {
+            state.slides[slideIndex] = {
+              ...serverSlide,
+              accent: currentSlide.accent,
+            };
+          } else {
+            state.slides[slideIndex] = serverSlide;
+          }
+        }
         // Update activeSlideId if it was the client ID
         if (state.activeSlideId === clientId) {
           state.activeSlideId = serverSlide.id;
@@ -246,10 +290,16 @@ const slidesSlice = createSlice({
         initialContent?: any;
       }>
     ) => {
-      const { slideId, insertAt, columnCount = 1, blockType, initialContent } = action.payload;
+      const {
+        slideId,
+        insertAt,
+        columnCount = 1,
+        blockType,
+        initialContent,
+      } = action.payload;
       const slide = findSlide(state, slideId);
       if (!slide) return;
-      
+
       const newRow = createRowWithColumns(
         columnCount,
         blockType as any,
@@ -299,10 +349,15 @@ const slidesSlice = createSlice({
         initialContent?: any;
       }>
     ) => {
-      const { slideId, columnCount, insertIndex, blockType, initialContent } = action.payload;
+      const { slideId, columnCount, insertIndex, blockType, initialContent } =
+        action.payload;
       const slide = findSlide(state, slideId);
       if (!slide) return;
-      const newRow = createRowWithColumns(columnCount, blockType as any, initialContent);
+      const newRow = createRowWithColumns(
+        columnCount,
+        blockType as any,
+        initialContent
+      );
       const targetIndex = Math.max(0, Math.min(insertIndex, slide.rows.length));
       slide.rows.splice(targetIndex, 0, newRow);
     },
@@ -335,11 +390,39 @@ const slidesSlice = createSlice({
     },
     replaceSlideWithLayout: (
       state,
-      action: PayloadAction<{ slideId: string; rows: Row[]; accent?: SlideAccent }>
+      action: PayloadAction<{
+        slideId: string;
+        rows: Row[];
+        accent?: SlideAccent;
+      }>
     ) => {
       const slide = findSlide(state, action.payload.slideId);
       if (slide) {
-        slide.rows = action.payload.rows;
+        // Normalize block content when applying layout
+        // Generate new IDs for rows and blocks to avoid conflicts
+        const normalizedRows = action.payload.rows.map((row) => ({
+          ...row,
+          id: row.id || nanoid(), // Ensure row has an ID
+          blocks: row.blocks.map((block) => {
+            // Generate new block ID to avoid conflicts with existing blocks
+            const newBlockId = nanoid();
+            const blockDef = BLOCK_DEFINITIONS[block.type as BlockType];
+            if (blockDef && blockDef.normalizeContent) {
+              const normalized = blockDef.normalizeContent(block.content);
+              return {
+                ...block,
+                id: newBlockId, // Use new ID
+                content: normalized,
+              };
+            }
+            return {
+              ...block,
+              id: newBlockId, // Use new ID even if not normalized
+            };
+          }),
+        }));
+
+        slide.rows = normalizedRows;
         // Apply accent if provided by template
         if (action.payload.accent) {
           slide.accent = action.payload.accent;
@@ -374,14 +457,20 @@ const slidesSlice = createSlice({
       // 1. Extract block and its width
       const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
       let movedWidth = 1;
-      if (sourceRow.columnWidths && sourceRow.columnWidths.length > blockIndex) {
+      if (
+        sourceRow.columnWidths &&
+        sourceRow.columnWidths.length > blockIndex
+      ) {
         [movedWidth] = sourceRow.columnWidths.splice(blockIndex, 1);
       }
 
       // Cleanup source row widths if it still has blocks
       if (sourceRow.blocks.length > 0) {
         // If we didn't have widths or they got out of sync, reset them
-        if (!sourceRow.columnWidths || sourceRow.columnWidths.length !== sourceRow.blocks.length) {
+        if (
+          !sourceRow.columnWidths ||
+          sourceRow.columnWidths.length !== sourceRow.blocks.length
+        ) {
           recalculateWidths(sourceRow);
         }
       }
@@ -390,17 +479,22 @@ const slidesSlice = createSlice({
       if (target.createNewRow) {
         const newRow = createRow([movedBlock]);
         let insertIndex = target.insertIndex ?? slide.rows.length;
-        
+
         // Clean up source row if empty before inserting new one to avoid index shifts
         if (sourceRow.blocks.length === 0) {
-          const sourceRowIndex = slide.rows.findIndex(r => r.id === sourceRowId);
+          const sourceRowIndex = slide.rows.findIndex(
+            (r) => r.id === sourceRowId
+          );
           slide.rows.splice(sourceRowIndex, 1);
           if (sourceRowIndex < insertIndex) {
             insertIndex = Math.max(0, insertIndex - 1);
           }
         }
-        
-        const finalInsertIndex = Math.max(0, Math.min(insertIndex, slide.rows.length));
+
+        const finalInsertIndex = Math.max(
+          0,
+          Math.min(insertIndex, slide.rows.length)
+        );
         slide.rows.splice(finalInsertIndex, 0, newRow);
       } else if (target.rowId) {
         const targetRow = findRow(slide, target.rowId);
@@ -412,17 +506,22 @@ const slidesSlice = createSlice({
         }
 
         let finalInsertIndex: number;
-        if (typeof target.insertIndex === 'number') {
-          finalInsertIndex = Math.max(0, Math.min(target.insertIndex, targetRow.blocks.length));
+        if (typeof target.insertIndex === "number") {
+          finalInsertIndex = Math.max(
+            0,
+            Math.min(target.insertIndex, targetRow.blocks.length)
+          );
         } else if (target.targetBlockId) {
-          const idx = targetRow.blocks.findIndex(b => b.id === target.targetBlockId);
+          const idx = targetRow.blocks.findIndex(
+            (b) => b.id === target.targetBlockId
+          );
           finalInsertIndex = idx === -1 ? targetRow.blocks.length : idx;
         } else {
           finalInsertIndex = targetRow.blocks.length;
         }
 
         targetRow.blocks.splice(finalInsertIndex, 0, movedBlock);
-        
+
         // Handle widths for target row
         if (!targetRow.columnWidths) {
           recalculateWidths(targetRow);
@@ -450,7 +549,8 @@ const slidesSlice = createSlice({
         targetBlockId?: string;
       }>
     ) => {
-      const { slideId, sourceRowId, targetRowId, blockId, targetBlockId } = action.payload;
+      const { slideId, sourceRowId, targetRowId, blockId, targetBlockId } =
+        action.payload;
       const slide = findSlide(state, slideId);
       if (!slide) return;
 
@@ -463,18 +563,19 @@ const slidesSlice = createSlice({
 
       // Extract
       const [movedBlock] = sourceRow.blocks.splice(blockIndex, 1);
-      
+
       // Target index
       let targetIndex = targetRow.blocks.length;
       if (targetBlockId) {
-        const idx = targetRow.blocks.findIndex(b => b.id === targetBlockId);
+        const idx = targetRow.blocks.findIndex((b) => b.id === targetBlockId);
         if (idx !== -1) {
-          targetIndex = (sourceRowId === targetRowId && blockIndex < idx) ? idx - 1 : idx;
+          targetIndex =
+            sourceRowId === targetRowId && blockIndex < idx ? idx - 1 : idx;
         }
       }
 
       targetRow.blocks.splice(targetIndex, 0, movedBlock);
-      
+
       // Recalculate
       recalculateWidths(sourceRow);
       recalculateWidths(targetRow);
@@ -523,7 +624,10 @@ const slidesSlice = createSlice({
       }
 
       const adjustedNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
-      const finalIndex = Math.max(0, Math.min(adjustedNewIndex, row.blocks.length));
+      const finalIndex = Math.max(
+        0,
+        Math.min(adjustedNewIndex, row.blocks.length)
+      );
 
       row.blocks.splice(finalIndex, 0, movedBlock);
 
@@ -564,7 +668,7 @@ const slidesSlice = createSlice({
       if (!slide) return;
       const row = findRow(slide, rowId);
       if (!row) return;
-      
+
       const blockIndex = row.blocks.findIndex((b) => b.id === blockId);
       if (blockIndex === -1) return;
 
@@ -614,7 +718,9 @@ const slidesSlice = createSlice({
       if (!block) return;
 
       block.type = newType;
-      const definition = BLOCK_DEFINITIONS[newType] || BLOCK_DEFINITIONS[BLOCK_TYPES.PROSEMIRROR];
+      const definition =
+        BLOCK_DEFINITIONS[newType] ||
+        BLOCK_DEFINITIONS[BLOCK_TYPES.PROSEMIRROR];
       block.content = definition.createContent();
     },
     moveBlockToNewRow: (
@@ -643,7 +749,9 @@ const slidesSlice = createSlice({
 
       // Clean up source row if empty
       if (sourceRow.blocks.length === 0) {
-        const sourceRowIndex = slide.rows.findIndex(r => r.id === sourceRowId);
+        const sourceRowIndex = slide.rows.findIndex(
+          (r) => r.id === sourceRowId
+        );
         slide.rows.splice(sourceRowIndex, 1);
         if (sourceRowIndex < targetIndex) {
           targetIndex = Math.max(0, targetIndex - 1);
