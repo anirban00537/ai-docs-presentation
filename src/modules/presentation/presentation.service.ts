@@ -101,23 +101,28 @@ export class PresentationService {
 
   async findOne(id: string, user: User | null): Promise<ResponseModel> {
     try {
-      // First try to find as owner
-      let presentation = await this.prisma.presentation.findFirst({
-        where: {
-          id,
-          userId: user?.id,
-          deletedAt: null,
-        },
-        include: {
-          slides: {
-            where: { deletedAt: null },
-            orderBy: { order: 'asc' },
-          },
-        },
-      });
+      let presentation = null;
 
-      // If not found and user is not authenticated, check if it's publicly shared
-      if (!presentation && !user) {
+      // If user is authenticated, try to find as owner first
+      if (user?.id) {
+        presentation = await this.prisma.presentation.findFirst({
+          where: {
+            id,
+            userId: user.id,
+            deletedAt: null,
+          },
+          include: {
+            slides: {
+              where: { deletedAt: null },
+              orderBy: { order: 'asc' },
+            },
+          },
+        });
+      }
+
+      // If not found (either user is not authenticated, or not the owner), 
+      // check if it's publicly shared
+      if (!presentation) {
         presentation = await this.prisma.presentation.findFirst({
           where: {
             id,

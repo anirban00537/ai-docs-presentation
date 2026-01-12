@@ -21,16 +21,28 @@ export class JwtAuthGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    if (isPublic) {
-      return true;
-    }
-
     const request = context.switchToHttp().getRequest();
     const auth = await getAuth();
     const session = await auth.api.getSession({
       headers: request.headers,
     });
 
+    // For public endpoints, try to set user if session exists (optional auth)
+    // but don't require it
+    if (isPublic) {
+      if (session) {
+        const fullUser = await prisma.user.findUnique({
+          where: { id: session.user.id },
+        });
+        if (fullUser) {
+          request.user = fullUser;
+          (request as any).session = session.session;
+        }
+      }
+      return true;
+    }
+
+    // For protected endpoints, require authentication
     if (!session) {
       throw new UnauthorizedException();
     }
