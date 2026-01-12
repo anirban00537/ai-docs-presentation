@@ -1,6 +1,10 @@
 import React, { memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme, StackedTimelineContent } from "@/types/presentation";
+import type {
+  Block,
+  Theme,
+  StackedTimelineContent,
+} from "@/types/presentation";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
 import { createStackedTimelineItem } from "../definitions/stacked-timeline-block";
@@ -8,176 +12,160 @@ import { IconPlus, IconX } from "@tabler/icons-react";
 import { getFontFamily } from "@/lib/fonts";
 
 interface StackedTimelineBlockProps {
-    block: Block;
-    onUpdate: (content: any) => void;
-    theme?: Theme;
-    readOnly?: boolean;
+  block: Block;
+  onUpdate: (content: any) => void;
+  theme?: Theme;
+  readOnly?: boolean;
 }
 
 export const StackedTimelineBlock = memo(function StackedTimelineBlock({
-    block,
-    onUpdate,
-    theme: themeProp,
-    readOnly = false,
+  block,
+  onUpdate,
+  theme: themeProp,
+  readOnly = false,
 }: StackedTimelineBlockProps) {
-    const reduxTheme = useAppSelector(selectTheme);
-    const theme = themeProp || reduxTheme || DEFAULT_THEME;
-    const isDark = theme.themeType === "dark";
+  const reduxTheme = useAppSelector(selectTheme);
+  const theme = themeProp || reduxTheme || DEFAULT_THEME;
 
-    const content = block.content as StackedTimelineContent;
-    const items = content.items || [];
+  const content = block.content as StackedTimelineContent;
+  const items = content.items || [];
 
-    const handleItemUpdate = (index: number, field: "title" | "description", value: string) => {
-        const newItems = [...items];
-        newItems[index] = {
-            ...newItems[index],
-            [field]: value,
-        };
-        onUpdate({
-            ...content,
-            items: newItems,
-        });
+  const handleItemUpdate = (
+    index: number,
+    field: "title" | "description",
+    value: string
+  ) => {
+    const newItems = [...items];
+    newItems[index] = {
+      ...newItems[index],
+      [field]: value,
     };
+    onUpdate({
+      ...content,
+      items: newItems,
+    });
+  };
 
-    const handleAddItem = () => {
-        const newItem = createStackedTimelineItem();
-        onUpdate({
-            ...content,
-            items: [...items, newItem],
-        });
-    };
+  const handleAddItem = () => {
+    const newItem = createStackedTimelineItem();
+    onUpdate({
+      ...content,
+      items: [...items, newItem],
+    });
+  };
 
-    const handleRemoveItem = (index: number) => {
-        if (readOnly) return;
-        const newItems = items.filter((_, i) => i !== index);
-        onUpdate({
-            ...content,
-            items: newItems,
-        });
-    };
+  const handleRemoveItem = (index: number) => {
+    if (readOnly) return;
+    const newItems = items.filter((_, i) => i !== index);
+    onUpdate({
+      ...content,
+      items: newItems,
+    });
+  };
 
-
-    return (
-        <div 
-            className="group relative w-full h-full min-h-[180px] px-4 py-0"
+  return (
+    <div
+      className="group relative w-full h-full min-h-[200px] py-4 pl-10 pr-4"
+      style={{
+        fontFamily: getFontFamily(theme.fontFamily || "Inter"),
+      }}
+    >
+      {/* Fused List Container */}
+      <div className="relative flex flex-col rounded-3xl overflow-visible">
+        {items.map((item, index) => (
+          <div
+            key={item.id}
+            className="group/card relative p-6 transition-all duration-500 first:rounded-t-3xl last:rounded-b-3xl"
             style={{
-                fontFamily: getFontFamily(theme.fontFamily || "Inter"),
+              backgroundColor: theme.cardBackground,
+              // Modern Divider
+              borderBottom:
+                index < items.length - 1
+                  ? `1px solid ${theme.primary}20`
+                  : "none",
             }}
-        >
-            <div 
-                className="w-full h-full flex flex-col items-center gap-0"
-                style={{
-                    background: theme.cardBackground,
-                    borderRadius: "12px",
-                }}
+          >
+            {/* Number Badge - Half Out */}
+            <div
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-12 rounded-full flex items-center justify-center text-lg font-black shadow-lg transition-transform duration-300 group-hover/card:scale-110 z-20 border-4"
+              style={{
+                background: theme.primary,
+                color: theme.cardBackground,
+                borderColor: theme.pageBackground, // Matches page bg to look "cut out"
+                boxShadow: `0 4px 12px ${theme.primary}40`,
+              }}
             >
-                {/* Decorative Side Accents */}
-                <div className="absolute left-10 top-0 bottom-0 w-1 opacity-10" style={{ background: theme.primary }} />
-                <div className="absolute right-10 top-0 bottom-0 w-1 opacity-10" style={{ background: theme.primary }} />
-                
-                {items.map((item, index) => (
-                    <React.Fragment key={item.id}>
-                        {/* Item Card */}
-                        <div 
-                            className="relative w-full pl-6 pr-4 py-2 transition-all duration-500 group/item"
-                            style={{
-                                borderBottom: index < items.length - 1 ? `2px solid ${theme.primary}25` : "none",
-                            }}
-                        >
-                            {/* Number Indicator - Unique design element */}
-                            <div 
-                                className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold z-20 transition-transform group-hover/item:scale-110 border"
-                                style={{
-                                    background: theme.primary,
-                                    borderColor: `${theme.primary}40`,
-                                    color: theme.cardBackground,
-                                }}
-                            >
-                                {index + 1}
-                            </div>
-
-                        {/* Selector Handle & Remove Button */}
-                        <div className="absolute top-2 right-4 opacity-0 group-hover/item:opacity-100 transition-opacity z-20 flex items-center gap-2">
-                             {!readOnly && (
-                                <button
-                                    onClick={() => handleRemoveItem(index)}
-                                    className="p-1 px-2 text-[8px] font-bold tracking-widest rounded bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all uppercase"
-                                >
-                                    Remove
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Title Editor */}
-                        <div className="mb-0.5">
-                            <ProseMirrorEditor
-                                key={`${item.id}-title`}
-                                blockId={`${item.id}-title`}
-                                value={typeof item.title === 'string' ? item.title : JSON.stringify(item.title)}
-                                onChange={(value) => handleItemUpdate(index, "title", value)}
-                                placeholder="Item"
-                                readOnly={readOnly}
-                                theme={theme}
-                                className="text-base font-serif font-medium"
-                            />
-                        </div>
-
-                        {/* Description Editor */}
-                        <div className="">
-                            <ProseMirrorEditor
-                                key={`${item.id}-description`}
-                                blockId={`${item.id}-description`}
-                                value={typeof item.description === 'string' ? item.description : JSON.stringify(item.description)}
-                                onChange={(value) => handleItemUpdate(index, "description", value)}
-                                placeholder="Description"
-                                readOnly={readOnly}
-                                theme={theme}
-                                className="text-sm"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Unique Connector - Linked Path */}
-                    {index < items.length - 1 && (
-                        <div className="relative w-full flex justify-center h-6 -my-3">
-                            <div 
-                                className="w-0.5 h-full opacity-30" 
-                                style={{ background: `linear-gradient(to bottom, ${theme.primary}, transparent, ${theme.primary})` }}
-                            />
-                            <div 
-                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full z-10"
-                                style={{ background: theme.primary }}
-                            />
-                        </div>
-                    )}
-                </React.Fragment>
-                ))}
+              {index + 1}
             </div>
 
-            {/* Float Add Button - Bottom Right */}
+            {/* Remove Button */}
             {!readOnly && (
-                <button
-                    onClick={handleAddItem}
-                    className="absolute bottom-6 right-6 h-10 w-10 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    style={{
-                        background: theme.cardBackground,
-                        color: theme.primary,
-                    }}
-                >
-                    <IconPlus size={20} stroke={2.5} />
-                </button>
+              <button
+                onClick={() => handleRemoveItem(index)}
+                className="absolute top-4 right-4 opacity-0 group-hover/card:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500 z-10"
+              >
+                <IconX size={16} stroke={2.5} />
+              </button>
             )}
 
-            {/* Left selector dots like in image */}
-            {!readOnly && (
-                <div className="absolute left-3 top-3 opacity-40 hover:opacity-100 transition-opacity cursor-pointer">
-                     <div className="flex flex-col gap-1.5 p-1 rounded hover:bg-black/5">
-                        <div className="w-1 h-1 rounded-full bg-black/60" />
-                        <div className="w-1 h-1 rounded-full bg-black/60" />
-                        <div className="w-1 h-1 rounded-full bg-black/60" />
-                     </div>
-                </div>
-            )}
+            {/* Content - Shifted for visual balance */}
+            <div className="pl-6 flex flex-col justify-center min-h-[3rem] space-y-1">
+              <ProseMirrorEditor
+                key={`${item.id}-title`}
+                blockId={`${item.id}-title`}
+                value={
+                  typeof item.title === "string"
+                    ? item.title
+                    : JSON.stringify(item.title)
+                }
+                onChange={(value) => handleItemUpdate(index, "title", value)}
+                placeholder="Item Title"
+                readOnly={readOnly}
+                theme={{
+                  ...theme,
+                  headingColor: theme.primary,
+                }}
+                className="text-xl font-bold tracking-tight"
+              />
+              <ProseMirrorEditor
+                key={`${item.id}-description`}
+                blockId={`${item.id}-description`}
+                value={
+                  typeof item.description === "string"
+                    ? item.description
+                    : JSON.stringify(item.description)
+                }
+                onChange={(value) =>
+                  handleItemUpdate(index, "description", value)
+                }
+                placeholder="Description goes here..."
+                readOnly={readOnly}
+                theme={theme}
+                className="text-base leading-relaxed opacity-60"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Add Button */}
+      {!readOnly && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={handleAddItem}
+            className="group/add flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 duration-300 shadow-md hover:shadow-xl"
+            style={{
+              backgroundColor: theme.primary,
+              color: theme.cardBackground,
+            }}
+          >
+            <IconPlus size={18} stroke={3} />
+            <span className="text-sm font-black uppercase tracking-widest">
+              Add Item
+            </span>
+          </button>
         </div>
-    );
+      )}
+    </div>
+  );
 });
