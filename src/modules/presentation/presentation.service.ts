@@ -19,7 +19,7 @@ import * as crypto from 'crypto';
 @Injectable()
 export class PresentationService {
   private readonly logger = new Logger(PresentationService.name);
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(
     user: User,
@@ -39,7 +39,9 @@ export class PresentationService {
         },
       });
 
-      this.logger.log(`CREATE: Presentation "${presentation.title}" (${presentation.id}) for user ${user.id}`);
+      this.logger.log(
+        `CREATE: Presentation "${presentation.title}" (${presentation.id}) for user ${user.id}`,
+      );
       return successResponse('Presentation created successfully', presentation);
     } catch (error) {
       processException(error);
@@ -120,7 +122,7 @@ export class PresentationService {
         });
       }
 
-      // If not found (either user is not authenticated, or not the owner), 
+      // If not found (either user is not authenticated, or not the owner),
       // check if it's publicly shared
       if (!presentation) {
         presentation = await this.prisma.presentation.findFirst({
@@ -338,7 +340,9 @@ export class PresentationService {
           },
         });
 
-        this.logger.log(`ADD SLIDE: Added slide to presentation ${presentationId} at order ${targetOrder}`);
+        this.logger.log(
+          `ADD SLIDE: Added slide to presentation ${presentationId} at order ${targetOrder}`,
+        );
         return slide;
       });
 
@@ -510,7 +514,9 @@ export class PresentationService {
         },
       });
 
-      this.logger.log(`SHARE ${enabled ? 'ENABLED' : 'DISABLED'}: Presentation ${presentationId}`);
+      this.logger.log(
+        `SHARE ${enabled ? 'ENABLED' : 'DISABLED'}: Presentation ${presentationId}`,
+      );
       return successResponse(
         `Sharing ${enabled ? 'enabled' : 'disabled'} successfully`,
         {
@@ -545,89 +551,6 @@ export class PresentationService {
       return successResponse('Share info retrieved successfully', {
         shareEnabled: presentation.shareEnabled,
       });
-    } catch (error) {
-      processException(error);
-    }
-  }
-
-  async getSharedPresentation(shareToken: string): Promise<ResponseModel> {
-    try {
-      if (!shareToken || shareToken.trim().length === 0) {
-        return errorResponse('Invalid share token');
-      }
-
-      const presentation = await this.prisma.presentation.findFirst({
-        where: {
-          shareToken,
-          shareEnabled: true,
-          deletedAt: null,
-        },
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          thumbnail: true,
-          globalTheme: true,
-          createdAt: true,
-          updatedAt: true,
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              image: true,
-            },
-          },
-        },
-      });
-
-      if (!presentation) {
-        return errorResponse('Presentation not found or sharing is disabled');
-      }
-
-      return successResponse('Shared presentation retrieved successfully', presentation);
-    } catch (error) {
-      processException(error);
-    }
-  }
-
-  async getSharedPresentationSlides(shareToken: string): Promise<ResponseModel> {
-    try {
-      if (!shareToken || shareToken.trim().length === 0) {
-        return errorResponse('Invalid share token');
-      }
-
-      const presentation = await this.prisma.presentation.findFirst({
-        where: {
-          shareToken,
-          shareEnabled: true,
-          deletedAt: null,
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      if (!presentation) {
-        return errorResponse('Presentation not found or sharing is disabled');
-      }
-
-      const slides = await this.prisma.slide.findMany({
-        where: {
-          presentationId: presentation.id,
-          deletedAt: null,
-        },
-        select: {
-          id: true,
-          data: true,
-          order: true,
-        },
-        orderBy: {
-          order: 'asc',
-        },
-      });
-
-      return successResponse('Shared presentation slides retrieved successfully', slides);
     } catch (error) {
       processException(error);
     }
