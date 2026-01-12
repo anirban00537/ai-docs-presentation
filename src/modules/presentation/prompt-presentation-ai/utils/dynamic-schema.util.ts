@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 
 /**
  * JSON Schema type definition
+ * Extended to support prefixItems for tuple validation
  */
 interface JSONSchema {
   type?: string | string[];
@@ -10,6 +11,7 @@ interface JSONSchema {
   description?: string;
   properties?: Record<string, JSONSchema>;
   items?: JSONSchema;
+  prefixItems?: JSONSchema[];
   required?: string[];
   additionalProperties?: boolean;
   minItems?: number;
@@ -34,10 +36,43 @@ interface InferOptions {
 }
 
 /**
+ * Valid ProseMirror node types
+ */
+const PROSEMIRROR_NODE_TYPES = [
+  'doc',
+  'paragraph',
+  'heading',
+  'text',
+  'bullet_list',
+  'ordered_list',
+  'list_item',
+  'blockquote',
+  'code_block',
+  'hard_break',
+  'horizontal_rule',
+  'image',
+] as const;
+
+/**
+ * Valid ProseMirror mark types
+ */
+const PROSEMIRROR_MARK_TYPES = [
+  'strong',
+  'em',
+  'code',
+  'link',
+  'underline',
+  'strike',
+  'subscript',
+  'superscript',
+  'highlight',
+] as const;
+
+/**
  * Dynamic Schema Generator Utility
- * 
+ *
  * Generates JSON Schemas by introspecting actual template data at runtime.
- * No hardcoded block type mappings required.
+ * Uses tuple validation (prefixItems) to enforce exact structure matching.
  */
 export class DynamicSchemaUtil {
   private static readonly logger = new Logger(DynamicSchemaUtil.name);
@@ -64,9 +99,9 @@ export class DynamicSchemaUtil {
         type: 'object',
         properties: {
           url: { type: 'string' },
-          position: { 
-            type: 'string', 
-            enum: ['left', 'right', 'top', 'bottom', 'background'] 
+          position: {
+            type: 'string',
+            enum: ['left', 'right', 'top', 'bottom', 'background'],
           },
           size: { type: 'number' },
         },
@@ -76,14 +111,15 @@ export class DynamicSchemaUtil {
       schema.required!.push('accent');
     }
 
-    // Generate rows schema from template
+    // Generate rows schema from template using tuple validation
     schema.properties!.rows = this.generateRowsSchema(templateRows);
 
     return schema;
   }
 
   /**
-   * Generate schema for the rows array
+   * Generate schema for the rows array using tuple validation (prefixItems)
+   * Each row position has its exact structure enforced
    */
   private static generateRowsSchema(templateRows: any[]): JSONSchema {
     if (!templateRows || templateRows.length === 0) {
@@ -94,77 +130,77 @@ export class DynamicSchemaUtil {
       };
     }
 
-    // Collect all unique block schemas from all rows
-    const allBlocks: any[] = [];
-    templateRows.forEach(row => {
-      if (row.blocks && Array.isArray(row.blocks)) {
-        allBlocks.push(...row.blocks);
-      }
+    // Generate a specific schema for each row using prefixItems (tuple validation)
+    const rowSchemas: JSONSchema[] = templateRows.map((row, rowIndex) => {
+      return this.generateSingleRowSchema(row, rowIndex);
     });
-
-    // Generate block schema using oneOf for different types
-    const blockSchema = this.generateBlockSchemaFromExamples(allBlocks);
 
     return {
       type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-          columnWidths: {
-            type: 'array',
-            items: { type: 'number' },
-          },
-          blocks: {
-            type: 'array',
-            items: blockSchema,
-            minItems: 1,
-          },
-        },
-        required: ['id', 'blocks'],
-        additionalProperties: false,
-      },
+      prefixItems: rowSchemas,
       minItems: templateRows.length,
       maxItems: templateRows.length,
     };
   }
 
   /**
-   * Generate block schema from example blocks
-   * Uses oneOf if multiple block types are present
+   * Generate schema for a single row with exact block structure
    */
-  private static generateBlockSchemaFromExamples(blocks: any[]): JSONSchema {
-    if (!blocks || blocks.length === 0) {
-      return { type: 'object', additionalProperties: true };
+  private static generateSingleRowSchema(
+    row: any,
+    rowIndex: number,
+  ): JSONSchema {
+    const required: string[] = ['id', 'blocks'];
+    const properties: Record<string, JSONSchema> = {
+      id: { type: 'string' },
+    };
+
+    // Add columnWidths if present in template (make it required)
+    if (
+      row.columnWidths &&
+      Array.isArray(row.columnWidths) &&
+      row.columnWidths.length > 0
+    ) {
+      properties.columnWidths = {
+        type: 'array',
+        items: { type: 'number' },
+        minItems: row.columnWidths.length,
+        maxItems: row.columnWidths.length,
+      };
+      required.push('columnWidths');
     }
 
-    // Group blocks by type
-    const blocksByType = new Map<string, any>();
-    for (const block of blocks) {
-      const blockType = block.type || 'unknown';
-      if (!blocksByType.has(blockType)) {
-        blocksByType.set(blockType, block);
-      }
+    // Generate blocks schema using tuple validation
+    if (row.blocks && Array.isArray(row.blocks) && row.blocks.length > 0) {
+      const blockSchemas: JSONSchema[] = row.blocks.map((block: any) => {
+        return this.generateSingleBlockSchema(block);
+      });
+
+      properties.blocks = {
+        type: 'array',
+        prefixItems: blockSchemas,
+        minItems: row.blocks.length,
+        maxItems: row.blocks.length,
+      };
+    } else {
+      properties.blocks = {
+        type: 'array',
+        items: { type: 'object', additionalProperties: true },
+        minItems: 0,
+      };
     }
 
-    // Generate schema for each unique block type
-    const blockSchemas: JSONSchema[] = [];
-    for (const [blockType, exampleBlock] of blocksByType) {
-      const schema = this.generateSingleBlockSchema(exampleBlock);
-      blockSchemas.push(schema);
-    }
-
-    // If only one type, return it directly
-    if (blockSchemas.length === 1) {
-      return blockSchemas[0];
-    }
-
-    // Multiple types: use anyOf (more flexible than oneOf for structured output)
-    return { anyOf: blockSchemas };
+    return {
+      type: 'object',
+      properties,
+      required,
+      additionalProperties: false,
+    };
   }
 
   /**
    * Generate schema for a single block based on its structure
+   * Enforces exact type using const
    */
   private static generateSingleBlockSchema(block: any): JSONSchema {
     const schema: JSONSchema = {
@@ -177,18 +213,26 @@ export class DynamicSchemaUtil {
       additionalProperties: false,
     };
 
-    // Infer content schema from the block's content
-    // FORCED OVERRIDE: ProseMirror blocks MUST be structured objects, even if template is a string/null
+    // Handle content based on block type
+    // FORCED OVERRIDE: ProseMirror blocks MUST be structured objects, even if template is a string/null/empty
     if (block.type === 'prosemirror') {
       schema.properties!.content = this.getProseMirrorSchema();
-    } else if (block.content !== undefined) {
+    } else if (
+      block.content !== undefined &&
+      block.content !== null &&
+      block.content !== ''
+    ) {
       schema.properties!.content = this.inferSchema(block.content, {
-        allowAdditionalProperties: true,
-        enforceArrayLength: false,
+        allowAdditionalProperties: false,
+        enforceArrayLength: true,
         currentDepth: 0,
       });
     } else {
-      schema.properties!.content = { type: 'object', additionalProperties: true };
+      // Empty or null content - use generic object schema
+      schema.properties!.content = {
+        type: 'object',
+        additionalProperties: true,
+      };
     }
 
     return schema;
@@ -227,11 +271,14 @@ export class DynamicSchemaUtil {
         return { type: 'boolean' };
       case 'object':
         if (Array.isArray(value)) {
-          return this.inferArraySchema(value, { ...options, currentDepth: depth + 1 });
+          return this.inferArraySchema(value, {
+            ...options,
+            currentDepth: depth + 1,
+          });
         }
-        return this.inferObjectSchema(value as Record<string, unknown>, { 
-          ...options, 
-          currentDepth: depth + 1 
+        return this.inferObjectSchema(value as Record<string, unknown>, {
+          ...options,
+          currentDepth: depth + 1,
         });
       default:
         return { type: 'string' };
@@ -244,30 +291,33 @@ export class DynamicSchemaUtil {
   private static inferStringSchema(value: string): JSONSchema {
     const schema: JSONSchema = { type: 'string' };
 
-    // Detect URL patterns
-    if (value.startsWith('http://') || value.startsWith('https://')) {
-      // Don't add format constraint, just keep as string
-    }
-
+    // Detect URL patterns - no special handling needed, just string
     return schema;
   }
 
   /**
-   * Infer schema for arrays
+   * Infer schema for arrays using tuple validation when enforceArrayLength is true
    */
-  private static inferArraySchema(arr: unknown[], options: InferOptions): JSONSchema {
+  private static inferArraySchema(
+    arr: unknown[],
+    options: InferOptions,
+  ): JSONSchema {
     const schema: JSONSchema = { type: 'array' };
 
     if (arr.length === 0) {
       // Empty array - allow any items
       schema.items = { type: 'object', additionalProperties: true };
+      schema.minItems = 0;
+    } else if (options.enforceArrayLength && arr.length > 0) {
+      // Use prefixItems for tuple validation (exact structure per position)
+      schema.prefixItems = arr.map((item) => this.inferSchema(item, options));
+      schema.minItems = arr.length;
+      schema.maxItems = arr.length;
     } else {
-      // Use first element as canonical item schema
+      // Use first element as canonical item schema (fallback)
       schema.items = this.inferSchema(arr[0], options);
+      schema.minItems = 1;
     }
-
-    // Minimum of 1 item to ensure AI generates content
-    schema.minItems = 1;
 
     return schema;
   }
@@ -291,25 +341,20 @@ export class DynamicSchemaUtil {
     for (const [key, value] of Object.entries(obj)) {
       properties[key] = this.inferSchema(value, options);
 
-      // Determine which fields should be required
-      if (key === 'id' || key === 'type') {
-        required.push(key);
-
-        // Lock "type" field to its exact value
-        if (key === 'type' && typeof value === 'string') {
-          properties[key] = { type: 'string', const: value };
-        }
+      // Lock "type" field to its exact value using const
+      if (key === 'type' && typeof value === 'string') {
+        properties[key] = { type: 'string', const: value };
       }
-    }
 
-    // If no explicit requirements, require all fields
-    const finalRequired = required.length > 0 ? required : Object.keys(properties);
+      // Add to required list
+      required.push(key);
+    }
 
     return {
       type: 'object',
       properties,
-      required: finalRequired,
-      additionalProperties: options.allowAdditionalProperties ?? true,
+      required,
+      additionalProperties: options.allowAdditionalProperties ?? false,
     };
   }
 
@@ -326,7 +371,7 @@ export class DynamicSchemaUtil {
   }
 
   /**
-   * Generate a flexible ProseMirror schema
+   * Generate a strict ProseMirror schema with valid node and mark type enums
    * ProseMirror documents have a recursive structure that needs special handling
    */
   private static getProseMirrorSchema(): JSONSchema {
@@ -336,18 +381,8 @@ export class DynamicSchemaUtil {
         type: { type: 'string', const: 'doc' },
         content: {
           type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              type: { type: 'string' },
-              attrs: { type: 'object', additionalProperties: true },
-              content: { type: 'array' },
-              marks: { type: 'array' },
-              text: { type: 'string', minLength: 1 },
-            },
-            required: ['type'],
-            additionalProperties: true,
-          },
+          items: this.getProseMirrorNodeSchema(),
+          minItems: 1,
         },
       },
       required: ['type', 'content'],
@@ -356,9 +391,81 @@ export class DynamicSchemaUtil {
   }
 
   /**
+   * Generate schema for a single ProseMirror node with restricted types
+   */
+  private static getProseMirrorNodeSchema(): JSONSchema {
+    return {
+      type: 'object',
+      properties: {
+        type: {
+          type: 'string',
+          enum: [...PROSEMIRROR_NODE_TYPES],
+        },
+        attrs: {
+          type: 'object',
+          additionalProperties: true,
+        },
+        content: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              type: {
+                type: 'string',
+                enum: [...PROSEMIRROR_NODE_TYPES],
+              },
+              attrs: { type: 'object', additionalProperties: true },
+              content: { type: 'array' },
+              marks: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    type: {
+                      type: 'string',
+                      enum: [...PROSEMIRROR_MARK_TYPES],
+                    },
+                    attrs: { type: 'object', additionalProperties: true },
+                  },
+                  required: ['type'],
+                  additionalProperties: true,
+                },
+              },
+              text: { type: 'string', minLength: 1 },
+            },
+            required: ['type'],
+            additionalProperties: true,
+          },
+        },
+        marks: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              type: {
+                type: 'string',
+                enum: [...PROSEMIRROR_MARK_TYPES],
+              },
+              attrs: { type: 'object', additionalProperties: true },
+            },
+            required: ['type'],
+            additionalProperties: true,
+          },
+        },
+        text: { type: 'string', minLength: 1 },
+      },
+      required: ['type'],
+      additionalProperties: true,
+    };
+  }
+
+  /**
    * Debug helper: Log the generated schema
    */
-  static logSchema(schema: JSONSchema, label: string = 'Generated Schema'): void {
+  static logSchema(
+    schema: JSONSchema,
+    label: string = 'Generated Schema',
+  ): void {
     this.logger.debug(`${label}: ${JSON.stringify(schema, null, 2)}`);
   }
 }

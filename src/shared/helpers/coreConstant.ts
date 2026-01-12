@@ -56,7 +56,7 @@ export const coreConstant = {
   AI_MODELS: {
     OUTLINE: {
       NAME: 'x-ai/grok-4.1-fast',
-      PRICING: { prompt: 0.20, completion: 0.50 },
+      PRICING: { prompt: 0.2, completion: 0.5 },
 
       //  NAME: 'mistralai/ministral-14b-2512',
       // PRICING: { prompt: 0.20, completion: 0.20},
@@ -64,12 +64,10 @@ export const coreConstant = {
       // PRICING: { prompt: 0.28, completion: 1.20},
     },
     SLIDES: {
-      // NAME: 'x-ai/grok-4.1-fast',
-      // PRICING: { prompt: 0.20, completion: 0.50 },
-      //  NAME: 'minimax/minimax-m2.1',
-      // PRICING: { prompt: 0.28, completion: 1.20},
-      NAME: 'mistralai/ministral-14b-2512',
-      PRICING: { prompt: 0.20, completion: 0.20},
+      NAME: 'x-ai/grok-4.1-fast',
+      PRICING: { prompt: 0.2, completion: 0.5 },
+      // NAME: 'mistralai/ministral-14b-2512',
+      // PRICING: { prompt: 0.20, completion: 0.20},
     },
     IMAGE: {
       NAME: 'black-forest-labs/flux-1.1-pro',
@@ -77,7 +75,7 @@ export const coreConstant = {
     },
     DEFAULT: {
       PRICING: { prompt: 10.0, completion: 30.0 },
-    }
+    },
   },
 
   // Subscription Status Constants
@@ -95,7 +93,7 @@ export const coreConstant = {
 
   // Statuses that grant active access
   SUBSCRIPTION_ACTIVE_STATUSES: ['active', 'trialing'] as const,
-  
+
   // Statuses that indicate subscription has ended
   SUBSCRIPTION_ENDED_STATUSES: ['canceled', 'expired', 'revoked'] as const,
 
