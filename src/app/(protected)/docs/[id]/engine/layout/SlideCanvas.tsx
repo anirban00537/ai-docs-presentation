@@ -526,7 +526,7 @@ export const SlideCanvas = memo(function SlideCanvas({
               className={cn(
                 "relative min-w-0 max-w-full outline-none",
                 fullWidth
-                  ? "w-full max-w-[1200px] mx-auto px-16 md:px-24 py-20 md:py-32"
+                  ? "w-full max-w-[1600px] mx-auto px-16 md:px-24 py-20 md:py-32"
                   : "p-5 md:p-10"
               )}
             >
