@@ -518,7 +518,7 @@ export const SlideCanvas = memo(function SlideCanvas({
           )}
 
           <div
-            className={`relative flex-1 flex flex-col min-w-0 z-10 ${
+            className={`relative flex-1 flex flex-col justify-center min-w-0 z-10 ${
               isBackground ? "z-20" : ""
             }`}
           >
@@ -526,8 +526,8 @@ export const SlideCanvas = memo(function SlideCanvas({
               className={cn(
                 "relative min-w-0 max-w-full outline-none",
                 fullWidth
-                  ? "w-full max-w-[1200px] mx-auto flex-1 flex flex-col px-16 md:px-24 pt-20 md:pt-32 pb-20 md:pb-32"
-                  : "flex-1 p-5 md:p-10"
+                  ? "w-full max-w-[1200px] mx-auto px-16 md:px-24 py-20 md:py-32"
+                  : "p-5 md:p-10"
               )}
             >
               <div className="flex flex-col gap-0 relative">
