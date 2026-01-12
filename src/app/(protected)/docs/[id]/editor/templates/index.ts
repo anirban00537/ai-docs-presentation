@@ -15,6 +15,7 @@ import { sidelineCardsTemplate } from "./sideline-cards";
 import { leafCardsTemplate } from "./leaf-cards";
 import { solidBoxesTemplate } from "./solid-boxes";
 import { timelineBentoTemplate } from "./timeline-bento";
+import { endingTemplate } from "./ending";
 import { blankTemplate } from "./blank";
 
 export const templates = [
@@ -35,6 +36,7 @@ export const templates = [
   leafCardsTemplate,
   solidBoxesTemplate,
   timelineBentoTemplate,
+  endingTemplate,
   blankTemplate,
 ];
 
@@ -56,5 +58,6 @@ export {
   leafCardsTemplate,
   solidBoxesTemplate,
   timelineBentoTemplate,
+  endingTemplate,
   blankTemplate,
 };
