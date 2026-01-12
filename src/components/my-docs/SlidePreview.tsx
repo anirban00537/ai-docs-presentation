@@ -49,6 +49,7 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
         ...row,
         blocks: row.blocks || [],
       })),
+      accent: slide.data?.accent || slide.accent || undefined,
     }),
     [slide]
   );
