@@ -31,7 +31,31 @@ const getStageDisplay = (stage?: string): string => {
   return stage ? stageMap[stage] || stage : '';
 };
 
-// Advanced reactive loader component
+// Thinking animation - pulsing dots
+const ThinkingAnimation = ({ color }: { color: string }) => {
+  return (
+    <div className="flex items-center gap-1.5 h-5">
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          className="w-1.5 h-1.5 rounded-full"
+          style={{ backgroundColor: color }}
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [0.4, 1, 0.4],
+          }}
+          transition={{
+            duration: 1.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 0.2,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 // Advanced reactive loader component
 const ReactiveWaveform = ({ speed = 0, color }: { speed?: number; color: string }) => {
   // Threshold: only animate if speed is significant (> 1 char/sec)
@@ -98,13 +122,16 @@ export const LoaderOverlay: React.FC<LoaderOverlayProps> = ({
   // Fallback to black causing high contrast if no theme is provided (e.g. outline generation)
   const primaryColor = theme?.primary || (isDark ? "#ffffff" : "#000000");
 
-  const displayMessage = progress 
-    ? (getStageDisplay(progress.stage) || progress.message || "Generating...") 
-    : message;
-  
   // Determine effective speed
   // Default to 0 if not provided and no progress (don't fake activity)
   const effectiveSpeed = streamSpeed !== undefined ? streamSpeed : (progress ? 40 : 0);
+  const hasStream = effectiveSpeed > 1;
+  
+  const displayMessage = hasStream 
+    ? (progress 
+        ? (getStageDisplay(progress.stage) || progress.message || "Generating...") 
+        : message)
+    : "AI is thinking";
 
   return (
     <div className={cn("fixed inset-0 z-50 backdrop-blur-[1px] cursor-wait flex items-end justify-center pb-12 pointer-events-auto", isDark ? "bg-black/10" : "bg-white/10", className)}>
@@ -123,7 +150,11 @@ export const LoaderOverlay: React.FC<LoaderOverlayProps> = ({
                : "0 20px 50px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.05)",
            }}
         >
-            <ReactiveWaveform speed={effectiveSpeed} color={primaryColor} />
+            {hasStream ? (
+              <ReactiveWaveform speed={effectiveSpeed} color={primaryColor} />
+            ) : (
+              <ThinkingAnimation color={primaryColor} />
+            )}
             
             <span className={cn("font-medium text-base tracking-wide", isDark ? "text-white/90" : "text-black/90")}>
                {displayMessage}
