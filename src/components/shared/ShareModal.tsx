@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useShareInfo, useEnableShare, useDisableShare } from "@/hooks/use-share";
-import { IconCopy, IconCheck, IconShare, IconPlayerPlay } from "@tabler/icons-react";
+import { IconCopy, IconCheck, IconShare } from "@tabler/icons-react";
 import { toast } from "sonner";
 
 interface ShareModalProps {
@@ -64,20 +64,6 @@ export const ShareModal: React.FC<ShareModalProps> = ({
     }
   };
 
-  const handleCopyViewLink = () => {
-    if (!shareUrl) return;
-    handleCopyLink();
-  };
-
-  const handleCopyPresentLink = () => {
-    if (!shareUrl) return;
-    const presentUrl = `${shareUrl}?mode=present`;
-    navigator.clipboard.writeText(presentUrl).then(() => {
-      setCopied(true);
-      toast.success("Present link copied to clipboard!");
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -88,7 +74,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
             Share Presentation
           </DialogTitle>
           <DialogDescription>
-            Generate a shareable link that allows anyone to view or present your presentation.
+            Generate a shareable link that allows anyone to view or present your presentation. Use the same link for both viewing and presenting.
           </DialogDescription>
         </DialogHeader>
 
@@ -137,33 +123,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Anyone with this link can view your presentation
+                  Anyone with this link can view or present your presentation. Use the "Present" button on the page to switch to presentation mode.
                 </p>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="space-y-2">
-                <Label>Quick Actions</Label>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={handleCopyViewLink}
-                  >
-                    <IconShare size={16} className="mr-2" />
-                    Copy View Link
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={handleCopyPresentLink}
-                  >
-                    <IconPlayerPlay size={16} className="mr-2" />
-                    Copy Present Link
-                  </Button>
-                </div>
               </div>
             </div>
           )}
