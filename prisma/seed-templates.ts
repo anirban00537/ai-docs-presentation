@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2026-01-07T12:18:32.426Z
+ * Generated: 2026-01-12T09:17:58.903Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -25,10 +25,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "tatHjx9jD860NLAQMDts7",
+            "id": "7lYPwHYjs2HURocnrbrZS",
             "blocks": [
               {
-                "id": "OyCxkZK2skkG4aF6QYS7T",
+                "id": "gPwfG8y0tn6XlrUrUMzhf",
                 "type": "spacer",
                 "content": {
                   "type": "spacer",
@@ -41,10 +41,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "bo1Ly62J_wnX5y6119Yla",
+            "id": "bKxIDDCUTwr7wngM5sFvS",
             "blocks": [
               {
-                "id": "lA-IjC_rPt-hxSuki2lBZ",
+                "id": "Nr9UT7xfpYPLFM_uJzxeT",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -83,10 +83,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "Fe6zvrjq1GFQbeoxd72IS",
+            "id": "mxmSOKad0cDyjNX07KKOb",
             "blocks": [
               {
-                "id": "5np0PIXBk5M-If3vhGNJ9",
+                "id": "8flRchgw9ASqBhMZOBfhO",
                 "type": "spacer",
                 "content": {
                   "type": "spacer",
@@ -114,10 +114,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "5NzATTu-fW-_qOIvvjoR5",
+            "id": "riel1zyCW_D_j4A6ExcOa",
             "blocks": [
               {
-                "id": "GR-RNTcWXihstQ9_rnkFl",
+                "id": "ngcJEvdGXtW22tLM3u6j1",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -143,10 +143,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "MUrOjDrQ2LG8G4PosBe6Y",
+            "id": "per3GK6S6tzuVTKoQ0Bz2",
             "blocks": [
               {
-                "id": "x6QmJrFlF3UQOGb3L65iT",
+                "id": "wlDX8m2Ko_n1X63DTIlPL",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -169,10 +169,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "1YJZQWHnRWqw0TBPtXbwo",
+            "id": "h263Y5YJT9h0eHg4KDD0G",
             "blocks": [
               {
-                "id": "p2RLCIs29qJgFHFQvrnip",
+                "id": "VQXakxW3S5fv1dKQrF9lY",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -215,10 +215,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "ohvzwMMlWwF1SDcN_KklO",
+            "id": "2pW8UL3riVpcxaMZX8UKi",
             "blocks": [
               {
-                "id": "kEdIXJNaDg8fgMhbd_Wru",
+                "id": "KgCbNZgkOzZWr-ez3OaBF",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -244,10 +244,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "HlZdCrqrRhYwmVlJVtDNo",
+            "id": "rhedOk3v_kHW-GWUCAKrS",
             "blocks": [
               {
-                "id": "EFgaeozROlo5pcPpTj1WD",
+                "id": "1UPaZpdVYyaSyvuBqUtjf",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -270,10 +270,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "g5Ym0Psou-fnHQIWfsNKG",
+            "id": "l4xdMmmBWgkx8WiqSDjbN",
             "blocks": [
               {
-                "id": "UPPma6_OqTvDUEqZJyB8Z",
+                "id": "kbCUReO-HpJeTUOjgoDSY",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -316,10 +316,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "FzytdVPgltygQMVwiu56Q",
+            "id": "d4uHbtpEWgidFmSP7ppu0",
             "blocks": [
               {
-                "id": "81zNMDnX4xvHfURnqQFnV",
+                "id": "eV99jvgc7Neyhfk2qusIW",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -345,10 +345,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "SknQNsmuZroAHWEo-KNOn",
+            "id": "iVXA6RPOoYt2hgRfM2kh8",
             "blocks": [
               {
-                "id": "ouRu9St0mkjWPQhGSnikN",
+                "id": "tASc9EyRkEWqjUn5zoxAv",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -391,10 +391,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Y8asi93yhg3zuWNgk5uL_",
+            "id": "WDGv4VBeypZVBCKBwcnHW",
             "blocks": [
               {
-                "id": "usD5qypYTh_kWW14CJcBi",
+                "id": "TKsabgal03s202MwiuwNd",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -420,10 +420,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "PfhIbjJpbOElhBlMuGjAj",
+            "id": "CWKTrded96CpSE3mtzQbm",
             "blocks": [
               {
-                "id": "2jJa65vQzZ7t0el6RmAfU",
+                "id": "Ihob2-m4ctymV4ISYqmqM",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -466,10 +466,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "n6fMQvMQtTQPMUV9Rj2G2",
+            "id": "Sk7Zgz0E6MQKS3MGR6FyT",
             "blocks": [
               {
-                "id": "qnVelGSjx721dseM6nmzD",
+                "id": "XzxBkws6MM3c8Z4AriPb9",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -495,10 +495,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "LlRyh9UrslqNGAusVrjBA",
+            "id": "eGeIxMMe31aEpEU9b5dCL",
             "blocks": [
               {
-                "id": "lIqeTJKiws8RtOSMiUEIy",
+                "id": "dYvNxA0fW23FZx4P8NT55",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -541,10 +541,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "1nN3TnD0sDiIyId_xv1lo",
+            "id": "RW4e8lVcuw-tnjvp04C24",
             "blocks": [
               {
-                "id": "fdb2uNws9TlJuAm4upQdu",
+                "id": "dL0GtC-kDRxX3fdZcFFx-",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -571,10 +571,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "By4RMS4KDiUv3J0gEi94I",
+            "id": "iECds56uSbwvxkbfO2Jrz",
             "blocks": [
               {
-                "id": "4M2cMbtLUjH60QhOAHDx_",
+                "id": "E4tzSRxorLPzgKEp5Iqu7",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -597,10 +597,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "fY_5UciUI8b6Efqyuzsug",
+            "id": "cgkkYkzW7IICz4IaFFl3d",
             "blocks": [
               {
-                "id": "7HicHaYh8J74nkoq1wFnA",
+                "id": "nwv8YcL7HK5f8RhL4ioQA",
                 "type": "image",
                 "content": {
                   "type": "image",
@@ -636,10 +636,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "tzBRmhmPXpPC7Vctfrghb",
+            "id": "o9Lj_TgOeaq3_FAPQgRBE",
             "blocks": [
               {
-                "id": "wOi52W1M-B3QHuMgrWmJG",
+                "id": "ceYC766bsVKdlsNut7iZ0",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -666,10 +666,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "99k1CnQkRJ-0Itr7OnZzz",
+            "id": "OWISb72O0eT9Tg38zdPoK",
             "blocks": [
               {
-                "id": "CKR4SfCW2xhDiCJSPC-Bx",
+                "id": "4NOvio2Xcdol7N2ezo_qo",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -724,10 +724,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "sNU5M1c8o5O3F6DvgVRwB",
+            "id": "VjSpiG27waykRRPtbBhmF",
             "blocks": [
               {
-                "id": "wsTYayE8gR-Ein18KLsoA",
+                "id": "A0RcDQqR2DQ3A6E9l6KsH",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -753,10 +753,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "az2U25fZhQJmLf2l3rA67",
+            "id": "6b39XX4eqdBjsPEkRq1hg",
             "blocks": [
               {
-                "id": "mzXHfniSfSIQYgLR0J7LG",
+                "id": "5ORBHu0shZUZ44JLgYoaf",
                 "type": "callout-block",
                 "content": {
                   "type": "callout-block",
@@ -783,10 +783,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "uMt2Dbca0tyM1MZR8JWB2",
+            "id": "mZ4TrHCxw866rZ_kUAnp-",
             "blocks": [
               {
-                "id": "YK3Wkrn7DYdQFoXrqCDEw",
+                "id": "PqRKBGFjOLwSxsMFbv3U9",
                 "type": "button-block",
                 "content": {
                   "type": "button-block",
@@ -814,100 +814,6 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
-      name: "Simple Code",
-      description: "Simple Code layout template",
-      data: {
-        "id": "simple-code-layout",
-        "name": "Simple Code",
-        "description": "Simple Code layout template",
-        "icon": "IconLayout",
-        "rows": [
-          {
-            "id": "5rFsqRzl9w-1TAaN7UG2P",
-            "blocks": [
-              {
-                "id": "oNqakQ1WR0oUBuBmhWCN0",
-                "type": "prosemirror",
-                "content": {
-                  "type": "doc",
-                  "content": [
-                    {
-                      "type": "heading",
-                      "attrs": {
-                        "level": 2
-                      },
-                      "content": [
-                        {
-                          "type": "text",
-                          "text": "Code Example"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            ],
-            "columnWidths": [
-              1
-            ]
-          },
-          {
-            "id": "2mpO4VfCK_Zcr0IZ1Uvfj",
-            "blocks": [
-              {
-                "id": "Huk5NVCCWqH7Ktgo4UAnO",
-                "type": "code",
-                "content": {
-                  "type": "code",
-                  "language": "javascript",
-                  "code": "const greeting = 'Hello Butterfast!';\nconsole.log(greeting);",
-                  "showLineNumbers": true,
-                  "theme": "light"
-                }
-              }
-            ],
-            "columnWidths": [
-              1
-            ]
-          },
-          {
-            "id": "h-U4SZV2LGfY9DepjoMKv",
-            "blocks": [
-              {
-                "id": "DyNB-Gntk07RCVJm7Oj6Z",
-                "type": "prosemirror",
-                "content": {
-                  "type": "doc",
-                  "content": [
-                    {
-                      "type": "paragraph",
-                      "content": [
-                        {
-                          "type": "text",
-                          "text": "Basic syntax for immediate testing and prototyping."
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            ],
-            "columnWidths": [
-              1
-            ]
-          }
-        ],
-        "accent": {
-          "url": "https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?q=80&w=1964&auto=format&fit=crop",
-          "position": "right",
-          "size": 25
-        }
-      },
-      type: "admin",
-      tags: ["simple-code"],
-      isAdmin: true,
-    },
-    {
       name: "Stacked Timeline",
       description: "Stacked Timeline layout template",
       data: {
@@ -917,10 +823,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Jjnhv4wuNLQbENgE7jD5m",
+            "id": "VTlwquoExCobS4TlxwbHW",
             "blocks": [
               {
-                "id": "9QSoZDwl_WE1jCBeTQPZx",
+                "id": "PnTM5qviL3YvgdSi5FRko",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -959,16 +865,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "rdBtInvoEsAdQ5Cu1LP3I",
+            "id": "79hVVKdIE0mprJPU7AIim",
             "blocks": [
               {
-                "id": "FacDUkf6PjTOXRpIcW0rT",
+                "id": "r0AJG7lyw7Mna6I4LBaBK",
                 "type": "stacked-timeline-block",
                 "content": {
                   "type": "stacked-timeline-block",
                   "items": [
                     {
-                      "id": "Yc43kmna9pREw5x2_oy5r",
+                      "id": "BvsP2DOUDS_slVl1WFG84",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1002,7 +908,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "NOywYE2EFgcuUYvYN9njr",
+                      "id": "9HCxOiAWiUns233nMeZLy",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1036,7 +942,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "RLKmkuFraLVUEuD3937fO",
+                      "id": "X5yjR2jTNer9CJ7WZ7BB8",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1098,10 +1004,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "YOiJ_Lr1IjgRNMfnfA4Gh",
+            "id": "UjwDwPnCDM78RoULgHhMh",
             "blocks": [
               {
-                "id": "aLsgUxvHL7-TJ_NcDKm2R",
+                "id": "OEXZ4tA3Fx7rBYjAdFEcZ",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1140,16 +1046,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "mK0TvbU8l5e-BswM9X3mp",
+            "id": "6ti8f5eX5u-6-z9lOy9Vg",
             "blocks": [
               {
-                "id": "uaHKTRwWjQuYvzVvJjJum",
+                "id": "ro10Xr1v0ssZ_V99ZmSYV",
                 "type": "simple-number-card",
                 "content": {
                   "type": "simple-number-card",
                   "items": [
                     {
-                      "id": "og1eqTYbHWQN9W-398rjb",
+                      "id": "VKx87g-xUvrlxrwWKvXUP",
                       "number": 1,
                       "title": {
                         "type": "doc",
@@ -1184,7 +1090,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "hrd2FxHf5Qk7_EH55kKIf",
+                      "id": "QIkZXZQ8H9F1oVwqxhSnA",
                       "number": 2,
                       "title": {
                         "type": "doc",
@@ -1219,7 +1125,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "3rb1bJjq9rDfWGBtUQF11",
+                      "id": "QLn0TCSg5jOL-GTpFLO17",
                       "number": 3,
                       "title": {
                         "type": "doc",
@@ -1282,10 +1188,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "tgvqmeijK0TcZjsJ6oO4k",
+            "id": "Xv9IpN8QkkbmtTeFFJNvf",
             "blocks": [
               {
-                "id": "8q9LGbvwYYSZ7344RBpnF",
+                "id": "Bvx3DQast1-fMe1MVFcrt",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1324,16 +1230,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "pNIu5bkCYh16aY5O0SVIf",
+            "id": "vzy1GORBTCpp_VHRm29QD",
             "blocks": [
               {
-                "id": "QWI5ZbhwVuttJj5YFkJA8",
+                "id": "22IIr1eHgu7hkfJP3Tl1M",
                 "type": "solid-icon-box-block",
                 "content": {
                   "type": "solid-icon-box-block",
                   "items": [
                     {
-                      "id": "iSP4uEF3pEUxmrfRe1U19",
+                      "id": "paMC-Rp3kj944O01FvakN",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1368,7 +1274,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "Umt5BYP6XeVh5Zcx_YOC9",
+                      "id": "0BcF-mbPaNuHQJQfz5lzl",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1403,7 +1309,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "fU2jM_ZA6YQjJsoA9dsUJ",
+                      "id": "xXtvrjBG1A_9lDiyltScs",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1466,10 +1372,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Mnfs8V79KYNCWJSrzq0CI",
+            "id": "hF9yQ0Z_N8na8HPVnxQu6",
             "blocks": [
               {
-                "id": "VUPsury4ZCLtR9cg6N4ZB",
+                "id": "l3QAFxWIbBaHVV3qTcH7l",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1496,16 +1402,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "sJfnv05NTZhOUfNUI6OLw",
+            "id": "vyEzLzZomeX0F5DoxKnDE",
             "blocks": [
               {
-                "id": "YMc9wu3zv_MvBY7bkuhWC",
+                "id": "8NSsuI-5VIAfH08-gt4Bw",
                 "type": "layered-number-block",
                 "content": {
                   "type": "layered-number-block",
                   "items": [
                     {
-                      "id": "nwFnmY1xeqU8rsDFo-fcZ",
+                      "id": "6XxR44yHin4IifKu_0vB2",
                       "number": 1,
                       "title": {
                         "type": "doc",
@@ -1540,7 +1446,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "Er-sxuUBpTOADEXyyqVJc",
+                      "id": "5uPcLyRtYJFNdeLKf96iQ",
                       "number": 2,
                       "title": {
                         "type": "doc",
@@ -1603,10 +1509,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "pZ8xxSYBOP9WCRHmPqB08",
+            "id": "lT4G3vwCxHO9qgvWOFvJL",
             "blocks": [
               {
-                "id": "nesydjXm1qQKjaq0kjJxT",
+                "id": "9GIiSexV2h5EQB8jr88ZJ",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1633,16 +1539,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "R50IWJUbJzn0aFjdeU3JO",
+            "id": "nm2VOBpxgAhAKzTGgGWaf",
             "blocks": [
               {
-                "id": "xsGaGApK_QEAbTSK2RvIx",
+                "id": "Lr8yY798-T5WZN9sf_gPQ",
                 "type": "sideline-card-block",
                 "content": {
                   "type": "sideline-card-block",
                   "items": [
                     {
-                      "id": "w9G4VkhFOEoLGuIwlXeou",
+                      "id": "AUX0uGr52k6sgjmhoE-Ox",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1676,7 +1582,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "80Z7gM0nWPv4xkUjibiZu",
+                      "id": "wTK_VHa-dtSHKbWYc7N8H",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1710,7 +1616,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "mtYoqm8cd-L5u5SMLFKJg",
+                      "id": "5Iz4oNqWibI4GDLIvDbGw",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1772,10 +1678,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "4cVd4ATA6MAepstMVyM6g",
+            "id": "5-U4Yoy4Dv3OVYcTJL9Jl",
             "blocks": [
               {
-                "id": "sab71X50UUKOgQmV_Y8_o",
+                "id": "aLe5bIZC9WXAVu9hr40gn",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1802,16 +1708,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "KJ3KyD6dp7wjknB9L4nF-",
+            "id": "ILaXQ1sKa7j8yVpbXrEKZ",
             "blocks": [
               {
-                "id": "yQJO0kVcMCwykDAGi6OYx",
+                "id": "cckWiw1ZTpH9WPHLt1emv",
                 "type": "leaf-block",
                 "content": {
                   "type": "leaf-block",
                   "items": [
                     {
-                      "id": "vjldqZklbHGqUhnXQWkGI",
+                      "id": "jm-CJP018bg_1Bom56u8r",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1845,7 +1751,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "fFcmw19_-8NCvfVZIgNAk",
+                      "id": "tfddUxlkJbBvIAiMDNl8G",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1879,7 +1785,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "GL1hfUtVI8AucA1i7E8iE",
+                      "id": "oVarnK-_IauzVM30DOD4M",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1941,10 +1847,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "8SiTc3FcjXVf5WULzwK7D",
+            "id": "9bdMY4HEKlswgJQ_IwPyH",
             "blocks": [
               {
-                "id": "tV5s7rWEGo4-NQkEQoWVt",
+                "id": "u9xtM__ohDoP8GjVvb_se",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1971,16 +1877,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "nucKNmgTb7FiQxrkYh6Hg",
+            "id": "FXQcFUHnYUQZ0DSBSb0Mx",
             "blocks": [
               {
-                "id": "JgJ80yyIhjeHhayfKkgrm",
+                "id": "jzfa9vmvlJFTMSoglAI4i",
                 "type": "solid-box-block",
                 "content": {
                   "type": "solid-box-block",
                   "items": [
                     {
-                      "id": "pFzp23N0IVxGAlR6sOVJ6",
+                      "id": "DkmrFhdxvh_Mc2KlaUSzq",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2014,7 +1920,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "7Q5HsackXxyYNagMs_BS6",
+                      "id": "EjB5GO6mgpLY2kFJfpoBa",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2048,7 +1954,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "VSE5wtVDtA_j23cciwWT9",
+                      "id": "wyJXjg7PMD5DReFOrKzvt",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2110,10 +2016,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "4zjONnRK24lRsL1zt8BJw",
+            "id": "uy_wZlZtjuohXzqG3aNVU",
             "blocks": [
               {
-                "id": "qWV_cMaBmav-qGTB9M4IM",
+                "id": "PChKjsYAyZJisW37W57iZ",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2140,16 +2046,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "GyPJ2L-dI_uJqhgiBaYC3",
+            "id": "4HnSPeNr5bzsWN0t0ip4d",
             "blocks": [
               {
-                "id": "XcO6YPQKzq23rVyvO0fkA",
+                "id": "L4EGvC5vr3nsA06xN7fgJ",
                 "type": "timeline-bento-block",
                 "content": {
                   "type": "timeline-bento-block",
                   "items": [
                     {
-                      "id": "i_HelQ-ZfuW11i98qyKQ8",
+                      "id": "J9VvuYsq3M2nojoTo41vf",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2183,7 +2089,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "TmOFC19DdmMt6AFFZ41JL",
+                      "id": "FEpi0IAXdJCV-4SYrnpmu",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2217,7 +2123,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "_sBplR7aptx7H-c8HCasG",
+                      "id": "aVoE9UQhoWfI5uMAnz4A3",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2251,7 +2157,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "37vyBHB-XAGSubWX7vxhF",
+                      "id": "3SoE0m9jrE1DjfjG_bsj8",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2304,70 +2210,6 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
-      name: "Code Example",
-      description: "Code Example layout template",
-      data: {
-        "id": "code-example-layout",
-        "name": "Code Example",
-        "description": "Code Example layout template",
-        "icon": "IconLayout",
-        "rows": [
-          {
-            "id": "NBC1_n1xPzKXm13bJw03O",
-            "blocks": [
-              {
-                "id": "3pofS3Yct_j--SRHdBECu",
-                "type": "prosemirror",
-                "content": {
-                  "type": "doc",
-                  "content": [
-                    {
-                      "type": "heading",
-                      "attrs": {
-                        "level": 2,
-                        "textAlign": "center"
-                      },
-                      "content": [
-                        {
-                          "type": "text",
-                          "text": "Robust SDK"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            ],
-            "columnWidths": [
-              1
-            ]
-          },
-          {
-            "id": "7GYiV8RhC1-EeOF_LbYS6",
-            "blocks": [
-              {
-                "id": "1OPPXspJHymTAgfAcely4",
-                "type": "code",
-                "content": {
-                  "type": "code",
-                  "language": "javascript",
-                  "code": "import { Butterfast } from '@butterfast/sdk';\n\nconst client = new Butterfast();\nawait client.init();",
-                  "showLineNumbers": true,
-                  "theme": "dark"
-                }
-              }
-            ],
-            "columnWidths": [
-              1
-            ]
-          }
-        ]
-      },
-      type: "admin",
-      tags: ["code-example"],
-      isAdmin: true,
-    },
-    {
       name: "Blank",
       description: "Blank layout template",
       data: {
@@ -2377,10 +2219,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "twO8_R1miTE1nGgMhnery",
+            "id": "mTfG5uT-V7wHBB0DCs0Pd",
             "blocks": [
               {
-                "id": "27ZbFtkFdAPe7hoZzk37q",
+                "id": "QH0DY8ZFPlyk07KLwBZFL",
                 "type": "prosemirror",
                 "content": ""
               }
