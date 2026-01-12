@@ -236,7 +236,18 @@ export function AppSidebar() {
             <div className="relative overflow-hidden rounded-2xl p-[1px] group">
               <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/20 via-white to-secondary/20 opacity-100" />
               <div className="relative rounded-[15px] p-5 bg-secondary/10 backdrop-blur-md overflow-hidden border border-white/50">
-                <div className="flex items-start gap-4 mb-4">
+                {!isSubscribed ? (
+                  <Link href="/pricing" className="block w-full mb-4">
+                    <Button
+                      size="sm"
+                      className="w-full justify-center h-10 rounded-full text-xs font-semibold bg-primary text-white shadow-coral-glow hover:bg-primary/90 hover:scale-[1.02] transition-all"
+                    >
+                      Upgrade to Pro
+                    </Button>
+                  </Link>
+                ) : null}
+
+                <div className="flex items-start gap-4">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20">
                     <IconSparkles size={20} className="" />
                   </div>
@@ -256,17 +267,8 @@ export function AppSidebar() {
                   </div>
                 </div>
 
-                {!isSubscribed ? (
-                  <Link href="/pricing" className="block w-full">
-                    <Button
-                      size="sm"
-                      className="w-full justify-center h-10 rounded-full text-xs font-semibold bg-primary text-white shadow-coral-glow hover:bg-primary/90 hover:scale-[1.02] transition-all"
-                    >
-                      Upgrade to Pro
-                    </Button>
-                  </Link>
-                ) : (
-                  <div className="w-full h-2 bg-secondary/20 rounded-full overflow-hidden">
+                {isSubscribed ? (
+                  <div className="w-full h-2 bg-secondary/20 rounded-full overflow-hidden mt-4">
                     <motion.div
                       className="h-full bg-primary"
                       initial={{ width: 0 }}
@@ -281,7 +283,7 @@ export function AppSidebar() {
                       transition={{ duration: 1, ease: "easeOut" }}
                     />
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
 
