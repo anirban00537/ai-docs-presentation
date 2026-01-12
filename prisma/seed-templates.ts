@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2026-01-12T09:22:07.554Z
+ * Generated: 2026-01-12T09:40:42.386Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -25,10 +25,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "ls-bHzA95pSdI9Y-YIZrV",
+            "id": "j1O0CInYFxlAsKZNwVBtS",
             "blocks": [
               {
-                "id": "m-xJGKzrYaMU7JhK2Db15",
+                "id": "__yBsFwA9Qf9GMU80EueK",
                 "type": "spacer",
                 "content": {
                   "type": "spacer",
@@ -41,10 +41,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "JtXYxDIfg0hgGsul6Z0dP",
+            "id": "Qg3ckxjUP6SId2-pleHLS",
             "blocks": [
               {
-                "id": "u_HJn3gIlppT6WqA3AwbO",
+                "id": "OSH9sQfLRVdNqlUhH_YGT",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -83,10 +83,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "RGZNddDUUHWFrUPJdkcls",
+            "id": "XIg02SLuBUfASzmjiM26x",
             "blocks": [
               {
-                "id": "shGcMhXUczkJaGwA47Eyn",
+                "id": "sHuw_30qdpNW79unP8AE0",
                 "type": "spacer",
                 "content": {
                   "type": "spacer",
@@ -114,10 +114,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "yBNdqKWPEUi0wVAsl7nkd",
+            "id": "FT3DNf-w7460tmY7_TgPz",
             "blocks": [
               {
-                "id": "tAiK36cIkVO74AqjzXcpy",
+                "id": "z9UsN1IxgvCZOoQ0_TNNR",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -143,10 +143,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "ln4jbREjWIFjqOpYSeAKB",
+            "id": "O0wpSqktzOdoZ8ibLJ-aJ",
             "blocks": [
               {
-                "id": "Lxpr3AsLK1xtQM6_MZHFn",
+                "id": "h3Z9noEe1Q_b4NUBkfUya",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -169,10 +169,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "llqiXNTdEoOpOL0UJPzcB",
+            "id": "kkjS-tHQVd671_FqX7UMQ",
             "blocks": [
               {
-                "id": "LEkTLhJG5tSrmsPsAupSA",
+                "id": "coQy9QJVi7GBnACPDRdNE",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -215,10 +215,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "q6K1pyhWlP3hTIIvq-ijk",
+            "id": "Ho7X8auPe2VmtAuCMs19U",
             "blocks": [
               {
-                "id": "0_IJCeFZvBeDH5wyVe2vj",
+                "id": "N2iDtmV59OWlbsUbUzcWd",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -244,10 +244,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "IU_eX5GRWDKWe_8djV9E5",
+            "id": "jDv1wW_VBvMk1_POvxjHv",
             "blocks": [
               {
-                "id": "xEmtZiej-rGsuhvOpTsyk",
+                "id": "VJY93GRzxV2rWqlTAN5wz",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -270,10 +270,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "VCB-2W5pc7jwbfven5XLq",
+            "id": "K21DKOjCFJlYYnb66zqq6",
             "blocks": [
               {
-                "id": "oTjnz2JNqRys_UxA7LAJc",
+                "id": "9aLjO1Chg8hKo2D4eayma",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -316,10 +316,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "k2xD12kKMQgBoSLVuTOLl",
+            "id": "h5RaccBbQrbXOqnvVy127",
             "blocks": [
               {
-                "id": "EY8jIuaaQbYQ4_eaZp591",
+                "id": "fQB-XKQj_AEdj34Ya4TIW",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -345,10 +345,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "YW3FXQbWeM9NBcW3KZc6Z",
+            "id": "uNH6JGtHc0i7BB60kPhY-",
             "blocks": [
               {
-                "id": "aU5jgVxjWoW3BhLO_RTY3",
+                "id": "cHtJ2yswvT_LD0X7Vsb-X",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -391,10 +391,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "JBXBqWvvL68gBJsNaCNjA",
+            "id": "6kATefwe5F6IoKWVOJ8ZH",
             "blocks": [
               {
-                "id": "g9XJkohOufhyhT15duQ40",
+                "id": "iyAwmdCtgM8n7_zvGIxXA",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -420,10 +420,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "jCYrQ0QTaLx5L1maHu-5w",
+            "id": "raNT71fVrINns6lX7CZ7x",
             "blocks": [
               {
-                "id": "96UdkP6URnzBe9gX4rY0M",
+                "id": "RdTW8euH6nLX-OLUOOY72",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -466,10 +466,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "AxGpOeTbIaT_hGLmbe5IO",
+            "id": "g9wWebE3A1HrJdnrI1H91",
             "blocks": [
               {
-                "id": "XnkMDguYpZ83X_E0Es__b",
+                "id": "GTgFz7NBYu1JqP1utECjt",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -495,10 +495,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "R0NncbNUm_JrvTeu96Rig",
+            "id": "AZBYBUrjPHj7av-FvvO70",
             "blocks": [
               {
-                "id": "LBnDrIHNEERX8M2SCikuT",
+                "id": "ivj794sfzXpNGI30KccsU",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -541,10 +541,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "S0q7Iujnhg54YRRPR9ZNx",
+            "id": "eRGxzksR-jn6wTu4HzjLJ",
             "blocks": [
               {
-                "id": "go-_DBGIOAncQ98D94bVb",
+                "id": "HsGHrmHAPmH9spomT81vw",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -571,10 +571,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "VrEBhk26esnbNT4wuqiix",
+            "id": "79O5tGzcdJA14yx0w6Nl5",
             "blocks": [
               {
-                "id": "31d8ZyFfGDrJyB2L0E4Yq",
+                "id": "FFvvJQNXt1EuFhlmd4jDr",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -597,10 +597,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "v6fbtux2_wofeNxxtF7uX",
+            "id": "qsnPekXcjUnHsHWGdR81H",
             "blocks": [
               {
-                "id": "BrpwhnANOC55-xQE8h-NS",
+                "id": "NXk37EJqQvPGmy29f7rH0",
                 "type": "image",
                 "content": {
                   "type": "image",
@@ -636,10 +636,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "wlj6wl7FeuU7Q7uythzJA",
+            "id": "k0-zDR-wf643v3rJOhsqk",
             "blocks": [
               {
-                "id": "09SN94AJWSUuQyZkRiaiT",
+                "id": "ploLDEvJ9kwE-sZ0TsQtB",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -666,10 +666,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "xaMLyQoT5TRzwNRDt-Ppz",
+            "id": "uCltcbP1P6D_oSjH0SX0x",
             "blocks": [
               {
-                "id": "86OcPWrmOLzaGbqyBKzsU",
+                "id": "zjI80fawYnD7jHjF0dJdH",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -724,10 +724,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Jn5SLUUwT4II0ZER-JRWt",
+            "id": "Pn_WiOfKyAJmjWozRXlsb",
             "blocks": [
               {
-                "id": "Zgy1dkcq4sO4lXwrsmEDb",
+                "id": "9Xhgl7znudzkWDVuSY7qH",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -753,10 +753,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "0wUsCG8e8NJJhDBn7gVBc",
+            "id": "Y3eNRVKoUSoP1P_Z9T9eA",
             "blocks": [
               {
-                "id": "iDDY3e2_-6qCx7lZoHf4F",
+                "id": "M-GQ7IRXPv3G9x2SE-nZz",
                 "type": "callout-block",
                 "content": {
                   "type": "callout-block",
@@ -783,10 +783,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "2Urzcz4ivm1WgkBpn-okd",
+            "id": "s9cJ4D4QUbO8-y3Snik8t",
             "blocks": [
               {
-                "id": "d4WhwJjOiT5rbYG20pgzo",
+                "id": "35_JFMmzuMTzGVNQVh6yB",
                 "type": "button-block",
                 "content": {
                   "type": "button-block",
@@ -823,10 +823,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "hH6sc7BV9CDrrsNxRZZuL",
+            "id": "ibsL5q91n1aeHiWl_sTbr",
             "blocks": [
               {
-                "id": "adwYjPKRg4TD5gbZuRT5G",
+                "id": "Doj3T9tjliIu8syY3pVj2",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -865,16 +865,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "-R0wpbDQpvISeTn0gUQLY",
+            "id": "Bp7_82CTtK9Sp8sXupolt",
             "blocks": [
               {
-                "id": "CD8qGASjD9Tj_Q6HlBXGr",
+                "id": "2Et3xEu-Jy7hSbL1kZ5R-",
                 "type": "stacked-timeline-block",
                 "content": {
                   "type": "stacked-timeline-block",
                   "items": [
                     {
-                      "id": "plfkAU6CgMfNO19GuVXqy",
+                      "id": "u7yBcVr0e6RKrv3O_Qjt9",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -908,7 +908,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "_TJrZGLOMCnMF3UMd8x7V",
+                      "id": "nWjMLVXwk7WY_vNjMrCiM",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -942,7 +942,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "LS-4yaIgNjBLy5vD5ktbh",
+                      "id": "Iyxkpcr3Wirmbnd8E3ttL",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1004,10 +1004,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Mv1ZZQR_MvQ0_8rz0xhzH",
+            "id": "a-Hlfkj08ob1hV98hn07d",
             "blocks": [
               {
-                "id": "M5VlNuXFrjWoNGFEkHxa9",
+                "id": "8bnDu9ZgOXTgbFV7Wfeuv",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1046,16 +1046,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "NN-st305lLnQ_bERm72LR",
+            "id": "FXkxtc8JffSJU_9FO1aQC",
             "blocks": [
               {
-                "id": "ak5r-dORUS1dSoRMA93VQ",
+                "id": "1I6YOILMjOE8DUWlCIe0p",
                 "type": "simple-number-card",
                 "content": {
                   "type": "simple-number-card",
                   "items": [
                     {
-                      "id": "hGjfoeMxmY3TWKsBSp0ZC",
+                      "id": "Wr4CT042HJNlykjaF6Owx",
                       "number": 1,
                       "title": {
                         "type": "doc",
@@ -1090,7 +1090,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "CdomklVbVNKdUs9hCasbP",
+                      "id": "ut4l1Mo1A4F-f8y7xTve_",
                       "number": 2,
                       "title": {
                         "type": "doc",
@@ -1125,7 +1125,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "Y4Rp4E4yMNV_gFSvGaLkU",
+                      "id": "DhMv4Uz3eeshvRcf6LGlt",
                       "number": 3,
                       "title": {
                         "type": "doc",
@@ -1188,10 +1188,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "roQfa85_mlEEe008ae9Jt",
+            "id": "w5Kn0kG-TCwu9TFu5kXsX",
             "blocks": [
               {
-                "id": "4uIAEVMy3ydr3hH30O3LK",
+                "id": "A3V9yWIB3LPMdRslyQpxA",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1230,16 +1230,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "uIhl4hECuyoPfjKVrFYHj",
+            "id": "RyB9ugShEoia8W_pNYjAR",
             "blocks": [
               {
-                "id": "ViCQVl9Ay-fFBoATqQdmt",
+                "id": "VNE3jv2TTYuFN_Qt4bJmL",
                 "type": "solid-icon-box-block",
                 "content": {
                   "type": "solid-icon-box-block",
                   "items": [
                     {
-                      "id": "35RQ8NS5xlkPsYbL1ZcQb",
+                      "id": "haOSOPJEat6aEtKtyFo6W",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1274,7 +1274,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "B6to7muIPm3ni5bG5bspF",
+                      "id": "WWyYTDMBE7hmW2ZmN5FeG",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1309,7 +1309,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "-cduSLk4F7-VOE3jwmo8T",
+                      "id": "AoGOGJaJBvBgJWM27MW29",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1372,10 +1372,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "YE0AtKFjZ2FCaWXN9xrif",
+            "id": "2yXr2tf-7PeW34R8m4b78",
             "blocks": [
               {
-                "id": "bkuKrkioKAc1tjEU6VsK7",
+                "id": "n883rdR7kcLkTmLC-SiLj",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1402,16 +1402,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "DZWkkxnIQP9eEWjpQks0N",
+            "id": "F_Xhykupr_4sue1adh9ZS",
             "blocks": [
               {
-                "id": "0eiDD_XiLaDHMs5-qq85G",
+                "id": "HgtM6uxkTL7QwBUr-hyA8",
                 "type": "layered-number-block",
                 "content": {
                   "type": "layered-number-block",
                   "items": [
                     {
-                      "id": "AtT3EI1HTaUHcLbGZUc1O",
+                      "id": "BjqNlRiLIcGNv46zOqUNq",
                       "number": 1,
                       "title": {
                         "type": "doc",
@@ -1446,7 +1446,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "g_XZ6aLtPC1x32CijMTx0",
+                      "id": "3lcTMk-frydetqsv6pPvI",
                       "number": 2,
                       "title": {
                         "type": "doc",
@@ -1509,10 +1509,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "2VENB1xDVaClFtYssn0hh",
+            "id": "x-7F7bQGe5X7XIYqrR29C",
             "blocks": [
               {
-                "id": "yQmXb-6E1v01MY7xTKl0S",
+                "id": "Y0BFHrOJbR1pedaKciOtr",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1539,16 +1539,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "Pw0pWnSmsFiS_WPfPPuy2",
+            "id": "5Wm9_xVfvFAcYlVJSMJN0",
             "blocks": [
               {
-                "id": "GsfPwnWJk1NoePt1M8JJu",
+                "id": "fwWvpCqEastqv6VUEQ7Yh",
                 "type": "sideline-card-block",
                 "content": {
                   "type": "sideline-card-block",
                   "items": [
                     {
-                      "id": "c4FI8Szm5Ckc8XnD7BOHE",
+                      "id": "-g3pNyuZHUCT3u9IGiItG",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1582,7 +1582,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "O1tWEzPaDdjZ-E9kBZyoj",
+                      "id": "afRr36VYYkla0tFxh2hT5",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1616,7 +1616,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "j-ueSdi7c6GJfUKd26JTA",
+                      "id": "VRi4aolFtuNLsPjwD7T6t",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1678,10 +1678,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "InUZiMoL_fHLfqackKS1U",
+            "id": "PXJmmzJc2Wz5Gddjs2qwD",
             "blocks": [
               {
-                "id": "J-z5lW9XcPAx4rzCRrIEq",
+                "id": "85ZYeuS6kqhQp5jchy-qs",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1708,16 +1708,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "T6LFczA-m9XGuWas_dFrM",
+            "id": "yRbFWTiKm4ZeQ0yjw4Gnp",
             "blocks": [
               {
-                "id": "pqRZpPddKBIbAbILgaVAD",
+                "id": "0Rv6bRlpf3xXwkeOSBgAn",
                 "type": "leaf-block",
                 "content": {
                   "type": "leaf-block",
                   "items": [
                     {
-                      "id": "CDbYSd5SH6FfdpBYXNwxx",
+                      "id": "P5qTkq9GAaJNnZJLSwY0-",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1751,7 +1751,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "MqFyWaYRfs1cEmwp4oo11",
+                      "id": "VQ3xJxshKu2Ni2JEXUEoY",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1785,7 +1785,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "0kP6zmRcsQ9eyeqPjW0wA",
+                      "id": "2MQJJ3FoJQwDXz6zQuRVy",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1847,10 +1847,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "BhF0JyPRdsZQCpOTodA5z",
+            "id": "dHQg5lDJSPDplwfu_JvFK",
             "blocks": [
               {
-                "id": "xcKDRJayxTbRioBy18MbO",
+                "id": "RcA3WeULq0ZtfroTT4EtL",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1877,16 +1877,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "Bfo0kNALh2c4sZUFFTLAe",
+            "id": "zfRh5WuWtb_4-F3EadVnx",
             "blocks": [
               {
-                "id": "CuBMuBMkna7zKHgzRSKlz",
+                "id": "PSHtgQRG7KKcKcsUEtOpS",
                 "type": "solid-box-block",
                 "content": {
                   "type": "solid-box-block",
                   "items": [
                     {
-                      "id": "MsrVfIQRYRfuXnTl86nSX",
+                      "id": "a1STCoXXV6qSuJ20D0qnZ",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1920,7 +1920,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "2brdeSy-S1jCVeW5gOQJD",
+                      "id": "-UYVHjHPeFwv2FKSmOYd1",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1954,7 +1954,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "TXtn9ChkYAID2YKOMe_It",
+                      "id": "QGg5Qf7x14pxvvYs11gJs",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2016,10 +2016,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Var82Umy9IOCwP0MNWB9-",
+            "id": "QPVS7d2ks0P-fnyjRrcWZ",
             "blocks": [
               {
-                "id": "TTY0vtl6-GozpRKayHQTi",
+                "id": "DgJ2IdVeMivathfUSMmVA",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2046,16 +2046,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "mYAkAy-F2UlC5iLlBF1DB",
+            "id": "2IONFi8ddKM5wDvDqAWvj",
             "blocks": [
               {
-                "id": "0MD8q6KaSg_4lvRRsSw24",
+                "id": "f1AVo8sZQ580DSrad3E3r",
                 "type": "timeline-bento-block",
                 "content": {
                   "type": "timeline-bento-block",
                   "items": [
                     {
-                      "id": "pOPzwg47wRfivZQFiTHhy",
+                      "id": "4rL5RW6SKFnildhhpBZSe",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2089,7 +2089,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "ZcGHgN7hv6ei7v3xoM0Zo",
+                      "id": "ZIx2fU9isSsIklQOV_4Sx",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2123,7 +2123,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "Lr9p7ZSBOz96rqYCgYG6N",
+                      "id": "tpk1TDLZemewT9G9u2e2y",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2157,7 +2157,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "3Y3IsrVMjdIFLpNMM5u0L",
+                      "id": "-jaSbBKWNSDSKZuUCn4Et",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2210,6 +2210,114 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
+      name: "Ending",
+      description: "Ending layout template",
+      data: {
+        "id": "ending-layout",
+        "name": "Ending",
+        "description": "Ending layout template",
+        "icon": "IconLayout",
+        "rows": [
+          {
+            "id": "Y-6SQJMTlLamNtw9lyWAc",
+            "blocks": [
+              {
+                "id": "GH3lsVUKSz7PZ1PenytxI",
+                "type": "prosemirror",
+                "content": {
+                  "type": "doc",
+                  "content": [
+                    {
+                      "type": "heading",
+                      "attrs": {
+                        "level": 3,
+                        "textAlign": "center"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Thank You"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "columnWidths": [
+              1
+            ]
+          },
+          {
+            "id": "VT5ZzThlNCPmTvbmzh-KF",
+            "blocks": [
+              {
+                "id": "VkyQhmCx9nx_Di8p_4cmw",
+                "type": "prosemirror",
+                "content": {
+                  "type": "doc",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "textAlign": "center"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Thank you for your time and attention. We look forward to connecting with you."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "columnWidths": [
+              1
+            ]
+          },
+          {
+            "id": "iSUW8a9FcHLjZcOcXfZ8g",
+            "blocks": [
+              {
+                "id": "fZWmsv6rvrsQrXaXxRfBm",
+                "type": "prosemirror",
+                "content": {
+                  "type": "doc",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "textAlign": "center"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Questions? Feel free to reach out or schedule a follow-up discussion."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "columnWidths": [
+              1
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+          "position": "background",
+          "size": 15
+        }
+      },
+      type: "admin",
+      tags: ["ending"],
+      isAdmin: true,
+    },
+    {
       name: "Blank",
       description: "Blank layout template",
       data: {
@@ -2219,10 +2327,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "E9ZXW5v-CsV4ioU8ZCtNy",
+            "id": "3IXYLl5gdhqBn4OO4Hie7",
             "blocks": [
               {
-                "id": "-AKL1JTR_gbOGE-LmHfFH",
+                "id": "1hnQzhbtrfKYecczecXt7",
                 "type": "prosemirror",
                 "content": ""
               }
