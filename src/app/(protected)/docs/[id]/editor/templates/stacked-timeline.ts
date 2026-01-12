@@ -1,5 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
+import {
+  createBlockInstance,
+  createRow,
+} from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { createStackedTimelineContent } from "../blocks/definitions/stacked-timeline-block";
 import { Slide } from "@/store/slices/slidesSlice";
@@ -8,24 +11,26 @@ export const stackedTimelineTemplate: Slide = {
   id: "stacked-timeline-layout",
   rows: [
     createRow([
-      createBlockInstance(
-        BLOCK_TYPES.PROSEMIRROR,
-        {
-          type: "doc",
-          content: [
-            {
-              type: "heading",
-              attrs: { level: 2, textAlign: "center" },
-              content: [{ type: "text", text: "Project Roadmap" }],
-            },
-            {
-              type: "paragraph",
-              attrs: { textAlign: "center" },
-              content: [{ type: "text", text: "Key milestones and deliverables for the upcoming phases of development." }],
-            },
-          ],
-        }
-      ),
+      createBlockInstance(BLOCK_TYPES.PROSEMIRROR, {
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: { level: 3, textAlign: "center" },
+            content: [{ type: "text", text: "Project Roadmap" }],
+          },
+          {
+            type: "paragraph",
+            attrs: { textAlign: "center" },
+            content: [
+              {
+                type: "text",
+                text: "Key milestones and deliverables for the upcoming phases of development.",
+              },
+            ],
+          },
+        ],
+      }),
     ]),
     createRow([
       createBlockInstance(

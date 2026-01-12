@@ -218,7 +218,7 @@ export const BlockContentSchema = z.union([
 
 
 // Utilities
-export const getDefaultHeadingContent = (): any => createProseMirrorDoc("", "heading", 2);
+export const getDefaultHeadingContent = (): any => createProseMirrorDoc("", "heading", 3);
 
 export const createProseMirrorDoc = (text: string, type: 'paragraph' | 'heading' = 'paragraph', level: number = 1) => {
   if (type === 'heading') {

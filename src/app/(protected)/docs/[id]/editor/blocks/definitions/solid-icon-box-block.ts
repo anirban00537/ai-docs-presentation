@@ -1,11 +1,18 @@
-import { BLOCK_TYPES, type SolidIconBoxContent, type SolidIconBoxItem, createProseMirrorDoc } from "@/types/presentation";
+import {
+  BLOCK_TYPES,
+  type SolidIconBoxContent,
+  type SolidIconBoxItem,
+  createProseMirrorDoc,
+} from "@/types/presentation";
 import { SolidIconBoxContentSchema } from "@/types/presentation/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createSolidIconBoxItem = (
   icon: string = "star",
-  title: any = createProseMirrorDoc("Feature Title", "heading", 4),
-  description: any = createProseMirrorDoc("Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition.")
+  title: any = createProseMirrorDoc("Feature Title", "heading", 5),
+  description: any = createProseMirrorDoc(
+    "Highlight essential capabilities with visual cues. Pair icons with clear text for immediate recognition."
+  )
 ): SolidIconBoxItem => ({
   id: nanoid(),
   icon,
@@ -13,19 +20,30 @@ export const createSolidIconBoxItem = (
   description,
 });
 
-export const createSolidIconBoxContent = (itemCount: number = 3): SolidIconBoxContent => ({
+export const createSolidIconBoxContent = (
+  itemCount: number = 3
+): SolidIconBoxContent => ({
   type: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
   items: Array.from({ length: itemCount }, () => createSolidIconBoxItem()),
 });
 
-export const normalizeSolidIconBoxContent = (content: any): SolidIconBoxContent => {
-  if (!content || typeof content !== "object") return createSolidIconBoxContent();
+export const normalizeSolidIconBoxContent = (
+  content: any
+): SolidIconBoxContent => {
+  if (!content || typeof content !== "object")
+    return createSolidIconBoxContent();
 
   // Handle legacy single content migration
   if ((content.editorContent || content.icon) && !content.items) {
     return {
       type: BLOCK_TYPES.SOLID_ICON_BOX_BLOCK,
-      items: [createSolidIconBoxItem(content.icon || "star", createProseMirrorDoc("Feature", "heading", 2), content.editorContent || createProseMirrorDoc("Description"))],
+      items: [
+        createSolidIconBoxItem(
+          content.icon || "star",
+          createProseMirrorDoc("Feature", "heading", 3),
+          content.editorContent || createProseMirrorDoc("Description")
+        ),
+      ],
     };
   }
 
@@ -33,20 +51,20 @@ export const normalizeSolidIconBoxContent = (content: any): SolidIconBoxContent 
   let items = content.items;
   if (Array.isArray(content.items)) {
     items = content.items.map((item: any) => {
-        if (item.editorContent && (!item.title || !item.description)) {
-            return {
-                id: item.id || nanoid(),
-                icon: item.icon || "star",
-                title: item.title || createProseMirrorDoc("Title", "heading", 2),
-                description: item.description || item.editorContent,
-            };
-        }
+      if (item.editorContent && (!item.title || !item.description)) {
         return {
-            id: item.id || nanoid(),
-            icon: item.icon || "star",
-            title: item.title || createProseMirrorDoc("Title", "heading", 2),
-            description: item.description || createProseMirrorDoc("Description"),
+          id: item.id || nanoid(),
+          icon: item.icon || "star",
+          title: item.title || createProseMirrorDoc("Title", "heading", 3),
+          description: item.description || item.editorContent,
         };
+      }
+      return {
+        id: item.id || nanoid(),
+        icon: item.icon || "star",
+        title: item.title || createProseMirrorDoc("Title", "heading", 3),
+        description: item.description || createProseMirrorDoc("Description"),
+      };
     });
   }
 

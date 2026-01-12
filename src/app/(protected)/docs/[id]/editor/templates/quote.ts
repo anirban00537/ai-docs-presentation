@@ -1,5 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
+import {
+  createBlockInstance,
+  createRow,
+} from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { Slide } from "@/store/slices/slidesSlice";
 
@@ -12,7 +15,7 @@ export const quoteTemplate: Slide = {
         content: [
           {
             type: "heading",
-            attrs: { level: 2, textAlign: "center" },
+            attrs: { level: 3, textAlign: "center" },
             content: [{ type: "text", text: "Inspiration" }],
           },
         ],
@@ -27,7 +30,7 @@ export const quoteTemplate: Slide = {
             content: [
               {
                 type: "text",
-                text: "> \"Design is not just what it looks like and feels like. Design is how it works.\"",
+                text: '> "Design is not just what it looks like and feels like. Design is how it works."',
               },
             ],
           },

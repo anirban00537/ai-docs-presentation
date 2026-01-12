@@ -1,5 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
+import {
+  createBlockInstance,
+  createRow,
+} from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { createSolidBoxContent } from "../blocks/definitions/solid-box-block";
 import { Slide } from "@/store/slices/slidesSlice";
@@ -13,14 +16,17 @@ export const solidBoxesTemplate: Slide = {
         content: [
           {
             type: "heading",
-            attrs: { level: 2, textAlign: "center" },
+            attrs: { level: 3, textAlign: "center" },
             content: [{ type: "text", text: "Strategic Pillars" }],
           },
         ],
       }),
     ]),
     createRow([
-      createBlockInstance(BLOCK_TYPES.SOLID_BOX_BLOCK, createSolidBoxContent(3)),
+      createBlockInstance(
+        BLOCK_TYPES.SOLID_BOX_BLOCK,
+        createSolidBoxContent(3)
+      ),
     ]),
   ],
   accent: {

@@ -1,5 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
+import {
+  createBlockInstance,
+  createRow,
+} from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { createCalloutContent } from "../blocks/definitions/callout-block";
 import { createButtonBlockContent } from "../blocks/definitions/button-block";
@@ -9,7 +12,10 @@ export const calloutWithButtonTemplate: Slide = {
   id: "callout-with-button-layout",
   rows: [
     createRow([
-      createBlockInstance(BLOCK_TYPES.PROSEMIRROR, createProseMirrorDoc("Call to Action", "heading", 2)),
+      createBlockInstance(
+        BLOCK_TYPES.PROSEMIRROR,
+        createProseMirrorDoc("Call to Action", "heading", 3)
+      ),
     ]),
     createRow([
       createBlockInstance(BLOCK_TYPES.CALLOUT_BLOCK, createCalloutContent()),

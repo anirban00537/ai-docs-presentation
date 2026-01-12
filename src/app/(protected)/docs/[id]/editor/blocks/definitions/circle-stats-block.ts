@@ -12,7 +12,7 @@ export const createCircleStatsItem = (value: number = 75): CircleStatsItem => ({
   id: nanoid(),
   value,
   suffix: "",
-  title: createProseMirrorDoc("Statistic", "heading", 4) as any,
+  title: createProseMirrorDoc("Statistic", "heading", 5) as any,
   description: createProseMirrorDoc("Add a short description regarding this statistic.") as any,
 });
 

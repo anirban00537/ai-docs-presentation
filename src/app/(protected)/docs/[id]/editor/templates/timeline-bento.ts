@@ -1,5 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
+import {
+  createBlockInstance,
+  createRow,
+} from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { createTimelineBentoContent } from "../blocks/definitions/timeline-bento-block";
 import { Slide } from "@/store/slices/slidesSlice";
@@ -13,14 +16,17 @@ export const timelineBentoTemplate: Slide = {
         content: [
           {
             type: "heading",
-            attrs: { level: 2, textAlign: "center" },
+            attrs: { level: 3, textAlign: "center" },
             content: [{ type: "text", text: "Evolution Timeline" }],
           },
         ],
       }),
     ]),
     createRow([
-      createBlockInstance(BLOCK_TYPES.TIMELINE_BENTO_BLOCK, createTimelineBentoContent(4)),
+      createBlockInstance(
+        BLOCK_TYPES.TIMELINE_BENTO_BLOCK,
+        createTimelineBentoContent(4)
+      ),
     ]),
   ],
   accent: {

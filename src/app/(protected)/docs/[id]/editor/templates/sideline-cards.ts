@@ -1,5 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
+import {
+  createBlockInstance,
+  createRow,
+} from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { createSidelineCardContent } from "../blocks/definitions/sideline-card-block";
 import { Slide } from "@/store/slices/slidesSlice";
@@ -13,14 +16,17 @@ export const sidelineCardsTemplate: Slide = {
         content: [
           {
             type: "heading",
-            attrs: { level: 2, textAlign: "center" },
+            attrs: { level: 3, textAlign: "center" },
             content: [{ type: "text", text: "Key Insights" }],
           },
         ],
       }),
     ]),
     createRow([
-      createBlockInstance(BLOCK_TYPES.SIDELINE_CARD_BLOCK, createSidelineCardContent(3)),
+      createBlockInstance(
+        BLOCK_TYPES.SIDELINE_CARD_BLOCK,
+        createSidelineCardContent(3)
+      ),
     ]),
   ],
   accent: {

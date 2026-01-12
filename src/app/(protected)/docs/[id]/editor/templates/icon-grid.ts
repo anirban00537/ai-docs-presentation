@@ -1,5 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
+import {
+  createBlockInstance,
+  createRow,
+} from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { createSolidIconBoxContent } from "../blocks/definitions/solid-icon-box-block";
 import { Slide } from "@/store/slices/slidesSlice";
@@ -8,24 +11,26 @@ export const iconGridTemplate: Slide = {
   id: "icon-box-layout",
   rows: [
     createRow([
-      createBlockInstance(
-        BLOCK_TYPES.PROSEMIRROR,
-        {
-          type: "doc",
-          content: [
-            {
-              type: "heading",
-              attrs: { level: 2, textAlign: "center" },
-              content: [{ type: "text", text: "Core Features" }],
-            },
-            {
-              type: "paragraph",
-              attrs: { textAlign: "center" },
-              content: [{ type: "text", text: "Explore the powerful capabilities that drive our solution forward." }],
-            },
-          ],
-        }
-      ),
+      createBlockInstance(BLOCK_TYPES.PROSEMIRROR, {
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: { level: 3, textAlign: "center" },
+            content: [{ type: "text", text: "Core Features" }],
+          },
+          {
+            type: "paragraph",
+            attrs: { textAlign: "center" },
+            content: [
+              {
+                type: "text",
+                text: "Explore the powerful capabilities that drive our solution forward.",
+              },
+            ],
+          },
+        ],
+      }),
     ]),
     createRow([
       createBlockInstance(

@@ -1,5 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
+import {
+  createBlockInstance,
+  createRow,
+} from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { createSimpleNumberCardContent } from "../blocks/definitions/simple-number-card";
 import { Slide } from "@/store/slices/slidesSlice";
@@ -8,24 +11,26 @@ export const numberCardsTemplate: Slide = {
   id: "number-card-layout",
   rows: [
     createRow([
-      createBlockInstance(
-        BLOCK_TYPES.PROSEMIRROR,
-        {
-          type: "doc",
-          content: [
-            {
-              type: "heading",
-              attrs: { level: 2, textAlign: "center" },
-              content: [{ type: "text", text: "By The Numbers" }],
-            },
-            {
-              type: "paragraph",
-              attrs: { textAlign: "center" },
-              content: [{ type: "text", text: "A quantitative look at our growth and market impact this quarter." }],
-            },
-          ],
-        }
-      ),
+      createBlockInstance(BLOCK_TYPES.PROSEMIRROR, {
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: { level: 3, textAlign: "center" },
+            content: [{ type: "text", text: "By The Numbers" }],
+          },
+          {
+            type: "paragraph",
+            attrs: { textAlign: "center" },
+            content: [
+              {
+                type: "text",
+                text: "A quantitative look at our growth and market impact this quarter.",
+              },
+            ],
+          },
+        ],
+      }),
     ]),
     createRow([
       createBlockInstance(

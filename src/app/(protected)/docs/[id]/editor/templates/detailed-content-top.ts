@@ -1,5 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
-import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
+import {
+  createBlockInstance,
+  createRow,
+} from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
 import { Slide } from "@/store/slices/slidesSlice";
 
@@ -9,7 +12,7 @@ export const detailedContentTopTemplate: Slide = {
     createRow([
       createBlockInstance(
         BLOCK_TYPES.PROSEMIRROR,
-        createProseMirrorDoc("Top Performance", "heading", 3)
+        createProseMirrorDoc("Top Performance", "heading", 4)
       ),
     ]),
     createRow([
