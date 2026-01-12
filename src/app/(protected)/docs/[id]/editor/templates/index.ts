@@ -7,7 +7,6 @@ import { detailedContentBackgroundTemplate } from "./detailed-content-background
 import { contentWithImageTemplate } from "./content-with-image";
 import { quoteTemplate } from "./quote";
 import { calloutWithButtonTemplate } from "./callout-with-button";
-import { simpleCodeTemplate } from "./simple-code";
 import { stackedTimelineTemplate } from "./stacked-timeline";
 import { numberCardsTemplate } from "./number-cards";
 import { iconGridTemplate } from "./icon-grid";
@@ -16,7 +15,6 @@ import { sidelineCardsTemplate } from "./sideline-cards";
 import { leafCardsTemplate } from "./leaf-cards";
 import { solidBoxesTemplate } from "./solid-boxes";
 import { timelineBentoTemplate } from "./timeline-bento";
-import { codeExampleTemplate } from "./code-example";
 import { blankTemplate } from "./blank";
 
 export const templates = [
@@ -29,7 +27,6 @@ export const templates = [
   contentWithImageTemplate,
   quoteTemplate,
   calloutWithButtonTemplate,
-  simpleCodeTemplate,
   stackedTimelineTemplate,
   numberCardsTemplate,
   iconGridTemplate,
@@ -38,7 +35,6 @@ export const templates = [
   leafCardsTemplate,
   solidBoxesTemplate,
   timelineBentoTemplate,
-  codeExampleTemplate,
   blankTemplate,
 ];
 
@@ -52,7 +48,6 @@ export {
   contentWithImageTemplate,
   quoteTemplate,
   calloutWithButtonTemplate,
-  simpleCodeTemplate,
   stackedTimelineTemplate,
   numberCardsTemplate,
   iconGridTemplate,
@@ -61,6 +56,5 @@ export {
   leafCardsTemplate,
   solidBoxesTemplate,
   timelineBentoTemplate,
-  codeExampleTemplate,
   blankTemplate,
 };
