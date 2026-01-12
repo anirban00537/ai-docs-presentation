@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2026-01-12T09:40:42.386Z
+ * Generated: 2026-01-12T10:01:34.742Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -25,10 +25,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "j1O0CInYFxlAsKZNwVBtS",
+            "id": "mN9-xZFoGTwjCQYENHZr7",
             "blocks": [
               {
-                "id": "__yBsFwA9Qf9GMU80EueK",
+                "id": "CmEfqTN50gNLBz-nLdP7y",
                 "type": "spacer",
                 "content": {
                   "type": "spacer",
@@ -41,10 +41,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "Qg3ckxjUP6SId2-pleHLS",
+            "id": "hSHkA9IghWl4cReaTGTBw",
             "blocks": [
               {
-                "id": "OSH9sQfLRVdNqlUhH_YGT",
+                "id": "u8Rlu-yksBq72qmgSP5GS",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -83,10 +83,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "XIg02SLuBUfASzmjiM26x",
+            "id": "OrkTWl0sQ206HtNeOQr_Q",
             "blocks": [
               {
-                "id": "sHuw_30qdpNW79unP8AE0",
+                "id": "l-UcvzZQ3TUlv9to1c8bz",
                 "type": "spacer",
                 "content": {
                   "type": "spacer",
@@ -114,10 +114,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "FT3DNf-w7460tmY7_TgPz",
+            "id": "hC6tZ0geFxRoBpkQZxOEV",
             "blocks": [
               {
-                "id": "z9UsN1IxgvCZOoQ0_TNNR",
+                "id": "af-SxxuHBabmKAAleMYTe",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -143,10 +143,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "O0wpSqktzOdoZ8ibLJ-aJ",
+            "id": "L3Va4jZVbJLhc-uUvokvD",
             "blocks": [
               {
-                "id": "h3Z9noEe1Q_b4NUBkfUya",
+                "id": "8RHrsP33ceFky70mlZHok",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -169,10 +169,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "kkjS-tHQVd671_FqX7UMQ",
+            "id": "nOY7GoCecJqh_LZaJhPRl",
             "blocks": [
               {
-                "id": "coQy9QJVi7GBnACPDRdNE",
+                "id": "o1QzboTOFbwyxrWmLVJFe",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -215,10 +215,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Ho7X8auPe2VmtAuCMs19U",
+            "id": "Btgcbuxlf1vkeqPCHlG_8",
             "blocks": [
               {
-                "id": "N2iDtmV59OWlbsUbUzcWd",
+                "id": "C7xCz2poxv0HA4aUEz1J4",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -244,10 +244,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "jDv1wW_VBvMk1_POvxjHv",
+            "id": "YPKIi3zaWvKhhyKiWKmPg",
             "blocks": [
               {
-                "id": "VJY93GRzxV2rWqlTAN5wz",
+                "id": "FU2xKvkVTDp6V8sKKGgfG",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -270,10 +270,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "K21DKOjCFJlYYnb66zqq6",
+            "id": "oaaRLjb_gkEQru3WHEQ33",
             "blocks": [
               {
-                "id": "9aLjO1Chg8hKo2D4eayma",
+                "id": "ARkO6YMDku5wW5yayKmDx",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -316,10 +316,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "h5RaccBbQrbXOqnvVy127",
+            "id": "8D_MSU5qUL3Qgob12isak",
             "blocks": [
               {
-                "id": "fQB-XKQj_AEdj34Ya4TIW",
+                "id": "G7E-FTwnzwK7WpzxDRg_d",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -345,10 +345,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "uNH6JGtHc0i7BB60kPhY-",
+            "id": "mrMQYDdpTV_vuAgrdRCD_",
             "blocks": [
               {
-                "id": "cHtJ2yswvT_LD0X7Vsb-X",
+                "id": "wNZCGOh6I3q0ZoTjZkbTS",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -391,10 +391,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "6kATefwe5F6IoKWVOJ8ZH",
+            "id": "GBCl1_wXjfn_ZCpqPYMud",
             "blocks": [
               {
-                "id": "iyAwmdCtgM8n7_zvGIxXA",
+                "id": "75OpHNUMBx_M-UFeSyFA-",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -420,10 +420,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "raNT71fVrINns6lX7CZ7x",
+            "id": "d5EppSIdMnGIZD_yDU9mp",
             "blocks": [
               {
-                "id": "RdTW8euH6nLX-OLUOOY72",
+                "id": "RaVS5Wj8hSsqmGTISmq_m",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -466,10 +466,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "g9wWebE3A1HrJdnrI1H91",
+            "id": "wOxfjVdG1jlHV4q6CjVWs",
             "blocks": [
               {
-                "id": "GTgFz7NBYu1JqP1utECjt",
+                "id": "mw1sqkZMF_v1oLf-Afgq9",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -495,10 +495,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "AZBYBUrjPHj7av-FvvO70",
+            "id": "H_hIAnnx7ODC9D_-SfVnf",
             "blocks": [
               {
-                "id": "ivj794sfzXpNGI30KccsU",
+                "id": "SGs2CWuZEe6S-kyHVs55o",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -541,10 +541,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "eRGxzksR-jn6wTu4HzjLJ",
+            "id": "DPI-aeQhSzn5Ux7FuJ9Hr",
             "blocks": [
               {
-                "id": "HsGHrmHAPmH9spomT81vw",
+                "id": "nkpg77K3IzQ9EZLmXoGRf",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -571,10 +571,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "79O5tGzcdJA14yx0w6Nl5",
+            "id": "udGP6fJGhnuQupnjYHTuL",
             "blocks": [
               {
-                "id": "FFvvJQNXt1EuFhlmd4jDr",
+                "id": "Hfsg61YAshTNqM50wZpPC",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -597,10 +597,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "qsnPekXcjUnHsHWGdR81H",
+            "id": "OOpGJfdjcHHWDhUzTPaNP",
             "blocks": [
               {
-                "id": "NXk37EJqQvPGmy29f7rH0",
+                "id": "Mpw2YqMXU2MzVC8LsjaMS",
                 "type": "image",
                 "content": {
                   "type": "image",
@@ -636,10 +636,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "k0-zDR-wf643v3rJOhsqk",
+            "id": "ge3OtR-nvekgyAaDC78kM",
             "blocks": [
               {
-                "id": "ploLDEvJ9kwE-sZ0TsQtB",
+                "id": "ZLWCqb2cjkh4a6vOGhqUG",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -666,10 +666,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "uCltcbP1P6D_oSjH0SX0x",
+            "id": "9KguJtsWoxD9iO1VvjfLB",
             "blocks": [
               {
-                "id": "zjI80fawYnD7jHjF0dJdH",
+                "id": "N8fZ_rIAw6Vr-6-VS09Ie",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -724,10 +724,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Pn_WiOfKyAJmjWozRXlsb",
+            "id": "k2ekfrr5DIHkXoJs0LDuS",
             "blocks": [
               {
-                "id": "9Xhgl7znudzkWDVuSY7qH",
+                "id": "NoSLU5cwfIC8O4E-GRaaO",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -753,10 +753,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "Y3eNRVKoUSoP1P_Z9T9eA",
+            "id": "qR5EN02YGE9nz7uQBSAmi",
             "blocks": [
               {
-                "id": "M-GQ7IRXPv3G9x2SE-nZz",
+                "id": "sQJHtuQthqxCzLWd-lWTS",
                 "type": "callout-block",
                 "content": {
                   "type": "callout-block",
@@ -783,10 +783,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "s9cJ4D4QUbO8-y3Snik8t",
+            "id": "LqodC6amTJuPrm3ewGaBt",
             "blocks": [
               {
-                "id": "35_JFMmzuMTzGVNQVh6yB",
+                "id": "yM2D5OJJ471L5n8OXujXI",
                 "type": "button-block",
                 "content": {
                   "type": "button-block",
@@ -823,10 +823,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "ibsL5q91n1aeHiWl_sTbr",
+            "id": "eR0xNVkaQ-UcQkDoCjjqf",
             "blocks": [
               {
-                "id": "Doj3T9tjliIu8syY3pVj2",
+                "id": "sDbSRVr3zjqqwO0YiflQZ",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -865,16 +865,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "Bp7_82CTtK9Sp8sXupolt",
+            "id": "B9_2eYTYsbtkACOF1hKgR",
             "blocks": [
               {
-                "id": "2Et3xEu-Jy7hSbL1kZ5R-",
+                "id": "E9rXcYIYNHanR8OOKJFpS",
                 "type": "stacked-timeline-block",
                 "content": {
                   "type": "stacked-timeline-block",
                   "items": [
                     {
-                      "id": "u7yBcVr0e6RKrv3O_Qjt9",
+                      "id": "uqYkg_rUYNzsxkIu1S-Rc",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -908,7 +908,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "nWjMLVXwk7WY_vNjMrCiM",
+                      "id": "qAKe3BfPffGKVZTmnMaQe",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -942,7 +942,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "Iyxkpcr3Wirmbnd8E3ttL",
+                      "id": "J9yYoH6ilaXZG5jcojrl8",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1004,10 +1004,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "a-Hlfkj08ob1hV98hn07d",
+            "id": "Fcatk1jADkJ502UINTmKV",
             "blocks": [
               {
-                "id": "8bnDu9ZgOXTgbFV7Wfeuv",
+                "id": "aP_XECHsPb7KI1trXVXai",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1046,16 +1046,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "FXkxtc8JffSJU_9FO1aQC",
+            "id": "XZDwxsO9IrrmrmvwiBuzA",
             "blocks": [
               {
-                "id": "1I6YOILMjOE8DUWlCIe0p",
+                "id": "hQ_Os3dRLi7iVeOyHhCS5",
                 "type": "simple-number-card",
                 "content": {
                   "type": "simple-number-card",
                   "items": [
                     {
-                      "id": "Wr4CT042HJNlykjaF6Owx",
+                      "id": "uoI96dIWOU8nnrVm5QpUk",
                       "number": 1,
                       "title": {
                         "type": "doc",
@@ -1090,7 +1090,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "ut4l1Mo1A4F-f8y7xTve_",
+                      "id": "6ZI7W_hNy1lVYLzPDxHF3",
                       "number": 2,
                       "title": {
                         "type": "doc",
@@ -1125,7 +1125,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "DhMv4Uz3eeshvRcf6LGlt",
+                      "id": "kc-8kv8uesEbnsyqfX5VI",
                       "number": 3,
                       "title": {
                         "type": "doc",
@@ -1188,10 +1188,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "w5Kn0kG-TCwu9TFu5kXsX",
+            "id": "G8hoxbRMTBgvRZuH0xH0O",
             "blocks": [
               {
-                "id": "A3V9yWIB3LPMdRslyQpxA",
+                "id": "KcmrSk-u3mcG63gr4Kuz8",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1230,16 +1230,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "RyB9ugShEoia8W_pNYjAR",
+            "id": "4l5dSFhpoGVtnPKRKPrzE",
             "blocks": [
               {
-                "id": "VNE3jv2TTYuFN_Qt4bJmL",
+                "id": "enySQoRBPrcPLMQxzDJVH",
                 "type": "solid-icon-box-block",
                 "content": {
                   "type": "solid-icon-box-block",
                   "items": [
                     {
-                      "id": "haOSOPJEat6aEtKtyFo6W",
+                      "id": "WKZmj5W88IvBEshLTVxzM",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1274,7 +1274,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "WWyYTDMBE7hmW2ZmN5FeG",
+                      "id": "NdHN3f3WbQeq6JPr2XWEu",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1309,7 +1309,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "AoGOGJaJBvBgJWM27MW29",
+                      "id": "bacSVKpc9ykThG_LyTPQ-",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1363,6 +1363,196 @@ const layoutTemplates = [
       isAdmin: true,
     },
     {
+      name: "Image Card Grid",
+      description: "Image Card Grid layout template",
+      data: {
+        "id": "image-card-grid",
+        "name": "Image Card Grid",
+        "description": "Image Card Grid layout template",
+        "icon": "IconLayout",
+        "rows": [
+          {
+            "id": "K-vmjkYCQ-a9f1hBJWEzc",
+            "blocks": [
+              {
+                "id": "7VYKZ88xBGoD8p1UHPZ46",
+                "type": "prosemirror",
+                "content": {
+                  "type": "doc",
+                  "content": [
+                    {
+                      "type": "heading",
+                      "attrs": {
+                        "level": 3,
+                        "textAlign": "center"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Visual Showcase"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "textAlign": "center"
+                      },
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Discover our products and services through stunning visuals."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "columnWidths": [
+              1
+            ]
+          },
+          {
+            "id": "-b6J3zeCtwoey54g_QvFk",
+            "blocks": [
+              {
+                "id": "ubyShA0pP-mV59PGATBE3",
+                "type": "image-card-block",
+                "content": {
+                  "type": "image-card-block",
+                  "items": [
+                    {
+                      "id": "cV9FPD3L_dF-5TjH0dE5G",
+                      "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+                      "imageAlt": "",
+                      "title": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "heading",
+                            "attrs": {
+                              "level": 5
+                            },
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "Card Title"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "description": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "Add a compelling description that complements the image and provides context."
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "objectFit": "cover"
+                    },
+                    {
+                      "id": "gmUnzpd5uw9nbeJKValEq",
+                      "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+                      "imageAlt": "",
+                      "title": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "heading",
+                            "attrs": {
+                              "level": 5
+                            },
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "Card Title"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "description": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "Add a compelling description that complements the image and provides context."
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "objectFit": "cover"
+                    },
+                    {
+                      "id": "QT1Ds1pbGsHqCjyA2Xv2E",
+                      "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+                      "imageAlt": "",
+                      "title": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "heading",
+                            "attrs": {
+                              "level": 5
+                            },
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "Card Title"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "description": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "Add a compelling description that complements the image and provides context."
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "objectFit": "cover"
+                    }
+                  ]
+                }
+              }
+            ],
+            "columnWidths": [
+              1
+            ]
+          }
+        ],
+        "accent": {
+          "url": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+          "position": "background",
+          "size": 15
+        }
+      },
+      type: "admin",
+      tags: ["image-card-grid"],
+      isAdmin: true,
+    },
+    {
       name: "Layered Steps",
       description: "Layered Steps layout template",
       data: {
@@ -1372,10 +1562,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "2yXr2tf-7PeW34R8m4b78",
+            "id": "I9NvDm8IacDgg7A1tCTdL",
             "blocks": [
               {
-                "id": "n883rdR7kcLkTmLC-SiLj",
+                "id": "bIRP2diUO0hYqrtd98XYT",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1402,16 +1592,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "F_Xhykupr_4sue1adh9ZS",
+            "id": "kGlg69CLQ05p1jq29wgFm",
             "blocks": [
               {
-                "id": "HgtM6uxkTL7QwBUr-hyA8",
+                "id": "dsXr8AmxQ2bDvPx4nx7SP",
                 "type": "layered-number-block",
                 "content": {
                   "type": "layered-number-block",
                   "items": [
                     {
-                      "id": "BjqNlRiLIcGNv46zOqUNq",
+                      "id": "y3gujkD5-l6mCvuFXxitA",
                       "number": 1,
                       "title": {
                         "type": "doc",
@@ -1446,7 +1636,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "3lcTMk-frydetqsv6pPvI",
+                      "id": "e-aNv7CB9h9CsEMag0FaS",
                       "number": 2,
                       "title": {
                         "type": "doc",
@@ -1509,10 +1699,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "x-7F7bQGe5X7XIYqrR29C",
+            "id": "9vwRCNfGG725kR6YaFnf6",
             "blocks": [
               {
-                "id": "Y0BFHrOJbR1pedaKciOtr",
+                "id": "86J7AmN4R8gsbQbwx23O9",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1539,16 +1729,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "5Wm9_xVfvFAcYlVJSMJN0",
+            "id": "m-4umWGx5227UeBb1Ws4r",
             "blocks": [
               {
-                "id": "fwWvpCqEastqv6VUEQ7Yh",
+                "id": "cizKfp8wtaXeWxhtjp-CR",
                 "type": "sideline-card-block",
                 "content": {
                   "type": "sideline-card-block",
                   "items": [
                     {
-                      "id": "-g3pNyuZHUCT3u9IGiItG",
+                      "id": "NI8-_oaeVGeGMLUAxDf2T",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1582,7 +1772,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "afRr36VYYkla0tFxh2hT5",
+                      "id": "xiOpA2T_EcHe0VzGSmKou",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1616,7 +1806,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "VRi4aolFtuNLsPjwD7T6t",
+                      "id": "EKwvGEoAwH2cbRlK0FVYj",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1678,10 +1868,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "PXJmmzJc2Wz5Gddjs2qwD",
+            "id": "Ko2eIw5Rl34xW7GDdEFpd",
             "blocks": [
               {
-                "id": "85ZYeuS6kqhQp5jchy-qs",
+                "id": "5hknqL3bFSnVt7KHdcovY",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1708,16 +1898,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "yRbFWTiKm4ZeQ0yjw4Gnp",
+            "id": "H5Gl9Acu_-ea6vuvbIiTP",
             "blocks": [
               {
-                "id": "0Rv6bRlpf3xXwkeOSBgAn",
+                "id": "l3VtJ5qhG11Uo2Gl_ubhj",
                 "type": "leaf-block",
                 "content": {
                   "type": "leaf-block",
                   "items": [
                     {
-                      "id": "P5qTkq9GAaJNnZJLSwY0-",
+                      "id": "I2KVPxqX28VclK6ewqd5y",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1751,7 +1941,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "VQ3xJxshKu2Ni2JEXUEoY",
+                      "id": "YRg2N7TTyGigHldrUEhnm",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1785,7 +1975,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "2MQJJ3FoJQwDXz6zQuRVy",
+                      "id": "9cM5ms4EaqdZDL0cgXCGu",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1847,10 +2037,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "dHQg5lDJSPDplwfu_JvFK",
+            "id": "bIac4fxXAqHiMDz0NKz1R",
             "blocks": [
               {
-                "id": "RcA3WeULq0ZtfroTT4EtL",
+                "id": "WwbGSuBHyvqEs0denH9g1",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1877,16 +2067,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "zfRh5WuWtb_4-F3EadVnx",
+            "id": "jOZmwWj8bJ0frg-0Hf1_i",
             "blocks": [
               {
-                "id": "PSHtgQRG7KKcKcsUEtOpS",
+                "id": "KobmdexDve2hJ7hQGKWSY",
                 "type": "solid-box-block",
                 "content": {
                   "type": "solid-box-block",
                   "items": [
                     {
-                      "id": "a1STCoXXV6qSuJ20D0qnZ",
+                      "id": "UtBh4LFnQ9eqs1lqZfb1C",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1920,7 +2110,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "-UYVHjHPeFwv2FKSmOYd1",
+                      "id": "6Hz5Wr_lM6jBB9KheeZ55",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1954,7 +2144,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "QGg5Qf7x14pxvvYs11gJs",
+                      "id": "nvXsc8LwWFp9DJ8DGhHWF",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2016,10 +2206,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "QPVS7d2ks0P-fnyjRrcWZ",
+            "id": "-w4ghnxkqU6aGM4kuklfi",
             "blocks": [
               {
-                "id": "DgJ2IdVeMivathfUSMmVA",
+                "id": "T99oZ7zwvJWsASvSx-h3E",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2046,16 +2236,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "2IONFi8ddKM5wDvDqAWvj",
+            "id": "0LxuYM6fJeth3hX3QIHqa",
             "blocks": [
               {
-                "id": "f1AVo8sZQ580DSrad3E3r",
+                "id": "D1zSdXOPYlAqesAz5Mzvp",
                 "type": "timeline-bento-block",
                 "content": {
                   "type": "timeline-bento-block",
                   "items": [
                     {
-                      "id": "4rL5RW6SKFnildhhpBZSe",
+                      "id": "3MwhN5ZeAoPq1bHYGNsC_",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2089,7 +2279,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "ZIx2fU9isSsIklQOV_4Sx",
+                      "id": "JowUBuOnoXi0-3AgYNTBP",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2123,7 +2313,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "tpk1TDLZemewT9G9u2e2y",
+                      "id": "TMOGiWdNASsoL9_3TzQAS",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2157,7 +2347,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "-jaSbBKWNSDSKZuUCn4Et",
+                      "id": "7ZK2zFkLqWm3h6NugVvKp",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2219,10 +2409,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Y-6SQJMTlLamNtw9lyWAc",
+            "id": "1nFk7mq81AzaHyeFMab_t",
             "blocks": [
               {
-                "id": "GH3lsVUKSz7PZ1PenytxI",
+                "id": "ey4r1j9aPNqTOQF5P4ng6",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2249,10 +2439,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "VT5ZzThlNCPmTvbmzh-KF",
+            "id": "fLtZBK8G3gRpZwWEUcsU8",
             "blocks": [
               {
-                "id": "VkyQhmCx9nx_Di8p_4cmw",
+                "id": "G-Du9HF865v9k8gM90mCQ",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2278,10 +2468,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "iSUW8a9FcHLjZcOcXfZ8g",
+            "id": "Izo-pRJHLp399MyPeoRy7",
             "blocks": [
               {
-                "id": "fZWmsv6rvrsQrXaXxRfBm",
+                "id": "XTUGr1B2NvJKfD74RrCtY",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2327,10 +2517,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "3IXYLl5gdhqBn4OO4Hie7",
+            "id": "jY0yU7pfA-rUHUNOCO_5q",
             "blocks": [
               {
-                "id": "1hnQzhbtrfKYecczecXt7",
+                "id": "_Zz7UioRdycWuxXecznNZ",
                 "type": "prosemirror",
                 "content": ""
               }
