@@ -18,25 +18,25 @@ interface SuggestionGridProps {
   title?: string;
 }
 
-export const SuggestionGrid: React.FC<SuggestionGridProps> = ({ 
+export const SuggestionGrid: React.FC<SuggestionGridProps> = ({
   suggestions,
   onSuggestionClick,
-  title = "Quick Start Ideas"
+  title = "Quick Start Ideas",
 }) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.3 }}
-      className="space-y-6"
+      className="space-y-3"
     >
       {title && (
-        <p className="text-xs font-bold text-muted-foreground/60 text-center uppercase tracking-widest">
+        <p className="text-[10px] font-bold text-muted-foreground/60 text-center uppercase tracking-widest">
           {title}
         </p>
       )}
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {suggestions.map((suggestion, index) => (
           <SuggestionCard
             key={suggestion.title}
