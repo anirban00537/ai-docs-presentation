@@ -28,6 +28,8 @@ import { PromptPresentationAIService } from './prompt-presentation-ai/prompt-pre
 import { OutlineService } from './outline.service';
 import { CreditService } from '../subscription/services/credit.service';
 import { BadRequestException } from '@nestjs/common';
+import { Public } from 'src/shared/decorators/public.decorator';
+import { ToggleShareDto } from './dto/share-presentation.dto';
 
 @Controller('presentation')
 @UseGuards(JwtAuthGuard)
@@ -46,8 +48,34 @@ export class PresentationController {
     return this.presentationService.findAll(user, query);
   }
 
+  // Share endpoints - placed before generic :id routes to ensure proper matching
+  @Post(':id/share/enable')
+  async enableShare(
+    @Param('id') id: string,
+    @UserInfo() user: User,
+  ): Promise<ResponseModel> {
+    return this.presentationService.generateShareToken(id, user);
+  }
+
+  @Post(':id/share/disable')
+  async disableShare(
+    @Param('id') id: string,
+    @UserInfo() user: User,
+  ): Promise<ResponseModel> {
+    return this.presentationService.toggleShare(id, user, false);
+  }
+
+  @Get(':id/share')
+  async getShareInfo(
+    @Param('id') id: string,
+    @UserInfo() user: User,
+  ): Promise<ResponseModel> {
+    return this.presentationService.getShareInfo(id, user);
+  }
+
+  @Public()
   @Get(':id/get')
-  findOne(@Param('id') id: string, @UserInfo() user: User) {
+  findOne(@Param('id') id: string, @UserInfo() user: User | null) {
     return this.presentationService.findOne(id, user);
   }
 
@@ -182,7 +210,11 @@ export class PresentationController {
         layoutId?: string;
       }>;
 
-      if (!outlineItems || !Array.isArray(outlineItems) || outlineItems.length === 0) {
+      if (
+        !outlineItems ||
+        !Array.isArray(outlineItems) ||
+        outlineItems.length === 0
+      ) {
         res.write(
           `data: ${JSON.stringify({ type: 'error', message: 'Outline is empty or invalid' })}\n\n`,
         );
@@ -203,13 +235,17 @@ export class PresentationController {
           presentationId,
         );
         creditsDeducted = requiredCredits;
-        this.logger.log(`[Credits] Deducted ${requiredCredits} credits upfront for user ${user.id}`);
+        this.logger.log(
+          `[Credits] Deducted ${requiredCredits} credits upfront for user ${user.id}`,
+        );
       } catch (creditError: any) {
         // Credit deduction failed (likely insufficient credits)
         res.write(
-          `data: ${JSON.stringify({ 
-            type: 'error', 
-            message: creditError.message || `Insufficient credits. Required: ${requiredCredits} credits to generate ${estimatedSlides} slides.` 
+          `data: ${JSON.stringify({
+            type: 'error',
+            message:
+              creditError.message ||
+              `Insufficient credits. Required: ${requiredCredits} credits to generate ${estimatedSlides} slides.`,
           })}\n\n`,
         );
         res.end();
@@ -228,7 +264,7 @@ export class PresentationController {
 
         for await (const chunk of stream) {
           const data = JSON.parse(chunk);
-          
+
           // Track successful slide generation
           if (data.type === 'slide') {
             slidesGenerated++;
@@ -261,7 +297,9 @@ export class PresentationController {
             `Refund: Slide generation failed for presentation ${presentationId}`,
             presentationId,
           );
-          this.logger.log(`[Credits] Refunded ${creditsDeducted} credits to user ${user.id} due to generation failure`);
+          this.logger.log(
+            `[Credits] Refunded ${creditsDeducted} credits to user ${user.id} due to generation failure`,
+          );
         } catch (refundError) {
           this.logger.error('Failed to refund credits:', refundError);
         }
@@ -278,7 +316,9 @@ export class PresentationController {
             `Refund: Unexpected error during slide generation for presentation ${presentationId}`,
             presentationId,
           );
-          this.logger.log(`[Credits] Refunded ${creditsDeducted} credits to user ${user.id} due to unexpected error`);
+          this.logger.log(
+            `[Credits] Refunded ${creditsDeducted} credits to user ${user.id} due to unexpected error`,
+          );
         } catch (refundError) {
           this.logger.error('Failed to refund credits:', refundError);
         }

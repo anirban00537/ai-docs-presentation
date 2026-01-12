@@ -14,6 +14,7 @@ import { UpdatePresentationDto } from './dto/update-presentation.dto';
 import { CreateSlideDto } from './dto/create-slide.dto';
 import { UpdateSlideDto } from './dto/update-slide.dto';
 import { Logger } from '@nestjs/common';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class PresentationService {
@@ -98,12 +99,13 @@ export class PresentationService {
     }
   }
 
-  async findOne(id: string, user: User): Promise<ResponseModel> {
+  async findOne(id: string, user: User | null): Promise<ResponseModel> {
     try {
-      const presentation = await this.prisma.presentation.findFirst({
+      // First try to find as owner
+      let presentation = await this.prisma.presentation.findFirst({
         where: {
           id,
-          userId: user.id,
+          userId: user?.id,
           deletedAt: null,
         },
         include: {
@@ -113,6 +115,23 @@ export class PresentationService {
           },
         },
       });
+
+      // If not found and user is not authenticated, check if it's publicly shared
+      if (!presentation && !user) {
+        presentation = await this.prisma.presentation.findFirst({
+          where: {
+            id,
+            shareEnabled: true,
+            deletedAt: null,
+          },
+          include: {
+            slides: {
+              where: { deletedAt: null },
+              orderBy: { order: 'asc' },
+            },
+          },
+        });
+      }
 
       if (!presentation) {
         return errorResponse('Presentation not found');
@@ -423,6 +442,187 @@ export class PresentationService {
       );
 
       return successResponse('Slides reordered successfully');
+    } catch (error) {
+      processException(error);
+    }
+  }
+
+  async generateShareToken(
+    presentationId: string,
+    user: User,
+  ): Promise<ResponseModel> {
+    try {
+      const presentation = await this.prisma.presentation.findFirst({
+        where: {
+          id: presentationId,
+          userId: user.id,
+          deletedAt: null,
+        },
+      });
+
+      if (!presentation) {
+        return errorResponse('Presentation not found');
+      }
+
+      const updatedPresentation = await this.prisma.presentation.update({
+        where: { id: presentationId },
+        data: {
+          shareEnabled: true,
+        },
+      });
+
+      this.logger.log(`SHARE ENABLED: Presentation ${presentationId}`);
+      return successResponse('Sharing enabled successfully', {
+        shareEnabled: updatedPresentation.shareEnabled,
+      });
+    } catch (error) {
+      processException(error);
+    }
+  }
+
+  async toggleShare(
+    presentationId: string,
+    user: User,
+    enabled: boolean,
+  ): Promise<ResponseModel> {
+    try {
+      const presentation = await this.prisma.presentation.findFirst({
+        where: {
+          id: presentationId,
+          userId: user.id,
+          deletedAt: null,
+        },
+      });
+
+      if (!presentation) {
+        return errorResponse('Presentation not found');
+      }
+
+      const updatedPresentation = await this.prisma.presentation.update({
+        where: { id: presentationId },
+        data: {
+          shareEnabled: enabled,
+        },
+      });
+
+      this.logger.log(`SHARE ${enabled ? 'ENABLED' : 'DISABLED'}: Presentation ${presentationId}`);
+      return successResponse(
+        `Sharing ${enabled ? 'enabled' : 'disabled'} successfully`,
+        {
+          shareEnabled: updatedPresentation.shareEnabled,
+        },
+      );
+    } catch (error) {
+      processException(error);
+    }
+  }
+
+  async getShareInfo(
+    presentationId: string,
+    user: User,
+  ): Promise<ResponseModel> {
+    try {
+      const presentation = await this.prisma.presentation.findFirst({
+        where: {
+          id: presentationId,
+          userId: user.id,
+          deletedAt: null,
+        },
+        select: {
+          shareEnabled: true,
+        },
+      });
+
+      if (!presentation) {
+        return errorResponse('Presentation not found');
+      }
+
+      return successResponse('Share info retrieved successfully', {
+        shareEnabled: presentation.shareEnabled,
+      });
+    } catch (error) {
+      processException(error);
+    }
+  }
+
+  async getSharedPresentation(shareToken: string): Promise<ResponseModel> {
+    try {
+      if (!shareToken || shareToken.trim().length === 0) {
+        return errorResponse('Invalid share token');
+      }
+
+      const presentation = await this.prisma.presentation.findFirst({
+        where: {
+          shareToken,
+          shareEnabled: true,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          thumbnail: true,
+          globalTheme: true,
+          createdAt: true,
+          updatedAt: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+        },
+      });
+
+      if (!presentation) {
+        return errorResponse('Presentation not found or sharing is disabled');
+      }
+
+      return successResponse('Shared presentation retrieved successfully', presentation);
+    } catch (error) {
+      processException(error);
+    }
+  }
+
+  async getSharedPresentationSlides(shareToken: string): Promise<ResponseModel> {
+    try {
+      if (!shareToken || shareToken.trim().length === 0) {
+        return errorResponse('Invalid share token');
+      }
+
+      const presentation = await this.prisma.presentation.findFirst({
+        where: {
+          shareToken,
+          shareEnabled: true,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!presentation) {
+        return errorResponse('Presentation not found or sharing is disabled');
+      }
+
+      const slides = await this.prisma.slide.findMany({
+        where: {
+          presentationId: presentation.id,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          data: true,
+          order: true,
+        },
+        orderBy: {
+          order: 'asc',
+        },
+      });
+
+      return successResponse('Shared presentation slides retrieved successfully', slides);
     } catch (error) {
       processException(error);
     }

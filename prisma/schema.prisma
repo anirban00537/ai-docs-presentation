@@ -145,6 +145,8 @@ model Presentation {
   sharedWith String[]
   ownerId    String
 
+  shareEnabled Boolean  @default(false)
+
   deletedAt DateTime?
 
   createdAt    DateTime  @default(now())
