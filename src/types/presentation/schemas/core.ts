@@ -18,6 +18,7 @@ export const BLOCK_TYPES = {
   STACKED_TIMELINE_BLOCK: "stacked-timeline-block",
   CONNECTED_STEPS_BLOCK: "connected-steps-block",
   CIRCLE_STATS_BLOCK: "circle-stats-block",
+  IMAGE_CARD_BLOCK: "image-card-block",
 } as const;
 
 export const MAX_BLOCKS_PER_ROW = 3;

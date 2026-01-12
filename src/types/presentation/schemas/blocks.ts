@@ -196,6 +196,27 @@ export const CircleStatsContentSchema = z.object({
 export type CircleStatsItem = z.infer<typeof CircleStatsItemSchema>;
 export type CircleStatsContent = z.infer<typeof CircleStatsContentSchema>;
 
+// Image Card Block
+export const ImageCardItemSchema = z.object({
+  id: z.string(),
+  imageUrl: z.string().default(""),
+  imageAlt: z.string().optional().default(""),
+  title: ProseMirrorDocumentSchema,
+  description: ProseMirrorDocumentSchema,
+  objectFit: z.enum(["cover", "contain", "fill"]).default("cover"),
+  attribution: z.object({
+    name: z.string(),
+    link: z.string().url(),
+  }).optional(),
+});
+
+export const ImageCardContentSchema = z.object({
+  type: z.literal("image-card-block"),
+  items: z.array(ImageCardItemSchema).default([]),
+});
+export type ImageCardItem = z.infer<typeof ImageCardItemSchema>;
+export type ImageCardContent = z.infer<typeof ImageCardContentSchema>;
+
 export const BlockContentSchema = z.union([
   z.string(),
   ProseMirrorDocObjectSchema,
@@ -213,6 +234,7 @@ export const BlockContentSchema = z.union([
   StackedTimelineContentSchema,
   ConnectedStepsContentSchema,
   CircleStatsContentSchema,
+  ImageCardContentSchema,
   SpacerContentSchema,
 ]);
 

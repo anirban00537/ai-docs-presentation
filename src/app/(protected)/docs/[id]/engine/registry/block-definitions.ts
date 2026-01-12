@@ -42,6 +42,7 @@ import { createTimelineBentoContent, normalizeTimelineBentoContent } from "@/app
 import { createStackedTimelineContent, normalizeStackedTimelineContent } from "@/app/(protected)/docs/[id]/editor/blocks/definitions/stacked-timeline-block";
 import { createConnectedStepsContent, normalizeConnectedStepsContent } from "@/app/(protected)/docs/[id]/editor/blocks/definitions/connected-steps-block";
 import { createCircleStatsContent, normalizeCircleStatsContent } from "@/app/(protected)/docs/[id]/editor/blocks/definitions/circle-stats-block";
+import { createImageCardContent, normalizeImageCardContent } from "@/app/(protected)/docs/[id]/editor/blocks/definitions/image-card-block";
 
 export interface BlockPreset {
   label: string;
@@ -301,5 +302,17 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
     createContent: createCircleStatsContent,
     normalizeContent: normalizeCircleStatsContent,
     keywords: ['stats', 'circle', 'data', 'percentage'],
+  },
+
+  [BLOCK_TYPES.IMAGE_CARD_BLOCK]: {
+    type: BLOCK_TYPES.IMAGE_CARD_BLOCK,
+    component: lazy(() => import('@/app/(protected)/docs/[id]/editor/blocks/image-card/ImageCardBlock').then(m => ({ default: m.ImageCardBlock }))),
+    icon: IconPhoto,
+    label: 'Image Card',
+    description: 'Image cards with title and description',
+    category: 'Cards & Boxes',
+    createContent: createImageCardContent,
+    normalizeContent: normalizeImageCardContent,
+    keywords: ['image', 'card', 'photo', 'gallery', 'picture'],
   },
 };

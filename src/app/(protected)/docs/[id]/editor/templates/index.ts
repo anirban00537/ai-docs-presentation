@@ -10,6 +10,7 @@ import { calloutWithButtonTemplate } from "./callout-with-button";
 import { stackedTimelineTemplate } from "./stacked-timeline";
 import { numberCardsTemplate } from "./number-cards";
 import { iconGridTemplate } from "./icon-grid";
+import { imageCardGridTemplate } from "./image-card-grid";
 import { layeredStepsTemplate } from "./layered-steps";
 import { sidelineCardsTemplate } from "./sideline-cards";
 import { leafCardsTemplate } from "./leaf-cards";
@@ -31,6 +32,7 @@ export const templates = [
   stackedTimelineTemplate,
   numberCardsTemplate,
   iconGridTemplate,
+  imageCardGridTemplate,
   layeredStepsTemplate,
   sidelineCardsTemplate,
   leafCardsTemplate,
@@ -53,6 +55,7 @@ export {
   stackedTimelineTemplate,
   numberCardsTemplate,
   iconGridTemplate,
+  imageCardGridTemplate,
   layeredStepsTemplate,
   sidelineCardsTemplate,
   leafCardsTemplate,

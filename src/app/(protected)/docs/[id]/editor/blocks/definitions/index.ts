@@ -20,6 +20,7 @@ import { createTimelineBentoContent, normalizeTimelineBentoContent } from "./tim
 import { createStackedTimelineContent, normalizeStackedTimelineContent } from "./stacked-timeline-block";
 import { createConnectedStepsContent, normalizeConnectedStepsContent } from "./connected-steps-block";
 import { createCircleStatsContent, normalizeCircleStatsContent } from "./circle-stats-block";
+import { createImageCardContent, normalizeImageCardContent } from "./image-card-block";
 
 
 // Re-export factories and normalizers
@@ -39,6 +40,7 @@ export {
   createStackedTimelineContent, normalizeStackedTimelineContent,
   createConnectedStepsContent, normalizeConnectedStepsContent,
   createCircleStatsContent, normalizeCircleStatsContent,
+  createImageCardContent, normalizeImageCardContent,
 };
 
 
