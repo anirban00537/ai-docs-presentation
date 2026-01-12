@@ -215,9 +215,9 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
             </motion.div>
           </div>
 
-          {/* Current Slide - Full Width with Vertical Centering */}
+          {/* Current Slide - Full Width with Flexible Height */}
           <div
-            className="min-h-screen w-full flex flex-col justify-center"
+            className="min-h-screen w-full flex flex-col"
             style={{ fontFamily: `${theme.fontFamily}, sans-serif` }}
           >
             <AnimatePresence mode="wait">
@@ -228,7 +228,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="w-full my-auto"
+                  className="w-full min-h-screen"
                 >
                   <SlideCanvas
                     slide={slides[currentSlideIndex]}

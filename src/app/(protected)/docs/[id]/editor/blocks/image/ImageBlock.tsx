@@ -131,19 +131,20 @@ export const ImageBlock = memo(function ImageBlock({
     <>
       <CommonCard 
         theme={theme}
-        className="w-full h-full min-w-0 flex flex-col gap-0 group/image relative p-0 overflow-hidden border-none transition-all duration-500"
+        className="w-full h-full min-w-0 min-h-0 flex flex-col gap-0 group/image relative p-0 overflow-hidden border-none transition-all duration-500"
         style={{ borderRadius: "24px" }}
       >
         {/* Image Container */}
         <div 
           className={cn(
             "relative w-full overflow-hidden transition-all duration-500",
-            height === 0 ? "h-auto" : "flex-1"
+            height === 0 ? "h-auto" : "flex-1 min-h-0"
           )}
           style={{
             backgroundColor: `${theme.primary}05`,
             height: height > 0 ? `${height}px` : "auto",
-            minHeight: height > 0 ? `${height}px` : "200px"
+            minHeight: height > 0 ? `${height}px` : "200px",
+            maxHeight: height > 0 ? `${height}px` : "100%"
           }}
         >
           <img
@@ -154,6 +155,11 @@ export const ImageBlock = memo(function ImageBlock({
               "w-full h-full transition-transform duration-700 ease-out",
               height === 0 ? "object-contain" : "object-cover"
             )}
+            style={{
+              maxWidth: "100%",
+              maxHeight: "100%",
+              objectFit: height === 0 ? "contain" : "cover"
+            }}
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
