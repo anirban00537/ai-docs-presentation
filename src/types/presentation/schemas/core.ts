@@ -63,6 +63,7 @@ export const PresentationInfoSchema = z.object({
   forkedFrom: z.string().nullable(),
   sharedWith: z.array(z.string()),
   ownerId: z.string(),
+  shareEnabled: z.boolean().optional(),
   deletedAt: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
