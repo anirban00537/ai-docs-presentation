@@ -27,6 +27,7 @@ import DragOverlayWrapper from "./DragOverlayWrapper";
 import { Slide } from "@/store/slices/slidesSlice";
 import { SLIDE_MAX_WIDTH } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { useProfile } from "@/hooks/use-auth";
 
 
 const EditorContent = ({ presentationId, outlineId }: { presentationId: string, outlineId: string | null }) => {
@@ -52,6 +53,10 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
   const activeSlideId = useAppSelector(selectActiveSlideId);
   const isDark = theme.themeType === "dark";
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { data: user } = useProfile();
+  
+  // Determine if we're in read-only mode
+  const isReadOnly = !user && presentation?.shareEnabled === true;
   
   // Mobile UI States
   const [isMobileNavigatorOpen, setIsMobileNavigatorOpen] = useState(false);
@@ -134,27 +139,30 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
       <EditorHeader 
         onPresentClick={startPresentation} 
         onMenuClick={() => setIsMobileNavigatorOpen(!isMobileNavigatorOpen)}
+        isReadOnly={isReadOnly}
       />
 
       <div className="fixed inset-0 pt-14 flex overflow-hidden">
         <EditorBackground theme={theme} />
 
         {/* Desktop Sidebar */}
-        <div className="hidden lg:flex h-full">
-          <SlideNavigator
-            slides={slides.filter(
-              (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
-            )}
-            onUpdateBlock={handleUpdateBlock}
-            onDeleteRow={handleDeleteRow}
-            onAddColumn={handleAddColumn}
-            onAddRowAtTop={handleAddRowAtTop}
-            onAddRowAtBottom={handleAddRowAtBottom}
-            onUpdateColumnWidths={handleUpdateColumnWidths}
-            onAddSlide={handleAddSlide}
-            onDeleteSlide={handleDeleteSlide}
-          />
-        </div>
+        {!isReadOnly && (
+          <div className="hidden lg:flex h-full">
+            <SlideNavigator
+              slides={slides.filter(
+                (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+              )}
+              onUpdateBlock={handleUpdateBlock}
+              onDeleteRow={handleDeleteRow}
+              onAddColumn={handleAddColumn}
+              onAddRowAtTop={handleAddRowAtTop}
+              onAddRowAtBottom={handleAddRowAtBottom}
+              onUpdateColumnWidths={handleUpdateColumnWidths}
+              onAddSlide={handleAddSlide}
+              onDeleteSlide={handleDeleteSlide}
+            />
+          </div>
+        )}
 
         {/* Mobile Sidebar Overlay */}
         <AnimatePresence>
@@ -198,50 +206,92 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
         <div className="flex-1 overflow-hidden relative flex flex-col">
           <div ref={scrollContainerRef} className="flex-1 overflow-y-auto w-full relative">
             <div className="w-full max-w-[1400px] mx-auto px-4 py-8 flex flex-col items-center min-h-full">
-              <EditorDndProvider slides={slides} commandBus={commandBus}>
-                <BlockSelectionProvider>
-                  <ToolbarPanel presentationId={presentationId} />
-
-                  <div className="flex flex-col w-full items-center pb-32 gap-3">
-                    {slides
-                      .filter(
-                        (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
-                      )
-                      .map((slide: Slide, index: number) => (
-                        <motion.div
-                          key={slide.id}
-                          data-slide-id={slide.id}
-                          data-slide-index={index}
-                          className="w-full max-w-full relative"
-                          initial={{ opacity: 0, y: 15 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05, duration: 0.3 }}
+              {isReadOnly ? (
+                // Read-only view - no editing capabilities
+                <div className="flex flex-col w-full items-center pb-32 gap-3">
+                  {slides
+                    .filter(
+                      (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+                    )
+                    .map((slide: Slide, index: number) => (
+                      <motion.div
+                        key={slide.id}
+                        data-slide-id={slide.id}
+                        data-slide-index={index}
+                        className="w-full max-w-full relative"
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05, duration: 0.3 }}
+                      >
+                        <div
+                          className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
+                          style={{ color: theme.bodyColor }}
                         >
-                          <div
-                            className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
-                            style={{ color: theme.bodyColor }}
+                          {index + 1}
+                        </div>
+
+                        <ScalableSlideContainer>
+                          <SlideCanvas
+                            slide={slide}
+                            onUpdateBlock={() => {}}
+                            onDeleteRow={() => {}}
+                            onAddColumn={() => {}}
+                            onAddRowAtTop={() => {}}
+                            onAddRowAtBottom={() => {}}
+                            onUpdateColumnWidths={() => {}}
+                            readOnly={true}
+                          />
+                        </ScalableSlideContainer>
+                      </motion.div>
+                    ))}
+                </div>
+              ) : (
+                // Full editing mode
+                <EditorDndProvider slides={slides} commandBus={commandBus}>
+                  <BlockSelectionProvider>
+                    <ToolbarPanel presentationId={presentationId} />
+
+                    <div className="flex flex-col w-full items-center pb-32 gap-3">
+                      {slides
+                        .filter(
+                          (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+                        )
+                        .map((slide: Slide, index: number) => (
+                          <motion.div
+                            key={slide.id}
+                            data-slide-id={slide.id}
+                            data-slide-index={index}
+                            className="w-full max-w-full relative"
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05, duration: 0.3 }}
                           >
-                            {index + 1}
-                          </div>
+                            <div
+                              className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
+                              style={{ color: theme.bodyColor }}
+                            >
+                              {index + 1}
+                            </div>
 
-                          <ScalableSlideContainer>
-                            <SlideCanvas
-                              slide={slide}
-                              onUpdateBlock={handleUpdateBlock}
-                              onDeleteRow={handleDeleteRow}
-                              onAddColumn={handleAddColumn}
-                              onAddRowAtTop={handleAddRowAtTop}
-                              onAddRowAtBottom={handleAddRowAtBottom}
-                              onUpdateColumnWidths={handleUpdateColumnWidths}
-                            />
-                          </ScalableSlideContainer>
-                        </motion.div>
-                      ))}
-                  </div>
-                </BlockSelectionProvider>
+                            <ScalableSlideContainer>
+                              <SlideCanvas
+                                slide={slide}
+                                onUpdateBlock={handleUpdateBlock}
+                                onDeleteRow={handleDeleteRow}
+                                onAddColumn={handleAddColumn}
+                                onAddRowAtTop={handleAddRowAtTop}
+                                onAddRowAtBottom={handleAddRowAtBottom}
+                                onUpdateColumnWidths={handleUpdateColumnWidths}
+                              />
+                            </ScalableSlideContainer>
+                          </motion.div>
+                        ))}
+                    </div>
+                  </BlockSelectionProvider>
 
-                <DragOverlayWrapper />
-              </EditorDndProvider>
+                  <DragOverlayWrapper />
+                </EditorDndProvider>
+              )}
             </div>
           </div>
         </div>

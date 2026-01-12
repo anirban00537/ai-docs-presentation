@@ -5,4 +5,5 @@ export * from "./use-layouts";
 export * from "./use-mobile";
 export * from "./use-presentation";
 export * from "./use-pricing";
+export * from "./use-share";
 export * from "./use-subscription";

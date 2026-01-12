@@ -112,11 +112,32 @@ export interface Presentation {
   forkedFrom?: string | null;
   sharedWith?: string[];
   ownerId?: string;
+  shareEnabled?: boolean;
   deletedAt?: string | null;
   lastViewedAt?: string | null;
   slides?: Slide[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ShareInfo {
+  shareEnabled: boolean;
+}
+
+export interface SharedPresentation {
+  id: string;
+  title: string;
+  description?: string | null;
+  thumbnail?: string | null;
+  globalTheme: any;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image?: string | null;
+  };
 }
 
 export interface Slide {
@@ -274,3 +295,20 @@ export const generateAndCreateSlides = (presentationId: string, onChunk: (chunk:
 
 export const generateOutlineStream = (outlineId: string, onChunk: (chunk: StreamChunk) => void) => 
   handleSSEStream(`${CONFIG.API_URL}/presentation/outline/${outlineId}/generate-stream`, onChunk);
+
+// Share API functions
+export const enableShare = (presentationId: string) => 
+  api.post<ShareInfo>(`/presentation/${presentationId}/share/enable`);
+
+export const disableShare = (presentationId: string) => 
+  api.post<ShareInfo>(`/presentation/${presentationId}/share/disable`);
+
+export const getShareInfo = (presentationId: string) => 
+  api.get<ShareInfo>(`/presentation/${presentationId}/share`);
+
+// Public share API functions (no auth required)
+export const getSharedPresentation = (token: string) => 
+  api.get<SharedPresentation>(`/presentation/public/share/${token}`);
+
+export const getSharedPresentationSlides = (token: string) => 
+  api.get<Slide[]>(`/presentation/public/share/${token}/slides`);
