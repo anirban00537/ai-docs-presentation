@@ -162,12 +162,12 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
               >
                 <div className="flex flex-col">
                   <span
-                    className="text-xs font-bold uppercase tracking-widest opacity-40 mb-0.5"
+                    className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-0.5"
                     style={{ color: isDark ? "#fff" : "#000" }}
                   >
                     OUTLINE
                   </span>
-                  <span className="text-sm font-semibold opacity-90" style={{ color: isDark ? "#fff" : "#1a1a1a" }}>
+                  <span className="text-xs font-semibold opacity-90" style={{ color: isDark ? "#fff" : "#1a1a1a" }}>
                     {slides.length} {slides.length === 1 ? 'Slide' : 'Slides'}
                   </span>
                 </div>

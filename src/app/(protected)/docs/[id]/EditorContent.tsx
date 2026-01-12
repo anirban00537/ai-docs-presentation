@@ -136,7 +136,7 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
         onMenuClick={() => setIsMobileNavigatorOpen(!isMobileNavigatorOpen)}
       />
 
-      <div className="fixed inset-0 pt-16 flex overflow-hidden">
+      <div className="fixed inset-0 pt-14 flex overflow-hidden">
         <EditorBackground theme={theme} />
 
         {/* Desktop Sidebar */}

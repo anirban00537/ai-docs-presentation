@@ -33,7 +33,7 @@ export const EditorHeader = ({ onPresentClick, onMenuClick }: EditorHeaderProps)
   return (
     <div className="fixed top-0 left-0 z-[60] w-full">
       <div
-        className="relative w-full px-4 md:px-6 h-16 flex items-center justify-between"
+        className="relative w-full px-4 md:px-6 h-14 flex items-center justify-between"
         style={{
           backgroundColor: isDark ? "rgba(18, 18, 22, 0.85)" : "rgba(255, 255, 255, 0.85)",
           backdropFilter: "blur(20px)",
@@ -64,15 +64,15 @@ export const EditorHeader = ({ onPresentClick, onMenuClick }: EditorHeaderProps)
 
           <div className="flex flex-col min-w-0">
             <h1
-              className="text-xs md:text-sm font-bold tracking-tight line-clamp-1 truncate max-w-[120px] md:max-w-[300px]"
+              className="text-[10px] md:text-xs font-bold tracking-tight line-clamp-1 truncate max-w-[120px] md:max-w-[300px]"
               style={{ color: theme.bodyColor }}
             >
               {presentation?.title || "Untitled Presentation"}
             </h1>
             <div className="flex items-center gap-1 md:gap-1.5 mt-0.5">
-              <IconCloudCheck size={10} className="text-emerald-500 shrink-0" />
+              <IconCloudCheck size={9} className="text-emerald-500 shrink-0" />
               <span
-                className="text-[10px] font-medium opacity-40 uppercase tracking-widest truncate hidden xs:inline"
+                className="text-[9px] font-medium opacity-40 uppercase tracking-widest truncate hidden xs:inline"
                 style={{ color: theme.bodyColor }}
               >
                 Saved
@@ -102,20 +102,20 @@ export const EditorHeader = ({ onPresentClick, onMenuClick }: EditorHeaderProps)
             </button>
           </div>
 
-          <button className="hidden sm:flex items-center gap-2 px-3 md:px-4 py-2 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 text-xs font-semibold">
-            <IconShare size={16} style={{ color: theme.bodyColor }} />
+          <button className="hidden sm:flex items-center gap-2 px-3 md:px-4 py-2 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 text-[10px] font-semibold">
+            <IconShare size={14} style={{ color: theme.bodyColor }} />
             <span className="hidden md:inline" style={{ color: theme.bodyColor }}>Share</span>
           </button>
 
           <button
             onClick={onPresentClick}
-            className="flex items-center justify-center gap-2 p-2.5 md:px-5 md:py-2.5 rounded-xl transition-all hover:shadow-lg active:scale-95 text-xs font-bold leading-none shadow-sm"
+            className="flex items-center justify-center gap-2 p-2.5 md:px-5 md:py-2.5 rounded-xl transition-all hover:shadow-lg active:scale-95 text-[10px] font-bold leading-none shadow-sm"
             style={{
               backgroundColor: theme.primary,
               color: "#ffffff"
             }}
           >
-            <IconPlayerPlayFilled size={14} className="shrink-0" />
+            <IconPlayerPlayFilled size={12} className="shrink-0" />
             <span className="hidden md:inline">Present</span>
           </button>
 
