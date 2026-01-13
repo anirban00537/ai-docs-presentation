@@ -356,11 +356,27 @@ export const useOutlineEditor = (outlineId: string) => {
     }
 
     // C. Fetched data - extract outline data from cards if available
-    // Note: Outline data might be in cards or generated on demand
-    // For now, return null if no outline data is available
-    // The outline generation will populate this
+    if (outline?.cards && outline.cards.length > 0) {
+      const hasOutlineData = outline.cards.some((card: any) => card.outline?.content);
+      if (hasOutlineData) {
+        const outlines = outline.cards
+          .filter((card: any) => card.outline?.content)
+          .map((card: any) => ({
+            content: card.outline.content,
+            layoutId: card.outline.layoutId,
+            schemaId: card.outline.schemaId,
+          }));
+        
+        return {
+          title: outline.title || "Untitled Doc",
+          outlines,
+        };
+      }
+    }
+    
+    // D. No outline data available yet
     return null;
-  }, [outline?.title, streamingContent, completedOutline]);
+  }, [outline?.title, outline?.cards, streamingContent, completedOutline]);
 
   // Theme Logic
   const saveThemeToDoc = useCallback(
