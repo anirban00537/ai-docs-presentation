@@ -89,7 +89,7 @@ export class ScreenshotService {
     slideId: string,
     options: ScreenshotOptions = {},
   ): Promise<Buffer> {
-    const { width = 1920, height = 1080, timeout = 30000 } = options;
+    const { width = 1920, height = 1080, timeout = 15000 } = options;
 
     const browser = await this.initializeBrowser();
     const page = await browser.newPage();
@@ -102,43 +102,67 @@ export class ScreenshotService {
         deviceScaleFactor: 2, // High DPI for better quality
       });
 
+      // Disable unnecessary features for faster loading
+      await page.setRequestInterception(true);
+      page.on('request', (request) => {
+        // Block analytics, ads, and other non-essential resources
+        const resourceType = request.resourceType();
+        if (['font', 'stylesheet', 'image'].includes(resourceType)) {
+          request.continue();
+        } else if (['media', 'websocket', 'manifest'].includes(resourceType)) {
+          request.abort();
+        } else {
+          request.continue();
+        }
+      });
+
       // Generate export key for secure access
       const exportKey = this.generateExportKey(presentationId);
 
       // Navigate to the export embed route
       const exportUrl = `${this.appUrl}/embed/slide/${slideId}?presentationId=${presentationId}&exportKey=${exportKey}`;
 
-      this.logger.log(`Navigating to export URL: ${exportUrl}`);
+      this.logger.log(`Navigating to export URL for slide ${slideId}`);
 
       await page.goto(exportUrl, {
-        waitUntil: 'networkidle2',
+        waitUntil: 'domcontentloaded', // Changed from networkidle2 for faster loading
         timeout,
       });
 
       // Wait for the export container to be ready
       try {
         await page.waitForSelector('#export-slide-container.export-ready', {
-          timeout: 20000,
+          timeout: 8000, // Reduced from 20000
         });
 
-        // Additional wait for fonts and images to fully load
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Minimal wait for critical rendering - reduced from 2000ms
+        await new Promise((resolve) => setTimeout(resolve, 800));
 
-        // Wait for any images to finish loading
+        // Wait for images only if they exist and aren't loaded
         await page.evaluate(() => {
-          return Promise.all(
-            Array.from(document.images)
-              .filter((img) => !img.complete)
-              .map(
-                (img) =>
-                  new Promise((resolve) => {
-                    img.onload = img.onerror = resolve;
-                  }),
-              ),
-          );
+          const images = Array.from(document.images);
+          if (images.length === 0) return Promise.resolve();
+          
+          return Promise.race([
+            Promise.all(
+              images
+                .filter((img) => !img.complete)
+                .map(
+                  (img) =>
+                    new Promise((resolve) => {
+                      img.onload = img.onerror = resolve;
+                      // Timeout individual images after 2s
+                      setTimeout(resolve, 2000);
+                    }),
+                ),
+            ),
+            // Overall timeout for all images
+            new Promise((resolve) => setTimeout(resolve, 3000)),
+          ]);
         });
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // Small final wait for any CSS transitions - reduced from 500ms
+        await new Promise((resolve) => setTimeout(resolve, 200));
       } catch (waitError) {
         // Check if there's an error state
         const hasError = await page.$('#export-error');
@@ -182,7 +206,7 @@ export class ScreenshotService {
   }
 
   /**
-   * Take screenshots for multiple slides (optimized - reuses browser)
+   * Take screenshots for multiple slides (optimized - parallel batches)
    */
   async takeMultipleSlideScreenshots(
     presentationId: string,
@@ -190,31 +214,49 @@ export class ScreenshotService {
     options: ScreenshotOptions = {},
   ): Promise<Map<string, Buffer>> {
     const screenshots = new Map<string, Buffer>();
+    const BATCH_SIZE = 3; // Process 3 slides at a time for optimal performance
 
     try {
       // Initialize browser once for all screenshots
       await this.initializeBrowser();
 
-      for (const slideId of slideIds) {
-        try {
-          this.logger.log(`Capturing screenshot for slide ${slideId}`);
+      // Process slides in batches for parallel execution
+      for (let i = 0; i < slideIds.length; i += BATCH_SIZE) {
+        const batch = slideIds.slice(i, i + BATCH_SIZE);
+        
+        this.logger.log(
+          `Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(slideIds.length / BATCH_SIZE)} (${batch.length} slides)`,
+        );
 
-          const screenshot = await this.takeSlideScreenshot(
-            presentationId,
-            slideId,
-            options,
-          );
+        // Process batch in parallel
+        const batchPromises = batch.map(async (slideId) => {
+          try {
+            this.logger.log(`Capturing screenshot for slide ${slideId}`);
 
-          screenshots.set(slideId, screenshot);
-          this.logger.log(`Screenshot captured successfully for slide ${slideId}`);
-        } catch (error) {
-          this.logger.error(
-            `Failed to capture screenshot for slide ${slideId}, continuing with next`,
-            error,
-          );
-          // Continue with other slides even if one fails
-        }
+            const screenshot = await this.takeSlideScreenshot(
+              presentationId,
+              slideId,
+              options,
+            );
+
+            screenshots.set(slideId, screenshot);
+            this.logger.log(`Screenshot captured successfully for slide ${slideId}`);
+          } catch (error) {
+            this.logger.error(
+              `Failed to capture screenshot for slide ${slideId}, continuing with next`,
+              error,
+            );
+            // Continue with other slides even if one fails
+          }
+        });
+
+        // Wait for all slides in the batch to complete
+        await Promise.all(batchPromises);
       }
+
+      this.logger.log(
+        `Completed screenshot capture for ${screenshots.size}/${slideIds.length} slides`,
+      );
 
       return screenshots;
     } catch (error) {

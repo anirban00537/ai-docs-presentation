@@ -56,7 +56,7 @@ export class PdfExportService {
           {
             width: 1920,
             height: 1080,
-            timeout: 30000,
+            timeout: 15000, // Reduced from 30000
           },
         );
 
