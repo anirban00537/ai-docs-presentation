@@ -35,7 +35,7 @@ export const detailedContentLeftTemplate: Card = {
     ]),
   ],
   accent: {
-    url: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1974&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1974&auto=format&fit=crop",
     position: "left",
     size: 28,
   },

@@ -53,7 +53,7 @@ export const CardOptions: React.FC<CardOptionsProps> = ({
       // Use custom handler (for layout editor)
       if (!accent) {
         // Create new accent with the selected position
-        onUpdateAccent(card.id, { position: pos, size: 40, url: undefined });
+        onUpdateAccent(card.id, { position: pos, size: 40, imageUrl: undefined });
       } else {
         // Update existing accent position
         onUpdateAccent(card.id, { ...accent, position: pos });

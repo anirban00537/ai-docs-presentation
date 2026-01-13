@@ -26,6 +26,8 @@ import { useResize } from "@/app/(protected)/docs/[id]/engine/hooks/useResize";
 import { DragStateBridge } from "./DragStateBridge";
 import { InsertDropZone } from "./InsertDropZone";
 import { cn } from "@/lib/utils";
+import { useLazyImage } from "@/hooks/use-lazy-image";
+import { ImagePlaceholder } from "@/components/ui/image-placeholder";
 
 // Lazy load the heavy ImagePickerModal
 const ImagePickerModal = lazy(() =>
@@ -138,20 +140,46 @@ export const CardCanvas = memo(function CardCanvas({
     },
   });
 
+  const handleAccentImageLoaded = useCallback((loadedUrl: string) => {
+    if (onUpdateAccent) {
+      onUpdateAccent(card.id, {
+        ...card.accent!,
+        imageUrl: loadedUrl,
+        imageQuery: undefined,
+      });
+    } else {
+      dispatch(
+        updateCardAccent({
+          cardId: card.id,
+          update: { imageUrl: loadedUrl, imageQuery: undefined },
+        })
+      );
+    }
+  }, [card.id, card.accent, onUpdateAccent, dispatch]);
+
+  const { url: accentUrl, isLoading: accentLoading } = useLazyImage({
+    imageUrl: card.accent?.imageUrl || "",
+    imageQuery: card.accent?.imageQuery,
+    orientation: 'landscape',
+    onImageLoaded: handleAccentImageLoaded,
+    disabled: card.isStreaming,
+  });
+
   const handleAccentImageSelect = useCallback(
     (image: SelectedImage) => {
       if (onUpdateAccent) {
         const updatedAccent = {
           position: card.accent?.position || ("right" as const),
           size: card.accent?.size || 40,
-          url: image.url,
+          imageUrl: image.imageUrl,
+          imageQuery: undefined,
         };
         onUpdateAccent(card.id, updatedAccent);
       } else {
         dispatch(
           updateCardAccent({
             cardId: card.id,
-            update: { url: image.url },
+            update: { imageUrl: image.imageUrl, imageQuery: undefined },
           })
         );
       }
@@ -361,14 +389,18 @@ export const CardCanvas = memo(function CardCanvas({
           </div>
 
           {/* Background Image Mode */}
-          {isBackground && card.accent?.url && (
+          {isBackground && (accentUrl || accentLoading) && (
             <div className="absolute inset-0">
-              <img
-                src={card.accent.url}
-                alt="Background Accent"
-                className="w-full h-full object-cover transition-opacity duration-500"
-                style={{ opacity: (card.accent.size ?? 40) / 100 }}
-              />
+              {accentUrl ? (
+                <img
+                  src={accentUrl}
+                  alt="Background Accent"
+                  className="w-full h-full object-cover transition-opacity duration-500"
+                  style={{ opacity: (card.accent?.size ?? 40) / 100 }}
+                />
+              ) : (
+                <ImagePlaceholder isLoading={accentLoading} className="h-full border-none rounded-none" />
+              )}
               <div
                 className={`absolute inset-0 ${
                   isDark ? "bg-black/20" : "bg-white/10"
@@ -420,7 +452,7 @@ export const CardCanvas = memo(function CardCanvas({
                       onUpdateAccent(cardId, {
                         position: "right",
                         size: 40,
-                        url: undefined,
+                        imageUrl: undefined,
                       });
                     }
                   }
@@ -445,7 +477,7 @@ export const CardCanvas = memo(function CardCanvas({
             minHeight: fullWidth ? "100vh" : "auto",
           }}
         >
-          {card.accent && card.accent.url && !isBackground && (
+          {card.accent && !isBackground && (accentUrl || accentLoading) && (
             <div
               className="relative shrink-0 group/accent z-0"
               style={{
@@ -475,12 +507,14 @@ export const CardCanvas = memo(function CardCanvas({
                     : "0",
               }}
             >
-              {card.accent.url && (
+              {accentUrl ? (
                 <img
-                  src={card.accent.url}
+                  src={accentUrl}
                   alt="Accent"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
+              ) : (
+                <ImagePlaceholder isLoading={accentLoading} className="h-full border-none rounded-none" />
               )}
               <div className="absolute inset-0 bg-black/10 transition-opacity opacity-0 group-hover/accent:opacity-100" />
 
@@ -561,6 +595,7 @@ export const CardCanvas = memo(function CardCanvas({
                       ) => onUpdateColumnWidths(card.id, rowId, columnWidths)}
                       rowCount={card.rows?.length || 0}
                       readOnly={readOnly}
+                      isStreaming={card.isStreaming}
                     />
                     {!readOnly && (
                       <InsertDropZone

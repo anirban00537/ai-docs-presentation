@@ -133,12 +133,12 @@ const normalizeProseMirrorJSON = (json: any): any => {
     });
   }
 
-  // Fix image attributes (url -> src compatibility)
+  // Fix image attributes (src/url -> imageUrl compatibility)
   if (newJson.type === 'image' && newJson.attrs) {
     // Clone attrs to avoid mutation
     newJson.attrs = { ...newJson.attrs };
-    if (newJson.attrs.url && !newJson.attrs.src) {
-       newJson.attrs.src = newJson.attrs.url;
+    if ((newJson.attrs.url || newJson.attrs.src) && !newJson.attrs.imageUrl) {
+       newJson.attrs.imageUrl = newJson.attrs.url || newJson.attrs.src;
     }
   }
 
@@ -469,8 +469,8 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
           const start = newFrom.before(newFrom.depth);
           const end = newFrom.after(newFrom.depth);
 
-          // Create image node with empty src (placeholder state)
-          const imageNode = nodeType.create({ src: "", alt: "", title: "" });
+          // Create image node with empty imageUrl (placeholder state)
+          const imageNode = nodeType.create({ imageUrl: "", alt: "", title: "" });
 
           // Insert only the image - user can click below to add more content
           const newTr = v.state.tr.replaceWith(start, end, imageNode);
@@ -783,18 +783,18 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
           dom.className = "prosemirror-image-wrapper my-2";
           dom.contentEditable = "false";
 
-          const { src, alt } = node.attrs;
+          const { imageUrl, alt } = node.attrs;
 
           // Content container for image/placeholder
           const contentContainer = document.createElement("div");
 
-          if (src) {
+          if (imageUrl) {
             // Render image
             const figure = document.createElement("figure");
             figure.className =
               "prosemirror-image relative cursor-pointer group rounded-lg overflow-hidden";
             const img = document.createElement("img");
-            img.src = src;
+            img.src = imageUrl;
             img.alt = alt || "";
             img.className =
               "w-full h-auto max-h-[500px] object-contain rounded-lg transition-all duration-200 group-hover:opacity-90";
@@ -848,7 +848,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
               setImageModal({
                 open: true,
                 nodePos: pos,
-                currentSrc: src || "",
+                currentSrc: imageUrl || "",
               });
             }
           });

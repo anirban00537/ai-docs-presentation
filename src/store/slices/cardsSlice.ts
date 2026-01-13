@@ -774,7 +774,7 @@ const cardsSlice = createSlice({
         card.accent = {
           position: "left",
           size: 40,
-          url: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
+          imageUrl: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
         };
       }
     },
@@ -783,7 +783,8 @@ const cardsSlice = createSlice({
       action: PayloadAction<{
         cardId: string;
         update: {
-          url?: string;
+          imageUrl?: string;
+          imageQuery?: string;
           position?: "left" | "right" | "top" | "bottom" | "background";
         };
       }>

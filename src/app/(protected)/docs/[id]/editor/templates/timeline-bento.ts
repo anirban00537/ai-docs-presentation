@@ -30,7 +30,7 @@ export const timelineBentoTemplate: Card = {
     ]),
   ],
   accent: {
-    url: "https://images.unsplash.com/photo-1618556658017-c3b0c1d87a69?q=80&w=1964&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1618556658017-c3b0c1d87a69?q=80&w=1964&auto=format&fit=crop",
     position: "top",
     size: 20,
   },

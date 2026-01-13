@@ -34,6 +34,9 @@ export function useCardGeneration({ cardsRef }: UseCardGenerationParams) {
 
   const lastContentLengthRef = useRef(0);
   const lastUpdateTimestampRef = useRef(0);
+  const lastDispatchTimeRef = useRef(0); // Track last Redux dispatch time
+  const pendingUpdateRef = useRef<Card[] | null>(null); // Store pending updates
+  
   useEffect(() => {
     lastUpdateTimestampRef.current = Date.now();
   }, []);
@@ -52,6 +55,29 @@ export function useCardGeneration({ cardsRef }: UseCardGenerationParams) {
     }, 100);
     return () => clearInterval(interval);
   }, [isGenerating]);
+
+  // Flush pending updates when generation stops
+  useEffect(() => {
+    if (!isGenerating && pendingUpdateRef.current) {
+      dispatch(setCards(pendingUpdateRef.current));
+      pendingUpdateRef.current = null;
+    }
+  }, [isGenerating, dispatch]);
+
+  // Periodic flush of pending updates during streaming
+  useEffect(() => {
+    if (!isGenerating) return;
+    
+    const flushInterval = setInterval(() => {
+      if (pendingUpdateRef.current) {
+        dispatch(setCards(pendingUpdateRef.current));
+        lastDispatchTimeRef.current = Date.now();
+        pendingUpdateRef.current = null;
+      }
+    }, 200); // Flush every 200ms if there are pending updates
+    
+    return () => clearInterval(flushInterval);
+  }, [isGenerating, dispatch]);
 
   /**
    * Handles individual chunks from the streaming SSE
@@ -115,15 +141,19 @@ export function useCardGeneration({ cardsRef }: UseCardGenerationParams) {
               );
 
               if (validRows.length > 0) {
+                // Use stable IDs during streaming to prevent React remounts
+                // These will be replaced with real IDs when the card is saved
+                const streamingCardId = chunk.cardId || `streaming-card-${chunk.cardNumber}`;
+                
                 const partialCard: Card = {
-                  id: `temp-${chunk.cardNumber}`,
-                  rows: validRows.map((row: any) => ({
-                    id: row.id || nanoid(),
+                  id: streamingCardId,
+                  rows: validRows.map((row: any, rowIndex: number) => ({
+                    id: row.id || `streaming-row-${chunk.cardNumber}-${rowIndex}`,
                     columnWidths: row.columnWidths,
                     blocks: (row.blocks || [])
                       .filter((block: any) => block && block.type)
-                      .map((block: any) => ({
-                        id: block.id || nanoid(),
+                      .map((block: any, blockIndex: number) => ({
+                        id: block.id || `streaming-block-${chunk.cardNumber}-${rowIndex}-${blockIndex}`,
                         type: block.type,
                         content: block.content || {},
                       })),
@@ -138,7 +168,21 @@ export function useCardGeneration({ cardsRef }: UseCardGenerationParams) {
                 } else {
                   newCards.push(partialCard);
                 }
-                dispatch(setCards(newCards));
+                
+                // Throttle Redux updates to prevent excessive re-renders
+                // Only dispatch every 150ms during streaming
+                const now = Date.now();
+                const timeSinceLastDispatch = now - lastDispatchTimeRef.current;
+                
+                if (timeSinceLastDispatch > 150) {
+                  // Enough time has passed, dispatch immediately
+                  dispatch(setCards(newCards));
+                  lastDispatchTimeRef.current = now;
+                  pendingUpdateRef.current = null;
+                } else {
+                  // Store the update to be dispatched later
+                  pendingUpdateRef.current = newCards;
+                }
               }
             }
           } catch {
@@ -165,6 +209,7 @@ export function useCardGeneration({ cardsRef }: UseCardGenerationParams) {
             })),
           })),
           accent: chunk.data.accent,
+          isStreaming: false, // Explicitly mark as not streaming to enable image fetching
         };
         const currentCards = cardsRef.current;
         const cardIndex = chunk.cardNumber
@@ -174,7 +219,7 @@ export function useCardGeneration({ cardsRef }: UseCardGenerationParams) {
         const newCards = [...currentCards];
         if (
           cardIndex < newCards.length &&
-          newCards[cardIndex]?.id?.startsWith("temp-")
+          newCards[cardIndex]?.id?.startsWith("streaming-")
         ) {
           newCards[cardIndex] = card;
           dispatch(setCards(newCards));

@@ -41,6 +41,7 @@ interface ContentRowProps {
   onUpdateColumnWidths: (rowId: string, columnWidths: number[]) => void;
   rowCount: number;
   readOnly?: boolean;
+  isStreaming?: boolean;
 }
 
 export const ContentRow = memo(function ContentRow({
@@ -56,6 +57,7 @@ export const ContentRow = memo(function ContentRow({
   onUpdateColumnWidths,
   rowCount,
   readOnly = false,
+  isStreaming = false,
 }: ContentRowProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnyDragActive, setIsAnyDragActive] = useState(false);
@@ -329,6 +331,7 @@ export const ContentRow = memo(function ContentRow({
             isLastBlock={index === (row.blocks?.length || 0) - 1}
             canAddColumn={canAddColumn}
             readOnly={readOnly}
+            isStreaming={isStreaming}
             // Resize props
             onResize={handleResize}
             isResizing={isResizing}

@@ -29,7 +29,7 @@ export const calloutWithButtonTemplate: Card = {
     ]),
   ],
   accent: {
-    url: "https://images.unsplash.com/photo-1618004912976-3c0c1d87a641?q=80&w=1974&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1618004912976-3c0c1d87a641?q=80&w=1974&auto=format&fit=crop",
     position: "bottom",
     size: 20,
   },

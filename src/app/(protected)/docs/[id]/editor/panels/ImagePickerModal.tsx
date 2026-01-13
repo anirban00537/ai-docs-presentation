@@ -18,7 +18,7 @@ import type { UnsplashPhoto, MediaItem } from "@/services/images";
 import { useEditorTheme } from "..";
 
 export interface SelectedImage {
-  url: string;
+  imageUrl: string;
   alt?: string;
   attribution?: {
     name: string;
@@ -95,7 +95,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       
       if (result?.data) {
         onSelect({
-          url: result.data.url,
+          imageUrl: result.data.imageUrl,
           alt: file.name,
         });
         onClose();
@@ -120,7 +120,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
     }
 
     onSelect({
-      url: photo.urls.regular,
+      imageUrl: photo.urls.regular,
       alt: photo.altDescription || "",
       attribution: {
         name: photo.user.name,
@@ -133,7 +133,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
 
   const handleSelectUserMedia = useCallback((media: MediaItem) => {
     onSelect({
-      url: media.url,
+      imageUrl: media.imageUrl,
       alt: media.name,
     });
     onClose();
@@ -387,7 +387,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
                         className="relative aspect-square rounded-lg overflow-hidden group transition-all"
                       >
                         <img
-                          src={media.url}
+                          src={media.imageUrl}
                           alt={media.name}
                           className="w-full h-full object-cover transition-transform group-hover:scale-105"
                           loading="lazy"

@@ -30,7 +30,7 @@ export const sidelineCardsTemplate: Card = {
     ]),
   ],
   accent: {
-    url: "https://images.unsplash.com/photo-1618005198914-c3b6f1f11ac6?q=80&w=1974&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1618005198914-c3b6f1f11ac6?q=80&w=1974&auto=format&fit=crop",
     position: "left",
     size: 28,
   },

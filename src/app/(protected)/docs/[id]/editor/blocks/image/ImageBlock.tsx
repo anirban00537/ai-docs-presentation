@@ -8,6 +8,9 @@ import {
   ImagePickerModal,
   type SelectedImage,
 } from "../../panels/ImagePickerModal";
+import { useLazyImage } from "@/hooks/use-lazy-image";
+import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { useCallback } from "react";
 
 interface ImageBlockProps {
   block: Block;
@@ -15,6 +18,7 @@ interface ImageBlockProps {
   theme: Theme;
   placeholder?: string;
   readOnly?: boolean;
+  isStreaming?: boolean;
 }
 
 export const ImageBlock = memo(function ImageBlock({
@@ -22,9 +26,10 @@ export const ImageBlock = memo(function ImageBlock({
   onUpdate,
   theme,
   readOnly = false,
+  isStreaming = false,
 }: ImageBlockProps) {
   const content = block.content as ImageContent;
-  const { url, alt, caption, objectFit = "cover", height = 450, attribution } = content;
+  const { imageUrl, alt, caption, objectFit = "cover", height = 450, attribution } = content;
   const isDark = theme.themeType === "dark";
 
   // Modal state
@@ -33,12 +38,29 @@ export const ImageBlock = memo(function ImageBlock({
   const handleImageSelect = (image: SelectedImage) => {
     onUpdate({
       ...content,
-      url: image.url,
+      imageUrl: image.imageUrl,
+      imageQuery: undefined, // Clear query once image is selected
       alt: image.alt || "",
       attribution: image.attribution,
     });
     setIsModalOpen(false);
   };
+
+  const handleImageLoaded = useCallback((loadedUrl: string) => {
+    onUpdate({ 
+      ...content, 
+      imageUrl: loadedUrl,
+      imageQuery: undefined // Clear query once loaded
+    });
+  }, [content, onUpdate]);
+
+  const { url, isLoading } = useLazyImage({
+    imageUrl,
+    imageQuery: content.imageQuery,
+    orientation: 'landscape',
+    onImageLoaded: handleImageLoaded,
+    disabled: isStreaming,
+  });
 
   const handleCaptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (readOnly) return;
@@ -79,41 +101,31 @@ export const ImageBlock = memo(function ImageBlock({
     setIsModalOpen(true);
   };
 
-  // Empty state
-  if (!url) {
+  // Placeholder / Loading state - show placeholder only if we have no URL yet
+  // Once url is set (either from props or from fetch), show the image
+  const hasUrl = url && url.length > 0;
+  const isFetchingFromQuery = isLoading && !!content.imageQuery;
+
+  if (!hasUrl) {
     return (
-      <>
+      <div className="w-full">
         <CommonCard
           theme={theme}
-          onClick={openModal}
-          className={`w-full h-64 flex flex-col items-center justify-center gap-4 transition-all duration-300 relative overflow-hidden group/empty ${!readOnly ? 'cursor-pointer' : ''}`}
+          className={cn(
+            "w-full flex flex-col items-center justify-center gap-4 transition-all duration-300 relative overflow-hidden",
+            height === 0 ? "h-64" : ""
+          )}
           style={{
             borderRadius: "24px",
+            height: height > 0 ? `${height}px` : "256px",
             color: theme.bodyColor,
           }}
         >
-          {/* Minimal Gradient Background Blob */}
-          <div
-            className="absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-[0.05] blur-2xl pointer-events-none transition-transform duration-700 ease-out"
-            style={{ backgroundColor: theme.primary }}
+          <ImagePlaceholder 
+            isLoading={isFetchingFromQuery} 
+            onClick={openModal}
+            className="border-none bg-transparent h-full"
           />
-          <div className="w-16 h-16 rounded-3xl flex items-center justify-center border shadow-sm transition-all"
-            style={{ 
-              backgroundColor: `${theme.primary}10`,
-              borderColor: `${theme.primary}20`,
-              backdropFilter: "blur(8px)"
-            }}
-          >
-            <IconPhoto size={32} stroke={1.5} style={{ color: theme.primary }} />
-          </div>
-          <div className="text-center">
-            <span className="text-base font-bold tracking-tight block">
-              {readOnly ? "No image provided" : "Drop an image or click"}
-            </span>
-            {!readOnly && (
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-40">To add to your doc</span>
-            )}
-          </div>
         </CommonCard>
 
         {!readOnly && (
@@ -123,7 +135,7 @@ export const ImageBlock = memo(function ImageBlock({
             onSelect={handleImageSelect}
           />
         )}
-      </>
+      </div>
     );
   }
 

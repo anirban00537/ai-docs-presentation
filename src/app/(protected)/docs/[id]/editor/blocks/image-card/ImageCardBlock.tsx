@@ -14,12 +14,16 @@ import {
   ImagePickerModal,
   type SelectedImage,
 } from "../../panels/ImagePickerModal";
+import { useLazyImage } from "@/hooks/use-lazy-image";
+import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { useCallback } from "react";
 
 interface ImageCardBlockProps {
   block: Block;
   onUpdate: (content: any) => void;
   theme?: Theme;
   readOnly?: boolean;
+  isStreaming?: boolean;
 }
 
 export const ImageCardBlock = memo(function ImageCardBlock({
@@ -27,12 +31,14 @@ export const ImageCardBlock = memo(function ImageCardBlock({
   onUpdate,
   theme: themeProp,
   readOnly = false,
+  isStreaming = false,
 }: ImageCardBlockProps) {
   const reduxTheme = useAppSelector(selectTheme);
   const theme = themeProp || reduxTheme || DEFAULT_THEME;
 
   const content = block.content as ImageCardContent;
   const items = content.items || [];
+  
   const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null);
   const [isImagePickerOpen, setIsImagePickerOpen] = useState(false);
 
@@ -58,7 +64,7 @@ export const ImageCardBlock = memo(function ImageCardBlock({
     const newItems = [...items];
     newItems[editingImageIndex] = {
       ...newItems[editingImageIndex],
-      imageUrl: image.url,
+      imageUrl: image.imageUrl,
       imageAlt: image.alt || "",
       attribution: image.attribution,
     };
@@ -108,105 +114,22 @@ export const ImageCardBlock = memo(function ImageCardBlock({
           }}
         >
           {items.map((item, index) => (
-            <div
+            <ImageCardItem
               key={item.id}
-              className="relative group/card p-0 transition-all duration-500 overflow-hidden rounded-3xl"
-              style={{
-                backgroundColor: theme.cardBackground,
+              item={item}
+              index={index}
+              theme={theme}
+              readOnly={readOnly}
+              onImageClick={handleImageClick}
+              onRemove={handleRemoveItem}
+              onUpdateContent={handleItemUpdate}
+              onImageLoaded={(url) => {
+                const newItems = [...items];
+                newItems[index] = { ...newItems[index], imageUrl: url, imageQuery: undefined };
+                onUpdate({ ...content, items: newItems });
               }}
-            >
-              {/* Remove Button */}
-              {!readOnly && (
-                <button
-                  onClick={() => handleRemoveItem(index)}
-                  className="absolute top-4 right-4 z-30 opacity-0 group-hover/card:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500 bg-white/90 backdrop-blur-sm"
-                >
-                  <IconX size={16} stroke={2.5} />
-                </button>
-              )}
-
-              {/* Image Container */}
-              <div
-                className="relative w-full h-48 overflow-hidden cursor-pointer"
-                onClick={() => handleImageClick(index)}
-              >
-                {item.imageUrl && item.imageUrl.trim() !== "" ? (
-                  <img
-                    src={item.imageUrl}
-                    alt={item.imageAlt || ""}
-                    className="w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-105"
-                    style={{
-                      objectFit: item.objectFit || "cover",
-                    }}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-neutral-100 dark:bg-neutral-800">
-                    <div className="text-center">
-                      <IconPhoto size={48} className="mx-auto mb-2 opacity-40" />
-                      <span className="text-sm font-medium opacity-60">
-                        {readOnly ? "No image" : "Click to add image"}
-                      </span>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Image Overlay on Hover */}
-                {!readOnly && item.imageUrl && (
-                  <div className="absolute inset-0 bg-black/0 group-hover/card:bg-black/20 transition-all flex items-center justify-center opacity-0 group-hover/card:opacity-100">
-                    <span className="text-white text-sm font-bold px-4 py-2 rounded-lg bg-white/20 backdrop-blur-sm">
-                      Change Image
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Content Section */}
-              <div className="p-6">
-                {/* Title Section */}
-                <div className="mb-2">
-                  <ProseMirrorEditor
-                    key={`${item.id}-title`}
-                    blockId={`${item.id}-title`}
-                    value={
-                      typeof item.title === "string"
-                        ? item.title
-                        : JSON.stringify(item.title)
-                    }
-                    onChange={(value) => handleItemUpdate(index, "title", value)}
-                    placeholder="Card Title"
-                    readOnly={readOnly}
-                    theme={{
-                      ...theme,
-                      headingColor: theme.primary,
-                    }}
-                    className="text-xl font-bold tracking-tight"
-                  />
-                </div>
-
-                {/* Description Section */}
-                <div>
-                  <ProseMirrorEditor
-                    key={`${item.id}-description`}
-                    blockId={`${item.id}-description`}
-                    value={
-                      typeof item.description === "string"
-                        ? item.description
-                        : JSON.stringify(item.description)
-                    }
-                    onChange={(value) =>
-                      handleItemUpdate(index, "description", value)
-                    }
-                    placeholder="Add description here..."
-                    readOnly={readOnly}
-                    theme={theme}
-                    className="text-base leading-relaxed opacity-60"
-                  />
-                </div>
-              </div>
-            </div>
+              isStreaming={isStreaming}
+            />
           ))}
         </div>
 
@@ -241,5 +164,129 @@ export const ImageCardBlock = memo(function ImageCardBlock({
         />
       )}
     </>
+  );
+});
+
+interface ImageCardItemProps {
+  item: any;
+  index: number;
+  theme: Theme;
+  readOnly: boolean;
+  onImageClick: (index: number) => void;
+  onRemove: (index: number) => void;
+  onUpdateContent: (index: number, field: "title" | "description", value: string) => void;
+  onImageLoaded: (url: string) => void;
+  isStreaming?: boolean;
+}
+
+const ImageCardItem = memo(function ImageCardItem({
+  item,
+  index,
+  theme,
+  readOnly,
+  onImageClick,
+  onRemove,
+  onUpdateContent,
+  onImageLoaded,
+  isStreaming = false,
+}: ImageCardItemProps) {
+  const { url, isLoading } = useLazyImage({
+    imageUrl: item.imageUrl,
+    imageQuery: item.imageQuery,
+    orientation: 'squarish',
+    onImageLoaded,
+    disabled: isStreaming,
+  });
+
+  return (
+    <div
+      className="relative group/card p-0 transition-all duration-500 overflow-hidden rounded-3xl"
+      style={{
+        backgroundColor: theme.cardBackground,
+      }}
+    >
+      {/* Remove Button */}
+      {!readOnly && (
+        <button
+          onClick={() => onRemove(index)}
+          className="absolute top-4 right-4 z-30 opacity-0 group-hover/card:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500 bg-white/90 backdrop-blur-sm"
+        >
+          <IconX size={16} stroke={2.5} />
+        </button>
+      )}
+
+      {/* Image Container */}
+      <div
+        className="relative w-full h-48 overflow-hidden cursor-pointer"
+        onClick={() => onImageClick(index)}
+      >
+        {url ? (
+          <img
+            src={url}
+            alt={item.imageAlt || ""}
+            className="w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-105"
+            style={{
+              objectFit: item.objectFit || "cover",
+            }}
+          />
+        ) : (
+          <ImagePlaceholder 
+            isLoading={isLoading} 
+            className="h-full border-none rounded-none"
+          />
+        )}
+        
+        {/* Image Overlay on Hover */}
+        {!readOnly && url && (
+          <div className="absolute inset-0 bg-black/0 group-hover/card:bg-black/20 transition-all flex items-center justify-center opacity-0 group-hover/card:opacity-100">
+            <span className="text-white text-sm font-bold px-4 py-2 rounded-lg bg-white/20 backdrop-blur-sm">
+              Change Image
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Content Section */}
+      <div className="p-6">
+        <div className="mb-2">
+          <ProseMirrorEditor
+            key={`${item.id}-title`}
+            blockId={`${item.id}-title`}
+            value={
+              typeof item.title === "string"
+                ? item.title
+                : JSON.stringify(item.title)
+            }
+            onChange={(value) => onUpdateContent(index, "title", value)}
+            placeholder="Card Title"
+            readOnly={readOnly}
+            theme={{
+              ...theme,
+              headingColor: theme.primary,
+            }}
+            className="text-xl font-bold tracking-tight"
+          />
+        </div>
+
+        <div>
+          <ProseMirrorEditor
+            key={`${item.id}-description`}
+            blockId={`${item.id}-description`}
+            value={
+              typeof item.description === "string"
+                ? item.description
+                : JSON.stringify(item.description)
+            }
+            onChange={(value) =>
+              onUpdateContent(index, "description", value)
+            }
+            placeholder="Add description here..."
+            readOnly={readOnly}
+            theme={theme}
+            className="text-base leading-relaxed opacity-60"
+          />
+        </div>
+      </div>
+    </div>
   );
 });

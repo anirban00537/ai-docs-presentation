@@ -32,7 +32,7 @@ export const contentWithImageTemplate: Card = {
     createRow([
       createBlockInstance(BLOCK_TYPES.IMAGE, {
         type: "image",
-        url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
+        imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
         alt: "Mockup",
         caption: "A visual redoc of the concept.",
         objectFit: "cover",
@@ -40,7 +40,7 @@ export const contentWithImageTemplate: Card = {
     ]),
   ],
   accent: {
-    url: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
     position: "right",
     size: 35,
   },

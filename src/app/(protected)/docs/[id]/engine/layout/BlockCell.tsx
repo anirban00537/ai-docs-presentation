@@ -5,8 +5,8 @@ import { BlockRenderer } from "@/app/(protected)/docs/[id]/engine/renderer/Block
 import { BlockToolbar } from "@/app/(protected)/docs/[id]/editor/block-ui/BlockToolbar";
 import { useBlockFocus } from "@/app/(protected)/docs/[id]/engine/selection/BlockSelectionContext";
 import type { Block, BlockContent } from "@/types/docs";
-import { useAppDispatch } from "@/store/hooks";
 import { duplicateBlock, deleteBlock } from "@/store/slices/cardsSlice";
+import { useAppDispatch } from "@/store/hooks";
 import { useEditorTheme } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
 import { IconGripHorizontal } from "@tabler/icons-react";
 import { useResize } from "@/app/(protected)/docs/[id]/engine/hooks/useResize";
@@ -28,6 +28,7 @@ interface BlockCellProps {
   onResizeStart?: () => void;
   onResizeEnd?: () => void;
   readOnly?: boolean;
+  isStreaming?: boolean;
 }
 
 export const BlockCell = memo(function BlockCell({
@@ -47,6 +48,7 @@ export const BlockCell = memo(function BlockCell({
   onResizeStart,
   onResizeEnd,
   readOnly = false,
+  isStreaming = false,
 }: BlockCellProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isBorderHovered, setIsBorderHovered] = useState(false);
@@ -55,6 +57,9 @@ export const BlockCell = memo(function BlockCell({
   const theme = useEditorTheme();
   const isDark = theme.themeType === "dark";
   const dispatch = useAppDispatch();
+  // Use prop instead of Redux lookup to prevent re-renders
+  const isStreamingCard = isStreaming;
+
   const { focusedBlockId, focusedCardId, setFocusedBlock } = useBlockFocus();
   const handleStartRef = useRef<{ x: number; y: number } | null>(null);
   const wasDraggingRef = useRef(false);
@@ -253,8 +258,9 @@ export const BlockCell = memo(function BlockCell({
           {/* Block Renderer */}
           <BlockRenderer
             block={block}
-            onUpdate={(content) => onUpdate(block.id, content)}
+            onUpdate={(content: BlockContent) => onUpdate(block.id, content)}
             readOnly={readOnly}
+            isStreaming={isStreamingCard}
           />
         </div>
       </div>

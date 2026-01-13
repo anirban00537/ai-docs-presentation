@@ -130,6 +130,30 @@ export const createSchema = () => {
           { class: "bg-gray-100 rounded-lg p-3 font-mono text-sm" },
           ["code", 0],
         ],
+      })
+      .addBefore("code_block", "image", {
+        inline: true,
+        attrs: {
+          imageUrl: {},
+          alt: { default: "" },
+          title: { default: "" },
+        },
+        group: "inline",
+        draggable: true,
+        parseDOM: [
+          {
+            tag: "img[src]",
+            getAttrs: (dom: any) => ({
+              imageUrl: dom.getAttribute("src"),
+              title: dom.getAttribute("title"),
+              alt: dom.getAttribute("alt"),
+            }),
+          },
+        ],
+        toDOM: (node) => {
+          const { imageUrl, alt, title } = node.attrs;
+          return ["img", { src: imageUrl, alt, title }];
+        },
       }),
     marks: basicSchema.spec.marks.append({
       bold: basicSchema.spec.marks.get("strong")!,

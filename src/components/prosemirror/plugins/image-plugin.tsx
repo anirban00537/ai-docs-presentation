@@ -18,7 +18,7 @@ interface ImageNodeViewProps {
   node: ProseMirrorNode;
   view: EditorView;
   getPos: () => number | undefined;
-  onUpdate: (attrs: { src: string; alt: string; title: string }) => void;
+  onUpdate: (attrs: { imageUrl: string; alt: string; title: string }) => void;
 }
 
 // Image placeholder card component
@@ -45,10 +45,10 @@ const ImagePlaceholder: React.FC<{ onClick: () => void }> = ({ onClick }) => {
 
 // Image display component
 const ImageDisplay: React.FC<{
-  src: string;
+  imageUrl: string;
   alt: string;
   onClick: () => void;
-}> = ({ src, alt, onClick }) => {
+}> = ({ imageUrl, alt, onClick }) => {
   const [hasError, setHasError] = useState(false);
 
   if (hasError) {
@@ -70,7 +70,7 @@ const ImageDisplay: React.FC<{
       className="relative cursor-pointer group rounded-lg overflow-hidden"
     >
       <img
-        src={src}
+        src={imageUrl}
         alt={alt}
         onError={() => setHasError(true)}
         className="w-full h-auto max-h-[500px] object-contain rounded-lg transition-all duration-200 group-hover:opacity-90"
@@ -179,17 +179,17 @@ export const ImageUrlModal: React.FC<ImageUrlModalProps> = ({
 
 // Main image node component for React rendering
 interface ImageNodeComponentProps {
-  src: string;
+  imageUrl: string;
   alt: string;
   onUpdateUrl: (url: string) => void;
 }
 
 export const ImageNodeComponent: React.FC<ImageNodeComponentProps> = ({
-  src,
+  imageUrl,
   alt,
   onUpdateUrl,
 }) => {
-  const [modalOpen, setModalOpen] = useState(!src);
+  const [modalOpen, setModalOpen] = useState(!imageUrl);
 
   const handleClick = useCallback(() => {
     setModalOpen(true);
@@ -209,8 +209,8 @@ export const ImageNodeComponent: React.FC<ImageNodeComponentProps> = ({
 
   return (
     <div className="my-2" contentEditable={false}>
-      {src ? (
-        <ImageDisplay src={src} alt={alt} onClick={handleClick} />
+      {imageUrl ? (
+        <ImageDisplay imageUrl={imageUrl} alt={alt} onClick={handleClick} />
       ) : (
         <ImagePlaceholder onClick={handleClick} />
       )}
@@ -218,7 +218,7 @@ export const ImageNodeComponent: React.FC<ImageNodeComponentProps> = ({
         open={modalOpen}
         onClose={handleClose}
         onSubmit={handleSubmit}
-        initialUrl={src}
+        initialUrl={imageUrl}
       />
     </div>
   );

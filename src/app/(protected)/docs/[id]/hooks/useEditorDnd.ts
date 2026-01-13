@@ -26,7 +26,7 @@ export const useEditorDnd = ({ cards, commandBus }: UseEditorDndParams) => {
     null
   );
   const [draggingImageData, setDraggingImageData] = useState<{
-    url: string;
+    imageUrl: string;
     alt?: string;
     attribution?: { name: string; link: string };
   } | null>(null);
@@ -61,7 +61,7 @@ export const useEditorDnd = ({ cards, commandBus }: UseEditorDndParams) => {
       setIsBlockDragging(true);
       setDraggingBlockType("image"); // Use the IMAGE block type
       setDraggingImageData({
-        url: data.imageUrl,
+        imageUrl: data.imageUrl,
         alt: data.imageAlt,
         attribution: data.attribution,
       });
@@ -91,7 +91,7 @@ export const useEditorDnd = ({ cards, commandBus }: UseEditorDndParams) => {
           // Build initialContent for block or images
           const activeData = active.data.current;
           const initialContent = draggingImageData ? {
-            url: draggingImageData.url,
+            imageUrl: draggingImageData.imageUrl,
             alt: draggingImageData.alt || "",
             caption: "",
             objectFit: "cover",

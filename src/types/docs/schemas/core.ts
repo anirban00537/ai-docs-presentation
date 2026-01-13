@@ -38,7 +38,8 @@ export const RowSchema = z.object({
 });
 
 export const CardAccentSchema = z.object({
-  url: z.string().optional(),
+  imageUrl: z.string().optional(),
+  imageQuery: z.string().optional(),
   position: z.enum(["left", "right", "top", "bottom", "background"]),
   size: z.number().min(5).max(100), // width/height percentage, or opacity for background
 });
@@ -47,6 +48,7 @@ export const CardSchema = z.object({
   id: z.string(),
   rows: z.array(RowSchema),
   accent: CardAccentSchema.optional(),
+  isStreaming: z.boolean().optional(),
 });
 
 export const DocInfoSchema = z.object({

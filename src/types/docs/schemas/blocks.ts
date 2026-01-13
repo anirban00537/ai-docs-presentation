@@ -21,7 +21,8 @@ export const CodeContentSchema = z.object({
 
 export const ImageContentSchema = z.object({
   type: z.literal("image"),
-  url: z.string().url(),
+  imageUrl: z.string(),
+  imageQuery: z.string().optional(),
   alt: z.string().optional(),
   caption: z.string().optional(),
   width: z.number().optional(),
@@ -200,6 +201,7 @@ export type CircleStatsContent = z.infer<typeof CircleStatsContentSchema>;
 export const ImageCardItemSchema = z.object({
   id: z.string(),
   imageUrl: z.string().default(""),
+  imageQuery: z.string().optional(),
   imageAlt: z.string().optional().default(""),
   title: ProseMirrorDocumentSchema,
   description: ProseMirrorDocumentSchema,

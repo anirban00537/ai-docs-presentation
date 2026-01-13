@@ -6,4 +6,5 @@ export interface BlockRendererProps {
   theme: Theme;
   placeholder?: string;
   readOnly?: boolean;
+  isStreaming?: boolean;
 }

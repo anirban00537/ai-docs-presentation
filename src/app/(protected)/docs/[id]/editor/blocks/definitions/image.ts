@@ -1,8 +1,8 @@
 import { ImageContentSchema, type ImageContent } from "@/types";
 
-export const createImageContent = (url: string = "", alt?: string, attribution?: { name: string; link: string }): ImageContent => ({
+export const createImageContent = (imageUrl: string = "", alt?: string, attribution?: { name: string; link: string }): ImageContent => ({
   type: "image",
-  url,
+  imageUrl,
   alt: alt || "",
   caption: "",
   objectFit: "cover",
@@ -17,7 +17,7 @@ export const normalizeImageContent = (content: any): ImageContent => {
   
   return {
     type: "image",
-    url: typeof content?.url === "string" ? content.url : "",
+    imageUrl: typeof content?.imageUrl === "string" ? content.imageUrl : "",
     alt: typeof content?.alt === "string" ? content.alt : "",
     caption: typeof content?.caption === "string" ? content.caption : "",
     width: typeof content?.width === "number" ? content.width : undefined,

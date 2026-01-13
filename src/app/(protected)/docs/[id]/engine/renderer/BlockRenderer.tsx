@@ -10,6 +10,7 @@ interface BlockRendererProps {
   onUpdate: (content: BlockContent) => void;
   placeholder?: string;
   readOnly?: boolean;
+  isStreaming?: boolean;
 }
 
 export const BlockRenderer = memo(function BlockRenderer({
@@ -17,6 +18,7 @@ export const BlockRenderer = memo(function BlockRenderer({
   onUpdate,
   placeholder,
   readOnly = false,
+  isStreaming = false,
 }: BlockRendererProps) {
   const theme = useEditorTheme();
   
@@ -52,6 +54,7 @@ export const BlockRenderer = memo(function BlockRenderer({
           theme={theme}
           placeholder={placeholder}
           readOnly={readOnly}
+          isStreaming={isStreaming}
         />
       </React.Suspense>
     </BlockErrorBoundary>

@@ -171,7 +171,7 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
     } else {
       // User uploaded media
       const mediaItem = selectedImage as MediaItem;
-      onSelectImage?.(mediaItem.url);
+      onSelectImage?.(mediaItem.imageUrl);
     }
 
     setIsModalOpen(false);
@@ -456,8 +456,8 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
                           <div key={media.id} className="relative">
                             <DraggableImageItem
                               id={media.id}
-                              imageUrl={media.url}
-                              thumbnailUrl={media.url}
+                              imageUrl={media.imageUrl}
+                              thumbnailUrl={media.imageUrl}
                               alt={media.name}
                               onClick={() => handleImageSelect(media)}
                             />
@@ -517,7 +517,7 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
               {/* Image Preview */}
               <div className="relative aspect-video bg-black/5">
                 <img
-                  src={'urls' in selectedImage ? selectedImage.urls.regular : selectedImage.url}
+                  src={'urls' in selectedImage ? selectedImage.urls.regular : selectedImage.imageUrl}
                   alt={'altDescription' in selectedImage ? (selectedImage.altDescription || "Selected image") : selectedImage.name}
                   className="w-full h-full object-contain"
                 />

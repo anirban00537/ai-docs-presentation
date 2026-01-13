@@ -76,7 +76,7 @@ export interface MediaItem {
   id: string;
   userId: string;
   name: string;
-  url: string;
+  imageUrl: string;
   mimeType: string;
   size: number;
   width?: number | null;
@@ -114,6 +114,28 @@ export interface UpdateMediaParams {
  */
 export const searchUnsplashPhotos = (params: SearchPhotosParams) => 
   api.get<SearchPhotosResponse>("/images/unsplash-search", { params });
+
+/**
+ * Simple Unsplash search that returns just the optimized URL
+ * Used for lazy image loading during card rendering
+ */
+export const searchUnsplashSimple = async (
+  query: string,
+  orientation: "landscape" | "portrait" | "squarish" = "landscape"
+): Promise<string | null> => {
+  try {
+    // The backend returns the URL string directly (not wrapped in ApiResponse)
+    // handleResponse in api.ts returns response.data, which is the raw URL string
+    const response = await api.get<string>("/images/unsplash-simple", {
+      params: { query, orientation },
+    });
+    // response is now the raw string URL (or null if not found)
+    return (response as unknown as string) || null;
+  } catch (error) {
+    console.error("Failed to fetch Unsplash image:", error);
+    return null;
+  }
+};
 
 /**
  * Get random Unsplash photos
