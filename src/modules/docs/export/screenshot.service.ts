@@ -135,8 +135,8 @@ export class ScreenshotService {
           timeout: 8000, // Reduced from 20000
         });
 
-        // Minimal wait for critical rendering - reduced from 2000ms
-        await new Promise((resolve) => setTimeout(resolve, 800));
+        // Minimal wait for critical rendering - increased to allow lazy hooks to fire
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
         // Wait for images only if they exist and aren't loaded
         await page.evaluate(() => {
@@ -151,13 +151,13 @@ export class ScreenshotService {
                   (img) =>
                     new Promise((resolve) => {
                       img.onload = img.onerror = resolve;
-                      // Timeout individual images after 2s
-                      setTimeout(resolve, 2000);
+                      // Timeout individual images after 8s
+                      setTimeout(resolve, 8000);
                     }),
                 ),
             ),
             // Overall timeout for all images
-            new Promise((resolve) => setTimeout(resolve, 3000)),
+            new Promise((resolve) => setTimeout(resolve, 10000)),
           ]);
         });
 
