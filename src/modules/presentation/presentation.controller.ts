@@ -125,6 +125,64 @@ export class PresentationController {
     }
   }
 
+  @Get(':id/export/pdf')
+  async exportToPdf(
+    @Param('id') id: string,
+    @UserInfo() user: User,
+    @Res() res: Response,
+  ) {
+    try {
+      const pdfBuffer = await this.presentationService.exportToPdf(id, user);
+      
+      // Get presentation title for filename
+      const presentationResponse = await this.presentationService.findOne(id, user);
+      const presentation = (presentationResponse as any)?.data;
+      const title = presentation?.title || 'presentation';
+      const filename = `${title.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', pdfBuffer.length.toString());
+      
+      res.send(pdfBuffer);
+    } catch (error: any) {
+      this.logger.error(`Failed to export presentation ${id} to PDF`, error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to export presentation',
+      });
+    }
+  }
+
+  @Get(':id/export/png')
+  async exportToPng(
+    @Param('id') id: string,
+    @UserInfo() user: User,
+    @Res() res: Response,
+  ) {
+    try {
+      const pngBuffer = await this.presentationService.exportToPng(id, user);
+      
+      // Get presentation title for filename
+      const presentationResponse = await this.presentationService.findOne(id, user);
+      const presentation = (presentationResponse as any)?.data;
+      const title = presentation?.title || 'presentation';
+      const filename = `${title.replace(/[^a-z0-9]/gi, '_')}_slides.zip`;
+
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', pngBuffer.length.toString());
+      
+      res.send(pngBuffer);
+    } catch (error: any) {
+      this.logger.error(`Failed to export presentation ${id} to PNG`, error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to export presentation',
+      });
+    }
+  }
+
   @Patch(':id/update')
   update(
     @Param('id') id: string,

@@ -16,6 +16,8 @@ import { UpdateSlideDto } from './dto/update-slide.dto';
 import { Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { PptxExportService } from './export/pptx-export.service';
+import { PdfExportService } from './export/pdf-export.service';
+import { PngExportService } from './export/png-export.service';
 
 @Injectable()
 export class PresentationService {
@@ -23,6 +25,8 @@ export class PresentationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly pptxExportService: PptxExportService,
+    private readonly pdfExportService: PdfExportService,
+    private readonly pngExportService: PngExportService,
   ) {}
 
   async create(
@@ -579,6 +583,52 @@ export class PresentationService {
       return await this.pptxExportService.exportPresentation(id, user.id);
     } catch (error) {
       this.logger.error(`Failed to export presentation ${id} to PPTX`, error);
+      throw error;
+    }
+  }
+
+  async exportToPdf(id: string, user: User): Promise<Buffer> {
+    try {
+      // Verify user owns the presentation
+      const presentation = await this.prisma.presentation.findFirst({
+        where: {
+          id,
+          userId: user.id,
+          deletedAt: null,
+        },
+      });
+
+      if (!presentation) {
+        throw new Error('Presentation not found');
+      }
+
+      // Export to PDF
+      return await this.pdfExportService.exportPresentation(id, user.id);
+    } catch (error) {
+      this.logger.error(`Failed to export presentation ${id} to PDF`, error);
+      throw error;
+    }
+  }
+
+  async exportToPng(id: string, user: User): Promise<Buffer> {
+    try {
+      // Verify user owns the presentation
+      const presentation = await this.prisma.presentation.findFirst({
+        where: {
+          id,
+          userId: user.id,
+          deletedAt: null,
+        },
+      });
+
+      if (!presentation) {
+        throw new Error('Presentation not found');
+      }
+
+      // Export to PNG (ZIP of images)
+      return await this.pngExportService.exportPresentation(id, user.id);
+    } catch (error) {
+      this.logger.error(`Failed to export presentation ${id} to PNG`, error);
       throw error;
     }
   }

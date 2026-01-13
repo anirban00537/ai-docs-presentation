@@ -14,6 +14,8 @@ import { PromptBuilderService } from './prompt-presentation-ai/prompts/prompt-bu
 // Import export services
 import { ScreenshotService } from './export/screenshot.service';
 import { PptxExportService } from './export/pptx-export.service';
+import { PdfExportService } from './export/pdf-export.service';
+import { PngExportService } from './export/png-export.service';
 
 @Module({
   imports: [PrismaModule, SubscriptionModule, ImagesModule],
@@ -29,6 +31,8 @@ import { PptxExportService } from './export/pptx-export.service';
     // Export services
     ScreenshotService,
     PptxExportService,
+    PdfExportService,
+    PngExportService,
   ],
   exports: [
     PresentationService,
