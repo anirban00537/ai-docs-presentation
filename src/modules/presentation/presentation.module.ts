@@ -11,6 +11,9 @@ import { ImagesModule } from '../images/images.module';
 import { ImageAnalyzerService } from './prompt-presentation-ai/generators/image-analyzer.service';
 import { ImageFetcherService } from './prompt-presentation-ai/generators/image-fetcher.service';
 import { PromptBuilderService } from './prompt-presentation-ai/prompts/prompt-builder.service';
+// Import export services
+import { ScreenshotService } from './export/screenshot.service';
+import { PptxExportService } from './export/pptx-export.service';
 
 @Module({
   imports: [PrismaModule, SubscriptionModule, ImagesModule],
@@ -23,6 +26,9 @@ import { PromptBuilderService } from './prompt-presentation-ai/prompts/prompt-bu
     ImageAnalyzerService,
     ImageFetcherService,
     PromptBuilderService,
+    // Export services
+    ScreenshotService,
+    PptxExportService,
   ],
   exports: [
     PresentationService,

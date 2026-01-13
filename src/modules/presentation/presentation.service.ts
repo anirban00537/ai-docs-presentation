@@ -15,11 +15,15 @@ import { CreateSlideDto } from './dto/create-slide.dto';
 import { UpdateSlideDto } from './dto/update-slide.dto';
 import { Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { PptxExportService } from './export/pptx-export.service';
 
 @Injectable()
 export class PresentationService {
   private readonly logger = new Logger(PresentationService.name);
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly pptxExportService: PptxExportService,
+  ) {}
 
   async create(
     user: User,
@@ -554,5 +558,95 @@ export class PresentationService {
     } catch (error) {
       processException(error);
     }
+  }
+
+  async exportToPptx(id: string, user: User): Promise<Buffer> {
+    try {
+      // Verify user owns the presentation
+      const presentation = await this.prisma.presentation.findFirst({
+        where: {
+          id,
+          userId: user.id,
+          deletedAt: null,
+        },
+      });
+
+      if (!presentation) {
+        throw new Error('Presentation not found');
+      }
+
+      // Export to PPTX
+      return await this.pptxExportService.exportPresentation(id, user.id);
+    } catch (error) {
+      this.logger.error(`Failed to export presentation ${id} to PPTX`, error);
+      throw error;
+    }
+  }
+  /**
+   * Get slide data for export (used by Puppeteer screenshot service)
+   * Validates export key and returns slide with theme data
+   */
+  async getSlideForExport(
+    presentationId: string,
+    slideId: string,
+    exportKey: string,
+  ): Promise<ResponseModel> {
+    try {
+      // Validate export key - it should match a hash of the presentation ID
+      // This provides basic security without requiring full authentication
+      const expectedKey = this.generateExportKey(presentationId);
+      
+      if (exportKey !== expectedKey) {
+        return errorResponse('Invalid export key');
+      }
+
+      // Fetch presentation with the specific slide
+      const presentation = await this.prisma.presentation.findFirst({
+        where: {
+          id: presentationId,
+          deletedAt: null,
+        },
+        include: {
+          slides: {
+            where: {
+              id: slideId,
+              deletedAt: null,
+            },
+          },
+        },
+      });
+
+      if (!presentation) {
+        return errorResponse('Presentation not found');
+      }
+
+      if (!presentation.slides || presentation.slides.length === 0) {
+        return errorResponse('Slide not found');
+      }
+
+      const slide = presentation.slides[0];
+      const theme = presentation.globalTheme || {};
+
+      return successResponse('Slide data retrieved successfully', {
+        slide,
+        theme,
+      });
+    } catch (error) {
+      processException(error);
+    }
+  }
+
+  /**
+   * Generate a secure export key for a presentation
+   * Used to validate export requests without requiring full authentication
+   */
+  generateExportKey(presentationId: string): string {
+    // Use a hash of presentationId + a secret to create the export key
+    const secret = process.env.EXPORT_SECRET || 'butterfast-export-secret-key';
+    return crypto
+      .createHash('sha256')
+      .update(`${presentationId}:${secret}`)
+      .digest('hex')
+      .substring(0, 32);
   }
 }

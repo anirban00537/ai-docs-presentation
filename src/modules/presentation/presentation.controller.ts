@@ -79,6 +79,52 @@ export class PresentationController {
     return this.presentationService.findOne(id, user);
   }
 
+  /**
+   * Internal endpoint for export service to fetch slide data
+   * Uses exportKey for authentication instead of user JWT
+   */
+  @Public()
+  @Get(':presentationId/slides/:slideId/export')
+  async getSlideForExport(
+    @Param('presentationId') presentationId: string,
+    @Param('slideId') slideId: string,
+    @Query('exportKey') exportKey: string,
+  ) {
+    return this.presentationService.getSlideForExport(presentationId, slideId, exportKey);
+  }
+
+  @Get(':id/export/pptx')
+  async exportToPptx(
+    @Param('id') id: string,
+    @UserInfo() user: User,
+    @Res() res: Response,
+  ) {
+    try {
+      const pptxBuffer = await this.presentationService.exportToPptx(id, user);
+      
+      // Get presentation title for filename
+      const presentationResponse = await this.presentationService.findOne(id, user);
+      const presentation = (presentationResponse as any)?.data;
+      const title = presentation?.title || 'presentation';
+      const filename = `${title.replace(/[^a-z0-9]/gi, '_')}.pptx`;
+
+      res.setHeader(
+        'Content-Type',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      );
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', pptxBuffer.length.toString());
+      
+      res.send(pptxBuffer);
+    } catch (error: any) {
+      this.logger.error(`Failed to export presentation ${id} to PPTX`, error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to export presentation',
+      });
+    }
+  }
+
   @Patch(':id/update')
   update(
     @Param('id') id: string,
