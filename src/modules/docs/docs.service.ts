@@ -23,6 +23,7 @@ import { ConfigService } from '@nestjs/config';
 import { CreditService } from '../subscription/services/credit.service';
 import { AiUsageService } from '../subscription/services/ai-usage.service';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
+import { PromptBuilderService } from './prompt-docs-ai/prompts/prompt-builder.service';
 
 interface OutlineItem {
   content: string;
@@ -39,7 +40,8 @@ interface OutlineResponse {
 export class DocsService implements OnModuleInit {
   private readonly logger = new Logger(DocsService.name);
   private readonly generatingOutlines = new Set<string>();
-  private openRouter: any = null;
+  private openai: any = null;
+  private OpenAI: any = null;
   private readonly MODEL_NAME = coreConstant.AI_MODELS.OUTLINE.NAME;
   constructor(
     private readonly prisma: PrismaService,
@@ -49,6 +51,7 @@ export class DocsService implements OnModuleInit {
     private readonly configService: ConfigService,
     private readonly creditService: CreditService,
     private readonly aiUsageService: AiUsageService,
+    private readonly promptBuilderService: PromptBuilderService,
   ) {}
 
   async onModuleInit() {
@@ -59,11 +62,22 @@ export class DocsService implements OnModuleInit {
     }
 
     try {
-      const { OpenRouter } = await import('@openrouter/sdk');
-      this.openRouter = new OpenRouter({ apiKey });
-      this.logger.log('OpenRouter SDK initialized');
+      // Dynamic import for ESM-only or regular package
+      const { OpenAI } = await import('openai');
+      this.OpenAI = OpenAI;
+      
+      this.openai = new OpenAI({
+        baseURL: "https://openrouter.ai/api/v1",
+        apiKey: apiKey,
+        defaultHeaders: {
+          "HTTP-Referer": "https://butterfast.app", 
+          "X-Title": "Butterfast",
+        }
+      });
+      
+      this.logger.log('OpenAI SDK initialized (DocsService) with OpenRouter base URL');
     } catch (error) {
-      this.logger.error('Failed to initialize OpenRouter SDK:', error);
+      this.logger.error('Failed to initialize OpenAI SDK in DocsService:', error);
     }
   }
 
@@ -790,50 +804,35 @@ export class DocsService implements OnModuleInit {
     docId: string,
     user: User,
   ): AsyncGenerator<string, void, unknown> {
-    const doc = await this.prisma.doc.findFirst({
-      where: {
-        id: docId,
-        userId: user.id,
-      },
+    if (this.generatingOutlines.has(docId)) {
+      throw new Error('Outline generation already in progress for this doc');
+    }
+
+    // 1. Fetch doc and prompt
+    const doc = await this.prisma.doc.findUnique({
+      where: { id: docId, userId: user.id },
+      select: { 
+        id: true, 
+        title: true, 
+        prompt: true,
+        numberOfCards: true,
+        cards: { select: { id: true } }
+      }
     });
 
-    if (!doc) {
-      throw new Error('Doc not found');
-    }
+    if (!doc) throw new Error('Doc not found');
 
-    if (this.generatingOutlines.has(docId)) {
-      throw new Error('Outline is already being generated');
-    }
-
-    this.generatingOutlines.add(docId);
-    this.logger.log(`🚀 STARTING OUTLINE STREAM GENERATION: Doc ID ${docId}`);
+    // For better DX, we might need to store the initial prompt in the Doc if not already
+    // Assuming the doc title is the prompt for now if prompt field isn't there, 
+    // OR we pass prompt in. But this method signature is fixed.
+    // Let's assume the frontend passes the prompt in the doc.title or a specific field.
+    // For now, using title as prompt if no specific prompt field exists.
+    const userPrompt = (doc as any).prompt || doc.title; 
+    const numberOfCards = (doc as any).numberOfCards || 8;
 
     let creditDeducted = false;
 
     try {
-      if (!this.openRouter) {
-        throw new Error('OpenRouter service is not initialized');
-      }
-
-      // UPFRONT DEDUCTION: Deduct credit before generation starts
-      this.logger.log(`💳 [Doc ${docId}] Deducting 1 credit upfront...`);
-      try {
-        await this.creditService.useCredits(
-          user.id,
-          1,
-          `Generating AI outline for doc ${doc.title || docId}`,
-          docId,
-        );
-        creditDeducted = true;
-        this.logger.log(`💳 [Doc ${docId}] Credit deducted successfully`);
-      } catch (creditError: any) {
-        throw new BadRequestException(creditError.message || 'Insufficient credits to generate doc outline.');
-      }
-
-      const userPrompt = doc.prompt || '';
-      const numberOfCards = doc.numberOfCards || 1;
-
-      // Update status to generating
       await this.prisma.doc.update({
         where: { id: docId },
         data: { outlineStatus: 'generating' },
@@ -865,107 +864,37 @@ export class DocsService implements OnModuleInit {
         description: layout.description,
       }));
 
+      // Build Prompt
+      const systemPrompt = this.promptBuilderService.buildOutlinePrompt(userPrompt, numberOfCards, layoutsInfo);
+      
+      // Get Schema
+      const { DynamicSchemaUtil } = await import('./prompt-docs-ai/utils/dynamic-schema.util');
+      const outlineSchema = DynamicSchemaUtil.generateOutlineSchema();
+
       this.logger.log(`🤖 [Doc ${docId}] Calling LLM for streaming content...`);
 
-      const stream = await this.openRouter.chat.send({
+      // Call OpenAI
+      const stream = await this.openai.chat.completions.create({
         model: this.MODEL_NAME,
         messages: [
-          {
-            role: 'user',
-            content: `Analyze the following prompt and generate a comprehensive and highly descriptive doc outline with exactly ${numberOfCards} cards.
-            
-CRITICAL INSTRUCTION: You MUST generate EXACTLY ${numberOfCards} card items. Each item should be detailed, descriptive, and provide substantial information for the card builder to use.
-If the content is long, split it across multiple cards.
-If the content is short, expand on details to reach exactly ${numberOfCards} cards.
-
-User Prompt:
-${userPrompt}
-
-Available Layouts (each layout has id, name, and description):
-${JSON.stringify(layoutsInfo, null, 2)}
-
-LAYOUT SELECTION PROCESS:
-For each card, follow these steps:
-1. Review all available layouts above, paying close attention to each layout's "name" and "description"
-2. For the FIRST card only: Select an introduction/title/hero layout from the available layouts
-3. For subsequent cards: Identify which layout's purpose best matches the content you're planning for that specific card
-4. Attempt to vary layouts if multiple are available
-5. Ensure the layoutId you choose exactly matches one of the "id" values from the available layouts list (case-sensitive)
-
-IMPORTANT RULES:
-- The title field MUST be a clear, professional title for the doc. Do not use "..." or "Generating...".
-- The FIRST card MUST use an introduction/title/hero layout - this is mandatory
-- Match the layout's description to the card's content purpose
-- If you have multiple cards with similar content, use the most appropriate layout available even if you have to reuse one
-- Focus on high-quality content that matches the card purpose
-
-For each outline item, the "content" field MUST strictly follow this Markdown format:
-1. One main title using a single hash (# Title)
-2. Followed ONLY by bullet points (- Point 1)
-3. No short descriptions, no intro text, no other paragraphs.
-4. JUST Title and Points. Both are COMPULSORY.
-
-Example of valid content:
-"# Card Title
-- First key point
-- Second key point
-- Third key point"
-
-Generate exactly ${numberOfCards} outline items. Each item must have:
-- A "content" field containing the STRICT markdown-formatted content as defined above
-- A "layoutId" field with a UNIQUE id (case-sensitive) from the available layouts list that best matches this card's content type and purpose
-
-REMINDER: Every single card must have a DIFFERENT layoutId. No exceptions.`,
-          },
+          { role: 'user', content: systemPrompt }
         ],
-        responseFormat: {
-          type: 'json_schema',
-          jsonSchema: {
-            name: 'doc_outline',
-            strict: true,
-            schema: {
-              type: 'object',
-              properties: {
-                title: {
-                  type: 'string',
-                  description: 'The main title of the doc. Must be a complete, professional string, not empty or "..."',
-                },
-                outlines: {
-                  type: 'array',
-                  description: `Array of exactly ${numberOfCards} outline items, each representing one card`,
-                  minItems: numberOfCards,
-                  maxItems: numberOfCards,
-                  items: {
-                    type: 'object',
-                    properties: {
-                      content: {
-                        type: 'string',
-                        description:
-                          'Strict Markdown: "# Title" followed ONLY by detailed and descriptive bullet points "- Point". Provide rich information for each card.',
-                      },
-                      layoutId: {
-                        type: 'string',
-                        description:
-                          'The ID of the most appropriate layout from the available layouts list for this specific card. CRITICAL: Each card must have a UNIQUE layoutId - do not reuse the same layoutId for multiple cards. All layoutIds in the outlines array must be different from each other.',
-                      },
-                    },
-                    required: ['content', 'layoutId'],
-                    additionalProperties: false,
-                  },
-                },
-              },
-              required: ['title', 'outlines'],
-              additionalProperties: false,
+        temperature: 0,
+        seed: 42,
+        top_p: 1,
+        response_format: {
+            type: 'json_schema',
+            json_schema: {
+              name: 'outline_structure',
+              strict: true,
+              schema: outlineSchema,
             },
-          },
         },
         stream: true,
-        streamOptions: {
-          includeUsage: true,
+        stream_options: {
+          include_usage: true,
         },
-        max_tokens: 16000,
       });
-
       let accumulatedContent = '';
       let finishReason = null;
       let usageData: any = null;
@@ -985,7 +914,7 @@ REMINDER: Every single card must have a DIFFERENT layoutId. No exceptions.`,
         
         if (chunk.usage) {
           usageData = chunk.usage;
-          this.logger.log(`📊 [Doc ${docId}] Token usage - Prompt: ${usageData.promptTokens}, Completion: ${usageData.completionTokens}, Total: ${usageData.totalTokens}`);
+          this.logger.log(`📊 [Doc ${docId}] Token usage - Prompt: ${usageData.prompt_tokens}, Completion: ${usageData.completion_tokens}, Total: ${usageData.total_tokens}`);
         }
       }
 
@@ -1044,8 +973,8 @@ REMINDER: Every single card must have a DIFFERENT layoutId. No exceptions.`,
           await this.aiUsageService.logUsage({
             userId: user.id,
             modelName: this.MODEL_NAME,
-            inputTokens: usageData.promptTokens || 0,
-            outputTokens: usageData.completionTokens || 0,
+            inputTokens: usageData.prompt_tokens || 0,
+            outputTokens: usageData.completion_tokens || 0,
             type: 'doc',
             docId: docId,
           });

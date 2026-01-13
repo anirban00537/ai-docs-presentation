@@ -140,4 +140,80 @@ FINAL CHECKLIST:
 
 Generate only the JSON. No prefix/suffix text.`;
   }
+
+  /**
+   * Build the prompt for outline generation
+   */
+  /**
+   * Build the prompt for outline generation
+   */
+  buildOutlinePrompt(
+    prompt: string,
+    numberOfCards: number,
+    layouts: { id: string; name: string; description: string }[] = [],
+  ): string {
+    // Generate the layouts section
+    let layoutsSection = '';
+    
+    if (layouts.length > 0) {
+      layoutsSection = `
+    AVAILABLE LAYOUTS:
+    ${JSON.stringify(layouts, null, 2)}
+    
+    LAYOUT SELECTION PROCESS:
+    1. Select the layout that best fits the content key points.
+    2. Ensure the "layoutId" matches one of the IDs above exactly.
+    3. Use "title-basic" (if available) or a similar hero layout for the first card.
+      `;
+    } else {
+      layoutsSection = `
+    VALID LAYOUT IDs (Choose the best fit for each card's content):
+    - "title-basic": For the main title card or section headers.
+    - "two-columns": For comparing two concepts or text + small image.
+    - "three-columns": For listing 3 features, steps, or items.
+    - "image-left": For a large image on the left with descriptive text on the right.
+    - "image-right": For a large image on the right with descriptive text on the left.
+    - "big-number": For highlighting a key statistic or single number.
+    - "quote": For a powerful quote or testimonial.
+    - "list": For bullet points or checklists.
+      `;
+    }
+
+    return `
+    You are an expert presentation designer. Create a comprehensive outline for a document based on the following topic:
+    "${prompt}"
+
+    REQUIREMENTS:
+    1. Create exactly ${numberOfCards} distinct cards (pages).
+    2. Each card must have a specific "layoutId" chosen from the valid options provided.
+    
+    ${layoutsSection}
+
+    CONTENT FORMAT INSTRUCTIONS (CRITICAL):
+    For the "content" field of each card, you MUST use this strict Markdown format:
+    1. One main title using a single hash (# Title)
+    2. Followed ONLY by bullet points (- Point 1)
+    3. No short descriptions, no intro text, no other paragraphs.
+    4. JUST Title and Points. Both are COMPULSORY.
+
+    Example of valid content:
+    "# Card Title
+    - First key point
+    - Second key point
+    - Third key point"
+
+    OUTPUT FORMAT:
+    You must output a single JSON object with the following structure:
+    {
+      "title": "A catchy title for the whole document",
+      "outlines": [
+        {
+          "content": "Strict Markdown content as defined above.",
+          "layoutId": "layout-id-from-list"
+        },
+        ...
+      ]
+    }
+    `;
+  }
 }

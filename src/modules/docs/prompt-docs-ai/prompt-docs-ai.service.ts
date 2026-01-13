@@ -17,7 +17,8 @@ import { PromptBuilderService } from './prompts/prompt-builder.service';
 @Injectable()
 export class PromptDocsAIService implements OnModuleInit {
   private readonly logger = new Logger(PromptDocsAIService.name);
-  private openRouter: any = null;
+  private openai: any = null;
+  private OpenAI: any = null;
   private readonly MODEL_NAME = coreConstant.AI_MODELS.CARDS.NAME;
 
   constructor(
@@ -37,12 +38,22 @@ export class PromptDocsAIService implements OnModuleInit {
     }
 
     try {
-      // Dynamic import for ESM-only package
-      const { OpenRouter } = await import('@openrouter/sdk');
-      this.openRouter = new OpenRouter({ apiKey });
-      this.logger.log('OpenRouter SDK initialized');
+      // Dynamic import for ESM-only or regular package
+      const { OpenAI } = await import('openai');
+      this.OpenAI = OpenAI;
+      
+      this.openai = new OpenAI({
+        baseURL: "https://openrouter.ai/api/v1",
+        apiKey: apiKey,
+        defaultHeaders: {
+          "HTTP-Referer": "https://butterfast.app", // Optional, for including your app on openrouter.ai rankings.
+          "X-Title": "Butterfast", // Optional. Shows in rankings on openrouter.ai.
+        }
+      });
+      
+      this.logger.log('OpenAI SDK initialized with OpenRouter base URL');
     } catch (error) {
-      this.logger.error('Failed to initialize OpenRouter SDK:', error);
+      this.logger.error('Failed to initialize OpenAI SDK:', error);
     }
   }
 
@@ -54,8 +65,8 @@ export class PromptDocsAIService implements OnModuleInit {
     docId: string,
     user: User,
   ): AsyncGenerator<string, void, unknown> {
-    if (!this.openRouter) {
-      throw new Error('OpenRouter service is not initialized');
+    if (!this.openai) {
+      throw new Error('OpenAI service is not initialized');
     }
 
     // Find doc with cards that have outline data
@@ -325,7 +336,7 @@ export class PromptDocsAIService implements OnModuleInit {
 
     while (attempts < maxAttempts) {
       try {
-        stream = await this.openRouter.chat.send({
+        stream = await this.openai.chat.completions.create({
           model: this.MODEL_NAME,
           messages: [
             {
@@ -333,25 +344,30 @@ export class PromptDocsAIService implements OnModuleInit {
               content: cardPrompt,
             },
           ],
-          temperature: 0, // Zero creativity for deterministic structured output
-          seed: 42, // Consistent results across runs
-          top_p: 1, // Focus on top probability tokens
-          // Use structured output with dynamic schema
-          responseFormat: {
+          temperature: 0,
+          seed: 42,
+          top_p: 1,
+          presence_penalty: 0,
+          frequency_penalty: 0,
+          max_completion_tokens: 4096, // Prevents truncation variance
+          response_format: {
             type: 'json_schema',
-            jsonSchema: {
+            json_schema: {
               name: 'card_structure',
               strict: true,
               schema: cardSchema,
             },
           },
-          strict: true,
-          stream: true, // Enable streaming
-          streamOptions: {
-            includeUsage: true, // Include token usage in the final chunk
+          stream: true,
+          stream_options: {
+            include_usage: true, 
           },
+          // OpenRouter specific: Disable prompt transformations for 100% consistency
+          extra_body: {
+            transforms: [],
+          } as any,
         });
-        break; // Success
+        break;
       } catch (error: any) {
         attempts++;
         this.logger.warn(`⚠️ [Card ${cardNumber}] Generation attempt ${attempts} failed: ${error.message}`);
@@ -360,7 +376,6 @@ export class PromptDocsAIService implements OnModuleInit {
           throw error;
         }
         
-        // Exponential backoff: 1s, 2s, 3s
         await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
       }
     }
@@ -391,13 +406,12 @@ export class PromptDocsAIService implements OnModuleInit {
         });
       }
       
-      // Capture usage data from the final chunk
+      // Capture usage data from the final chunk (OpenAI standard)
       if (chunk.usage) {
         usageData = chunk.usage;
-        this.logger.log(`📊 [Card ${cardNumber}] Token usage - Prompt: ${usageData.promptTokens}, Completion: ${usageData.completionTokens}, Total: ${usageData.totalTokens}`);
+        this.logger.log(`📊 [Card ${cardNumber}] Token usage - Prompt: ${usageData.prompt_tokens}, Completion: ${usageData.completion_tokens}, Total: ${usageData.total_tokens}`);
       }
       
-      // Check if stream is done
       if (chunk.choices[0]?.finish_reason === 'stop') {
         break;
       }
@@ -472,8 +486,8 @@ export class PromptDocsAIService implements OnModuleInit {
         await this.aiUsageService.logUsage({
           userId: user.id,
           modelName: this.MODEL_NAME,
-          inputTokens: usageData.promptTokens || 0,
-          outputTokens: usageData.completionTokens || 0,
+          inputTokens: usageData.prompt_tokens || 0,
+          outputTokens: usageData.completion_tokens || 0,
           type: 'cards',
           docId: docId,
         });

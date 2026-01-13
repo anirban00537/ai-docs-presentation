@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common';
  * JSON Schema type definition
  * Extended to support prefixItems for tuple validation
  */
-interface JSONSchema {
+export interface JSONSchema {
   type?: string | string[];
   const?: string | number | boolean;
   format?: string;
@@ -23,6 +23,7 @@ interface JSONSchema {
   enum?: (string | number)[];
   oneOf?: JSONSchema[];
   anyOf?: JSONSchema[];
+  pattern?: string;
 }
 
 /**
@@ -116,6 +117,46 @@ export class DynamicSchemaUtil {
     schema.properties!.rows = this.generateRowsSchema(templateRows);
 
     return schema;
+  }
+
+  /**
+   * Generate schema for document outline
+   * Enforces strict content format: title (# ) followed by bullet points (- )
+   */
+  static generateOutlineSchema(): JSONSchema {
+    return {
+      type: 'object',
+      properties: {
+        title: {
+          type: 'string',
+          description: 'The title of the generated document. Must be a complete, professional title.',
+          minLength: 5,
+        },
+        outlines: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              content: {
+                type: 'string',
+                description: 'STRICT FORMAT REQUIRED: Must start with "# Title" on line 1, followed by AT LEAST 3 bullet points starting with "- ". Both title AND bullet points are MANDATORY.',
+                minLength: 50,
+                pattern: '^# .+[\\s\\S]*- .+', // Forces # Title AND at least one - point
+              },
+              layoutId: {
+                type: 'string',
+                description: 'The ID of the layout to use for this card',
+              },
+            },
+            required: ['content', 'layoutId'],
+            additionalProperties: false,
+          },
+          minItems: 1,
+        },
+      },
+      required: ['title', 'outlines'],
+      additionalProperties: false,
+    };
   }
 
   /**
