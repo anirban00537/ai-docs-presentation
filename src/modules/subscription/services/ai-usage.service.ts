@@ -9,7 +9,7 @@ export class AiUsageService {
   // Use pricing from coreConstant
   private readonly pricing = {
     [coreConstant.AI_MODELS.OUTLINE.NAME]: coreConstant.AI_MODELS.OUTLINE.PRICING,
-    [coreConstant.AI_MODELS.SLIDES.NAME]: coreConstant.AI_MODELS.SLIDES.PRICING,
+    [coreConstant.AI_MODELS.CARDS.NAME]: coreConstant.AI_MODELS.CARDS.PRICING,
     'default': coreConstant.AI_MODELS.DEFAULT.PRICING
   };
 
@@ -21,12 +21,11 @@ export class AiUsageService {
     inputTokens: number;
     outputTokens: number;
     type: string;
-    presentationId?: string;
-    outlineId?: string;
+    docId?: string;
     provider?: string;
   }) {
     try {
-      const { userId, modelName, inputTokens, outputTokens, type, presentationId, outlineId, provider = 'openrouter' } = params;
+      const { userId, modelName, inputTokens, outputTokens, type, docId, provider = 'openrouter' } = params;
 
       // Calculate cost
       const rates = this.pricing[modelName] || this.pricing['default'];
@@ -40,8 +39,7 @@ export class AiUsageService {
           outputTokens,
           cost,
           type,
-          presentationId,
-          outlineId,
+          docId,
           provider
         }
       });

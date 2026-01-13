@@ -65,7 +65,7 @@ export class CreditService {
     userId: string,
     amount: number,
     description?: string,
-    presentationId?: string,
+    docId?: string,
   ): Promise<void> {
     if (!Number.isInteger(amount) || amount <= 0) {
       throw new BadRequestException(
@@ -108,7 +108,7 @@ export class CreditService {
           amount: -amount,
           type: 'usage',
           description: description || 'Credits used',
-          presentationId,
+          docId,
           balanceAfter: newBalance,
         },
       });
@@ -122,7 +122,7 @@ export class CreditService {
     userId: string,
     amount: number,
     description?: string,
-    presentationId?: string,
+    docId?: string,
   ): Promise<void> {
     if (!Number.isInteger(amount) || amount <= 0) {
       throw new BadRequestException(
@@ -159,7 +159,7 @@ export class CreditService {
           amount: amount, // Positive amount for refund
           type: 'refund',
           description: description || 'Credits refunded',
-          presentationId,
+          docId,
           balanceAfter: newBalance,
         },
       });

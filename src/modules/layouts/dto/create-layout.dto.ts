@@ -24,7 +24,7 @@ export class CreateLayoutDto {
   thumbnail?: string;
 
   @IsObject()
-  data: any; // Layout/template data (JSON) - similar to Slide data
+  data: any; // Layout/template data (JSON) - similar to Card data
 
   @IsOptional()
   @IsString()

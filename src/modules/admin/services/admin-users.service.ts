@@ -87,21 +87,14 @@ export class AdminUsersService {
             AiUsages: {
               orderBy: { createdAt: 'desc' },
             },
-            Presentations: {
+            Docs: {
               select: {
                 id: true,
                 title: true,
                 createdAt: true,
                 _count: {
-                  select: { slides: true }
+                  select: { cards: true }
                 }
-              }
-            },
-            Outlines: {
-              select: {
-                id: true,
-                title: true,
-                createdAt: true,
               }
             },
           },

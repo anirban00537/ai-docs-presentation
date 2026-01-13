@@ -11,6 +11,6 @@ export class UseCreditsDto {
 
   @IsString()
   @IsOptional()
-  presentationId?: string;
+  docId?: string;
 }
 

@@ -227,22 +227,26 @@ export class AdminAnalyticsService {
 
   private async calculateEngagement() {
     const [
-      totalPresentations,
+      totalDocs,
       totalOutlines,
-      slidesAggregate
+      cardsAggregate
     ] = await Promise.all([
-      this.prisma.presentation.count(),
-      this.prisma.outline.count(),
-      this.prisma.slide.count(),
+      this.prisma.doc.count(),
+      this.prisma.doc.count({
+        where: {
+          outlineStatus: { not: 'none' }
+        }
+      }),
+      this.prisma.card.count(),
     ]);
 
     return {
-      totalPresentations,
+      totalDocs,
       totalOutlines,
-      totalSlides: slidesAggregate,
-      averagePresentationsPerUser: 0,
-      averageSlidesPerPresentation: totalPresentations > 0
-        ? slidesAggregate / totalPresentations
+      totalCards: cardsAggregate,
+      averageDocsPerUser: 0,
+      averageCardsPerDoc: totalDocs > 0
+        ? cardsAggregate / totalDocs
         : 0,
     };
   }
@@ -287,7 +291,7 @@ export class AdminAnalyticsService {
       const [
         totalUsers,
         activeSubscriptionsCount,
-        totalPresentations,
+        totalDocs,
         totalMedia,
         totalTokensInput,
         totalTokensOutput,
@@ -305,7 +309,7 @@ export class AdminAnalyticsService {
         // Totals
         this.prisma.user.count(),
         this.prisma.subscription.count({ where: { status: 'active' } }),
-        this.prisma.presentation.count(),
+        this.prisma.doc.count(),
         this.prisma.media.count(),
         this.prisma.aiUsage.aggregate({ _sum: { inputTokens: true } }),
         this.prisma.aiUsage.aggregate({ _sum: { outputTokens: true } }),
@@ -357,8 +361,8 @@ export class AdminAnalyticsService {
           take: 10
         }),
 
-        // Presentation Type
-        this.prisma.presentation.groupBy({
+        // Doc Type
+        this.prisma.doc.groupBy({
           by: ['isPublic', 'isTemplate'],
           _count: { _all: true },
         }),
@@ -440,7 +444,7 @@ export class AdminAnalyticsService {
         summary: {
           totalUsers,
           activeSubscriptions: activeSubscriptionsCount,
-          totalPresentations,
+          totalDocs: totalDocs,
           totalMedia,
           totalTokens: (totalTokensInput._sum.inputTokens || 0) + (totalTokensOutput._sum.outputTokens || 0),
           totalCost: totalCost._sum.cost || 0,
@@ -475,7 +479,7 @@ export class AdminAnalyticsService {
             country: g.country,
             count: g._count._all
           })),
-          presentationTypes: typeDistribution.map(t => ({
+          docTypes: typeDistribution.map(t => ({
             isPublic: t.isPublic,
             isTemplate: t.isTemplate,
             count: t._count._all

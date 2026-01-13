@@ -32,11 +32,10 @@ model User {
 
   UserTokens            UserTokens[]
   UserVerificationCodes UserVerificationCodes[]
-  Presentations         Presentation[]
+  Docs                  Doc[]
   Media                 Media[]
   Themes                Theme[]
   Layouts               Layout[]
-  Outlines              Outline[]
   Subscription          Subscription?
   CreditBalance         CreditBalance?
   CreditTransactions    CreditTransaction[]
@@ -123,12 +122,12 @@ model UserVerificationCodes {
   @@index([userId])
 }
 
-model Presentation {
+model Doc {
   id     String @id @default(cuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  title       String  @default("Untitled Presentation")
+  title       String  @default("Untitled Doc")
   description String?
   thumbnail   String? @db.VarChar(500)
 
@@ -147,16 +146,21 @@ model Presentation {
 
   shareEnabled Boolean  @default(false)
 
+  // Outline fields (merged from Outline model)
+  prompt         String? @db.Text
+  numberOfCards  Int?
+  outlineStatus  String? @default("none") @db.VarChar(50) // none, generating, completed, failed
+
   deletedAt DateTime?
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   lastViewedAt DateTime?
 
-  slides    Slide[]
-  versions  PresentationVersion[]
-  analytics PresentationAnalytics?
-  views     PresentationView[]
+  cards    Card[]
+  versions  DocVersion[]
+  analytics DocAnalytics?
+  views     DocView[]
 
   @@index([userId])
   @@index([ownerId])
@@ -167,13 +171,13 @@ model Presentation {
   @@index([updatedAt])
   @@index([parentId])
   @@index([forkedFrom])
-  @@map("presentations")
+  @@map("docs")
 }
 
-model PresentationVersion {
+model DocVersion {
   id             String       @id @default(cuid())
-  presentationId String
-  presentation   Presentation @relation(fields: [presentationId], references: [id], onDelete: Cascade)
+  docId          String
+  doc            Doc          @relation(fields: [docId], references: [id], onDelete: Cascade)
 
   title       String
   globalTheme Json
@@ -183,35 +187,36 @@ model PresentationVersion {
   createdAt DateTime @default(now())
   createdBy String?
 
-  @@index([presentationId])
+  @@index([docId])
   @@index([createdAt])
-  @@map("presentation_versions")
+  @@map("doc_versions")
 }
 
-model Slide {
+model Card {
   id             String       @id @default(cuid())
-  presentationId String
-  presentation   Presentation @relation(fields: [presentationId], references: [id], onDelete: Cascade)
+  docId          String
+  doc            Doc          @relation(fields: [docId], references: [id], onDelete: Cascade)
 
-  data  Json @default("{}")
-  order Int
+  data    Json @default("{}")
+  order   Int
+  outline Json? // Individual outline data for this card (content, layoutId, etc.)
 
   deletedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([presentationId])
-  @@index([presentationId, order])
+  @@index([docId])
+  @@index([docId, order])
   @@index([deletedAt])
   @@index([createdAt])
-  @@map("slides")
+  @@map("cards")
 }
 
-model PresentationAnalytics {
+model DocAnalytics {
   id             String       @id @default(cuid())
-  presentationId String
-  presentation   Presentation @relation(fields: [presentationId], references: [id], onDelete: Cascade)
+  docId          String
+  doc            Doc          @relation(fields: [docId], references: [id], onDelete: Cascade)
 
   viewCount    Int       @default(0)
   uniqueViews  Int       @default(0)
@@ -226,16 +231,16 @@ model PresentationAnalytics {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([presentationId])
+  @@unique([docId])
   @@index([viewCount])
   @@index([lastViewedAt])
-  @@map("presentation_analytics")
+  @@map("doc_analytics")
 }
 
-model PresentationView {
+model DocView {
   id             String       @id @default(cuid())
-  presentationId String
-  presentation   Presentation @relation(fields: [presentationId], references: [id], onDelete: Cascade)
+  docId          String
+  doc            Doc          @relation(fields: [docId], references: [id], onDelete: Cascade)
 
   userId    String?
   sessionId String
@@ -243,16 +248,16 @@ model PresentationView {
   userAgent String? @db.VarChar(500)
 
   duration     Int?
-  slidesViewed Int[]
+  cardsViewed  Int[]
   completed    Boolean @default(false)
 
   viewedAt DateTime @default(now())
 
-  @@index([presentationId])
+  @@index([docId])
   @@index([userId])
   @@index([viewedAt])
   @@index([sessionId])
-  @@map("presentation_views")
+  @@map("doc_views")
 }
 
 model Media {
@@ -350,28 +355,6 @@ model Layout {
   @@map("layouts")
 }
 
-model Outline {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  prompt         String @db.Text
-  numberOfSlides Int
-
-  title    String?
-  outlines Json? // Array of { content: string, layoutId?: string }
-  status   String  @default("generating") // generating, completed, failed
-
-  presentationId String? // Link to presentation if created from this outline
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("outlines")
-}
 
 model Subscription {
   id     String @id @default(cuid())
@@ -438,7 +421,7 @@ model CreditTransaction {
   description String? @db.VarChar(500)
 
   // Related entities
-  presentationId String?
+  docId          String?
   subscriptionId String?
 
   // Balance after transaction
@@ -469,9 +452,8 @@ model AiUsage {
   errorMessage String? @db.Text
 
   // Context
-  type           String // outline, slides, image
-  presentationId String?
-  outlineId      String?
+  type           String // doc, cards, image
+  docId          String?
 
   createdAt DateTime @default(now())
 
@@ -516,7 +498,7 @@ model SystemActivity {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  action      String // login, registration, presentation_create, presentation_export, etc.
+  action      String // login, registration, doc_create, doc_export, etc.
   description String? @db.Text
   ipAddress   String? @db.VarChar(45)
   userAgent   String? @db.VarChar(500)

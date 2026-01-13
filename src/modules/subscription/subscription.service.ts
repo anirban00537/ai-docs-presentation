@@ -1200,14 +1200,14 @@ export class SubscriptionService {
     user: User,
     amount: number,
     description?: string,
-    presentationId?: string,
+    docId?: string,
   ): Promise<ResponseModel> {
     try {
       await this.creditService.useCredits(
         user.id,
         amount,
         description,
-        presentationId,
+        docId,
       );
 
       return this.getCreditBalance(user);

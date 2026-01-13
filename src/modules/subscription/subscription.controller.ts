@@ -71,7 +71,7 @@ export class SubscriptionController {
       user,
       dto.amount,
       dto.description,
-      dto.presentationId,
+      dto.docId,
     );
   }
 

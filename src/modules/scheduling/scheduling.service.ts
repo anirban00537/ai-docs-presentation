@@ -96,7 +96,7 @@ export class SchedulingService {
       // You can add more maintenance tasks here:
       // - Clean up old credit transactions
       // - Remove expired sessions
-      // - Archive old presentations
+      // - Archive old docs
       // etc.
 
       this.logger.log('[CRON] Daily maintenance completed');

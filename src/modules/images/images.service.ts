@@ -115,7 +115,7 @@ export class ImagesService {
 
   /**
    * Simple Unsplash search that returns just the optimized URL of the first result
-   * Used for AI-powered image discovery during slide generation
+   * Used for AI-powered image discovery during card generation
    */
   async searchUnsplashSimple(
     query: string,
@@ -140,7 +140,7 @@ export class ImagesService {
       }
 
       const photo = result.response.results[0];
-      // Return optimized URL with good quality for presentations
+      // Return optimized URL with good quality for docs
       return `${photo.urls.raw}?auto=format&fit=crop&w=1200&q=80`;
     } catch (error) {
       console.error(`Unsplash search error for "${query}":`, error);

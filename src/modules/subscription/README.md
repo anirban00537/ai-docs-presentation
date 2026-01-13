@@ -77,12 +77,12 @@ private getMonthlyCreditLimit(productId?: string): number {
 }
 ```
 
-### 5. Configure Credits Per Slide
+### 5. Configure Credits Per Card
 
-Update the `creditsPerSlide` value in `presentation.controller.ts` based on your pricing:
+Update the `creditsPerCard` value in `doc.controller.ts` based on your pricing:
 
 ```typescript
-const creditsPerSlide = 1; // Adjust based on your pricing model
+const creditsPerCard = 1; // Adjust based on your pricing model
 ```
 
 ## API Endpoints
@@ -116,8 +116,8 @@ Returns current credit balance.
 POST /api/subscription/credits/use
 Body: {
   "amount": 1,
-  "description": "Generated slides",
-  "presentationId": "optional-id"
+  "description": "Generated cards",
+  "docId": "optional-id"
 }
 ```
 
@@ -181,21 +181,21 @@ Credits are deducted in this order:
 ### Automatic Credit Deduction
 
 Credits are automatically deducted when:
-- Generating slides from outline (1 credit per slide)
-- Using AI features in presentations
+- Generating cards from outline (1 credit per card)
+- Using AI features in docs
 
-## Integration with Presentation Service
+## Integration with Doc Service
 
-The subscription module is integrated with the presentation service to:
-- Check credit balance before generating slides
-- Deduct credits after successful slide generation
-- Prevent slide generation if insufficient credits
+The subscription module is integrated with the doc service to:
+- Check credit balance before generating cards
+- Deduct credits after successful card generation
+- Prevent card generation if insufficient credits
 
 ## Testing
 
 1. Create a test customer in Polar.sh
 2. Create a subscription for the customer
-3. Test credit deduction by generating slides
+3. Test credit deduction by generating cards
 4. Verify webhook events are received and processed
 
 ## Notes

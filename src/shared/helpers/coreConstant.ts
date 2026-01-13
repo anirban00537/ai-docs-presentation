@@ -63,7 +63,7 @@ export const coreConstant = {
       // NAME: 'minimax/minimax-m2.1',
       // PRICING: { prompt: 0.28, completion: 1.20},
     },
-    SLIDES: {
+    CARDS: {
       // NAME: 'x-ai/grok-4.1-fast',
       // PRICING: { prompt: 0.2, completion: 0.5 },
       // NAME: 'qwen/qwen3-30b-a3b-instruct-2507',

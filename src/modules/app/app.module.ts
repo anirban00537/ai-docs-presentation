@@ -14,7 +14,7 @@ import { ApiSecretCheckMiddleware } from 'src/shared/middlewares/apisecret.middl
 import { coreConstant } from 'src/shared/helpers/coreConstant';
 import { LoggerModule } from '../logger/logger.module';
 import { SchedulingModule } from '../scheduling/scheduling.module';
-import { PresentationModule } from '../presentation/presentation.module';
+import { DocsModule } from '../docs/docs.module';
 import { ImagesModule } from '../images/images.module';
 import { ThemesModule } from '../themes/themes.module';
 import { LayoutsModule } from '../layouts/layouts.module';
@@ -36,7 +36,7 @@ import { API_PREFIX } from 'src/shared/constants/global.constants';
     MailModule,
     LoggerModule,
     SchedulingModule,
-    PresentationModule,
+    DocsModule,
     ImagesModule,
     ThemesModule,
     LayoutsModule,
