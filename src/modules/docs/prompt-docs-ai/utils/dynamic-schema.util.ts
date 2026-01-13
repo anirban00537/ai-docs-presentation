@@ -98,14 +98,15 @@ export class DynamicSchemaUtil {
       schema.properties!.accent = {
         type: 'object',
         properties: {
-          url: { type: 'string' },
+          imageUrl: { type: 'string' },
+          imageQuery: { type: 'string' },
           position: {
             type: 'string',
             enum: ['left', 'right', 'top', 'bottom', 'background'],
           },
           size: { type: 'number' },
         },
-        required: ['url', 'position', 'size'],
+        required: ['imageUrl', 'imageQuery', 'position', 'size'],
         additionalProperties: false,
       };
       schema.required!.push('accent');
@@ -346,8 +347,20 @@ export class DynamicSchemaUtil {
         properties[key] = { type: 'string', const: value };
       }
 
+      // Special handling for imageUrl: if it exists, force imageQuery to be required
+      if (key === 'imageUrl') {
+        if (!properties['imageQuery']) {
+          properties['imageQuery'] = { type: 'string' };
+        }
+        if (!required.includes('imageQuery')) {
+          required.push('imageQuery');
+        }
+      }
+
       // Add to required list
-      required.push(key);
+      if (!required.includes(key)) {
+        required.push(key);
+      }
     }
 
     return {

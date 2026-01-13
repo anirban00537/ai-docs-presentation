@@ -266,7 +266,7 @@ model Media {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   name     String @db.VarChar(255)
-  url      String @db.VarChar(1000)
+  imageUrl String @db.VarChar(1000) @map("url")
   mimeType String @db.VarChar(100)
   size     Int // Size in bytes
   width    Int?

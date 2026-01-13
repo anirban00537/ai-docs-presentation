@@ -7,44 +7,43 @@ import { ImageFieldInfo } from '../interfaces/image-analysis.interface';
 @Injectable()
 export class PromptBuilderService {
   /**
-   * Build the image injection section for the card generation prompt
+   * Build instructions for the AI to generate image queries instead of using fixed URLs
    */
-  buildImageInjectionPrompt(
-    imageMap: Map<string, string>,
-    imageFields: ImageFieldInfo[],
-  ): string {
-    if (imageMap.size === 0) {
-      return '';
-    }
-
-    const imageInstructions = Array.from(imageMap.entries())
-      .map(([fieldPath, url]) => {
-        const field = imageFields.find((f) => f.fieldPath === fieldPath);
-        return `- Set "${fieldPath}" to: "${url}" (${field?.fieldType || 'image'})`;
-      })
-      .join('\n');
-
+  buildImageQueryInstructions(): string {
     return `
-⚠️ IMAGE INJECTION INSTRUCTIONS (CRITICAL) ⚠️
+⚠️ IMAGE FIELD INSTRUCTIONS (CRITICAL) ⚠️
 
-The following image URLs have been pre-fetched from Unsplash. You MUST include these exact URLs in the corresponding fields:
+For ANY field that should contain an image (accent, image block, card items, avatars, etc.), you MUST output these properties:
+- "imageUrl": "" (ALWAYS output an empty string)
+- "imageQuery": "a descriptive, contextual search query for Unsplash"
 
-${imageInstructions}
+IMAGE QUERY GUIDELINES:
+1. Make queries specific to the card content and context.
+2. Use 3-5 words describing the ideal image.
+3. For accent/background images: Use atmospheric or abstract terms related to the topic.
+4. For person/avatar fields: Use "professional headshot portrait person".
+5. Examples: "modern office teamwork collaboration", "data analytics dashboard charts", "renewable energy solar panels sunset".
 
 HOW TO APPLY:
-1. For "accent.url" - Add a top-level "accent" object to your JSON response with these properties:
+1. For "accent" - Add a top-level "accent" object to your JSON response:
    {
      "accent": {
-       "url": "the-provided-url",
+       "imageUrl": "",
+       "imageQuery": "abstract gradient technology background",
        "position": "right",
        "size": 40
      },
      "rows": [...]
    }
-2. For "rows[X].blocks[Y].content.url" - Set the block's content url to the provided URL within the rows array
-3. For avatar/profile fields - Set the avatar or profileImage field to the provided URL within the appropriate block
-
-DO NOT change these URLs. Copy them exactly as provided above into the appropriate fields in your JSON output.
+2. For "image" blocks - Set the block's content:
+   {
+     "type": "image",
+     "content": {
+       "imageUrl": "",
+       "imageQuery": "solar panels in field during golden hour"
+     }
+   }
+3. For "image-card-block" - Set the imageUrl and imageQuery for each item in the "items" array.
 `;
   }
 
@@ -104,7 +103,7 @@ If an "accent" image was provided in the injection instructions, include it at t
 
 Example structure:
 {
-  "accent": { "url": "...", "position": "left", "size": 35 },
+  "accent": { "imageUrl": "", "imageQuery": "...", "position": "left", "size": 35 },
   "rows": [ ...identical structure to template... ]
 }
 
@@ -137,7 +136,7 @@ FINAL CHECKLIST:
 3. Are all block IDs and types preserved?
 4. Is ALL placeholder/demo text replaced with meaningful content?
 5. Did you verify NO text fields are empty?
-6. Did you use the specific URLs provided for images?
+6. Did you provide descriptive "imageQuery" strings and empty "imageUrl" strings?
 
 Generate only the JSON. No prefix/suffix text.`;
   }

@@ -352,7 +352,7 @@ export class ImagesService {
         data: {
           userId,
           name: uploadDto.name || file.originalname,
-          url: fileUrl,
+          imageUrl: fileUrl,
           mimeType: file.mimetype,
           size: file.size,
           width,
@@ -513,7 +513,7 @@ export class ImagesService {
 
       // Delete file from B2
       try {
-        await deleteFileFromS3(existingMedia.url);
+        await deleteFileFromS3(existingMedia.imageUrl);
       } catch (error) {
         console.error('Error deleting file from B2:', error);
         // Continue with database deletion even if B2 deletion fails

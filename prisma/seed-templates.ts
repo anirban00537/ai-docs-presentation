@@ -4,7 +4,7 @@
  * 
  * To regenerate: cd butterfast-template-script && npx tsx generate-all-schemas.ts
  * 
- * Generated: 2026-01-12T10:01:34.742Z
+ * Generated: 2026-01-13T15:11:35.716Z
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -25,10 +25,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "mN9-xZFoGTwjCQYENHZr7",
+            "id": "s7bQlobWzcRQDJexgLD0S",
             "blocks": [
               {
-                "id": "CmEfqTN50gNLBz-nLdP7y",
+                "id": "TqmNo95ci824F2Z6YOR5d",
                 "type": "spacer",
                 "content": {
                   "type": "spacer",
@@ -41,10 +41,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "hSHkA9IghWl4cReaTGTBw",
+            "id": "XJ9hHqNmgQemjdqVYlC6O",
             "blocks": [
               {
-                "id": "u8Rlu-yksBq72qmgSP5GS",
+                "id": "jsM2fN-1Ev-LZSlvh1lq6",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -58,7 +58,7 @@ const layoutTemplates = [
                       "content": [
                         {
                           "type": "text",
-                          "text": "Presentation Title"
+                          "text": "Doc Title"
                         }
                       ]
                     },
@@ -83,10 +83,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "OrkTWl0sQ206HtNeOQr_Q",
+            "id": "4rMMc4-nAQqIMjDtiqB_2",
             "blocks": [
               {
-                "id": "l-UcvzZQ3TUlv9to1c8bz",
+                "id": "F9QzBr62V-he9MVfx6XtZ",
                 "type": "spacer",
                 "content": {
                   "type": "spacer",
@@ -114,10 +114,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "hC6tZ0geFxRoBpkQZxOEV",
+            "id": "HbSWRV6hNmytz77SoNhq1",
             "blocks": [
               {
-                "id": "af-SxxuHBabmKAAleMYTe",
+                "id": "P4ZMvLEflD7ilI8bf8kNd",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -143,10 +143,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "L3Va4jZVbJLhc-uUvokvD",
+            "id": "CYj7OBDWhdO8CbfZLyiv5",
             "blocks": [
               {
-                "id": "8RHrsP33ceFky70mlZHok",
+                "id": "pEv05_5Y74lT4qAoyMPae",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -169,10 +169,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "nOY7GoCecJqh_LZaJhPRl",
+            "id": "vx-Ga4WHeUNBeTO_0PdGK",
             "blocks": [
               {
-                "id": "o1QzboTOFbwyxrWmLVJFe",
+                "id": "74SKtbskPazdkYmy3c6CZ",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -196,7 +196,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1974&auto=format&fit=crop",
           "position": "left",
           "size": 28
         }
@@ -215,10 +215,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Btgcbuxlf1vkeqPCHlG_8",
+            "id": "pzpwAXOPkE6rMfR1EA8Ij",
             "blocks": [
               {
-                "id": "C7xCz2poxv0HA4aUEz1J4",
+                "id": "ybVQQUbT2Rm8EYLbajXsT",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -244,10 +244,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "YPKIi3zaWvKhhyKiWKmPg",
+            "id": "VXFjqBStDos_qC22wjSFy",
             "blocks": [
               {
-                "id": "FU2xKvkVTDp6V8sKKGgfG",
+                "id": "x16s3ZZiUjWrtwaKynivh",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -270,10 +270,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "oaaRLjb_gkEQru3WHEQ33",
+            "id": "sWAQHkTnt7zf0G1KfDxnw",
             "blocks": [
               {
-                "id": "ARkO6YMDku5wW5yayKmDx",
+                "id": "9b8KLdJ_Sgr-BZ7WiFxCe",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -297,7 +297,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop",
           "position": "right",
           "size": 28
         }
@@ -316,10 +316,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "8D_MSU5qUL3Qgob12isak",
+            "id": "xlJ_Se3XupM6zfwNS-Hua",
             "blocks": [
               {
-                "id": "G7E-FTwnzwK7WpzxDRg_d",
+                "id": "HfR_G_T04brxuHVaCEOvA",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -345,10 +345,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "mrMQYDdpTV_vuAgrdRCD_",
+            "id": "MJLG0kT6jUMYIDF0yaOBU",
             "blocks": [
               {
-                "id": "wNZCGOh6I3q0ZoTjZkbTS",
+                "id": "aaPruN_4-i4-EJUZY_miN",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -372,7 +372,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
           "position": "top",
           "size": 22
         }
@@ -391,10 +391,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "GBCl1_wXjfn_ZCpqPYMud",
+            "id": "tkSbnTtiulqQ2lpa8N6T6",
             "blocks": [
               {
-                "id": "75OpHNUMBx_M-UFeSyFA-",
+                "id": "Pcx-j1oXzzypCPjCepzk_",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -420,10 +420,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "d5EppSIdMnGIZD_yDU9mp",
+            "id": "_wvu9GEkRVMhET0qFg82f",
             "blocks": [
               {
-                "id": "RaVS5Wj8hSsqmGTISmq_m",
+                "id": "ai-CSMYLyMEYzEz1FGsUe",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -447,7 +447,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
           "position": "bottom",
           "size": 26
         }
@@ -466,10 +466,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "wOxfjVdG1jlHV4q6CjVWs",
+            "id": "yMxO4hEHa7PCJdkzkWjMs",
             "blocks": [
               {
-                "id": "mw1sqkZMF_v1oLf-Afgq9",
+                "id": "0N8H65bzTO38buXX75MC2",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -495,10 +495,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "H_hIAnnx7ODC9D_-SfVnf",
+            "id": "Kqv6rJL-TPjabLd_U2vEO",
             "blocks": [
               {
-                "id": "SGs2CWuZEe6S-kyHVs55o",
+                "id": "wA9kqyM1jb5fc-F99WnYp",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -522,7 +522,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618005891825-37449c57c799?q=80&w=1932&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618005891825-37449c57c799?q=80&w=1932&auto=format&fit=crop",
           "position": "background",
           "size": 12
         }
@@ -541,10 +541,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "DPI-aeQhSzn5Ux7FuJ9Hr",
+            "id": "MwgBFpSL3V2YzX_mIDO0M",
             "blocks": [
               {
-                "id": "nkpg77K3IzQ9EZLmXoGRf",
+                "id": "8A0TxqXvJgc2gVD-6vO_H",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -571,10 +571,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "udGP6fJGhnuQupnjYHTuL",
+            "id": "o6diIQsxgB8FpsKni77WW",
             "blocks": [
               {
-                "id": "Hfsg61YAshTNqM50wZpPC",
+                "id": "O93Wpwol9C_gjQsi9B-jR",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -597,16 +597,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "OOpGJfdjcHHWDhUzTPaNP",
+            "id": "WAh2tFA3eD1tBDo60yZ_g",
             "blocks": [
               {
-                "id": "Mpw2YqMXU2MzVC8LsjaMS",
+                "id": "107pPh_vjHW2j37FrWAHM",
                 "type": "image",
                 "content": {
                   "type": "image",
-                  "url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
+                  "imageUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
                   "alt": "Mockup",
-                  "caption": "A visual representation of the concept.",
+                  "caption": "A visual redoc of the concept.",
                   "objectFit": "cover"
                 }
               }
@@ -617,7 +617,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
           "position": "right",
           "size": 35
         }
@@ -636,10 +636,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "ge3OtR-nvekgyAaDC78kM",
+            "id": "mhP1tMWeIfpJEgy6sdX1V",
             "blocks": [
               {
-                "id": "ZLWCqb2cjkh4a6vOGhqUG",
+                "id": "iBVCZ007HNpilz2naTdP-",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -666,10 +666,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "9KguJtsWoxD9iO1VvjfLB",
+            "id": "I-RbfRHAlnaLc5Tq15mlq",
             "blocks": [
               {
-                "id": "N8fZ_rIAw6Vr-6-VS09Ie",
+                "id": "QPy1jx-jWWFET2eZZlq_X",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -705,7 +705,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618004652321-13a63e576b80?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618004652321-13a63e576b80?q=80&w=1974&auto=format&fit=crop",
           "position": "left",
           "size": 25
         }
@@ -724,10 +724,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "k2ekfrr5DIHkXoJs0LDuS",
+            "id": "0A-nFiMFZHEzOfQTJCV6i",
             "blocks": [
               {
-                "id": "NoSLU5cwfIC8O4E-GRaaO",
+                "id": "sVJik-UmNsoW3nFZQ4ozE",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -753,10 +753,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "qR5EN02YGE9nz7uQBSAmi",
+            "id": "ahxtA6SSYgyS7xryrsfgz",
             "blocks": [
               {
-                "id": "sQJHtuQthqxCzLWd-lWTS",
+                "id": "lUcAyMX_xh_welIqrBsGj",
                 "type": "callout-block",
                 "content": {
                   "type": "callout-block",
@@ -783,10 +783,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "LqodC6amTJuPrm3ewGaBt",
+            "id": "KB5wHhORvJXpjHt2IQvxU",
             "blocks": [
               {
-                "id": "yM2D5OJJ471L5n8OXujXI",
+                "id": "0dQJBPJlJBpPXfo-HrcRX",
                 "type": "button-block",
                 "content": {
                   "type": "button-block",
@@ -804,7 +804,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618004912976-3c0c1d87a641?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618004912976-3c0c1d87a641?q=80&w=1974&auto=format&fit=crop",
           "position": "bottom",
           "size": 20
         }
@@ -823,10 +823,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "eR0xNVkaQ-UcQkDoCjjqf",
+            "id": "P4mzYp2sxbCRc4-TS7cI9",
             "blocks": [
               {
-                "id": "sDbSRVr3zjqqwO0YiflQZ",
+                "id": "vrGhkzzJE1eyDlzH3FHH3",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -865,16 +865,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "B9_2eYTYsbtkACOF1hKgR",
+            "id": "likVWg_EVyoYyCSP-7Vqn",
             "blocks": [
               {
-                "id": "E9rXcYIYNHanR8OOKJFpS",
+                "id": "RpL8meMPqQkUU4JH1Gj60",
                 "type": "stacked-timeline-block",
                 "content": {
                   "type": "stacked-timeline-block",
                   "items": [
                     {
-                      "id": "uqYkg_rUYNzsxkIu1S-Rc",
+                      "id": "XDyhzh7JvRkCz_Qaotd7d",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -908,7 +908,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "qAKe3BfPffGKVZTmnMaQe",
+                      "id": "YiDRmiVGtX95SY6nc88e0",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -942,7 +942,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "J9yYoH6ilaXZG5jcojrl8",
+                      "id": "SVODcsPcYBd6mG8cd2wTl",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -985,7 +985,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=1974&auto=format&fit=crop",
           "position": "left",
           "size": 28
         }
@@ -1004,10 +1004,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Fcatk1jADkJ502UINTmKV",
+            "id": "AG57_B08Gwr-Q7HWm5eR2",
             "blocks": [
               {
-                "id": "aP_XECHsPb7KI1trXVXai",
+                "id": "WBahRJM5M7wah8O7xtQ8e",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1046,16 +1046,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "XZDwxsO9IrrmrmvwiBuzA",
+            "id": "8N945yN-20UhHuDARHvqK",
             "blocks": [
               {
-                "id": "hQ_Os3dRLi7iVeOyHhCS5",
+                "id": "8IqtvheOx6QcFdcq_aqAm",
                 "type": "simple-number-card",
                 "content": {
                   "type": "simple-number-card",
                   "items": [
                     {
-                      "id": "uoI96dIWOU8nnrVm5QpUk",
+                      "id": "t2nyQFOtO7CqXgbPRzrPl",
                       "number": 1,
                       "title": {
                         "type": "doc",
@@ -1090,7 +1090,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "6ZI7W_hNy1lVYLzPDxHF3",
+                      "id": "h-tFOiEuh3VzDT337EjoL",
                       "number": 2,
                       "title": {
                         "type": "doc",
@@ -1125,7 +1125,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "kc-8kv8uesEbnsyqfX5VI",
+                      "id": "XlSSWKFRz1f1zXpTM3Dq6",
                       "number": 3,
                       "title": {
                         "type": "doc",
@@ -1169,7 +1169,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
           "position": "bottom",
           "size": 25
         }
@@ -1188,10 +1188,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "G8hoxbRMTBgvRZuH0xH0O",
+            "id": "T-CBr-lTaUYIkarcit_20",
             "blocks": [
               {
-                "id": "KcmrSk-u3mcG63gr4Kuz8",
+                "id": "GY2BYd4Wre2tmLy__Mvtz",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1230,16 +1230,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "4l5dSFhpoGVtnPKRKPrzE",
+            "id": "3XlVJKL9C_U-tGIu0xWX4",
             "blocks": [
               {
-                "id": "enySQoRBPrcPLMQxzDJVH",
+                "id": "GFir_gn8n9Dn3BHnpi6Te",
                 "type": "solid-icon-box-block",
                 "content": {
                   "type": "solid-icon-box-block",
                   "items": [
                     {
-                      "id": "WKZmj5W88IvBEshLTVxzM",
+                      "id": "rEcx4shUJQ6PGjsF5JgtM",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1274,7 +1274,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "NdHN3f3WbQeq6JPr2XWEu",
+                      "id": "3Q6i1xfjkwKS4Ab6_NWp7",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1309,7 +1309,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "bacSVKpc9ykThG_LyTPQ-",
+                      "id": "XkbUZkZmJgvHg2zuxO99c",
                       "icon": "star",
                       "title": {
                         "type": "doc",
@@ -1353,7 +1353,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop",
           "position": "right",
           "size": 35
         }
@@ -1372,10 +1372,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "K-vmjkYCQ-a9f1hBJWEzc",
+            "id": "HkXKYhJKGb-f6tSNw99NK",
             "blocks": [
               {
-                "id": "7VYKZ88xBGoD8p1UHPZ46",
+                "id": "ADhmLyGm-p_m9Dm7FqT3L",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1414,16 +1414,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "-b6J3zeCtwoey54g_QvFk",
+            "id": "XkstZWD__waw9u_3wcJbR",
             "blocks": [
               {
-                "id": "ubyShA0pP-mV59PGATBE3",
+                "id": "I_NjAjeExNQ-G2yMCPjq5",
                 "type": "image-card-block",
                 "content": {
                   "type": "image-card-block",
                   "items": [
                     {
-                      "id": "cV9FPD3L_dF-5TjH0dE5G",
+                      "id": "2HsAmWyuTO8EWR4egmyTw",
                       "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
                       "imageAlt": "",
                       "title": {
@@ -1460,7 +1460,7 @@ const layoutTemplates = [
                       "objectFit": "cover"
                     },
                     {
-                      "id": "gmUnzpd5uw9nbeJKValEq",
+                      "id": "8-iLq77VvgnkIddAwfeR3",
                       "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
                       "imageAlt": "",
                       "title": {
@@ -1497,7 +1497,7 @@ const layoutTemplates = [
                       "objectFit": "cover"
                     },
                     {
-                      "id": "QT1Ds1pbGsHqCjyA2Xv2E",
+                      "id": "5UeoJqptUwBh5S5iEbzaA",
                       "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
                       "imageAlt": "",
                       "title": {
@@ -1543,7 +1543,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
           "position": "background",
           "size": 15
         }
@@ -1562,10 +1562,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "I9NvDm8IacDgg7A1tCTdL",
+            "id": "XXwNW2KUQ_eMovEM-Pf45",
             "blocks": [
               {
-                "id": "bIRP2diUO0hYqrtd98XYT",
+                "id": "0yJEReQBS1OiYq2GbxtAo",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1592,16 +1592,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "kGlg69CLQ05p1jq29wgFm",
+            "id": "2l69w9thm-DvYd-qRJorJ",
             "blocks": [
               {
-                "id": "dsXr8AmxQ2bDvPx4nx7SP",
+                "id": "qSVW4wpcyFpsvg9cIOe8M",
                 "type": "layered-number-block",
                 "content": {
                   "type": "layered-number-block",
                   "items": [
                     {
-                      "id": "y3gujkD5-l6mCvuFXxitA",
+                      "id": "GI7M5_W4rwRe6eNwwVxPf",
                       "number": 1,
                       "title": {
                         "type": "doc",
@@ -1636,7 +1636,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "e-aNv7CB9h9CsEMag0FaS",
+                      "id": "Zx3dXUBTWBpfqOhOYrnDn",
                       "number": 2,
                       "title": {
                         "type": "doc",
@@ -1680,7 +1680,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop",
           "position": "right",
           "size": 40
         }
@@ -1699,10 +1699,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "9vwRCNfGG725kR6YaFnf6",
+            "id": "JaueOCxassw-7C2gnvuOK",
             "blocks": [
               {
-                "id": "86J7AmN4R8gsbQbwx23O9",
+                "id": "EnCB7rwKrtErTEpr3P5MN",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1729,16 +1729,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "m-4umWGx5227UeBb1Ws4r",
+            "id": "4molKl1KMbD59qPfSdHYm",
             "blocks": [
               {
-                "id": "cizKfp8wtaXeWxhtjp-CR",
+                "id": "VgjZpdnEX3uZfBBwVZ1o9",
                 "type": "sideline-card-block",
                 "content": {
                   "type": "sideline-card-block",
                   "items": [
                     {
-                      "id": "NI8-_oaeVGeGMLUAxDf2T",
+                      "id": "fLo69sFjyZqQ2PTzhYgEl",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1772,7 +1772,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "xiOpA2T_EcHe0VzGSmKou",
+                      "id": "CkYgtU5gfH9c2praA4xRX",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1806,7 +1806,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "EKwvGEoAwH2cbRlK0FVYj",
+                      "id": "jA0kJsp5gtx1bEOUq1Vsv",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1849,7 +1849,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618005198914-c3b6f1f11ac6?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618005198914-c3b6f1f11ac6?q=80&w=1974&auto=format&fit=crop",
           "position": "left",
           "size": 28
         }
@@ -1868,10 +1868,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "Ko2eIw5Rl34xW7GDdEFpd",
+            "id": "RXBpxOENFl5BUl3gI0q9L",
             "blocks": [
               {
-                "id": "5hknqL3bFSnVt7KHdcovY",
+                "id": "lToXUG2LmsNAc7Dze_8MX",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -1898,16 +1898,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "H5Gl9Acu_-ea6vuvbIiTP",
+            "id": "qsg93T0pCsqXyjB_zhhdv",
             "blocks": [
               {
-                "id": "l3VtJ5qhG11Uo2Gl_ubhj",
+                "id": "ZPqgT2Cg_Y_K-cFQA8UlZ",
                 "type": "leaf-block",
                 "content": {
                   "type": "leaf-block",
                   "items": [
                     {
-                      "id": "I2KVPxqX28VclK6ewqd5y",
+                      "id": "PMyhpeILtLzzzZkj-NW6M",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1941,7 +1941,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "YRg2N7TTyGigHldrUEhnm",
+                      "id": "PZzxBV6ncsp3po2JBhOR_",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -1975,7 +1975,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "9cM5ms4EaqdZDL0cgXCGu",
+                      "id": "DCAz7ZJ9PK6Q_oCGMv7VR",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2018,7 +2018,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?q=80&w=1964&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?q=80&w=1964&auto=format&fit=crop",
           "position": "right",
           "size": 25
         }
@@ -2037,10 +2037,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "bIac4fxXAqHiMDz0NKz1R",
+            "id": "bUrW2lQ4yW9eLaNU_pNKd",
             "blocks": [
               {
-                "id": "WwbGSuBHyvqEs0denH9g1",
+                "id": "2pWHjZ0bKX1QeowJ--yi6",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2067,16 +2067,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "jOZmwWj8bJ0frg-0Hf1_i",
+            "id": "B8KyN1_sMDX11vzHbhL2R",
             "blocks": [
               {
-                "id": "KobmdexDve2hJ7hQGKWSY",
+                "id": "gqRQRUnhd-_uGP0Qlw-L5",
                 "type": "solid-box-block",
                 "content": {
                   "type": "solid-box-block",
                   "items": [
                     {
-                      "id": "UtBh4LFnQ9eqs1lqZfb1C",
+                      "id": "xg6VGDxEfHCNOAyoN1qcW",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2110,7 +2110,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "6Hz5Wr_lM6jBB9KheeZ55",
+                      "id": "lX_IrAmZxdcv2lGO3RgqS",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2144,7 +2144,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "nvXsc8LwWFp9DJ8DGhHWF",
+                      "id": "yBsmjiBPZWbiaNVVmXEWl",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2187,7 +2187,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618005891825-37449c57c799?q=80&w=1932&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618005891825-37449c57c799?q=80&w=1932&auto=format&fit=crop",
           "position": "background",
           "size": 15
         }
@@ -2206,10 +2206,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "-w4ghnxkqU6aGM4kuklfi",
+            "id": "cHspDUL1J13CHJ7Kh5cVC",
             "blocks": [
               {
-                "id": "T99oZ7zwvJWsASvSx-h3E",
+                "id": "4XDgsBbDXoFyDf91RDn4W",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2236,16 +2236,16 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "0LxuYM6fJeth3hX3QIHqa",
+            "id": "pVbvD6Rf3k9FG3l_Z0dtP",
             "blocks": [
               {
-                "id": "D1zSdXOPYlAqesAz5Mzvp",
+                "id": "3U_-ZeCpY0WIE4zBAS_Ds",
                 "type": "timeline-bento-block",
                 "content": {
                   "type": "timeline-bento-block",
                   "items": [
                     {
-                      "id": "3MwhN5ZeAoPq1bHYGNsC_",
+                      "id": "ge9Crn6gFJo5Bl0Xx0KG9",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2279,7 +2279,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "JowUBuOnoXi0-3AgYNTBP",
+                      "id": "OfnY1UJUUqBXy9N-pMnUL",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2313,7 +2313,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "TMOGiWdNASsoL9_3TzQAS",
+                      "id": "qI_xLVVRSL-9LTlcK69OR",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2347,7 +2347,7 @@ const layoutTemplates = [
                       }
                     },
                     {
-                      "id": "7ZK2zFkLqWm3h6NugVvKp",
+                      "id": "YfNg8xySixrf7LfP1E8C8",
                       "title": {
                         "type": "doc",
                         "content": [
@@ -2390,7 +2390,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618556658017-c3b0c1d87a69?q=80&w=1964&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618556658017-c3b0c1d87a69?q=80&w=1964&auto=format&fit=crop",
           "position": "top",
           "size": 20
         }
@@ -2409,10 +2409,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "1nFk7mq81AzaHyeFMab_t",
+            "id": "qGu_ClwB9QckqHUGPdPDd",
             "blocks": [
               {
-                "id": "ey4r1j9aPNqTOQF5P4ng6",
+                "id": "FCkjUsSxHDm1KcBEVjPzB",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2439,10 +2439,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "fLtZBK8G3gRpZwWEUcsU8",
+            "id": "BdIoqd5Q-g2bETEkPgcFk",
             "blocks": [
               {
-                "id": "G-Du9HF865v9k8gM90mCQ",
+                "id": "M0ccyEQfpTG7YFioTbqkH",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2468,10 +2468,10 @@ const layoutTemplates = [
             ]
           },
           {
-            "id": "Izo-pRJHLp399MyPeoRy7",
+            "id": "XHpswwlH3wmNQpCnys3Ok",
             "blocks": [
               {
-                "id": "XTUGr1B2NvJKfD74RrCtY",
+                "id": "eGjBm066KEJArrQWvkjg7",
                 "type": "prosemirror",
                 "content": {
                   "type": "doc",
@@ -2498,7 +2498,7 @@ const layoutTemplates = [
           }
         ],
         "accent": {
-          "url": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
+          "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1974&auto=format&fit=crop",
           "position": "background",
           "size": 15
         }
@@ -2517,10 +2517,10 @@ const layoutTemplates = [
         "icon": "IconLayout",
         "rows": [
           {
-            "id": "jY0yU7pfA-rUHUNOCO_5q",
+            "id": "GkGmZ6d39vEPMxDN8Jd8x",
             "blocks": [
               {
-                "id": "_Zz7UioRdycWuxXecznNZ",
+                "id": "3oNiR_pt1Hjp-e5w5TJkm",
                 "type": "prosemirror",
                 "content": ""
               }

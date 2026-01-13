@@ -34,6 +34,15 @@ export class ImagesController {
     return this.imagesService.searchUnsplashPhotos(searchDto);
   }
 
+  @Get('unsplash-simple')
+  async searchUnsplashSimple(
+    @Query('query') query: string,
+    @Query('orientation')
+    orientation: 'landscape' | 'portrait' | 'squarish' = 'landscape',
+  ) {
+    return this.imagesService.searchUnsplashSimple(query, orientation);
+  }
+
   @Get('unsplash-random')
   getRandomUnsplashPhotos(@Query() getRandomDto: GetRandomPhotosDto) {
     return this.imagesService.getRandomUnsplashPhotos(getRandomDto);

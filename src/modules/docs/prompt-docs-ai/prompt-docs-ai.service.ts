@@ -205,20 +205,10 @@ export class PromptDocsAIService implements OnModuleInit {
     });
 
     try {
-      // Step 1: Analyze layout and fetch images
-      yield JSON.stringify({
-        type: 'card-progress',
-        cardNumber,
-        stage: 'analyzing-layout',
-        message: 'Analyzing layout structure...',
-      });
+      // Step 1: Build image query instructions
+      const imageQueryInstructions = this.promptBuilderService.buildImageQueryInstructions();
 
-      const imageInjectionPrompt = await this.processImages(
-        layoutData,
-        outlineItem.content,
-        title,
-        cardNumber,
-      );
+      const hasAccent = !!layoutData?.accent;
 
       // Step 2: Generate card content (with streaming)
       yield JSON.stringify({
@@ -235,9 +225,10 @@ export class PromptDocsAIService implements OnModuleInit {
         title,
         outlineItem.content,
         templateRows,
-        imageInjectionPrompt,
+        imageQueryInstructions,
         user,
         docId,
+        hasAccent,
       )) {
         // Check if this is the final card data (an object, not a JSON string)
         if (typeof chunk === 'object' && chunk !== null) {
@@ -290,69 +281,6 @@ export class PromptDocsAIService implements OnModuleInit {
     }
   }
 
-  /**
-   * Process images for a card (analyze and fetch)
-   */
-  private async processImages(
-    layoutData: any,
-    outlineContent: string,
-    title: string,
-    cardNumber: number,
-  ): Promise<string> {
-    let imageInjectionPrompt = '';
-
-    if (layoutData) {
-      this.logger.log(
-        `🔍 [Card ${cardNumber}] Analyzing layout for image fields...`,
-      );
-
-      const imageAnalysis =
-        await this.imageAnalyzerService.analyzeLayoutForImages(
-          this.openRouter,
-          layoutData,
-          outlineContent,
-          title,
-        );
-
-      if (imageAnalysis.hasImages && imageAnalysis.imageFields.length > 0) {
-        this.logger.log(
-          `✨ [Card ${cardNumber}] AI detected ${imageAnalysis.imageFields.length} image fields.`,
-        );
-
-        this.logger.log(
-          `🌐 [Card ${cardNumber}] Fetching images from Unsplash...`,
-        );
-        const imageMap = await this.imageFetcherService.fetchImagesForFields(
-          imageAnalysis.imageFields,
-        );
-
-        if (imageMap.size > 0) {
-          imageInjectionPrompt =
-            this.promptBuilderService.buildImageInjectionPrompt(
-              imageMap,
-              imageAnalysis.imageFields,
-            );
-
-          this.logger.log(
-            `📸 [Card ${cardNumber}] Successfully mapped ${imageMap.size} images to layout.`,
-          );
-          imageMap.forEach((url, path) => {
-            this.logger.debug(`   ↳ ${path}: ${url}`);
-          });
-        } else {
-          this.logger.log(
-            `❓ [Card ${cardNumber}] No matching images found on Unsplash.`,
-          );
-        }
-      } else {
-        this.logger.log(
-          `ℹ️ [Card ${cardNumber}] No image fields found in this layout.`,
-        );
-      }
-    }
-
-    return imageInjectionPrompt;
-  }
 
   /**
    * Generate card content using AI (with streaming support)
@@ -363,9 +291,10 @@ export class PromptDocsAIService implements OnModuleInit {
     title: string,
     outlineContent: string,
     templateRows: any[],
-    imageInjectionPrompt: string,
+    imageQueryInstructions: string,
     user: User,
     docId: string,
+    hasAccent: boolean = false,
   ): AsyncGenerator<string, any, unknown> {
     // Build layout structure prompt
     const layoutStructureSection =
@@ -377,17 +306,14 @@ export class PromptDocsAIService implements OnModuleInit {
       title,
       outlineContent,
       layoutStructureSection,
-      imageInjectionPrompt,
+      imageQueryInstructions,
     );
 
     this.logger.log(
       `🤖 [Card ${cardNumber}] Calling LLM for content generation...`,
     );
 
-    // Check if accent image is being injected
-    const hasAccent = imageInjectionPrompt.includes('accent.url');
-
-    // Generate dynamic JSON schema from template at runtime (no hardcoded types!)
+    // Generate dynamic JSON schema from template at runtime (handles imageQuery!)
     const { DynamicSchemaUtil } = await import('./utils/dynamic-schema.util');
     const cardSchema = DynamicSchemaUtil.generateCardSchemaFromTemplate(templateRows, hasAccent);
     
@@ -472,25 +398,56 @@ export class PromptDocsAIService implements OnModuleInit {
         this.logger.error(
           `❌ [Card ${cardNumber}] JSON Parse Error: ${e.message}. Finish Reason: ${finishReason}`,
         );
-        this.logger.debug(`Failed Content (last 100 chars): ${accumulatedContent.slice(-100)}`);
+        this.logger.debug(`Failed Content (first 200 chars): ${accumulatedContent.slice(0, 200)}`);
+        this.logger.debug(`Failed Content (last 200 chars): ${accumulatedContent.slice(-200)}`);
         
-        // Naive repair for simple truncation if length was the reason
-        if (finishReason === 'length' || e.message.includes('Unterminated string')) {
-           // Attempt to close string and object
-           try {
-             // Very naive repair: close string if open, then close object
-             const repaired = accumulatedContent + '"}\n]}'; 
-             // Note: accurate repair requires a stack parser, but this might save a simple case
-           } catch (repairError) {}
+        // Attempt JSON repair for truncated responses
+        if (finishReason === 'length') {
+          this.logger.warn(`⚠️ [Card ${cardNumber}] Response truncated due to token limit. Attempting repair...`);
+          
+          try {
+            let repaired = accumulatedContent.trim();
+            
+            // Count open/close braces and brackets
+            const openBraces = (repaired.match(/{/g) || []).length;
+            const closeBraces = (repaired.match(/}/g) || []).length;
+            const openBrackets = (repaired.match(/\[/g) || []).length;
+            const closeBrackets = (repaired.match(/\]/g) || []).length;
+            
+            // Close any unterminated strings
+            const quoteCount = (repaired.match(/"/g) || []).length;
+            if (quoteCount % 2 !== 0) {
+              repaired += '"';
+            }
+            
+            // Close arrays first (inner to outer)
+            for (let i = 0; i < openBrackets - closeBrackets; i++) {
+              repaired += ']';
+            }
+            
+            // Close objects (inner to outer)
+            for (let i = 0; i < openBraces - closeBraces; i++) {
+              repaired += '}';
+            }
+            
+            cardData = JSON.parse(repaired);
+            this.logger.log(`✅ [Card ${cardNumber}] Successfully repaired truncated JSON`);
+          } catch (repairError: any) {
+            this.logger.error(`❌ [Card ${cardNumber}] JSON repair failed: ${repairError.message}`);
+            throw new Error(
+              `Card generation exceeded token limit and auto-repair failed. Try using a simpler layout or shorter content.`
+            );
+          }
+        } else {
+          // For other errors, provide helpful error message
+          throw new Error(
+            `Card generation incomplete (${finishReason || 'interrupted'}). ${e.message}. Please try again.`
+          );
         }
-
-        throw new Error(
-          `Card generation incomplete (${finishReason || 'interrupted'}). Please try again.`
-        );
       }
     }
 
-    // Log AI usage to database
+    // Log AI usage to database (non-critical - don't fail card generation if this fails)
     if (usageData) {
       try {
         await this.aiUsageService.logUsage({
@@ -503,8 +460,12 @@ export class PromptDocsAIService implements OnModuleInit {
         });
         
         this.logger.log(`💾 [Card ${cardNumber}] AI usage logged successfully`);
-      } catch (usageError) {
-        this.logger.error(`❌ [Card ${cardNumber}] Failed to log AI usage:`, usageError);
+      } catch (usageError: any) {
+        // Don't throw - this is non-critical logging
+        this.logger.error(
+          `❌ [Card ${cardNumber}] Failed to log AI usage (non-critical): ${usageError.message}`,
+        );
+        // Continue with card generation even if usage logging fails
       }
     } else {
       this.logger.warn(`⚠️ [Card ${cardNumber}] No usage data available to log`);
