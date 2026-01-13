@@ -3,11 +3,11 @@ import {
   createBlockInstance,
   createRow,
 } from "@/app/(protected)/docs/[id]/engine/registry/factories";
-import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
+import { createProseMirrorDoc } from "@/types/docs/schemas/blocks";
 import { createImageCardContent } from "../blocks/definitions/image-card-block";
-import { Slide } from "@/store/slices/slidesSlice";
+import { Card } from "@/store/slices/cardsSlice";
 
-export const imageCardGridTemplate: Slide = {
+export const imageCardGridTemplate: Card = {
   id: "image-card-grid",
   rows: [
     createRow([

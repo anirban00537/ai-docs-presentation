@@ -1,4 +1,4 @@
-export const SLIDE_MAX_WIDTH = 1000; // Maximum width for slides in pixels
+export const CARD_MAX_WIDTH = 1000; // Maximum width for cards in pixels
 
 export const GOOGLE_FONT_NAMES = [
   // Sans Serif

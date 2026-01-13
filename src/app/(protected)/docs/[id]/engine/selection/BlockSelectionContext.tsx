@@ -7,23 +7,23 @@ import React, {
   useMemo,
 } from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { selectSlides } from "@/store/slices/slidesSlice";
-import type { Block, Row, Slide } from "@/types/presentation";
+import { selectCards } from "@/store/slices/cardsSlice";
+import type { Block, Row, Card } from "@/types/docs";
 
 interface BlockPosition {
-  slideId: string;
+  cardId: string;
   rowId: string;
   blockId: string;
-  slideIndex: number;
+  cardIndex: number;
   rowIndex: number;
   blockIndex: number;
 }
 
 interface BlockSelectionContextValue {
   focusedBlockId: string | null;
-  focusedSlideId: string | null;
+  focusedCardId: string | null;
   focusedPosition: BlockPosition | null;
-  setFocusedBlock: (slideId: string | null, blockId: string | null) => void;
+  setFocusedBlock: (cardId: string | null, blockId: string | null) => void;
   navigateUp: () => void;
   navigateDown: () => void;
   navigateLeft: () => void;
@@ -40,7 +40,7 @@ const BlockSelectionContext = createContext<BlockSelectionContextValue | null>(n
 // Default no-op context for components rendered outside the provider (e.g., mini previews)
 const noOpContext: BlockSelectionContextValue = {
   focusedBlockId: null,
-  focusedSlideId: null,
+  focusedCardId: null,
   focusedPosition: null,
   setFocusedBlock: () => {},
   navigateUp: () => {},
@@ -72,21 +72,21 @@ export const BlockSelectionProvider: React.FC<BlockSelectionProviderProps> = ({
   children,
   onNavigate,
 }) => {
-  const slides = useAppSelector(selectSlides);
-  const [focusedSlideId, setFocusedSlideId] = useState<string | null>(null);
+  const cards = useAppSelector(selectCards);
+  const [focusedCardId, setFocusedCardId] = useState<string | null>(null);
   const [focusedBlockId, setFocusedBlockId] = useState<string | null>(null);
 
   // Build a flat list of all block positions for navigation
   const getAllBlockPositions = useCallback((): BlockPosition[] => {
     const positions: BlockPosition[] = [];
-    slides.forEach((slide, slideIndex) => {
-      slide.rows.forEach((row, rowIndex) => {
+    cards.forEach((card, cardIndex) => {
+      card.rows.forEach((row, rowIndex) => {
         row.blocks.forEach((block, blockIndex) => {
           positions.push({
-            slideId: slide.id,
+            cardId: card.id,
             rowId: row.id,
             blockId: block.id,
-            slideIndex,
+            cardIndex,
             rowIndex,
             blockIndex,
           });
@@ -94,14 +94,14 @@ export const BlockSelectionProvider: React.FC<BlockSelectionProviderProps> = ({
       });
     });
     return positions;
-  }, [slides]);
+  }, [cards]);
 
   // Get current focused position
   const focusedPosition = useMemo((): BlockPosition | null => {
-    if (!focusedBlockId || !focusedSlideId) return null;
+    if (!focusedBlockId || !focusedCardId) return null;
     const positions = getAllBlockPositions();
-    return positions.find((p) => p.blockId === focusedBlockId && p.slideId === focusedSlideId) || null;
-  }, [focusedBlockId, focusedSlideId, getAllBlockPositions]);
+    return positions.find((p) => p.blockId === focusedBlockId && p.cardId === focusedCardId) || null;
+  }, [focusedBlockId, focusedCardId, getAllBlockPositions]);
 
   // Navigation capabilities
   const navigationState = useMemo(() => {
@@ -114,31 +114,31 @@ export const BlockSelectionProvider: React.FC<BlockSelectionProviderProps> = ({
       };
     }
 
-    const { slideIndex, rowIndex, blockIndex } = focusedPosition;
-    const slide = slides[slideIndex];
-    const row = slide?.rows[rowIndex];
+    const { cardIndex, rowIndex, blockIndex } = focusedPosition;
+    const card = cards[cardIndex];
+    const row = card?.rows[rowIndex];
 
     return {
-      canNavigateUp: rowIndex > 0 || slideIndex > 0,
+      canNavigateUp: rowIndex > 0 || cardIndex > 0,
       canNavigateDown:
-        rowIndex < (slide?.rows.length || 0) - 1 ||
-        slideIndex < slides.length - 1,
+        rowIndex < (card?.rows.length || 0) - 1 ||
+        cardIndex < cards.length - 1,
       canNavigateLeft: blockIndex > 0,
       canNavigateRight: blockIndex < (row?.blocks.length || 0) - 1,
     };
-  }, [focusedPosition, slides]);
+  }, [focusedPosition, cards]);
 
-  const setFocusedBlock = useCallback((slideId: string | null, blockId: string | null) => {
-    setFocusedSlideId(slideId);
+  const setFocusedBlock = useCallback((cardId: string | null, blockId: string | null) => {
+    setFocusedCardId(cardId);
     setFocusedBlockId(blockId);
   }, []);
 
   // Navigate to adjacent block in same row (left/right)
   const navigateLeft = useCallback(() => {
     if (!focusedPosition || !navigationState.canNavigateLeft) return;
-    const { slideIndex, rowIndex, blockIndex } = focusedPosition;
-    const slide = slides[slideIndex];
-    const row = slide?.rows[rowIndex];
+    const { cardIndex, rowIndex, blockIndex } = focusedPosition;
+    const card = cards[cardIndex];
+    const row = card?.rows[rowIndex];
     if (row && blockIndex > 0) {
       const newBlock = row.blocks[blockIndex - 1];
       setFocusedBlockId(newBlock.id);
@@ -148,13 +148,13 @@ export const BlockSelectionProvider: React.FC<BlockSelectionProviderProps> = ({
         blockIndex: blockIndex - 1,
       });
     }
-  }, [focusedPosition, navigationState.canNavigateLeft, slides, onNavigate]);
+  }, [focusedPosition, navigationState.canNavigateLeft, cards, onNavigate]);
 
   const navigateRight = useCallback(() => {
     if (!focusedPosition || !navigationState.canNavigateRight) return;
-    const { slideIndex, rowIndex, blockIndex } = focusedPosition;
-    const slide = slides[slideIndex];
-    const row = slide?.rows[rowIndex];
+    const { cardIndex, rowIndex, blockIndex } = focusedPosition;
+    const card = cards[cardIndex];
+    const row = card?.rows[rowIndex];
     if (row && blockIndex < row.blocks.length - 1) {
       const newBlock = row.blocks[blockIndex + 1];
       setFocusedBlockId(newBlock.id);
@@ -164,79 +164,79 @@ export const BlockSelectionProvider: React.FC<BlockSelectionProviderProps> = ({
         blockIndex: blockIndex + 1,
       });
     }
-  }, [focusedPosition, navigationState.canNavigateRight, slides, onNavigate]);
+  }, [focusedPosition, navigationState.canNavigateRight, cards, onNavigate]);
 
   // Navigate to block in adjacent row (up/down)
   const navigateUp = useCallback(() => {
     if (!focusedPosition || !navigationState.canNavigateUp) return;
-    const { slideIndex, rowIndex, blockIndex } = focusedPosition;
+    const { cardIndex, rowIndex, blockIndex } = focusedPosition;
 
-    let newSlideIndex = slideIndex;
+    let newCardIndex = cardIndex;
     let newRowIndex = rowIndex - 1;
 
-    // Move to previous slide if at first row
+    // Move to previous card if at first row
     if (newRowIndex < 0) {
-      if (slideIndex > 0) {
-        newSlideIndex = slideIndex - 1;
-        newRowIndex = slides[newSlideIndex].rows.length - 1;
+      if (cardIndex > 0) {
+        newCardIndex = cardIndex - 1;
+        newRowIndex = cards[newCardIndex].rows.length - 1;
       } else {
         return;
       }
     }
 
-    const newSlide = slides[newSlideIndex];
-    const newRow = newSlide?.rows[newRowIndex];
+    const newCard = cards[newCardIndex];
+    const newRow = newCard?.rows[newRowIndex];
     if (newRow) {
       // Try to maintain same block index, or use last block in row
       const newBlockIndex = Math.min(blockIndex, newRow.blocks.length - 1);
       const newBlock = newRow.blocks[newBlockIndex];
       setFocusedBlockId(newBlock.id);
       onNavigate?.({
-        slideId: newSlide.id,
+        cardId: newCard.id,
         rowId: newRow.id,
         blockId: newBlock.id,
-        slideIndex: newSlideIndex,
+        cardIndex: newCardIndex,
         rowIndex: newRowIndex,
         blockIndex: newBlockIndex,
       });
     }
-  }, [focusedPosition, navigationState.canNavigateUp, slides, onNavigate]);
+  }, [focusedPosition, navigationState.canNavigateUp, cards, onNavigate]);
 
   const navigateDown = useCallback(() => {
     if (!focusedPosition || !navigationState.canNavigateDown) return;
-    const { slideIndex, rowIndex, blockIndex } = focusedPosition;
-    const slide = slides[slideIndex];
+    const { cardIndex, rowIndex, blockIndex } = focusedPosition;
+    const card = cards[cardIndex];
 
-    let newSlideIndex = slideIndex;
+    let newCardIndex = cardIndex;
     let newRowIndex = rowIndex + 1;
 
-    // Move to next slide if at last row
-    if (newRowIndex >= slide.rows.length) {
-      if (slideIndex < slides.length - 1) {
-        newSlideIndex = slideIndex + 1;
+    // Move to next card if at last row
+    if (newRowIndex >= card.rows.length) {
+      if (cardIndex < cards.length - 1) {
+        newCardIndex = cardIndex + 1;
         newRowIndex = 0;
       } else {
         return;
       }
     }
 
-    const newSlide = slides[newSlideIndex];
-    const newRow = newSlide?.rows[newRowIndex];
+    const newCard = cards[newCardIndex];
+    const newRow = newCard?.rows[newRowIndex];
     if (newRow) {
       // Try to maintain same block index, or use last block in row
       const newBlockIndex = Math.min(blockIndex, newRow.blocks.length - 1);
       const newBlock = newRow.blocks[newBlockIndex];
       setFocusedBlockId(newBlock.id);
       onNavigate?.({
-        slideId: newSlide.id,
+        cardId: newCard.id,
         rowId: newRow.id,
         blockId: newBlock.id,
-        slideIndex: newSlideIndex,
+        cardIndex: newCardIndex,
         rowIndex: newRowIndex,
         blockIndex: newBlockIndex,
       });
     }
-  }, [focusedPosition, navigationState.canNavigateDown, slides, onNavigate]);
+  }, [focusedPosition, navigationState.canNavigateDown, cards, onNavigate]);
 
   // Global keyboard navigation
   useEffect(() => {
@@ -282,7 +282,7 @@ export const BlockSelectionProvider: React.FC<BlockSelectionProviderProps> = ({
 
   const value = useMemo<BlockSelectionContextValue>(
     () => ({
-      focusedSlideId,
+      focusedCardId,
       focusedBlockId,
       focusedPosition,
       setFocusedBlock,
@@ -294,6 +294,7 @@ export const BlockSelectionProvider: React.FC<BlockSelectionProviderProps> = ({
       getAllBlockPositions,
     }),
     [
+      focusedCardId,
       focusedBlockId,
       focusedPosition,
       setFocusedBlock,

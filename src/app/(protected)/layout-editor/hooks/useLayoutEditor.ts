@@ -14,8 +14,8 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import type { Block, BlockContent, Row, SlideAccent, Theme } from "@/types/presentation";
-import { DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import type { Block, BlockContent, Row, CardAccent, Theme } from "@/types";
+import { DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { createRow, createBlockInstance } from "@/app/(protected)/docs/[id]/engine/registry/factories";
 import { toast } from "sonner";
 import { 
@@ -70,13 +70,13 @@ interface UseLayoutEditorReturn {
   customCollisionDetection: CollisionDetection;
 
   // Layout Operations
-  handleUpdateBlock: (slideId: string, blockId: string, content: BlockContent) => void;
-  handleDeleteRow: (slideId: string, rowId: string) => void;
-  handleAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
-  handleAddRowAtTop: (slideId: string) => void;
-  handleAddRowAtBottom: (slideId: string) => void;
-  handleUpdateColumnWidths: (slideId: string, rowId: string, columnWidths: number[]) => void;
-  handleUpdateAccent: (slideId: string, accent: SlideAccent | undefined) => void;
+  handleUpdateBlock: (cardId: string, blockId: string, content: BlockContent) => void;
+  handleDeleteRow: (cardId: string, rowId: string) => void;
+  handleAddColumn: (cardId: string, rowId: string, afterBlockId: string) => void;
+  handleAddRowAtTop: (cardId: string) => void;
+  handleAddRowAtBottom: (cardId: string) => void;
+  handleUpdateColumnWidths: (cardId: string, rowId: string, columnWidths: number[]) => void;
+  handleUpdateAccent: (cardId: string, accent: CardAccent | undefined) => void;
 
   // Metadata & Persistence
   handleUpdateMetadata: (updates: Partial<LayoutMetadata>) => void;
@@ -282,7 +282,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
 
   // Layout Operations
   const handleUpdateBlock = useCallback(
-    (slideId: string, blockId: string, content: BlockContent) => {
+    (cardId: string, blockId: string, content: BlockContent) => {
       setLayoutData((prev: LayoutData) => {
         const newRows = prev.rows.map((row: Row) => ({
           ...row,
@@ -296,7 +296,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
     []
   );
 
-  const handleDeleteRow = useCallback((slideId: string, rowId: string) => {
+  const handleDeleteRow = useCallback((cardId: string, rowId: string) => {
     setLayoutData((prev: LayoutData) => {
       const newRows = prev.rows.filter((r: Row) => r.id !== rowId);
       return {
@@ -307,7 +307,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
   }, []);
 
   const handleAddColumn = useCallback(
-    (slideId: string, rowId: string, afterBlockId: string) => {
+    (cardId: string, rowId: string, afterBlockId: string) => {
       setLayoutData((prev: LayoutData) => {
         const newRows = prev.rows.map((row: Row) => {
           if (row.id === rowId) {
@@ -330,14 +330,14 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
     []
   );
 
-  const handleAddRowAtTop = useCallback((slideId: string) => {
+  const handleAddRowAtTop = useCallback((cardId: string) => {
     setLayoutData((prev: LayoutData) => ({
       ...prev,
       rows: [createRow(), ...prev.rows],
     }));
   }, []);
 
-  const handleAddRowAtBottom = useCallback((slideId: string) => {
+  const handleAddRowAtBottom = useCallback((cardId: string) => {
     setLayoutData((prev: LayoutData) => ({
       ...prev,
       rows: [...prev.rows, createRow()],
@@ -345,7 +345,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
   }, []);
 
   const handleUpdateColumnWidths = useCallback(
-    (slideId: string, rowId: string, columnWidths: number[]) => {
+    (cardId: string, rowId: string, columnWidths: number[]) => {
       setLayoutData((prev: LayoutData) => {
         const newRows = prev.rows.map((row: Row) =>
           row.id === rowId ? { ...row, columnWidths } : row
@@ -357,7 +357,7 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
   );
 
   // Accent Operations
-  const handleUpdateAccent = useCallback((slideId: string, accent: SlideAccent | undefined) => {
+  const handleUpdateAccent = useCallback((cardId: string, accent: CardAccent | undefined) => {
     setLayoutData((prev: LayoutData) => ({ ...prev, accent }));
   }, []);
 

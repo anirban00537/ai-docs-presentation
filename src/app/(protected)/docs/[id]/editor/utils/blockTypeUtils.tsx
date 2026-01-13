@@ -1,4 +1,4 @@
-import { BLOCK_TYPES } from "@/types/presentation";
+import { BLOCK_TYPES } from "@/types";
 import {
   IconFileText,
   IconPhoto,

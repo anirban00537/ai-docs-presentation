@@ -2,76 +2,76 @@
 
 import { useEffect, useRef } from "react";
 import { useAppSelector } from "@/store/hooks";
-import { selectSlides, selectTheme, Slide } from "@/store/slices/slidesSlice";
-import { useUpdateSlide, useUpdatePresentation, useReorderSlides } from "@/hooks/use-presentation";
-import { convertReduxSlideToApi } from "@/lib/editor/adapters";
+import { selectCards, selectTheme, Card } from "@/store/slices/cardsSlice";
+import { useUpdateCard, useUpdateDoc, useReorderCards } from "@/hooks/use-docs";
+import { convertReduxCardToApi } from "@/lib/editor/adapters";
 
 /**
  * Hook to automatically sync Redux state changes to the backend.
- * Replaces the slidesApiMiddleware with a cleaner, React-native implementation.
+ * Replaces the cardsApiMiddleware with a cleaner, React-native implementation.
  */
-export function useEditorSync(presentationId: string | null) {
-  const slides = useAppSelector(selectSlides);
+export function useEditorSync(docId: string | null) {
+  const cards = useAppSelector(selectCards);
   const theme = useAppSelector(selectTheme);
   
-  const updateSlideMutation = useUpdateSlide();
-  const updatePresentationMutation = useUpdatePresentation();
-  const reorderSlidesMutation = useReorderSlides();
+  const updateCardMutation = useUpdateCard();
+  const updateDocMutation = useUpdateDoc();
+  const reorderCardsMutation = useReorderCards();
   
-  const prevSlidesRef = useRef<Slide[]>([]);
+  const prevCardsRef = useRef<Card[]>([]);
   const prevThemeRef = useRef<any>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (!presentationId || slides.length === 0) return;
+    if (!docId || cards.length === 0) return;
 
     // Detect what changed
-    const changedSlides = slides.filter(slide => {
-      const prev = prevSlidesRef.current.find(ps => ps.id === slide.id);
+    const changedCards = cards.filter(card => {
+      const prev = prevCardsRef.current.find(pc => pc.id === card.id);
       if (!prev) return false; // Creation is handled by separate actions
-      return JSON.stringify(prev) !== JSON.stringify(slide);
+      return JSON.stringify(prev) !== JSON.stringify(card);
     });
 
     const themeChanged = JSON.stringify(prevThemeRef.current) !== JSON.stringify(theme);
 
     // Detect reordering
-    const slidesReordered = slides.length > 0 && 
-      prevSlidesRef.current.length === slides.length && 
-      slides.some((s, i) => prevSlidesRef.current[i] && s.id !== prevSlidesRef.current[i].id);
+    const cardsReordered = cards.length > 0 && 
+      prevCardsRef.current.length === cards.length && 
+      cards.some((c, i) => prevCardsRef.current[i] && c.id !== prevCardsRef.current[i].id);
 
-    if (changedSlides.length > 0 || themeChanged || slidesReordered) {
+    if (changedCards.length > 0 || themeChanged || cardsReordered) {
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
 
       debounceTimerRef.current = setTimeout(async () => {
-        // Sync slides content
-        for (const slide of changedSlides) {
-          const apiData = convertReduxSlideToApi(slide);
-          updateSlideMutation.mutate({
-            presentationId,
-            slideId: slide.id,
+        // Sync cards content
+        for (const card of changedCards) {
+          const apiData = convertReduxCardToApi(card);
+          updateCardMutation.mutate({
+            docId,
+            cardId: card.id,
             payload: apiData,
           });
         }
 
         // Sync reordering
-        if (slidesReordered) {
-          const slideOrders = slides.map((s, i) => ({ slideId: s.id, order: i }));
-          reorderSlidesMutation.mutate({
-            presentationId,
-            slideOrders,
+        if (cardsReordered) {
+          const cardOrders = cards.map((c, i) => ({ cardId: c.id, order: i }));
+          reorderCardsMutation.mutate({
+            docId,
+            cardOrders,
           });
         }
 
         // Sync theme
         if (themeChanged) {
-          updatePresentationMutation.mutate({
-            id: presentationId,
+          updateDocMutation.mutate({
+            id: docId,
             payload: { globalTheme: theme },
           });
         }
 
         // Update refs
-        prevSlidesRef.current = JSON.parse(JSON.stringify(slides));
+        prevCardsRef.current = JSON.parse(JSON.stringify(cards));
         prevThemeRef.current = JSON.parse(JSON.stringify(theme));
       }, 1000);
     }
@@ -79,15 +79,15 @@ export function useEditorSync(presentationId: string | null) {
     return () => {
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     };
-  }, [slides, theme, presentationId, updateSlideMutation, updatePresentationMutation]);
+  }, [cards, theme, docId, updateCardMutation, updateDocMutation, reorderCardsMutation]);
 
   // Initial ref set
   useEffect(() => {
-    if (slides.length > 0 && prevSlidesRef.current.length === 0) {
-      prevSlidesRef.current = JSON.parse(JSON.stringify(slides));
+    if (cards.length > 0 && prevCardsRef.current.length === 0) {
+      prevCardsRef.current = JSON.parse(JSON.stringify(cards));
     }
     if (theme && !prevThemeRef.current) {
       prevThemeRef.current = JSON.parse(JSON.stringify(theme));
     }
-  }, [slides, theme]);
+  }, [cards, theme]);
 }

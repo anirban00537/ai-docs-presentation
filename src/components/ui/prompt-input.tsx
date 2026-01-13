@@ -30,7 +30,7 @@ const TooltipContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "relative z-50 max-w-[280px] rounded-md bg-popover text-popover-foreground px-1.5 py-1 text-xs animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        "relative z-50 max-w-[280px] rounded-md bg-popover text-popover-foreground px-1.5 py-1 text-xs animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:card-in-from-top-2 data-[side=left]:card-in-from-right-2 data-[side=right]:card-in-from-left-2 data-[side=top]:card-in-from-bottom-2",
         className
       )}
       {...props}
@@ -76,7 +76,7 @@ interface PromptBoxProps {
   name?: string;
   defaultValue?: string;
   onError?: (error: string) => void;
-  onSubmit?: (value: string, numberOfSlides: number) => void;
+  onSubmit?: (value: string, numberOfCards: number) => void;
 }
 
 export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
@@ -85,7 +85,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
     const savePromptMutation = useSavePrompt();
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const [value, setValue] = React.useState(defaultValue);
-    const [numberOfSlides, setNumberOfSlides] = React.useState<string>("5");
+    const [numberOfCards, setNumberOfCards] = React.useState<string>("5");
 
     // Update value when defaultValue prop changes
     React.useEffect(() => {
@@ -117,21 +117,21 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
         return;
       }
 
-      const slides = parseInt(numberOfSlides);
-      if (isNaN(slides) || slides < 1 || slides > 50) {
-        onError?.("Number of slides must be between 1 and 50");
+      const cards = parseInt(numberOfCards);
+      if (isNaN(cards) || cards < 1 || cards > 50) {
+        onError?.("Number of cards must be between 1 and 50");
         return;
       }
 
       if (onSubmit) {
-        onSubmit(value.trim(), slides);
+        onSubmit(value.trim(), cards);
         return;
       }
 
       savePromptMutation.mutate(
         {
           prompt: value.trim(),
-          numberOfSlides: slides,
+          numberOfCards: cards,
         },
         {
           onSuccess: (response) => {
@@ -245,18 +245,18 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
           <div className="mt-0.5 p-1 pt-0">
             <TooltipProvider delayDuration={100}>
               <div className="flex items-center gap-2 flex-wrap">
-                {/* Number of Slides Select */}
+                {/* Number of Cards Select */}
                 <Select
-                  value={numberOfSlides}
-                  onValueChange={setNumberOfSlides}
+                  value={numberOfCards}
+                  onValueChange={setNumberOfCards}
                 >
                   <SelectTrigger className="h-8 w-fit gap-2 px-2 text-xs border-0 bg-transparent hover:bg-secondary/10 transition-colors focus:ring-0">
-                    <SelectValue placeholder="Slides" />
+                    <SelectValue placeholder="Cards" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-secondary/10">
                     {Array.from({ length: 50 }, (_, i) => i + 1).map((num) => (
                       <SelectItem key={num} value={num.toString()} className="focus:bg-secondary/10">
-                        {num} {num === 1 ? "slide" : "slides"}
+                        {num} {num === 1 ? "card" : "cards"}
                       </SelectItem>
                     ))}
                   </SelectContent>

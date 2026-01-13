@@ -44,7 +44,7 @@ export function HowItWorksSection() {
             <span className="italic text-secondary-foreground/60">in seconds.</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Three simple steps to generate professional presentations.
+            Three simple steps to generate professional docs.
           </p>
         </div>
 

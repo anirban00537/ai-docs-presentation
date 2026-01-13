@@ -4,21 +4,21 @@ import { CSS } from "@dnd-kit/utilities";
 import { BlockRenderer } from "@/app/(protected)/docs/[id]/engine/renderer/BlockRenderer";
 import { BlockToolbar } from "@/app/(protected)/docs/[id]/editor/block-ui/BlockToolbar";
 import { useBlockFocus } from "@/app/(protected)/docs/[id]/engine/selection/BlockSelectionContext";
-import type { Block, BlockContent } from "@/types/presentation";
+import type { Block, BlockContent } from "@/types/docs";
 import { useAppDispatch } from "@/store/hooks";
-import { duplicateBlock, deleteBlock } from "@/store/slices/slidesSlice";
+import { duplicateBlock, deleteBlock } from "@/store/slices/cardsSlice";
 import { useEditorTheme } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
 import { IconGripHorizontal } from "@tabler/icons-react";
 import { useResize } from "@/app/(protected)/docs/[id]/engine/hooks/useResize";
 
 interface BlockCellProps {
   block: Block;
-  slideId: string;
+  cardId: string;
   rowId: string;
   index: number;
   totalBlocksInRow: number;
   rowIndex: number;
-  totalRowsInSlide: number;
+  totalRowsInCard: number;
   onUpdate: (blockId: string, content: BlockContent) => void;
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   isLastBlock: boolean;
@@ -32,12 +32,12 @@ interface BlockCellProps {
 
 export const BlockCell = memo(function BlockCell({
   block,
-  slideId,
+  cardId,
   rowId,
   index,
   totalBlocksInRow,
   rowIndex,
-  totalRowsInSlide,
+  totalRowsInCard,
   onUpdate,
   onAddColumn,
   isLastBlock,
@@ -55,11 +55,11 @@ export const BlockCell = memo(function BlockCell({
   const theme = useEditorTheme();
   const isDark = theme.themeType === "dark";
   const dispatch = useAppDispatch();
-  const { focusedBlockId, focusedSlideId, setFocusedBlock } = useBlockFocus();
+  const { focusedBlockId, focusedCardId, setFocusedBlock } = useBlockFocus();
   const handleStartRef = useRef<{ x: number; y: number } | null>(null);
   const wasDraggingRef = useRef(false);
 
-  const isFocused = focusedBlockId === block.id && focusedSlideId === slideId;
+  const isFocused = focusedBlockId === block.id && focusedCardId === cardId;
 
   // Use the resize hook for column resizing
   const { isResizing: isResizingActive, handleMouseDown: handleBorderMouseDown } = useResize({
@@ -79,8 +79,8 @@ export const BlockCell = memo(function BlockCell({
     transform,
     isDragging,
   } = useDraggable({
-    id: `${slideId}-${block.id}`,
-    data: { type: "block", block, slideId, rowId, index },
+    id: `${cardId}-${block.id}`,
+    data: { type: "block", block, cardId, rowId, index },
     disabled: readOnly,
   });
 
@@ -105,9 +105,9 @@ export const BlockCell = memo(function BlockCell({
 
       e.preventDefault();
       e.stopPropagation();
-      setFocusedBlock(slideId, block.id);
+      setFocusedBlock(cardId, block.id);
     },
-    [block.id, setFocusedBlock, readOnly, slideId]
+    [block.id, setFocusedBlock, readOnly, cardId]
   );
 
   // Click outside handler
@@ -131,13 +131,13 @@ export const BlockCell = memo(function BlockCell({
 
   // Block actions
   const handleDuplicate = useCallback(() => {
-    dispatch(duplicateBlock({ slideId, rowId, blockId: block.id }));
-  }, [dispatch, slideId, rowId, block.id]);
+    dispatch(duplicateBlock({ cardId, rowId, blockId: block.id }));
+  }, [dispatch, cardId, rowId, block.id]);
 
   const handleDelete = useCallback(() => {
-    dispatch(deleteBlock({ slideId, rowId, blockId: block.id }));
+    dispatch(deleteBlock({ cardId, rowId, blockId: block.id }));
     setFocusedBlock(null, null);
-  }, [dispatch, slideId, rowId, block.id, setFocusedBlock]);
+  }, [dispatch, cardId, rowId, block.id, setFocusedBlock]);
 
   return (
     <div
@@ -219,7 +219,7 @@ export const BlockCell = memo(function BlockCell({
                   if (dist < 5) {
                     e.preventDefault();
                     e.stopPropagation();
-                    setFocusedBlock(slideId, block.id);
+                    setFocusedBlock(cardId, block.id);
                   }
                 }
                 handleStartRef.current = null;

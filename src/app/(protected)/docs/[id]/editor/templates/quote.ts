@@ -3,10 +3,10 @@ import {
   createBlockInstance,
   createRow,
 } from "@/app/(protected)/docs/[id]/engine/registry/factories";
-import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
-import { Slide } from "@/store/slices/slidesSlice";
+import { createProseMirrorDoc } from "@/types/docs/schemas/blocks";
+import { Card } from "@/store/slices/cardsSlice";
 
-export const quoteTemplate: Slide = {
+export const quoteTemplate: Card = {
   id: "quote-layout",
   rows: [
     createRow([

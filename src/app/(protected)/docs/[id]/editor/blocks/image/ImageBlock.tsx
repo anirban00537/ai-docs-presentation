@@ -1,6 +1,6 @@
 import React, { useState, memo } from "react";
-import type { Block, Theme } from "@/types/presentation";
-import { type ImageContent } from "@/types/presentation";
+import type { Block, Theme } from "@/types";
+import { type ImageContent } from "@/types";
 import { IconPhoto, IconExternalLink, IconRectangleVertical, IconRectangle, IconPhotoPlus } from "@tabler/icons-react";
 import { CommonCard } from "../CommonCard";
 import { cn } from "@/lib/utils";
@@ -111,7 +111,7 @@ export const ImageBlock = memo(function ImageBlock({
               {readOnly ? "No image provided" : "Drop an image or click"}
             </span>
             {!readOnly && (
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-40">To add to your presentation</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] opacity-40">To add to your doc</span>
             )}
           </div>
         </CommonCard>

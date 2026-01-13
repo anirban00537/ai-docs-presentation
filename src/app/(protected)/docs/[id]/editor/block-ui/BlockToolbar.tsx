@@ -1,13 +1,13 @@
 import React, { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import {
   IconTrash,
   IconCopy,
   IconPlus,
 } from "@tabler/icons-react";
-import { type Block } from "@/types/presentation";
+import { type Block } from "@/types/docs";
 import { cn } from "@/lib/utils";
 
 interface BlockToolbarProps {

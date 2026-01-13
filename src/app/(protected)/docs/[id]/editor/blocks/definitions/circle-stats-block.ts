@@ -6,7 +6,7 @@ import {
   CircleStatsItem,
   getDefaultHeadingContent, 
   createProseMirrorDoc
-} from "@/types/presentation";
+} from "@/types";
 
 export const createCircleStatsItem = (value: number = 75): CircleStatsItem => ({
   id: nanoid(),

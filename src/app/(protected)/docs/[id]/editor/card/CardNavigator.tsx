@@ -1,54 +1,54 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import type { Slide } from "@/store/slices/slidesSlice";
+import type { Card } from "@/store/slices/cardsSlice";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   selectTheme,
-  selectActiveSlideId,
+  selectActiveCardId,
   DEFAULT_THEME,
-  setActiveSlide,
-  replaceSlideWithLayout,
-} from "@/store/slices/slidesSlice";
+  setActiveCard,
+  replaceCardWithLayout,
+} from "@/store/slices/cardsSlice";
 import {
   IconChevronRight,
   IconPlus,
 } from "@tabler/icons-react";
-import { SlideLayoutSelector } from "./SlideLayoutSelector";
-import type { LayoutTemplate } from "@/types/presentation";
+import { CardLayoutSelector } from "./CardLayoutSelector";
+import type { LayoutTemplate } from "@/types/docs";
 import { motion, AnimatePresence } from "framer-motion";
 import { SidebarList } from "./SidebarList";
 import { cn } from "@/lib/utils";
 
 // --- Types ---
 
-interface SlideNavigatorProps {
-  slides: Slide[];
-  onUpdateBlock: (slideId: string, blockId: string, content: any) => void;
-  onDeleteRow: (slideId: string, rowId: string) => void;
-  onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
-  onAddRowAtTop: (slideId: string) => void;
-  onAddRowAtBottom: (slideId: string) => void;
+interface CardNavigatorProps {
+  cards: Card[];
+  onUpdateBlock: (cardId: string, blockId: string, content: any) => void;
+  onDeleteRow: (cardId: string, rowId: string) => void;
+  onAddColumn: (cardId: string, rowId: string, afterBlockId: string) => void;
+  onAddRowAtTop: (cardId: string) => void;
+  onAddRowAtBottom: (cardId: string) => void;
   onUpdateColumnWidths: (
-    slideId: string,
+    cardId: string,
     rowId: string,
     columnWidths: number[]
   ) => void;
-  onAddSlide: (afterSlideId?: string) => void;
-  onDeleteSlide: (slideId: string) => void;
+  onAddCard: (afterCardId?: string) => void;
+  onDeleteCard: (cardId: string) => void;
   isMobile?: boolean;
 }
 
 // --- Main Component ---
 
-export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
-  slides,
+export const CardNavigator: React.FC<CardNavigatorProps> = ({
+  cards,
   onUpdateBlock,
   onDeleteRow,
   onAddColumn,
   onAddRowAtTop,
   onAddRowAtBottom,
   onUpdateColumnWidths,
-  onAddSlide: onAddSlideProp,
-  onDeleteSlide: onDeleteSlideProp,
+  onAddCard: onAddCardProp,
+  onDeleteCard: onDeleteCardProp,
   isMobile = false,
 }) => {
   // State
@@ -59,9 +59,9 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
   // Redux & Theme
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
-  const activeSlideId = useAppSelector(selectActiveSlideId);
+  const activeCardId = useAppSelector(selectActiveCardId);
   const dispatch = useAppDispatch();
-  const previousActiveSlideIdRef = useRef<string | null>(null);
+  const previousActiveCardIdRef = useRef<string | null>(null);
 
   // Measurements
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -73,41 +73,41 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
   useEffect(() => {
     if (
       pendingLayout &&
-      activeSlideId &&
-      activeSlideId !== previousActiveSlideIdRef.current
+      activeCardId &&
+      activeCardId !== previousActiveCardIdRef.current
     ) {
       const rows = pendingLayout.data?.rows || [];
       const accent = pendingLayout.data?.accent;
 
-      dispatch(replaceSlideWithLayout({
-        slideId: activeSlideId,
+      dispatch(replaceCardWithLayout({
+        cardId: activeCardId,
         rows,
         accent
       }));
       setTimeout(() => setPendingLayout(null), 0);
     }
-    previousActiveSlideIdRef.current = activeSlideId;
-  }, [activeSlideId, pendingLayout, dispatch]);
+    previousActiveCardIdRef.current = activeCardId;
+  }, [activeCardId, pendingLayout, dispatch]);
 
   // --- Handlers ---
 
-  const handleAddSlide = useCallback(() => {
+  const handleAddCard = useCallback(() => {
     setIsLayoutModalOpen(true);
   }, []);
 
   const handleSelectLayout = useCallback((template: LayoutTemplate) => {
     setPendingLayout(template);
-    onAddSlideProp();
-  }, [onAddSlideProp]);
+    onAddCardProp();
+  }, [onAddCardProp]);
 
-  const handleDeleteSlide = useCallback((slideId: string) => {
-    if (slides.length <= 1) return;
-    onDeleteSlideProp(slideId);
-  }, [onDeleteSlideProp, slides.length]);
+  const handleDeleteCard = useCallback((cardId: string) => {
+    if (cards.length <= 1) return;
+    onDeleteCardProp(cardId);
+  }, [onDeleteCardProp, cards.length]);
 
   return (
     <>
-      <SlideLayoutSelector
+      <CardLayoutSelector
         isOpen={isLayoutModalOpen}
         onClose={() => setIsLayoutModalOpen(false)}
         onSelectLayout={handleSelectLayout}
@@ -168,15 +168,15 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                     OUTLINE
                   </span>
                   <span className="text-xs font-semibold opacity-90" style={{ color: isDark ? "#fff" : "#1a1a1a" }}>
-                    {slides.length} {slides.length === 1 ? 'Slide' : 'Slides'}
+                    {cards.length} {cards.length === 1 ? 'Card' : 'Cards'}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={handleAddSlide}
+                    onClick={handleAddCard}
                     className="p-2 rounded-xl transition-all hover:scale-105 hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 flex items-center justify-center"
-                    title="Add slide"
+                    title="Add card"
                   >
                     <IconPlus size={16} stroke={3}
                       style={{ color: isDark ? "#fff" : "#000" }}
@@ -197,7 +197,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
 
               <div className="flex-1 overflow-hidden flex flex-col w-full h-full">
                 <SidebarList
-                  slides={slides}
+                  cards={cards}
                   containerWidth={containerWidth}
                   onUpdateBlock={onUpdateBlock}
                   onDeleteRow={onDeleteRow}
@@ -205,7 +205,7 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({
                   onAddRowAtTop={onAddRowAtTop}
                   onAddRowAtBottom={onAddRowAtBottom}
                   onUpdateColumnWidths={onUpdateColumnWidths}
-                  onDeleteSlide={handleDeleteSlide}
+                  onDeleteCard={handleDeleteCard}
                 />
               </div>
 

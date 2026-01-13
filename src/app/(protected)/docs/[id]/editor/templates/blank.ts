@@ -1,8 +1,8 @@
 import { BLOCK_TYPES } from "../blocks/definitions";
 import { createBlockInstance, createRow } from "@/app/(protected)/docs/[id]/engine/registry/factories";
-import { Slide } from "@/store/slices/slidesSlice";
+import { Card } from "@/store/slices/cardsSlice";
 
-export const blankTemplate: Slide = {
+export const blankTemplate: Card = {
   id: "blank",
   rows: [
     createRow([

@@ -5,7 +5,7 @@ import {
   setTheme,
   Theme,
   DEFAULT_THEME,
-} from "@/store/slices/slidesSlice";
+} from "@/store/slices/cardsSlice";
 import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAdminThemes } from "@/services/themes";
@@ -99,21 +99,21 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
     dispatch(setTheme(selectedTheme));
   };
 
-  // Debounced theme update for high-frequency changes (sliders)
+  // Debounced theme update for high-frequency changes (cardrs)
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const updateThemeProperty = useCallback((updates: Partial<Theme>) => {
     dispatch(setTheme({ ...currentTheme, ...updates }));
   }, [dispatch, currentTheme]);
 
-  // Debounced version for slider changes
+  // Debounced version for cardr changes
   const debouncedUpdateThemeProperty = useCallback((updates: Partial<Theme>) => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
     }
     debounceTimeoutRef.current = setTimeout(() => {
       dispatch(setTheme({ ...currentTheme, ...updates }));
-    }, 50); // 50ms debounce for smooth slider updates
+    }, 50); // 50ms debounce for smooth cardr updates
   }, [dispatch, currentTheme]);
 
   // Cleanup timeout on unmount
@@ -147,7 +147,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
     { id: "capsule", label: "Capsule", desc: "Rounded corners with playful blocks" },
   ];
 
-  const SliderControl = memo(function SliderControl({ 
+  const CardrControl = memo(function CardrControl({ 
     label, 
     value, 
     onChange, 
@@ -172,7 +172,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
           <label 
             className="text-[10px] font-bold opacity-50 uppercase tracking-wider" 
             style={{ color: isDark ? "#fff" : "#000" }}
-            id={`slider-label-${label.replace(/\s+/g, '-').toLowerCase()}`}
+            id={`cardr-label-${label.replace(/\s+/g, '-').toLowerCase()}`}
           >
             {label}
           </label>
@@ -188,7 +188,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
           value={value} 
           onChange={(e) => onChange(parseFloat(e.target.value))}
           className="w-full h-1.5 bg-neutral-500/10 rounded-lg appearance-none cursor-pointer accent-primary border-none outline-none" 
-          aria-labelledby={`slider-label-${label.replace(/\s+/g, '-').toLowerCase()}`}
+          aria-labelledby={`cardr-label-${label.replace(/\s+/g, '-').toLowerCase()}`}
           aria-valuemin={min}
           aria-valuemax={max}
           aria-valuenow={value}
@@ -406,7 +406,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                     
                     {currentTheme.cardDesignPattern && currentTheme.cardDesignPattern !== "none" && (
                       <div className="pt-2 px-1">
-                        <SliderControl 
+                        <CardrControl 
                           label="Pattern Intensity"
                           value={currentTheme.cardDesignPatternOpacity !== undefined ? Math.round(currentTheme.cardDesignPatternOpacity * 100) : 100}
                           onChange={(val) => debouncedUpdateThemeProperty({ cardDesignPatternOpacity: val / 100 })}
@@ -451,7 +451,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                   <div className="space-y-4 pt-2 border-t border-neutral-500/10">
                     <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 block" style={{ color: isDark ? "#fff" : "#000" }}>Fine Tuning</label>
                     <div className="p-4 rounded-2xl space-y-5" style={{ backgroundColor: isDark ? "rgba(0,0,0,0.2)" : "rgba(0,0,0,0.03)" }}>
-                      <SliderControl 
+                      <CardrControl 
                         label="Roundness"
                         value={parsePx(currentTheme.cardBorderRadius, 12)}
                         onChange={(val) => debouncedUpdateThemeProperty({ cardBorderRadius: `${val}px` })}
@@ -460,7 +460,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                         isDark={isDark}
                       />
 
-                      <SliderControl 
+                      <CardrControl 
                         label="Transparency"
                         value={currentTheme.cardOpacity !== undefined ? Math.round(currentTheme.cardOpacity * 100) : 100}
                         onChange={(val) => debouncedUpdateThemeProperty({ cardOpacity: val / 100 })}
@@ -470,7 +470,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                         isDark={isDark}
                       />
 
-                      <SliderControl 
+                      <CardrControl 
                         label="Backdrop Blur"
                         value={parsePx(currentTheme.cardBackdropBlur, 0)}
                         onChange={(val) => debouncedUpdateThemeProperty({ cardBackdropBlur: `${val}px` })}
@@ -479,7 +479,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                         isDark={isDark}
                       />
 
-                      <SliderControl 
+                      <CardrControl 
                         label="Border Width"
                         value={parsePx(currentTheme.cardBorderWidth, 1)}
                         onChange={(val) => debouncedUpdateThemeProperty({ cardBorderWidth: `${val}px` })}
@@ -488,7 +488,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                         isDark={isDark}
                       />
 
-                      <SliderControl 
+                      <CardrControl 
                         label="Grain Intensity"
                         value={currentTheme.cardNoiseOpacity !== undefined ? Math.round(currentTheme.cardNoiseOpacity * 100) : 0}
                         onChange={(val) => debouncedUpdateThemeProperty({ cardNoiseOpacity: val / 100 })}
@@ -498,7 +498,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                         isDark={isDark}
                       />
 
-                      <SliderControl 
+                      <CardrControl 
                         label="Vignette"
                         value={currentTheme.cardVignetteOpacity !== undefined ? Math.round(currentTheme.cardVignetteOpacity * 100) : 0}
                         onChange={(val) => debouncedUpdateThemeProperty({ cardVignetteOpacity: val / 100 })}

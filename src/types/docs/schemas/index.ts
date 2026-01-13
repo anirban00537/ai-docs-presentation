@@ -18,10 +18,10 @@ import {
 import {
   BlockSchema,
   RowSchema,
-  SlideSchema,
-  PresentationInfoSchema,
+  CardSchema,
+  DocInfoSchema,
   BlockTypeSchema,
-  SlideAccentSchema,
+  CardAccentSchema,
 } from "./core";
 
 import { ThemeSchema, CardDesignPatternSchema } from "./theme";
@@ -45,7 +45,7 @@ export type LayoutTemplate = {
   thumbnail?: string;
   data: {
     rows: Row[];
-    accent?: SlideAccent;
+    accent?: CardAccent;
     icon?: string;
   };
   createdAt?: string;
@@ -62,9 +62,9 @@ export type Block<T = BlockContent> = {
 };
 
 export type Row = z.infer<typeof RowSchema>;
-export type Slide = z.infer<typeof SlideSchema>;
-export type SlideAccent = z.infer<typeof SlideAccentSchema>;
-export type PresentationInfo = z.infer<typeof PresentationInfoSchema>;
+export type Card = z.infer<typeof CardSchema>;
+export type CardAccent = z.infer<typeof CardAccentSchema>;
+export type DocInfo = z.infer<typeof DocInfoSchema>;
 
 export type Theme = z.infer<typeof ThemeSchema>;
 export type CardDesignPattern = z.infer<typeof CardDesignPatternSchema>;

@@ -1,5 +1,5 @@
 import React from "react";
-import type { Theme } from "@/types/presentation";
+import type { Theme } from "@/types";
 
 interface EditorBackgroundProps {
   theme: Theme;

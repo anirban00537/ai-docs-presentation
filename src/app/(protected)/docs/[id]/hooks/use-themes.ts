@@ -8,7 +8,7 @@ import {
   deleteTheme,
   type ThemeResponse,
 } from "@/services/themes";
-import type { Theme } from "@/store/slices/slidesSlice";
+import type { Theme } from "@/store/slices/cardsSlice";
 
 // Types for hook params/payloads
 export interface ListThemesParams {

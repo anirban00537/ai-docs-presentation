@@ -15,7 +15,7 @@ const testimonials = [
     role: "Founder, ScaleAI",
   },
   {
-    quote: "Finally, an AI presentation tool that understands clean design principles.",
+    quote: "Finally, an AI doc tool that understands clean design principles.",
     author: "Elena Rodriguez",
     role: "Creative Lead",
   },

@@ -22,7 +22,7 @@ export default function AboutPage() {
         {
             icon: <IconPalette className="text-pink-500" size={24} />,
             title: "Beautiful Designs",
-            description: "Say goodbye to ugly slides. Everything is automatically formatted to look stunning and consistent."
+            description: "Say goodbye to ugly cards. Everything is automatically formatted to look stunning and consistent."
         },
         {
             icon: <IconSparkles className="text-amber-500" size={24} />,
@@ -62,7 +62,7 @@ export default function AboutPage() {
                                 transition={{ duration: 0.5, delay: 0.2 }}
                                 className="text-2xl md:text-3xl text-muted-foreground font-light leading-snug max-w-2xl mx-auto"
                             >
-                                Presentations reimagined. <br className="hidden md:block" />
+                                Docs reimagined. <br className="hidden md:block" />
                                 Powered by intelligence. Designed for you.
                             </motion.p>
                         </div>

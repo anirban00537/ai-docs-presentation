@@ -3,7 +3,7 @@ import {
   type SimpleNumberCardContent,
   type SimpleNumberCardItem,
   createProseMirrorDoc,
-} from "@/types/presentation";
+} from "@/types";
 import { nanoid } from "nanoid";
 
 export const createSimpleNumberCardItem = (

@@ -4,9 +4,9 @@ import type {
   Block,
   Theme,
   StackedTimelineContent,
-} from "@/types/presentation";
+} from "@/types/docs";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { createStackedTimelineItem } from "../definitions/stacked-timeline-block";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { getFontFamily } from "@/lib/fonts";

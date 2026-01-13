@@ -4,10 +4,10 @@ import {
   createBlockInstance,
   createRow,
 } from "@/app/(protected)/docs/[id]/engine/registry/factories";
-import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
-import { Slide } from "@/store/slices/slidesSlice";
+import { createProseMirrorDoc } from "@/types/docs/schemas/blocks";
+import { Card } from "@/store/slices/cardsSlice";
 
-export const introductionTemplate: Slide = {
+export const introductionTemplate: Card = {
   id: "introduction",
   rows: [
     createRow([
@@ -23,7 +23,7 @@ export const introductionTemplate: Slide = {
           {
             type: "heading",
             attrs: { level: 2, textAlign: "center" },
-            content: [{ type: "text", text: "Presentation Title" }],
+            content: [{ type: "text", text: "Doc Title" }],
           },
           {
             type: "paragraph",

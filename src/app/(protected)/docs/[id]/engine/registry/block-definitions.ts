@@ -23,7 +23,7 @@ import {
   IconContrast,
 } from "@tabler/icons-react";
 
-import { BLOCK_TYPES, BlockType, BlockContent, getDefaultHeadingContent, Block } from "@/types/presentation";
+import { BLOCK_TYPES, BlockType, BlockContent, getDefaultHeadingContent, Block } from "@/types";
 import type { BlockRendererProps } from "@/app/(protected)/docs/[id]/engine/types";
 
 // Import factories and normalizers directly

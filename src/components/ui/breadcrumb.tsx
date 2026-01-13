@@ -70,7 +70,7 @@ function BreadcrumbSeparator({
   return (
     <li
       data-slot="breadcrumb-separator"
-      role="presentation"
+      role="doc"
       aria-hidden="true"
       className={cn("[&>svg]:size-3.5", className)}
       {...props}
@@ -87,7 +87,7 @@ function BreadcrumbEllipsis({
   return (
     <span
       data-slot="breadcrumb-ellipsis"
-      role="presentation"
+      role="doc"
       aria-hidden="true"
       className={cn("flex size-9 items-center justify-center", className)}
       {...props}

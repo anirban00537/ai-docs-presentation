@@ -6,7 +6,7 @@ import {
   ConnectedStepsItem,
   getDefaultHeadingContent,
   createProseMirrorDoc
-} from "@/types/presentation";
+} from "@/types";
 
 export const createConnectedStepItem = (index: number = 0): ConnectedStepsItem => ({
   id: nanoid(),

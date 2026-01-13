@@ -1,4 +1,4 @@
-import type { Slide as ReduxSlide, Block, Row } from "@/types/presentation";
+import type { Card as ReduxCard, Block, Row } from "@/types";
 import { BLOCK_TYPES } from "@/app/(protected)/docs/[id]/editor/blocks/definitions";
 
 /**
@@ -23,24 +23,24 @@ function migrateRow(row: Row): Row {
 }
 
 /**
- * Convert API slide format to Redux format, migrating legacy ProseMirror JSON to Markdown
+ * Convert API card format to Redux format, migrating legacy ProseMirror JSON to Markdown
  */
-export const convertApiSlideToRedux = (apiSlide: any): ReduxSlide => {
-  const rows = (apiSlide.data?.rows || []).map(migrateRow);
+export const convertApiCardToRedux = (apiCard: any): ReduxCard => {
+  const rows = (apiCard.data?.rows || []).map(migrateRow);
   return {
-    id: apiSlide.id,
+    id: apiCard.id,
     rows,
-    accent: apiSlide.data?.accent,
+    accent: apiCard.data?.accent,
   };
 };
 
 /**
- * Convert Redux slide format to API format
+ * Convert Redux card format to API format
  * Note: Content is already in Markdown format at this point, so no conversion needed
  */
-export const convertReduxSlideToApi = (reduxSlide: ReduxSlide): any => ({
+export const convertReduxCardToApi = (reduxCard: ReduxCard): any => ({
   data: {
-    rows: reduxSlide.rows,
-    accent: reduxSlide.accent,
+    rows: reduxCard.rows,
+    accent: reduxCard.accent,
   },
 });

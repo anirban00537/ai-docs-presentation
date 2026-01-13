@@ -136,7 +136,7 @@ export const PlanStatusCard: React.FC<PlanStatusCardProps> = ({
                 <AlertDialogHeader>
                   <AlertDialogTitle className="text-xl font-bold tracking-tight">Cancel Subscription?</AlertDialogTitle>
                   <AlertDialogDescription className="text-sm font-medium text-muted-foreground/80 leading-relaxed">
-                    Your access will continue until the end of your current billing period. Are you sure you want to stop building amazing presentations?
+                    Your access will continue until the end of your current billing period. Are you sure you want to stop building amazing docs?
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="gap-2 mt-4">

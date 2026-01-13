@@ -10,19 +10,19 @@ import {
 import type { LayoutTemplate } from "@/types";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { motion } from "framer-motion";
 import { useAdminLayouts } from "@/hooks";
 import { layoutsService } from "@/services";
 import { toast } from "sonner";
 
-interface SlideLayoutSelectorProps {
+interface CardLayoutSelectorProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectLayout: (template: LayoutTemplate) => void;
 }
 
-export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
+export const CardLayoutSelector: React.FC<CardLayoutSelectorProps> = ({
   isOpen,
   onClose,
   onSelectLayout,
@@ -62,16 +62,16 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
           const apiData = response.data as any;
 
           // Transform API response to LayoutTemplate format
-          // API returns a presentation with slides array, but we need a layout template
+          // API returns a doc with cards array, but we need a layout template
           let layoutTemplate: LayoutTemplate;
 
           if (
-            apiData.slides &&
-            Array.isArray(apiData.slides) &&
-            apiData.slides.length > 0
+            apiData.cards &&
+            Array.isArray(apiData.cards) &&
+            apiData.cards.length > 0
           ) {
-            // Extract the first slide's data
-            const firstSlide = apiData.slides[0];
+            // Extract the first card's data
+            const firstCard = apiData.cards[0];
             layoutTemplate = {
               id: apiData.id || template.id,
               name: (apiData as any).title || template.name,
@@ -80,8 +80,8 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
               type: "admin",
               tags: apiData.tags || [],
               data: {
-                rows: firstSlide.data?.rows || [],
-                accent: firstSlide.data?.accent,
+                rows: firstCard.data?.rows || [],
+                accent: firstCard.data?.accent,
               },
               createdAt: apiData.createdAt,
               updatedAt: apiData.updatedAt,
@@ -182,7 +182,7 @@ export const SlideLayoutSelector: React.FC<SlideLayoutSelectorProps> = ({
           >
             {isLoading
               ? "Loading templates..."
-              : "Select a template for your new slide"}
+              : "Select a template for your new card"}
           </p>
         </DialogHeader>
 

@@ -37,19 +37,19 @@ export const RowSchema = z.object({
   columnWidths: z.array(z.number()).optional(),
 });
 
-export const SlideAccentSchema = z.object({
+export const CardAccentSchema = z.object({
   url: z.string().optional(),
   position: z.enum(["left", "right", "top", "bottom", "background"]),
   size: z.number().min(5).max(100), // width/height percentage, or opacity for background
 });
 
-export const SlideSchema = z.object({
+export const CardSchema = z.object({
   id: z.string(),
   rows: z.array(RowSchema),
-  accent: SlideAccentSchema.optional(),
+  accent: CardAccentSchema.optional(),
 });
 
-export const PresentationInfoSchema = z.object({
+export const DocInfoSchema = z.object({
   id: z.string(),
   userId: z.string(),
   title: z.string(),
@@ -68,4 +68,8 @@ export const PresentationInfoSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   lastViewedAt: z.string().nullable(),
+  // Outline fields
+  prompt: z.string().nullable().optional(),
+  numberOfCards: z.number().nullable().optional(),
+  outlineStatus: z.enum(["none", "generating", "completed", "failed"]).nullable().optional(),
 });

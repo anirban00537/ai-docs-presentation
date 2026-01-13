@@ -5,122 +5,121 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   DEFAULT_THEME,
-  selectActiveSlideId,
-  selectSlides,
+  selectActiveCardId,
+  selectCards,
   selectTheme,
-  setPresentation,
-  setSlides,
+  setDoc,
+  setCards,
   setTheme,
-} from "@/store/slices/slidesSlice";
-import { convertApiSlideToRedux } from "@/lib/editor/adapters";
+} from "@/store/slices/cardsSlice";
+import { convertApiCardToRedux } from "@/lib/editor/adapters";
 import { createEditorCommandBus } from "@/lib/editor/commands";
-import { usePresentation } from "@/hooks/use-presentation";
+import { useDoc } from "@/hooks/use-docs";
 import { useOutline } from "@/app/(protected)/docs/[id]/hooks/use-outline";
 import { useEditorDnd } from "./useEditorDnd";
-import { useSlideGeneration } from "./useSlideGeneration";
+import { useCardGeneration } from "./useCardGeneration";
 import { useEditorSync } from "./useEditorSync";
-import { useSlideActions } from "./useSlideActions";
+import { useCardActions } from "./useCardActions";
 import { detectRowBlockType } from "@/app/(protected)/docs/[id]/editor/blocks/utils";
 
 interface UseEditorPageParams {
-  presentationId: string | null;
+  docId: string | null;
   outlineId: string | null;
 }
 
-export const useEditorPage = ({ presentationId, outlineId }: UseEditorPageParams) => {
+export const useEditorPage = ({ docId, outlineId }: UseEditorPageParams) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const slides = useAppSelector(selectSlides);
+  const cards = useAppSelector(selectCards);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
-  const activeSlideId = useAppSelector(selectActiveSlideId);
-  const slidesRef = useRef(slides);
+  const activeCardId = useAppSelector(selectActiveCardId);
+  const cardsRef = useRef(cards);
 
-  useEffect(() => { slidesRef.current = slides; }, [slides]);
+  useEffect(() => { cardsRef.current = cards; }, [cards]);
 
   // --- Sub-Hooks (The Logic Layers) ---
-  const { data: presentationResponse, isLoading: isLoadingPresentation } = usePresentation(presentationId);
+  const { data: docResponse, isLoading: isLoadingDoc } = useDoc(docId);
   const { data: outlineResponse } = useOutline(outlineId);
   
   // 1. Generation Logic
-  const { isGenerating, progress, startGeneration, generationSpeed } = useSlideGeneration({ 
-    presentationId, 
-    slidesRef 
+  const { isGenerating, progress, startGeneration, generationSpeed } = useCardGeneration({ 
+    cardsRef 
   });
 
   // 2. Sync Logic (Auto-save)
-  useEditorSync(presentationId);
+  useEditorSync(docId);
 
-  // 4. Slide Actions (Add/Delete)
-  const { handleAddSlide, handleDeleteSlide } = useSlideActions(presentationId);
+  // 4. Card Actions (Add/Delete)
+  const { handleAddCard, handleDeleteCard } = useCardActions(docId);
 
   const commandBus = useMemo(() => createEditorCommandBus(dispatch), [dispatch]);
 
   // 3. Interaction Logic (DnD)
-  const dnd = useEditorDnd({ slides, commandBus });
+  const dnd = useEditorDnd({ cards: cards, commandBus });
 
   // --- Initialization Logic ---
   const hasLoaded = useRef(false);
 
-  // Load presentation from DB
+  // Load doc from DB
   useEffect(() => {
-    if (presentationResponse?.success && presentationResponse.data && !hasLoaded.current) {
-      const apiSlides = presentationResponse.data.slides || [];
-      const reduxSlides = [...apiSlides]
+    if (docResponse?.success && docResponse.data && !hasLoaded.current) {
+      const apiCards = docResponse.data.cards || [];
+      const reduxCards = [...apiCards]
         .sort((a: any, b: any) => a.order - b.order)
-        .map(convertApiSlideToRedux);
+        .map(convertApiCardToRedux);
       
-      dispatch(setSlides(reduxSlides));
-      if (presentationResponse.data.globalTheme) {
-        dispatch(setTheme(presentationResponse.data.globalTheme as any));
+      dispatch(setCards(reduxCards));
+      if (docResponse.data.globalTheme) {
+        dispatch(setTheme(docResponse.data.globalTheme as any));
       }
-      dispatch(setPresentation(presentationResponse.data as any));
+      dispatch(setDoc(docResponse.data as any));
       
       hasLoaded.current = true;
 
-      // Auto-trigger generation if presentation is empty and outline exists
-      if (reduxSlides.length === 0 && outlineId && outlineResponse?.success) {
-        startGeneration(presentationId!);
+      // Auto-trigger generation if doc is empty and outline exists
+      if (reduxCards.length === 0 && outlineId && outlineResponse?.success) {
+        startGeneration(docId!);
       }
     }
-  }, [presentationResponse, outlineResponse, outlineId, presentationId, dispatch, startGeneration]);
+  }, [docResponse, outlineResponse, outlineId, docId, dispatch, startGeneration]);
 
   // --- Action Handlers ---
-  const handleUpdateBlock = (slideId: string, blockId: string, content: any) => 
-    commandBus.updateBlock({ slideId, blockId, content });
+  const handleUpdateBlock = (cardId: string, blockId: string, content: any) => 
+    commandBus.updateBlock({ cardId, blockId, content });
 
-  const handleDeleteRow = (slideId: string, rowId: string) => 
-    commandBus.deleteRow({ slideId, rowId });
+  const handleDeleteRow = (cardId: string, rowId: string) => 
+    commandBus.deleteRow({ cardId, rowId });
 
-  const handleAddColumn = (slideId: string, rowId: string, afterBlockId: string) => {
-    const slide = slides.find((s) => s.id === slideId);
-    const row = slide?.rows.find((r) => r.id === rowId);
+  const handleAddColumn = (cardId: string, rowId: string, afterBlockId: string) => {
+    const card = cards.find((c) => c.id === cardId);
+    const row = card?.rows.find((r) => r.id === rowId);
     const blockType = row ? detectRowBlockType(row) : undefined;
-    commandBus.addBlockAfter({ slideId, rowId, afterBlockId, blockType });
+    commandBus.addBlockAfter({ cardId, rowId, afterBlockId, blockType });
   };
 
-  const handleAddRowAtTop = (slideId: string) => 
-    commandBus.addRowAtTop({ slideId, columnCount: 1 });
+  const handleAddRowAtTop = (cardId: string) => 
+    commandBus.addRowAtTop({ cardId, columnCount: 1 });
 
-  const handleAddRowAtBottom = (slideId: string) => 
-    commandBus.addRowWithColumns({ slideId, columnCount: 1, blockType: "prosemirror" });
+  const handleAddRowAtBottom = (cardId: string) => 
+    commandBus.addRowWithColumns({ cardId, columnCount: 1, blockType: "prosemirror" });
 
-  const handleUpdateColumnWidths = (slideId: string, rowId: string, columnWidths: number[]) => 
-    commandBus.updateColumnWidths({ slideId, rowId, columnWidths });
+  const handleUpdateColumnWidths = (cardId: string, rowId: string, columnWidths: number[]) => 
+    commandBus.updateColumnWidths({ cardId, rowId, columnWidths });
 
-  const handleAddSlideAtOrder = (afterSlideId?: string) => 
-    handleAddSlide(afterSlideId);
+  const handleAddCardAtOrder = (afterCardId?: string) => 
+    handleAddCard(afterCardId);
 
   return {
     // state
-    slides,
+    cards,
     theme,
-    activeSlideId,
-    isGeneratingSlides: isGenerating,
-    slideGenerationProgress: progress,
-    slideGenerationSpeed: generationSpeed,
-    isLoadingPresentation,
-    presentationId,
+    activeCardId,
+    isGeneratingCards: isGenerating,
+    cardGenerationProgress: progress,
+    cardGenerationSpeed: generationSpeed,
+    isLoadingDoc,
+    docId,
 
     // dnd
     ...dnd,
@@ -132,8 +131,8 @@ export const useEditorPage = ({ presentationId, outlineId }: UseEditorPageParams
     handleAddRowAtTop,
     handleAddRowAtBottom,
     handleUpdateColumnWidths,
-    handleAddSlide: handleAddSlideAtOrder,
-    handleDeleteSlide,
+    handleAddCard: handleAddCardAtOrder,
+    handleDeleteCard: handleDeleteCard,
     
     // internals
     commandBus, 

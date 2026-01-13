@@ -101,7 +101,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            {isGenerating ? "Generating your presentation" : "Loading presentation"}
+            {isGenerating ? "Generating your doc" : "Loading doc"}
           </motion.h2>
           
           {/* Progress indicator for generation */}
@@ -114,7 +114,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
             >
               <div className="flex items-center gap-2">
                 <span className="text-sm text-foreground/50">
-                  Slide {progress.current} of {progress.total}
+                  Card {progress.current} of {progress.total}
                 </span>
               </div>
               {/* Progress bar */}

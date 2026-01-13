@@ -1,4 +1,4 @@
-import { Theme } from "@/types/presentation";
+import { Theme } from "@/types";
 
 /**
  * Static definition of the 9 card styles.

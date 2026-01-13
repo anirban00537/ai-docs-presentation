@@ -1,2 +1,2 @@
 export * from "./api.types";
-export * from "./presentation";
+export * from "./docs";

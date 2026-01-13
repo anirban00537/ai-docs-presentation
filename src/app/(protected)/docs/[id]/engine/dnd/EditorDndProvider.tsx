@@ -13,7 +13,7 @@ import {
   closestCenter,
   pointerWithin,
 } from "@dnd-kit/core";
-import { Block, Slide } from "@/types/presentation";
+import { Block, Card } from "@/types";
 import { EditorCommandBus } from "@/lib/editor/commands";
 import { useEditorDnd } from "@/app/(protected)/docs/[id]/hooks/useEditorDnd";
 
@@ -31,13 +31,13 @@ const EditorDndContext = createContext<EditorDndContextValue | null>(null);
 
 interface EditorDndProviderProps {
   children: ReactNode;
-  slides: Slide[];
+  cards: Card[];
   commandBus: EditorCommandBus;
 }
 
 export const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
   children,
-  slides,
+  cards,
   commandBus,
 }) => {
   // We reuse the logic from useEditorDnd hook which encapsulates sensors and state
@@ -49,7 +49,7 @@ export const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
     handleDragStart,
     handleDragEnd,
     customCollisionDetection,
-  } = useEditorDnd({ slides, commandBus });
+  } = useEditorDnd({ cards, commandBus });
 
   return (
     <EditorDndContext.Provider

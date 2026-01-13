@@ -1,10 +1,10 @@
 import React from "react";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BlockOption } from "../block-ui/BlockOption";
-import type { BlockType } from "@/types/presentation";
+import type { BlockType } from "@/types/docs";
 import { BLOCK_DEFINITIONS } from "@/app/(protected)/docs/[id]/engine";
 
 interface BlockLibraryPanelProps {
@@ -154,7 +154,7 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
                 className="text-[11px] font-medium mb-2 px-1 opacity-50"
                 style={{ color: isDark ? "#fff" : "#000" }}
               >
-                Drag to add to your slide
+                Drag to add to your card
               </p>
               <div className="space-y-6">
                 {Array.from(new Set(blockDefinitions.map(b => b.category))).map(category => (

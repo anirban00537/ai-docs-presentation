@@ -4,46 +4,46 @@ import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { CONFIG } from "@/lib/config";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
-import { SlideCanvas } from "@/app/(protected)/docs/[id]/engine/layout/SlideCanvas";
+import { CardCanvas } from "@/app/(protected)/docs/[id]/engine/layout/CardCanvas";
 import { EditorThemeProvider } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
-import { convertApiSlideToRedux } from "@/lib/editor/adapters";
-import { Slide, Theme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { convertApiCardToRedux } from "@/lib/editor/adapters";
+import { Card, Theme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { Provider } from "react-redux";
 import { store } from "@/store";
 
-interface ExportSlideData {
-  slide: any;
+interface ExportCardData {
+  card: any;
   theme: Theme;
 }
 
 /**
- * Export-optimized slide embed page.
- * This route is used by the Puppeteer screenshot service to capture slides.
- * It fetches slide data directly using an internal API key for authentication.
+ * Export-optimized card embed page.
+ * This route is used by the Puppeteer screenshot service to capture cards.
+ * It fetches card data directly using an internal API key for authentication.
  */
-const ExportSlideContent = () => {
+const ExportCardContent = () => {
   const params = useParams();
   const searchParams = useSearchParams();
-  const slideId = params?.slideId as string;
-  const presentationId = searchParams.get("presentationId");
+  const cardId = params?.cardId as string;
+  const docId = searchParams.get("docId");
   const exportKey = searchParams.get("exportKey");
 
-  const [slideData, setSlideData] = useState<ExportSlideData | null>(null);
+  const [cardData, setCardData] = useState<ExportCardData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSlideData = async () => {
-      if (!slideId || !presentationId || !exportKey) {
+    const fetchCardData = async () => {
+      if (!cardId || !docId || !exportKey) {
         setError("Missing required parameters");
         setIsLoading(false);
         return;
       }
 
       try {
-        // Fetch slide data from internal export API
+        // Fetch card data from internal export API
         const response = await fetch(
-          `${CONFIG.API_URL}/presentation/${presentationId}/slides/${slideId}/export?exportKey=${exportKey}`,
+          `${CONFIG.API_URL}/doc/${docId}/cards/${cardId}/export?exportKey=${exportKey}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -53,26 +53,26 @@ const ExportSlideContent = () => {
         );
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch slide: ${response.status}`);
+          throw new Error(`Failed to fetch card: ${response.status}`);
         }
 
         const result = await response.json();
         
         if (result.success && result.data) {
-          setSlideData(result.data);
+          setCardData(result.data);
         } else {
-          throw new Error(result.message || "Failed to fetch slide data");
+          throw new Error(result.message || "Failed to fetch card data");
         }
       } catch (err) {
-        console.error("Export slide fetch error:", err);
-        setError(err instanceof Error ? err.message : "Failed to load slide");
+        console.error("Export card fetch error:", err);
+        setError(err instanceof Error ? err.message : "Failed to load card");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchSlideData();
-  }, [slideId, presentationId, exportKey]);
+    fetchCardData();
+  }, [cardId, docId, exportKey]);
 
   if (isLoading) {
     return (
@@ -80,54 +80,54 @@ const ExportSlideContent = () => {
         id="export-loading" 
         className="w-screen h-screen flex items-center justify-center bg-gray-900"
       >
-        <div className="text-white text-lg">Loading slide...</div>
+        <div className="text-white text-lg">Loading card...</div>
       </div>
     );
   }
 
-  if (error || !slideData) {
+  if (error || !cardData) {
     return (
       <div 
         id="export-error" 
         className="w-screen h-screen flex items-center justify-center bg-red-900"
       >
-        <div className="text-white text-lg">{error || "No slide data"}</div>
+        <div className="text-white text-lg">{error || "No card data"}</div>
       </div>
     );
   }
 
-  // Convert the API slide format to Redux format
-  const reduxSlide = convertApiSlideToRedux(slideData.slide);
+  // Convert the API card format to Redux format
+  const reduxCard = convertApiCardToRedux(cardData.card);
   // Merge with defaults for a complete theme
-  const theme: Theme = { ...DEFAULT_THEME, ...(slideData.theme || {}) };
+  const theme: Theme = { ...DEFAULT_THEME, ...(cardData.theme || {}) };
 
   return (
     <EditorThemeProvider themeOverride={theme}>
-      <ExportSlideRenderer slide={reduxSlide} theme={theme} />
+      <ExportCardRenderer card={reduxCard} theme={theme} />
     </EditorThemeProvider>
   );
 };
 
-interface ExportSlideRendererProps {
-  slide: Slide;
+interface ExportCardRendererProps {
+  card: Card;
   theme: Theme;
 }
 
-const ExportSlideRenderer = ({ slide, theme }: ExportSlideRendererProps) => {
+const ExportCardRenderer = ({ card, theme }: ExportCardRendererProps) => {
   const isDark = theme.themeType === "dark";
 
   return (
     <>
       <GoogleFontsLoader />
       <div
-        id="export-slide-container"
+        id="export-card-container"
         className="export-ready w-screen h-screen overflow-hidden"
         style={{
           backgroundColor: theme.pageBackground,
           fontFamily: `${theme.fontFamily || 'Inter'}, sans-serif`,
         }}
       >
-        {/* Mesh gradient background for presentation mode */}
+        {/* Mesh gradient background for doc mode */}
         <div
           className="absolute inset-0 -z-10 pointer-events-none"
           style={{
@@ -143,8 +143,8 @@ const ExportSlideRenderer = ({ slide, theme }: ExportSlideRendererProps) => {
 
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-full h-full">
-            <SlideCanvas
-              slide={slide}
+            <CardCanvas
+              card={card}
               onUpdateBlock={() => {}}
               onDeleteRow={() => {}}
               onAddColumn={() => {}}
@@ -163,12 +163,12 @@ const ExportSlideRenderer = ({ slide, theme }: ExportSlideRendererProps) => {
 };
 
 // Wrapper that provides Redux store (needed for some internal components)
-const ExportSlidePage = () => {
+const ExportCardPage = () => {
   return (
     <Provider store={store}>
-      <ExportSlideContent />
+      <ExportCardContent />
     </Provider>
   );
 };
 
-export default ExportSlidePage;
+export default ExportCardPage;

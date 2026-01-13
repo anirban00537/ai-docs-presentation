@@ -3,8 +3,8 @@ import {
   type SolidIconBoxContent,
   type SolidIconBoxItem,
   createProseMirrorDoc,
-} from "@/types/presentation";
-import { SolidIconBoxContentSchema } from "@/types/presentation/schemas/blocks";
+} from "@/types";
+import { SolidIconBoxContentSchema } from "@/types/docs/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createSolidIconBoxItem = (

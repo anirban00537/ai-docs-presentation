@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme, ProseMirrorDocument } from "@/types/presentation";
+import type { Block, Theme, ProseMirrorDocument } from "@/types";
 import {
   createCalloutContent,
 } from "../definitions/callout-block";
-import type { CalloutContent } from "@/types/presentation";
+import type { CalloutContent } from "@/types";
 import { 
   IconInfoCircle, 
   IconAlertTriangle, 

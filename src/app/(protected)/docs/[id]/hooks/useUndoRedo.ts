@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionCreators } from 'redux-undo';
-import { selectCanUndo, selectCanRedo } from '@/store/slices/slidesSlice';
+import { selectCanUndo, selectCanRedo } from '@/store/slices/cardsSlice';
 
 /**
  * Hook for undo/redo functionality with keyboard shortcuts

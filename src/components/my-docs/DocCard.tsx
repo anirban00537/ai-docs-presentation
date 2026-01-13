@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  IconPresentation,
+  IconFileText,
   IconEdit,
   IconTrash,
   IconDotsVertical,
@@ -18,29 +18,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DEFAULT_THEME, Theme } from "@/store/slices/slidesSlice";
-import { SlidePreview } from "./SlidePreview";
+import { DEFAULT_THEME, Theme } from "@/store/slices/cardsSlice";
+import { CardPreview } from "./CardPreview";
 
-interface PresentationCardProps {
-  presentation: any;
+interface DocCardProps {
+  doc: any;
   index: number;
   onEdit: (id: string) => void;
   onDelete: (id: string, title: string) => void;
 }
 
-export const PresentationCard: React.FC<PresentationCardProps> = ({
-  presentation,
+export const DocCard: React.FC<DocCardProps> = ({
+  doc,
   index,
   onEdit,
   onDelete,
 }) => {
   const theme: Theme = {
     ...DEFAULT_THEME,
-    ...(presentation.globalTheme || {}),
+    ...(doc.globalTheme || {}),
   };
   
-  const firstSlide = presentation.slides?.[0];
-  const slideCount = presentation._count?.slides || presentation.slides?.length || 0;
+  const firstCard = doc.cards?.[0];
+  const cardCount = doc._count?.cards || doc.cards?.length || 0;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -67,19 +67,19 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
       whileHover={{ y: -4, scale: 1.01 }}
       className="group relative"
     >
-      <Link href={`/docs/${presentation.id}`}>
+      <Link href={`/docs/${doc.id}`}>
         <div 
           className="relative overflow-hidden rounded-2xl transition-all duration-300 cursor-pointer bg-white/40 border border-secondary/20 hover:border-primary/20 hover:shadow-depth-3 hover:bg-white"
         >
-          {/* Slide Preview */}
+          {/* Card Preview */}
           <div className="relative border-b border-black/5">
-            {firstSlide ? (
-              <SlidePreview slide={firstSlide} theme={theme} />
+            {firstCard ? (
+              <CardPreview card={firstCard} theme={theme} />
             ) : (
               <div 
                 className="aspect-video flex items-center justify-center bg-secondary/5"
               >
-                <IconPresentation size={48} className="text-secondary/50" />
+                <IconFileText size={48} className="text-secondary/50" />
               </div>
             )}
 
@@ -90,17 +90,17 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
           {/* Content */}
           <div className="relative p-4 z-10">
             <h3 className="font-serif text-sm font-bold text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
-              {presentation.title || "Untitled Presentation"}
+              {doc.title || "Untitled Doc"}
             </h3>
             
             <div className="flex items-center gap-4 text-xs text-muted-foreground font-medium">
               <span className="flex items-center gap-1.5 p-1 px-2 rounded-full bg-secondary/10">
                 <IconStack2 size={12} />
-                {slideCount}
+                {cardCount}
               </span>
               <span className="flex items-center gap-1.5">
                 <IconCalendar size={12} />
-                {formatDate(presentation.updatedAt || presentation.createdAt)}
+                {formatDate(doc.updatedAt || doc.createdAt)}
               </span>
             </div>
           </div>
@@ -125,7 +125,7 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                onEdit(presentation.id);
+                onEdit(doc.id);
               }}
               className="rounded-lg cursor-pointer"
             >
@@ -136,7 +136,7 @@ export const PresentationCard: React.FC<PresentationCardProps> = ({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                onDelete(presentation.id, presentation.title || "Untitled Presentation");
+                onDelete(doc.id, doc.title || "Untitled Doc");
               }}
               className="text-destructive focus:text-destructive rounded-lg cursor-pointer"
             >

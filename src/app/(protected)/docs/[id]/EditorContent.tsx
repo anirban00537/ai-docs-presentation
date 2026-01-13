@@ -3,36 +3,36 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  SlideCanvas,
-  SlideNavigator,
+  CardCanvas,
+  CardNavigator,
   EditorHeader,
-  PresentationView,
+  DocView,
   EditorBackground,
   BlockSelectionProvider,
   ToolbarPanel,
   EditorThemeProvider,
   EditorDndProvider,
   useEditorTheme,
-  ScalableSlideContainer,
+  ScalableCardContainer,
 } from "@/app/(protected)/docs/[id]/editor";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { LoadingOverlay } from "@/app/(protected)/docs/[id]/editor";
 import { LoaderOverlay } from "@/components/ui";
 import { useEditorPage } from "./hooks/useEditorPage";
-import { usePresentationMode } from "./hooks/usePresentationMode";
+import { useDocMode } from "./hooks/useDocMode";
 import { useAppSelector } from "@/store/hooks";
-import { selectPresentation, selectActiveSlideId } from "@/store/slices/slidesSlice";
+import { selectDoc, selectActiveCardId } from "@/store/slices/cardsSlice";
 import { useUndoRedoKeyboardShortcuts } from "@/app/(protected)/docs/[id]/hooks/useUndoRedo";
 import DragOverlayWrapper from "./DragOverlayWrapper";
-import { Slide } from "@/store/slices/slidesSlice";
-import { SLIDE_MAX_WIDTH } from "@/lib/constants";
+import { Card } from "@/store/slices/cardsSlice";
+import { CARD_MAX_WIDTH } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useProfile } from "@/hooks/use-auth";
 
 
-const EditorContent = ({ presentationId, outlineId }: { presentationId: string, outlineId: string | null }) => {
+const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string | null }) => {
   const {
-    slides,
+    cards,
     commandBus,
     handleUpdateBlock,
     handleDeleteRow,
@@ -40,23 +40,23 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
     handleAddRowAtTop,
     handleAddRowAtBottom,
     handleUpdateColumnWidths,
-    handleAddSlide,
-    handleDeleteSlide,
-    isLoadingPresentation,
-    isGeneratingSlides,
-    slideGenerationProgress,
-    slideGenerationSpeed,
-  } = useEditorPage({ presentationId, outlineId });
+    handleAddCard,
+    handleDeleteCard,
+    isLoadingDoc,
+    isGeneratingCards,
+    cardGenerationProgress,
+    cardGenerationSpeed,
+  } = useEditorPage({ docId, outlineId });
 
   const theme = useEditorTheme();
-  const presentation = useAppSelector(selectPresentation);
-  const activeSlideId = useAppSelector(selectActiveSlideId);
+  const doc = useAppSelector(selectDoc);
+  const activeCardId = useAppSelector(selectActiveCardId);
   const isDark = theme.themeType === "dark";
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { data: user } = useProfile();
   
   // Determine if we're in read-only mode
-  const isReadOnly = !user && presentation?.shareEnabled === true;
+  const isReadOnly = !user && doc?.shareEnabled === true;
   
   // Mobile UI States
   const [isMobileNavigatorOpen, setIsMobileNavigatorOpen] = useState(false);
@@ -65,34 +65,34 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
 
   const {
     isPresenting,
-    currentSlideIndex,
-    presentationContainerRef,
-    startPresentation,
-    stopPresentation,
-    goToNextSlide,
-    goToPrevSlide,
-  } = usePresentationMode({
-    slidesCount: slides.length,
-    slides: slides.filter((slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)),
-    presentationId,
+    currentCardIndex,
+    docContainerRef,
+    startDoc,
+    stopDoc,
+    goToNextCard,
+    goToPrevCard,
+  } = useDocMode({
+    cardsCount: cards.length,
+    cards: cards.filter((card: Card) => card && card.rows && Array.isArray(card.rows)),
+    docId,
   });
 
   useEffect(() => {
-    if (activeSlideId && !isPresenting && !isGeneratingSlides) {
+    if (activeCardId && !isPresenting && !isGeneratingCards) {
       setTimeout(() => {
-        const slideElement = document.querySelector(`[data-slide-id="${activeSlideId}"]`);
-        if (slideElement) {
-          slideElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        const cardElement = document.querySelector(`[data-card-id="${activeCardId}"]`);
+        if (cardElement) {
+          cardElement.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       }, 100);
       
-      // Close mobile navigator when a slide is selected
+      // Close mobile navigator when a card is selected
       setIsMobileNavigatorOpen(false);
     }
-  }, [activeSlideId, isPresenting]);
+  }, [activeCardId, isPresenting]);
 
   useEffect(() => {
-    if (isGeneratingSlides && slides.length > 0) {
+    if (isGeneratingCards && cards.length > 0) {
       const timeoutId = setTimeout(() => {
         if (scrollContainerRef.current) {
           const container = scrollContainerRef.current;
@@ -106,9 +106,9 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
       }, 50);
       return () => clearTimeout(timeoutId);
     }
-  }, [isGeneratingSlides, slides]); // Watch 'slides' to follow streaming content updates
+  }, [isGeneratingCards, cards]); // Watch 'cards' to follow streaming content updates
 
-  const showLoading = isLoadingPresentation && !isGeneratingSlides;
+  const showLoading = isLoadingDoc && !isGeneratingCards;
 
   if (showLoading) {
     return (
@@ -123,15 +123,15 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
     <>
       <GoogleFontsLoader />
 
-      <PresentationView
+      <DocView
         isPresenting={isPresenting}
-        slides={slides}
-        currentSlideIndex={currentSlideIndex}
+        cards={cards}
+        currentCardIndex={currentCardIndex}
         theme={theme}
-        containerRef={presentationContainerRef}
-        onPrevSlide={goToPrevSlide}
-        onNextSlide={goToNextSlide}
-        onClose={stopPresentation}
+        containerRef={docContainerRef}
+        onPrevCard={goToPrevCard}
+        onNextCard={goToNextCard}
+        onClose={stopDoc}
         onUpdateBlock={handleUpdateBlock}
         onDeleteRow={handleDeleteRow}
         onAddColumn={handleAddColumn}
@@ -141,7 +141,7 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
       />
 
       <EditorHeader 
-        onPresentClick={startPresentation} 
+        onPresentClick={startDoc} 
         onMenuClick={() => setIsMobileNavigatorOpen(!isMobileNavigatorOpen)}
         isReadOnly={isReadOnly}
       />
@@ -152,9 +152,9 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
         {/* Desktop Sidebar */}
         {!isReadOnly && (
           <div className="hidden lg:flex h-full">
-            <SlideNavigator
-              slides={slides.filter(
-                (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+            <CardNavigator
+              cards={cards.filter(
+                (card: Card) => card && card.rows && Array.isArray(card.rows)
               )}
               onUpdateBlock={handleUpdateBlock}
               onDeleteRow={handleDeleteRow}
@@ -162,8 +162,8 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
               onAddRowAtTop={handleAddRowAtTop}
               onAddRowAtBottom={handleAddRowAtBottom}
               onUpdateColumnWidths={handleUpdateColumnWidths}
-              onAddSlide={handleAddSlide}
-              onDeleteSlide={handleDeleteSlide}
+              onAddCard={handleAddCard}
+              onDeleteCard={handleDeleteCard}
             />
           </div>
         )}
@@ -187,9 +187,9 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
                 className="absolute top-0 left-0 bottom-0 w-[240px] bg-white dark:bg-[#121216] shadow-2xl"
               >
                 <div className="h-full w-full overflow-hidden">
-                   <SlideNavigator
-                      slides={slides.filter(
-                        (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+                   <CardNavigator
+                      cards={cards.filter(
+                        (card: Card) => card && card.rows && Array.isArray(card.rows)
                       )}
                       onUpdateBlock={handleUpdateBlock}
                       onDeleteRow={handleDeleteRow}
@@ -197,8 +197,8 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
                       onAddRowAtTop={handleAddRowAtTop}
                       onAddRowAtBottom={handleAddRowAtBottom}
                       onUpdateColumnWidths={handleUpdateColumnWidths}
-                      onAddSlide={handleAddSlide}
-                      onDeleteSlide={handleDeleteSlide}
+                      onAddCard={handleAddCard}
+                      onDeleteCard={handleDeleteCard}
                       isMobile={true}
                     />
                 </div>
@@ -213,15 +213,15 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
               {isReadOnly ? (
                 // Read-only view - no editing capabilities
                 <div className="flex flex-col w-full items-center pb-32 gap-3">
-                  {slides
+                  {cards
                     .filter(
-                      (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+                      (card: Card) => card && card.rows && Array.isArray(card.rows)
                     )
-                    .map((slide: Slide, index: number) => (
+                    .map((card: Card, index: number) => (
                       <motion.div
-                        key={slide.id}
-                        data-slide-id={slide.id}
-                        data-slide-index={index}
+                        key={card.id}
+                        data-card-id={card.id}
+                        data-card-index={index}
                         className="w-full max-w-full relative"
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -234,9 +234,9 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
                           {index + 1}
                         </div>
 
-                        <ScalableSlideContainer>
-                          <SlideCanvas
-                            slide={slide}
+                        <ScalableCardContainer>
+                          <CardCanvas
+                            card={card}
                             onUpdateBlock={() => {}}
                             onDeleteRow={() => {}}
                             onAddColumn={() => {}}
@@ -245,26 +245,26 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
                             onUpdateColumnWidths={() => {}}
                             readOnly={true}
                           />
-                        </ScalableSlideContainer>
+                        </ScalableCardContainer>
                       </motion.div>
                     ))}
                 </div>
               ) : (
                 // Full editing mode
-                <EditorDndProvider slides={slides} commandBus={commandBus}>
+                <EditorDndProvider cards={cards} commandBus={commandBus}>
                   <BlockSelectionProvider>
-                    <ToolbarPanel presentationId={presentationId} />
+                    <ToolbarPanel docId={docId} />
 
                     <div className="flex flex-col w-full items-center pb-32 gap-3">
-                      {slides
+                      {cards
                         .filter(
-                          (slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)
+                          (card: Card) => card && card.rows && Array.isArray(card.rows)
                         )
-                        .map((slide: Slide, index: number) => (
+                        .map((card: Card, index: number) => (
                           <motion.div
-                            key={slide.id}
-                            data-slide-id={slide.id}
-                            data-slide-index={index}
+                            key={card.id}
+                            data-card-id={card.id}
+                            data-card-index={index}
                             className="w-full max-w-full relative"
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -277,9 +277,9 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
                               {index + 1}
                             </div>
 
-                            <ScalableSlideContainer>
-                              <SlideCanvas
-                                slide={slide}
+                            <ScalableCardContainer>
+                              <CardCanvas
+                                card={card}
                                 onUpdateBlock={handleUpdateBlock}
                                 onDeleteRow={handleDeleteRow}
                                 onAddColumn={handleAddColumn}
@@ -287,7 +287,7 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
                                 onAddRowAtBottom={handleAddRowAtBottom}
                                 onUpdateColumnWidths={handleUpdateColumnWidths}
                               />
-                            </ScalableSlideContainer>
+                            </ScalableCardContainer>
                           </motion.div>
                         ))}
                     </div>
@@ -302,11 +302,11 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
       </div>
 
       <LoaderOverlay
-        isLoading={isGeneratingSlides}
-        progress={slideGenerationProgress}
+        isLoading={isGeneratingCards}
+        progress={cardGenerationProgress}
         theme={theme}
         mode={isDark ? "dark" : "light"}
-        streamSpeed={slideGenerationSpeed}
+        streamSpeed={cardGenerationSpeed}
       />
     </>
   );

@@ -13,7 +13,7 @@ export interface SubscriptionStatus {
     productId?: string;
   };
   features: {
-    maxSlides: number;
+    maxCards: number;
     hasWatermark: boolean;
     isPremium: boolean;
     productName?: string;

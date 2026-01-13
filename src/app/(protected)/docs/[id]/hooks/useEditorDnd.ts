@@ -11,15 +11,15 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import type { Block, Slide } from "@/types/presentation";
+import type { Block, Card } from "@/types";
 import type { EditorCommandBus } from "@/lib/editor/commands";
 
 interface UseEditorDndParams {
-  slides: Slide[];
+  cards: Card[];
   commandBus: EditorCommandBus;
 }
 
-export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
+export const useEditorDnd = ({ cards, commandBus }: UseEditorDndParams) => {
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
   const [isBlockDragging, setIsBlockDragging] = useState(false);
   const [draggingBlockType, setDraggingBlockType] = useState<string | null>(
@@ -36,11 +36,11 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
     useSensor(KeyboardSensor)
   );
 
-  const slidesRef = useRef(slides);
+  const cardsRef = useRef(cards);
 
   useEffect(() => {
-    slidesRef.current = slides;
-  }, [slides]);
+    cardsRef.current = cards;
+  }, [cards]);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     const data = event.active.data.current;
@@ -103,10 +103,10 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
           const columnCount = isLayout ? (activeData?.columnCount || 1) : 1;
 
           if (overData?.type === "row-insert") {
-            const slideId = overData.slideId as string;
+            const cardId = overData.cardId as string;
             const insertIndex = Number(overData.insertIndex ?? 0);
             commandBus.addRowWithColumnsAtIndex({
-              slideId,
+              cardId,
               columnCount,
               insertIndex,
               blockType: draggingBlockType,
@@ -120,7 +120,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
           // Any block/layout can be dropped into any row
           if (overData?.type === "row") {
             const rowId = overData.rowId as string;
-            const slideId = overData.slideId as string;
+            const cardId = overData.cardId as string;
             const insertIndex = overData.insertIndex as number | undefined;
 
             // If it's a layout, we might want to add all its columns...
@@ -129,7 +129,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
             // Given the instruction "any block... any where", we'll allow it.
             
             commandBus.addBlockAfter({
-              slideId,
+              cardId,
               rowId,
               insertIndex,
               blockType: draggingBlockType,
@@ -145,16 +145,16 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
 
       const activeData = active.data.current;
       const overData = over.data.current;
-      const sourceSlideId = activeData?.slideId as string;
+      const sourceCardId = activeData?.cardId as string;
       const sourceBlockId = activeData?.block?.id as string;
 
-      if (!sourceSlideId || !sourceBlockId) return;
+      if (!sourceCardId || !sourceBlockId) return;
 
       let sourceRowId: string | null = null;
       let sourceBlockIndex = -1;
-      const sourceSlide = slidesRef.current.find((s) => s.id === sourceSlideId);
-      if (sourceSlide) {
-        for (const row of sourceSlide.rows) {
+      const sourceCard = cardsRef.current.find((s) => s.id === sourceCardId);
+      if (sourceCard) {
+        for (const row of sourceCard.rows) {
           const blockIdx = row.blocks.findIndex((b) => b.id === sourceBlockId);
           if (blockIdx !== -1) {
             sourceRowId = row.id;
@@ -169,7 +169,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
       if (overData?.type === "row-insert") {
         const insertIndex = Number(overData.insertIndex ?? 0);
         commandBus.moveBlockToNewRow({
-          slideId: sourceSlideId,
+          cardId: sourceCardId,
           sourceRowId,
           blockId: sourceBlockId,
           insertIndex,
@@ -180,20 +180,20 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
       // Handle drop on a specific Row (Insertion Logic)
       if (overData?.type === "row") {
         const targetRowId = overData.rowId as string;
-        const targetSlideId = overData.slideId as string;
+        const targetCardId = overData.cardId as string;
         const insertIndex = overData.insertIndex as number | undefined;
         
-        const targetSlide = slidesRef.current.find((s) => s.id === targetSlideId);
-        if (!targetSlide) return;
-        const targetRow = targetSlide.rows.find((r) => r.id === targetRowId);
+        const targetCard = cardsRef.current.find((s) => s.id === targetCardId);
+        if (!targetCard) return;
+        const targetRow = targetCard.rows.find((r) => r.id === targetRowId);
         if (!targetRow) return;
 
         const finalInsertIndex = insertIndex ?? targetRow.blocks.length;
 
         // Same Row Reordering
-        if (targetRowId === sourceRowId && targetSlideId === sourceSlideId) {
+        if (targetRowId === sourceRowId && targetCardId === sourceCardId) {
             commandBus.reorderBlocksInRow({
-              slideId: sourceSlideId,
+              cardId: sourceCardId,
               rowId: sourceRowId,
               oldIndex: sourceBlockIndex,
               newIndex: finalInsertIndex,
@@ -208,7 +208,7 @@ export const useEditorDnd = ({ slides, commandBus }: UseEditorDndParams) => {
         }
         
         commandBus.moveBlock({
-            slideId: sourceSlideId,
+            cardId: sourceCardId,
             sourceRowId,
             targetRowId,
             blockId: sourceBlockId,

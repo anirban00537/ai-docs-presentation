@@ -1,7 +1,7 @@
-import { BlockType, BlockContent, BLOCK_TYPES, getDefaultHeadingContent } from "@/types/presentation";
+import { BlockType, BlockContent, BLOCK_TYPES, getDefaultHeadingContent } from "@/types";
 
 // Export everything from types
-export * from "@/types/presentation";
+export * from "@/types";
 
 // Individual block definitions (Only keeping the ones to stay)
 import { createImageContent, normalizeImageContent } from "./image";

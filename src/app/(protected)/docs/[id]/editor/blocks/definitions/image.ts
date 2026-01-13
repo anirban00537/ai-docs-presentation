@@ -1,4 +1,4 @@
-import { ImageContentSchema, type ImageContent } from "@/types/presentation";
+import { ImageContentSchema, type ImageContent } from "@/types";
 
 export const createImageContent = (url: string = "", alt?: string, attribution?: { name: string; link: string }): ImageContent => ({
   type: "image",

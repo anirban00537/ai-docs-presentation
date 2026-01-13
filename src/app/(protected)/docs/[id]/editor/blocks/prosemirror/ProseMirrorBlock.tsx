@@ -1,7 +1,7 @@
 import React, { memo, useCallback } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme, BlockContent } from "@/types/presentation";
-import { isProseMirrorDocument } from "@/types/presentation";
+import type { Block, Theme, BlockContent } from "@/types";
+import { isProseMirrorDocument } from "@/types";
 
 interface ProseMirrorBlockProps {
   block: Block;

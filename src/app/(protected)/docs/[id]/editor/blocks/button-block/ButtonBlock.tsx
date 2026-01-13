@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
-import { ButtonBlockContent } from "@/types/presentation/schemas/blocks";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
+import { ButtonBlockContent } from "@/types/docs/schemas/blocks";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { 
   IconLink, 

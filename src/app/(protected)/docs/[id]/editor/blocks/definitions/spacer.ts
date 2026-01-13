@@ -1,4 +1,4 @@
-import { SpacerContentSchema, type SpacerContent } from "@/types/presentation";
+import { SpacerContentSchema, type SpacerContent } from "@/types";
 
 export const createSpacerContent = (height: number = 64): SpacerContent => ({
   type: "spacer",

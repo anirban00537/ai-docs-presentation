@@ -15,7 +15,7 @@ export { BlockRenderer } from "./renderer/BlockRenderer";
 export { BlockErrorBoundary } from "./renderer/BlockErrorBoundary";
 
 // Layout Components
-export { SlideCanvas } from "./layout/SlideCanvas";
+export { CardCanvas } from "./layout/CardCanvas";
 export { ContentRow } from "./layout/ContentRow";
 export { BlockCell } from "./layout/BlockCell";
 export { InsertionIndicator } from "./layout/InsertionIndicator";
@@ -23,7 +23,7 @@ export { DragPreview } from "./layout/DragPreview";
 
 // Registry
 export { BLOCK_DEFINITIONS, type BlockDefinition } from "./registry/block-definitions";
-export { createBlockInstance, createRow, createRowWithColumns, createSlide } from "./registry/factories";
+export { createBlockInstance, createRow, createRowWithColumns, createCard } from "./registry/factories";
 
 // Hooks
 export { useResize } from "./hooks/useResize";

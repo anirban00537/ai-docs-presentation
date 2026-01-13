@@ -1,5 +1,5 @@
 import React from "react";
-import { Theme } from "@/types/presentation";
+import { Theme } from "@/types";
 
 interface ProgressCircleProps {
   value: number;

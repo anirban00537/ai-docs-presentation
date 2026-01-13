@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import type { Theme } from "@/types/presentation";
+import type { Theme } from "@/types";
 
 interface CommonCardProps {
   theme: Theme;
@@ -13,7 +13,7 @@ interface CommonCardProps {
 
 /**
  * CommonCard provides a standardized card container for various editor blocks.
- * It now uses the centralized SlideFrame for consistent styling across the editor.
+ * It now uses the centralized CardFrame for consistent styling across the editor.
  */
 export const CommonCard = memo(function CommonCard({
   theme,

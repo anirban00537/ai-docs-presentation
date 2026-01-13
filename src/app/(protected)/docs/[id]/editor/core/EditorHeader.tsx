@@ -13,23 +13,23 @@ import {
   IconDownload,
   IconChevronDown,
   IconFileTypePdf,
-  IconPresentation,
+  IconFileText,
   IconPhoto,
   IconLock,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useUndoRedo } from "@/app/(protected)/docs/[id]/hooks/useUndoRedo";
-import { selectPresentation } from "@/store/slices/slidesSlice";
+import { selectDoc } from "@/store/slices/cardsSlice";
 import { selectIsSubscribed } from "@/store/slices/subscriptionSlice";
 import { useAppSelector } from "@/store/hooks";
 import { useEditorTheme } from "../../engine";
 import { ShareModal } from "@/components/shared/ShareModal";
 import { toast } from "sonner";
 import { 
-  exportPresentationToPptx, 
-  exportPresentationToPdf,
-  exportPresentationToPng 
-} from "@/services/presentation";
+  exportDocToPptx, 
+  exportDocToPdf,
+  exportDocToPng 
+} from "@/services/docs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,7 +50,7 @@ export const EditorHeader = ({
 }: EditorHeaderProps) => {
   const theme = useEditorTheme();
   const router = useRouter();
-  const presentation = useAppSelector(selectPresentation);
+  const doc = useAppSelector(selectDoc);
   const isSubscribed = useAppSelector(selectIsSubscribed);
   const isDark = theme.themeType === "dark";
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
@@ -59,7 +59,7 @@ export const EditorHeader = ({
 
   const checkSubscription = () => {
     if (!isSubscribed) {
-      toast.error("Upgrade to Pro to export presentations", {
+      toast.error("Upgrade to Pro to export docs", {
         action: {
           label: "Upgrade",
           onClick: () => router.push("/pricing"),
@@ -71,24 +71,24 @@ export const EditorHeader = ({
   };
 
   const handleExportPptx = async () => {
-    if (!presentation?.id || isExporting) return;
+    if (!doc?.id || isExporting) return;
     if (!checkSubscription()) return;
 
     try {
       setIsExporting(true);
-      const blob = await exportPresentationToPptx(presentation.id);
+      const blob = await exportDocToPptx(doc.id);
       
       // Create download link
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${presentation.title || 'presentation'}.pptx`;
+      a.download = `${doc.title || 'document'}.pptx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to export presentation to PPTX:', error);
+      console.error('Failed to export doc to PPTX:', error);
       // TODO: Show error toast/notification
     } finally {
       setIsExporting(false);
@@ -96,24 +96,24 @@ export const EditorHeader = ({
   };
 
   const handleExportPdf = async () => {
-    if (!presentation?.id || isExporting) return;
+    if (!doc?.id || isExporting) return;
     if (!checkSubscription()) return;
 
     try {
       setIsExporting(true);
-      const blob = await exportPresentationToPdf(presentation.id);
+      const blob = await exportDocToPdf(doc.id);
       
       // Create download link
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${presentation.title || 'presentation'}.pdf`;
+      a.download = `${doc.title || 'document'}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to export presentation to PDF:', error);
+      console.error('Failed to export doc to PDF:', error);
       // TODO: Show error toast/notification
     } finally {
       setIsExporting(false);
@@ -121,24 +121,24 @@ export const EditorHeader = ({
   };
 
   const handleExportPng = async () => {
-    if (!presentation?.id || isExporting) return;
+    if (!doc?.id || isExporting) return;
     if (!checkSubscription()) return;
 
     try {
       setIsExporting(true);
-      const blob = await exportPresentationToPng(presentation.id);
+      const blob = await exportDocToPng(doc.id);
       
       // Create download link
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${presentation.title || 'presentation'}_slides.zip`;
+      a.download = `${doc.title || 'document'}_cards.zip`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to export presentation to PNG:', error);
+      console.error('Failed to export doc to PNG:', error);
       // TODO: Show error toast/notification
     } finally {
       setIsExporting(false);
@@ -188,7 +188,7 @@ export const EditorHeader = ({
               className="text-[10px] md:text-xs font-bold tracking-tight line-clamp-1 truncate max-w-[120px] md:max-w-[300px]"
               style={{ color: theme.bodyColor }}
             >
-              {presentation?.title || "Untitled Presentation"}
+              {doc?.title || "Untitled Document"}
             </h1>
             <div className="flex items-center gap-1 md:gap-1.5 mt-0.5">
               <IconCloudCheck size={9} className="text-emerald-500 shrink-0" />
@@ -250,7 +250,7 @@ export const EditorHeader = ({
                   <button
                     disabled={isExporting}
                     className="hidden sm:flex items-center gap-2 px-3 md:px-4 py-2 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 text-[10px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Export presentation"
+                    title="Export doc"
                   >
                     <IconDownload size={14} style={{ color: theme.bodyColor }} />
                     <span
@@ -264,7 +264,7 @@ export const EditorHeader = ({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem onClick={handleExportPptx} disabled={isExporting}>
-                    <IconPresentation size={16} className="mr-2" />
+                    <IconFileText size={16} className="mr-2" />
                     <span>Export as PPTX</span>
                     {!isSubscribed && (
                       <IconLock size={14} className="ml-auto opacity-50" />
@@ -313,11 +313,11 @@ export const EditorHeader = ({
         </div>
       </div>
 
-      {presentation?.id && (
+      {doc?.id && (
         <ShareModal
           open={shareModalOpen}
           onOpenChange={setShareModalOpen}
-          presentationId={presentation.id}
+          docId={doc.id}
         />
       )}
     </div>

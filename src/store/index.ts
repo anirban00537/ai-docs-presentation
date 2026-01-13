@@ -1,10 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import slidesReducer from "@/store/slices/slidesSlice";
+import cardsReducer from "@/store/slices/cardsSlice";
 import userReducer from "@/store/slices/userSlice";
 import subscriptionReducer from "@/store/slices/subscriptionSlice";
 
 const rootReducer = combineReducers({
-  slides: slidesReducer,
+  cards: cardsReducer,
   user: userReducer,
   subscription: subscriptionReducer,
 });

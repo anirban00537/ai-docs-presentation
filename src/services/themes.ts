@@ -1,6 +1,6 @@
 import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types";
-import type { Theme } from "@/store/slices/slidesSlice";
+import type { Theme } from "@/store/slices/cardsSlice";
 
 export interface ThemeResponse {
   id: string;

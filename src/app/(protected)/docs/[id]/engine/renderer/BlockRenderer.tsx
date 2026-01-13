@@ -1,9 +1,9 @@
 import React, { memo, useMemo, useCallback } from "react";
-import type { Block, BlockContent, BlockType } from "@/types/presentation";
+import type { Block, BlockContent, BlockType } from "@/types";
 import { useEditorTheme } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
 import { BlockErrorBoundary } from "./BlockErrorBoundary";
 import { BLOCK_DEFINITIONS } from "@/app/(protected)/docs/[id]/engine/registry/block-definitions";
-import { BLOCK_TYPES } from "@/types/presentation";
+import { BLOCK_TYPES } from "@/types";
 
 interface BlockRendererProps {
   block: Block;

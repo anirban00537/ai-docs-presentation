@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Butterfast Export",
-  description: "Slide export view",
+  description: "Card export view",
 };
 
 /**

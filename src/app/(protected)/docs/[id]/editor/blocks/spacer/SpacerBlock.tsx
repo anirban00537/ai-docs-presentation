@@ -1,6 +1,6 @@
 import React, { memo } from "react";
-import type { Block, Theme } from "@/types/presentation";
-import { type SpacerContent } from "@/types/presentation"; // spacer";
+import type { Block, Theme } from "@/types";
+import { type SpacerContent } from "@/types"; // spacer";
 
 interface SpacerBlockProps {
   block: Block;

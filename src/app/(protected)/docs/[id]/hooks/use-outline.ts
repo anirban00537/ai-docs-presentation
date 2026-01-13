@@ -2,24 +2,22 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { parse as parsePartialJson } from "partial-json";
 import {
-  getOutline,
   savePrompt,
-  updateOutline,
-  generateAndCreateSlides,
-  updatePresentation,
-  type CreateOutlineDto,
-  type UpdateOutlineDto,
-  type SlideGenerationChunk,
+  updateDoc,
+  generateAndCreateCards,
+  getDoc,
+  type CreatePlanFromPromptDto,
+  type UpdateDocPayload,
+  type CardGenerationChunk,
   type StreamChunk,
   type OutlineResponse,
   generateOutlineStream,
-} from "@/services/presentation";
+} from "@/services/docs";
 import { useAppDispatch } from "@/store/hooks";
 import { fetchCreditBalance } from "@/store/slices/subscriptionSlice";
 import { subscriptionKeys } from "@/hooks/use-subscription";
 import { useAdminThemesList } from "./use-themes";
 import { type ThemeResponse } from "@/services/themes";
-import { useRouter } from "next/navigation";
 
 // Query keys
 export const outlineKeys = {
@@ -32,89 +30,101 @@ export const useOutlineGeneration = () => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const generateOutlineStreamMutation = useGenerateOutlineStream();
-  
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [streamingContent, setStreamingContent] = useState<string>("");
   const [completedOutline, setCompletedOutline] = useState<any>(null);
   const [generationSpeed, setGenerationSpeed] = useState(0);
-  
+
   const hasStartedStreaming = useRef(false);
   const lastContentLengthRef = useRef(0);
-  const lastUpdateTimestampRef = useRef(Date.now());
+  const lastUpdateTimestampRef = useRef(0);
+  useEffect(() => {
+    lastUpdateTimestampRef.current = Date.now();
+  }, []);
 
   // Decay speed effect: if no updates for >200ms, start decaying the speed visual
   useEffect(() => {
     if (!isGenerating) {
-        setGenerationSpeed(0);
-        return;
+      // Use setTimeout to avoid setState in effect
+      setTimeout(() => setGenerationSpeed(0), 0);
+      return;
     }
     const interval = setInterval(() => {
-        const now = Date.now();
-        const timeSinceLastUpdate = now - lastUpdateTimestampRef.current;
-        if (timeSinceLastUpdate > 150) {
-             // Rapid decay if stalled
-             setGenerationSpeed(prev => Math.max(0, prev * 0.8)); 
-        }
+      const now = Date.now();
+      const timeSinceLastUpdate = now - lastUpdateTimestampRef.current;
+      if (timeSinceLastUpdate > 150) {
+        // Rapid decay if stalled
+        setGenerationSpeed((prev) => Math.max(0, prev * 0.8));
+      }
     }, 100);
     return () => clearInterval(interval);
   }, [isGenerating]);
 
-  const startGeneration = useCallback((outlineId: string) => {
-    // Prevent double-start
-    if (isGenerating) return;
-    
-    setIsGenerating(true);
-    setStreamingContent("");
-    setCompletedOutline(null);
-    setGenerationSpeed(0);
-    hasStartedStreaming.current = true;
-    lastContentLengthRef.current = 0;
-    lastUpdateTimestampRef.current = Date.now();
+  const startGeneration = useCallback(
+    (outlineId: string) => {
+      // Prevent double-start
+      if (isGenerating) return;
 
-    generateOutlineStreamMutation.mutate({
-      outlineId,
-      onChunk: (chunk) => {
-        if (chunk.type === 'chunk' && chunk.accumulated) {
-           const now = Date.now();
-           const deltaChars = chunk.accumulated.length - lastContentLengthRef.current;
-           const timeDiff = now - lastUpdateTimestampRef.current;
-           
-           // Calculate chars/sec
-           if (timeDiff > 0 && deltaChars >= 0) {
-               // Smoothed instant speed
-               const instantSpeed = (deltaChars / Math.max(timeDiff, 1)) * 1000;
-               setGenerationSpeed(prev => (prev * 0.3) + (instantSpeed * 0.7)); // simple moving average
-           }
-
-           lastContentLengthRef.current = chunk.accumulated.length;
-           lastUpdateTimestampRef.current = now;
-
-           setStreamingContent(chunk.accumulated);
-        } else if (chunk.type === 'complete') {
-           if (chunk.data) {
-               setCompletedOutline(chunk.data);
-           }
-           setIsGenerating(false);
-           setGenerationSpeed(0);
-           // Refresh credits on completion (both Redux and React Query)
-           dispatch(fetchCreditBalance());
-           queryClient.invalidateQueries({ queryKey: subscriptionKeys.credits() });
-           queryClient.invalidateQueries({ queryKey: subscriptionKeys.status() });
-        } else if (chunk.type === 'error') {
-           setIsGenerating(false);
-           setGenerationSpeed(0);
-           console.error("Streaming error:", chunk.message);
-        }
-      }
-    });
-  }, [isGenerating, generateOutlineStreamMutation, dispatch, queryClient]);
-
-  const resetGeneration = useCallback(() => {
-      setIsGenerating(false);
+      setIsGenerating(true);
       setStreamingContent("");
       setCompletedOutline(null);
       setGenerationSpeed(0);
-      hasStartedStreaming.current = false;
+      hasStartedStreaming.current = true;
+      lastContentLengthRef.current = 0;
+      lastUpdateTimestampRef.current = Date.now();
+
+      generateOutlineStreamMutation.mutate({
+        outlineId,
+        onChunk: (chunk) => {
+          if (chunk.type === "chunk" && chunk.accumulated) {
+            const now = Date.now();
+            const deltaChars =
+              chunk.accumulated.length - lastContentLengthRef.current;
+            const timeDiff = now - lastUpdateTimestampRef.current;
+
+            // Calculate chars/sec
+            if (timeDiff > 0 && deltaChars >= 0) {
+              // Smoothed instant speed
+              const instantSpeed = (deltaChars / Math.max(timeDiff, 1)) * 1000;
+              setGenerationSpeed((prev) => prev * 0.3 + instantSpeed * 0.7); // simple moving average
+            }
+
+            lastContentLengthRef.current = chunk.accumulated.length;
+            lastUpdateTimestampRef.current = now;
+
+            setStreamingContent(chunk.accumulated);
+          } else if (chunk.type === "complete") {
+            if (chunk.data) {
+              setCompletedOutline(chunk.data);
+            }
+            setIsGenerating(false);
+            setGenerationSpeed(0);
+            // Refresh credits on completion (both Redux and React Query)
+            dispatch(fetchCreditBalance());
+            queryClient.invalidateQueries({
+              queryKey: subscriptionKeys.credits(),
+            });
+            queryClient.invalidateQueries({
+              queryKey: subscriptionKeys.status(),
+            });
+          } else if (chunk.type === "error") {
+            setIsGenerating(false);
+            setGenerationSpeed(0);
+            console.error("Streaming error:", chunk.message);
+          }
+        },
+      });
+    },
+    [isGenerating, generateOutlineStreamMutation, dispatch, queryClient]
+  );
+
+  const resetGeneration = useCallback(() => {
+    setIsGenerating(false);
+    setStreamingContent("");
+    setCompletedOutline(null);
+    setGenerationSpeed(0);
+    hasStartedStreaming.current = false;
   }, []);
 
   return {
@@ -124,32 +134,32 @@ export const useOutlineGeneration = () => {
     generationSpeed,
     startGeneration,
     resetGeneration,
-    hasStartedStreaming
+    hasStartedStreaming,
   };
 };
 
-// Get outline query
-export const useOutline = (outlineId: string | null) => {
+// Get outline query (outline data is now part of doc)
+export const useOutline = (docId: string | null) => {
   const dispatch = useAppDispatch();
   const hasRefreshedCredits = useRef(false);
 
   const query = useQuery({
-    queryKey: outlineId ? outlineKeys.detail(outlineId) : ["outline", "null"],
+    queryKey: docId ? outlineKeys.detail(docId) : ["outline", "null"],
     queryFn: () => {
-      if (!outlineId) {
-        throw new Error("Outline ID is required");
+      if (!docId) {
+        throw new Error("Doc ID is required");
       }
-      return getOutline(outlineId);
+      return getDoc(docId);
     },
-    enabled: !!outlineId,
+    enabled: !!docId,
     staleTime: 0,
     refetchInterval: (q) => {
-      const status = (q.state.data as any)?.data?.status;
+      const status = (q.state.data as any)?.data?.outlineStatus;
       return status === "generating" ? 3000 : false;
     },
   });
 
-  const status = query.data?.data?.status;
+  const status = query.data?.data?.outlineStatus;
   useEffect(() => {
     if (status === "completed" && !hasRefreshedCredits.current) {
       hasRefreshedCredits.current = true;
@@ -164,24 +174,24 @@ export const useOutline = (outlineId: string | null) => {
 export const useSavePrompt = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: CreateOutlineDto) => savePrompt(payload),
+    mutationFn: (payload: CreatePlanFromPromptDto) => savePrompt(payload),
     onSuccess: (data) => {
       if (data.success && data.data?.id) {
         queryClient.prefetchQuery({
           queryKey: outlineKeys.detail(data.data.id),
-          queryFn: () => getOutline(data.data.id),
+          queryFn: () => getDoc(data.data.id),
         });
       }
     },
   });
 };
 
-// Update outline mutation
+// Update outline mutation (now updates doc with outline data)
 export const useUpdateOutline = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: UpdateOutlineDto }) =>
-      updateOutline(id, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateDocPayload }) =>
+      updateDoc(id, payload),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: outlineKeys.detail(variables.id),
@@ -197,24 +207,24 @@ export const useGenerateOutlineStream = () => {
       outlineId,
       onChunk,
     }: {
-      outlineId: string;
+      outlineId: string; // This is actually docId now
       onChunk: (chunk: StreamChunk) => void;
     }) => generateOutlineStream(outlineId, onChunk),
   });
 };
 
-// Generate and create slides hook
-export const useGenerateAndCreateSlides = () => {
+// Generate and create cards hook
+export const useGenerateAndCreateCards = () => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      presentationId,
+      docId,
       onChunk,
     }: {
-      presentationId: string;
-      onChunk: (chunk: SlideGenerationChunk) => void;
-    }) => generateAndCreateSlides(presentationId, onChunk),
+      docId: string; // This is actually docId now
+      onChunk: (chunk: CardGenerationChunk) => void;
+    }) => generateAndCreateCards(docId, onChunk),
     onSuccess: () => {
       // Refresh credits (both Redux and React Query)
       dispatch(fetchCreditBalance());
@@ -222,7 +232,7 @@ export const useGenerateAndCreateSlides = () => {
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.status() });
     },
     onError: (error: any) => {
-      console.error("[useGenerateAndCreateSlides] Mutation error:", error);
+      console.error("[useGenerateAndCreateCards] Mutation error:", error);
     },
   });
 };
@@ -232,7 +242,6 @@ export const useGenerateAndCreateSlides = () => {
  */
 // --- Main Hook: Outline Editor ---
 export const useOutlineEditor = (outlineId: string) => {
-  const router = useRouter();
   const updateOutlineMutation = useUpdateOutline();
 
   // 1. Data Fetching
@@ -244,21 +253,27 @@ export const useOutlineEditor = (outlineId: string) => {
   } = useOutline(outlineId);
 
   const { data: themesResponse } = useAdminThemesList();
-  
+
   // 2. Generation Hook
-  const { 
-    isGenerating: isStreaming, 
-    streamingContent, 
-    completedOutline, 
+  const {
+    isGenerating: isStreaming,
+    streamingContent,
+    completedOutline,
     generationSpeed,
     startGeneration,
-    resetGeneration 
+    resetGeneration,
   } = useOutlineGeneration();
 
   // 3. Local State
-  const [selectedTheme, setSelectedTheme] = useState<ThemeResponse | null>(null);
-  const [themeSaveStatus, setThemeSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [selectedTheme, setSelectedTheme] = useState<ThemeResponse | null>(
+    null
+  );
+  const [themeSaveStatus, setThemeSaveStatus] = useState<
+    "idle" | "saving" | "saved"
+  >("idle");
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">(
+    "idle"
+  );
 
   // Refs
   const hasAutoSelectedTheme = useRef(false);
@@ -266,139 +281,162 @@ export const useOutlineEditor = (outlineId: string) => {
 
   // Derived Values
   const outline = outlineResponse?.data || null;
-  const themes = useMemo(() => themesResponse?.data?.list || [], [themesResponse]);
-  
-  const displayError = outlineError?.message || 
-    (outlineResponse && !outlineResponse.success ? outlineResponse.message : null);
+  const themes = useMemo(
+    () => themesResponse?.data?.list || [],
+    [themesResponse]
+  );
 
-  const presentationId = outlineResponse?.data?.presentationId || outline?.presentationId;
-  const presentationUrl = presentationId && outlineId 
-    ? `/docs/${presentationId}?outlineId=${outlineId}` 
-    : null;
+  const displayError =
+    outlineError?.message ||
+    (outlineResponse && !outlineResponse.success
+      ? outlineResponse.message
+      : null);
+
+  const docId = outlineResponse?.data?.id || outline?.id || outlineId;
+  const docUrl = docId ? `/docs/${docId}` : null;
 
   // Auto-start streaming logic
   useEffect(() => {
-    // Only start if: 
+    // Only start if:
     // 1. We have outline data
     // 2. Status is 'generating'
     // 3. We haven't started streaming yet (handled by hook, but double check here)
-    // 4. outline.outlines is empty (meaning we need to generate content)
-    if (outline && outline.status === 'generating' && !outline.outlines?.length && !isStreaming && !streamingContent) {
-       startGeneration(outlineId);
+    // 4. No cards exist yet (meaning we need to generate content)
+    if (
+      outline &&
+      outline.outlineStatus === "generating" &&
+      (!outline.cards || outline.cards.length === 0) &&
+      !isStreaming &&
+      !streamingContent
+    ) {
+      startGeneration(outlineId);
     }
   }, [outline, outlineId, isStreaming, streamingContent, startGeneration]);
 
   // When stream completes, refetch to ensure we have canonical DB state
   useEffect(() => {
-      if (completedOutline) {
-          refetch();
-      }
+    if (completedOutline) {
+      refetch();
+    }
   }, [completedOutline, refetch]);
 
   // Computed Outline Data (Merging stream vs fetched)
   const outlineData = useMemo(() => {
     // A. Explicit completed data (Prioritize this)
     if (completedOutline) {
-        let displayTitle = completedOutline.title;
-         if (!displayTitle || displayTitle.match(/^[\.\s]+$/)) {
-             displayTitle = outline?.title || "Untitled Presentation";
-         }
-        // Filter empty outlines
-        const validOutlines = (completedOutline.outlines || []).filter((o: any) => o.content && o.content.trim());
-        return {
-            title: displayTitle,
-            outlines: validOutlines
-        };
+      let displayTitle = completedOutline.title;
+      if (!displayTitle || displayTitle.match(/^[\.\s]+$/)) {
+        displayTitle = outline?.title || "Untitled Doc";
+      }
+      // Filter empty outlines
+      const validOutlines = (completedOutline.outlines || []).filter(
+        (o: any) => o.content && o.content.trim()
+      );
+      return {
+        title: displayTitle,
+        outlines: validOutlines,
+      };
     }
 
     // B. Streaming data (Use if we have content)
     if (streamingContent) {
-        try {
-            const partial = parsePartialJson(streamingContent);
-            if (partial && partial.outlines && partial.outlines.length > 0) {
-                let displayTitle = partial.title || outline?.title || "Generating...";
-                if (displayTitle.match(/^[\.\s]+$/)) displayTitle = "Generating...";
-                return {
-                    title: displayTitle,
-                    outlines: partial.outlines
-                };
-            }
-        } catch (e) {
-            // Ignore parse errors, fall through to DB data
+      try {
+        const partial = parsePartialJson(streamingContent);
+        if (partial && partial.outlines && partial.outlines.length > 0) {
+          let displayTitle = partial.title || outline?.title || "Generating...";
+          if (displayTitle.match(/^[\.\s]+$/)) displayTitle = "Generating...";
+          return {
+            title: displayTitle,
+            outlines: partial.outlines,
+          };
         }
+      } catch {
+        // Ignore parse errors, fall through to DB data
+      }
     }
 
-    // C. Fetched data
-    if (outline?.outlines && Array.isArray(outline.outlines)) {
-      return {
-        title: outline.title || "Untitled Presentation",
-        outlines: outline.outlines as any,
-      };
-    }
+    // C. Fetched data - extract outline data from cards if available
+    // Note: Outline data might be in cards or generated on demand
+    // For now, return null if no outline data is available
+    // The outline generation will populate this
     return null;
-  }, [outline?.title, outline?.outlines, streamingContent, completedOutline]);
+  }, [outline?.title, streamingContent, completedOutline]);
 
   // Theme Logic
-  const saveThemeToPresentation = useCallback(async (theme: ThemeResponse) => {
-    if (!presentationId) return;
-    setThemeSaveStatus('saving');
-    try {
-      await updatePresentation(presentationId, { globalTheme: theme.themeData });
-      setThemeSaveStatus('saved');
-      setTimeout(() => setThemeSaveStatus('idle'), 2000);
-    } catch (err) {
-      console.error("Failed to save theme:", err);
-      setThemeSaveStatus('idle');
-    }
-  }, [presentationId]);
+  const saveThemeToDoc = useCallback(
+    async (theme: ThemeResponse) => {
+      if (!docId) return;
+      setThemeSaveStatus("saving");
+      try {
+        await updateDoc(docId, { globalTheme: theme.themeData });
+        setThemeSaveStatus("saved");
+        setTimeout(() => setThemeSaveStatus("idle"), 2000);
+      } catch (err) {
+        console.error("Failed to save theme:", err);
+        setThemeSaveStatus("idle");
+      }
+    },
+    [docId]
+  );
 
   useEffect(() => {
-    if (!hasAutoSelectedTheme.current && themes.length > 0 && presentationId && !selectedTheme) {
+    if (
+      !hasAutoSelectedTheme.current &&
+      themes.length > 0 &&
+      docId &&
+      !selectedTheme
+    ) {
       hasAutoSelectedTheme.current = true;
       const randomIndex = Math.floor(Math.random() * themes.length);
       const randomTheme = themes[randomIndex];
-      setSelectedTheme(randomTheme);
-      saveThemeToPresentation(randomTheme);
+      // Use setTimeout to avoid setState in effect
+      setTimeout(() => {
+        setSelectedTheme(randomTheme);
+        saveThemeToDoc(randomTheme);
+      }, 0);
     }
-  }, [themes, presentationId, selectedTheme, saveThemeToPresentation]);
+  }, [themes, docId, selectedTheme, saveThemeToDoc]);
 
   // Regenerate Handler
-  const handleRegenerate = (newPrompt: string, newSlideCount: number) => {
+  const handleRegenerate = (newPrompt: string, newCardCount: number) => {
     resetGeneration();
     updateOutlineMutation.mutate(
       {
         id: outlineId,
         payload: {
           prompt: newPrompt,
-          numberOfSlides: newSlideCount,
-          outlines: [] // Clear previous outlines
-        }
+          numberOfCards: newCardCount,
+          outlineStatus: "generating", // Reset status
+        },
       },
       {
         onSuccess: () => {
-             startGeneration(outlineId);
-        }
+          startGeneration(outlineId);
+        },
       }
     );
   };
 
   // Debounced auto-save
-  const debouncedSave = useCallback((updatedOutline: OutlineResponse) => {
-    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
-    debounceTimerRef.current = setTimeout(() => {
-      setSaveStatus('saving');
-      updateOutlineMutation.mutate(
-        { id: outlineId, payload: updatedOutline },
-        {
-          onSuccess: () => {
-            setSaveStatus('saved');
-            setTimeout(() => setSaveStatus('idle'), 2000);
-          },
-          onError: () => setSaveStatus('idle')
-        }
-      );
-    }, 1500);
-  }, [outlineId, updateOutlineMutation]);
+  const debouncedSave = useCallback(
+    (updatedOutline: OutlineResponse) => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = setTimeout(() => {
+        setSaveStatus("saving");
+        updateOutlineMutation.mutate(
+          { id: outlineId, payload: updatedOutline },
+          {
+            onSuccess: () => {
+              setSaveStatus("saved");
+              setTimeout(() => setSaveStatus("idle"), 2000);
+            },
+            onError: () => setSaveStatus("idle"),
+          }
+        );
+      }, 1500);
+    },
+    [outlineId, updateOutlineMutation]
+  );
 
   return {
     // Data
@@ -406,9 +444,9 @@ export const useOutlineEditor = (outlineId: string) => {
     outlineData,
     themes,
     selectedTheme,
-    presentationUrl,
+    docUrl,
     displayError,
-    
+
     // Status
     isLoading,
     isStreaming,
@@ -417,13 +455,12 @@ export const useOutlineEditor = (outlineId: string) => {
     themesLoading: false, // themesLoading was removed from useOutlineEditor, assuming it's not needed or handled elsewhere
     saveStatus,
     themeSaveStatus,
-    
+
     // Actions
     handleRegenerate,
     debouncedSave,
     setSelectedTheme,
-    saveThemeToPresentation,
-    refetch
+    saveThemeToDoc,
+    refetch,
   };
 };
-

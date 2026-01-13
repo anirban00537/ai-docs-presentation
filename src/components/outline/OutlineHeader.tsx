@@ -8,7 +8,7 @@ import { PromptBox } from "@/components/ui/prompt-input";
 
 interface OutlineHeaderProps {
   prompt: string;
-  onRegenerate: (prompt: string, numberOfSlides: number) => void;
+  onRegenerate: (prompt: string, numberOfCards: number) => void;
 }
 
 export const OutlineHeader: React.FC<OutlineHeaderProps> = ({ 

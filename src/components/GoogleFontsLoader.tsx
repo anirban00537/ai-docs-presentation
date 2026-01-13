@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 
 // Google Fonts CDN mapping
 const GOOGLE_FONTS_CDN: Record<string, string> = {

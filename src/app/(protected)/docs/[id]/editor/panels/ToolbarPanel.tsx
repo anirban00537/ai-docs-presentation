@@ -5,16 +5,16 @@ import { BlockLibraryPanel } from "./BlockLibraryPanel";
 import { LayoutsPanel } from "./LayoutsPanel";
 import { ImageLibraryPanel } from "./ImageLibraryPanel";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface ToolbarPanelProps {
-  presentationId: string;
+  docId: string;
 }
 
 export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
-  presentationId,
+  docId,
 }) => {
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
   const [isBlocksPanelOpen, setIsBlocksPanelOpen] = useState(false);

@@ -1,8 +1,8 @@
-import { CalloutContentSchema, type CalloutContent, type ProseMirrorDocument, createProseMirrorDoc } from "@/types/presentation";
+import { CalloutContentSchema, type CalloutContent, type ProseMirrorDocument, createProseMirrorDoc } from "@/types";
 
 export const getDefaultCalloutEditorContent = (variant: string): ProseMirrorDocument => {
   switch(variant) {
-    case 'info': return createProseMirrorDoc("Here is some helpful information or context relating to this slide.") as any;
+    case 'info': return createProseMirrorDoc("Here is some helpful information or context relating to this card.") as any;
     case 'warning': return createProseMirrorDoc("Be mindful of this potential pitfall or important requirement.") as any;
     case 'error': return createProseMirrorDoc("PAY ATTENTION: This is a critical error or destructive action warning.") as any;
     case 'success': return createProseMirrorDoc("Great job! This indicates a successful outcome or completed step.") as any;

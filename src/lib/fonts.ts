@@ -1,4 +1,4 @@
-// Google Fonts mapping - using Google Fonts CDN for slides
+// Google Fonts mapping - using Google Fonts CDN for cards
 export const GOOGLE_FONTS = {
   Inter: "'Inter', system-ui, sans-serif",
   Poppins: "'Poppins', system-ui, sans-serif",

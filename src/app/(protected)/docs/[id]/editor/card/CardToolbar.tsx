@@ -1,25 +1,25 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { type Slide, toggleSlideAccent } from "@/store/slices/slidesSlice";
+import { type Card, toggleCardAccent } from "@/store/slices/cardsSlice";
 import { useEditorTheme } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
 import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
 import { IconPlus, IconPhoto } from "@tabler/icons-react";
-import { SlideOptions } from "./SlideOptions";
+import { CardOptions } from "./CardOptions";
 import { cn } from "@/lib/utils";
 
-interface SlideToolbarProps {
-  slide: Slide;
+interface CardToolbarProps {
+  card: Card;
   isHovered: boolean;
   fullWidth: boolean;
   onOpenImagePicker: () => void;
   onAddRow: () => void;
-  onUpdateAccent?: (slideId: string, accent: any) => void;
-  onToggleAccent?: (slideId: string) => void;
+  onUpdateAccent?: (cardId: string, accent: any) => void;
+  onToggleAccent?: (cardId: string) => void;
 }
 
-export const SlideToolbar: React.FC<SlideToolbarProps> = ({
-  slide,
+export const CardToolbar: React.FC<CardToolbarProps> = ({
+  card,
   isHovered,
   fullWidth,
   onOpenImagePicker,
@@ -45,9 +45,9 @@ export const SlideToolbar: React.FC<SlideToolbarProps> = ({
 
   const handleToggleAccent = () => {
     if (onToggleAccent) {
-      onToggleAccent(slide.id);
+      onToggleAccent(card.id);
     } else {
-      dispatch(toggleSlideAccent({ slideId: slide.id }));
+      dispatch(toggleCardAccent({ cardId: card.id }));
     }
   };
 
@@ -68,8 +68,8 @@ export const SlideToolbar: React.FC<SlideToolbarProps> = ({
         className={actionBarBaseClass}
         style={actionBarStyles}
       >
-        <SlideOptions 
-          slide={slide} 
+        <CardOptions 
+          card={card} 
           onOpenImagePicker={onOpenImagePicker}
           onUpdateAccent={onUpdateAccent}
           onToggleAccent={onToggleAccent}
@@ -84,7 +84,7 @@ export const SlideToolbar: React.FC<SlideToolbarProps> = ({
           size="icon"
           onClick={handleToggleAccent}
           className={buttonClass}
-          style={slide.accent ? { color: theme.primary } : {}}
+          style={card.accent ? { color: theme.primary } : {}}
           title="Toggle Accent Layout"
         >
           <IconPhoto size={16} />

@@ -2,21 +2,21 @@ import React, { memo } from "react";
 import { useDroppable } from "@dnd-kit/core";
 
 export const InsertDropZone = memo(function InsertDropZone({
-  slideId,
+  cardId,
   insertIndex,
   themePrimary,
   isActive,
 }: {
-  slideId: string;
+  cardId: string;
   insertIndex: number;
   themePrimary: string;
   isActive: boolean;
 }) {
   const { setNodeRef, isOver } = useDroppable({
-    id: `row-insert-${slideId}-${insertIndex}`,
+    id: `row-insert-${cardId}-${insertIndex}`,
     data: {
       type: "row-insert",
-      slideId,
+      cardId,
       insertIndex,
     },
   });

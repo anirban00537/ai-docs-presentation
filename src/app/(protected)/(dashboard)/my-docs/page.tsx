@@ -4,8 +4,8 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import {
-  usePresentationsList,
-  useDeletePresentation,
+  useDocsList,
+  useDeleteDoc,
 } from "@/hooks";
 import {
   AlertDialog,
@@ -19,39 +19,39 @@ import {
   Button,
 } from "@/components/ui";
 import { toast } from "sonner";
-import { IconPresentation, IconPlus } from "@tabler/icons-react";
+import { IconFileText, IconPlus } from "@tabler/icons-react";
 
 // Shared components
 import { EmptyState, GridSkeleton, Pagination, PageHeader } from "@/components/shared";
 
 import {
-  PresentationCard,
+  DocCard,
 } from "@/components/my-docs";
 
-export default function MyPresentationsPage() {
+export default function MyDocsPage() {
   const router = useRouter();
   const [page, setPage] = React.useState(1);
   const LIMIT = 15;
 
-  const { data: presentationsResponse, isLoading } = usePresentationsList({
+  const { data: docsResponse, isLoading } = useDocsList({
     page,
     limit: LIMIT,
   });
 
-  const deletePresentationMutation = useDeletePresentation();
+  const deleteDocMutation = useDeleteDoc();
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const [presentationToDelete, setPresentationToDelete] = React.useState<{
+  const [docToDelete, setDocToDelete] = React.useState<{
     id: string;
     title: string;
   } | null>(null);
 
-  const presentations = presentationsResponse?.success
-    ? presentationsResponse.data?.list || []
+  const docs = docsResponse?.success
+    ? docsResponse.data?.list || []
     : [];
 
   // Safely access meta data, defaulting to reasonable values if missing
-  const meta = presentationsResponse?.success
-    ? presentationsResponse.data?.meta
+  const meta = docsResponse?.success
+    ? docsResponse.data?.meta
     : null;
 
   const totalPages = meta?.lastPage || 1;
@@ -61,19 +61,19 @@ export default function MyPresentationsPage() {
   };
 
   const handleDelete = (id: string, title: string) => {
-    setPresentationToDelete({ id, title });
+    setDocToDelete({ id, title });
     setDeleteDialogOpen(true);
   };
 
   const confirmDelete = async () => {
-    if (!presentationToDelete) return;
+    if (!docToDelete) return;
     try {
-      await deletePresentationMutation.mutateAsync(presentationToDelete.id);
-      toast.success("Presentation deleted successfully");
+      await deleteDocMutation.mutateAsync(docToDelete.id);
+      toast.success("Doc deleted successfully");
       setDeleteDialogOpen(false);
-      setPresentationToDelete(null);
+      setDocToDelete(null);
     } catch {
-      toast.error("Failed to delete presentation");
+      toast.error("Failed to delete doc");
     }
   };
 
@@ -93,7 +93,7 @@ export default function MyPresentationsPage() {
 
       <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">
         <PageHeader
-          title={<>My <span className="text-primary italic">Presentations</span></>}
+          title={<>My <span className="text-primary italic">Docs</span></>}
           action={
             <Button
               onClick={() => router.push("/home")}
@@ -108,22 +108,22 @@ export default function MyPresentationsPage() {
 
         {isLoading ? (
           <GridSkeleton count={LIMIT} aspectRatio="video" />
-        ) : presentations.length === 0 ? (
+        ) : docs.length === 0 ? (
           <EmptyState
-            icon={IconPresentation}
-            title="No presentations yet"
-            description="Create your first presentation to get started. Our AI will help you design beautiful slides in seconds."
-            actionText="Create Presentation"
+            icon={IconFileText}
+            title="No docs yet"
+            description="Create your first doc to get started. Our AI will help you design beautiful cards in seconds."
+            actionText="Create Doc"
             onAction={() => router.push("/home")}
           />
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
               <AnimatePresence mode="popLayout">
-                {presentations.map((presentation: any, index: number) => (
-                  <PresentationCard
-                    key={presentation.id}
-                    presentation={presentation}
+                {docs.map((doc: any, index: number) => (
+                  <DocCard
+                    key={doc.id}
+                    doc={doc}
                     index={index}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
@@ -146,9 +146,9 @@ export default function MyPresentationsPage() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="rounded-2xl border-0 bg-card/90 backdrop-blur-3xl shadow-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Presentation</AlertDialogTitle>
+            <AlertDialogTitle>Delete Doc</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &ldquo;{presentationToDelete?.title}&rdquo;?
+              Are you sure you want to delete &ldquo;{docToDelete?.title}&rdquo;?
               This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -157,9 +157,9 @@ export default function MyPresentationsPage() {
             <AlertDialogAction
               onClick={confirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
-              disabled={deletePresentationMutation.isPending}
+              disabled={deleteDocMutation.isPending}
             >
-              {deletePresentationMutation.isPending ? "Deleting..." : "Delete"}
+              {deleteDocMutation.isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

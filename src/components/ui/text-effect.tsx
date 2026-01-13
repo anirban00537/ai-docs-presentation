@@ -10,7 +10,7 @@ import {
 
 import { cn } from "@/lib/utils";
 
-type PresetType = "blur" | "shake" | "scale" | "fade" | "slide";
+type PresetType = "blur" | "shake" | "scale" | "fade" | "card";
 
 type TextEffectProps = {
   children: string;
@@ -91,7 +91,7 @@ const presetVariants: Record<
       exit: { opacity: 0 },
     },
   },
-  slide: {
+  card: {
     container: defaultContainerVariants,
     item: {
       hidden: { opacity: 0, y: 20 },

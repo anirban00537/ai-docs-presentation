@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Theme, Block } from "@/store/slices/slidesSlice";
+import { Theme, Block } from "@/store/slices/cardsSlice";
 import { getBlockTypeIcon, getBlockTypeLabel } from "@/app/(protected)/docs/[id]/editor/utils/blockTypeUtils";
 
 interface DragPreviewProps {

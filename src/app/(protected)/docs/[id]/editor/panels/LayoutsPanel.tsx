@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME, addRowWithColumnsAtIndex, selectActiveSlideId } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME, addRowWithColumnsAtIndex, selectActiveCardId } from "@/store/slices/cardsSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BLOCK_TYPES } from "../blocks/definitions";
@@ -120,17 +120,17 @@ const masterLayouts: LayoutDefinition[] = [
 
 export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
-  const activeSlideId = useAppSelector(selectActiveSlideId);
+  const activeCardId = useAppSelector(selectActiveCardId);
   const dispatch = useAppDispatch();
   const isDark = theme.themeType === "dark";
 
   const handleLayoutClick = (layout: LayoutDefinition) => {
-    if (!activeSlideId) return;
+    if (!activeCardId) return;
 
     // Add a new row with the specified number of columns
     dispatch(
       addRowWithColumnsAtIndex({
-        slideId: activeSlideId,
+        cardId: activeCardId,
         columnCount: layout.columnCount || 3,
         insertIndex: 999, // Insert at bottom
         blockType: layout.blockType,

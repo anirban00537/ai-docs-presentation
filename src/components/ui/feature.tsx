@@ -1,26 +1,26 @@
 "use client";
 
-import { IconLayoutDashboard, IconWand, IconPresentation, IconPalette, IconTypography, IconCheck } from "@tabler/icons-react";
+import { IconLayoutDashboard, IconWand, IconFileText, IconPalette, IconTypography, IconCheck } from "@tabler/icons-react";
 
 const features = [
   {
     title: "Smart Layouts",
-    description: "Don't stress about where to put things. Our AI arranges your slides perfectly, every time.",
+    description: "Don't stress about where to put things. Our AI arranges your cards perfectly, every time.",
     icon: <IconLayoutDashboard className="w-6 h-6 text-primary" />,
   },
   {
     title: "Instant Transformation",
-    description: "Turn your notes or old documents into a fresh presentation in just one click.",
+    description: "Turn your notes or old documents into a fresh doc in just one click.",
     icon: <IconWand className="w-6 h-6 text-primary" />,
   },
   {
     title: "Instant Present",
     description: "Present seamlessly right from your browser. Your audience sees exactly what you see.",
-    icon: <IconPresentation className="w-6 h-6 text-primary" />,
+    icon: <IconFileText className="w-6 h-6 text-primary" />,
   },
   {
     title: "Your Brand",
-    description: "Upload your logo and colors once. We'll make sure every slide looks like you.",
+    description: "Upload your logo and colors once. We'll make sure every card looks like you.",
     icon: <IconPalette className="w-6 h-6 text-primary" />,
   },
   {
@@ -56,7 +56,7 @@ export function FeaturesSection() {
             <span className="italic text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-orange-500">nothing you don't.</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            A complete suite of storytelling tools designed to eliminate the friction between your ideas and a finished presentation.
+            A complete suite of storytelling tools designed to eliminate the friction between your ideas and a finished doc.
           </p>
         </div>
 

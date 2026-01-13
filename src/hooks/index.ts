@@ -3,7 +3,7 @@ export * from "./use-blog";
 export * from "./use-images";
 export * from "./use-layouts";
 export * from "./use-mobile";
-export * from "./use-presentation";
+export * from "./use-docs";
 export * from "./use-pricing";
 export * from "./use-share";
 export * from "./use-subscription";

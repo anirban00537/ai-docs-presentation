@@ -28,7 +28,7 @@ export default function OutlinePage() {
     outlineData,
     themes,
     selectedTheme,
-    presentationUrl,
+    docUrl,
     
     // Status
     isLoading,
@@ -41,7 +41,7 @@ export default function OutlinePage() {
     handleRegenerate,
     debouncedSave,
     setSelectedTheme,
-    saveThemeToPresentation,
+    saveThemeToDoc,
   } = useOutlineEditor(outlineId);
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -76,7 +76,7 @@ export default function OutlinePage() {
             <EmptyState 
               icon={IconWriting}
               title="Ready to generate"
-              description="Enter a prompt in the box above to generate your presentation outline. Our AI will help you structure your thoughts."
+              description="Enter a prompt in the box above to generate your doc outline. Our AI will help you structure your thoughts."
               className="py-12 border-2 border-dashed border-secondary/20 rounded-[32px]"
             />
         ) : (
@@ -103,15 +103,15 @@ export default function OutlinePage() {
           selectedTheme={selectedTheme} 
           onSelectTheme={(theme) => {
             setSelectedTheme(theme);
-            saveThemeToPresentation(theme);
+            saveThemeToDoc(theme);
           }} 
         />
 
         {/* Bottom Actions */}
         <div className="flex justify-end pt-4">
-            <Link href={presentationUrl || "#"}>
+            <Link href={docUrl || "#"}>
                 <Button 
-                    disabled={!presentationUrl || isStreaming}
+                    disabled={!docUrl || isStreaming}
                     className="rounded-full h-12 px-8 shadow-coral-glow hover:scale-105 transition-transform font-bold text-base bg-primary text-primary-foreground"
                 >
                     {isStreaming ? (
@@ -120,7 +120,7 @@ export default function OutlinePage() {
                         </>
                     ) : (
                         <>
-                           <IconSparkles size={18} className="mr-2" /> Create Presentation
+                           <IconSparkles size={18} className="mr-2" /> Create Doc
                         </>
                     )}
                 </Button>

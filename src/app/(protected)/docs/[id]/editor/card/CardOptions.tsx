@@ -1,5 +1,5 @@
 import React from "react";
-import { type Slide, updateSlideAccent, toggleSlideAccent } from "@/store/slices/slidesSlice";
+import { type Card, updateCardAccent, toggleCardAccent } from "@/store/slices/cardsSlice";
 import { useEditorTheme } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
 import { useAppDispatch } from "@/store/hooks";
 import {
@@ -23,22 +23,22 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
-interface SlideOptionsProps {
-  slide: Slide;
+interface CardOptionsProps {
+  card: Card;
   onOpenImagePicker: () => void;
-  onUpdateAccent?: (slideId: string, accent: any) => void;
-  onToggleAccent?: (slideId: string) => void;
+  onUpdateAccent?: (cardId: string, accent: any) => void;
+  onToggleAccent?: (cardId: string) => void;
 }
 
-export const SlideOptions: React.FC<SlideOptionsProps> = ({
-  slide,
+export const CardOptions: React.FC<CardOptionsProps> = ({
+  card,
   onOpenImagePicker,
   onUpdateAccent,
   onToggleAccent,
 }) => {
   const theme = useEditorTheme();
   const dispatch = useAppDispatch();
-  const accent = slide.accent;
+  const accent = card.accent;
 
   const positions: { id: "left" | "right" | "top" | "bottom" | "background"; icon: React.ReactNode; label: string }[] = [
     { id: "background", icon: <IconWallpaper size={20} />, label: "Background" },
@@ -53,20 +53,20 @@ export const SlideOptions: React.FC<SlideOptionsProps> = ({
       // Use custom handler (for layout editor)
       if (!accent) {
         // Create new accent with the selected position
-        onUpdateAccent(slide.id, { position: pos, size: 40, url: undefined });
+        onUpdateAccent(card.id, { position: pos, size: 40, url: undefined });
       } else {
         // Update existing accent position
-        onUpdateAccent(slide.id, { ...accent, position: pos });
+        onUpdateAccent(card.id, { ...accent, position: pos });
       }
     } else {
-      // Use Redux dispatch (for presentation editor)
+      // Use Redux dispatch (for doc editor)
       if (!accent) {
-        dispatch(toggleSlideAccent({ slideId: slide.id }));
+        dispatch(toggleCardAccent({ cardId: card.id }));
         setTimeout(() => {
-          dispatch(updateSlideAccent({ slideId: slide.id, update: { position: pos } }));
+          dispatch(updateCardAccent({ cardId: card.id, update: { position: pos } }));
         }, 0);
       } else {
-        dispatch(updateSlideAccent({ slideId: slide.id, update: { position: pos } }));
+        dispatch(updateCardAccent({ cardId: card.id, update: { position: pos } }));
       }
     }
   };
@@ -74,10 +74,10 @@ export const SlideOptions: React.FC<SlideOptionsProps> = ({
   const handleToggleAccent = () => {
     if (onToggleAccent) {
       // Use custom handler (for layout editor)
-      onToggleAccent(slide.id);
+      onToggleAccent(card.id);
     } else {
-      // Use Redux dispatch (for presentation editor)
-      dispatch(toggleSlideAccent({ slideId: slide.id }));
+      // Use Redux dispatch (for doc editor)
+      dispatch(toggleCardAccent({ cardId: card.id }));
     }
   };
 

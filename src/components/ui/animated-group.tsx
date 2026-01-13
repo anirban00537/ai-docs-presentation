@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 
 type PresetType =
   | "fade"
-  | "slide"
+  | "card"
   | "scale"
   | "blur"
-  | "blur-slide"
+  | "blur-card"
   | "zoom"
   | "flip"
   | "bounce"
@@ -53,7 +53,7 @@ const presetVariants: Record<
       visible: { opacity: 1 },
     },
   },
-  slide: {
+  card: {
     container: defaultContainerVariants,
     item: {
       hidden: { opacity: 0, y: 20 },
@@ -74,7 +74,7 @@ const presetVariants: Record<
       visible: { opacity: 1, filter: "blur(0px)" },
     },
   },
-  "blur-slide": {
+  "blur-card": {
     container: defaultContainerVariants,
     item: {
       hidden: { opacity: 0, filter: "blur(4px)", y: 20 },

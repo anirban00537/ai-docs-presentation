@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, ReactNode } from "react";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME, Theme } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME, Theme } from "@/store/slices/cardsSlice";
 
 const EditorThemeContext = createContext<Theme>(DEFAULT_THEME);
 

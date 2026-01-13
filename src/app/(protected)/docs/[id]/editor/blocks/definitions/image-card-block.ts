@@ -3,8 +3,8 @@ import {
   type ImageCardContent,
   type ImageCardItem,
   createProseMirrorDoc,
-} from "@/types/presentation";
-import { ImageCardContentSchema } from "@/types/presentation/schemas/blocks";
+} from "@/types";
+import { ImageCardContentSchema } from "@/types/docs/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createImageCardItem = (

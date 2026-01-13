@@ -3,11 +3,11 @@ import {
   createBlockInstance,
   createRow,
 } from "@/app/(protected)/docs/[id]/engine/registry/factories";
-import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
+import { createProseMirrorDoc } from "@/types/docs/schemas/blocks";
 import { createTimelineBentoContent } from "../blocks/definitions/timeline-bento-block";
-import { Slide } from "@/store/slices/slidesSlice";
+import { Card } from "@/store/slices/cardsSlice";
 
-export const timelineBentoTemplate: Slide = {
+export const timelineBentoTemplate: Card = {
   id: "timeline-bento-layout",
   rows: [
     createRow([

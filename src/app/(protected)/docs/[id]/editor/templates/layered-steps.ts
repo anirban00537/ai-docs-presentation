@@ -3,11 +3,11 @@ import {
   createBlockInstance,
   createRow,
 } from "@/app/(protected)/docs/[id]/engine/registry/factories";
-import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
+import { createProseMirrorDoc } from "@/types/docs/schemas/blocks";
 import { createLayeredNumberContent } from "../blocks/definitions/layered-number-block";
-import { Slide } from "@/store/slices/slidesSlice";
+import { Card } from "@/store/slices/cardsSlice";
 
-export const layeredStepsTemplate: Slide = {
+export const layeredStepsTemplate: Card = {
   id: "layered-steps-layout",
   rows: [
     createRow([

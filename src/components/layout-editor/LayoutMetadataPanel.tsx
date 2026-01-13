@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Save, Tag, FileText, Type } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Theme } from "@/types/presentation";
+import type { Theme } from "@/types";
 import type { LayoutMetadata } from "@/app/(protected)/layout-editor/hooks/useLayoutEditor";
 
 interface LayoutMetadataPanelProps {

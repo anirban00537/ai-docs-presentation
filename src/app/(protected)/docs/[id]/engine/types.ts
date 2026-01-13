@@ -1,4 +1,4 @@
-import type { Block, BlockContent, Theme } from "@/types/presentation";
+import type { Block, BlockContent, Theme } from "@/types";
 
 export interface BlockRendererProps {
   block: Block;

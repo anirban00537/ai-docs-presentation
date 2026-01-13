@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { MarkdownViewer } from "@/components/markdown-viewer/markdown-viewer";
 import { cn } from "@/lib/utils";
-import type { OutlineResponse } from "@/services/presentation";
+import type { OutlineResponse } from "@/services/docs";
 
 interface OutlineViewerProps {
   outline: OutlineResponse | null;
@@ -142,7 +142,7 @@ export const OutlineViewer: React.FC<OutlineViewerProps> = ({
                 "relative rounded-md px-3 py-4 overflow-hidden transition-all duration-300",
                 "bg-white/40 border border-secondary/20 shadow-sm",
                 "hover:shadow-depth-3 hover:bg-white hover:scale-[1.005]",
-                !isLoading && "animate-in fade-in-0 slide-in-from-bottom-4"
+                !isLoading && "animate-in fade-in-0 card-in-from-bottom-4"
               )}
               style={{
                 animationDelay: isLoading ? undefined : `${index * 100}ms`,

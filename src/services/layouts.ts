@@ -1,9 +1,9 @@
 import { api } from "@/lib/api";
-import type { Row, SlideAccent } from "@/types/presentation";
+import type { Row, CardAccent } from "@/types";
 
 export interface LayoutData {
   rows: Row[];
-  accent?: SlideAccent;
+  accent?: CardAccent;
   icon?: string;
 }
 

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { SLIDE_MAX_WIDTH } from "@/lib/constants";
+import { CARD_MAX_WIDTH } from "@/lib/constants";
 
-interface ScalableSlideContainerProps {
+interface ScalableCardContainerProps {
     children: React.ReactNode;
 }
 
@@ -11,7 +11,7 @@ interface ScalableSlideContainerProps {
  * A container that scales its content to fit the available width.
  * It also dynamically measures the content height to ensure correct vertical spacing.
  */
-export const ScalableSlideContainer = ({ children }: ScalableSlideContainerProps) => {
+export const ScalableCardContainer = ({ children }: ScalableCardContainerProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const contentWrapRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
@@ -25,7 +25,7 @@ export const ScalableSlideContainer = ({ children }: ScalableSlideContainerProps
             if (!containerRef.current) return;
             const { width } = containerRef.current.getBoundingClientRect();
             // Calculate scale based on available width, maxing out at 1 (no zoom in beyond 100%)
-            const targetScale = Math.min(1, width / SLIDE_MAX_WIDTH);
+            const targetScale = Math.min(1, width / CARD_MAX_WIDTH);
             setScale(targetScale);
         };
 
@@ -80,7 +80,7 @@ export const ScalableSlideContainer = ({ children }: ScalableSlideContainerProps
         };
     }, []);
 
-    // We no longer enforce a large aspect-ratio minimum height to allow slides to hug their content.
+    // We no longer enforce a large aspect-ratio minimum height to allow cards to hug their content.
     // If we have no measurement yet, we fall back to a reasonable small height to avoid layout jump.
     const finalContentHeight = contentHeight || 100;
 
@@ -94,7 +94,7 @@ export const ScalableSlideContainer = ({ children }: ScalableSlideContainerProps
         >
             <div
                 style={{
-                    width: SLIDE_MAX_WIDTH,
+                    width: CARD_MAX_WIDTH,
                     transform: `scale(${scale})`,
                     transformOrigin: 'top center',
                 }}

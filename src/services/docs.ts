@@ -14,54 +14,14 @@ export interface OutlineResponse {
 
 export interface CreatePlanFromPromptDto {
   prompt: string;
-  numberOfSlides: number;
+  numberOfCards: number;
 }
 
 export type CreateFromPromptPayload = CreatePlanFromPromptDto;
 
-export interface CreateOutlineDto {
-  prompt: string;
-  numberOfSlides: number;
-}
-
-export interface UpdateOutlineDto {
-  title?: string;
-  prompt?: string;
-  numberOfSlides?: number;
-  outlines?: OutlineItem[];
-}
-
-export interface Outline {
-  id: string;
-  userId: string;
-  prompt: string;
-  numberOfSlides: number;
-  title?: string;
-  outlines?: OutlineItem[];
-  status: "generating" | "completed" | "failed";
-  presentationId?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface SavePromptResponse {
   id: string;
-  presentationId?: string;
 }
-
-export const reorderSlides = (
-  presentationId: string,
-  slideOrders: { slideId: string; order: number }[]
-) => api.post<void>(`/presentation/${presentationId}/slides/reorder`, { slideOrders });
-
-export const savePrompt = (payload: CreateOutlineDto) => 
-  api.post<SavePromptResponse>(`/presentation/save-prompt`, payload);
-
-export const getOutline = (id: string) => 
-  api.get<Outline>(`/presentation/outline/${id}`);
-
-export const updateOutline = (id: string, payload: UpdateOutlineDto) => 
-  api.patch<Outline>(`/presentation/outline/${id}`, payload);
 
 export interface StreamChunk {
   type: "start" | "chunk" | "title" | "outline" | "complete" | "error";
@@ -73,19 +33,19 @@ export interface StreamChunk {
   delta?: string;
 }
 
-export interface SlideGenerationChunk {
+export interface CardGenerationChunk {
   type:
     | "start"
-    | "slide-start"
-    | "slide-progress"
-    | "slide-streaming"
-    | "slide"
-    | "slide-error"
+    | "card-start"
+    | "card-progress"
+    | "card-streaming"
+    | "card"
+    | "card-error"
     | "complete"
     | "error";
-  slideNumber?: number;
-  totalSlides?: number;
-  slideId?: string;
+  cardNumber?: number;
+  totalCards?: number;
+  cardId?: string;
   data?: any;
   partialData?: any;
   rawChunk?: string;
@@ -93,12 +53,12 @@ export interface SlideGenerationChunk {
   isComplete?: boolean;
   message?: string;
   estimatedSeconds?: number;
-  stage?: 'initializing' | 'analyzing-layout' | 'generating-content' | 'saving-slide';
+  stage?: 'initializing' | 'analyzing-layout' | 'generating-content' | 'saving-card';
   duration?: string;
 }
 
-// Presentation interfaces
-export interface Presentation {
+// Doc interfaces
+export interface Doc {
   id: string;
   userId: string;
   title?: string;
@@ -116,7 +76,11 @@ export interface Presentation {
   shareEnabled?: boolean;
   deletedAt?: string | null;
   lastViewedAt?: string | null;
-  slides?: Slide[];
+  // Outline fields (merged from Outline)
+  prompt?: string;
+  numberOfCards?: number;
+  outlineStatus?: "none" | "generating" | "completed" | "failed";
+  cards?: Card[];
   createdAt: string;
   updatedAt: string;
 }
@@ -125,7 +89,7 @@ export interface ShareInfo {
   shareEnabled: boolean;
 }
 
-export interface SharedPresentation {
+export interface SharedDoc {
   id: string;
   title: string;
   description?: string | null;
@@ -141,16 +105,17 @@ export interface SharedPresentation {
   };
 }
 
-export interface Slide {
+export interface Card {
   id: string;
-  presentationId: string;
+  docId: string;
   data: any; // JSON data containing rows/blocks
   order: number;
+  outline?: any; // Individual outline data for this card
   createdAt: string;
   updatedAt: string;
 }
 
-export interface CreatePresentationPayload {
+export interface CreateDocPayload {
   title?: string;
   description?: string;
   thumbnail?: string;
@@ -158,9 +123,11 @@ export interface CreatePresentationPayload {
   isPublic?: boolean;
   isTemplate?: boolean;
   tags?: string[];
+  prompt?: string;
+  numberOfCards?: number;
 }
 
-export interface UpdatePresentationPayload {
+export interface UpdateDocPayload {
   title?: string;
   description?: string;
   thumbnail?: string;
@@ -168,48 +135,61 @@ export interface UpdatePresentationPayload {
   isPublic?: boolean;
   isTemplate?: boolean;
   tags?: string[];
+  prompt?: string;
+  numberOfCards?: number;
+  outlineStatus?: string;
 }
 
-export interface CreateSlidePayload {
+export interface CreateCardPayload {
   data?: any;
   order?: number;
+  outline?: any;
 }
 
-export interface UpdateSlidePayload {
+export interface UpdateCardPayload {
   data?: any;
   order?: number;
+  outline?: any;
 }
 
-// Presentation API functions
-export const getPresentationsList = (filters?: { page?: number; limit?: number }) => 
-  api.get<{ list: Presentation[]; meta: any }>("/presentation/list", { params: filters });
+// Doc API functions
+export const getDocsList = (filters?: { page?: number; limit?: number }) => 
+  api.get<{ list: Doc[]; meta: any }>("/docs/list", { params: filters });
 
-export const getPresentation = (id: string) => 
-  api.get<Presentation>(`/presentation/${id}/get`);
+export const getDoc = (id: string) => 
+  api.get<Doc>(`/docs/${id}/get`);
 
-export const createPresentation = (payload: CreatePresentationPayload) => 
-  api.post<Presentation>("/presentation/create", payload);
+export const createDoc = (payload: CreateDocPayload) => 
+  api.post<Doc>("/docs/create", payload);
 
-export const createPresentationFromPrompt = (payload: CreatePlanFromPromptDto) => 
-  api.post<Presentation>("/presentation/create-from-prompt", payload);
+export const createDocFromPrompt = (payload: CreatePlanFromPromptDto) => 
+  api.post<Doc>("/docs/create-from-prompt", payload);
 
-export const updatePresentation = (id: string, payload: UpdatePresentationPayload) => 
-  api.patch<Presentation>(`/presentation/${id}/update`, payload);
+export const updateDoc = (id: string, payload: UpdateDocPayload) => 
+  api.patch<Doc>(`/docs/${id}/update`, payload);
 
-export const updatePresentationTitle = (id: string, title: string) => 
-  api.patch<Presentation>(`/presentation/${id}/update-title`, { title });
+export const updateDocTitle = (id: string, title: string) => 
+  api.patch<Doc>(`/docs/${id}/update-title`, { title });
 
-export const deletePresentation = (id: string) => 
-  api.delete<void>(`/presentation/${id}/delete`);
+export const deleteDoc = (id: string) => 
+  api.delete<void>(`/docs/${id}/delete`);
 
-export const createSlide = (presentationId: string, payload: CreateSlidePayload) => 
-  api.post<Slide>(`/presentation/${presentationId}/slides/add`, payload);
+export const createCard = (docId: string, payload: CreateCardPayload) => 
+  api.post<Card>(`/docs/${docId}/cards/add`, payload);
 
-export const updateSlide = (presentationId: string, slideId: string, payload: UpdateSlidePayload) => 
-  api.patch<Slide>(`/presentation/${presentationId}/slides/${slideId}/update`, payload);
+export const updateCard = (docId: string, cardId: string, payload: UpdateCardPayload) => 
+  api.patch<Card>(`/docs/${docId}/cards/${cardId}/update`, payload);
 
-export const deleteSlide = (presentationId: string, slideId: string) => 
-  api.delete<void>(`/presentation/${presentationId}/slides/${slideId}/delete`);
+export const deleteCard = (docId: string, cardId: string) => 
+  api.delete<void>(`/docs/${docId}/cards/${cardId}/delete`);
+
+export const reorderCards = (
+  docId: string,
+  cardOrders: { cardId: string; order: number }[]
+) => api.post<void>(`/docs/${docId}/cards/reorder`, { cardOrders });
+
+export const savePrompt = (payload: CreatePlanFromPromptDto) => 
+  api.post<SavePromptResponse>(`/docs/save-prompt`, payload);
 
 // Reusable SSE Stream Handler
 const handleSSEStream = async (url: string, onChunk: (chunk: any) => void) => {
@@ -291,51 +271,51 @@ const handleSSEStream = async (url: string, onChunk: (chunk: any) => void) => {
   }
 };
 
-export const generateAndCreateSlides = (presentationId: string, onChunk: (chunk: SlideGenerationChunk) => void) => 
-  handleSSEStream(`${CONFIG.API_URL}/presentation/${presentationId}/slides/create`, onChunk);
+export const generateAndCreateCards = (docId: string, onChunk: (chunk: CardGenerationChunk) => void) => 
+  handleSSEStream(`${CONFIG.API_URL}/docs/${docId}/cards/create`, onChunk);
 
-export const generateOutlineStream = (outlineId: string, onChunk: (chunk: StreamChunk) => void) => 
-  handleSSEStream(`${CONFIG.API_URL}/presentation/outline/${outlineId}/generate-stream`, onChunk);
+export const generateOutlineStream = (docId: string, onChunk: (chunk: StreamChunk) => void) => 
+  handleSSEStream(`${CONFIG.API_URL}/docs/${docId}/generate-outline`, onChunk);
 
 // Share API functions
-export const enableShare = (presentationId: string) => 
-  api.post<ShareInfo>(`/presentation/${presentationId}/share/enable`);
+export const enableShare = (docId: string) => 
+  api.post<ShareInfo>(`/docs/${docId}/share/enable`);
 
-export const disableShare = (presentationId: string) => 
-  api.post<ShareInfo>(`/presentation/${presentationId}/share/disable`);
+export const disableShare = (docId: string) => 
+  api.post<ShareInfo>(`/docs/${docId}/share/disable`);
 
-export const getShareInfo = (presentationId: string) => 
-  api.get<ShareInfo>(`/presentation/${presentationId}/share`);
+export const getShareInfo = (docId: string) => 
+  api.get<ShareInfo>(`/docs/${docId}/share`);
 
 // Public share API functions (no auth required)
-export const getSharedPresentation = (token: string) => 
-  api.get<SharedPresentation>(`/presentation/public/share/${token}`);
+export const getSharedDoc = (token: string) => 
+  api.get<SharedDoc>(`/docs/public/share/${token}`);
 
-export const getSharedPresentationSlides = (token: string) => 
-  api.get<Slide[]>(`/presentation/public/share/${token}/slides`);
+export const getSharedDocCards = (token: string) => 
+  api.get<Card[]>(`/docs/public/share/${token}/cards`);
 
 // Export API functions
-export const exportPresentationToPptx = async (presentationId: string): Promise<Blob> => {
+export const exportDocToPptx = async (docId: string): Promise<Blob> => {
   // For blob responses, use request directly to get the blob
-  const response = await request.get(`/presentation/${presentationId}/export/pptx`, {
+  const response = await request.get(`/docs/${docId}/export/pptx`, {
     responseType: 'blob',
   });
   
   return response.data as Blob;
 };
 
-export const exportPresentationToPdf = async (presentationId: string): Promise<Blob> => {
+export const exportDocToPdf = async (docId: string): Promise<Blob> => {
   // For blob responses, use request directly to get the blob
-  const response = await request.get(`/presentation/${presentationId}/export/pdf`, {
+  const response = await request.get(`/docs/${docId}/export/pdf`, {
     responseType: 'blob',
   });
   
   return response.data as Blob;
 };
 
-export const exportPresentationToPng = async (presentationId: string): Promise<Blob> => {
+export const exportDocToPng = async (docId: string): Promise<Blob> => {
   // For blob responses, use request directly to get the blob (ZIP file)
-  const response = await request.get(`/presentation/${presentationId}/export/png`, {
+  const response = await request.get(`/docs/${docId}/export/png`, {
     responseType: 'blob',
   });
   

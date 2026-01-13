@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
-import { BLOCK_TYPES } from "@/types/presentation";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
+import { BLOCK_TYPES } from "@/types/docs";
 import {
   IconFileText,
   IconHash,
@@ -12,7 +12,7 @@ import {
   IconTimeline,
   IconCheck,
 } from "@tabler/icons-react";
-import type { BlockType } from "@/types/presentation";
+import type { BlockType } from "@/types/docs";
 
 interface BlockTypeSelectorProps {
   isOpen: boolean;

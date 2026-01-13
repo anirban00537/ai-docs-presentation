@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme, CircleStatsContent } from "@/types/presentation";
+import type { Block, Theme, CircleStatsContent } from "@/types/docs";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { createCircleStatsItem } from "../definitions/circle-stats-block";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { getFontFamily } from "@/lib/fonts";

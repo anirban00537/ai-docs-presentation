@@ -1,4 +1,4 @@
-import { CodeContentSchema, type CodeContent } from "@/types/presentation";
+import { CodeContentSchema, type CodeContent } from "@/types";
 
 export const createCodeContent = (): CodeContent => ({
   type: "code",

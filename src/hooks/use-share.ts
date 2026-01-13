@@ -3,19 +3,19 @@ import {
   enableShare,
   disableShare,
   getShareInfo,
-  getSharedPresentation,
-  getSharedPresentationSlides,
+  getSharedDoc,
+  getSharedDocCards,
   type ShareInfo,
-  type SharedPresentation,
-  type Slide,
-} from "@/services/presentation";
+  type SharedDoc,
+  type Card,
+} from "@/services/docs";
 import { toast } from "sonner";
 
-export const useShareInfo = (presentationId: string) => {
+export const useShareInfo = (docId: string) => {
   return useQuery({
-    queryKey: ["share-info", presentationId],
-    queryFn: () => getShareInfo(presentationId),
-    enabled: !!presentationId,
+    queryKey: ["share-info", docId],
+    queryFn: () => getShareInfo(docId),
+    enabled: !!docId,
     select: (response) => response.data,
   });
 };
@@ -24,9 +24,9 @@ export const useEnableShare = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (presentationId: string) => enableShare(presentationId),
-    onSuccess: (response, presentationId) => {
-      queryClient.invalidateQueries({ queryKey: ["share-info", presentationId] });
+    mutationFn: (docId: string) => enableShare(docId),
+    onSuccess: (response, docId) => {
+      queryClient.invalidateQueries({ queryKey: ["share-info", docId] });
       toast.success("Share link generated successfully");
     },
     onError: (error: any) => {
@@ -39,9 +39,9 @@ export const useDisableShare = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (presentationId: string) => disableShare(presentationId),
-    onSuccess: (response, presentationId) => {
-      queryClient.invalidateQueries({ queryKey: ["share-info", presentationId] });
+    mutationFn: (docId: string) => disableShare(docId),
+    onSuccess: (response, docId) => {
+      queryClient.invalidateQueries({ queryKey: ["share-info", docId] });
       toast.success("Sharing disabled successfully");
     },
     onError: (error: any) => {
@@ -50,20 +50,20 @@ export const useDisableShare = () => {
   });
 };
 
-export const useSharedPresentation = (token: string, enabled: boolean = true) => {
+export const useSharedDoc = (token: string, enabled: boolean = true) => {
   return useQuery({
-    queryKey: ["shared-presentation", token],
-    queryFn: () => getSharedPresentation(token),
+    queryKey: ["shared-doc", token],
+    queryFn: () => getSharedDoc(token),
     enabled: enabled && !!token,
     select: (response) => response.data,
     retry: false,
   });
 };
 
-export const useSharedPresentationSlides = (token: string, enabled: boolean = true) => {
+export const useSharedDocCards = (token: string, enabled: boolean = true) => {
   return useQuery({
-    queryKey: ["shared-presentation-slides", token],
-    queryFn: () => getSharedPresentationSlides(token),
+    queryKey: ["shared-doc-cards", token],
+    queryFn: () => getSharedDocCards(token),
     enabled: enabled && !!token,
     select: (response) => response.data,
     retry: false,

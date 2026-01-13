@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { SlideCanvas } from "@/app/(protected)/docs/[id]/engine/layout/SlideCanvas";
+import { CardCanvas } from "@/app/(protected)/docs/[id]/engine/layout/CardCanvas";
 import { EditorThemeProvider } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
-import { Theme } from "@/store/slices/slidesSlice";
-import { SLIDE_MAX_WIDTH } from "@/lib/constants";
+import { Theme } from "@/store/slices/cardsSlice";
+import { CARD_MAX_WIDTH } from "@/lib/constants";
 
-interface SlidePreviewProps {
-  slide: any;
+interface CardPreviewProps {
+  card: any;
   theme: Theme;
 }
 
-export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
+export const CardPreview: React.FC<CardPreviewProps> = ({ card, theme }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
 
@@ -38,20 +38,20 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
   }, []);
 
   // Calculate scale based on actual container width
-  const scale = containerWidth > 0 ? containerWidth / SLIDE_MAX_WIDTH : 0;
-  const slideHeight = SLIDE_MAX_WIDTH * (9 / 16);
+  const scale = containerWidth > 0 ? containerWidth / CARD_MAX_WIDTH : 0;
+  const cardHeight = CARD_MAX_WIDTH * (9 / 16);
 
-  // Convert API slide data to Redux format
-  const reduxSlide = useMemo(
+  // Convert API card data to Redux format
+  const reduxCard = useMemo(
     () => ({
-      id: slide.id,
-      rows: (slide.data?.rows || []).map((row: any) => ({
+      id: card.id,
+      rows: (card.data?.rows || []).map((row: any) => ({
         ...row,
         blocks: row.blocks || [],
       })),
-      accent: slide.data?.accent || slide.accent || undefined,
+      accent: card.data?.accent || card.accent || undefined,
     }),
-    [slide]
+    [card]
   );
 
   // No-op handlers for read-only preview
@@ -76,15 +76,15 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
         }}
       />
 
-      {/* Only render the slide content once we have a valid width */}
+      {/* Only render the card content once we have a valid width */}
       {containerWidth > 0 && (
         <div
           className="pointer-events-none"
           style={{
             transform: `scale(${scale})`,
             transformOrigin: "center center",
-            width: `${SLIDE_MAX_WIDTH}px`,
-            minHeight: `${slideHeight}px`,
+            width: `${CARD_MAX_WIDTH}px`,
+            minHeight: `${cardHeight}px`,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -96,8 +96,8 @@ export const SlidePreview: React.FC<SlidePreviewProps> = ({ slide, theme }) => {
             }}
           >
             <EditorThemeProvider themeOverride={theme}>
-              <SlideCanvas
-                slide={reduxSlide}
+              <CardCanvas
+                card={reduxCard}
                 onUpdateBlock={noop}
                 onDeleteRow={noop}
                 onAddColumn={noop}

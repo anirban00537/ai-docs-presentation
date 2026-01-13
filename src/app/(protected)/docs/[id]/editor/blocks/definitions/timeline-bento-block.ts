@@ -4,7 +4,7 @@ import {
   type TimelineBentoContent,
   type TimelineBentoItem,
   createProseMirrorDoc,
-} from "@/types/presentation";
+} from "@/types";
 
 export const createTimelineBentoItem = (): TimelineBentoItem => ({
   id: nanoid(),

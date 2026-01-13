@@ -3,8 +3,8 @@ import {
   type SolidBoxContent,
   type SolidBoxItem,
   createProseMirrorDoc,
-} from "@/types/presentation";
-import { SolidBoxContentSchema } from "@/types/presentation/schemas/blocks";
+} from "@/types";
+import { SolidBoxContentSchema } from "@/types/docs/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createSolidBoxItem = (

@@ -3,8 +3,8 @@ import {
   type SidelineCardContent,
   type SidelineCardItem,
   createProseMirrorDoc,
-} from "@/types/presentation";
-import { SidelineCardContentSchema } from "@/types/presentation/schemas/blocks";
+} from "@/types";
+import { SidelineCardContentSchema } from "@/types/docs/schemas/blocks";
 import { nanoid } from "nanoid";
 
 export const createSidelineCardItem = (

@@ -3,10 +3,10 @@ import {
   createBlockInstance,
   createRow,
 } from "@/app/(protected)/docs/[id]/engine/registry/factories";
-import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
-import { Slide } from "@/store/slices/slidesSlice";
+import { createProseMirrorDoc } from "@/types/docs/schemas/blocks";
+import { Card } from "@/store/slices/cardsSlice";
 
-export const contentWithImageTemplate: Slide = {
+export const contentWithImageTemplate: Card = {
   id: "content-with-image-layout",
   rows: [
     createRow([
@@ -34,7 +34,7 @@ export const contentWithImageTemplate: Slide = {
         type: "image",
         url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
         alt: "Mockup",
-        caption: "A visual representation of the concept.",
+        caption: "A visual redoc of the concept.",
         objectFit: "cover",
       }),
     ]),

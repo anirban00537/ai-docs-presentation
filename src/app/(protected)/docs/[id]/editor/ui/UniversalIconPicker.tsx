@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DynamicIcon, AVAILABLE_ICON_NAMES } from "./DynamicIcon";
 import { IconSearch, IconIcons } from "@tabler/icons-react";
-import type { Theme } from "@/types/presentation";
+import type { Theme } from "@/types";
 
 // Use the centralized icon list from DynamicIcon
 const CURATED_ICONS = AVAILABLE_ICON_NAMES;
@@ -21,7 +21,7 @@ interface UniversalIconPickerProps {
   value: string;
   /** Callback when icon is selected */
   onChange: (value: string) => void;
-  /** Presentation theme for styling */
+  /** Doc theme for styling */
   theme: Theme;
   /** Whether the picker is disabled */
   disabled?: boolean;

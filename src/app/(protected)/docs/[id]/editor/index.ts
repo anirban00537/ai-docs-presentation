@@ -15,7 +15,7 @@ export {
   BlockSelectionProvider,
   useBlockFocus,
   // Layout
-  SlideCanvas,
+  CardCanvas,
   ContentRow,
   BlockCell,
   InsertionIndicator,
@@ -28,7 +28,7 @@ export {
   createBlockInstance,
   createRow,
   createRowWithColumns,
-  createSlide,
+  createCard,
   // Hooks
   useResize,
   // Types
@@ -36,12 +36,12 @@ export {
   type BlockRendererProps,
 } from "@/app/(protected)/docs/[id]/engine";
 
-// Slide UI
-export { SlideNavigator } from "./slide/SlideNavigator";
-export { SlideToolbar } from "./slide/SlideToolbar";
-export { SlideOptions } from "./slide/SlideOptions";
-export { SlideLayoutSelector } from "./slide/SlideLayoutSelector";
-export { ScalableSlideContainer } from "./slide/ScalableSlideContainer";
+// Card UI
+export { CardNavigator } from "./card/CardNavigator";
+export { CardToolbar } from "./card/CardToolbar";
+export { CardOptions } from "./card/CardOptions";
+export { CardLayoutSelector } from "./card/CardLayoutSelector";
+export { ScalableCardContainer } from "./card/ScalableCardContainer";
 
 // Block UI
 export { BlockToolbar } from "./block-ui/BlockToolbar";
@@ -56,8 +56,8 @@ export { ImageLibraryPanel } from "./panels/ImageLibraryPanel";
 export { ThemeSelectorPanel } from "./panels/ThemeSelectorPanel";
 export { ImagePickerModal } from "./panels/ImagePickerModal";
 
-// Presentation
-export { PresentationView } from "./presentation/PresentationView";
+// Doc
+export { DocView } from "./doc/DocView";
 
 // UI
 export { LoadingOverlay } from "./ui/LoadingOverlay";

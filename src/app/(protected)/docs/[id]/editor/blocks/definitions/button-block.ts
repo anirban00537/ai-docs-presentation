@@ -1,5 +1,5 @@
-import { BlockContent, BLOCK_TYPES } from "@/types/presentation";
-import { ButtonBlockContentSchema } from "@/types/presentation/schemas/blocks";
+import { BlockContent, BLOCK_TYPES } from "@/types";
+import { ButtonBlockContentSchema } from "@/types/docs/schemas/blocks";
 
 export const createButtonBlockContent = (): any => ({
   type: BLOCK_TYPES.BUTTON_BLOCK,

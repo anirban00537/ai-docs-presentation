@@ -3,7 +3,7 @@ import {
   type LeafBlockContent,
   type LeafItem,
   createProseMirrorDoc,
-} from "@/types/presentation";
+} from "@/types";
 import { nanoid } from "nanoid";
 
 export const createLeafItem = (

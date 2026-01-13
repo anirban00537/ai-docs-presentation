@@ -19,15 +19,15 @@ import { toast } from "sonner";
 interface ShareModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  presentationId: string;
+  docId: string;
 }
 
 export const ShareModal: React.FC<ShareModalProps> = ({
   open,
   onOpenChange,
-  presentationId,
+  docId,
 }) => {
-  const { data: shareInfo, isLoading } = useShareInfo(presentationId);
+  const { data: shareInfo, isLoading } = useShareInfo(docId);
   const enableShareMutation = useEnableShare();
   const disableShareMutation = useDisableShare();
   const [copied, setCopied] = useState(false);
@@ -45,9 +45,9 @@ export const ShareModal: React.FC<ShareModalProps> = ({
 
   const handleToggleShare = async (enabled: boolean) => {
     if (enabled) {
-      await enableShareMutation.mutateAsync(presentationId);
+      await enableShareMutation.mutateAsync(docId);
     } else {
-      await disableShareMutation.mutateAsync(presentationId);
+      await disableShareMutation.mutateAsync(docId);
     }
   };
 
@@ -71,10 +71,10 @@ export const ShareModal: React.FC<ShareModalProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <IconShare size={20} />
-            Share Presentation
+            Share Doc
           </DialogTitle>
           <DialogDescription>
-            Generate a shareable link that allows anyone to view or present your presentation. Use the same link for both viewing and presenting.
+            Generate a shareable link that allows anyone to view or present your doc. Use the same link for both viewing and presenting.
           </DialogDescription>
         </DialogHeader>
 
@@ -86,7 +86,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                 Enable sharing
               </Label>
               <p className="text-sm text-muted-foreground">
-                Create a public link to share your presentation
+                Create a public link to share your doc
               </p>
             </div>
             <Switch
@@ -123,7 +123,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Anyone with this link can view or present your presentation. Use the "Present" button on the page to switch to presentation mode.
+                  Anyone with this link can view or present your doc. Use the "Present" button on the page to switch to doc mode.
                 </p>
               </div>
             </div>

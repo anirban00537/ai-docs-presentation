@@ -3,131 +3,131 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
-interface UsePresentationModeProps {
-  slidesCount: number;
-  slides: Array<{ id: string }>;
-  presentationId: string;
+interface UseDocModeProps {
+  cardsCount: number;
+  cards: Array<{ id: string }>;
+  docId: string;
 }
 
-interface UsePresentationModeReturn {
+interface UseDocModeReturn {
   isPresenting: boolean;
-  currentSlideIndex: number;
-  presentationContainerRef: React.RefObject<HTMLDivElement | null>;
-  startPresentation: () => void;
-  stopPresentation: () => void;
-  goToNextSlide: () => void;
-  goToPrevSlide: () => void;
-  setCurrentSlideIndex: React.Dispatch<React.SetStateAction<number>>;
+  currentCardIndex: number;
+  docContainerRef: React.RefObject<HTMLDivElement | null>;
+  startDoc: () => void;
+  stopDoc: () => void;
+  goToNextCard: () => void;
+  goToPrevCard: () => void;
+  setCurrentCardIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 /**
- * Custom hook to manage presentation mode state and navigation.
- * Handles keyboard navigation, smart scrolling within slides, slide transitions, and URL synchronization.
+ * Custom hook to manage doc mode state and navigation.
+ * Handles keyboard navigation, smart scrolling within cards, card transitions, and URL synchronization.
  */
-export function usePresentationMode({
-  slidesCount,
-  slides,
-  presentationId,
-}: UsePresentationModeProps): UsePresentationModeReturn {
+export function useDocMode({
+  cardsCount,
+  cards,
+  docId,
+}: UseDocModeProps): UseDocModeReturn {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
   const [isPresenting, setIsPresenting] = useState(false);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const presentationContainerRef = useRef<HTMLDivElement>(null);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const docContainerRef = useRef<HTMLDivElement>(null);
   const isInitializedRef = useRef(false);
 
   /**
-   * Update URL with presentation mode parameters
+   * Update URL with doc mode parameters
    */
   const updateUrl = useCallback(
-    (slideIndex: number, isPresenting: boolean) => {
-      if (isPresenting && slides[slideIndex]) {
+    (cardIndex: number, isPresenting: boolean) => {
+      if (isPresenting && cards[cardIndex]) {
         const params = new URLSearchParams(searchParams.toString());
         params.set('mode', 'present');
-        params.set('slideId', slides[slideIndex].id);
+        params.set('cardId', cards[cardIndex].id);
         router.replace(`${pathname}?${params.toString()}`, { scroll: false });
       } else {
         const params = new URLSearchParams(searchParams.toString());
         params.delete('mode');
-        params.delete('slideId');
+        params.delete('cardId');
         const newUrl = params.toString()
           ? `${pathname}?${params.toString()}`
           : pathname;
         router.replace(newUrl, { scroll: false });
       }
     },
-    [router, pathname, searchParams, slides],
+    [router, pathname, searchParams, cards],
   );
 
   /**
-   * Start presentation mode and update URL
+   * Start doc mode and update URL
    */
-  const startPresentation = useCallback(() => {
+  const startDoc = useCallback(() => {
     setIsPresenting(true);
-    setCurrentSlideIndex(0);
-    if (slides[0]) {
+    setCurrentCardIndex(0);
+    if (cards[0]) {
       updateUrl(0, true);
     }
-  }, [slides, updateUrl]);
+  }, [cards, updateUrl]);
 
   /**
-   * Stop presentation mode and clean URL
+   * Stop doc mode and clean URL
    */
-  const stopPresentation = useCallback(() => {
+  const stopDoc = useCallback(() => {
     setIsPresenting(false);
     updateUrl(0, false);
   }, [updateUrl]);
 
   /**
-   * Navigate to next slide and update URL
+   * Navigate to next card and update URL
    */
-  const goToNextSlide = useCallback(() => {
-    setCurrentSlideIndex((prev) => {
-      const nextIndex = Math.min(prev + 1, slidesCount - 1);
-      if (isPresenting && slides[nextIndex]) {
+  const goToNextCard = useCallback(() => {
+    setCurrentCardIndex((prev) => {
+      const nextIndex = Math.min(prev + 1, cardsCount - 1);
+      if (isPresenting && cards[nextIndex]) {
         updateUrl(nextIndex, true);
       }
       return nextIndex;
     });
-  }, [slidesCount, slides, isPresenting, updateUrl]);
+  }, [cardsCount, cards, isPresenting, updateUrl]);
 
   /**
-   * Navigate to previous slide and update URL
+   * Navigate to previous card and update URL
    */
-  const goToPrevSlide = useCallback(() => {
-    setCurrentSlideIndex((prev) => {
+  const goToPrevCard = useCallback(() => {
+    setCurrentCardIndex((prev) => {
       const prevIndex = Math.max(prev - 1, 0);
-      if (isPresenting && slides[prevIndex]) {
+      if (isPresenting && cards[prevIndex]) {
         updateUrl(prevIndex, true);
       }
       return prevIndex;
     });
-  }, [slides, isPresenting, updateUrl]);
+  }, [cards, isPresenting, updateUrl]);
 
   /**
-   * Initialize presentation mode from URL parameters
+   * Initialize doc mode from URL parameters
    */
   useEffect(() => {
     if (isInitializedRef.current) return;
-    if (slidesCount === 0 || slides.length === 0) return;
+    if (cardsCount === 0 || cards.length === 0) return;
 
     const mode = searchParams.get('mode');
-    const slideId = searchParams.get('slideId');
+    const cardId = searchParams.get('cardId');
 
-    if (mode === 'present' && slideId) {
-      const slideIndex = slides.findIndex((slide) => slide.id === slideId);
-      if (slideIndex !== -1) {
+    if (mode === 'present' && cardId) {
+      const cardIndex = cards.findIndex((card) => card.id === cardId);
+      if (cardIndex !== -1) {
         setIsPresenting(true);
-        setCurrentSlideIndex(slideIndex);
+        setCurrentCardIndex(cardIndex);
         isInitializedRef.current = true;
       }
     }
-  }, [searchParams, slides, slidesCount]);
+  }, [searchParams, cards, cardsCount]);
 
   /**
-   * Lock body scroll during presentation
+   * Lock body scroll during doc
    */
   useEffect(() => {
     if (isPresenting) {
@@ -140,33 +140,33 @@ export function usePresentationMode({
     };
   }, [isPresenting]);
 
-  // Reset scroll position on slide change
+  // Reset scroll position on card change
   useEffect(() => {
-    if (presentationContainerRef.current) {
-      presentationContainerRef.current.scrollTop = 0;
+    if (docContainerRef.current) {
+      docContainerRef.current.scrollTop = 0;
     }
-  }, [currentSlideIndex]);
+  }, [currentCardIndex]);
 
-  // Keyboard navigation for presentation mode with smart scrolling
+  // Keyboard navigation for doc mode with smart scrolling
   useEffect(() => {
     if (!isPresenting) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const container = presentationContainerRef.current;
+      const container = docContainerRef.current;
       if (!container) return;
 
       if (e.key === "ArrowRight" || e.key === " ") {
         e.preventDefault();
-        const nextIndex = Math.min(currentSlideIndex + 1, slidesCount - 1);
-        setCurrentSlideIndex(nextIndex);
-        if (slides[nextIndex]) {
+        const nextIndex = Math.min(currentCardIndex + 1, cardsCount - 1);
+        setCurrentCardIndex(nextIndex);
+        if (cards[nextIndex]) {
           updateUrl(nextIndex, true);
         }
       } else if (e.key === "ArrowLeft") {
         e.preventDefault();
-        const prevIndex = Math.max(currentSlideIndex - 1, 0);
-        setCurrentSlideIndex(prevIndex);
-        if (slides[prevIndex]) {
+        const prevIndex = Math.max(currentCardIndex - 1, 0);
+        setCurrentCardIndex(prevIndex);
+        if (cards[prevIndex]) {
           updateUrl(prevIndex, true);
         }
       } else if (e.key === "ArrowDown") {
@@ -176,7 +176,7 @@ export function usePresentationMode({
         e.preventDefault();
         handleScrollUp(container);
       } else if (e.key === "Escape") {
-        stopPresentation();
+        stopDoc();
       }
     };
 
@@ -187,12 +187,12 @@ export function usePresentationMode({
       const maxScroll = scrollHeight - viewportHeight;
       const remainingScroll = maxScroll - scrollTop;
 
-      // If content fits in viewport OR we're truly at the bottom (less than 100px remaining), go to next slide
+      // If content fits in viewport OR we're truly at the bottom (less than 100px remaining), go to next card
       if (maxScroll <= 10 || remainingScroll < 100) {
-        if (currentSlideIndex < slidesCount - 1) {
-          const nextIndex = currentSlideIndex + 1;
-          setCurrentSlideIndex(nextIndex);
-          if (slides[nextIndex]) {
+        if (currentCardIndex < cardsCount - 1) {
+          const nextIndex = currentCardIndex + 1;
+          setCurrentCardIndex(nextIndex);
+          if (cards[nextIndex]) {
             updateUrl(nextIndex, true);
           }
         }
@@ -220,17 +220,17 @@ export function usePresentationMode({
       const scrollHeight = container.scrollHeight;
       const maxScroll = scrollHeight - viewportHeight;
 
-      // If we're at the top (less than 100px scrolled), go to previous slide
+      // If we're at the top (less than 100px scrolled), go to previous card
       if (maxScroll <= 10 || scrollTop < 100) {
-        if (currentSlideIndex > 0) {
-          const prevIndex = currentSlideIndex - 1;
-          setCurrentSlideIndex(prevIndex);
-          if (slides[prevIndex]) {
+        if (currentCardIndex > 0) {
+          const prevIndex = currentCardIndex - 1;
+          setCurrentCardIndex(prevIndex);
+          if (cards[prevIndex]) {
             updateUrl(prevIndex, true);
           }
-          // Scroll to bottom of previous slide after transition
+          // Scroll to bottom of previous card after transition
           setTimeout(() => {
-            const newContainer = presentationContainerRef.current;
+            const newContainer = docContainerRef.current;
             if (newContainer) {
               const newMaxScroll =
                 newContainer.scrollHeight - window.innerHeight;
@@ -261,16 +261,16 @@ export function usePresentationMode({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isPresenting, slidesCount, currentSlideIndex, slides, updateUrl, stopPresentation]);
+  }, [isPresenting, cardsCount, currentCardIndex, cards, updateUrl, stopDoc]);
 
   return {
     isPresenting,
-    currentSlideIndex,
-    presentationContainerRef,
-    startPresentation,
-    stopPresentation,
-    goToNextSlide,
-    goToPrevSlide,
-    setCurrentSlideIndex,
+    currentCardIndex,
+    docContainerRef,
+    startDoc,
+    stopDoc,
+    goToNextCard,
+    goToPrevCard,
+    setCurrentCardIndex,
   };
 }

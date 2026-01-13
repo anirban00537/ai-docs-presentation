@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme, SimpleNumberCardContent } from "@/types/presentation";
+import type { Block, Theme, SimpleNumberCardContent } from "@/types/docs";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { createSimpleNumberCardItem } from "../definitions/simple-number-card";
 import { IconPlus, IconX } from "@tabler/icons-react";
 

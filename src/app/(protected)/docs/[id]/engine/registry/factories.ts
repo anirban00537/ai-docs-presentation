@@ -2,11 +2,11 @@ import { nanoid } from "nanoid";
 import {
   type Block,
   type Row,
-  type Slide,
+  type Card,
   BLOCK_TYPES,
   MAX_BLOCKS_PER_ROW,
   type BlockType,
-} from "@/types/presentation";
+} from "@/types";
 import { BLOCK_DEFINITIONS } from "./block-definitions";
 
 export const createBlockInstance = (
@@ -44,7 +44,7 @@ export const createRowWithColumns = (
   return createRow(blocks);
 };
 
-export const createSlide = (): Slide => ({
+export const createCard = (): Card => ({
   id: nanoid(),
   rows: [createRow()],
 });

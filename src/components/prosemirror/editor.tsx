@@ -35,7 +35,7 @@ import {
   selectTheme,
   DEFAULT_THEME,
   type Theme,
-} from "@/store/slices/slidesSlice";
+} from "@/store/slices/cardsSlice";
 import { getFontFamily } from "@/lib/fonts";
 
 
@@ -199,7 +199,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
     injectBaseStyles();
   }, []);
 
-  // Generate unique ID for scoping styles - always unique to prevent conflicts when multiple slides have same blockId
+  // Generate unique ID for scoping styles - always unique to prevent conflicts when multiple cards have same blockId
   const editorIdRef = useRef<string>(
     blockId
       ? `${blockId}-${Math.random().toString(36).substr(2, 9)}`

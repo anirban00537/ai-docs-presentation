@@ -5,41 +5,41 @@ import {
   IconGripVertical,
   IconTrash,
 } from "@tabler/icons-react";
-import { SLIDE_MAX_WIDTH } from "@/lib/constants";
-import { SlideCanvas } from "@/app/(protected)/docs/[id]/engine";
-import type { Slide } from "@/store/slices/slidesSlice";
+import { CARD_MAX_WIDTH } from "@/lib/constants";
+import { CardCanvas } from "@/app/(protected)/docs/[id]/engine";
+import type { Card } from "@/store/slices/cardsSlice";
 
-interface SortableSlideItemProps {
-  slide: Slide;
+interface SortableCardItemProps {
+  card: Card;
   index: number;
   isActive: boolean;
   theme: any;
   isDark: boolean;
   scale: number;
-  slideHeight: number;
+  cardHeight: number;
   thumbnailHeight: number;
   containerWidth: number;
-  onSlideClick: (id: string) => void;
-  onDeleteSlide: (id: string) => void; // Changed back to just ID
-  slideCount: number;
-  renderSlideProps: any;
+  onCardClick: (id: string) => void;
+  onDeleteCard: (id: string) => void;
+  cardCount: number;
+  renderCardProps: any;
 }
 
-export const SortableSlideItem = ({
-  slide,
+export const SortableCardItem = ({
+  card,
   index,
   isActive,
   theme,
   isDark,
   scale,
-  slideHeight,
+  cardHeight,
   thumbnailHeight,
   containerWidth,
-  onSlideClick,
-  onDeleteSlide,
-  slideCount,
-  renderSlideProps,
-}: SortableSlideItemProps) => {
+  onCardClick,
+  onDeleteCard,
+  cardCount,
+  renderCardProps,
+}: SortableCardItemProps) => {
   const {
     attributes,
     listeners,
@@ -47,7 +47,7 @@ export const SortableSlideItem = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: slide.id });
+  } = useSortable({ id: card.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -63,10 +63,10 @@ export const SortableSlideItem = ({
       className="relative mb-2 group touch-none px-1"
     >
       <div
-        onClick={() => onSlideClick(slide.id)}
+        onClick={() => onCardClick(card.id)}
         className="relative cursor-pointer transition-transform duration-200"
       >
-        {/* Slide Preview Container */}
+        {/* Card Preview Container */}
         <div
           className="relative rounded-xl bg-white shadow-sm transition-all duration-200 hover:shadow-md mx-auto"
           style={{
@@ -78,16 +78,16 @@ export const SortableSlideItem = ({
             overflow: "hidden",
           }}
         >
-          {/* Scaled SlideContainer */}
+          {/* Scaled CardContainer */}
           <div
             className="absolute top-0 left-0 pointer-events-none origin-top-left"
             style={{
               transform: `scale(${scale})`,
-              width: `${SLIDE_MAX_WIDTH}px`,
-              height: `${slideHeight}px`,
+              width: `${CARD_MAX_WIDTH}px`,
+              height: `${cardHeight}px`,
             }}
           >
-            <SlideCanvas slide={slide} {...renderSlideProps} enableDragHints={false} readOnly={true} />
+            <CardCanvas card={card as any} {...renderCardProps} enableDragHints={false} readOnly={true} />
           </div>
 
           {/* Hover Overlay with Controls */}
@@ -115,14 +115,14 @@ export const SortableSlideItem = ({
             </div>
 
             {/* Delete Button */}
-            {slideCount > 1 && (
+            {cardCount > 1 && (
               <button
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent slide selection
-                  onDeleteSlide(slide.id);
+                  e.stopPropagation(); // Prevent card selection
+                  onDeleteCard(card.id);
                 }}
                 className="p-2 rounded-lg hover:scale-105 transition-transform shadow-sm bg-red-500 text-white"
-                title="Delete slide"
+                title="Delete card"
               >
                 <IconTrash size={16} />
               </button>
@@ -130,7 +130,7 @@ export const SortableSlideItem = ({
           </div>
         </div>
 
-        {/* Slide Number Badge */}
+        {/* Card Number Badge */}
         <div
           className="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold shadow-sm z-10"
           style={{

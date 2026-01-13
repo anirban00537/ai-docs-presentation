@@ -1,18 +1,18 @@
-import { SlidesState, Slide, Row, Block } from "@/store/slices/slidesSlice";
-import { BlockType } from "@/types/presentation";
+import { CardsState, Card, Row, Block } from "@/store/slices/cardsSlice";
+import { BlockType } from "@/types/docs";
 
 /**
- * Finds a slide by ID in the state
+ * Finds a card by ID in the state
  */
-export const findSlide = (state: SlidesState, slideId: string): Slide | undefined => {
-  return state.slides.find((s) => s.id === slideId);
+export const findCard = (state: CardsState, cardId: string): Card | undefined => {
+  return state.cards.find((c) => c.id === cardId);
 };
 
 /**
- * Finds a row by ID in a slide
+ * Finds a row by ID in a card
  */
-export const findRow = (slide: Slide | undefined, rowId: string): Row | undefined => {
-  return slide?.rows.find((r) => r.id === rowId);
+export const findRow = (card: Card | undefined, rowId: string): Row | undefined => {
+  return card?.rows.find((r) => r.id === rowId);
 };
 
 /**
@@ -30,10 +30,10 @@ export const recalculateWidths = (row: Row) => {
 };
 
 /**
- * Ensures a slide has at least one row
+ * Ensures a card has at least one row
  */
-export const ensureRowExists = (slide: Slide, createRowFn: () => Row) => {
-  if (slide.rows.length === 0) {
-    slide.rows.push(createRowFn());
+export const ensureRowExists = (card: Card, createRowFn: () => Row) => {
+  if (card.rows.length === 0) {
+    card.rows.push(createRowFn());
   }
 };

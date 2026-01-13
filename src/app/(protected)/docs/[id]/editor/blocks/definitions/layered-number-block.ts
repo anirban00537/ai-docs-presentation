@@ -3,7 +3,7 @@ import {
   type LayeredNumberContent,
   type LayeredNumberItem,
   createProseMirrorDoc,
-} from "@/types/presentation";
+} from "@/types";
 import { nanoid } from "nanoid";
 
 export const createLayeredNumberItem = (

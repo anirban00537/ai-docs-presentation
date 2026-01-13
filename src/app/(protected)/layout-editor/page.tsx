@@ -5,7 +5,7 @@ import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { motion } from "framer-motion";
 import {
-  SlideCanvas,
+  CardCanvas,
   EditorBackground,
   BlockSelectionProvider,
   ToolbarPanel,
@@ -22,8 +22,8 @@ import { EditorThemeProvider } from "@/app/(protected)/docs/[id]/engine/theme/Ed
 
 /**
  * Layout Editor Page - Admin tool for creating and editing layout templates
- * This is a standalone editor that reuses all presentation editor components
- * but operates on a single layout template instead of multiple slides.
+ * This is a standalone editor that reuses all doc editor components
+ * but operates on a single layout template instead of multiple cards.
  */
 const LayoutEditorPage = () => {
   return (
@@ -104,7 +104,7 @@ const LayoutEditorContent = () => {
           >
             <BlockSelectionProvider>
               {/* Blocks Panel */}
-              <ToolbarPanel presentationId="layout-editor" />
+              <ToolbarPanel docId="layout-editor" />
 
               {/* Layout Canvas */}
               <div className="flex flex-col gap-8">
@@ -134,7 +134,7 @@ const LayoutEditorContent = () => {
                       style={{ color: theme.bodyColor }}
                     >
                       Create reusable layout templates. Add blocks, arrange them, and save
-                      as a template for presentations.
+                      as a template for docs.
                     </p>
                   </div>
                 </motion.div>
@@ -145,8 +145,8 @@ const LayoutEditorContent = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  <SlideCanvas
-                    slide={{
+                  <CardCanvas
+                    card={{
                       id: "layout-preview",
                       rows: layoutData.rows,
                       accent: layoutData.accent,

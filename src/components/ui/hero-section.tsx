@@ -46,7 +46,7 @@ export default function HeroSection() {
           >
             Ideas to{" "}
             <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">
-              Slides
+              Cards
             </span>{" "}
             <br />
             in Seconds.
@@ -59,7 +59,7 @@ export default function HeroSection() {
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed"
           >
             Butterfast transforms your prompts into stunning, professional
-            presentations. No design skills needed. Just pure storytelling.
+            docs. No design skills needed. Just pure storytelling.
           </motion.p>
 
           <motion.div

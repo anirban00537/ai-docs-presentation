@@ -9,18 +9,18 @@ import React, {
 } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { ContentRow } from "./ContentRow";
-import type { Slide, SlideAccent } from "@/store/slices/slidesSlice";
-import type { BlockContent } from "@/types/presentation";
+import type { Card, CardAccent } from "@/store/slices/cardsSlice";
+import type { BlockContent } from "@/types/docs";
 import { useAppDispatch } from "@/store/hooks";
 import {
-  setSlideAccentSize,
-  updateSlideAccent,
-} from "@/store/slices/slidesSlice";
+  setCardAccentSize,
+  updateCardAccent,
+} from "@/store/slices/cardsSlice";
 import { useEditorTheme } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
-import { SlideToolbar } from "@/app/(protected)/docs/[id]/editor/slide/SlideToolbar";
+import { CardToolbar } from "@/app/(protected)/docs/[id]/editor/card/CardToolbar";
 import type { SelectedImage } from "@/app/(protected)/docs/[id]/editor/panels/ImagePickerModal";
 import { getFontFamily } from "@/lib/fonts";
-import { SLIDE_MAX_WIDTH } from "@/lib/constants";
+import { CARD_MAX_WIDTH } from "@/lib/constants";
 import * as Patterns from "@/app/(protected)/docs/[id]/editor/patterns";
 import { useResize } from "@/app/(protected)/docs/[id]/engine/hooks/useResize";
 import { DragStateBridge } from "./DragStateBridge";
@@ -34,30 +34,30 @@ const ImagePickerModal = lazy(() =>
   )
 );
 
-interface SlideCanvasProps {
-  slide: Slide;
+interface CardCanvasProps {
+  card: Card;
   onUpdateBlock: (
-    slideId: string,
+    cardId: string,
     blockId: string,
     content: BlockContent
   ) => void;
-  onDeleteRow: (slideId: string, rowId: string) => void;
-  onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
-  onAddRowAtTop: (slideId: string) => void;
-  onAddRowAtBottom: (slideId: string) => void;
+  onDeleteRow: (cardId: string, rowId: string) => void;
+  onAddColumn: (cardId: string, rowId: string, afterBlockId: string) => void;
+  onAddRowAtTop: (cardId: string) => void;
+  onAddRowAtBottom: (cardId: string) => void;
   onUpdateColumnWidths: (
-    slideId: string,
+    cardId: string,
     rowId: string,
     columnWidths: number[]
   ) => void;
-  onUpdateAccent?: (slideId: string, accent: SlideAccent | undefined) => void;
+  onUpdateAccent?: (cardId: string, accent: CardAccent | undefined) => void;
   enableDragHints?: boolean;
   readOnly?: boolean;
   fullWidth?: boolean;
 }
 
-export const SlideCanvas = memo(function SlideCanvas({
-  slide,
+export const CardCanvas = memo(function CardCanvas({
+  card,
   onUpdateBlock,
   onDeleteRow,
   onAddColumn,
@@ -68,15 +68,15 @@ export const SlideCanvas = memo(function SlideCanvas({
   enableDragHints = true,
   readOnly = false,
   fullWidth = false,
-}: SlideCanvasProps) {
+}: CardCanvasProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isImagePickerOpen, setIsImagePickerOpen] = useState(false);
   const [localAccentSize, setLocalAccentSize] = useState(
-    slide.accent?.size || 40
+    card.accent?.size || 40
   );
-  const latestSizeRef = useRef<number>(slide.accent?.size || 40);
-  const [prevAccentSize, setPrevAccentSize] = useState(slide.accent?.size);
+  const latestSizeRef = useRef<number>(card.accent?.size || 40);
+  const [prevAccentSize, setPrevAccentSize] = useState(card.accent?.size);
 
   const theme = useEditorTheme();
   const dispatch = useAppDispatch();
@@ -84,10 +84,10 @@ export const SlideCanvas = memo(function SlideCanvas({
   const dragActive = enableDragHints ? isDragging : false;
 
   // Sync local accent size when prop changes (React recommended pattern)
-  if (slide.accent?.size !== prevAccentSize) {
-    setPrevAccentSize(slide.accent?.size);
-    if (slide.accent?.size !== undefined) {
-      setLocalAccentSize(slide.accent.size);
+  if (card.accent?.size !== prevAccentSize) {
+    setPrevAccentSize(card.accent?.size);
+    if (card.accent?.size !== undefined) {
+      setLocalAccentSize(card.accent.size);
     }
   }
 
@@ -102,17 +102,17 @@ export const SlideCanvas = memo(function SlideCanvas({
     handleMouseDown: handleAccentResizeStart,
   } = useResize({
     direction:
-      slide.accent?.position === "top" || slide.accent?.position === "bottom"
+      card.accent?.position === "top" || card.accent?.position === "bottom"
         ? "vertical"
         : "horizontal",
     onResize: (delta) => {
-      if (slide.accent?.position === "background") return;
+      if (card.accent?.position === "background") return;
 
-      const container = document.getElementById(`card-content-${slide.id}`);
+      const container = document.getElementById(`card-content-${card.id}`);
       if (!container) return;
 
       const isVertical =
-        slide.accent?.position === "top" || slide.accent?.position === "bottom";
+        card.accent?.position === "top" || card.accent?.position === "bottom";
       const containerDimension = isVertical
         ? container.offsetHeight
         : container.offsetWidth;
@@ -121,8 +121,8 @@ export const SlideCanvas = memo(function SlideCanvas({
       setLocalAccentSize((prev) => {
         const deltaPercent = (delta / containerDimension) * 100;
         let newSize =
-          slide.accent?.position === "right" ||
-          slide.accent?.position === "bottom"
+          card.accent?.position === "right" ||
+          card.accent?.position === "bottom"
             ? prev - deltaPercent
             : prev + deltaPercent;
 
@@ -133,7 +133,7 @@ export const SlideCanvas = memo(function SlideCanvas({
     },
     onResizeEnd: () => {
       dispatch(
-        setSlideAccentSize({ slideId: slide.id, size: latestSizeRef.current })
+        setCardAccentSize({ cardId: card.id, size: latestSizeRef.current })
       );
     },
   });
@@ -142,22 +142,22 @@ export const SlideCanvas = memo(function SlideCanvas({
     (image: SelectedImage) => {
       if (onUpdateAccent) {
         const updatedAccent = {
-          position: slide.accent?.position || ("right" as const),
-          size: slide.accent?.size || 40,
+          position: card.accent?.position || ("right" as const),
+          size: card.accent?.size || 40,
           url: image.url,
         };
-        onUpdateAccent(slide.id, updatedAccent);
+        onUpdateAccent(card.id, updatedAccent);
       } else {
         dispatch(
-          updateSlideAccent({
-            slideId: slide.id,
+          updateCardAccent({
+            cardId: card.id,
             update: { url: image.url },
           })
         );
       }
       setIsImagePickerOpen(false);
     },
-    [dispatch, slide.id, slide.accent, onUpdateAccent]
+    [dispatch, card.id, card.accent, onUpdateAccent]
   );
 
   // Frame styling
@@ -178,8 +178,8 @@ export const SlideCanvas = memo(function SlideCanvas({
       backdropFilter: backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
       WebkitBackdropFilter:
         backdropBlur !== "0px" ? `blur(${backdropBlur})` : "none",
-      minWidth: fullWidth ? "100%" : `${SLIDE_MAX_WIDTH}px`,
-      maxWidth: fullWidth ? "100%" : `${SLIDE_MAX_WIDTH}px`,
+      minWidth: fullWidth ? "100%" : `${CARD_MAX_WIDTH}px`,
+      maxWidth: fullWidth ? "100%" : `${CARD_MAX_WIDTH}px`,
       overflow: "visible",
       display: fullWidth ? "flex" : "block",
       flexDirection: fullWidth ? "column" : undefined,
@@ -332,13 +332,13 @@ export const SlideCanvas = memo(function SlideCanvas({
   };
 
   const isVertical =
-    slide.accent?.position === "top" || slide.accent?.position === "bottom";
-  const isBackground = slide.accent?.position === "background";
+    card.accent?.position === "top" || card.accent?.position === "bottom";
+  const isBackground = card.accent?.position === "background";
 
   return (
     <>
       <div
-        className={`group/slide relative z-0 hover:z-20 ${
+        className={`group/card relative z-0 hover:z-20 ${
           fullWidth ? "w-full min-h-screen" : "mx-auto"
         }`}
         style={finalStyle}
@@ -361,13 +361,13 @@ export const SlideCanvas = memo(function SlideCanvas({
           </div>
 
           {/* Background Image Mode */}
-          {isBackground && slide.accent?.url && (
+          {isBackground && card.accent?.url && (
             <div className="absolute inset-0">
               <img
-                src={slide.accent.url}
+                src={card.accent.url}
                 alt="Background Accent"
                 className="w-full h-full object-cover transition-opacity duration-500"
-                style={{ opacity: (slide.accent.size ?? 40) / 100 }}
+                style={{ opacity: (card.accent.size ?? 40) / 100 }}
               />
               <div
                 className={`absolute inset-0 ${
@@ -402,22 +402,22 @@ export const SlideCanvas = memo(function SlideCanvas({
           <DragStateBridge onDragChange={setIsDragging} />
         )}
 
-        {/* Slide Controls */}
+        {/* Card Controls */}
         {!readOnly && (
-          <SlideToolbar
-            slide={slide}
+          <CardToolbar
+            card={card}
             isHovered={isHovered}
             fullWidth={fullWidth}
             onOpenImagePicker={() => setIsImagePickerOpen(true)}
-            onAddRow={() => onAddRowAtBottom(slide.id)}
+            onAddRow={() => onAddRowAtBottom(card.id)}
             onUpdateAccent={onUpdateAccent}
             onToggleAccent={
               onUpdateAccent
-                ? (slideId) => {
-                    if (slide.accent) {
-                      onUpdateAccent(slideId, undefined);
+                ? (cardId) => {
+                    if (card.accent) {
+                      onUpdateAccent(cardId, undefined);
                     } else {
-                      onUpdateAccent(slideId, {
+                      onUpdateAccent(cardId, {
                         position: "right",
                         size: 40,
                         url: undefined,
@@ -430,13 +430,13 @@ export const SlideCanvas = memo(function SlideCanvas({
         )}
 
         <div
-          id={`card-content-${slide.id}`}
+          id={`card-content-${card.id}`}
           className={`relative z-10 w-full flex items-stretch ${
-            slide.accent?.position === "right"
+            card.accent?.position === "right"
               ? "flex-row-reverse"
-              : slide.accent?.position === "bottom"
+              : card.accent?.position === "bottom"
               ? "flex-col-reverse"
-              : slide.accent?.position === "top"
+              : card.accent?.position === "top"
               ? "flex-col"
               : "flex-row"
           }`}
@@ -445,7 +445,7 @@ export const SlideCanvas = memo(function SlideCanvas({
             minHeight: fullWidth ? "100vh" : "auto",
           }}
         >
-          {slide.accent && slide.accent.url && !isBackground && (
+          {card.accent && card.accent.url && !isBackground && (
             <div
               className="relative shrink-0 group/accent z-0"
               style={{
@@ -454,30 +454,30 @@ export const SlideCanvas = memo(function SlideCanvas({
                 minHeight: isVertical ? "200px" : fullWidth ? "100vh" : "auto",
                 overflow: "hidden",
                 borderTopLeftRadius:
-                  slide.accent.position === "left" ||
-                  slide.accent.position === "top"
+                  card.accent.position === "left" ||
+                  card.accent.position === "top"
                     ? borderRadius
                     : "0",
                 borderBottomLeftRadius:
-                  slide.accent.position === "left" ||
-                  slide.accent.position === "bottom"
+                  card.accent.position === "left" ||
+                  card.accent.position === "bottom"
                     ? borderRadius
                     : "0",
                 borderTopRightRadius:
-                  slide.accent.position === "right" ||
-                  slide.accent.position === "top"
+                  card.accent.position === "right" ||
+                  card.accent.position === "top"
                     ? borderRadius
                     : "0",
                 borderBottomRightRadius:
-                  slide.accent.position === "right" ||
-                  slide.accent.position === "bottom"
+                  card.accent.position === "right" ||
+                  card.accent.position === "bottom"
                     ? borderRadius
                     : "0",
               }}
             >
-              {slide.accent.url && (
+              {card.accent.url && (
                 <img
-                  src={slide.accent.url}
+                  src={card.accent.url}
                   alt="Accent"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
@@ -491,10 +491,10 @@ export const SlideCanvas = memo(function SlideCanvas({
                   className={`absolute z-50 transition-all duration-300 ${
                     isVertical
                       ? `left-0 w-full h-[1px] cursor-row-resize ${
-                          slide.accent.position === "top" ? "bottom-0" : "top-0"
+                          card.accent.position === "top" ? "bottom-0" : "top-0"
                         }`
                       : `top-0 w-[1px] h-full cursor-col-resize ${
-                          slide.accent.position === "left"
+                          card.accent.position === "left"
                             ? "right-0"
                             : "left-0"
                         }`
@@ -533,38 +533,38 @@ export const SlideCanvas = memo(function SlideCanvas({
               <div className="flex flex-col gap-0 relative">
                 {!readOnly && (
                   <InsertDropZone
-                    slideId={slide.id}
+                    cardId={card.id}
                     insertIndex={0}
                     themePrimary={theme.primary}
                     isActive={dragActive}
                   />
                 )}
-                {(slide.rows || []).map((row, rowIndex) => (
+                {(card.rows || []).map((row, rowIndex) => (
                   <React.Fragment key={row.id}>
                     <ContentRow
                       row={row}
-                      slideId={slide.id}
+                      cardId={card.id}
                       rowIndex={rowIndex}
-                      totalRowsInSlide={slide.rows?.length || 0}
+                      totalRowsInCard={card.rows?.length || 0}
                       isDragging={dragActive}
                       enableDragHints={enableDragHints}
                       onUpdateBlock={(blockId, content) =>
-                        onUpdateBlock(slide.id, blockId, content)
+                        onUpdateBlock(card.id, blockId, content)
                       }
-                      onDeleteRow={(rowId) => onDeleteRow(slide.id, rowId)}
+                      onDeleteRow={(rowId) => onDeleteRow(card.id, rowId)}
                       onAddColumn={(rowId, afterBlockId) =>
-                        onAddColumn(slide.id, rowId, afterBlockId)
+                        onAddColumn(card.id, rowId, afterBlockId)
                       }
                       onUpdateColumnWidths={(
                         rowId: string,
                         columnWidths: number[]
-                      ) => onUpdateColumnWidths(slide.id, rowId, columnWidths)}
-                      rowCount={slide.rows?.length || 0}
+                      ) => onUpdateColumnWidths(card.id, rowId, columnWidths)}
+                      rowCount={card.rows?.length || 0}
                       readOnly={readOnly}
                     />
                     {!readOnly && (
                       <InsertDropZone
-                        slideId={slide.id}
+                        cardId={card.id}
                         insertIndex={rowIndex + 1}
                         themePrimary={theme.primary}
                         isActive={dragActive}

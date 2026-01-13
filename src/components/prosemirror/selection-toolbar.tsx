@@ -4,7 +4,7 @@ import { toggleMark, setBlockType } from "prosemirror-commands";
 import { cn } from "@/lib/utils";
 import { schema } from "./schema";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import {
   Select,
   SelectContent,

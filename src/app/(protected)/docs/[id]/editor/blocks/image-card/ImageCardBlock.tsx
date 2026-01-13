@@ -4,9 +4,9 @@ import type {
   Block,
   Theme,
   ImageCardContent,
-} from "@/types/presentation";
+} from "@/types/docs";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { createImageCardItem } from "../definitions/image-card-block";
 import { IconPlus, IconX, IconPhoto } from "@tabler/icons-react";
 import { getFontFamily } from "@/lib/fonts";

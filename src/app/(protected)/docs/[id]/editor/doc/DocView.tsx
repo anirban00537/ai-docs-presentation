@@ -3,34 +3,34 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconChevronLeft, IconChevronRight, IconX } from "@tabler/icons-react";
-import { Theme, Slide } from "@/store/slices/slidesSlice";
-import { SlideCanvas } from "..";
+import { Theme, Card } from "@/store/slices/cardsSlice";
+import { CardCanvas } from "..";
 
-interface PresentationViewProps {
+interface DocViewProps {
   isPresenting: boolean;
-  slides: Slide[];
-  currentSlideIndex: number;
+  cards: Card[];
+  currentCardIndex: number;
   theme: Theme;
   containerRef: React.RefObject<HTMLDivElement | null>;
-  onPrevSlide: () => void;
-  onNextSlide: () => void;
+  onPrevCard: () => void;
+  onNextCard: () => void;
   onClose: () => void;
-  onUpdateBlock: (slideId: string, blockId: string, content: any) => void;
-  onDeleteRow: (slideId: string, rowId: string) => void;
-  onAddColumn: (slideId: string, rowId: string, afterBlockId: string) => void;
-  onAddRowAtTop: (slideId: string) => void;
-  onAddRowAtBottom: (slideId: string) => void;
-  onUpdateColumnWidths: (slideId: string, rowId: string, columnWidths: number[]) => void;
+  onUpdateBlock: (cardId: string, blockId: string, content: any) => void;
+  onDeleteRow: (cardId: string, rowId: string) => void;
+  onAddColumn: (cardId: string, rowId: string, afterBlockId: string) => void;
+  onAddRowAtTop: (cardId: string) => void;
+  onAddRowAtBottom: (cardId: string) => void;
+  onUpdateColumnWidths: (cardId: string, rowId: string, columnWidths: number[]) => void;
 }
 
-export const PresentationView: React.FC<PresentationViewProps> = ({
+export const DocView: React.FC<DocViewProps> = ({
   isPresenting,
-  slides,
-  currentSlideIndex,
+  cards,
+  currentCardIndex,
   theme,
   containerRef,
-  onPrevSlide,
-  onNextSlide,
+  onPrevCard,
+  onNextCard,
   onClose,
   onUpdateBlock,
   onDeleteRow,
@@ -50,7 +50,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
           ref={containerRef}
-          className={`presentation-mode fixed inset-0 z-[100] overflow-y-auto ${
+          className={`doc-mode fixed inset-0 z-[100] overflow-y-auto ${
             isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
           }`}
           style={{
@@ -176,8 +176,8 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
               }}
             >
               <button
-                onClick={onPrevSlide}
-                disabled={currentSlideIndex === 0}
+                onClick={onPrevCard}
+                disabled={currentCardIndex === 0}
                 className="p-1.5 rounded-full transition-all disabled:opacity-30"
                 style={{ color: isDark ? "#fff" : "#000" }}
               >
@@ -188,12 +188,12 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
                 className="text-sm font-medium tabular-nums min-w-[3rem] text-center"
                 style={{ color: isDark ? "#fff" : "#000" }}
               >
-                {currentSlideIndex + 1} / {slides.length}
+                {currentCardIndex + 1} / {cards.length}
               </span>
 
               <button
-                onClick={onNextSlide}
-                disabled={currentSlideIndex === slides.length - 1}
+                onClick={onNextCard}
+                disabled={currentCardIndex === cards.length - 1}
                 className="p-1.5 rounded-full transition-all disabled:opacity-30"
                 style={{ color: isDark ? "#fff" : "#000" }}
               >
@@ -215,23 +215,23 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
             </motion.div>
           </div>
 
-          {/* Current Slide - Full Width with Flexible Height */}
+          {/* Current Card - Full Width with Flexible Height */}
           <div
             className="min-h-screen w-full flex flex-col"
             style={{ fontFamily: `${theme.fontFamily}, sans-serif` }}
           >
             <AnimatePresence mode="wait">
-              {slides[currentSlideIndex] && (
+              {cards[currentCardIndex] && (
                 <motion.div
-                  key={currentSlideIndex}
+                  key={currentCardIndex}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
                   className="w-full min-h-screen"
                 >
-                  <SlideCanvas
-                    slide={slides[currentSlideIndex]}
+                  <CardCanvas
+                    card={cards[currentCardIndex]}
                     onUpdateBlock={onUpdateBlock}
                     onDeleteRow={onDeleteRow}
                     onAddColumn={onAddColumn}

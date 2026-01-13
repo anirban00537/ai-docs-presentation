@@ -1,13 +1,13 @@
 import React, { useState, useRef, useCallback, memo, useMemo, useEffect } from "react";
 import { useDroppable, useDndMonitor } from "@dnd-kit/core";
 import { BlockCell } from "@/app/(protected)/docs/[id]/engine/layout/BlockCell";
-import type { Row } from "@/store/slices/slidesSlice";
-import type { BlockContent } from "@/types/presentation";
+import type { Row } from "@/store/slices/cardsSlice";
+import type { BlockContent } from "@/types/docs";
 import { useAppSelector } from "@/store/hooks";
 import {
   selectTheme,
   DEFAULT_THEME,
-} from "@/store/slices/slidesSlice";
+} from "@/store/slices/cardsSlice";
 import { useEditorTheme } from "@/app/(protected)/docs/[id]/engine/theme/EditorThemeProvider";
 import { getFontFamily } from "@/lib/fonts";
 import { InsertionIndicator } from "@/app/(protected)/docs/[id]/engine/layout/InsertionIndicator";
@@ -30,9 +30,9 @@ const DragMonitorBridge: React.FC<{
 
 interface ContentRowProps {
   row: Row;
-  slideId: string;
+  cardId: string;
   rowIndex: number;
-  totalRowsInSlide: number;
+  totalRowsInCard: number;
   isDragging?: boolean;
   enableDragHints?: boolean;
   onUpdateBlock: (blockId: string, content: BlockContent) => void;
@@ -45,9 +45,9 @@ interface ContentRowProps {
 
 export const ContentRow = memo(function ContentRow({
   row,
-  slideId,
+  cardId,
   rowIndex,
-  totalRowsInSlide,
+  totalRowsInCard,
   isDragging = false,
   enableDragHints = true,
   onUpdateBlock,
@@ -93,11 +93,11 @@ export const ContentRow = memo(function ContentRow({
   const isDark = theme.themeType === "dark";
 
   const { setNodeRef, isOver } = useDroppable({
-    id: `row-drop-${slideId}-${row.id}`,
+    id: `row-drop-${cardId}-${row.id}`,
     data: {
       type: "row",
       rowId: row.id,
-      slideId,
+      cardId,
       insertIndex: dropIndicator?.index ?? (row.blocks?.length || 0),
     },
     disabled: readOnly,
@@ -318,12 +318,12 @@ export const ContentRow = memo(function ContentRow({
           <BlockCell
             key={block.id}
             block={block}
-            slideId={slideId}
+            cardId={cardId}
             rowId={row.id}
             index={index}
             totalBlocksInRow={row.blocks?.length || 0}
             rowIndex={rowIndex}
-            totalRowsInSlide={totalRowsInSlide}
+            totalRowsInCard={totalRowsInCard}
             onUpdate={onUpdateBlock}
             onAddColumn={onAddColumn}
             isLastBlock={index === (row.blocks?.length || 0) - 1}

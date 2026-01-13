@@ -266,7 +266,7 @@ export default function MediaPage() {
           <EmptyState
             icon={IconPhoto}
             title="No media yet"
-            description="Upload images to use in your presentations. They'll be stored securely and accessible from anywhere."
+            description="Upload images to use in your docs. They'll be stored securely and accessible from anywhere."
             actionText="Upload Media"
             onAction={handleUpload}
           />

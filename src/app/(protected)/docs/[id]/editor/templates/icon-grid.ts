@@ -3,11 +3,11 @@ import {
   createBlockInstance,
   createRow,
 } from "@/app/(protected)/docs/[id]/engine/registry/factories";
-import { createProseMirrorDoc } from "@/types/presentation/schemas/blocks";
+import { createProseMirrorDoc } from "@/types/docs/schemas/blocks";
 import { createSolidIconBoxContent } from "../blocks/definitions/solid-icon-box-block";
-import { Slide } from "@/store/slices/slidesSlice";
+import { Card } from "@/store/slices/cardsSlice";
 
-export const iconGridTemplate: Slide = {
+export const iconGridTemplate: Card = {
   id: "icon-box-layout",
   rows: [
     createRow([

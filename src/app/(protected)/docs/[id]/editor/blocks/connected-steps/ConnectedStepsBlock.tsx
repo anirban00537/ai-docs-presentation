@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { ProseMirrorEditor } from "@/components/prosemirror";
-import type { Block, Theme, ConnectedStepsContent } from "@/types/presentation";
+import type { Block, Theme, ConnectedStepsContent } from "@/types/docs";
 import { useAppSelector } from "@/store/hooks";
-import { selectTheme, DEFAULT_THEME } from "@/store/slices/slidesSlice";
+import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { createConnectedStepItem } from "../definitions/connected-steps-block";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { getFontFamily } from "@/lib/fonts";
@@ -25,7 +25,7 @@ export const ConnectedStepsBlock = memo(function ConnectedStepsBlock({
   const isDark = theme.themeType === "dark";
 
   // Cast content to our new type
-  // Note: We need to ensure the type definition exists in types/presentation.ts or locally extended
+  // Note: We need to ensure the type definition exists in types/doc.ts or locally extended
   // For now, we assume the content matches the structure we defined.
   const content = block.content as ConnectedStepsContent;
   const items = content.items || [];

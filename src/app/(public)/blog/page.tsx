@@ -24,7 +24,7 @@ export default async function BlogPage() {
               Blog
             </h1>
             <p className="text-lg text-slate-500 leading-relaxed max-w-2xl">
-              Insights on AI, productivity, and modern storytelling to help you create better presentations.
+              Insights on AI, productivity, and modern storytelling to help you create better docs.
             </p>
           </header>
 

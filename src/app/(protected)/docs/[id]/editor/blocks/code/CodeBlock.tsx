@@ -1,5 +1,5 @@
 import React, { useCallback, useState, memo } from "react";
-import type { Block, Theme } from "@/types/presentation";
+import type { Block, Theme } from "@/types";
 import { createCodeContent, type CodeContent } from "../definitions";
 import { IconCopy, IconCheck } from "@tabler/icons-react";
 import { BlockWrapper } from "./BlockWrapper";
