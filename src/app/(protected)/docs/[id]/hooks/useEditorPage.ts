@@ -67,7 +67,15 @@ export const useEditorPage = ({ docId }: UseEditorPageParams) => {
   useEffect(() => {
     if (docResponse?.success && docResponse.data && !hasLoaded.current) {
       const apiCards = docResponse.data.cards || [];
-      const reduxCards = [...apiCards]
+
+      // Only load cards that have actual data (rows). Cards with only outline data
+      // will be added later when generation completes
+      const cardsWithData = apiCards.filter(
+        (c: any) =>
+          c.data?.rows && Array.isArray(c.data.rows) && c.data.rows.length > 0
+      );
+
+      const reduxCards = [...cardsWithData]
         .sort((a: any, b: any) => a.order - b.order)
         .map(convertApiCardToRedux);
 
