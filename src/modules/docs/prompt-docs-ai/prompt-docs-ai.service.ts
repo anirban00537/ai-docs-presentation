@@ -319,32 +319,51 @@ export class PromptDocsAIService implements OnModuleInit {
     
     this.logger.debug(`[Card ${cardNumber}] Generated dynamic schema for ${templateRows.length} rows`);
 
-    const stream = await this.openRouter.chat.send({
-      model: this.MODEL_NAME,
-      messages: [
-        {
-          role: 'user',
-          content: cardPrompt,
-        },
-      ],
-      temperature: 0, // Zero creativity for deterministic structured output
-      seed: 42, // Consistent results across runs
-      top_p: 1, // Focus on top probability tokens
-      // Use structured output with dynamic schema
-      responseFormat: {
-        type: 'json_schema',
-        jsonSchema: {
-          name: 'card_structure',
+    let stream;
+    let attempts = 0;
+    const maxAttempts = 3;
+
+    while (attempts < maxAttempts) {
+      try {
+        stream = await this.openRouter.chat.send({
+          model: this.MODEL_NAME,
+          messages: [
+            {
+              role: 'user',
+              content: cardPrompt,
+            },
+          ],
+          temperature: 0, // Zero creativity for deterministic structured output
+          seed: 42, // Consistent results across runs
+          top_p: 1, // Focus on top probability tokens
+          // Use structured output with dynamic schema
+          responseFormat: {
+            type: 'json_schema',
+            jsonSchema: {
+              name: 'card_structure',
+              strict: true,
+              schema: cardSchema,
+            },
+          },
           strict: true,
-          schema: cardSchema,
-        },
-      },
-      strict: true,
-      stream: true, // Enable streaming
-      streamOptions: {
-        includeUsage: true, // Include token usage in the final chunk
-      },
-    });
+          stream: true, // Enable streaming
+          streamOptions: {
+            includeUsage: true, // Include token usage in the final chunk
+          },
+        });
+        break; // Success
+      } catch (error: any) {
+        attempts++;
+        this.logger.warn(`⚠️ [Card ${cardNumber}] Generation attempt ${attempts} failed: ${error.message}`);
+        
+        if (attempts >= maxAttempts) {
+          throw error;
+        }
+        
+        // Exponential backoff: 1s, 2s, 3s
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
+      }
+    }
 
     let accumulatedContent = '';
     let cardData: any = null;
