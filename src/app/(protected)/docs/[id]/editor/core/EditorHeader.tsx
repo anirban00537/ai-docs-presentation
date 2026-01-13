@@ -15,13 +15,16 @@ import {
   IconFileTypePdf,
   IconPresentation,
   IconPhoto,
+  IconLock,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useUndoRedo } from "@/app/(protected)/docs/[id]/hooks/useUndoRedo";
 import { selectPresentation } from "@/store/slices/slidesSlice";
+import { selectIsSubscribed } from "@/store/slices/subscriptionSlice";
 import { useAppSelector } from "@/store/hooks";
 import { useEditorTheme } from "../../engine";
 import { ShareModal } from "@/components/shared/ShareModal";
+import { toast } from "sonner";
 import { 
   exportPresentationToPptx, 
   exportPresentationToPdf,
@@ -48,13 +51,28 @@ export const EditorHeader = ({
   const theme = useEditorTheme();
   const router = useRouter();
   const presentation = useAppSelector(selectPresentation);
+  const isSubscribed = useAppSelector(selectIsSubscribed);
   const isDark = theme.themeType === "dark";
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
+  const checkSubscription = () => {
+    if (!isSubscribed) {
+      toast.error("Upgrade to Pro to export presentations", {
+        action: {
+          label: "Upgrade",
+          onClick: () => router.push("/pricing"),
+        },
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleExportPptx = async () => {
     if (!presentation?.id || isExporting) return;
+    if (!checkSubscription()) return;
 
     try {
       setIsExporting(true);
@@ -79,6 +97,7 @@ export const EditorHeader = ({
 
   const handleExportPdf = async () => {
     if (!presentation?.id || isExporting) return;
+    if (!checkSubscription()) return;
 
     try {
       setIsExporting(true);
@@ -103,6 +122,7 @@ export const EditorHeader = ({
 
   const handleExportPng = async () => {
     if (!presentation?.id || isExporting) return;
+    if (!checkSubscription()) return;
 
     try {
       setIsExporting(true);
@@ -246,14 +266,23 @@ export const EditorHeader = ({
                   <DropdownMenuItem onClick={handleExportPptx} disabled={isExporting}>
                     <IconPresentation size={16} className="mr-2" />
                     <span>Export as PPTX</span>
+                    {!isSubscribed && (
+                      <IconLock size={14} className="ml-auto opacity-50" />
+                    )}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleExportPdf} disabled={isExporting}>
                     <IconFileTypePdf size={16} className="mr-2" />
                     <span>Export as PDF</span>
+                    {!isSubscribed && (
+                      <IconLock size={14} className="ml-auto opacity-50" />
+                    )}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleExportPng} disabled={isExporting}>
                     <IconPhoto size={16} className="mr-2" />
                     <span>Export as PNG</span>
+                    {!isSubscribed && (
+                      <IconLock size={14} className="ml-auto opacity-50" />
+                    )}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
