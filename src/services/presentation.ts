@@ -1,6 +1,7 @@
 import { api } from "@/lib/api";
 import { CONFIG } from "@/lib/config";
 import type { ApiResponse } from "@/types/api.types";
+import request from "@/lib/request";
 
 export interface OutlineItem {
   content: string;
@@ -312,3 +313,13 @@ export const getSharedPresentation = (token: string) =>
 
 export const getSharedPresentationSlides = (token: string) => 
   api.get<Slide[]>(`/presentation/public/share/${token}/slides`);
+
+// Export API functions
+export const exportPresentationToPptx = async (presentationId: string): Promise<Blob> => {
+  // For blob responses, use request directly to get the blob
+  const response = await request.get(`/presentation/${presentationId}/export/pptx`, {
+    responseType: 'blob',
+  });
+  
+  return response.data as Blob;
+};

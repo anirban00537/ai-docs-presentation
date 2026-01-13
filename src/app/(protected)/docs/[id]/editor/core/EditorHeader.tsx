@@ -10,6 +10,7 @@ import {
   IconArrowBackUp,
   IconArrowForwardUp,
   IconMenu2,
+  IconDownload,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useUndoRedo } from "@/app/(protected)/docs/[id]/hooks/useUndoRedo";
@@ -17,6 +18,7 @@ import { selectPresentation } from "@/store/slices/slidesSlice";
 import { useAppSelector } from "@/store/hooks";
 import { useEditorTheme } from "../../engine";
 import { ShareModal } from "@/components/shared/ShareModal";
+import { exportPresentationToPptx } from "@/services/presentation";
 
 interface EditorHeaderProps {
   onPresentClick: () => void;
@@ -35,6 +37,31 @@ export const EditorHeader = ({
   const isDark = theme.themeType === "dark";
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = async () => {
+    if (!presentation?.id || isExporting) return;
+
+    try {
+      setIsExporting(true);
+      const blob = await exportPresentationToPptx(presentation.id);
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${presentation.title || 'presentation'}.pptx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to export presentation:', error);
+      // TODO: Show error toast/notification
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="fixed top-0 left-0 z-[60] w-full">
@@ -132,6 +159,21 @@ export const EditorHeader = ({
                   style={{ color: theme.bodyColor }}
                 >
                   Share
+                </span>
+              </button>
+
+              <button
+                onClick={handleExport}
+                disabled={isExporting}
+                className="hidden sm:flex items-center gap-2 px-3 md:px-4 py-2 rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 text-[10px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Export to PPTX"
+              >
+                <IconDownload size={14} style={{ color: theme.bodyColor }} />
+                <span
+                  className="hidden md:inline"
+                  style={{ color: theme.bodyColor }}
+                >
+                  {isExporting ? 'Exporting...' : 'Export'}
                 </span>
               </button>
             </>

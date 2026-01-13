@@ -18,6 +18,12 @@ const isDocsPath = (pathname: string) => {
   return pathname.startsWith("/docs/");
 };
 
+// Check if path is an embed route (always public - used for export screenshots)
+const isEmbedPath = (pathname: string) => {
+  return pathname.startsWith("/embed/");
+};
+
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -33,16 +39,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const isPublicPath = PUBLIC_PATHS.includes(pathname);
     // Docs paths may be public if shareEnabled (checked in the page component)
     const isDocsPublicPath = isDocsPath(pathname);
+    // Embed paths are always public (used for export screenshots)
+    const isEmbedPublicPath = isEmbedPath(pathname);
 
     if (!isLoading) {
-      if (!user && !isPublicPath && !isDocsPublicPath) {
+      if (!user && !isPublicPath && !isDocsPublicPath && !isEmbedPublicPath) {
         dispatch(clearUser());
         dispatch(clearSubscriptionInfo());
         router.push("/login");
       } else if (user && isPublicPath) {
         router.push("/home");
       }
-      // Don't redirect away from docs pages - let the page component handle read-only mode
+      // Don't redirect away from docs pages or embed pages - let the page component handle read-only mode
     }
   }, [user, isLoading, pathname, router, dispatch]);
 
@@ -53,7 +61,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [isAuthenticated, dispatch]);
 
-  if (isLoading) {
+  // For embed routes, skip the loading state entirely - they don't need auth
+  if (isLoading && !isEmbedPath(pathname)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center space-y-4">

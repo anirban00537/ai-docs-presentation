@@ -71,7 +71,11 @@ const EditorContent = ({ presentationId, outlineId }: { presentationId: string, 
     stopPresentation,
     goToNextSlide,
     goToPrevSlide,
-  } = usePresentationMode({ slidesCount: slides.length });
+  } = usePresentationMode({
+    slidesCount: slides.length,
+    slides: slides.filter((slide: Slide) => slide && slide.rows && Array.isArray(slide.rows)),
+    presentationId,
+  });
 
   useEffect(() => {
     if (activeSlideId && !isPresenting && !isGeneratingSlides) {
