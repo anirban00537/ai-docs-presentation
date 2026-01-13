@@ -55,8 +55,8 @@ export const coreConstant = {
 
   AI_MODELS: {
     OUTLINE: {
-      NAME: 'x-ai/grok-4.1-fast',
-      PRICING: { prompt: 0.2, completion: 0.5 },
+      NAME: 'meta-llama/llama-4-scout',
+      PRICING: { prompt: 0.08, completion: 0.30 },
       // NAME: 'qwen/qwen3-30b-a3b-instruct-2507',
       // PRICING: { prompt: 0.08, completion: 0.33 },
       //  NAME: 'mistralai/ministral-14b-2512',
@@ -67,8 +67,8 @@ export const coreConstant = {
     CARDS: {
       // NAME: 'x-ai/grok-4.1-fast',
       // PRICING: { prompt: 0.2, completion: 0.5 },
-      NAME: 'qwen/qwen3-235b-a22b-2507',
-      PRICING: { prompt: 0.071, completion: 0.463 },
+      NAME: 'meta-llama/llama-4-scout',
+      PRICING: { prompt: 0.08, completion: 0.30 },
       //    NAME: 'qwen/qwen3-30b-a3b-instruct-2507',
       // PRICING: { prompt: 0.08, completion: 0.33 
       // NAME: 'mistralai/ministral-14b-2512',
