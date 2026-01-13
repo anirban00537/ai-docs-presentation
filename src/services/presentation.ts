@@ -323,3 +323,21 @@ export const exportPresentationToPptx = async (presentationId: string): Promise<
   
   return response.data as Blob;
 };
+
+export const exportPresentationToPdf = async (presentationId: string): Promise<Blob> => {
+  // For blob responses, use request directly to get the blob
+  const response = await request.get(`/presentation/${presentationId}/export/pdf`, {
+    responseType: 'blob',
+  });
+  
+  return response.data as Blob;
+};
+
+export const exportPresentationToPng = async (presentationId: string): Promise<Blob> => {
+  // For blob responses, use request directly to get the blob (ZIP file)
+  const response = await request.get(`/presentation/${presentationId}/export/png`, {
+    responseType: 'blob',
+  });
+  
+  return response.data as Blob;
+};
