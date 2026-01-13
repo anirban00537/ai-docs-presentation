@@ -27,7 +27,8 @@ import { CreateOutlineDto, UpdateOutlineDto } from './dto/create-outline.dto';
 import { PromptPresentationAIService } from './prompt-presentation-ai/prompt-presentation-ai.service';
 import { OutlineService } from './outline.service';
 import { CreditService } from '../subscription/services/credit.service';
-import { BadRequestException } from '@nestjs/common';
+import { SubscriptionService } from '../subscription/subscription.service';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Public } from 'src/shared/decorators/public.decorator';
 import { ToggleShareDto } from './dto/share-presentation.dto';
 
@@ -41,6 +42,7 @@ export class PresentationController {
     private readonly promptPresentationAIService: PromptPresentationAIService,
     private readonly outlineService: OutlineService,
     private readonly creditService: CreditService,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   @Get('list')
@@ -100,6 +102,12 @@ export class PresentationController {
     @Res() res: Response,
   ) {
     try {
+      // Check subscription access
+      const accessCheck = await this.subscriptionService.hasActiveAccess(user.id);
+      if (!accessCheck.hasAccess) {
+        throw new ForbiddenException('Active subscription required to export presentations');
+      }
+
       const pptxBuffer = await this.presentationService.exportToPptx(id, user);
       
       // Get presentation title for filename
@@ -118,6 +126,15 @@ export class PresentationController {
       res.send(pptxBuffer);
     } catch (error: any) {
       this.logger.error(`Failed to export presentation ${id} to PPTX`, error);
+      
+      if (error instanceof ForbiddenException) {
+        res.status(403).json({
+          success: false,
+          message: error.message,
+        });
+        return;
+      }
+
       res.status(500).json({
         success: false,
         message: error.message || 'Failed to export presentation',
@@ -132,6 +149,12 @@ export class PresentationController {
     @Res() res: Response,
   ) {
     try {
+      // Check subscription access
+      const accessCheck = await this.subscriptionService.hasActiveAccess(user.id);
+      if (!accessCheck.hasAccess) {
+        throw new ForbiddenException('Active subscription required to export presentations');
+      }
+
       const pdfBuffer = await this.presentationService.exportToPdf(id, user);
       
       // Get presentation title for filename
@@ -147,6 +170,15 @@ export class PresentationController {
       res.send(pdfBuffer);
     } catch (error: any) {
       this.logger.error(`Failed to export presentation ${id} to PDF`, error);
+
+      if (error instanceof ForbiddenException) {
+        res.status(403).json({
+          success: false,
+          message: error.message,
+        });
+        return;
+      }
+
       res.status(500).json({
         success: false,
         message: error.message || 'Failed to export presentation',
@@ -161,6 +193,12 @@ export class PresentationController {
     @Res() res: Response,
   ) {
     try {
+      // Check subscription access
+      const accessCheck = await this.subscriptionService.hasActiveAccess(user.id);
+      if (!accessCheck.hasAccess) {
+        throw new ForbiddenException('Active subscription required to export presentations');
+      }
+
       const pngBuffer = await this.presentationService.exportToPng(id, user);
       
       // Get presentation title for filename
@@ -176,6 +214,14 @@ export class PresentationController {
       res.send(pngBuffer);
     } catch (error: any) {
       this.logger.error(`Failed to export presentation ${id} to PNG`, error);
+
+      if (error instanceof ForbiddenException) {
+        res.status(403).json({
+          success: false,
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         success: false,
         message: error.message || 'Failed to export presentation',
