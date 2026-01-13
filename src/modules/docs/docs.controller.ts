@@ -101,13 +101,17 @@ export class DocsController {
   ) {
     try {
       // Check subscription access
-      const accessCheck = await this.subscriptionService.hasActiveAccess(user.id);
+      const accessCheck = await this.subscriptionService.hasActiveAccess(
+        user.id,
+      );
       if (!accessCheck.hasAccess) {
-        throw new ForbiddenException('Active subscription required to export docs');
+        throw new ForbiddenException(
+          'Active subscription required to export docs',
+        );
       }
 
       const pptxBuffer = await this.docsService.exportToPptx(id, user);
-      
+
       // Get doc title for filename
       const docResponse = await this.docsService.findOne(id, user);
       const doc = (docResponse as any)?.data;
@@ -118,13 +122,16 @@ export class DocsController {
         'Content-Type',
         'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       );
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${filename}"`,
+      );
       res.setHeader('Content-Length', pptxBuffer.length.toString());
-      
+
       res.send(pptxBuffer);
     } catch (error: any) {
       this.logger.error(`Failed to export doc ${id} to PPTX`, error);
-      
+
       if (error instanceof ForbiddenException) {
         res.status(403).json({
           success: false,
@@ -148,13 +155,17 @@ export class DocsController {
   ) {
     try {
       // Check subscription access
-      const accessCheck = await this.subscriptionService.hasActiveAccess(user.id);
+      const accessCheck = await this.subscriptionService.hasActiveAccess(
+        user.id,
+      );
       if (!accessCheck.hasAccess) {
-        throw new ForbiddenException('Active subscription required to export docs');
+        throw new ForbiddenException(
+          'Active subscription required to export docs',
+        );
       }
 
       const pdfBuffer = await this.docsService.exportToPdf(id, user);
-      
+
       // Get doc title for filename
       const docResponse = await this.docsService.findOne(id, user);
       const doc = (docResponse as any)?.data;
@@ -162,9 +173,12 @@ export class DocsController {
       const filename = `${title.replace(/[^a-z0-9]/gi, '_')}.pdf`;
 
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${filename}"`,
+      );
       res.setHeader('Content-Length', pdfBuffer.length.toString());
-      
+
       res.send(pdfBuffer);
     } catch (error: any) {
       this.logger.error(`Failed to export doc ${id} to PDF`, error);
@@ -192,13 +206,17 @@ export class DocsController {
   ) {
     try {
       // Check subscription access
-      const accessCheck = await this.subscriptionService.hasActiveAccess(user.id);
+      const accessCheck = await this.subscriptionService.hasActiveAccess(
+        user.id,
+      );
       if (!accessCheck.hasAccess) {
-        throw new ForbiddenException('Active subscription required to export docs');
+        throw new ForbiddenException(
+          'Active subscription required to export docs',
+        );
       }
 
       const pngBuffer = await this.docsService.exportToPng(id, user);
-      
+
       // Get doc title for filename
       const docResponse = await this.docsService.findOne(id, user);
       const doc = (docResponse as any)?.data;
@@ -206,9 +224,12 @@ export class DocsController {
       const filename = `${title.replace(/[^a-z0-9]/gi, '_')}_cards.zip`;
 
       res.setHeader('Content-Type', 'application/zip');
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${filename}"`,
+      );
       res.setHeader('Content-Length', pngBuffer.length.toString());
-      
+
       res.send(pngBuffer);
     } catch (error: any) {
       this.logger.error(`Failed to export doc ${id} to PNG`, error);
@@ -256,11 +277,7 @@ export class DocsController {
     @UserInfo() user: User,
     @Body() createCardDto: CreateCardDto,
   ) {
-    return this.docsService.addCard(
-      docId,
-      user,
-      createCardDto,
-    );
+    return this.docsService.addCard(docId, user, createCardDto);
   }
 
   @Patch(':docId/cards/:cardId/update')
@@ -288,11 +305,7 @@ export class DocsController {
     @UserInfo() user: User,
     @Body() body: { cardOrders: { cardId: string; order: number }[] },
   ) {
-    return this.docsService.reorderCards(
-      docId,
-      user,
-      body.cardOrders,
-    );
+    return this.docsService.reorderCards(docId, user, body.cardOrders);
   }
 
   @Post('save-prompt')
@@ -379,26 +392,30 @@ export class DocsController {
       let generationError = false;
 
       try {
-        const stream =
-          this.promptDocsAIService.generateAndSaveCardsFromDoc(
-            docId,
-            user,
-          );
+        const stream = this.promptDocsAIService.generateAndSaveCardsFromDoc(
+          docId,
+          user,
+        );
 
         for await (const chunk of stream) {
-          const data = JSON.parse(chunk);
-
-          // Track successful card generation
-          if (data.type === 'card') {
-            cardsGenerated++;
-          }
-
-          // Check for error in stream
-          if (data.type === 'error') {
-            generationError = true;
-          }
-
+          // Write chunk directly to response (like outline stream does)
+          // The service already yields JSON strings, so we can write them directly
           res.write(`data: ${chunk}\n\n`);
+
+          // Track card generation by safely parsing (don't throw on parse errors)
+          try {
+            const data = JSON.parse(chunk);
+            if (data.type === 'card') {
+              cardsGenerated++;
+            }
+            if (data.type === 'error') {
+              generationError = true;
+            }
+          } catch (parseError) {
+            // Chunk might be malformed JSON, but we still wrote it to the response
+            // Let the frontend handle parsing errors
+          }
+
           // Force flush to prevent buffering
           if ((res as any).flush) {
             (res as any).flush();
