@@ -43,7 +43,7 @@ const ExportCardContent = () => {
       try {
         // Fetch card data from internal export API
         const response = await fetch(
-          `${CONFIG.API_URL}/doc/${docId}/cards/${cardId}/export?exportKey=${exportKey}`,
+          `${CONFIG.API_URL}/docs/${docId}/cards/${cardId}/export?exportKey=${exportKey}`,
           {
             headers: {
               "Content-Type": "application/json",
