@@ -160,7 +160,7 @@ export class PdfExportService {
         }
 
         // Finalize PDF
-        doc.end();
+        pdfDoc.end();
       } catch (error) {
         reject(error);
       }

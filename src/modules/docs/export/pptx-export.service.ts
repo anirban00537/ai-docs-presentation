@@ -98,7 +98,7 @@ export class PptxExportService {
           const base64Image = screenshot.toString('base64');
 
           // Add card with image - fill entire card area
-          pptx.addCard().addImage({
+          pptx.addSlide().addImage({
             data: `image/png;base64,${base64Image}`,
             x: 0,
             y: 0,
