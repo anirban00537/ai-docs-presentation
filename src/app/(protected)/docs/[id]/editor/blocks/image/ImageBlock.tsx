@@ -162,6 +162,7 @@ export const ImageBlock = memo(function ImageBlock({
           <img
             key={`${url}-${height}`}
             src={url}
+            crossOrigin="anonymous"
             alt={alt || caption || "Image"}
             className={cn(
               "w-full h-full transition-transform duration-700 ease-out",

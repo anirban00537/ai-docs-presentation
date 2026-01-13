@@ -223,6 +223,7 @@ const ImageCardItem = memo(function ImageCardItem({
         {url ? (
           <img
             src={url}
+            crossOrigin="anonymous"
             alt={item.imageAlt || ""}
             className="w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-105"
             style={{

@@ -394,6 +394,7 @@ export const CardCanvas = memo(function CardCanvas({
               {accentUrl ? (
                 <img
                   src={accentUrl}
+                  crossOrigin="anonymous"
                   alt="Background Accent"
                   className="w-full h-full object-cover transition-opacity duration-500"
                   style={{ opacity: (card.accent?.size ?? 40) / 100 }}
@@ -510,6 +511,7 @@ export const CardCanvas = memo(function CardCanvas({
               {accentUrl ? (
                 <img
                   src={accentUrl}
+                  crossOrigin="anonymous"
                   alt="Accent"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
