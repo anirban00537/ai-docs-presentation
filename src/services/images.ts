@@ -115,6 +115,9 @@ export interface UpdateMediaParams {
 export const searchUnsplashPhotos = (params: SearchPhotosParams) => 
   api.get<SearchPhotosResponse>("/images/unsplash-search", { params });
 
+const simpleSearchCache = new Map<string, string | null>();
+const pendingSimpleSearches = new Map<string, Promise<string | null>>();
+
 /**
  * Simple Unsplash search that returns just the optimized URL
  * Used for lazy image loading during card rendering
@@ -123,18 +126,38 @@ export const searchUnsplashSimple = async (
   query: string,
   orientation: "landscape" | "portrait" | "squarish" = "landscape"
 ): Promise<string | null> => {
-  try {
-    // The backend returns the URL string directly (not wrapped in ApiResponse)
-    // handleResponse in api.ts returns response.data, which is the raw URL string
-    const response = await api.get<string>("/images/unsplash-simple", {
-      params: { query, orientation },
-    });
-    // response is now the raw string URL (or null if not found)
-    return (response as unknown as string) || null;
-  } catch (error) {
-    console.error("Failed to fetch Unsplash image:", error);
-    return null;
+  if (!query || query.trim() === "") return null;
+  
+  const cacheKey = `${query.trim()}:${orientation}`;
+  
+  // Return from cache if available
+  if (simpleSearchCache.has(cacheKey)) {
+    return simpleSearchCache.get(cacheKey) || null;
   }
+  
+  // Return pending promise if already fetching
+  if (pendingSimpleSearches.has(cacheKey)) {
+    return pendingSimpleSearches.get(cacheKey) || null;
+  }
+
+  const fetchPromise = (async () => {
+    try {
+      const response = await api.get<string>("/images/unsplash-simple", {
+        params: { query, orientation },
+      });
+      const url = (response as unknown as string) || null;
+      simpleSearchCache.set(cacheKey, url);
+      return url;
+    } catch (error) {
+      console.error("Failed to fetch Unsplash image:", error);
+      return null;
+    } finally {
+      pendingSimpleSearches.delete(cacheKey);
+    }
+  })();
+
+  pendingSimpleSearches.set(cacheKey, fetchPromise);
+  return fetchPromise;
 };
 
 /**

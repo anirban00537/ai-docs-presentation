@@ -20,8 +20,9 @@ export function useLazyImage({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Track if we've already fetched for this query to prevent duplicate fetches
+  // Track if we've already fetched or are currently fetching for this query
   const fetchedQueryRef = useRef<string | null>(null);
+  const loadingQueryRef = useRef<string | null>(null);
   const onImageLoadedRef = useRef(onImageLoaded);
   
   // Keep the callback ref updated
@@ -30,11 +31,12 @@ export function useLazyImage({
   }, [onImageLoaded]);
 
   const fetchImage = useCallback(async (query: string) => {
-    // Prevent duplicate fetches for the same query
-    if (fetchedQueryRef.current === query) {
+    // Prevent duplicate fetches for the same query if already fetched or loading
+    if (fetchedQueryRef.current === query || loadingQueryRef.current === query) {
       return;
     }
     
+    loadingQueryRef.current = query;
     setIsLoading(true);
     setError(null);
 
@@ -52,6 +54,7 @@ export function useLazyImage({
       setError(err.message || 'Failed to fetch image');
     } finally {
       setIsLoading(false);
+      loadingQueryRef.current = null;
     }
   }, [orientation]);
 
@@ -62,6 +65,7 @@ export function useLazyImage({
     if (prevDisabledRef.current && !disabled) {
       // Was disabled, now enabled - reset so we can fetch
       fetchedQueryRef.current = null;
+      loadingQueryRef.current = null;
     }
     prevDisabledRef.current = disabled;
   }, [disabled]);
@@ -72,25 +76,27 @@ export function useLazyImage({
 
     // If we already have a URL from props, use it
     if (imageUrl && imageUrl.length > 0) {
-      setUrl(imageUrl);
+      if (url !== imageUrl) {
+        setUrl(imageUrl);
+      }
       fetchedQueryRef.current = null; // Reset so we can fetch again if needed
       return;
     }
 
     // If no URL but we have a query, fetch from Unsplash with a small debounce
     if (!imageUrl && imageQuery && imageQuery.length > 0) {
-      // Skip if we already fetched this query
-      if (fetchedQueryRef.current === imageQuery) {
+      // Skip if we already fetched or are loading this query
+      if (fetchedQueryRef.current === imageQuery || loadingQueryRef.current === imageQuery) {
         return;
       }
       
       const timer = setTimeout(() => {
         fetchImage(imageQuery);
-      }, 500); // 500ms debounce
+      }, 300); // 300ms debounce
       
       return () => clearTimeout(timer);
     }
-  }, [imageUrl, imageQuery, fetchImage, disabled]);
+  }, [imageUrl, imageQuery, fetchImage, disabled, url]);
 
   return { url, isLoading, error, refetch: () => imageQuery && fetchImage(imageQuery) };
 }
