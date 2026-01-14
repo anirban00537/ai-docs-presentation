@@ -168,7 +168,7 @@ export const ContentRow = memo(function ContentRow({
       }
 
       const rect = rowContainerRef.current.getBoundingClientRect();
-      if (e.clientY < rect.top - 20 || e.clientY > rect.bottom + 20) {
+      if (e.clientY < rect.top - 50 || e.clientY > rect.bottom + 50) {
         setDropIndicator(null);
         return;
       }

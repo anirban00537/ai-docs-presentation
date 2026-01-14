@@ -32,7 +32,7 @@ export const useEditorDnd = ({ cards, commandBus }: UseEditorDndParams) => {
   } | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor)
   );
 
@@ -235,7 +235,7 @@ export const useEditorDnd = ({ cards, commandBus }: UseEditorDndParams) => {
           );
           if (insertCollision) return [insertCollision];
 
-          // Removed layout-specific column restriction: any block can go into any row
+          // Priority 2: Row itself
           const rowCollision = pointerCollisions.find(
             (c: any) =>
               c.data?.droppableContainer?.data?.current?.type === "row"
@@ -243,22 +243,30 @@ export const useEditorDnd = ({ cards, commandBus }: UseEditorDndParams) => {
           if (rowCollision) return [rowCollision];
         }
 
-        // 2. Fallback: Closest Center
+        // 2. Fallback: Closest Center (sorted by distance for better responsiveness)
         const centerCollisions = closestCenter(args);
         
-        // Priority 2: Nearest Row Insertion
-        const insertCollisionFallback = centerCollisions.find(
+        // Sort by distance ascending for most responsive targeting
+        const sortedCollisions = [...centerCollisions].sort((a, b) => {
+          const distA = (a as any).data?.value ?? Infinity;
+          const distB = (b as any).data?.value ?? Infinity;
+          return distA - distB;
+        });
+        
+        // Priority: Prefer nearest row-insert zone
+        const insertCollisionFallback = sortedCollisions.find(
              (c: any) => c.data?.droppableContainer?.data?.current?.type === "row-insert"
         );
         if (insertCollisionFallback) return [insertCollisionFallback];
 
-        // Priority 3: Nearest Row (Fallback)
-        const nearestRow = centerCollisions.find(
+        // Priority: Nearest Row
+        const nearestRow = sortedCollisions.find(
              (c: any) => c.data?.droppableContainer?.data?.current?.type === "row"
         );
         if (nearestRow) return [nearestRow];
 
-        return centerCollisions;
+        // Ultimate fallback: return closest collision
+        return sortedCollisions.length > 0 ? [sortedCollisions[0]] : [];
       },
       []
     );
