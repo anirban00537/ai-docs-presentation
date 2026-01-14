@@ -37,25 +37,39 @@ export default function SubscriptionPage() {
   const verifyCheckoutMutation = useVerifyCheckout();
 
   const [isVerifying, setIsVerifying] = useState(false);
+  const hasVerified = React.useRef(false);
 
   // Handle checkout success - verify and sync subscription immediately
   useEffect(() => {
     const checkoutStatus = searchParams.get("checkout");
     const customerSessionToken = searchParams.get("customer_session_token");
 
-    if (checkoutStatus === "success") {
+    if (checkoutStatus === "success" && !hasVerified.current) {
+      hasVerified.current = true; // Mark as started immediately
       setIsVerifying(true);
+      console.log("Starting checkout verification...");
       
-      // Immediately verify the checkout and sync subscription
-      verifyCheckoutMutation.mutate(customerSessionToken || undefined, {
-        onSettled: () => {
+      const verify = async () => {
+        try {
+          // Immediately verify the checkout and sync subscription
+          await verifyCheckoutMutation.mutateAsync(customerSessionToken || undefined);
+          console.log("Checkout verification successful");
+        } catch (error) {
+          console.error("Checkout verification failed", error);
+        } finally {
           setIsVerifying(false);
-          // Clean up the URL (remove query params)
-          router.replace("/subscription", { scroll: false });
-        },
-      });
+          // Clean up the URL (remove query params) content-preservingly
+          // using history API avoids Next.js router re-renders/race conditions
+          const url = new URL(window.location.href);
+          url.searchParams.delete("checkout");
+          url.searchParams.delete("customer_session_token");
+          window.history.replaceState({}, "", url.toString());
+        }
+      };
+
+      verify();
     }
-  }, [searchParams]);
+  }, [searchParams, verifyCheckoutMutation]);
 
   const handleCancel = () => {
     cancelMutation.mutate(undefined, {
@@ -66,7 +80,7 @@ export default function SubscriptionPage() {
   };
 
   // Show verifying state when processing checkout
-  if (isVerifying || verifyCheckoutMutation.isPending) {
+  if (isVerifying) {
     return (
       <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-16 w-full">
         <div className="text-center space-y-4">

@@ -12,7 +12,12 @@ import {
 } from "@/services/subscription";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/store/hooks";
-import { fetchCreditBalance, fetchSubscriptionInfo } from "@/store/slices/subscriptionSlice";
+import {
+  fetchCreditBalance,
+  fetchSubscriptionInfo,
+  setSubscriptionStatus,
+  setCreditBalance,
+} from "@/store/slices/subscriptionSlice";
 
 // Query keys
 export const subscriptionKeys = {
@@ -93,12 +98,25 @@ export const useVerifyCheckout = () => {
 
   return useMutation({
     mutationFn: (customerSessionToken?: string) => verifyCheckout(customerSessionToken),
-    onSuccess: () => {
-      // Invalidate all subscription queries to get fresh data
-      queryClient.invalidateQueries({ queryKey: subscriptionKeys.all });
-      // Update Redux store
-      dispatch(fetchSubscriptionInfo());
-      dispatch(fetchCreditBalance());
+    onSuccess: (response) => {
+      const newStatus = response.data;
+      
+      // 1. Update React Query Cache immediately
+      queryClient.setQueryData(subscriptionKeys.status(), newStatus);
+
+      if (newStatus.creditBalance) {
+        queryClient.setQueryData(
+          subscriptionKeys.credits(),
+          newStatus.creditBalance
+        );
+      }
+
+      // 2. Update Redux Store synchronously (avoids extra API calls)
+      dispatch(setSubscriptionStatus(newStatus));
+      if (newStatus.creditBalance) {
+        dispatch(setCreditBalance(newStatus.creditBalance));
+      }
+      
       toast.success("Subscription activated successfully!");
     },
     onError: (error: any) => {
