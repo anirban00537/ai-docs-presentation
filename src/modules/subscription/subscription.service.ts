@@ -644,6 +644,11 @@ export class SubscriptionService {
         `Found matching user ${user.id} for Polar subscription ${polarSubscriptionId}`,
       );
 
+      // Check if subscription already exists for this user (could have been created by verify-checkout)
+      const existingSubscription = await this.prisma.subscription.findUnique({
+        where: { userId: user.id },
+      });
+
       // Create or update subscription record (use upsert to handle existing subscriptions)
       subscription = await this.prisma.subscription.upsert({
         where: { userId: user.id },
@@ -681,6 +686,20 @@ export class SubscriptionService {
           metadata: data.metadata || {},
         },
       });
+
+      // IDEMPOTENCY CHECK: Only reset credits if this is truly a new subscription
+      // If verify-checkout already synced this subscription (same productId and recent update), skip credit reset
+      const isAlreadySynced = existingSubscription?.polarSubscriptionId === data.id ||
+        (existingSubscription?.productId === (data.product_id || data.product?.id) &&
+         existingSubscription?.updatedAt && 
+         (Date.now() - new Date(existingSubscription.updatedAt).getTime()) < 2 * 60 * 1000); // Within 2 minutes
+
+      if (isAlreadySynced) {
+        this.logger.log(
+          `Subscription ${polarSubscriptionId} already synced for user ${user.id}. Skipping credit reset.`,
+        );
+        return;
+      }
 
       // Update monthly limit based on product metadata
       // Note: This is a NEW subscription (created via webhook), so no previous period - no rollover
