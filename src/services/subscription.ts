@@ -50,3 +50,6 @@ export const getSubscriptionStatus = () => api.get<SubscriptionStatus>("/subscri
 export const getCreditBalance = () => api.get<CreditBalance>("/subscription/credits");
 export const useCredits = (payload: UseCreditsDto) => api.post<CreditBalance>("/subscription/use-credits", payload);
 export const cancelSubscription = () => api.post<void>("/subscription/cancel");
+export const verifyCheckout = (customerSessionToken?: string) => 
+  api.post<SubscriptionStatus>("/subscription/verify-checkout", { customerSessionToken });
+

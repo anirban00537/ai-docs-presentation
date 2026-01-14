@@ -4,6 +4,7 @@ import {
   cancelSubscription,
   getCreditBalance,
   useCredits,
+  verifyCheckout,
   type UseCreditsDto,
   type SubscriptionStatus,
   type CreditBalance,
@@ -11,7 +12,7 @@ import {
 } from "@/services/subscription";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/store/hooks";
-import { fetchCreditBalance } from "@/store/slices/subscriptionSlice";
+import { fetchCreditBalance, fetchSubscriptionInfo } from "@/store/slices/subscriptionSlice";
 
 // Query keys
 export const subscriptionKeys = {
@@ -85,3 +86,24 @@ export const useUseCredits = () => {
   });
 };
 
+// Verify checkout and sync subscription (for instant feedback after payment)
+export const useVerifyCheckout = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
+
+  return useMutation({
+    mutationFn: (customerSessionToken?: string) => verifyCheckout(customerSessionToken),
+    onSuccess: () => {
+      // Invalidate all subscription queries to get fresh data
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.all });
+      // Update Redux store
+      dispatch(fetchSubscriptionInfo());
+      dispatch(fetchCreditBalance());
+      toast.success("Subscription activated successfully!");
+    },
+    onError: (error: any) => {
+      // Don't show error toast here - it might just mean the webhook hasn't arrived yet
+      console.error("Checkout verification failed:", error);
+    },
+  });
+};

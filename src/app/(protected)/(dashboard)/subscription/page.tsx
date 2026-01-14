@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   useCancelSubscription,
+  useVerifyCheckout,
 } from "@/hooks";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -24,12 +26,36 @@ import {
 
 export default function SubscriptionPage() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const subscriptionStatus = useAppSelector(selectSubscriptionStatus);
   const creditBalance = useAppSelector(selectCreditBalance);
   const isSubscribed = useAppSelector(selectIsSubscribed);
   const isLoading = useAppSelector(selectSubscriptionLoading);
 
   const cancelMutation = useCancelSubscription();
+  const verifyCheckoutMutation = useVerifyCheckout();
+
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  // Handle checkout success - verify and sync subscription immediately
+  useEffect(() => {
+    const checkoutStatus = searchParams.get("checkout");
+    const customerSessionToken = searchParams.get("customer_session_token");
+
+    if (checkoutStatus === "success") {
+      setIsVerifying(true);
+      
+      // Immediately verify the checkout and sync subscription
+      verifyCheckoutMutation.mutate(customerSessionToken || undefined, {
+        onSettled: () => {
+          setIsVerifying(false);
+          // Clean up the URL (remove query params)
+          router.replace("/subscription", { scroll: false });
+        },
+      });
+    }
+  }, [searchParams]);
 
   const handleCancel = () => {
     cancelMutation.mutate(undefined, {
@@ -38,6 +64,19 @@ export default function SubscriptionPage() {
       },
     });
   };
+
+  // Show verifying state when processing checkout
+  if (isVerifying || verifyCheckoutMutation.isPending) {
+    return (
+      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-16 w-full">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
+          <h2 className="text-xl font-semibold">Activating your subscription...</h2>
+          <p className="text-muted-foreground">This will only take a moment.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
