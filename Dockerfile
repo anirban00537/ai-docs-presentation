@@ -4,33 +4,13 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 
-# Install dependencies for Prisma and Puppeteer in Alpine
-RUN apk add --no-cache \
-    openssl \
-    libnss3 \
-    libnspr4 \
-    at-spi2-core \
-    libcups \
-    libdrm \
-    libxkbcommon \
-    libxcomposite \
-    libxdamage \
-    libxext \
-    libxfixes \
-    librandr \
-    mesa-gbm \
-    alsa-lib \
-    pango \
-    ca-certificates \
-    font-noto \
-    pixman \
-    git
+# Install essentials for Prisma
+RUN apk add --no-cache openssl git
 
 COPY package.json package-lock.json* yarn.lock* ./
 COPY prisma ./prisma/
 
-# Using npm install instead of ci
-RUN npm install --no-package-lock && npm cache clean --force
+RUN npm install && npm cache clean --force
 
 # ============================================
 # Stage 2: Builder
@@ -52,24 +32,7 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-RUN apk add --no-cache \
-    openssl \
-    libnss3 \
-    libnspr4 \
-    at-spi2-core \
-    libcups \
-    libdrm \
-    libxkbcommon \
-    libxcomposite \
-    libxdamage \
-    libxext \
-    libxfixes \
-    librandr \
-    mesa-gbm \
-    alsa-lib \
-    pango \
-    ca-certificates \
-    font-noto
+RUN apk add --no-cache openssl
 
 ENV NODE_ENV=production
 
