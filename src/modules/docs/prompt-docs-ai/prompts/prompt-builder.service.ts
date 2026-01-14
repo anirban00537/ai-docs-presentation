@@ -91,11 +91,17 @@ ${layoutStructureSection}
 
 ${imageInjectionPrompt}
 
-⚠️ KNOWLEDGE SOURCE (STRICT RULE) ⚠️
-Use ONLY the provided OUTLINE CONTENT as your knowledge base. 
-DO NOT make up, invent, or hallucinate any information not found in the outline. 
-If you don't have enough data for a field, use ONLY what is available in the outline.
+⚠️ CONTENT GENERATION RULES ⚠️
+1. Use the OUTLINE CONTENT as your primary source.
+2. If the outline is sparse or incomplete, EXPAND on the topic with relevant professional content.
+3. DO NOT invent specific statistics, names, dates, or data points not in the outline.
+4. You MAY generate general professional descriptions, explanations, and contextual content.
+5. EVERY field MUST have meaningful content - NEVER leave anything empty.
 
+🚨 CRITICAL: NEVER RETURN EMPTY CONTENT 🚨
+- Empty paragraphs are UNACCEPTABLE and will break the presentation.
+- If you're unsure what to write, generate relevant professional placeholder content.
+- Generic professional content is 1000x BETTER than empty fields.
 
 ⚠️ MANDATORY OUTPUT FORMAT:
 Your response must be a SINGLE JSON object. 
@@ -107,25 +113,19 @@ Example structure:
   "rows": [ ...identical structure to template... ]
 }
 
-⚠️⚠️⚠️ CRITICAL: NO EMPTY FIELDS OR DEMO TEXT ALLOWED ⚠️⚠️⚠️
+⚠️⚠️⚠️ CRITICAL CONTENT RULES ⚠️⚠️⚠️
 - EVERY text field MUST contain meaningful, relevant content.
 - DO NOT leave ANY "text" field as an empty string ("").
 - DO NOT leave ANY "title" or "description" fields empty.
 - ⛔️ NEVER OUTPUT DEMO TEXT from the template (e.g. "Doc Title", "Supporting subtitle", "Feature Title", "Point Title").
-- ⛔️ You MUST replace ALL template placeholder text with fresh content derived from the outline.
-- If a field exists in the template, you MUST overwrite it with new content.
-- Generate professional, contextually appropriate text for EVERY field.
-- Empty fields or preserved demo text will break the doc and are NOT acceptable.
+- ⛔️ You MUST replace ALL template placeholder text with fresh content.
+- If a field exists, you MUST populate it with professional content.
+- Empty fields will break the presentation - this is NOT acceptable.
 - STRICT RULE: Check every "text" field. If it is "", you MUST populate it.
-- ProseMirror text nodes: { "type": "text", "text": "MUST NOT BE EMPTY" }.
-- Ensure every paragraph or heading node implies a child text node with content.
-- EVERY content field for "prosemirror" blocks MUST be a valid JSON object matching the ProseMirror document structure (type: "doc", content: [...]).
+- ProseMirror text nodes: { "type": "text", "text": "MUST HAVE CONTENT" }.
+- Ensure every paragraph or heading node has a child text node with actual content.
+- EVERY content field for "prosemirror" blocks MUST be a valid JSON object matching the ProseMirror structure.
 - DO NOT stringify or escape the ProseMirror content; output it as a native JSON sub-object.
-- For standard fields (title, description, button text): "text": "MUST NOT BE EMPTY".
-- ⛔️ NEVER invent facts, names, or data not present in the outline content.
-- NEVER return an empty string "" for any content field.
-- NEVER return an empty paragraph without a text node.
-- ALWAYS include the "type" property for every node (especially "type": "text").
 - Use "strong" mark for bold text (not "bold").
 - Use "bullet_list" for unordered lists (not "bulletList").
 - Use "list_item" for list items (not "listItem").
@@ -134,18 +134,17 @@ FINAL CHECKLIST:
 1. Is it valid JSON?
 2. Does "rows" match the template structure exactly?
 3. Are all block IDs and types preserved?
-4. Is ALL placeholder/demo text replaced with meaningful content?
-5. Did you verify NO text fields are empty?
-6. Did you provide descriptive "imageQuery" strings and empty "imageUrl" strings?
+4. ⚠️ Did you verify EVERY text field has content? (NO EMPTY STRINGS)
+5. Did you provide descriptive "imageQuery" strings and empty "imageUrl" strings?
 
 Generate only the JSON. No prefix/suffix text.`;
   }
 
   /**
    * Build the prompt for outline generation
-   */
   /**
    * Build the prompt for outline generation
+   * CRITICAL: Forces detailed content with title + bullet points
    */
   buildOutlinePrompt(
     prompt: string,
@@ -163,7 +162,7 @@ Generate only the JSON. No prefix/suffix text.`;
     LAYOUT SELECTION PROCESS:
     1. Select the layout that best fits the content key points.
     2. Ensure the "layoutId" matches one of the IDs above exactly.
-    3. Use "title-basic" (if available) or a similar hero layout for the first card.
+    3. Use a title/hero layout for the first card.
       `;
     } else {
       layoutsSection = `
@@ -180,7 +179,7 @@ Generate only the JSON. No prefix/suffix text.`;
     }
 
     return `
-    You are an expert presentation designer. Create a comprehensive outline for a document based on the following topic:
+    You are an expert presentation designer. Create a DETAILED outline for a document based on the following topic:
     "${prompt}"
 
     REQUIREMENTS:
@@ -189,18 +188,32 @@ Generate only the JSON. No prefix/suffix text.`;
     
     ${layoutsSection}
 
-    CONTENT FORMAT INSTRUCTIONS (CRITICAL):
-    For the "content" field of each card, you MUST use this strict Markdown format:
-    1. One main title using a single hash (# Title)
-    2. Followed ONLY by bullet points (- Point 1)
-    3. No short descriptions, no intro text, no other paragraphs.
-    4. JUST Title and Points. Both are COMPULSORY.
-
-    Example of valid content:
-    "# Card Title
-    - First key point
-    - Second key point
-    - Third key point"
+    🚨🚨🚨 CRITICAL CONTENT FORMAT - READ CAREFULLY 🚨🚨🚨
+    
+    For EVERY card's "content" field, you MUST follow this EXACT format:
+    
+    LINE 1: A title starting with "# " (hash + space + title text)
+    LINES 2+: AT LEAST 4-6 bullet points, each starting with "- " (dash + space)
+    
+    ✅ VALID EXAMPLE (FOLLOW THIS):
+    "# AI in Healthcare
+    - AI algorithms analyze medical images to detect diseases early
+    - Machine learning models predict patient outcomes with high accuracy
+    - Natural language processing helps doctors access patient records faster
+    - Robotic surgery systems provide precision beyond human capability
+    - Virtual health assistants offer 24/7 patient support
+    - Predictive analytics help hospitals manage resources efficiently"
+    
+    ❌ INVALID EXAMPLE (DO NOT DO THIS):
+    "# AI in Healthcare"
+    
+    ⚠️ TITLE-ONLY CONTENT IS COMPLETELY UNACCEPTABLE AND WILL BREAK THE SYSTEM ⚠️
+    
+    Every single card MUST have:
+    - One title line (# Title)
+    - MINIMUM 4 detailed bullet points (- Point)
+    - Each bullet point should be a complete, informative sentence
+    - NO empty content, NO title-only content
 
     OUTPUT FORMAT:
     You must output a single JSON object with the following structure:
@@ -208,12 +221,14 @@ Generate only the JSON. No prefix/suffix text.`;
       "title": "A catchy title for the whole document",
       "outlines": [
         {
-          "content": "Strict Markdown content as defined above.",
+          "content": "# Card Title\\n- First detailed point about this topic\\n- Second detailed point with specific information\\n- Third detailed point explaining a key concept\\n- Fourth detailed point with additional context",
           "layoutId": "layout-id-from-list"
         },
         ...
       ]
     }
+    
+    FINAL CHECK: Before outputting, verify EVERY card has at least 4 bullet points. Title-only cards are NOT allowed.
     `;
   }
 }

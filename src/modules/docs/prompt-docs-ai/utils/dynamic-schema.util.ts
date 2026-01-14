@@ -139,8 +139,8 @@ export class DynamicSchemaUtil {
             properties: {
               content: {
                 type: 'string',
-                description: 'STRICT FORMAT REQUIRED: Must start with "# Title" on line 1, followed by AT LEAST 3 bullet points starting with "- ". Both title AND bullet points are MANDATORY.',
-                minLength: 50,
+                description: 'STRICT FORMAT: Must be "# Title" followed by AT LEAST 4 bullet points starting with "- ". Title-only content is INVALID.',
+                minLength: 100, // Forces substantial content (title + multiple bullet points)
                 pattern: '^# .+[\\s\\S]*- .+', // Forces # Title AND at least one - point
               },
               layoutId: {
