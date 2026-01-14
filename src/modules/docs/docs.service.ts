@@ -7,6 +7,7 @@ import {
   paginatioOptions,
   paginationMetaData,
   processException,
+  sanitizeErrorForFrontend,
 } from 'src/shared/helpers/functions';
 import { ResponseModel } from 'src/shared/models/response.model';
 import { CreateDocDto } from './dto/create-doc.dto';
@@ -1021,7 +1022,7 @@ export class DocsService implements OnModuleInit {
         }
       }
       
-      yield JSON.stringify({ type: 'error', message: error.message });
+      yield JSON.stringify({ type: 'error', message: sanitizeErrorForFrontend(error) });
     } finally {
       this.generatingOutlines.delete(docId);
     }

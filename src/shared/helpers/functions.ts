@@ -161,3 +161,48 @@ export async function paginationMetaData(
 
   return data;
 }
+
+/**
+ * Sanitize error messages for frontend display
+ * Converts technical errors into user-friendly messages
+ * @param error - The error object or message to sanitize
+ * @returns User-friendly error message string
+ */
+export function sanitizeErrorForFrontend(error: any): string {
+  const message = error?.message || String(error) || '';
+  
+  // Map technical errors to user-friendly messages
+  if (message.includes('JSON') || message.includes('parse') || message.includes('Unterminated')) {
+    return 'We encountered a temporary issue. Please try again.';
+  }
+  if (message.includes('token') || message.includes('limit') || message.includes('length')) {
+    return 'The content was too long to process. Try a simpler approach.';
+  }
+  if (message.includes('timeout') || message.includes('ECONNRESET') || message.includes('network')) {
+    return 'Connection issue. Please check your internet and try again.';
+  }
+  if (message.includes('rate limit') || message.includes('429')) {
+    return 'Service is busy. Please wait a moment and try again.';
+  }
+  if (message.includes('API') || message.includes('OpenAI') || message.includes('OpenRouter')) {
+    return 'AI service temporarily unavailable. Please try again shortly.';
+  }
+  if (message.includes('not found') || message.includes('Doc not found') || message.includes('Card not found')) {
+    return 'Resource not found. It may have been deleted.';
+  }
+  if (message.includes('outline') || message.includes('No cards')) {
+    return 'Please add an outline before generating cards.';
+  }
+  if (message.includes('credit') || message.includes('subscription') || message.includes('Insufficient')) {
+    return 'Please check your subscription or credits to continue.';
+  }
+  if (message.includes('layout') || message.includes('No layouts')) {
+    return 'No layouts available. Please contact support.';
+  }
+  if (message.includes('Unauthorized') || message.includes('permission')) {
+    return 'You do not have permission to perform this action.';
+  }
+  
+  // Default fallback - generic user-friendly message
+  return 'Something went wrong. Please try again.';
+}

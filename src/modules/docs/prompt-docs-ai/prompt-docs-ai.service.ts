@@ -4,6 +4,8 @@ import { User } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { AiUsageService } from '../../subscription/services/ai-usage.service';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
+import { sanitizeErrorForFrontend } from 'src/shared/helpers/functions';
+import { parse as parsePartialJson } from 'partial-json';
 
 // Internal imports
 import { OutlineItem } from './interfaces/outline.interface';
@@ -29,6 +31,7 @@ export class PromptDocsAIService implements OnModuleInit {
     private readonly imageFetcherService: ImageFetcherService,
     private readonly promptBuilderService: PromptBuilderService,
   ) {}
+
 
   async onModuleInit() {
     const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
@@ -165,7 +168,7 @@ export class PromptDocsAIService implements OnModuleInit {
   }
 
   /**
-   * Generate a single card from an outline item
+   * Generate a single card from an outline item (with retry support)
    */
   private async *generateSingleCard(
     outlineItem: OutlineItem,
@@ -175,13 +178,15 @@ export class PromptDocsAIService implements OnModuleInit {
     docId: string,
     cardId: string | undefined,
     user: User,
+    retryAttempt: number = 0,
   ): AsyncGenerator<string, void, unknown> {
     const schemaId = outlineItem.schemaId || outlineItem.layoutId;
     const cardStartTime = Date.now();
-    const estimatedSeconds = 10; // Average time per card
+    const estimatedSeconds = 10;
+    const MAX_RETRIES = 1; // Retry once on parse failure
 
     this.logger.log(
-      `▶ [Card ${cardNumber}/${totalCards}] Starting generation...`,
+      `▶ [Card ${cardNumber}/${totalCards}] Starting generation...${retryAttempt > 0 ? ` (Retry ${retryAttempt})` : ''}`,
     );
 
     let templateRows: any[] = [];
@@ -243,10 +248,8 @@ export class PromptDocsAIService implements OnModuleInit {
       )) {
         // Check if this is the final card data (an object, not a JSON string)
         if (typeof chunk === 'object' && chunk !== null) {
-          // This is the final card data
           cardData = chunk;
         } else if (typeof chunk === 'string') {
-          // This is a streaming progress chunk (JSON string)
           yield chunk;
         }
       }
@@ -271,7 +274,6 @@ export class PromptDocsAIService implements OnModuleInit {
         `✅ [Card ${cardNumber}] Saved successfully! (ID: ${savedCard.id}, Time: ${cardDuration}s)`,
       );
 
-      // Stream the card data with the saved card ID
       yield JSON.stringify({
         type: 'card',
         cardNumber,
@@ -280,6 +282,33 @@ export class PromptDocsAIService implements OnModuleInit {
         duration: cardDuration,
       });
     } catch (error: any) {
+      // Check if this is a JSON parse error and we haven't exhausted retries
+      const isParseError = error.message?.includes('JSON') || 
+                           error.message?.includes('parse') ||
+                           error.message?.includes('Unterminated');
+      
+      if (isParseError && retryAttempt < MAX_RETRIES) {
+        this.logger.warn(
+          `⚠️ [Card ${cardNumber}] JSON parse failed, retrying... (attempt ${retryAttempt + 1}/${MAX_RETRIES + 1})`,
+        );
+        
+        // Wait a bit before retry
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Retry generation
+        yield* this.generateSingleCard(
+          outlineItem,
+          cardNumber,
+          totalCards,
+          title,
+          docId,
+          cardId,
+          user,
+          retryAttempt + 1,
+        );
+        return;
+      }
+      
       this.logger.error(
         `❌ [Card ${cardNumber}] FAILED during generation:`,
         error,
@@ -287,7 +316,7 @@ export class PromptDocsAIService implements OnModuleInit {
       yield JSON.stringify({
         type: 'card-error',
         cardNumber,
-        message: error.message || 'Failed to generate card',
+        message: sanitizeErrorForFrontend(error),
       });
     }
   }
@@ -417,7 +446,7 @@ export class PromptDocsAIService implements OnModuleInit {
       }
     }
 
-    // Final parse
+    // Final parse with multi-layered fallbacks
     if (!cardData) {
       if (!accumulatedContent) {
         throw new Error(
@@ -425,59 +454,7 @@ export class PromptDocsAIService implements OnModuleInit {
         );
       }
 
-      try {
-        cardData = JSON.parse(accumulatedContent);
-      } catch (e: any) {
-        this.logger.error(
-          `❌ [Card ${cardNumber}] JSON Parse Error: ${e.message}. Finish Reason: ${finishReason}`,
-        );
-        this.logger.debug(`Failed Content (first 200 chars): ${accumulatedContent.slice(0, 200)}`);
-        this.logger.debug(`Failed Content (last 200 chars): ${accumulatedContent.slice(-200)}`);
-        
-        // Attempt JSON repair for truncated responses
-        if (finishReason === 'length') {
-          this.logger.warn(`⚠️ [Card ${cardNumber}] Response truncated due to token limit. Attempting repair...`);
-          
-          try {
-            let repaired = accumulatedContent.trim();
-            
-            // Count open/close braces and brackets
-            const openBraces = (repaired.match(/{/g) || []).length;
-            const closeBraces = (repaired.match(/}/g) || []).length;
-            const openBrackets = (repaired.match(/\[/g) || []).length;
-            const closeBrackets = (repaired.match(/\]/g) || []).length;
-            
-            // Close any unterminated strings
-            const quoteCount = (repaired.match(/"/g) || []).length;
-            if (quoteCount % 2 !== 0) {
-              repaired += '"';
-            }
-            
-            // Close arrays first (inner to outer)
-            for (let i = 0; i < openBrackets - closeBrackets; i++) {
-              repaired += ']';
-            }
-            
-            // Close objects (inner to outer)
-            for (let i = 0; i < openBraces - closeBraces; i++) {
-              repaired += '}';
-            }
-            
-            cardData = JSON.parse(repaired);
-            this.logger.log(`✅ [Card ${cardNumber}] Successfully repaired truncated JSON`);
-          } catch (repairError: any) {
-            this.logger.error(`❌ [Card ${cardNumber}] JSON repair failed: ${repairError.message}`);
-            throw new Error(
-              `Card generation exceeded token limit and auto-repair failed. Try using a simpler layout or shorter content.`
-            );
-          }
-        } else {
-          // For other errors, provide helpful error message
-          throw new Error(
-            `Card generation incomplete (${finishReason || 'interrupted'}). ${e.message}. Please try again.`
-          );
-        }
-      }
+      cardData = this.parseJsonWithFallbacks(accumulatedContent, cardNumber, finishReason);
     }
 
     // Log AI usage to database (non-critical - don't fail card generation if this fails)
@@ -508,6 +485,91 @@ export class PromptDocsAIService implements OnModuleInit {
     // This is the return value that the caller will use
     if (cardData) {
       yield cardData;
+    }
+  }
+
+  /**
+   * Multi-layered JSON parsing with fallbacks
+   * 1. Try JSON.parse()
+   * 2. If fails, try JSON repair (close unterminated strings/brackets/braces)
+   * 3. If fails, try parsePartialJson() library
+   * 4. If all fail, throw error
+   */
+  private parseJsonWithFallbacks(
+    content: string,
+    cardNumber: number,
+    finishReason: string | null,
+  ): any {
+    const trimmed = content.trim();
+    
+    // Step 1: Try standard JSON.parse
+    try {
+      return JSON.parse(trimmed);
+    } catch (e1: any) {
+      this.logger.warn(
+        `⚠️ [Card ${cardNumber}] JSON.parse failed: ${e1.message}. Attempting repair...`,
+      );
+      
+      // Step 2: Try JSON repair
+      try {
+        let repaired = trimmed;
+        
+        // Count open/close braces and brackets
+        const openBraces = (repaired.match(/{/g) || []).length;
+        const closeBraces = (repaired.match(/}/g) || []).length;
+        const openBrackets = (repaired.match(/\[/g) || []).length;
+        const closeBrackets = (repaired.match(/\]/g) || []).length;
+        
+        // Close any unterminated strings
+        const quoteCount = (repaired.match(/"/g) || []).length;
+        if (quoteCount % 2 !== 0) {
+          repaired += '"';
+          this.logger.debug(`[Card ${cardNumber}] Added closing quote`);
+        }
+        
+        // Close arrays first (inner to outer)
+        const missingBrackets = openBrackets - closeBrackets;
+        if (missingBrackets > 0) {
+          repaired += ']'.repeat(missingBrackets);
+          this.logger.debug(`[Card ${cardNumber}] Added ${missingBrackets} closing brackets`);
+        }
+        
+        // Close objects (inner to outer)
+        const missingBraces = openBraces - closeBraces;
+        if (missingBraces > 0) {
+          repaired += '}'.repeat(missingBraces);
+          this.logger.debug(`[Card ${cardNumber}] Added ${missingBraces} closing braces`);
+        }
+        
+        const result = JSON.parse(repaired);
+        this.logger.log(`✅ [Card ${cardNumber}] JSON repair successful`);
+        return result;
+      } catch (e2: any) {
+        this.logger.warn(
+          `⚠️ [Card ${cardNumber}] JSON repair failed: ${e2.message}. Trying partial-json...`,
+        );
+        
+        // Step 3: Try parsePartialJson library
+        try {
+          const result = parsePartialJson(trimmed);
+          if (result && typeof result === 'object') {
+            this.logger.log(`✅ [Card ${cardNumber}] parsePartialJson successful`);
+            return result;
+          }
+          throw new Error('parsePartialJson returned invalid result');
+        } catch (e3: any) {
+          this.logger.error(
+            `❌ [Card ${cardNumber}] All JSON parse methods failed. Finish Reason: ${finishReason}`,
+          );
+          this.logger.debug(`Failed Content (first 200 chars): ${trimmed.slice(0, 200)}`);
+          this.logger.debug(`Failed Content (last 200 chars): ${trimmed.slice(-200)}`);
+          
+          // All attempts failed - throw error (will be sanitized at card-error level)
+          throw new Error(
+            'Card content generation failed'
+          );
+        }
+      }
     }
   }
 
