@@ -19,6 +19,7 @@ import {
   deleteFileFromS3,
 } from 'src/shared/configs/multer-upload.config';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
+import { SubscriptionService } from '../subscription/subscription.service';
 
 @Injectable()
 export class ImagesService {
@@ -27,6 +28,7 @@ export class ImagesService {
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
+    private readonly subscriptionService: SubscriptionService,
   ) {
     const accessKey = this.configService.get<string>('UNSPLASH_ACCESS_KEY');
 
@@ -341,16 +343,14 @@ export class ImagesService {
 
       // If NOT Admin, enforce subscription check
       if (user.role !== coreConstant.USER_ROLE_ADMIN) {
-        const subscription = await this.prisma.subscription.findFirst({
-          where: {
-            userId,
-            status: { in: Array.from(coreConstant.SUBSCRIPTION_ACTIVE_STATUSES) },
-          },
-        });
+        // Check storage limit
+        const storageLimit = await this.subscriptionService.getStorageLimit(userId);
+        const currentUsage = await this.subscriptionService.getStorageUsage(userId);
+        const fileSizeGB = file.size / (1024 * 1024 * 1024);
 
-        if (!subscription) {
+        if (currentUsage + fileSizeGB > storageLimit) {
           throw new HttpException(
-            'Active subscription required to upload media',
+            `Storage limit exceeded. You have ${storageLimit.toFixed(2)} GB storage. Current usage: ${currentUsage.toFixed(2)} GB. This file would exceed your limit.`,
             HttpStatus.FORBIDDEN,
           );
         }

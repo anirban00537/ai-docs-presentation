@@ -55,6 +55,12 @@ export class SubscriptionController {
     return this.subscriptionService.getCreditBalance(user);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('settings')
+  async getUserSettings(@UserInfo() user: User) {
+    return this.subscriptionService.getUserSettings(user);
+  }
+
   /**
    * Get features for user's current subscription
    */

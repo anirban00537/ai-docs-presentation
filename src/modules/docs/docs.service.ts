@@ -23,6 +23,7 @@ import { PngExportService } from './export/png-export.service';
 import { ConfigService } from '@nestjs/config';
 import { CreditService } from '../subscription/services/credit.service';
 import { AiUsageService } from '../subscription/services/ai-usage.service';
+import { SubscriptionService } from '../subscription/subscription.service';
 import { coreConstant } from 'src/shared/helpers/coreConstant';
 import { PromptBuilderService } from './prompt-docs-ai/prompts/prompt-builder.service';
 
@@ -52,13 +53,16 @@ export class DocsService implements OnModuleInit {
     private readonly configService: ConfigService,
     private readonly creditService: CreditService,
     private readonly aiUsageService: AiUsageService,
+    private readonly subscriptionService: SubscriptionService,
     private readonly promptBuilderService: PromptBuilderService,
   ) {}
 
   async onModuleInit() {
     const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
     if (!apiKey) {
-      this.logger.error('OPENROUTER_API_KEY is not set in environment variables.');
+      this.logger.error(
+        'OPENROUTER_API_KEY is not set in environment variables.',
+      );
       return;
     }
 
@@ -66,26 +70,28 @@ export class DocsService implements OnModuleInit {
       // Dynamic import for ESM-only or regular package
       const { OpenAI } = await import('openai');
       this.OpenAI = OpenAI;
-      
+
       this.openai = new OpenAI({
-        baseURL: "https://openrouter.ai/api/v1",
+        baseURL: 'https://openrouter.ai/api/v1',
         apiKey: apiKey,
         defaultHeaders: {
-          "HTTP-Referer": "https://butterfast.app", 
-          "X-Title": "Butterfast",
-        }
+          'HTTP-Referer': 'https://butterfast.app',
+          'X-Title': 'Butterfast',
+        },
       });
-      
-      this.logger.log('OpenAI SDK initialized (DocsService) with OpenRouter base URL');
+
+      this.logger.log(
+        'OpenAI SDK initialized (DocsService) with OpenRouter base URL',
+      );
     } catch (error) {
-      this.logger.error('Failed to initialize OpenAI SDK in DocsService:', error);
+      this.logger.error(
+        'Failed to initialize OpenAI SDK in DocsService:',
+        error,
+      );
     }
   }
 
-  async create(
-    user: User,
-    payload: CreateDocDto,
-  ): Promise<ResponseModel> {
+  async create(user: User, payload: CreateDocDto): Promise<ResponseModel> {
     try {
       const doc = await this.prisma.doc.create({
         data: {
@@ -145,11 +151,7 @@ export class DocsService implements OnModuleInit {
         },
       });
 
-      const paginationMeta = await paginationMetaData(
-        'doc',
-        query,
-        total,
-      );
+      const paginationMeta = await paginationMetaData('doc', query, total);
 
       const data = {
         list: docs,
@@ -205,10 +207,7 @@ export class DocsService implements OnModuleInit {
         return errorResponse('Doc not found');
       }
 
-      return successResponse(
-        'Doc retrieved successfully',
-        doc,
-      );
+      return successResponse('Doc retrieved successfully', doc);
     } catch (error) {
       processException(error);
     }
@@ -246,10 +245,7 @@ export class DocsService implements OnModuleInit {
         },
       });
 
-      return successResponse(
-        'Doc updated successfully',
-        updatedDoc,
-      );
+      return successResponse('Doc updated successfully', updatedDoc);
     } catch (error) {
       processException(error);
     }
@@ -282,10 +278,7 @@ export class DocsService implements OnModuleInit {
       });
 
       this.logger.log(`UPDATE TITLE: Doc ${id} -> "${payload.title}"`);
-      return successResponse(
-        'Doc title updated successfully',
-        updatedDoc,
-      );
+      return successResponse('Doc title updated successfully', updatedDoc);
     } catch (error) {
       processException(error);
     }
@@ -340,7 +333,7 @@ export class DocsService implements OnModuleInit {
       const result = await this.prisma.$transaction(async (tx) => {
         // Get all existing cards to determine the correct order
         // This query is within a transaction, so it will see a consistent state
-        const existingCards = await tx.card.findMany({
+        const existingCardsInTx = await tx.card.findMany({
           where: {
             docId,
             deletedAt: null,
@@ -348,11 +341,11 @@ export class DocsService implements OnModuleInit {
           orderBy: { order: 'asc' },
         });
 
-        const cardCount = existingCards.length;
+        const cardCount = existingCardsInTx.length;
         // Find the maximum order value to ensure new cards are added at the end
         const maxOrder =
-          existingCards.length > 0
-            ? Math.max(...existingCards.map((c) => c.order))
+          existingCardsInTx.length > 0
+            ? Math.max(...existingCardsInTx.map((c) => c.order))
             : -1;
 
         // If no order is provided, add at the end (maxOrder + 1)
@@ -373,14 +366,14 @@ export class DocsService implements OnModuleInit {
 
         // Validate and adjust order if there's a conflict
         // If the target order already exists, shift all cards with order >= targetOrder
-        const conflictingCards = existingCards.filter(
+        const conflictingCards = existingCardsInTx.filter(
           (c) => c.order === targetOrder,
         );
 
         if (conflictingCards.length > 0) {
           // Shift all cards with order >= targetOrder by 1
           // Process in reverse order (highest first) to avoid temporary conflicts
-          const cardsToShift = existingCards
+          const cardsToShift = existingCardsInTx
             .filter((c) => c.order >= targetOrder)
             .sort((a, b) => b.order - a.order); // Sort descending
 
@@ -519,10 +512,7 @@ export class DocsService implements OnModuleInit {
     }
   }
 
-  async generateShareToken(
-    docId: string,
-    user: User,
-  ): Promise<ResponseModel> {
+  async generateShareToken(docId: string, user: User): Promise<ResponseModel> {
     try {
       const doc = await this.prisma.doc.findFirst({
         where: {
@@ -591,10 +581,7 @@ export class DocsService implements OnModuleInit {
     }
   }
 
-  async getShareInfo(
-    docId: string,
-    user: User,
-  ): Promise<ResponseModel> {
+  async getShareInfo(docId: string, user: User): Promise<ResponseModel> {
     try {
       const doc = await this.prisma.doc.findFirst({
         where: {
@@ -700,7 +687,7 @@ export class DocsService implements OnModuleInit {
       // Validate export key - it should match a hash of the doc ID
       // This provides basic security without requiring full authentication
       const expectedKey = this.generateExportKey(docId);
-      
+
       if (exportKey !== expectedKey) {
         return errorResponse('Invalid export key');
       }
@@ -763,13 +750,31 @@ export class DocsService implements OnModuleInit {
     payload: CreateFromPromptDto,
   ): Promise<ResponseModel> {
     try {
+      // Check slide generation limit for AI outline generation
+      const slideLimit = await this.subscriptionService.getSlideLimit(user.id);
+      if (payload.numberOfCards > slideLimit) {
+        this.logger.warn(
+          `User ${user.id} attempted to generate ${payload.numberOfCards} cards, but limit is ${slideLimit}`,
+        );
+        return {
+          success: false,
+          message: `Your plan allows up to ${slideLimit} slides per document for AI generation. Please upgrade your subscription to generate more slides.`,
+          data: null,
+        };
+      }
+
       // Check if user has enough credits before creating doc
       // Outline generation requires 1 credit + cards require 2 credits each
       const estimatedTotalCredits = 1 + payload.numberOfCards * 2;
 
-      const hasCredits = await this.creditService.hasEnoughCredits(user.id, estimatedTotalCredits);
+      const hasCredits = await this.creditService.hasEnoughCredits(
+        user.id,
+        estimatedTotalCredits,
+      );
       if (!hasCredits) {
-        this.logger.warn(`User ${user.id} attempted to create doc without sufficient credits (required: ${estimatedTotalCredits})`);
+        this.logger.warn(
+          `User ${user.id} attempted to create doc without sufficient credits (required: ${estimatedTotalCredits})`,
+        );
         return {
           success: false,
           message: `Insufficient credits. You need at least ${estimatedTotalCredits} credits to generate a ${payload.numberOfCards}-card doc. Please upgrade your subscription or purchase more credits.`,
@@ -812,23 +817,23 @@ export class DocsService implements OnModuleInit {
     // 1. Fetch doc and prompt
     const doc = await this.prisma.doc.findUnique({
       where: { id: docId, userId: user.id },
-      select: { 
-        id: true, 
-        title: true, 
+      select: {
+        id: true,
+        title: true,
         prompt: true,
         numberOfCards: true,
-        cards: { select: { id: true } }
-      }
+        cards: { select: { id: true } },
+      },
     });
 
     if (!doc) throw new Error('Doc not found');
 
     // For better DX, we might need to store the initial prompt in the Doc if not already
-    // Assuming the doc title is the prompt for now if prompt field isn't there, 
+    // Assuming the doc title is the prompt for now if prompt field isn't there,
     // OR we pass prompt in. But this method signature is fixed.
     // Let's assume the frontend passes the prompt in the doc.title or a specific field.
     // For now, using title as prompt if no specific prompt field exists.
-    const userPrompt = (doc as any).prompt || doc.title; 
+    const userPrompt = (doc as any).prompt || doc.title;
     const numberOfCards = (doc as any).numberOfCards || 8;
 
     let creditDeducted = false;
@@ -866,10 +871,16 @@ export class DocsService implements OnModuleInit {
       }));
 
       // Build Prompt
-      const systemPrompt = this.promptBuilderService.buildOutlinePrompt(userPrompt, numberOfCards, layoutsInfo);
-      
+      const systemPrompt = this.promptBuilderService.buildOutlinePrompt(
+        userPrompt,
+        numberOfCards,
+        layoutsInfo,
+      );
+
       // Get Schema
-      const { DynamicSchemaUtil } = await import('./prompt-docs-ai/utils/dynamic-schema.util');
+      const { DynamicSchemaUtil } = await import(
+        './prompt-docs-ai/utils/dynamic-schema.util'
+      );
       const outlineSchema = DynamicSchemaUtil.generateOutlineSchema();
 
       this.logger.log(`🤖 [Doc ${docId}] Calling LLM for streaming content...`);
@@ -877,19 +888,17 @@ export class DocsService implements OnModuleInit {
       // Call OpenAI
       const stream = await this.openai.chat.completions.create({
         model: this.MODEL_NAME,
-        messages: [
-          { role: 'user', content: systemPrompt }
-        ],
+        messages: [{ role: 'user', content: systemPrompt }],
         temperature: 0,
         seed: 42,
         top_p: 1,
         response_format: {
-            type: 'json_schema',
-            json_schema: {
-              name: 'outline_structure',
-              strict: true,
-              schema: outlineSchema,
-            },
+          type: 'json_schema',
+          json_schema: {
+            name: 'outline_structure',
+            strict: true,
+            schema: outlineSchema,
+          },
         },
         stream: true,
         stream_options: {
@@ -912,21 +921,29 @@ export class DocsService implements OnModuleInit {
             accumulated: accumulatedContent,
           });
         }
-        
+
         if (chunk.usage) {
           usageData = chunk.usage;
-          this.logger.log(`📊 [Doc ${docId}] Token usage - Prompt: ${usageData.prompt_tokens}, Completion: ${usageData.completion_tokens}, Total: ${usageData.total_tokens}`);
+          this.logger.log(
+            `📊 [Doc ${docId}] Token usage - Prompt: ${usageData.prompt_tokens}, Completion: ${usageData.completion_tokens}, Total: ${usageData.total_tokens}`,
+          );
         }
       }
 
-      this.logger.log(`🏁 [Doc ${docId}] Stream finished. Reason: ${finishReason}`);
+      this.logger.log(
+        `🏁 [Doc ${docId}] Stream finished. Reason: ${finishReason}`,
+      );
 
       if (!accumulatedContent) {
-        throw new Error(`AI returned empty response. Finish reason: ${finishReason}`);
+        throw new Error(
+          `AI returned empty response. Finish reason: ${finishReason}`,
+        );
       }
 
       if (finishReason === 'length') {
-        this.logger.warn(`⚠️ [Doc ${docId}] Output truncated due to length limit. Formatting may be incomplete.`);
+        this.logger.warn(
+          `⚠️ [Doc ${docId}] Output truncated due to length limit. Formatting may be incomplete.`,
+        );
       }
 
       this.logger.log(`🧪 [Doc ${docId}] Parsing final AI response...`);
@@ -936,7 +953,7 @@ export class DocsService implements OnModuleInit {
       } catch (e: any) {
         this.logger.error(`❌ [Doc ${docId}] JSON Parse Error: ${e.message}`);
         try {
-          const repaired = accumulatedContent + ']}'; 
+          const repaired = accumulatedContent + ']}';
           outlineData = JSON.parse(repaired);
         } catch (repairError) {
           throw new Error(`Failed to parse AI response: ${e.message}`);
@@ -989,7 +1006,10 @@ export class DocsService implements OnModuleInit {
           });
           this.logger.log(`💾 [Doc ${docId}] AI usage logged successfully`);
         } catch (usageError) {
-          this.logger.error(`❌ [Doc ${docId}] Failed to log AI usage:`, usageError);
+          this.logger.error(
+            `❌ [Doc ${docId}] Failed to log AI usage:`,
+            usageError,
+          );
         }
       }
 
@@ -1000,14 +1020,13 @@ export class DocsService implements OnModuleInit {
           outlines: outlineData.outlines,
         },
       });
-
     } catch (error: any) {
       this.logger.error(`❌ [Doc ${docId}] GENERATION ERROR:`, error);
       await this.prisma.doc.update({
         where: { id: docId },
         data: { outlineStatus: 'failed' },
       });
-      
+
       if (creditDeducted) {
         try {
           await this.creditService.refundCredits(
@@ -1016,13 +1035,21 @@ export class DocsService implements OnModuleInit {
             `Refund: Outline generation failed for doc ${docId}`,
             docId,
           );
-          this.logger.log(`💳 [Doc ${docId}] Credit refunded due to generation failure`);
+          this.logger.log(
+            `💳 [Doc ${docId}] Credit refunded due to generation failure`,
+          );
         } catch (refundError) {
-          this.logger.error(`❌ [Doc ${docId}] Failed to refund credit:`, refundError);
+          this.logger.error(
+            `❌ [Doc ${docId}] Failed to refund credit:`,
+            refundError,
+          );
         }
       }
-      
-      yield JSON.stringify({ type: 'error', message: sanitizeErrorForFrontend(error) });
+
+      yield JSON.stringify({
+        type: 'error',
+        message: sanitizeErrorForFrontend(error),
+      });
     } finally {
       this.generatingOutlines.delete(docId);
     }

@@ -107,6 +107,10 @@ export class SubscriptionService {
 
       // Fetch product features if subscription has a productId
       let features: FeatureResponseDto | null = null;
+      let slideLimit: number | null = null;
+      let storageLimit: number | null = null;
+      let storageUsage: number | null = null;
+
       if (subscription?.productId && this.polarService.isConfigured()) {
         try {
           const product = await this.polarService.getProduct(
@@ -114,6 +118,14 @@ export class SubscriptionService {
           );
           if (product) {
             features = this.extractFeaturesFromProduct(product);
+            // Extract slide and storage limits from metadata
+            const metadata = product?.metadata || {};
+            if (metadata.slide_limit) {
+              slideLimit = parseInt(String(metadata.slide_limit), 10);
+            }
+            if (metadata.storage_gb) {
+              storageLimit = parseFloat(String(metadata.storage_gb));
+            }
           }
         } catch (error) {
           this.logger.warn(
@@ -121,6 +133,11 @@ export class SubscriptionService {
             error,
           );
         }
+      }
+
+      // Get storage usage
+      if (storageLimit !== null) {
+        storageUsage = await this.getStorageUsage(user.id);
       }
 
       const status: SubscriptionStatusDto = {
@@ -134,6 +151,9 @@ export class SubscriptionService {
         hasAccess: !!hasAccess,
         hasCredits: creditBalance !== null && creditBalance.balance > 0,
         features,
+        slideLimit,
+        storageLimit,
+        storageUsage,
       };
 
       return successResponse(
@@ -1230,6 +1250,179 @@ export class SubscriptionService {
     }
 
     return CREDITS.FREE_TIER;
+  }
+
+  /**
+   * Get slide generation limit for a user based on their subscription
+   * Returns the maximum number of slides allowed per document
+   */
+  async getSlideLimit(userId: string): Promise<number> {
+    try {
+      const subscription = await this.prisma.subscription.findUnique({
+        where: { userId },
+      });
+
+      if (!subscription?.productId) {
+        // Free tier default: 10 slides
+        return 10;
+      }
+
+      // Try to get from Polar API
+      if (this.polarService.isConfigured()) {
+        try {
+          const product = await this.polarService.getProduct(
+            subscription.productId,
+          );
+          const metadata = product?.metadata || {};
+          const slideLimit = metadata.slide_limit;
+
+          if (slideLimit) {
+            const parsed = parseInt(String(slideLimit), 10);
+            if (!isNaN(parsed) && parsed > 0) {
+              return parsed;
+            }
+          }
+        } catch (error: any) {
+          this.logger.warn(
+            `Failed to fetch slide limit for product ${subscription.productId}: ${error.message}`,
+          );
+        }
+      }
+
+      // Default fallback
+      return 10;
+    } catch (error: any) {
+      this.logger.error(
+        `Error getting slide limit for user ${userId}: ${error.message}`,
+      );
+      return 10; // Safe default
+    }
+  }
+
+  /**
+   * Get storage limit in GB for a user based on their subscription
+   * Returns the maximum storage allowed in GB
+   */
+  async getStorageLimit(userId: string): Promise<number> {
+    try {
+      const subscription = await this.prisma.subscription.findUnique({
+        where: { userId },
+      });
+
+      if (!subscription?.productId) {
+        // Free tier default: 0 GB
+        return 0;
+      }
+
+      // Try to get from Polar API
+      if (this.polarService.isConfigured()) {
+        try {
+          const product = await this.polarService.getProduct(
+            subscription.productId,
+          );
+          const metadata = product?.metadata || {};
+          const storageGb = metadata.storage_gb;
+
+          if (storageGb) {
+            const parsed = parseFloat(String(storageGb));
+            if (!isNaN(parsed) && parsed > 0) {
+              return parsed;
+            }
+          }
+        } catch (error: any) {
+          this.logger.warn(
+            `Failed to fetch storage limit for product ${subscription.productId}: ${error.message}`,
+          );
+        }
+      }
+
+      // Default fallback
+      return 0;
+    } catch (error: any) {
+      this.logger.error(
+        `Error getting storage limit for user ${userId}: ${error.message}`,
+      );
+      return 0; // Safe default
+    }
+  }
+
+  /**
+   * Get current storage usage in GB for a user
+   */
+  async getStorageUsage(userId: string): Promise<number> {
+    try {
+      const result = await this.prisma.media.aggregate({
+        where: {
+          userId,
+          deletedAt: null,
+        },
+        _sum: {
+          size: true,
+        },
+      });
+
+      const totalBytes = result._sum.size || 0;
+      // Convert bytes to GB
+      return totalBytes / (1024 * 1024 * 1024);
+    } catch (error: any) {
+      this.logger.error(
+        `Error getting storage usage for user ${userId}: ${error.message}`,
+      );
+      return 0;
+    }
+  }
+
+  /**
+   * Get user settings including slide limits and subscription info
+   */
+  async getUserSettings(user: User): Promise<ResponseModel> {
+    try {
+      const subscription = await this.prisma.subscription.findUnique({
+        where: { userId: user.id },
+      });
+
+      let slideLimit = 10; // Default free tier
+      let planName = 'free';
+      let storageLimit = 0; // Default free tier
+      let storageUsage = 0;
+
+      if (subscription?.productId && this.polarService.isConfigured()) {
+        try {
+          const product = await this.polarService.getProduct(
+            subscription.productId,
+          );
+          const metadata = product?.metadata || {};
+          
+          if (metadata.slide_limit) {
+            slideLimit = parseInt(String(metadata.slide_limit), 10);
+          }
+          if (metadata.storage_gb) {
+            storageLimit = parseFloat(String(metadata.storage_gb));
+          }
+          if (metadata.plan_name) {
+            planName = String(metadata.plan_name);
+          }
+        } catch (error: any) {
+          this.logger.warn(
+            `Failed to fetch product settings for product ${subscription.productId}: ${error.message}`,
+          );
+        }
+      }
+
+      storageUsage = await this.getStorageUsage(user.id);
+
+      const settings = {
+        slideLimit,
+        storageLimit,
+        storageUsage,
+        planName,
+        hasActiveSubscription: !!subscription,
+      };
+
+      return successResponse('User settings retrieved successfully', settings);
+    } catch (error) {
+      return processException(error);
+    }
   }
 
   /**

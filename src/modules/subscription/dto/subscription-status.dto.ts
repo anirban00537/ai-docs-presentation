@@ -9,4 +9,7 @@ export class SubscriptionStatusDto {
   hasAccess: boolean;
   hasCredits: boolean;
   features?: FeatureResponseDto | null;
+  slideLimit?: number | null;
+  storageLimit?: number | null;
+  storageUsage?: number | null;
 }

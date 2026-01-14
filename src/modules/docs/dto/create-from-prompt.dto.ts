@@ -1,4 +1,11 @@
-import { IsString, MaxLength, IsNumber, Min, Max, IsOptional } from 'class-validator';
+import {
+  IsString,
+  MaxLength,
+  IsNumber,
+  Min,
+  Max,
+  IsOptional,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateFromPromptDto {
@@ -7,8 +14,8 @@ export class CreateFromPromptDto {
   prompt: string;
 
   @IsNumber()
-  @Min(1)
-  @Max(50)
+  @Min(1, { message: 'Number of cards must be at least 1' })
+  @Max(50, { message: 'Number of cards cannot exceed 50' })
   @Type(() => Number)
   numberOfCards: number;
 }
