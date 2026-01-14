@@ -10,8 +10,8 @@ RUN apk add --no-cache openssl git
 COPY package.json yarn.lock* ./
 COPY prisma ./prisma/
 
-# Using yarn instead of npm
-RUN yarn install --production --frozen-lockfile || yarn install --production
+# Install ALL dependencies (including dev) for build
+RUN yarn install --frozen-lockfile || yarn install
 
 # ============================================
 # Stage 2: Builder
@@ -24,8 +24,11 @@ RUN apk add --no-cache openssl
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Generate Prisma client (this doesn't need DATABASE_URL)
 RUN npx prisma generate
-RUN npm run build
+
+# Build NestJS (skip prisma migrate which needs DATABASE_URL)
+RUN npx rimraf dist && npx nest build
 
 # ============================================
 # Stage 3: Production
