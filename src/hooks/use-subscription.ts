@@ -3,12 +3,14 @@ import {
   getSubscriptionStatus,
   cancelSubscription,
   getCreditBalance,
+  getUserSettings,
   useCredits,
   verifyCheckout,
   type UseCreditsDto,
   type SubscriptionStatus,
   type CreditBalance,
   type Subscription,
+  type UserSettings,
 } from "@/services/subscription";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/store/hooks";
@@ -24,6 +26,7 @@ export const subscriptionKeys = {
   all: ["subscription"] as const,
   status: () => [...subscriptionKeys.all, "status"] as const,
   credits: () => [...subscriptionKeys.all, "credits"] as const,
+  settings: () => [...subscriptionKeys.all, "settings"] as const,
 };
 
 // Get subscription status
@@ -66,6 +69,19 @@ export const useCreditBalance = () => {
       return response.data;
     },
     staleTime: 10000, // 10 seconds
+    refetchOnWindowFocus: true,
+  });
+};
+
+// Get user settings (slide limits, storage, etc.)
+export const useUserSettings = () => {
+  return useQuery({
+    queryKey: subscriptionKeys.settings(),
+    queryFn: async () => {
+      const response = await getUserSettings();
+      return response.data;
+    },
+    staleTime: 60000, // 1 minute
     refetchOnWindowFocus: true,
   });
 };

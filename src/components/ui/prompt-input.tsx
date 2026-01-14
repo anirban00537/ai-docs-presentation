@@ -13,6 +13,7 @@ import {
 import { useSavePrompt } from "@/app/(protected)/docs/[id]/hooks/use-outline";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useUserSettings } from "@/hooks/use-subscription";
 
 // --- Utility Function & Radix Primitives ---
 const TooltipProvider = TooltipPrimitive.Provider;
@@ -68,8 +69,6 @@ const SendIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-
-
 // --- The Final, Self-Contained PromptBox Component ---
 interface PromptBoxProps {
   className?: string;
@@ -85,7 +84,31 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
     const savePromptMutation = useSavePrompt();
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const [value, setValue] = React.useState(defaultValue);
-    const [numberOfCards, setNumberOfCards] = React.useState<string>("5");
+    const { data: userSettings, isLoading: isLoadingSettings } =
+      useUserSettings();
+
+    // Set default number of cards based on user's limit (default to 5 or their limit, whichever is lower)
+    const defaultCards = React.useMemo(() => {
+      if (userSettings?.slideLimit) {
+        return Math.min(5, userSettings.slideLimit).toString();
+      }
+      return "5";
+    }, [userSettings?.slideLimit]);
+
+    const [numberOfCards, setNumberOfCards] =
+      React.useState<string>(defaultCards);
+
+    // Update numberOfCards when settings load
+    React.useEffect(() => {
+      if (userSettings?.slideLimit && !isLoadingSettings) {
+        const currentCards = parseInt(numberOfCards);
+        const limit = userSettings.slideLimit;
+        // If current selection exceeds limit, reset to a valid value
+        if (currentCards > limit) {
+          setNumberOfCards(Math.min(5, limit).toString());
+        }
+      }
+    }, [userSettings?.slideLimit, isLoadingSettings, numberOfCards]);
 
     // Update value when defaultValue prop changes
     React.useEffect(() => {
@@ -118,8 +141,17 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
       }
 
       const cards = parseInt(numberOfCards);
-      if (isNaN(cards) || cards < 1 || cards > 50) {
-        onError?.("Number of cards must be between 1 and 50");
+      if (isNaN(cards) || cards < 1) {
+        onError?.("Please select a valid number of cards");
+        return;
+      }
+
+      // Check slide limit
+      const slideLimit = userSettings?.slideLimit || 10;
+      if (cards > slideLimit) {
+        onError?.(
+          `Your plan allows up to ${slideLimit} slides per document. Please upgrade to create more slides.`
+        );
         return;
       }
 
@@ -164,7 +196,8 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
             }
           },
           onError: (err: any) => {
-            const errorMessage = err?.response?.data?.message ||
+            const errorMessage =
+              err?.response?.data?.message ||
               err?.message ||
               "An unexpected error occurred";
 
@@ -179,14 +212,18 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
     const hasValue = value.trim().length > 0;
 
     // --- Dynamic Placeholder Logic ---
-    const placeholders = [
-      "Create a deck about AI in Modern Healthcare...",
-      "Design a pitch for a Sustainable Fashion startup...",
-      "Explain Quantum Physics to a fifth grader...",
-      "Develop a marketing plan for a boutique coffee shop...",
-    ];
+    const placeholders = React.useMemo(
+      () => [
+        "Create a deck about AI in Modern Healthcare...",
+        "Design a pitch for a Sustainable Fashion startup...",
+        "Explain Quantum Physics to a fifth grader...",
+        "Develop a marketing plan for a boutique coffee shop...",
+      ],
+      []
+    );
 
-    const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = React.useState(0);
+    const [currentPlaceholderIndex, setCurrentPlaceholderIndex] =
+      React.useState(0);
     const [placeholderText, setPlaceholderText] = React.useState("");
     const [isDeleting, setIsDeleting] = React.useState(false);
 
@@ -200,7 +237,9 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
           setTimeout(() => setIsDeleting(true), pauseDuration);
         } else if (isDeleting && placeholderText === "") {
           setIsDeleting(false);
-          setCurrentPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+          setCurrentPlaceholderIndex(
+            (prev) => (prev + 1) % placeholders.length
+          );
         } else {
           setPlaceholderText((prev) =>
             isDeleting
@@ -229,8 +268,6 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
             className
           )}
         >
-
-
           <textarea
             ref={internalTextareaRef}
             rows={1}
@@ -249,23 +286,92 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                 <Select
                   value={numberOfCards}
                   onValueChange={setNumberOfCards}
+                  disabled={isLoadingSettings}
                 >
                   <SelectTrigger className="h-8 w-fit gap-2 px-2 text-xs border-0 bg-transparent hover:bg-secondary/10 transition-colors focus:ring-0">
-                    <SelectValue placeholder="Cards" />
+                    <SelectValue
+                      placeholder={isLoadingSettings ? "Loading..." : "Cards"}
+                    />
                   </SelectTrigger>
-                  <SelectContent className="bg-popover border-secondary/10">
-                    {Array.from({ length: 50 }, (_, i) => i + 1).map((num) => (
-                      <SelectItem key={num} value={num.toString()} className="focus:bg-secondary/10">
-                        {num} {num === 1 ? "card" : "cards"}
-                      </SelectItem>
-                    ))}
+                  <SelectContent className="bg-popover border-secondary/10 max-h-[300px]">
+                    <div className="px-2 py-1.5 text-xs text-muted-foreground border-b border-secondary/10">
+                      <p className="text-[10px] text-muted-foreground/70">
+                        Tip: cards are like slides
+                      </p>
+                    </div>
+                    {(() => {
+                      const slideLimit = userSettings?.slideLimit || 10;
+
+                      // Generate card options: 1-20 (all numbers), then 25, 30, 40, 50 (max 50)
+                      const cardOptions = [
+                        ...Array.from({ length: 20 }, (_, i) => i + 1),
+                        25,
+                        30,
+                        40,
+                        50,
+                      ];
+
+                      return cardOptions.map((num) => {
+                        const isSelected = numberOfCards === num.toString();
+
+                        // Determine tier label for visual indication (all options are enabled)
+                        let tierLabel = null;
+                        if (num > slideLimit) {
+                          if (num <= 20) {
+                            tierLabel = "PLUS";
+                          } else {
+                            tierLabel = "PRO";
+                          }
+                        }
+
+                        return (
+                          <SelectItem
+                            key={num}
+                            value={num.toString()}
+                            className={cn(
+                              "focus:bg-secondary/10 flex items-center justify-between",
+                              isSelected && "bg-secondary/20"
+                            )}
+                          >
+                            <span className="flex items-center gap-2">
+                              {isSelected && (
+                                <svg
+                                  className="h-3 w-3 text-primary"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              )}
+                              {num} {num === 1 ? "card" : "cards"}
+                            </span>
+                            {tierLabel && (
+                              <span
+                                className={cn(
+                                  "ml-2 px-2 py-0.5 rounded-full text-[10px] font-semibold",
+                                  tierLabel === "PLUS" &&
+                                    "bg-blue-500 text-white",
+                                  tierLabel === "PRO" &&
+                                    "bg-indigo-600 text-white"
+                                )}
+                              >
+                                {tierLabel}
+                              </span>
+                            )}
+                          </SelectItem>
+                        );
+                      });
+                    })()}
                   </SelectContent>
                 </Select>
 
                 {/* Right-aligned buttons container */}
                 <div className="ml-auto flex items-center gap-2">
                   <div className="h-4 w-px bg-secondary/10 mr-1" />
-
 
                   <Tooltip>
                     <TooltipTrigger asChild>

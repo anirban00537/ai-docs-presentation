@@ -46,8 +46,17 @@ export interface UseCreditsDto {
   reason?: string;
 }
 
+export interface UserSettings {
+  slideLimit: number;
+  storageLimit: number;
+  storageUsage: number;
+  planName: string;
+  hasActiveSubscription: boolean;
+}
+
 export const getSubscriptionStatus = () => api.get<SubscriptionStatus>("/subscription/status");
 export const getCreditBalance = () => api.get<CreditBalance>("/subscription/credits");
+export const getUserSettings = () => api.get<UserSettings>("/subscription/settings");
 export const useCredits = (payload: UseCreditsDto) => api.post<CreditBalance>("/subscription/use-credits", payload);
 export const cancelSubscription = () => api.post<void>("/subscription/cancel");
 export const verifyCheckout = (customerSessionToken?: string) => 
