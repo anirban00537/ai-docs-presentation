@@ -942,29 +942,37 @@ export class DocsService implements OnModuleInit {
         }
       }
 
-      // Update doc with outline data
-      await this.prisma.doc.update({
-        where: { id: docId },
-        data: {
-          title: outlineData.title,
-          outlineStatus: 'completed',
-        },
-      });
+      // Transaction to safely clear old cards and create new ones
+      await this.prisma.$transaction(async (tx) => {
+        // 1. Delete all existing cards for this doc (Clearing old outline/data)
+        await tx.card.deleteMany({
+          where: { docId },
+        });
 
-      // Create cards with outline data
-      const cardsWithOutlines = outlineData.outlines.map((item, index) => ({
-        docId,
-        data: {},
-        order: index,
-        outline: {
-          content: item.content,
-          layoutId: item.layoutId,
-          schemaId: item.layoutId,
-        },
-      }));
+        // 2. Update doc metadata
+        await tx.doc.update({
+          where: { id: docId },
+          data: {
+            title: outlineData.title,
+            outlineStatus: 'completed',
+          },
+        });
 
-      await this.prisma.card.createMany({
-        data: cardsWithOutlines,
+        // 3. Create fresh cards from the new outline
+        const cardsWithOutlines = outlineData.outlines.map((item, index) => ({
+          docId,
+          data: {},
+          order: index,
+          outline: {
+            content: item.content,
+            layoutId: item.layoutId,
+            schemaId: item.layoutId,
+          },
+        }));
+
+        await tx.card.createMany({
+          data: cardsWithOutlines,
+        });
       });
 
       // Log AI usage
