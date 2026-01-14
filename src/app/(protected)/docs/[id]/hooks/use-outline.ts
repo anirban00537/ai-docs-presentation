@@ -39,6 +39,7 @@ export const useOutlineGeneration = () => {
   const hasStartedStreaming = useRef(false);
   const lastContentLengthRef = useRef(0);
   const lastUpdateTimestampRef = useRef(0);
+  
   useEffect(() => {
     lastUpdateTimestampRef.current = Date.now();
   }, []);
@@ -46,7 +47,6 @@ export const useOutlineGeneration = () => {
   // Decay speed effect: if no updates for >200ms, start decaying the speed visual
   useEffect(() => {
     if (!isGenerating) {
-      // Use setTimeout to avoid setState in effect
       setTimeout(() => setGenerationSpeed(0), 0);
       return;
     }
@@ -54,7 +54,6 @@ export const useOutlineGeneration = () => {
       const now = Date.now();
       const timeSinceLastUpdate = now - lastUpdateTimestampRef.current;
       if (timeSinceLastUpdate > 150) {
-        // Rapid decay if stalled
         setGenerationSpeed((prev) => Math.max(0, prev * 0.8));
       }
     }, 100);
@@ -63,9 +62,13 @@ export const useOutlineGeneration = () => {
 
   const startGeneration = useCallback(
     (outlineId: string) => {
-      // Prevent double-start
-      if (isGenerating) return;
+      // CRITICAL: Prevent double-start
+      if (isGenerating || hasStartedStreaming.current) {
+        console.log("[useOutlineGeneration] Already generating, skipping duplicate call");
+        return;
+      }
 
+      console.log("[useOutlineGeneration] Starting generation for:", outlineId);
       setIsGenerating(true);
       setStreamingContent("");
       setCompletedOutline(null);
@@ -83,24 +86,24 @@ export const useOutlineGeneration = () => {
               chunk.accumulated.length - lastContentLengthRef.current;
             const timeDiff = now - lastUpdateTimestampRef.current;
 
-            // Calculate chars/sec
             if (timeDiff > 0 && deltaChars >= 0) {
-              // Smoothed instant speed
               const instantSpeed = (deltaChars / Math.max(timeDiff, 1)) * 1000;
-              setGenerationSpeed((prev) => prev * 0.3 + instantSpeed * 0.7); // simple moving average
+              setGenerationSpeed((prev) => prev * 0.3 + instantSpeed * 0.7);
             }
 
             lastContentLengthRef.current = chunk.accumulated.length;
             lastUpdateTimestampRef.current = now;
-
             setStreamingContent(chunk.accumulated);
           } else if (chunk.type === "complete") {
+            console.log("[useOutlineGeneration] Generation complete");
             if (chunk.data) {
               setCompletedOutline(chunk.data);
             }
             setIsGenerating(false);
             setGenerationSpeed(0);
-            // Refresh credits on completion (both Redux and React Query)
+            hasStartedStreaming.current = false;
+            
+            // Refresh credits on completion
             dispatch(fetchCreditBalance());
             queryClient.invalidateQueries({
               queryKey: subscriptionKeys.credits(),
@@ -109,9 +112,10 @@ export const useOutlineGeneration = () => {
               queryKey: subscriptionKeys.status(),
             });
           } else if (chunk.type === "error") {
+            console.error("[useOutlineGeneration] Streaming error:", chunk.message);
             setIsGenerating(false);
             setGenerationSpeed(0);
-            console.error("Streaming error:", chunk.message);
+            hasStartedStreaming.current = false;
           }
         },
       });
@@ -120,6 +124,7 @@ export const useOutlineGeneration = () => {
   );
 
   const resetGeneration = useCallback(() => {
+    console.log("[useOutlineGeneration] Resetting generation state");
     setIsGenerating(false);
     setStreamingContent("");
     setCompletedOutline(null);
@@ -149,14 +154,13 @@ export const useOutline = (docId: string | null) => {
       if (!docId) {
         throw new Error("Doc ID is required");
       }
+      console.log("[useOutline] Fetching doc:", docId);
       return getDoc(docId);
     },
     enabled: !!docId,
-    staleTime: 0,
-    refetchInterval: (q) => {
-      const status = (q.state.data as any)?.data?.outlineStatus;
-      return status === "generating" ? 3000 : false;
-    },
+    staleTime: 30000, // 30 seconds - prevent unnecessary refetches
+    // REMOVED refetchInterval - streaming handles real-time updates
+    // Polling every 3s was causing duplicate API calls
   });
 
   const status = query.data?.data?.outlineStatus;
@@ -207,7 +211,7 @@ export const useGenerateOutlineStream = () => {
       outlineId,
       onChunk,
     }: {
-      outlineId: string; // This is actually docId now
+      outlineId: string;
       onChunk: (chunk: StreamChunk) => void;
     }) => generateOutlineStream(outlineId, onChunk),
   });
@@ -222,11 +226,10 @@ export const useGenerateAndCreateCards = () => {
       docId,
       onChunk,
     }: {
-      docId: string; // This is actually docId now
+      docId: string;
       onChunk: (chunk: CardGenerationChunk) => void;
     }) => generateAndCreateCards(docId, onChunk),
     onSuccess: () => {
-      // Refresh credits (both Redux and React Query)
       dispatch(fetchCreditBalance());
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.credits() });
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.status() });
@@ -240,7 +243,6 @@ export const useGenerateAndCreateCards = () => {
 /**
  * Consolidated hook for the Outline Editor Page logic
  */
-// --- Main Hook: Outline Editor ---
 export const useOutlineEditor = (outlineId: string) => {
   const updateOutlineMutation = useUpdateOutline();
 
@@ -277,6 +279,7 @@ export const useOutlineEditor = (outlineId: string) => {
 
   // Refs
   const hasAutoSelectedTheme = useRef(false);
+  const hasAutoStartedGeneration = useRef(false); // NEW: Track auto-start
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Derived Values
@@ -295,13 +298,13 @@ export const useOutlineEditor = (outlineId: string) => {
   const docId = outlineResponse?.data?.id || outline?.id || outlineId;
   const docUrl = docId ? `/docs/${docId}` : null;
 
-  // Auto-start streaming logic
+  // Auto-start streaming logic (IMPROVED: Only runs once)
   useEffect(() => {
-    // Only start if:
-    // 1. We have outline data
-    // 2. Status is 'generating'
-    // 3. We haven't started streaming yet (handled by hook, but double check here)
-    // 4. No cards exist yet (meaning we need to generate content)
+    // CRITICAL: Only start ONCE per mount using ref
+    if (hasAutoStartedGeneration.current) {
+      return;
+    }
+
     if (
       outline &&
       outline.outlineStatus === "generating" &&
@@ -309,26 +312,27 @@ export const useOutlineEditor = (outlineId: string) => {
       !isStreaming &&
       !streamingContent
     ) {
+      console.log("[useOutlineEditor] Auto-starting generation");
+      hasAutoStartedGeneration.current = true;
       startGeneration(outlineId);
     }
-  }, [outline, outlineId, isStreaming, streamingContent, startGeneration]);
+  }, [outline?.outlineStatus, outline?.cards?.length]); // Minimal dependencies
 
   // When stream completes, refetch to ensure we have canonical DB state
   useEffect(() => {
     if (completedOutline) {
+      console.log("[useOutlineEditor] Stream completed, refetching doc");
       refetch();
     }
   }, [completedOutline, refetch]);
 
   // Computed Outline Data (Merging stream vs fetched)
   const outlineData = useMemo(() => {
-    // A. Explicit completed data (Prioritize this)
     if (completedOutline) {
       let displayTitle = completedOutline.title;
-      if (!displayTitle || displayTitle.match(/^[\.\s]+$/)) {
+      if (!displayTitle || displayTitle.match(/^[.\s]+$/)) {
         displayTitle = outline?.title || "Untitled Doc";
       }
-      // Filter empty outlines
       const validOutlines = (completedOutline.outlines || []).filter(
         (o: any) => o.content && o.content.trim()
       );
@@ -338,24 +342,22 @@ export const useOutlineEditor = (outlineId: string) => {
       };
     }
 
-    // B. Streaming data (Use if we have content)
     if (streamingContent) {
       try {
         const partial = parsePartialJson(streamingContent);
         if (partial && partial.outlines && partial.outlines.length > 0) {
           let displayTitle = partial.title || outline?.title || "Generating...";
-          if (displayTitle.match(/^[\.\s]+$/)) displayTitle = "Generating...";
+          if (displayTitle.match(/^[.\s]+$/)) displayTitle = "Generating...";
           return {
             title: displayTitle,
             outlines: partial.outlines,
           };
         }
       } catch {
-        // Ignore parse errors, fall through to DB data
+        // Ignore parse errors
       }
     }
 
-    // C. Fetched data - extract outline data from cards if available
     if (outline?.cards && outline.cards.length > 0) {
       const hasOutlineData = outline.cards.some((card: any) => card.outline?.content);
       if (hasOutlineData) {
@@ -374,7 +376,6 @@ export const useOutlineEditor = (outlineId: string) => {
       }
     }
     
-    // D. No outline data available yet
     return null;
   }, [outline?.title, outline?.cards, streamingContent, completedOutline]);
 
@@ -405,7 +406,6 @@ export const useOutlineEditor = (outlineId: string) => {
       hasAutoSelectedTheme.current = true;
       const randomIndex = Math.floor(Math.random() * themes.length);
       const randomTheme = themes[randomIndex];
-      // Use setTimeout to avoid setState in effect
       setTimeout(() => {
         setSelectedTheme(randomTheme);
         saveThemeToDoc(randomTheme);
@@ -415,18 +415,22 @@ export const useOutlineEditor = (outlineId: string) => {
 
   // Regenerate Handler
   const handleRegenerate = (newPrompt: string, newCardCount: number) => {
+    console.log("[useOutlineEditor] Regenerating with new prompt");
     resetGeneration();
+    hasAutoStartedGeneration.current = false; // Reset for new generation
+    
     updateOutlineMutation.mutate(
       {
         id: outlineId,
         payload: {
           prompt: newPrompt,
           numberOfCards: newCardCount,
-          outlineStatus: "generating", // Reset status
+          outlineStatus: "generating",
         },
       },
       {
         onSuccess: () => {
+          hasAutoStartedGeneration.current = true;
           startGeneration(outlineId);
         },
       }
@@ -468,7 +472,7 @@ export const useOutlineEditor = (outlineId: string) => {
     isStreaming,
     generationSpeed,
     streamingContent,
-    themesLoading: false, // themesLoading was removed from useOutlineEditor, assuming it's not needed or handled elsewhere
+    themesLoading: false,
     saveStatus,
     themeSaveStatus,
 
