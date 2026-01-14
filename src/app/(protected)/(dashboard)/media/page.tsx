@@ -180,7 +180,7 @@ export default function MediaPage() {
   const handlePreviewDownload = useCallback(() => {
     if (!previewMedia) return;
     const a = document.createElement("a");
-    a.href = previewMedia.url;
+    a.href = previewMedia.imageUrl;
     a.download = previewMedia.name;
     a.click();
     toast.success("Download started");
@@ -188,7 +188,7 @@ export default function MediaPage() {
 
   const handlePreviewCopyUrl = useCallback(async () => {
     if (!previewMedia) return;
-    await navigator.clipboard.writeText(previewMedia.url);
+    await navigator.clipboard.writeText(previewMedia.imageUrl);
     toast.success("URL copied to clipboard");
   }, [previewMedia]);
 

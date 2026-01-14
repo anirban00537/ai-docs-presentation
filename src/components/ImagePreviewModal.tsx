@@ -145,7 +145,7 @@ export const ImagePreviewModal = ({
         >
           {isImage ? (
             <img
-              src={media.url}
+              src={media.imageUrl}
               alt={media.name}
               className="max-w-full max-h-[75vh] object-contain"
               style={{

@@ -63,14 +63,14 @@ export const MediaCard: React.FC<MediaCardProps> = ({
 
   const handleCopyUrl = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await navigator.clipboard.writeText(media.url);
+    await navigator.clipboard.writeText(media.imageUrl);
     toast.success("URL copied to clipboard");
   };
 
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
     const a = document.createElement("a");
-    a.href = media.url;
+    a.href = media.imageUrl;
     a.download = media.name;
     a.click();
     toast.success("Download started");
@@ -97,7 +97,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
       >
         {isImage ? (
           <img
-            src={media.url}
+            src={media.imageUrl}
             alt={media.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
