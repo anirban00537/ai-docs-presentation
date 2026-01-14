@@ -111,6 +111,22 @@ export class SubscriptionController {
   }
 
   /**
+   * Verify checkout and sync subscription after successful payment
+   * Uses the customer_session_token from the Polar redirect URL
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post('verify-checkout')
+  async verifyCheckout(
+    @UserInfo() user: User,
+    @Body() body: { customerSessionToken?: string },
+  ) {
+    return this.subscriptionService.verifyCheckoutAndSync(
+      user,
+      body.customerSessionToken,
+    );
+  }
+
+  /**
    * Webhook endpoint for Polar.sh events
    * This endpoint should be publicly accessible (not behind JWT guard)
    */

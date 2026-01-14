@@ -42,6 +42,53 @@ export class SubscriptionService {
   ) { }
 
   /**
+   * Verify checkout and immediately sync subscription after successful payment
+   * This method is called when user returns from Polar checkout with customer_session_token
+   * This provides instant feedback instead of waiting for webhooks (which can take 10-30 seconds)
+   */
+  async verifyCheckoutAndSync(
+    user: User,
+    customerSessionToken?: string,
+  ): Promise<ResponseModel> {
+    this.logger.log(
+      `Verify checkout requested for user ${user.id}${customerSessionToken ? ' with session token' : ''}`,
+    );
+
+    try {
+      if (!this.polarService.isConfigured()) {
+        return errorResponse('Payment system is not configured');
+      }
+
+      // Simply sync the subscription from Polar
+      // The syncSubscriptionFromPolar method already handles:
+      // - Finding/creating the customer
+      // - Getting their subscriptions
+      // - Updating local database
+      // - Setting up credits
+      const syncResult = await this.syncSubscriptionFromPolar(user);
+
+      if (!syncResult.success) {
+        this.logger.warn(
+          `Checkout verification sync failed for user ${user.id}: ${syncResult.message}`,
+        );
+        return syncResult;
+      }
+
+      this.logger.log(
+        `Checkout verification successful for user ${user.id}`,
+      );
+
+      // Return the full subscription status for the frontend
+      return this.getSubscriptionStatus(user);
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to verify checkout for user ${user.id}: ${error.message}`,
+      );
+      return processException(error);
+    }
+  }
+
+  /**
    * Get subscription status for a user
    */
   async getSubscriptionStatus(user: User): Promise<ResponseModel> {
