@@ -41,6 +41,14 @@ export const DocCard: React.FC<DocCardProps> = ({
   
   const firstCard = doc.cards?.[0];
   const cardCount = doc._count?.cards || doc.cards?.length || 0;
+  
+  // Check if cards have actual presentation data (rows/blocks), not just outline
+  const hasActualPresentation = doc?.cards?.some((card: any) => 
+    card.data?.rows && card.data.rows.length > 0
+  );
+  
+  // Determine the correct route based on whether doc has presentation data
+  const docHref = hasActualPresentation ? `/docs/${doc.id}` : `/create/outline/${doc.id}`;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -67,7 +75,7 @@ export const DocCard: React.FC<DocCardProps> = ({
       whileHover={{ y: -4, scale: 1.01 }}
       className="group relative"
     >
-      <Link href={`/docs/${doc.id}`}>
+      <Link href={docHref}>
         <div 
           className="relative overflow-hidden rounded-2xl transition-all duration-300 cursor-pointer bg-white/40 border border-secondary/20 hover:border-primary/20 hover:shadow-depth-3 hover:bg-white"
         >

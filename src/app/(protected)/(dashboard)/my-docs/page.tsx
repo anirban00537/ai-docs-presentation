@@ -56,8 +56,22 @@ export default function MyDocsPage() {
 
   const totalPages = meta?.lastPage || 1;
 
-  const handleEdit = (id: string) => {
-    router.push(`/docs/${id}`);
+  const handleEdit = (docId: string) => {
+    // Find the doc to check if it has presentation data (cards)
+    const doc = docs.find((d: any) => d.id === docId);
+    
+    // Check if cards have actual presentation data (rows/blocks), not just outline
+    const hasActualPresentation = doc?.cards?.some((card: any) => 
+      card.data?.rows && card.data.rows.length > 0
+    );
+    
+    if (hasActualPresentation) {
+      // Has full presentation data - go to presentation editor
+      router.push(`/docs/${docId}`);
+    } else {
+      // No presentation data (only outline or empty) - go to outline page
+      router.push(`/create/outline/${docId}`);
+    }
   };
 
   const handleDelete = (id: string, title: string) => {

@@ -35,7 +35,9 @@ export const useDocsList = (filters?: {
   return useQuery({
     queryKey: docKeys.list(filters),
     queryFn: () => getDocsList(filters),
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 0, // Always consider data stale
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 };
 

@@ -81,6 +81,9 @@ export interface Doc {
   numberOfCards?: number;
   outlineStatus?: "none" | "generating" | "completed" | "failed";
   cards?: Card[];
+  _count?: {
+    cards: number;
+  };
   createdAt: string;
   updatedAt: string;
 }
