@@ -7,10 +7,11 @@ WORKDIR /app
 # Install essentials for Prisma
 RUN apk add --no-cache openssl git
 
-COPY package.json package-lock.json* yarn.lock* ./
+COPY package.json yarn.lock* ./
 COPY prisma ./prisma/
 
-RUN npm install && npm cache clean --force
+# Using yarn instead of npm
+RUN yarn install --production --frozen-lockfile || yarn install --production
 
 # ============================================
 # Stage 2: Builder
@@ -41,7 +42,6 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs
 
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/package-lock.json* ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
