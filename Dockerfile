@@ -1,49 +1,44 @@
 # ============================================
 # Stage 1: Dependencies
 # ============================================
-FROM node:20-bookworm-slim AS deps
+FROM node:20-alpine AS deps
 WORKDIR /app
 
-# Install dependencies for Prisma and Puppeteer
-RUN apt-get update && apt-get install -y \
+# Install dependencies for Prisma and Puppeteer in Alpine
+RUN apk add --no-cache \
     openssl \
     libnss3 \
     libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    librandr2 \
-    libgbm1 \
-    libasound2 \
-    libpangocairo-1.0-0 \
-    libca-certificates \
-    fonts-liberation \
-    libappindicator3-1 \
-    lsb-release \
-    xdg-utils \
-    wget \
-    && rm -rf /var/lib/apt/lists/*
+    at-spi2-core \
+    libcups \
+    libdrm \
+    libxkbcommon \
+    libxcomposite \
+    libxdamage \
+    libxext \
+    libxfixes \
+    librandr \
+    mesa-gbm \
+    alsa-lib \
+    pango \
+    ca-certificates \
+    font-noto \
+    pixman \
+    git
 
 COPY package.json package-lock.json* yarn.lock* ./
 COPY prisma ./prisma/
 
-# Using npm install instead of ci for better flexibility with mixed lockfiles
-RUN npm install && npm cache clean --force
+# Using npm install instead of ci
+RUN npm install --no-package-lock && npm cache clean --force
 
 # ============================================
 # Stage 2: Builder
 # ============================================
-FROM node:20-bookworm-slim AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Install openssl for prisma
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache openssl
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -54,30 +49,27 @@ RUN npm run build
 # ============================================
 # Stage 3: Production
 # ============================================
-FROM node:20-bookworm-slim AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Install production dependencies for Prisma and Puppeteer
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     openssl \
     libnss3 \
     libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    librandr2 \
-    libgbm1 \
-    libasound2 \
-    libpangocairo-1.0-0 \
+    at-spi2-core \
+    libcups \
+    libdrm \
+    libxkbcommon \
+    libxcomposite \
+    libxdamage \
+    libxext \
+    libxfixes \
+    librandr \
+    mesa-gbm \
+    alsa-lib \
+    pango \
     ca-certificates \
-    fonts-liberation \
-    && rm -rf /var/lib/apt/lists/*
+    font-noto
 
 ENV NODE_ENV=production
 
