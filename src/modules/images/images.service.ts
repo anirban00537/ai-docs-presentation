@@ -114,37 +114,72 @@ export class ImagesService {
   }
 
   /**
-   * Simple Unsplash search that returns just the optimized URL of the first result
+   * Professional Unsplash search with randomization and fallback
    * Used for AI-powered image discovery during card generation
+   * 
+   * @param query - The search term
+   * @param orientation - Image orientation preference
+   * @param excludeUrls - URLs to exclude (prevents duplicates across cards)
    */
   async searchUnsplashSimple(
     query: string,
     orientation: 'landscape' | 'portrait' | 'squarish' = 'landscape',
-  ): Promise<string | null> {
+    excludeUrls: string[] = [],
+  ): Promise<string> {
+    // Professional fallback images by category
+    const fallbackImages = {
+      landscape: 'https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1200&q=80',
+      portrait: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+      squarish: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?auto=format&fit=crop&w=1000&q=80',
+    };
+
     try {
       if (!query || query.trim() === '') {
-        return null;
+        console.warn('Empty query provided to searchUnsplashSimple, returning fallback');
+        return fallbackImages[orientation];
       }
 
+      // Fetch multiple results for variety
       const result = await this.unsplash.search.getPhotos({
         query: query.trim(),
         page: 1,
-        perPage: 1,
+        perPage: 10, // 10 provides good variety without large payload
         orientation,
         orderBy: 'relevant',
       });
 
-      if (result.errors || !result.response?.results?.length) {
-        console.warn(`No Unsplash results for query: "${query}"`);
-        return null;
+      if (result.errors) {
+        console.warn(`Unsplash API error for query "${query}":`, result.errors);
+        return fallbackImages[orientation];
       }
 
-      const photo = result.response.results[0];
+      const { total, results } = result.response || { total: 0, results: [] };
+      
+      console.log(`[Unsplash] Query "${query}" returned ${total} total results, fetched ${results.length}`);
+
+      if (!results || results.length === 0) {
+        console.warn(`No Unsplash results for query: "${query}", using fallback`);
+        return fallbackImages[orientation];
+      }
+
+      // Filter out already-used URLs to prevent duplicates
+      const availablePhotos = results.filter(photo => {
+        const url = `${photo.urls.raw}?auto=format&fit=crop&w=1200&q=80`;
+        return !excludeUrls.includes(url);
+      });
+
+      // If all photos are excluded, pick from all results anyway
+      const photosToPickFrom = availablePhotos.length > 0 ? availablePhotos : results;
+
+      // Pick a random photo from available results
+      const randomIndex = Math.floor(Math.random() * photosToPickFrom.length);
+      const photo = photosToPickFrom[randomIndex];
+
       // Return optimized URL with good quality for docs
       return `${photo.urls.raw}?auto=format&fit=crop&w=1200&q=80`;
     } catch (error) {
       console.error(`Unsplash search error for "${query}":`, error);
-      return null;
+      return fallbackImages[orientation];
     }
   }
 

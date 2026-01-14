@@ -55,14 +55,16 @@ export const coreConstant = {
 
   AI_MODELS: {
     OUTLINE: {
-      NAME: 'meta-llama/llama-4-scout',
-      PRICING: { prompt: 0.08, completion: 0.30 },
+      // NAME: 'meta-llama/llama-4-scout',
+      // PRICING: { prompt: 0.08, completion: 0.30 },
       // NAME: 'qwen/qwen3-30b-a3b-instruct-2507',
       // PRICING: { prompt: 0.08, completion: 0.33 },
       //  NAME: 'mistralai/ministral-14b-2512',
       // PRICING: { prompt: 0.20, completion: 0.20},
       // NAME: 'minimax/minimax-m2.1',
       // PRICING: { prompt: 0.28, completion: 1.20},
+      NAME: 'x-ai/grok-4.1-fast',
+      PRICING: { prompt: 0.2, completion: 0.5 },
     },
     CARDS: {
       // NAME: 'x-ai/grok-4.1-fast',
