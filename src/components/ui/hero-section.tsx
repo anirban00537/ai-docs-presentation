@@ -11,38 +11,33 @@ export default function HeroSection() {
   const [videoError, setVideoError] = useState(false);
 
   return (
-    <section className="relative pt-28 pb-20 overflow-hidden min-h-screen flex flex-col items-center justify-start bg-gradient-to-b from-secondary/20 via-white to-primary/5 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
-      {/* Ambient Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] bg-secondary/10 rounded-full blur-[120px] mix-blend-multiply opacity-70 animate-blob" />
-        <div className="absolute top-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-primary/5 rounded-full blur-[120px] mix-blend-multiply opacity-70 animate-blob animation-delay-2000" />
-        <div className="absolute bottom-[-20%] left-[20%] w-[70vw] h-[70vw] bg-pink-100/40 rounded-full blur-[120px] mix-blend-multiply opacity-70 animate-blob animation-delay-4000" />
-        <div className="absolute inset-0 bg-noise opacity-[0.03]" />
-      </div>
+    <section className="relative pt-32 pb-24 overflow-hidden min-h-screen flex flex-col items-center justify-start bg-white dark:bg-zinc-950">
+      {/* Modern Grid Background - Removed pattern as requested */}
+      <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]"></div>
 
       <div className="container relative z-10 px-4 flex flex-col items-center">
         {/* Headline Section */}
-        <div className="text-center max-w-4xl mx-auto mb-12">
+        <div className="text-center max-w-5xl mx-auto mb-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-secondary/20 shadow-sm mb-6"
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-8"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
             </span>
-            <span className="text-xs font-bold tracking-widest uppercase text-foreground/70">
+            <span className="text-xs font-semibold tracking-wide uppercase text-zinc-600 dark:text-zinc-400">
               AI-Powered Design v2.0
             </span>
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-serif text-5xl md:text-7xl lg:text-8xl font-medium tracking-tight text-foreground leading-[1] mb-6"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-serif text-6xl md:text-7xl lg:text-9xl font-medium tracking-tight text-zinc-900 dark:text-zinc-50 leading-[0.95] mb-8"
           >
             Ideas to{" "}
             <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">
@@ -53,25 +48,25 @@ export default function HeroSection() {
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed"
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light"
           >
             Butterfast transforms your prompts into stunning, professional
             docs. No design skills needed. Just pure storytelling.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Link href="/home">
               <Button
                 size="lg"
-                className="h-14 px-10 rounded-full text-lg bg-primary text-white hover:bg-primary/90 shadow-coral-glow hover:scale-105 transition-all duration-300"
+                className="h-14 px-8 rounded-full text-lg bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 shadow-xl shadow-zinc-200/50 dark:shadow-none transition-all duration-300"
               >
                 <IconSparkles className="mr-2 h-5 w-5" />
                 Start Creating Free
@@ -80,7 +75,7 @@ export default function HeroSection() {
             <Button
               variant="ghost"
               size="lg"
-              className="h-14 px-8 rounded-full text-lg hover:bg-black/5"
+              className="h-14 px-8 rounded-full text-lg text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-800"
             >
               <IconPlayerPlay className="mr-2 h-5 w-5 fill-current" />
               See how it works
@@ -88,14 +83,17 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Video Preview */}
+        {/* Sleek Video Preview */}
         <motion.div
-          className="relative w-full max-w-6xl h-[450px] md:h-[500px] flex items-center justify-center"
-          initial={{ opacity: 0, y: 50 }}
+          className="relative w-full max-w-6xl"
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <div className="relative w-full h-full flex items-center justify-center rounded-2xl overflow-hidden shadow-[0_25px_80px_-15px_rgba(0,0,0,0.3)] ring-4 ring-white/80">
+          {/* Glow Effect behind the video */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-purple-600/30 rounded-2xl blur-2xl opacity-30"></div>
+          
+          <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-zinc-200/50 dark:border-zinc-800/50 bg-black">
             {!videoError ? (
               <iframe
                 className="w-full h-full"
@@ -114,9 +112,9 @@ export default function HeroSection() {
                 priority
               />
             )}
-
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+            
+            {/* Subtle Texture Overlay */}
+            <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none" />
           </div>
         </motion.div>
       </div>
