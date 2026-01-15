@@ -83,32 +83,32 @@ export default function LoginPage() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1687392946855-8e35efa25ad7?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src="/login-background.jpg"
             alt="Abstract Background"
             fill
             priority
-            className="object-cover opacity-60"
+            className="object-cover"
           />
         </div>
 
         <div className="relative z-10 w-full max-w-[480px] p-8">
-           <h2 className="text-4xl font-bold tracking-tight text-white mb-12 font-serif text-center drop-shadow-md leading-tight">
+           <h2 className="text-4xl font-bold tracking-tight text-zinc-900 mb-12 font-serif text-center drop-shadow-sm leading-tight">
               From prompt<br/>to presentation.
            </h2>
 
            <div className="space-y-6 relative">
               {/* Connecting Line */}
-              <div className="absolute left-[27px] top-8 bottom-8 w-[2px] bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
+              <div className="absolute left-[27px] top-8 bottom-8 w-[2px] bg-gradient-to-b from-transparent via-zinc-900/10 to-transparent"></div>
 
               {/* Step 1 */}
-              <div className="relative group rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md transition-all hover:bg-white/10 hover:translate-x-1">
+              <div className="relative group rounded-2xl bg-white/60 border border-white/60 p-5 backdrop-blur-xl shadow-sm transition-all hover:bg-white/80 hover:shadow-md hover:translate-x-1">
                  <div className="flex items-start gap-5">
-                    <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                       <span className="text-2xl filter drop-shadow">💡</span>
+                    <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm border border-zinc-100 group-hover:scale-110 transition-transform duration-500">
+                       <span className="text-2xl filter drop-shadow-sm">💡</span>
                     </div>
                     <div>
-                       <h3 className="text-lg font-semibold text-white mb-1">Describe your idea</h3>
-                       <p className="text-zinc-400 text-sm leading-relaxed">
+                       <h3 className="text-lg font-bold text-zinc-900 mb-1">Describe your idea</h3>
+                       <p className="text-zinc-600 text-sm leading-relaxed font-medium">
                           Simply type a topic or paste your notes. Our AI understands context and structure instantly.
                        </p>
                     </div>
@@ -116,14 +116,14 @@ export default function LoginPage() {
               </div>
 
               {/* Step 2 */}
-              <div className="relative group rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md transition-all hover:bg-white/10 hover:translate-x-1">
+              <div className="relative group rounded-2xl bg-white/60 border border-white/60 p-5 backdrop-blur-xl shadow-sm transition-all hover:bg-white/80 hover:shadow-md hover:translate-x-1">
                  <div className="flex items-start gap-5">
-                    <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                       <Sparkles className="w-6 h-6 text-indigo-300" />
+                    <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm border border-zinc-100 group-hover:scale-110 transition-transform duration-500">
+                       <Sparkles className="w-6 h-6 text-indigo-500" />
                     </div>
                     <div>
-                       <h3 className="text-lg font-semibold text-white mb-1">AI generates the deck</h3>
-                       <p className="text-zinc-400 text-sm leading-relaxed">
+                       <h3 className="text-lg font-bold text-zinc-900 mb-1">AI generates the deck</h3>
+                       <p className="text-zinc-600 text-sm leading-relaxed font-medium">
                           Watch as layouts, images, and text are generated automatically in our premium design system.
                        </p>
                     </div>
@@ -131,14 +131,14 @@ export default function LoginPage() {
               </div>
 
               {/* Step 3 */}
-              <div className="relative group rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md transition-all hover:bg-white/10 hover:translate-x-1">
+              <div className="relative group rounded-2xl bg-white/60 border border-white/60 p-5 backdrop-blur-xl shadow-sm transition-all hover:bg-white/80 hover:shadow-md hover:translate-x-1">
                  <div className="flex items-start gap-5">
-                    <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                       <Zap className="w-6 h-6 text-teal-300" />
+                    <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm border border-zinc-100 group-hover:scale-110 transition-transform duration-500">
+                       <Zap className="w-6 h-6 text-teal-600" />
                     </div>
                     <div>
-                       <h3 className="text-lg font-semibold text-white mb-1">Export & Present</h3>
-                       <p className="text-zinc-400 text-sm leading-relaxed">
+                       <h3 className="text-lg font-bold text-zinc-900 mb-1">Export & Present</h3>
+                       <p className="text-zinc-600 text-sm leading-relaxed font-medium">
                           Download as an editable PowerPoint, PDF, or share a live link with your audience immediately.
                        </p>
                     </div>
