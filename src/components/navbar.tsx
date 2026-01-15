@@ -23,13 +23,13 @@ export function Navbar() {
   });
 
   return (
-    <motion.header 
+    <motion.header
       className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div 
+      <div
         className={cn(
           "pointer-events-auto flex items-center justify-between gap-8 h-14 pl-6 pr-2 rounded-full transition-all duration-300",
           "bg-white/80 backdrop-blur-xl border border-white/40 shadow-sm",
@@ -37,11 +37,11 @@ export function Navbar() {
         )}
       >
         <Link href="/" className="group flex items-center gap-2">
-          <Image 
-            src="/logo.svg" 
-            alt="Butterfast Logo" 
-            width={130} 
-            height={32} 
+          <Image
+            src="/logo.svg"
+            alt="Butterfast Logo"
+            width={130}
+            height={32}
             className="h-8 w-auto"
           />
         </Link>
@@ -62,19 +62,23 @@ export function Navbar() {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="hidden sm:inline-flex text-foreground/70 hover:text-foreground hover:bg-foreground/5 rounded-full px-5"
-          >
-            Log in
-          </Button>
-          <Button 
-            size="sm" 
-            className="rounded-full bg-primary hover:bg-primary/90 text-white px-5 shadow-coral-glow transition-all hover:scale-105"
-          >
-            Get Started
-          </Button>
+          <Link href="/login">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex text-foreground/70 hover:text-foreground hover:bg-foreground/5 rounded-full px-5"
+            >
+              Log in
+            </Button>
+          </Link>
+          <Link href="/home">
+            <Button
+              size="sm"
+              className="rounded-full bg-primary hover:bg-primary/90 text-white px-5 shadow-coral-glow transition-all hover:scale-105"
+            >
+              Get Started
+            </Button>
+          </Link>
         </div>
       </div>
     </motion.header>
