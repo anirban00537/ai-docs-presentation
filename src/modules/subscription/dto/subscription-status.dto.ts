@@ -12,4 +12,5 @@ export class SubscriptionStatusDto {
   slideLimit?: number | null;
   storageLimit?: number | null;
   storageUsage?: number | null;
+  planName?: string | null;
 }

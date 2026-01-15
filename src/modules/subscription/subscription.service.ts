@@ -93,67 +93,67 @@ export class SubscriptionService {
    */
   async getSubscriptionStatus(user: User): Promise<ResponseModel> {
     try {
-      const subscription = await this.prisma.subscription.findUnique({
-        where: { userId: user.id },
-      });
-
       const creditBalance = await this.creditService.getCreditBalance(user.id);
+      const accessCheck = await this.hasActiveAccess(user.id);
+      const hasActiveSubscription = accessCheck.hasAccess;
 
-      const hasAccessCheck = await this.hasActiveAccess(user.id);
-      const isActive =
-        hasAccessCheck.reason === 'active' ||
-        hasAccessCheck.reason === 'trialing';
-      const hasAccess = hasAccessCheck.hasAccess;
+      // Free tier defaults (SINGLE SOURCE OF TRUTH)
+      const FREE_SLIDE_LIMIT = 5;
+      const FREE_STORAGE_LIMIT = 0;
 
-      // Fetch product features if subscription has a productId
+      let slideLimit = FREE_SLIDE_LIMIT;
+      let planName = 'free';
+      let storageLimit = FREE_STORAGE_LIMIT;
+      let storageUsage = 0;
+
+      // Fetch product details if user has active subscription
       let features: FeatureResponseDto | null = null;
-      let slideLimit: number | null = null;
-      let storageLimit: number | null = null;
-      let storageUsage: number | null = null;
-
-      if (subscription?.productId && this.polarService.isConfigured()) {
+      if (hasActiveSubscription && accessCheck.subscription?.productId && this.polarService.isConfigured()) {
         try {
           const product = await this.polarService.getProduct(
-            subscription.productId,
+            accessCheck.subscription.productId,
           );
           if (product) {
             features = this.extractFeaturesFromProduct(product);
-            // Extract slide and storage limits from metadata
             const metadata = product?.metadata || {};
+            
             if (metadata.slide_limit) {
               slideLimit = parseInt(String(metadata.slide_limit), 10);
             }
             if (metadata.storage_gb) {
               storageLimit = parseFloat(String(metadata.storage_gb));
             }
+            if (metadata.plan_name) {
+              planName = String(metadata.plan_name);
+            } else if (product.name) {
+              planName = String(product.name);
+            }
           }
-        } catch (error) {
+        } catch (error: any) {
           this.logger.warn(
-            `Failed to fetch product features for product ${subscription.productId}:`,
-            error,
+            `Failed to fetch details for product ${accessCheck.subscription.productId}: ${error.message}`,
           );
         }
       }
 
-      // Get storage usage
-      if (storageLimit !== null) {
-        storageUsage = await this.getStorageUsage(user.id);
-      }
+      // Always get storage usage
+      storageUsage = await this.getStorageUsage(user.id);
 
       const status: SubscriptionStatusDto = {
-        subscription: subscription
-          ? (subscription as unknown as SubscriptionResponseDto)
+        subscription: accessCheck.subscription
+          ? (accessCheck.subscription as unknown as SubscriptionResponseDto)
           : null,
         creditBalance: creditBalance
           ? (creditBalance as unknown as CreditBalanceResponseDto)
           : null,
-        isActive: !!isActive,
-        hasAccess: !!hasAccess,
+        isActive: hasActiveSubscription,
+        hasAccess: hasActiveSubscription,
         hasCredits: creditBalance !== null && creditBalance.balance > 0,
         features,
         slideLimit,
         storageLimit,
         storageUsage,
+        planName,
       };
 
       return successResponse(
@@ -1372,58 +1372,7 @@ export class SubscriptionService {
     }
   }
 
-  /**
-   * Get user settings including slide limits and subscription info
-   */
-  async getUserSettings(user: User): Promise<ResponseModel> {
-    try {
-      const subscription = await this.prisma.subscription.findUnique({
-        where: { userId: user.id },
-      });
 
-      let slideLimit = 10; // Default free tier
-      let planName = 'free';
-      let storageLimit = 0; // Default free tier
-      let storageUsage = 0;
-
-      if (subscription?.productId && this.polarService.isConfigured()) {
-        try {
-          const product = await this.polarService.getProduct(
-            subscription.productId,
-          );
-          const metadata = product?.metadata || {};
-          
-          if (metadata.slide_limit) {
-            slideLimit = parseInt(String(metadata.slide_limit), 10);
-          }
-          if (metadata.storage_gb) {
-            storageLimit = parseFloat(String(metadata.storage_gb));
-          }
-          if (metadata.plan_name) {
-            planName = String(metadata.plan_name);
-          }
-        } catch (error: any) {
-          this.logger.warn(
-            `Failed to fetch product settings for product ${subscription.productId}: ${error.message}`,
-          );
-        }
-      }
-
-      storageUsage = await this.getStorageUsage(user.id);
-
-      const settings = {
-        slideLimit,
-        storageLimit,
-        storageUsage,
-        planName,
-        hasActiveSubscription: !!subscription,
-      };
-
-      return successResponse('User settings retrieved successfully', settings);
-    } catch (error) {
-      return processException(error);
-    }
-  }
 
   /**
    * Get credit balance
@@ -1643,6 +1592,101 @@ export class SubscriptionService {
       );
     } catch (error) {
       return processException(error);
+    }
+  }
+
+  /**
+   * Get plan tiers for UI display
+   * Returns a lightweight list of plan tiers with slide limits for the card selector
+   * This is cached and used to dynamically show tier labels
+   */
+  async getPlanTiers(): Promise<ResponseModel> {
+    try {
+      if (!this.polarService.isConfigured()) {
+        // Return default tiers if Polar is not configured
+        return successResponse('Plan tiers (default)', {
+          tiers: [
+            { name: 'Free', planName: 'free', slideLimit: 5 },
+            { name: 'Go Plan', planName: 'go_plan', slideLimit: 20 },
+            { name: 'Plus Plan', planName: 'plus', slideLimit: 35 },
+            { name: 'Pro Plan', planName: 'pro', slideLimit: 50 },
+          ],
+          freeTier: { name: 'Free', planName: 'free', slideLimit: 5 },
+        });
+      }
+
+      const productsResponse = await this.polarService.listProducts();
+      if (!productsResponse) {
+        // Return default tiers on error
+        return successResponse('Plan tiers (default)', {
+          tiers: [
+            { name: 'Free', planName: 'free', slideLimit: 5 },
+            { name: 'Go Plan', planName: 'go_plan', slideLimit: 20 },
+            { name: 'Plus Plan', planName: 'plus', slideLimit: 35 },
+            { name: 'Pro Plan', planName: 'pro', slideLimit: 50 },
+          ],
+          freeTier: { name: 'Free', planName: 'free', slideLimit: 5 },
+        });
+      }
+
+      // Extract items from response
+      let items: any[] = [];
+      if (productsResponse && typeof productsResponse === 'object') {
+        if ((productsResponse as any).result?.items) {
+          items = Array.isArray((productsResponse as any).result.items)
+            ? (productsResponse as any).result.items
+            : Array.from((productsResponse as any).result.items || []);
+        } else if ((productsResponse as any).items) {
+          items = Array.isArray((productsResponse as any).items)
+            ? (productsResponse as any).items
+            : Array.from((productsResponse as any).items || []);
+        } else if (Array.isArray(productsResponse)) {
+          items = productsResponse;
+        }
+      }
+
+      // Build tier list from products
+      const tiers = items
+        .filter((product: any) => !product.isArchived && !product.is_archived)
+        .map((product: any) => {
+          const metadata = product.metadata || {};
+          const prices = product.prices || [];
+          const minPrice = prices.length > 0
+            ? Math.min(...prices.map((p: any) => p.priceAmount || p.price_amount || 0))
+            : 0;
+
+          return {
+            name: product.name,
+            planName: metadata.plan_name || product.name.toLowerCase().replace(/\s+/g, '_'),
+            slideLimit: metadata.slide_limit ? parseInt(String(metadata.slide_limit), 10) : 10,
+            priceAmount: minPrice,
+          };
+        })
+        // Sort by price (lowest first)
+        .sort((a: any, b: any) => a.priceAmount - b.priceAmount)
+        // Remove priceAmount from output (only used for sorting)
+        .map(({ priceAmount, ...tier }: any) => tier);
+
+      // Add free tier at the beginning
+      const freeTier = { name: 'Free', planName: 'free', slideLimit: 5 };
+      const allTiers = [freeTier, ...tiers];
+
+      return successResponse('Plan tiers retrieved successfully', {
+        tiers: allTiers,
+        freeTier,
+      });
+    } catch (error) {
+      this.logger.error('Failed to get plan tiers:', error);
+      // Return default tiers on error
+      return successResponse('Plan tiers (default)', {
+        tiers: [
+          { name: 'Free', planName: 'free', slideLimit: 5 },
+          { name: 'Go Plan', planName: 'go_plan', slideLimit: 20 },
+          { name: 'Plus Plan', planName: 'plus', slideLimit: 35 },
+          { name: 'Pro Plan', planName: 'pro', slideLimit: 50 },
+        ],
+        freeTier: { name: 'Free', planName: 'free', slideLimit: 5 },
+      });
     }
   }
 

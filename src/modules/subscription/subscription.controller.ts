@@ -55,11 +55,7 @@ export class SubscriptionController {
     return this.subscriptionService.getCreditBalance(user);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('settings')
-  async getUserSettings(@UserInfo() user: User) {
-    return this.subscriptionService.getUserSettings(user);
-  }
+
 
   /**
    * Get features for user's current subscription
@@ -89,6 +85,17 @@ export class SubscriptionController {
   @Get('products')
   async getProducts() {
     return this.subscriptionService.getProducts();
+  }
+
+  /**
+   * Get plan tiers for UI display
+   * Returns a lightweight list of plan tiers with slide limits
+   * Used for dynamically showing tier labels in the card selector
+   */
+  @Public()
+  @Get('plan-tiers')
+  async getPlanTiers() {
+    return this.subscriptionService.getPlanTiers();
   }
 
   /**
