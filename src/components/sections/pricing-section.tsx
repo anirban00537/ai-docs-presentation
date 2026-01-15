@@ -11,7 +11,7 @@ export function PricingSection() {
   const displayPlans = products || [];
 
   return (
-    <section className="py-32 bg-gradient-to-b from-primary/5 via-white to-secondary/10 relative overflow-hidden" id="pricing">
+    <section className="py-32 bg-sky-50 relative overflow-hidden" id="pricing">
       {/* Background Gradients */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
 

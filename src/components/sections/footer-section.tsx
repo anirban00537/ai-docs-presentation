@@ -22,7 +22,7 @@ const footerLinks = {
 
 export function FooterSection() {
   return (
-    <footer className="relative bg-white pt-24 pb-12 overflow-hidden border-t border-secondary/10">
+    <footer className="bg-sky-50 pt-24 pb-12 overflow-hidden border-t border-secondary/10">
       {/* Butter Wash Gradient */}
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-secondary/30 to-transparent pointer-events-none" />
 

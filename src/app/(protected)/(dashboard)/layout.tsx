@@ -11,7 +11,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
       <AppSidebar />
       
       {/* Main Content */}
-      <main className="relative bg-slate-100  z-10 flex-1 flex flex-col overflow-hidden">
+      <main className="relative bg-sky-50  z-10 flex-1 flex flex-col overflow-hidden">
         <div className="container  mx-auto h-full">
           {children}
         </div>

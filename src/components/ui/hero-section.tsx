@@ -11,9 +11,17 @@ export default function HeroSection() {
   const [videoError, setVideoError] = useState(false);
 
   return (
-    <section className="relative pt-32 pb-24 overflow-hidden min-h-screen flex flex-col items-center justify-start bg-white dark:bg-zinc-950">
-      {/* Modern Grid Background - Removed pattern as requested */}
-      <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]"></div>
+    <section className="relative pt-32 pb-24 overflow-hidden min-h-screen flex flex-col items-center justify-start">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/hero-background-image.png"
+          alt="Hero Background"
+          fill
+          priority
+          className="object-cover object-top"
+        />
+      </div>
 
       <div className="container relative z-10 px-4 flex flex-col items-center">
         {/* Headline Section */}
@@ -40,7 +48,7 @@ export default function HeroSection() {
             className="font-serif text-6xl md:text-7xl lg:text-9xl font-medium tracking-tight text-zinc-900 dark:text-zinc-50 leading-[0.95] mb-8"
           >
             Ideas to{" "}
-            <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">
+            <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">
               Cards
             </span>{" "}
             <br />

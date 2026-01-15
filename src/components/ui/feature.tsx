@@ -37,7 +37,7 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="py-24 relative overflow-hidden bg-white" id="features">
+    <section className="py-24 bg-sky-50 relative overflow-hidden" id="features">
       {/* Background Subtle Elements */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent" />
       <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent" />
@@ -53,7 +53,7 @@ export function FeaturesSection() {
           </div>
           <h2 className="font-serif text-5xl md:text-6xl text-foreground mb-6 tracking-tight leading-[1.1]">
             Everything you need, <br />
-            <span className="italic text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-orange-500">nothing you don't.</span>
+            <span className="italic text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">nothing you don't.</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             A complete suite of storytelling tools designed to eliminate the friction between your ideas and a finished doc.
