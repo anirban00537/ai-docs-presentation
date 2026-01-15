@@ -22,8 +22,11 @@ export const BlockRenderer = memo(function BlockRenderer({
 }: BlockRendererProps) {
   const theme = useEditorTheme();
   
-  const type = block.type || BLOCK_TYPES.PROSEMIRROR;
-  const definition = BLOCK_DEFINITIONS[type as unknown as BlockType] || BLOCK_DEFINITIONS[BLOCK_TYPES.PROSEMIRROR];
+  const type = (block.type && BLOCK_DEFINITIONS[block.type as BlockType]) 
+    ? (block.type as BlockType) 
+    : BLOCK_TYPES.PROSEMIRROR;
+    
+  const definition = BLOCK_DEFINITIONS[type];
   const Component = definition.component;
 
   // Memoize the normalized block to avoid recalculating on every render

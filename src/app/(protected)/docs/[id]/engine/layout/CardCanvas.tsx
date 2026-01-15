@@ -566,7 +566,7 @@ export const CardCanvas = memo(function CardCanvas({
                   : "p-5 md:p-10"
               )}
             >
-              <div className="flex flex-col gap-0 relative">
+              <div className="flex flex-col gap-2 relative">
                 {!readOnly && (
                   <InsertDropZone
                     cardId={card.id}

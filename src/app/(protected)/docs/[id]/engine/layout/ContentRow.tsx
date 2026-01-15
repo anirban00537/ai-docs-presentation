@@ -215,9 +215,7 @@ export const ContentRow = memo(function ContentRow({
     [isOver, isAnyDragActive, row.blocks?.length, localWidths, isResizing]
   );
 
-  const handleMouseLeave = useCallback(() => {}, []);
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAnyDragActive) {
       setDropIndicator(null);
       return;
