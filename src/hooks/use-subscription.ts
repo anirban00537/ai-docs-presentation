@@ -3,14 +3,14 @@ import {
   getSubscriptionStatus,
   cancelSubscription,
   getCreditBalance,
-  getUserSettings,
+  getPlanTiers,
   useCredits,
   verifyCheckout,
   type UseCreditsDto,
   type SubscriptionStatus,
   type CreditBalance,
   type Subscription,
-  type UserSettings,
+  type PlanTiersResponse,
 } from "@/services/subscription";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/store/hooks";
@@ -26,7 +26,7 @@ export const subscriptionKeys = {
   all: ["subscription"] as const,
   status: () => [...subscriptionKeys.all, "status"] as const,
   credits: () => [...subscriptionKeys.all, "credits"] as const,
-  settings: () => [...subscriptionKeys.all, "settings"] as const,
+  planTiers: () => [...subscriptionKeys.all, "plan-tiers"] as const,
 };
 
 // Get subscription status
@@ -73,16 +73,18 @@ export const useCreditBalance = () => {
   });
 };
 
-// Get user settings (slide limits, storage, etc.)
-export const useUserSettings = () => {
+
+
+// Get plan tiers for UI (cached longer since tiers rarely change)
+export const usePlanTiers = () => {
   return useQuery({
-    queryKey: subscriptionKeys.settings(),
+    queryKey: subscriptionKeys.planTiers(),
     queryFn: async () => {
-      const response = await getUserSettings();
+      const response = await getPlanTiers();
       return response.data;
     },
-    staleTime: 60000, // 1 minute
-    refetchOnWindowFocus: true,
+    staleTime: 300000, // 5 minutes - tiers rarely change
+    refetchOnWindowFocus: false, // Don't refetch on focus
   });
 };
 
@@ -127,7 +129,11 @@ export const useVerifyCheckout = () => {
         );
       }
 
-      // 2. Update Redux Store synchronously (avoids extra API calls)
+      // 2. Invalidate status and plan tiers to refetch with new subscription data
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.status() });
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.planTiers() });
+
+      // 3. Update Redux Store synchronously (avoids extra API calls)
       dispatch(setSubscriptionStatus(newStatus));
       if (newStatus.creditBalance) {
         dispatch(setCreditBalance(newStatus.creditBalance));

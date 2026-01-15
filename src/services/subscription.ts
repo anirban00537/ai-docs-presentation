@@ -5,20 +5,18 @@ export interface SubscriptionStatus {
   hasAccess: boolean; // For legacy or feature-based access
   status: string;
   planId: string;
-  subscription?: {
-    id: string;
-    status: string;
-    cancelAtPeriodEnd: boolean;
-    currentPeriodEnd: number;
-    productId?: string;
-  };
-  features: {
+  subscription?: Subscription | null;
+  features?: {
     maxCards: number;
     hasWatermark: boolean;
     isPremium: boolean;
     productName?: string;
-  };
-  creditBalance?: CreditBalance;
+  } | null;
+  creditBalance?: CreditBalance | null;
+  slideLimit: number;
+  storageLimit: number;
+  storageUsage: number;
+  planName: string;
 }
 
 export interface Subscription {
@@ -46,17 +44,23 @@ export interface UseCreditsDto {
   reason?: string;
 }
 
-export interface UserSettings {
-  slideLimit: number;
-  storageLimit: number;
-  storageUsage: number;
+
+
+export interface PlanTier {
+  name: string;
   planName: string;
-  hasActiveSubscription: boolean;
+  slideLimit: number;
+}
+
+export interface PlanTiersResponse {
+  tiers: PlanTier[];
+  freeTier: PlanTier;
 }
 
 export const getSubscriptionStatus = () => api.get<SubscriptionStatus>("/subscription/status");
 export const getCreditBalance = () => api.get<CreditBalance>("/subscription/credits");
-export const getUserSettings = () => api.get<UserSettings>("/subscription/settings");
+
+export const getPlanTiers = () => api.get<PlanTiersResponse>("/subscription/plan-tiers");
 export const useCredits = (payload: UseCreditsDto) => api.post<CreditBalance>("/subscription/use-credits", payload);
 export const cancelSubscription = () => api.post<void>("/subscription/cancel");
 export const verifyCheckout = (customerSessionToken?: string) => 

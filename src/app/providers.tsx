@@ -10,9 +10,18 @@ import { AuthProvider } from "@/components/providers/auth-provider";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
 import { CONFIG } from "@/lib/config";
+import { usePlanTiers } from "@/hooks/use-subscription";
 
 type ProvidersProps = {
   children: React.ReactNode;
+};
+
+// Component that prefetches plan tiers globally
+const PlanTiersPreloader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // This hook call ensures plan tiers are fetched and cached globally
+  // The data is shared across all components via React Query cache
+  usePlanTiers();
+  return <>{children}</>;
 };
 
 const Providers: React.FC<ProvidersProps> = ({ children }) => {
@@ -20,8 +29,10 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
     <Provider store={store}>
       <ErrorBoundary>
         <AuthProvider>
-          <div className="h-full">{children}</div>
-          <Toaster richColors position="top-right" />
+          <PlanTiersPreloader>
+            <div className="h-full">{children}</div>
+            <Toaster richColors position="top-right" />
+          </PlanTiersPreloader>
         </AuthProvider>
       </ErrorBoundary>
     </Provider>
@@ -41,4 +52,3 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
 };
 
 export default Providers;
-

@@ -13,7 +13,7 @@ import {
 import { useSavePrompt } from "@/app/(protected)/docs/[id]/hooks/use-outline";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useUserSettings } from "@/hooks/use-subscription";
+import { useSubscriptionStatus, usePlanTiers } from "@/hooks/use-subscription";
 
 // --- Utility Function & Radix Primitives ---
 const TooltipProvider = TooltipPrimitive.Provider;
@@ -84,31 +84,32 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
     const savePromptMutation = useSavePrompt();
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const [value, setValue] = React.useState(defaultValue);
-    const { data: userSettings, isLoading: isLoadingSettings } =
-      useUserSettings();
+    const { data: subscriptionStatus, isLoading: isLoadingStatus } =
+      useSubscriptionStatus();
+    const { data: planTiersData } = usePlanTiers();
 
     // Set default number of cards based on user's limit (default to 5 or their limit, whichever is lower)
     const defaultCards = React.useMemo(() => {
-      if (userSettings?.slideLimit) {
-        return Math.min(5, userSettings.slideLimit).toString();
+      if (subscriptionStatus?.slideLimit) {
+        return Math.min(5, subscriptionStatus.slideLimit).toString();
       }
       return "5";
-    }, [userSettings?.slideLimit]);
+    }, [subscriptionStatus?.slideLimit]);
 
     const [numberOfCards, setNumberOfCards] =
       React.useState<string>(defaultCards);
 
     // Update numberOfCards when settings load
     React.useEffect(() => {
-      if (userSettings?.slideLimit && !isLoadingSettings) {
+      if (subscriptionStatus?.slideLimit && !isLoadingStatus) {
         const currentCards = parseInt(numberOfCards);
-        const limit = userSettings.slideLimit;
+        const limit = subscriptionStatus.slideLimit;
         // If current selection exceeds limit, reset to a valid value
         if (currentCards > limit) {
           setNumberOfCards(Math.min(5, limit).toString());
         }
       }
-    }, [userSettings?.slideLimit, isLoadingSettings, numberOfCards]);
+    }, [subscriptionStatus?.slideLimit, isLoadingStatus, numberOfCards]);
 
     // Update value when defaultValue prop changes
     React.useEffect(() => {
@@ -146,8 +147,8 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
         return;
       }
 
-      // Check slide limit
-      const slideLimit = userSettings?.slideLimit || 10;
+      // Check slide limit (default to 5 for free tier)
+      const slideLimit = subscriptionStatus?.slideLimit || 5;
       if (cards > slideLimit) {
         onError?.(
           `Your plan allows up to ${slideLimit} slides per document. Please upgrade to create more slides.`
@@ -286,11 +287,11 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                 <Select
                   value={numberOfCards}
                   onValueChange={setNumberOfCards}
-                  disabled={isLoadingSettings}
+                  disabled={isLoadingStatus}
                 >
                   <SelectTrigger className="h-8 w-fit gap-2 px-2 text-xs border-0 bg-transparent hover:bg-secondary/10 transition-colors focus:ring-0">
                     <SelectValue
-                      placeholder={isLoadingSettings ? "Loading..." : "Cards"}
+                      placeholder={isLoadingStatus ? "Loading..." : "Cards"}
                     />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-secondary/10 max-h-[300px]">
@@ -300,29 +301,60 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                       </p>
                     </div>
                     {(() => {
-                      const slideLimit = userSettings?.slideLimit || 10;
+                      // User's current slide limit (default to free tier: 5 slides)
+                      const slideLimit = subscriptionStatus?.slideLimit || 5;
 
-                      // Generate card options: 1-20 (all numbers), then 25, 30, 40, 50 (max 50)
+                      // Get plan tiers from API (fallback to defaults)
+                      const tiers = planTiersData?.tiers || [
+                        { name: "Free", planName: "free", slideLimit: 5 },
+                        { name: "Go Plan", planName: "go_plan", slideLimit: 20 },
+                        { name: "Plus Plan", planName: "plus", slideLimit: 35 },
+                        { name: "Pro Plan", planName: "pro", slideLimit: 50 },
+                      ];
+
+                      // Generate card options: 1-20 (all numbers), then 25, 30, 35, 40, 50 (max 50)
                       const cardOptions = [
                         ...Array.from({ length: 20 }, (_, i) => i + 1),
                         25,
                         30,
+                        35,
                         40,
                         50,
                       ];
 
-                      return cardOptions.map((num) => {
-                        const isSelected = numberOfCards === num.toString();
+                      // Helper to find which tier a card count belongs to (first tier that can accommodate it)
+                      const getTierForCardCount = (cardCount: number): string | null => {
+                        // If user already has access, no label needed
+                        if (cardCount <= slideLimit) return null;
 
-                        // Determine tier label for visual indication (all options are enabled)
-                        let tierLabel = null;
-                        if (num > slideLimit) {
-                          if (num <= 20) {
-                            tierLabel = "PLUS";
-                          } else {
-                            tierLabel = "PRO";
+                        // Find the first tier that can accommodate this card count
+                        // (tiers are sorted by price/slideLimit ascending)
+                        for (const tier of tiers) {
+                          if (cardCount <= tier.slideLimit && tier.slideLimit > slideLimit) {
+                            // Extract short name from plan name (e.g., "go_plan" -> "GO", "plus" -> "PLUS")
+                            const shortName = tier.planName
+                              .replace(/_plan$/i, "")
+                              .replace(/plan$/i, "")
+                              .trim()
+                              .toUpperCase();
+                            return shortName || tier.name.toUpperCase();
                           }
                         }
+
+                        // If no tier found that can accommodate, it's beyond all plans
+                        return null;
+                      };
+
+                      // Map tier names to colors
+                      const tierColors: Record<string, string> = {
+                        GO: "bg-emerald-500 text-white",
+                        PLUS: "bg-blue-500 text-white",
+                        PRO: "bg-indigo-600 text-white",
+                      };
+
+                      return cardOptions.map((num) => {
+                        const isSelected = numberOfCards === num.toString();
+                        const tierLabel = getTierForCardCount(num);
 
                         return (
                           <SelectItem
@@ -353,10 +385,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                               <span
                                 className={cn(
                                   "ml-2 px-2 py-0.5 rounded-full text-[10px] font-semibold",
-                                  tierLabel === "PLUS" &&
-                                    "bg-blue-500 text-white",
-                                  tierLabel === "PRO" &&
-                                    "bg-indigo-600 text-white"
+                                  tierColors[tierLabel] || "bg-gray-500 text-white"
                                 )}
                               >
                                 {tierLabel}
