@@ -446,6 +446,7 @@ export class PromptDocsAIService implements OnModuleInit {
       }
 
       // Capture usage data from the final chunk (OpenAI standard)
+      // Note: Usage data often comes in a chunk AFTER finish_reason='stop'
       if (chunk.usage) {
         usageData = chunk.usage;
         this.logger.log(
@@ -453,8 +454,14 @@ export class PromptDocsAIService implements OnModuleInit {
         );
       }
 
+      // Track when completion is received
       if (chunk.choices[0]?.finish_reason === 'stop') {
-        break;
+        // If we already have usage data, we can exit immediately
+        if (usageData) {
+          break;
+        }
+        // Otherwise, mark as complete and continue for one more iteration to get usage
+        // The stream will naturally end after the usage chunk
       }
     }
 
