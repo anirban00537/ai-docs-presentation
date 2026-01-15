@@ -66,8 +66,16 @@ export default function OutlinePage() {
   }
 
   return (
-    <div className="flex-1 min-h-[calc(100vh-80px)] bg-gradient-to-b from-primary/40 to-secondary/40 flex flex-col items-center py-8">
-      <div className="w-full max-w-5xl px-6 py-8 bg-white/60 backdrop-blur-xl border border-white/20 shadow-2xl rounded-[32px] flex flex-col gap-8">
+    <div className="relative flex-1 min-h-screen overflow-auto">
+      {/* Fixed Background Image */}
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-50 pointer-events-none"
+        style={{ backgroundImage: 'url("/hero-background-image.png")' }}
+      />
+      
+      {/* Scrollable Content */}
+      <div className="relative z-10 flex flex-col items-center py-8 min-h-full">
+        <div className="w-full max-w-5xl px-6 py-8 bg-white/60 backdrop-blur-xl border border-white/20 shadow-2xl rounded-[32px] flex flex-col gap-8">
         
         <OutlineHeader prompt={outline?.prompt || ""} onRegenerate={handleRegenerate} />
 
@@ -140,6 +148,7 @@ export default function OutlinePage() {
           message: "Generating Outline..."
         }}
       />
+      </div>
     </div>
   );
 }
