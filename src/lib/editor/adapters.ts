@@ -31,6 +31,7 @@ export const convertApiCardToRedux = (apiCard: any): ReduxCard => {
     id: apiCard.id,
     rows,
     accent: apiCard.data?.accent,
+    isStreaming: false, // Explicitly set for export context
   };
 };
 
