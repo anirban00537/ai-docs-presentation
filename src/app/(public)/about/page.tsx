@@ -334,8 +334,20 @@ export default function AboutPage() {
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="max-w-4xl mx-auto text-center p-12 md:p-16 rounded-[32px] bg-white border border-primary/10 shadow-butter-glow relative overflow-hidden"
+                            className="max-w-4xl mx-auto text-center p-12 md:p-16 rounded-[32px] relative overflow-hidden shadow-2xl"
                         >
+                            {/* Banner Background Image */}
+                            <div className="absolute inset-0 z-0">
+                                <Image
+                                    src="/banner-background.png"
+                                    alt="Banner Background"
+                                    fill
+                                    className="object-cover"
+                                />
+                                {/* Optional overlay for better text contrast if needed */}
+                                <div className="absolute inset-0 bg-white/10" />
+                            </div>
+
                             <div className="relative z-10">
                                 <h2 className="font-serif text-3xl md:text-5xl font-medium text-foreground mb-6">
                                     Ready to create something amazing?
