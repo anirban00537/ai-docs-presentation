@@ -5,18 +5,17 @@ import { cn } from "@/lib/utils";
 
 const footerLinks = {
   product: [
-    { name: "Features", href: "#features" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "Templates", href: "#templates" },
+    { name: "Features", href: "/#features" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "About", href: "/about" },
   ],
   company: [
-    { name: "About", href: "#about" },
-    { name: "Blog", href: "#blog" },
-    { name: "Careers", href: "#careers" },
+    { name: "Blog", href: "/blog" },
+    { name: "Contact", href: "/contact" },
   ],
   legal: [
-    { name: "Privacy", href: "#privacy" },
-    { name: "Terms", href: "#terms" },
+    { name: "Privacy", href: "/privacy" },
+    { name: "Terms", href: "/terms" },
   ],
 };
 
