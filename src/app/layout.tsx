@@ -19,20 +19,20 @@ const libre = Libre_Baskerville({
 
 export const metadata: Metadata = {
   title: {
-    default: "Butterfast - AI Doc Application",
+    default: "Butterfast - AI Presentation Application",
     template: "%s | Butterfast",
   },
   description:
-    "Create stunning docs effortlessly with Butterfast, an AI-powered doc application. Design, customize, and share professional docs in minutes.",
+    "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application. Design, customize, and share professional presentations in minutes.",
   keywords: [
-    "AI doc",
-    "doc builder",
-    "AI cards",
-    "doc maker",
-    "card creator",
-    "AI-powered docs",
-    "doc software",
-    "card design",
+    "AI presentation",
+    "presentation builder",
+    "AI presentations",
+    "presentation maker",
+    "presentation creator",
+    "AI-powered presentations",
+    "presentation software",
+    "presentation design",
   ],
   authors: [{ name: "Butterfast" }],
   creator: "Butterfast",
@@ -46,15 +46,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "/",
     siteName: "Butterfast",
-    title: "Butterfast - AI Doc Application",
+    title: "Butterfast - AI Presentation Application",
     description:
-      "Create stunning docs effortlessly with Butterfast, an AI-powered doc application.",
+      "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Butterfast - AI Doc Application",
+    title: "Butterfast - AI Presentation Application",
     description:
-      "Create stunning docs effortlessly with Butterfast, an AI-powered doc application.",
+      "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application.",
     creator: "@butterfast",
   },
   robots: {

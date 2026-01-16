@@ -33,13 +33,13 @@ export default function AboutPage() {
         {
             icon: IconPalette,
             title: "Beautiful Designs",
-            description: "Say goodbye to ugly cards. Everything is automatically formatted to look stunning and consistent.",
+            description: "Say goodbye to ugly presentations. Everything is automatically formatted to look stunning and consistent.",
             gradient: "from-pink-500 to-rose-500"
         },
         {
             icon: IconSparkles,
             title: "Easy Editing",
-            description: "Want to change something? Just click and type. It's as simple as using a text document.",
+            description: "Want to change something? Just click and type. It's as simple as using a text presentation.",
             gradient: "from-violet-500 to-purple-500"
         }
     ];
@@ -151,7 +151,7 @@ export default function AboutPage() {
                                     className="relative order-2 lg:order-1"
                                 >
                                     <div className="relative aspect-square max-w-md mx-auto">
-                                        {/* Floating cards */}
+                                        {/* Floating presentations */}
                                         <motion.div 
                                             animate={{ y: [0, -10, 0] }}
                                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -201,21 +201,21 @@ export default function AboutPage() {
                                     <div>
                                         <span className="text-primary font-semibold text-sm uppercase tracking-wider">Our Mission</span>
                                         <h2 className="font-serif text-4xl md:text-5xl font-medium leading-tight text-foreground mt-4">
-                                            Making beautiful docs accessible to everyone
+                                            Making beautiful presentations accessible to everyone
                                         </h2>
                                     </div>
                                     
                                     <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
                                         <p>
-                                            We started Butterfast because we were tired of spending hours formatting documents 
+                                            We started Butterfast because we were tired of spending hours formatting presentations 
                                             instead of focusing on what really matters — the ideas.
                                         </p>
                                         <p>
                                             Our AI-powered platform transforms your raw thoughts into polished, professional 
-                                            documents in seconds. No design skills needed. No formatting headaches.
+                                            presentations in seconds. No design skills needed. No formatting headaches.
                                         </p>
                                         <p className="font-medium text-foreground">
-                                            Just brilliant docs, effortlessly created.
+                                            Just brilliant presentations, effortlessly created.
                                         </p>
                                     </div>
                                 </motion.div>
@@ -353,7 +353,7 @@ export default function AboutPage() {
                                     Ready to create something amazing?
                                 </h2>
                                 <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-                                    Join thousands of creators who are already making beautiful docs with Butterfast.
+                                    Join thousands of creators who are already making beautiful presentations with Butterfast.
                                 </p>
                                 <a 
                                     href="/login"

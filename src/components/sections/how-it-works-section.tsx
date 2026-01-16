@@ -7,7 +7,7 @@ const steps = [
   {
     id: "01",
     title: "Input",
-    description: "Type a topic, paste a document, or enter a URL. Our engine reads it all.",
+    description: "Type a topic, paste a presentation, or enter a URL. Our engine reads it all.",
     align: "left",
   },
   {
@@ -40,11 +40,11 @@ export function HowItWorksSection() {
             </span>
           </motion.div>
           <h2 className="font-serif text-5xl md:text-7xl text-foreground mb-6 tracking-tight leading-[1]">
-            From idea to deck <br />
+            From idea to presentation <br />
             <span className="italic text-secondary-foreground/60">in seconds.</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Three simple steps to generate professional docs.
+            Three simple steps to generate professional presentations.
           </p>
         </div>
 

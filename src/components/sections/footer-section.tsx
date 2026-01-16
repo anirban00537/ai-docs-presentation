@@ -34,7 +34,7 @@ export function FooterSection() {
               </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
-              Effortless AI docs for teams who value design.
+              Effortless AI presentations for teams who value design.
             </p>
           </div>
 

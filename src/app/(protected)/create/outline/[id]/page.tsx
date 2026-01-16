@@ -90,7 +90,7 @@ export default function OutlinePage() {
             <EmptyState 
               icon={IconWriting}
               title="Ready to generate"
-              description="Enter a prompt in the box above to generate your doc outline. Our AI will help you structure your thoughts."
+              description="Enter a prompt in the box above to generate your presentation outline. Our AI will help you structure your thoughts."
               className="py-12 border-2 border-dashed border-secondary/20 rounded-[32px]"
             />
         ) : (
@@ -134,7 +134,7 @@ export default function OutlinePage() {
                         </>
                     ) : (
                         <>
-                           <IconSparkles size={18} className="mr-2" /> Create Doc
+                           <IconSparkles size={18} className="mr-2" /> Create Presentation
                         </>
                     )}
                 </Button>

@@ -83,11 +83,11 @@ export default function MyDocsPage() {
     if (!docToDelete) return;
     try {
       await deleteDocMutation.mutateAsync(docToDelete.id);
-      toast.success("Doc deleted successfully");
       setDeleteDialogOpen(false);
       setDocToDelete(null);
+      toast.success("Presentation deleted successfully");
     } catch {
-      toast.error("Failed to delete doc");
+      toast.error("Failed to delete presentation");
     }
   };
 
@@ -107,7 +107,7 @@ export default function MyDocsPage() {
 
       <div className="relative z-10 w-full flex-1 px-4 py-8 md:px-8 overflow-y-auto">
         <PageHeader
-          title={<>My <span className="text-primary italic">Docs</span></>}
+          title={<>My <span className="text-primary italic">Presentations</span></>}
           action={
             <Button
               onClick={() => router.push("/home")}
@@ -125,9 +125,9 @@ export default function MyDocsPage() {
         ) : docs.length === 0 ? (
           <EmptyState
             icon={IconFileText}
-            title="No docs yet"
-            description="Create your first doc to get started. Our AI will help you design beautiful cards in seconds."
-            actionText="Create Doc"
+            title="No presentations yet"
+            description="Create your first presentation to get started. Our AI will help you design beautiful presentations in seconds."
+            actionText="Create Presentation"
             onAction={() => router.push("/home")}
           />
         ) : (
@@ -160,7 +160,7 @@ export default function MyDocsPage() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="rounded-2xl border-0 bg-card/90 backdrop-blur-3xl shadow-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Doc</AlertDialogTitle>
+            <AlertDialogTitle>Delete Presentation</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete &ldquo;{docToDelete?.title}&rdquo;?
               This action cannot be undone.
