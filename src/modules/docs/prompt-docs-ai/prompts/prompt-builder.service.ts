@@ -151,7 +151,7 @@ Generate only the JSON. No prefix/suffix text.`;
     numberOfCards: number,
     layouts: { id: string; name: string; description: string }[] = [],
   ): string {
-    // Generate the layouts section
+    // Generate the layouts section with smart categorization
     let layoutsSection = '';
     
     if (layouts.length > 0) {
@@ -159,11 +159,29 @@ Generate only the JSON. No prefix/suffix text.`;
     AVAILABLE LAYOUTS:
     ${JSON.stringify(layouts, null, 2)}
     
-    LAYOUT SELECTION PROCESS:
-    1. Select the layout that best fits the content key points.
-    2. Ensure the "layoutId" matches one of the IDs above exactly.
-    3. Use a title/hero layout for the first card.
-      `;
+    🎯 SMART LAYOUT SELECTION PROCESS 🎯
+    
+    1. ANALYZE each card's content FIRST, then pick the layout that BEST presents that content.
+    2. Match layout to content type:
+       - Title/Hero layouts: ONLY for the first card (introduction) or major section dividers
+       - Image layouts: For concepts that benefit from visual representation
+       - List layouts: For step-by-step processes, features, or multiple points
+       - Number/Stats layouts: ONLY when presenting actual statistics or metrics
+       - Quote layouts: ONLY for testimonials, quotes, or powerful statements
+       - Comparison layouts: For pros/cons, before/after, or comparing options
+       - Timeline layouts: Only for chronological sequences or processes
+       - Team/Card layouts: Only for people, products, or multiple distinct items
+    
+    3. VARIETY IS ESSENTIAL:
+       - Use at least 4-5 DIFFERENT layout types across the presentation
+       - NEVER use the same layout more than 2 times in a row
+       - Alternate between content-heavy and visual layouts for rhythm
+    
+    4. RELEVANCE CHECK - Ask yourself:
+       - Does this layout make sense for this specific content?
+       - Would another layout present this information MORE effectively?
+       - Is the layout TYPE appropriate (don't use a quote layout for statistics)
+       `;
     } else {
       layoutsSection = `
     VALID LAYOUT IDs (Choose the best fit for each card's content):
@@ -187,6 +205,22 @@ Generate only the JSON. No prefix/suffix text.`;
     2. Each card must have a specific "layoutId" chosen from the valid options provided.
     
     ${layoutsSection}
+
+    ⚠️ LAYOUT SELECTION RULES - CRITICAL ⚠️
+    
+    DO NOT use layouts that don't match your content:
+    ❌ Don't use a "Quote" layout if you don't have an actual quote
+    ❌ Don't use a "Statistics/Number" layout if there are no numbers to show
+    ❌ Don't use a "Team/People" layout if the content isn't about people
+    ❌ Don't use a "Timeline" layout if there's no chronological sequence
+    ❌ Don't use the same layout repeatedly - aim for VARIETY
+    
+    DO match layouts to content intelligently:
+    ✅ Use image layouts when discussing concepts that benefit from visuals
+    ✅ Use list layouts for processes, features, or multiple points
+    ✅ Use comparison layouts when contrasting two things
+    ✅ First card should be a title/hero layout for impact
+    ✅ Last card can be a call-to-action or summary layout
 
     🚨🚨🚨 CRITICAL CONTENT FORMAT - READ CAREFULLY 🚨🚨🚨
     
@@ -228,7 +262,12 @@ Generate only the JSON. No prefix/suffix text.`;
       ]
     }
     
-    FINAL CHECK: Before outputting, verify EVERY card has at least 4 bullet points. Title-only cards are NOT allowed.
+    🔍 FINAL CHECKLIST BEFORE OUTPUT:
+    1. Does every card have at least 4 bullet points? (Title-only = FAIL)
+    2. Are you using at least 4-5 DIFFERENT layout types?
+    3. Is each layout APPROPRIATE for its content?
+    4. Did you avoid using the same layout more than twice in a row?
+    5. Does the flow make sense (title → content → conclusion)?
     `;
   }
 }
