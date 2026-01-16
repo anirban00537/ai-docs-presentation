@@ -167,7 +167,7 @@ export function AppSidebar() {
                     className={cn(
                       "relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-300 ease-out",
                       isActive
-                        ? "bg-slate-50"
+                        ? "bg-blue-50"
                         : "hover:bg-secondary/10 text-muted-foreground hover:text-foreground"
                     )}
                   >
@@ -210,7 +210,7 @@ export function AppSidebar() {
                   className={cn(
                     "flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group",
                     isActive
-                      ? "bg-slate-50 text-primary font-medium"
+                      ? "bg-blue-50 text-primary font-medium"
                       : "hover:bg-secondary/10 text-muted-foreground hover:text-foreground"
                   )}
                 >
