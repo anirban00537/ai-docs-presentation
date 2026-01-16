@@ -66,16 +66,24 @@ export default function PricingPage() {
 
   if (productsLoading) {
     return (
-      <div className="relative flex-1 overflow-y-auto flex flex-col items-center min-h-[calc(100vh-80px)] px-4 py-16 w-full">
-        <div className="relative z-10 w-full max-w-7xl">
-          <PageSkeleton>
-            <Skeleton className="h-12 w-1/3 mx-auto rounded-2xl" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full pt-10">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-[500px] w-full rounded-3xl" />
-              ))}
-            </div>
-          </PageSkeleton>
+      <div className="relative flex-1 min-h-screen overflow-auto">
+        {/* Fixed Background Image */}
+        <div 
+          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-50 pointer-events-none"
+          style={{ backgroundImage: 'url("/hero-background-image.png")' }}
+        />
+        
+        <div className="relative z-10 flex flex-col items-center px-4 py-16 w-full min-h-full">
+          <div className="w-full max-w-7xl">
+            <PageSkeleton>
+              <Skeleton className="h-12 w-1/3 mx-auto rounded-2xl" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full pt-10">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-[500px] w-full rounded-3xl" />
+                ))}
+              </div>
+            </PageSkeleton>
+          </div>
         </div>
       </div>
     );
@@ -93,34 +101,42 @@ export default function PricingPage() {
   });
 
   return (
-    <div className="relative flex-1 flex flex-col items-center min-h-[calc(100vh-80px)] overflow-y-auto px-4 py-16">
-      <div className="relative z-10 w-full mt-16 max-w-7xl flex flex-col gap-16">
-        <PricingHeader />
+    <div className="relative flex-1 min-h-screen overflow-auto">
+      {/* Fixed Background Image */}
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-50 pointer-events-none"
+        style={{ backgroundImage: 'url("/hero-background-image.png")' }}
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">
-          {sortedProducts.map((product, index) => {
-            const isCurrentPlan = hasAccess && currentSubscription?.productId === product.id;
-            const isPopular = index === 1;
-            const hasBlockingSubscription = isSubscriptionActive && !isCanceled;
+      <div className="relative z-10 flex flex-col items-center px-4 py-16 min-h-full w-full">
+        <div className="w-full mt-16 max-w-7xl flex flex-col gap-16">
+          <PricingHeader />
 
-            return (
-              <PricingCard
-                key={product.id}
-                product={product}
-                isPopular={isPopular}
-                isCurrentPlan={false}
-                isCanceled={false}
-                index={index}
-                onSelect={handleSelectPlan}
-                loading={loadingCheckout === product.id}
-                href={undefined}
-                cta={undefined}
-              />
-            );
-          })}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-8">
+            {sortedProducts.map((product, index) => {
+              const isCurrentPlan = hasAccess && currentSubscription?.productId === product.id;
+              const isPopular = index === 1;
+              const hasBlockingSubscription = isSubscriptionActive && !isCanceled;
+
+              return (
+                <PricingCard
+                  key={product.id}
+                  product={product}
+                  isPopular={isPopular}
+                  isCurrentPlan={false}
+                  isCanceled={false}
+                  index={index}
+                  onSelect={handleSelectPlan}
+                  loading={loadingCheckout === product.id}
+                  href={undefined}
+                  cta={undefined}
+                />
+              );
+            })}
+          </div>
+
+          <PricingFooter />
         </div>
-
-        <PricingFooter />
       </div>
     </div>
   );
