@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Navbar } from "@/components/navbar";
 import { FooterSection } from "@/components/sections/footer-section";
 import { motion } from "framer-motion";
@@ -75,10 +76,15 @@ export default function AboutPage() {
             <Navbar />
             <main className="relative min-h-screen overflow-auto">
                 {/* Fixed Background Image */}
-                <div 
-                    className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-50 pointer-events-none"
-                    style={{ backgroundImage: 'url("/hero-background-image.png")' }}
-                />
+                <div className="fixed inset-0 z-0 opacity-50 pointer-events-none">
+                    <Image
+                        src="/hero-background-image.png"
+                        alt="Background"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                </div>
 
                 <div className="relative z-10">
                     {/* Hero Section */}

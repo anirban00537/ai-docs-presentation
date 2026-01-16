@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { useOutlineEditor } from "@/app/(protected)/docs/[id]/hooks/use-outline";
 import { OutlineViewer } from "@/components/outline-viewer";
@@ -68,10 +69,15 @@ export default function OutlinePage() {
   return (
     <div className="relative flex-1 min-h-screen overflow-auto">
       {/* Fixed Background Image */}
-      <div 
-        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-50 pointer-events-none"
-        style={{ backgroundImage: 'url("/hero-background-image.png")' }}
-      />
+      <div className="fixed inset-0 z-0 opacity-50 pointer-events-none">
+        <Image
+          src="/hero-background-image.png"
+          alt="Background"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
       
       {/* Scrollable Content */}
       <div className="relative z-10 flex flex-col items-center py-8 min-h-full">

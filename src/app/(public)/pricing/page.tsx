@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { useProducts } from "@/hooks";
 import { useAppSelector } from "@/store/hooks";
 import { selectSubscriptionStatus } from "@/store/slices/subscriptionSlice";
@@ -68,10 +69,15 @@ export default function PricingPage() {
     return (
       <div className="relative flex-1 min-h-screen overflow-auto">
         {/* Fixed Background Image */}
-        <div 
-          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-50 pointer-events-none"
-          style={{ backgroundImage: 'url("/hero-background-image.png")' }}
-        />
+        <div className="fixed inset-0 z-0 opacity-50 pointer-events-none">
+          <Image
+            src="/hero-background-image.png"
+            alt="Background"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
         
         <div className="relative z-10 flex flex-col items-center px-4 py-16 w-full min-h-full">
           <div className="w-full max-w-7xl">
@@ -103,10 +109,15 @@ export default function PricingPage() {
   return (
     <div className="relative flex-1 min-h-screen overflow-auto">
       {/* Fixed Background Image */}
-      <div 
-        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-50 pointer-events-none"
-        style={{ backgroundImage: 'url("/hero-background-image.png")' }}
-      />
+      <div className="fixed inset-0 z-0 opacity-50 pointer-events-none">
+        <Image
+          src="/hero-background-image.png"
+          alt="Background"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
 
       <div className="relative z-10 flex flex-col items-center px-4 py-16 min-h-full w-full">
         <div className="w-full mt-16 max-w-7xl flex flex-col gap-16">
