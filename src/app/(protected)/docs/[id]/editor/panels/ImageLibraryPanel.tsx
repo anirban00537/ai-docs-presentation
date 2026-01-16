@@ -7,6 +7,7 @@ import { X, Search, Upload, Loader2, Heart, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -225,83 +226,71 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
             className="relative z-40"
           >
             <div
-              className="relative w-[420px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
-              style={{
-                backgroundColor: isDark 
-                  ? "rgba(30, 30, 40, 0.5)" 
-                  : "rgba(255, 255, 255, 0.5)",
-                backdropFilter: "blur(32px) saturate(200%)",
-                WebkitBackdropFilter: "blur(32px) saturate(200%)",
-                boxShadow: isDark
-                  ? `
-                    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
-                    0 -1px 0 0 rgba(0, 0, 0, 0.2) inset,
-                    0 8px 40px rgba(0, 0, 0, 0.4),
-                    0 2px 8px rgba(0, 0, 0, 0.2)
-                  `
-                  : `
-                    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
-                    0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-                    0 8px 40px rgba(0, 0, 0, 0.08),
-                    0 2px 8px rgba(0, 0, 0, 0.04)
-                  `,
-              }}
+              className={cn(
+                "relative w-[420px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden backdrop-blur-xl border shadow-2xl",
+                isDark 
+                  ? "bg-[#1a1a1f]/95 border-white/10" 
+                  : "bg-white/95 border-black/10"
+              )}
             >
-              {/* Glass shine overlay */}
-              <div 
-                className="absolute inset-0 pointer-events-none rounded-2xl"
-                style={{
-                  background: isDark
-                    ? "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.02) 100%)"
-                    : "linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.3) 100%)",
-                }}
-              />
+
 
               {/* Header */}
-              <div className="relative px-4 py-3 flex items-center justify-between shrink-0">
-                <span
-                  className="text-sm font-medium"
-                  style={{ color: isDark ? "#fff" : "#000" }}
-                >
+              <div className={cn(
+                "relative px-4 py-3 flex items-center justify-between shrink-0 border-b",
+                isDark ? "border-white/5" : "border-black/5"
+              )}>
+                <span className={cn(
+                  "text-sm font-semibold",
+                  isDark ? "text-white" : "text-black"
+                )}>
                   Images
                 </span>
                 <button
-                  className="p-1.5 rounded-lg transition-all opacity-50 hover:opacity-100"
+                  className={cn(
+                    "p-1.5 rounded-lg transition-all",
+                    isDark 
+                      ? "text-white/40 hover:text-white hover:bg-white/10" 
+                      : "text-black/40 hover:text-black hover:bg-black/5"
+                  )}
                   onClick={onClose}
-                  style={{ color: isDark ? "#fff" : "#000" }}
                 >
                   <X size={16} />
                 </button>
               </div>
 
               {/* Tabs */}
-              <div className="relative px-4 pb-3">
+              <div className="relative px-4 py-3">
                 <Tabs 
                   value={activeTab} 
                   onValueChange={(v) => setActiveTab(v as "unsplash" | "uploads")}
                   className="w-full"
                 >
-                  <TabsList 
-                    className="w-full grid grid-cols-2 h-9"
-                    style={{
-                      backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
-                    }}
-                  >
+                  <TabsList className={cn(
+                    "w-full grid grid-cols-2 h-10 p-1 rounded-xl",
+                    isDark ? "bg-white/5" : "bg-black/5"
+                  )}>
                     <TabsTrigger 
                       value="unsplash"
-                      className="text-xs data-[state=active]:shadow-sm"
-                      style={{
-                        color: isDark ? "#e5e7eb" : "#374151",
-                      }}
+                      className={cn(
+                        "text-xs font-medium rounded-lg transition-all duration-200",
+                        "data-[state=active]:shadow-none",
+                        isDark 
+                          ? "text-white/50 data-[state=active]:bg-white/10 data-[state=active]:text-white" 
+                          : "text-black/50 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm"
+                      )}
                     >
                       Unsplash
                     </TabsTrigger>
                     <TabsTrigger 
                       value="uploads"
-                      className="text-xs data-[state=active]:shadow-sm"
-                      style={{
-                        color: isDark ? "#e5e7eb" : "#374151",
-                      }}
+                      className={cn(
+                        "text-xs font-medium rounded-lg transition-all duration-200",
+                        "data-[state=active]:shadow-none",
+                        isDark 
+                          ? "text-white/50 data-[state=active]:bg-white/10 data-[state=active]:text-white" 
+                          : "text-black/50 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm"
+                      )}
                     >
                       My Uploads
                     </TabsTrigger>
@@ -311,23 +300,26 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
 
               {/* Search Bar (Unsplash only) */}
               {activeTab === "unsplash" && (
-                <div className="relative px-4 pb-3">
+                <div className="relative px-4 pb-4">
                   <div className="relative">
                     <Search 
                       size={14} 
-                      className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40"
-                      style={{ color: isDark ? "#fff" : "#000" }}
+                      className={cn(
+                        "absolute left-3 top-1/2 -translate-y-1/2",
+                        isDark ? "text-white/30" : "text-black/30"
+                      )}
                     />
                     <Input
                       type="text"
-                      placeholder="Search free high-resolution photos..."
+                      placeholder="Search high-quality images..."
                       value={searchQuery}
                       onChange={handleSearchChange}
-                      className="pl-9 h-9 text-xs border-0"
-                      style={{
-                        backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
-                        color: isDark ? "#fff" : "#000",
-                      }}
+                      className={cn(
+                        "pl-9 h-10 text-xs border-0 rounded-xl transition-all focus-visible:ring-1 focus-visible:ring-primary/20",
+                        isDark 
+                          ? "bg-white/5 text-white placeholder:text-white/20" 
+                          : "bg-black/5 text-black placeholder:text-black/20"
+                      )}
                     />
                   </div>
                 </div>

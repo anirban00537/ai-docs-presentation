@@ -155,8 +155,8 @@ export const EditorHeader = ({
         className={cn(
           "relative w-full px-4 md:px-6 h-14 flex items-center justify-between backdrop-blur-xl border-b",
           isDark 
-            ? "bg-[#0a0a0f]/95 border-white/5" 
-            : "bg-white/95 border-black/5"
+            ? "bg-[#1a1a1f]/95 border-white/10" 
+            : "bg-white/95 border-black/10"
         )}
       >
         {/* Left Section - Title & Navigation */}
@@ -240,7 +240,7 @@ export const EditorHeader = ({
                   onClick={undo}
                   disabled={!canUndo}
                   className={cn(
-                    "p-1.5 rounded-md disabled:opacity-20 disabled:cursor-not-allowed transition-all",
+                    "p-1.5 rounded-lg disabled:opacity-20 disabled:cursor-not-allowed transition-all",
                     isDark 
                       ? "text-white/60 hover:text-white hover:bg-white/10" 
                       : "text-black/60 hover:text-black hover:bg-black/10"
@@ -253,7 +253,7 @@ export const EditorHeader = ({
                   onClick={redo}
                   disabled={!canRedo}
                   className={cn(
-                    "p-1.5 rounded-md disabled:opacity-20 disabled:cursor-not-allowed transition-all",
+                    "p-1.5 rounded-lg disabled:opacity-20 disabled:cursor-not-allowed transition-all",
                     isDark 
                       ? "text-white/60 hover:text-white hover:bg-white/10" 
                       : "text-black/60 hover:text-black hover:bg-black/10"
@@ -358,7 +358,7 @@ export const EditorHeader = ({
           {/* Present Button - Primary Action */}
           <button
             onClick={onPresentClick}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/25"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/25"
           >
             <IconPlayerPlayFilled size={14} />
             <span className="hidden sm:inline">Present</span>

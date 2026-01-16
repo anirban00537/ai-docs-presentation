@@ -66,7 +66,7 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
             "flex items-center gap-1 px-2 py-1.5 rounded-2xl backdrop-blur-xl shadow-2xl border",
             isDark 
               ? "bg-[#1a1a1f]/95 border-white/10" 
-              : "bg-white/95 border-black/5"
+              : "bg-white/95 border-black/10"
           )}
         >
           {TOOLBAR_ITEMS.map((item) => {
@@ -106,19 +106,6 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
             className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[50]"
           >
             <div className="relative">
-              {/* Close button */}
-              <button
-                onClick={() => setActivePanel(null)}
-                className={cn(
-                  "absolute -top-3 -right-3 z-10 p-1.5 rounded-full border transition-all shadow-lg",
-                  isDark 
-                    ? "bg-[#1a1a1f] border-white/10 text-white/70 hover:text-white hover:bg-white/10"
-                    : "bg-white border-black/10 text-black/50 hover:text-black hover:bg-black/5"
-                )}
-              >
-                <IconX size={14} />
-              </button>
-
               {activePanel === "insert" && (
                 <BlockLibraryPanel
                   isOpen={true}
