@@ -89,7 +89,7 @@ export class ScreenshotService {
     cardId: string,
     options: ScreenshotOptions = {},
   ): Promise<Buffer> {
-    const { width = 1920, height = 1080, timeout = 15000 } = options;
+    const { width = 1920, height = 1080, timeout = 25000 } = options;
 
     const browser = await this.initializeBrowser();
     const page = await browser.newPage();
@@ -132,37 +132,41 @@ export class ScreenshotService {
       // Wait for the export container to be ready
       try {
         await page.waitForSelector('#export-card-container.export-ready', {
-          timeout: 8000, // Reduced from 20000
+          timeout: 10000,
         });
 
-        // Minimal wait for critical rendering - increased to allow lazy hooks to fire
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Wait for lazy image fetching hooks to complete (Unsplash API calls)
+        // The useLazyImage hook has a 300ms debounce, so we wait longer
+        await new Promise((resolve) => setTimeout(resolve, 3000));
 
-        // Wait for images only if they exist and aren't loaded
+        // Poll for images to appear and load (handles lazy-loaded images)
+        // This waits for img elements to appear AND fully load
         await page.evaluate(() => {
-          const images = Array.from(document.images);
-          if (images.length === 0) return Promise.resolve();
-          
-          return Promise.race([
-            Promise.all(
-              images
-                .filter((img) => !img.complete)
-                .map(
-                  (img) =>
-                    new Promise((resolve) => {
-                      img.onload = img.onerror = resolve;
-                      // Timeout individual images after 8s
-                      setTimeout(resolve, 8000);
-                    }),
-                ),
-            ),
-            // Overall timeout for all images
-            new Promise((resolve) => setTimeout(resolve, 10000)),
-          ]);
+          return new Promise<void>((resolve) => {
+            const maxWait = 12000; // 12 seconds max
+            const pollInterval = 500; // Check every 500ms
+            const startTime = Date.now();
+            
+            const checkImages = () => {
+              const images = Array.from(document.images);
+              const allLoaded = images.every(img => img.complete && img.naturalWidth > 0);
+              
+              if (allLoaded || Date.now() - startTime > maxWait) {
+                resolve();
+                return;
+              }
+              
+              // Continue polling
+              setTimeout(checkImages, pollInterval);
+            };
+            
+            // Start polling
+            checkImages();
+          });
         });
 
-        // Small final wait for any CSS transitions - reduced from 500ms
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        // Final wait for any CSS transitions and final rendering
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (waitError) {
         // Check if there's an error state
         const hasError = await page.$('#export-error');

@@ -56,7 +56,7 @@ export class PptxExportService {
           {
             width: 1920,
             height: 1080,
-            timeout: 15000, // Reduced from 30000
+            timeout: 25000, // Increased for lazy image loading
           },
         );
 
