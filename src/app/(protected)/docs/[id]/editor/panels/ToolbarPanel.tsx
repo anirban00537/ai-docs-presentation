@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { IconPalette, IconBlocks, IconPhoto, IconLayoutGrid } from "@tabler/icons-react";
+import { IconPalette, IconBlocks, IconPhoto, IconLayoutGrid, IconX } from "@tabler/icons-react";
 import { ThemeSelectorPanel } from "./ThemeSelectorPanel";
 import { BlockLibraryPanel } from "./BlockLibraryPanel";
 import { LayoutsPanel } from "./LayoutsPanel";
@@ -13,32 +13,31 @@ interface ToolbarPanelProps {
   docId: string;
 }
 
+// Toolbar buttons with icons and labels
+const TOOLBAR_ITEMS = [
+  { id: "insert", icon: IconBlocks, label: "Insert" },
+  { id: "layouts", icon: IconLayoutGrid, label: "Layouts" },
+  { id: "theme", icon: IconPalette, label: "Theme" },
+  { id: "images", icon: IconPhoto, label: "Images" },
+];
+
 export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
   docId,
 }) => {
-  const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
-  const [isBlocksPanelOpen, setIsBlocksPanelOpen] = useState(false);
-  const [isLayoutsPanelOpen, setIsLayoutsPanelOpen] = useState(false);
-  const [isImagesPanelOpen, setIsImagesPanelOpen] = useState(false);
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
+  const [activePanel, setActivePanel] = useState<string | null>(null);
 
   // Close panels when clicking outside
   useEffect(() => {
-    if (isThemePanelOpen || isBlocksPanelOpen || isImagesPanelOpen || isLayoutsPanelOpen) {
+    if (activePanel) {
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
         if (
-          !target.closest('[data-floating-sidebar]') &&
-          !target.closest('[data-theme-panel]') &&
-          !target.closest('[data-blocks-panel]') &&
-          !target.closest('[data-layouts-panel]') &&
-          !target.closest('[data-images-panel]')
+          !target.closest('[data-floating-toolbar]') &&
+          !target.closest('[data-toolbar-panel]')
         ) {
-          setIsThemePanelOpen(false);
-          setIsBlocksPanelOpen(false);
-          setIsLayoutsPanelOpen(false);
-          setIsImagesPanelOpen(false);
+          setActivePanel(null);
         }
       };
 
@@ -47,179 +46,107 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }
-  }, [isThemePanelOpen, isBlocksPanelOpen, isLayoutsPanelOpen, isImagesPanelOpen]);
+  }, [activePanel]);
 
-  const handleToggleThemePanel = () => {
-    setIsThemePanelOpen(!isThemePanelOpen);
-    setIsBlocksPanelOpen(false);
-    setIsLayoutsPanelOpen(false);
-    setIsImagesPanelOpen(false);
+  const handleTogglePanel = (panelId: string) => {
+    setActivePanel(prev => prev === panelId ? null : panelId);
   };
-
-  const handleToggleBlocksPanel = () => {
-    setIsBlocksPanelOpen(!isBlocksPanelOpen);
-    setIsThemePanelOpen(false);
-    setIsLayoutsPanelOpen(false);
-    setIsImagesPanelOpen(false);
-  };
-
-  const handleToggleLayoutsPanel = () => {
-    setIsLayoutsPanelOpen(!isLayoutsPanelOpen);
-    setIsThemePanelOpen(false);
-    setIsBlocksPanelOpen(false);
-    setIsImagesPanelOpen(false);
-  };
-
-  const handleToggleImagesPanel = () => {
-    setIsImagesPanelOpen(!isImagesPanelOpen);
-    setIsThemePanelOpen(false);
-    setIsBlocksPanelOpen(false);
-    setIsLayoutsPanelOpen(false);
-  };
-
-  const buttonClass = "p-2 md:p-2.5 rounded-xl transition-all";
 
   return (
     <>
-      {/* Floating Sidebar Buttons */}
+      {/* Bottom Floating Toolbar - Gamma/Molly Studio style */}
       <div
-        data-floating-sidebar
-        className={cn(
-          "fixed z-[45] flex shadow-2xl transition-all duration-300",
-          "bottom-6 left-1/2 -translate-x-1/2 flex-row md:flex-col md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:right-4 md:left-auto md:translate-x-0"
-        )}
+        data-floating-toolbar
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[45]"
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="relative rounded-2xl md:rounded-3xl flex flex-row md:flex-col gap-0.5 md:gap-1.5 p-1.5"
-          style={{
-            backgroundColor: isDark 
-              ? "rgba(30, 30, 40, 0.6)" 
-              : "rgba(255, 255, 255, 0.6)",
-            backdropFilter: "blur(32px) saturate(200%)",
-            WebkitBackdropFilter: "blur(32px) saturate(200%)",
-            boxShadow: isDark
-              ? "0 8px 32px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
-              : "0 8px 32px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(255, 255, 255, 0.8) inset",
-          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={cn(
+            "flex items-center gap-1 px-2 py-1.5 rounded-2xl backdrop-blur-xl shadow-2xl border",
+            isDark 
+              ? "bg-[#1a1a1f]/95 border-white/10" 
+              : "bg-white/95 border-black/5"
+          )}
         >
-          {/* Blocks Button */}
-          <button
-            onClick={handleToggleBlocksPanel}
-            className={cn(buttonClass)}
-            style={{
-              backgroundColor: isBlocksPanelOpen ? `${theme.primary}20` : "transparent",
-              color: isBlocksPanelOpen ? theme.primary : (isDark ? "#fff" : "#000"),
-            }}
-            title="Add blocks"
-          >
-            <IconBlocks size={22} stroke={1.5} />
-          </button>
-
-          <button
-            onClick={handleToggleLayoutsPanel}
-            className={cn(buttonClass)}
-            style={{
-              backgroundColor: isLayoutsPanelOpen ? `${theme.primary}20` : "transparent",
-              color: isLayoutsPanelOpen ? theme.primary : (isDark ? "#fff" : "#000"),
-            }}
-            title="Add layouts"
-          >
-            <IconLayoutGrid size={22} stroke={1.5} />
-          </button>
-
-          <button
-            onClick={handleToggleImagesPanel}
-            className={cn(buttonClass)}
-            style={{
-              backgroundColor: isImagesPanelOpen ? `${theme.primary}20` : "transparent",
-              color: isImagesPanelOpen ? theme.primary : (isDark ? "#fff" : "#000"),
-            }}
-            title="Add images"
-          >
-            <IconPhoto size={22} stroke={1.5} />
-          </button>
-
-          <button
-            onClick={handleToggleThemePanel}
-            className={cn(buttonClass)}
-            style={{
-              backgroundColor: isThemePanelOpen ? `${theme.primary}20` : "transparent",
-              color: isThemePanelOpen ? theme.primary : (isDark ? "#fff" : "#000"),
-            }}
-            title="Change theme"
-          >
-            <IconPalette size={22} stroke={1.5} />
-          </button>
+          {TOOLBAR_ITEMS.map((item) => {
+            const isActive = activePanel === item.id;
+            const Icon = item.icon;
+            
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleTogglePanel(item.id)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
+                  isActive 
+                    ? "bg-primary text-white" 
+                    : isDark
+                      ? "text-white/70 hover:text-white hover:bg-white/10"
+                      : "text-black/70 hover:text-black hover:bg-black/5"
+                )}
+              >
+                <Icon size={18} stroke={1.5} />
+                <span className="hidden sm:inline">{item.label}</span>
+              </button>
+            );
+          })}
         </motion.div>
       </div>
 
-      {/* Panels - Adjusted for mobile */}
+      {/* Panels - Slide up from bottom toolbar */}
       <AnimatePresence>
-        {isBlocksPanelOpen && (
+        {activePanel && (
           <motion.div
-            data-blocks-panel
-            initial={{ opacity: 0, y: 20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 20, x: "-50%" }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:right-16 md:left-auto md:translate-x-0"
+            data-toolbar-panel
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[50]"
           >
-            <BlockLibraryPanel
-              isOpen={isBlocksPanelOpen}
-              onClose={() => setIsBlocksPanelOpen(false)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div className="relative">
+              {/* Close button */}
+              <button
+                onClick={() => setActivePanel(null)}
+                className={cn(
+                  "absolute -top-3 -right-3 z-10 p-1.5 rounded-full border transition-all shadow-lg",
+                  isDark 
+                    ? "bg-[#1a1a1f] border-white/10 text-white/70 hover:text-white hover:bg-white/10"
+                    : "bg-white border-black/10 text-black/50 hover:text-black hover:bg-black/5"
+                )}
+              >
+                <IconX size={14} />
+              </button>
 
-      <AnimatePresence>
-        {isLayoutsPanelOpen && (
-          <motion.div
-            data-layouts-panel
-            initial={{ opacity: 0, y: 20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 20, x: "-50%" }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:right-16 md:left-auto md:translate-x-0"
-          >
-            <LayoutsPanel
-              isOpen={isLayoutsPanelOpen}
-              onClose={() => setIsLayoutsPanelOpen(false)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {activePanel === "insert" && (
+                <BlockLibraryPanel
+                  isOpen={true}
+                  onClose={() => setActivePanel(null)}
+                />
+              )}
 
-      <AnimatePresence>
-        {isImagesPanelOpen && (
-          <motion.div
-            data-images-panel
-            initial={{ opacity: 0, y: 20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 20, x: "-50%" }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:right-16 md:left-auto md:translate-x-0"
-          >
-            <ImageLibraryPanel
-              isOpen={isImagesPanelOpen}
-              onClose={() => setIsImagesPanelOpen(false)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {activePanel === "layouts" && (
+                <LayoutsPanel
+                  isOpen={true}
+                  onClose={() => setActivePanel(null)}
+                />
+              )}
 
-      <AnimatePresence>
-        {isThemePanelOpen && (
-          <motion.div
-            data-theme-panel
-            initial={{ opacity: 0, y: 20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 20, x: "-50%" }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:right-16 md:left-auto md:translate-x-0"
-          >
-            <ThemeSelectorPanel
-              isOpen={isThemePanelOpen}
-              onClose={() => setIsThemePanelOpen(false)}
-            />
+              {activePanel === "theme" && (
+                <ThemeSelectorPanel
+                  isOpen={true}
+                  onClose={() => setActivePanel(null)}
+                />
+              )}
+
+              {activePanel === "images" && (
+                <ImageLibraryPanel
+                  isOpen={true}
+                  onClose={() => setActivePanel(null)}
+                />
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

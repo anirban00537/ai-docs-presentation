@@ -4,8 +4,8 @@ import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BlockOption } from "../block-ui/BlockOption";
-import type { BlockType } from "@/types/docs";
 import { BLOCK_DEFINITIONS } from "@/app/(protected)/docs/[id]/engine";
+import { cn } from "@/lib/utils";
 
 interface BlockLibraryPanelProps {
   isOpen: boolean;
@@ -23,7 +23,6 @@ interface LibraryItem {
 
 const generateLibraryItems = (): LibraryItem[] => {
   return Object.values(BLOCK_DEFINITIONS).flatMap((def) => {
-    // If definition has presets, use them
     if (def.presets && def.presets.length > 0) {
       return def.presets.map((preset) => {
         const Icon = preset.icon || def.icon;
@@ -38,7 +37,6 @@ const generateLibraryItems = (): LibraryItem[] => {
       });
     }
 
-    // Otherwise use the definition itself
     const Icon = def.icon;
     return [{
       type: def.type,
@@ -53,7 +51,6 @@ const generateLibraryItems = (): LibraryItem[] => {
 
 const blockDefinitions = generateLibraryItems();
 
-
 export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
   isOpen,
   onClose,
@@ -64,19 +61,19 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
   const panelVariants = {
     hidden: {
       opacity: 0,
-      x: 20,
+      y: 10,
       scale: 0.98,
       transition: { duration: 0.15 },
     },
     visible: {
       opacity: 1,
-      x: 0,
+      y: 0,
       scale: 1,
       transition: { duration: 0.2 },
     },
     exit: {
       opacity: 0,
-      x: 20,
+      y: 10,
       scale: 0.98,
       transition: { duration: 0.15 },
     },
@@ -96,73 +93,55 @@ export const BlockLibraryPanel: React.FC<BlockLibraryPanelProps> = ({
           className="relative z-40"
         >
           <div
-            className="relative w-[380px] max-h-[75vh] flex flex-col rounded-2xl overflow-hidden"
-            style={{
-              backgroundColor: isDark
-                ? "rgba(30, 30, 40, 0.5)"
-                : "rgba(255, 255, 255, 0.5)",
-              backdropFilter: "blur(32px) saturate(200%)",
-              WebkitBackdropFilter: "blur(32px) saturate(200%)",
-              boxShadow: isDark
-                ? `
-                  0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
-                  0 -1px 0 0 rgba(0, 0, 0, 0.2) inset,
-                  0 8px 40px rgba(0, 0, 0, 0.4),
-                  0 2px 8px rgba(0, 0, 0, 0.2)
-                `
-                : `
-                  0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
-                  0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
-                  0 8px 40px rgba(0, 0, 0, 0.08),
-                  0 2px 8px rgba(0, 0, 0, 0.04)
-                `,
-            }}
+            className={cn(
+              "relative w-[400px] max-h-[60vh] flex flex-col rounded-2xl overflow-hidden backdrop-blur-xl border shadow-2xl",
+              isDark 
+                ? "bg-[#1a1a1f]/95 border-white/10" 
+                : "bg-white/95 border-black/10"
+            )}
           >
-            {/* Glass shine overlay */}
-            <div
-              className="absolute inset-0 pointer-events-none rounded-2xl"
-              style={{
-                background: isDark
-                  ? "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.02) 100%)"
-                  : "linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.3) 100%)",
-              }}
-            />
-
             {/* Header */}
-            <div className="relative px-4 py-3 flex items-center justify-between shrink-0">
-              <span
-                className="text-sm font-medium"
-                style={{ color: isDark ? "#fff" : "#000" }}
-              >
-                Add Block
+            <div className={cn(
+              "relative px-4 py-3 flex items-center justify-between shrink-0 border-b",
+              isDark ? "border-white/5" : "border-black/5"
+            )}>
+              <span className={cn(
+                "text-sm font-semibold",
+                isDark ? "text-white" : "text-black"
+              )}>
+                Insert Block
               </span>
               <button
-                className="p-1.5 rounded-lg transition-all opacity-50 hover:opacity-100"
+                className={cn(
+                  "p-1.5 rounded-lg transition-all",
+                  isDark 
+                    ? "text-white/40 hover:text-white hover:bg-white/10" 
+                    : "text-black/40 hover:text-black hover:bg-black/5"
+                )}
                 onClick={onClose}
-                style={{ color: isDark ? "#fff" : "#000" }}
               >
                 <X size={16} />
               </button>
             </div>
 
             {/* Blocks Grid */}
-            <div
-              className={`relative flex-1 overflow-y-auto px-3 pb-3 ${isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
-                }`}
-            >
-              <p
-                className="text-[11px] font-medium mb-2 px-1 opacity-50"
-                style={{ color: isDark ? "#fff" : "#000" }}
-              >
-                Drag to add to your card
+            <div className={cn(
+              "relative flex-1 overflow-y-auto px-3 pb-3",
+              isDark ? "custom-scrollbar-dark" : "custom-scrollbar-light"
+            )}>
+              <p className={cn(
+                "text-[11px] font-medium my-3 px-1",
+                isDark ? "text-white/40" : "text-black/40"
+              )}>
+                Drag to add to your slide
               </p>
-              <div className="space-y-6">
+              <div className="space-y-5">
                 {Array.from(new Set(blockDefinitions.map(b => b.category))).map(category => (
                   <div key={category}>
-                    <h3
-                      className="text-[10px] uppercase tracking-wider font-semibold mb-2 px-1 opacity-40 font-mono"
-                      style={{ color: isDark ? "#fff" : "#000" }}
-                    >
+                    <h3 className={cn(
+                      "text-[10px] uppercase tracking-wider font-semibold mb-2 px-1 font-mono",
+                      isDark ? "text-white/30" : "text-black/30"
+                    )}>
                       {category}
                     </h3>
                     <div className="grid grid-cols-4 gap-1">

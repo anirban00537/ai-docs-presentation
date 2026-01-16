@@ -232,31 +232,19 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
           className="relative z-40"
         >
           <div
-            className="relative w-80 max-h-[85vh] flex flex-col rounded-2xl overflow-hidden"
-            style={{
-              backgroundColor: isDark 
-                ? "rgba(30, 30, 40, 0.7)" 
-                : "rgba(255, 255, 255, 0.7)",
-              backdropFilter: "blur(32px) saturate(200%)",
-              WebkitBackdropFilter: "blur(32px) saturate(200%)",
-              boxShadow: isDark
-                ? "0 8px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.1)"
-                : "0 8px 40px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.05)",
-            }}
+            className={`relative w-80 max-h-[70vh] flex flex-col rounded-2xl overflow-hidden backdrop-blur-xl border shadow-2xl ${
+              isDark ? "bg-[#1a1a1f]/95 border-white/10" : "bg-white/95 border-black/10"
+            }`}
           >
             {/* Header */}
             <div className="px-4 pt-4 pb-2">
               <div className="flex items-center justify-between mb-4">
-                <span
-                  className="text-sm font-semibold"
-                  style={{ color: isDark ? "#fff" : "#000" }}
-                >
+                <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-black"}`}>
                   Design & Theme
                 </span>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg transition-all opacity-50 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
-                  style={{ color: isDark ? "#fff" : "#000" }}
+                  className={`p-1.5 rounded-lg transition-all ${isDark ? "text-white/40 hover:text-white hover:bg-white/10" : "text-black/40 hover:text-black hover:bg-black/5"}`}
                   aria-label="Close theme panel"
                 >
                   <X size={16} />
@@ -264,16 +252,13 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
               </div>
 
               {/* Tab Switcher */}
-              <div 
-                className="flex p-1 rounded-xl gap-1 mb-2"
-                style={{ backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
-              >
+              <div className={`flex p-1 rounded-xl gap-1 mb-2 ${isDark ? "bg-white/5" : "bg-black/5"}`}>
                 <button
                   onClick={() => setActiveTab("presets")}
                   className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
                     activeTab === "presets" 
-                      ? (isDark ? "bg-white/10 shadow-sm text-white" : "bg-white shadow-sm text-black")
-                      : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                      ? isDark ? "bg-white/10 shadow-sm text-white" : "bg-white shadow-sm text-black"
+                      : isDark ? "text-white/50 hover:text-white/70" : "text-black/50 hover:text-black/70"
                   }`}
                 >
                   Presets
@@ -282,8 +267,8 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                   onClick={() => setActiveTab("customize")}
                   className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
                     activeTab === "customize" 
-                      ? (isDark ? "bg-white/10 shadow-sm text-white" : "bg-white shadow-sm text-black")
-                      : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                      ? isDark ? "bg-white/10 shadow-sm text-white" : "bg-white shadow-sm text-black"
+                      : isDark ? "text-white/50 hover:text-white/70" : "text-black/50 hover:text-black/70"
                   }`}
                 >
                   Customize
@@ -292,7 +277,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
             </div>
 
             {/* Content Area */}
-            <div className={`flex-1 overflow-y-auto px-4 pb-6 ${isDark ? 'custom-scrollbar-dark' : 'custom-scrollbar-light'}`}>
+            <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar-dark">
               {activeTab === "presets" ? (
                 /* THEMES LIST */
                 <div className="space-y-1 py-2">

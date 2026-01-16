@@ -5,9 +5,7 @@ import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import {
   IconTrash,
   IconCopy,
-  IconPlus,
 } from "@tabler/icons-react";
-import { type Block } from "@/types/docs";
 import { cn } from "@/lib/utils";
 
 interface BlockToolbarProps {
@@ -25,8 +23,10 @@ export const BlockToolbar = memo(function BlockToolbar({
   const isDark = theme.themeType === "dark";
 
   const buttonClass = cn(
-    "w-8 h-8 rounded-lg transition-all flex items-center justify-center hover:text-primary hover:bg-black/5 dark:hover:bg-white/10",
-    isDark ? "text-white/60" : "text-muted-foreground"
+    "w-8 h-8 rounded-lg transition-all flex items-center justify-center",
+    isDark 
+      ? "text-white/60 hover:text-white hover:bg-white/10"
+      : "text-black/50 hover:text-black hover:bg-black/5"
   );
 
   return (
@@ -41,29 +41,31 @@ export const BlockToolbar = memo(function BlockToolbar({
           data-block-action-bar
         >
           <div
-            className="flex flex-col items-center gap-1 p-1 rounded-xl shadow-2xl border backdrop-blur-2xl"
-            style={{
-              backgroundColor: isDark ? "rgba(0, 0, 0, 0.2)" : "rgba(255, 255, 255, 0.4)",
-              borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)",
-            }}
+            className={cn(
+              "flex flex-col items-center gap-1 p-1 rounded-xl shadow-2xl border backdrop-blur-xl",
+              isDark 
+                ? "bg-[#1a1a1f]/95 border-white/10" 
+                : "bg-white/95 border-black/10"
+            )}
           >
             {/* Duplicate */}
             <button
               onClick={onDuplicate}
               className={buttonClass}
-              style={{ color: isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)" }}
               title="Duplicate"
             >
               <IconCopy size={16} />
             </button>
 
-            <div className="w-4 h-px bg-black/5 dark:bg-white/5 mx-auto" />
+            <div className={cn(
+              "w-4 h-px mx-auto",
+              isDark ? "bg-white/10" : "bg-black/10"
+            )} />
 
             {/* Delete */}
             <button
               onClick={onDelete}
-              className={buttonClass}
-              style={{ color: "#ef4444" }}
+              className={cn(buttonClass, "text-red-500 hover:text-red-400 hover:bg-red-500/10")}
               title="Delete"
             >
               <IconTrash size={16} />
@@ -74,4 +76,3 @@ export const BlockToolbar = memo(function BlockToolbar({
     </AnimatePresence>
   );
 });
-
