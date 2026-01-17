@@ -57,7 +57,7 @@ export const LeafBlock = memo(function LeafBlock({
     };
 
     return (
-        <div className="group relative w-full h-full min-h-[220px] p-3">
+        <div className="group relative w-full h-full p-3">
             <div 
                 className="grid gap-3"
                 style={{
@@ -67,9 +67,11 @@ export const LeafBlock = memo(function LeafBlock({
                 {items.map((item, index) => (
                     <div
                         key={item.id}
-                        className="relative group/leaf p-6 transition-all duration-500 overflow-hidden rounded-3xl"
+                        className="relative group/leaf p-6 transition-all duration-500 overflow-hidden"
                         style={{
                             backgroundColor: theme.cardBackground,
+                            // Leaf shape: rounded on top-left and bottom-right, sharp on others
+                            borderRadius: "2rem 0.5rem 2rem 0.5rem",
                         }}
                     >
                         {/* Remove Button */}
@@ -116,23 +118,19 @@ export const LeafBlock = memo(function LeafBlock({
                 ))}
             </div>
 
-            {/* Add Button */}
+            {/* Add Button - Corner positioned, icon only */}
             {!readOnly && (
-                <div className="flex justify-center mt-8">
-                    <button
-                        onClick={handleAddItem}
-                        className="group/add flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 duration-300 shadow-md hover:shadow-xl"
-                        style={{
-                            backgroundColor: theme.primary,
-                            color: theme.cardBackground,
-                        }}
-                    >
-                        <IconPlus size={18} stroke={3} />
-                        <span className="text-sm font-black uppercase tracking-widest">
-                            Add Card
-                        </span>
-                    </button>
-                </div>
+                <button
+                    onClick={handleAddItem}
+                    className="absolute bottom-3 right-3 z-30 p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
+                    style={{
+                        backgroundColor: theme.primary,
+                        color: theme.cardBackground,
+                    }}
+                    title="Add item"
+                >
+                    <IconPlus size={16} stroke={2.5} />
+                </button>
             )}
         </div>
     );

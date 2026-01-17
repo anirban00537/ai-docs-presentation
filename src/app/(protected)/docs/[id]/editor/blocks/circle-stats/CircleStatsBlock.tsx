@@ -61,7 +61,7 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
 
   return (
     <div 
-      className="group relative w-full h-full min-h-[220px] py-3"
+      className="group relative w-full h-full py-3"
       style={{
         fontFamily: getFontFamily(theme.fontFamily || "Inter"),
       }}
@@ -150,24 +150,19 @@ export const CircleStatsBlock = memo(function CircleStatsBlock({
           </div>
         ))}
 
-        {/* Add Button */}
+        {/* Add Button - Corner positioned, icon only */}
         {!readOnly && (
-             <div className="flex justify-center w-full mt-8">
-                 <button
-                    onClick={handleAddItem}
-                    className="group/add flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 duration-300 shadow-md hover:shadow-xl"
-                    style={{
-                        backgroundColor: theme.primary,
-                        color: theme.cardBackground,
-                    }}
-                    title="Add Statistic"
-                >
-                    <IconPlus size={18} stroke={3} />
-                    <span className="text-sm font-black uppercase tracking-widest">
-                        Add Stat
-                    </span>
-                </button>
-             </div>
+          <button
+            onClick={handleAddItem}
+            className="absolute bottom-3 right-3 z-30 p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
+            style={{
+              backgroundColor: theme.primary,
+              color: theme.cardBackground,
+            }}
+            title="Add stat"
+          >
+            <IconPlus size={16} stroke={2.5} />
+          </button>
         )}
       </div>
     </div>
