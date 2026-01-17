@@ -18,11 +18,20 @@ For ANY field that should contain an image (accent, image block, card items, ava
 - "imageQuery": "a descriptive, contextual search query for Unsplash"
 
 IMAGE QUERY GUIDELINES:
-1. Make queries specific to the card content and context.
+1. Make queries SPECIFIC and UNIQUE to this card's content - DO NOT reuse generic terms.
 2. Use 3-5 words describing the ideal image.
-3. For accent/background images: Use atmospheric or abstract terms related to the topic.
+3. For accent/background images: Use atmospheric or abstract terms related to the SPECIFIC topic of THIS card.
 4. For person/avatar fields: Use "professional headshot portrait person".
 5. Examples: "modern office teamwork collaboration", "data analytics dashboard charts", "renewable energy solar panels sunset".
+
+🚨 CRITICAL: UNIQUE IMAGES PER CARD 🚨
+- Each card MUST have DIFFERENT image queries than other cards in this presentation.
+- DO NOT use generic queries like "business meeting", "technology background", "abstract gradient" repeatedly.
+- Tie the image query DIRECTLY to the specific content of THIS card.
+- If this card is about "marketing", use "marketing campaign creative brainstorm".
+- If this card is about "data", use "data visualization analytics graph".
+- If this card is about "team", use "diverse team collaboration workspace".
+- VARIETY IS ESSENTIAL - each slide should have a visually distinct image.
 
 HOW TO APPLY:
 1. For "accent" - Add a top-level "accent" object to your JSON response:
@@ -44,6 +53,7 @@ HOW TO APPLY:
      }
    }
 3. For "image-card-block" - Set the imageUrl and imageQuery for each item in the "items" array.
+   IMPORTANT: Each item in image-card-block MUST have a UNIQUE imageQuery.
 `;
   }
 
@@ -136,6 +146,7 @@ FINAL CHECKLIST:
 3. Are all block IDs and types preserved?
 4. ⚠️ Did you verify EVERY text field has content? (NO EMPTY STRINGS)
 5. Did you provide descriptive "imageQuery" strings and empty "imageUrl" strings?
+6. 🖼️ Are ALL imageQuery values UNIQUE and specific to THIS card's content? (NO GENERIC DUPLICATES)
 
 Generate only the JSON. No prefix/suffix text.`;
   }
