@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState, useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { setCards, Card } from "@/store/slices/cardsSlice";
+import { fetchCreditBalance } from "@/store/slices/subscriptionSlice";
 import { generateAndCreateCards } from "@/services/docs";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
@@ -230,6 +231,7 @@ export function useCardGeneration({ cardsRef }: UseCardGenerationParams) {
         setIsGenerating(false);
         setProgress(null);
         toast.success("Document created successfully!");
+        dispatch(fetchCreditBalance());
       } else if (chunk.type === "card-error") {
         toast.error(
           `Card ${chunk.cardNumber} failed: ${chunk.message || "Unknown error"}`
@@ -238,6 +240,7 @@ export function useCardGeneration({ cardsRef }: UseCardGenerationParams) {
         setIsGenerating(false);
         setProgress(null);
         toast.error(`Generation failed: ${chunk.message || "Unknown error"}`);
+        dispatch(fetchCreditBalance());
       }
     },
     [dispatch, cardsRef, progress?.total]
