@@ -233,13 +233,18 @@ const ImageCardItem = memo(function ImageCardItem({
           />
         )}
         
-        {/* Image Overlay on Hover */}
-        {!readOnly && url && (
-          <div className="absolute inset-0 bg-black/0 group-hover/card:bg-black/20 transition-all flex items-center justify-center opacity-0 group-hover/card:opacity-100">
-            <span className="text-white text-sm font-bold px-4 py-2 rounded-lg bg-white/20 backdrop-blur-sm">
-              Change Image
-            </span>
-          </div>
+        {/* Change Image Button - Corner positioned */}
+        {!readOnly && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onImageClick(index);
+            }}
+            className="absolute top-3 left-3 z-20 p-2 rounded-xl opacity-0 group-hover/card:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg bg-white/90 backdrop-blur-sm"
+            title="Change image"
+          >
+            <IconPhoto size={16} stroke={2} className="text-neutral-700" />
+          </button>
         )}
       </div>
 

@@ -178,38 +178,26 @@ export const ImageBlock = memo(function ImageBlock({
             }}
           />
 
-          {/* Overlay Controls (only in edit mode) */}
+          {/* Corner Change Image Button - Always visible on hover */}
           {!readOnly && (
-            <div 
-              className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-all flex items-center justify-center opacity-0 group-hover/image:opacity-100 backdrop-blur-0 group-hover/image:backdrop-blur-[2px]"
+            <button
+              onClick={openModal}
+              className="absolute top-3 left-3 z-20 p-2 rounded-xl opacity-0 group-hover/image:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg bg-white/90 backdrop-blur-sm"
+              title="Change image"
             >
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={openModal}
-                  className="px-4 py-2 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-xl border"
-                  style={{
-                    backgroundColor: "rgba(255,255,255,0.95)",
-                    borderColor: "rgba(255,255,255,0.2)",
-                    color: "#000",
-                  }}
-                >
-                  Change Image
-                </button>
-                 <button
-                   onClick={toggleHeightMode}
-                   className="px-4 py-2 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-xl border flex items-center gap-2"
-                   style={{
-                     backgroundColor: "rgba(255,255,255,0.95)",
-                     borderColor: "rgba(255,255,255,0.2)",
-                     color: "#000",
-                   }}
-                   title={`Current: ${getHeightLabel()}`}
-                 >
-                   {getHeightIcon()}
-                   {getHeightLabel()}
-                 </button>
-              </div>
-            </div>
+              <IconPhoto size={18} stroke={2} className="text-neutral-700" />
+            </button>
+          )}
+          
+          {/* Height Mode Button - Corner positioned */}
+          {!readOnly && (
+            <button
+              onClick={toggleHeightMode}
+              className="absolute top-3 right-3 z-20 p-2 rounded-xl opacity-0 group-hover/image:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg bg-white/90 backdrop-blur-sm flex items-center gap-1"
+              title={`Current: ${getHeightLabel()}`}
+            >
+              {getHeightIcon()}
+            </button>
           )}
         </div>
       </CommonCard>

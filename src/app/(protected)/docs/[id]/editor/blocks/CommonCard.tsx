@@ -26,8 +26,11 @@ export const CommonCard = memo(function CommonCard({
 }: CommonCardProps) {
   return (
       <div 
-        className="cursor-pointer h-full w-full min-h-0 min-w-0 overflow-hidden" 
+        className={`cursor-pointer h-full w-full min-h-0 min-w-0 overflow-hidden ${className}`} 
+        style={style}
         onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         {/* Shine effect on hover - Block specific style */}
         <div
