@@ -106,6 +106,17 @@ export const useEditorPage = ({ docId }: UseEditorPageParams) => {
     if (!docResponse?.success || !docResponse.data || !docId || isGenerating)
       return;
 
+    // First check: If Redux already has cards with actual row data,
+    // generation has already completed - don't re-trigger
+    const reduxHasCardsWithData = cards.some(
+      (c) => c.rows && Array.isArray(c.rows) && c.rows.length > 0
+    );
+    
+    if (reduxHasCardsWithData) {
+      hasTriggeredGeneration.current = false;
+      return;
+    }
+
     const apiCards = docResponse.data.cards || [];
     const hasCardsWithOutlineButNoData = apiCards.some(
       (c: any) =>
@@ -116,7 +127,7 @@ export const useEditorPage = ({ docId }: UseEditorPageParams) => {
     );
     const outlineCompleted = docResponse.data.outlineStatus === "completed";
 
-    // If cards have data, generation is complete - reset flag and don't trigger
+    // If API cards have data, generation is complete - reset flag and don't trigger
     if (hasCardsWithData) {
       hasTriggeredGeneration.current = false;
       return;
@@ -131,7 +142,7 @@ export const useEditorPage = ({ docId }: UseEditorPageParams) => {
       hasTriggeredGeneration.current = true;
       startGeneration(docId);
     }
-  }, [docResponse, docId, isGenerating, startGeneration]);
+  }, [docResponse, docId, isGenerating, startGeneration, cards]);
 
   // --- Action Handlers ---
   const handleUpdateBlock = (cardId: string, blockId: string, content: any) =>
