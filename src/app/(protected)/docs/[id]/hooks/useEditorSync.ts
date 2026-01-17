@@ -28,7 +28,36 @@ export function useEditorSync(docId: string | null) {
     // Detect what changed
     const changedCards = cards.filter(card => {
       const prev = prevCardsRef.current.find(pc => pc.id === card.id);
-      if (!prev) return false; // Creation is handled by separate actions
+      
+      // Special case: If this is a "new" card (not in prevCardsRef) but has a valid 
+      // imageUrl and no imageQuery, it means the image was just loaded after generation.
+      // This handles the case where cards complete generation with empty imageUrl,
+      // then lazy-load images, but prevCardsRef was initialized before the image loaded.
+      if (!prev) {
+        // Check for accent image that was just loaded
+        const hasLoadedAccentImage = card.accent?.imageUrl && 
+          card.accent.imageUrl.length > 0 && 
+          !card.accent.imageQuery;
+        
+        // Check for image blocks that were just loaded
+        const hasLoadedBlockImage = card.rows?.some(row => 
+          row.blocks?.some(block => {
+            if (block.type !== 'image') return false;
+            const content = block.content as { imageUrl?: string; imageQuery?: string } | undefined;
+            return content?.imageUrl && 
+              content.imageUrl.length > 0 &&
+              !content.imageQuery;
+          })
+        );
+        
+        if (hasLoadedAccentImage || hasLoadedBlockImage) {
+          // This is a new card with loaded images - sync it
+          return true;
+        }
+        
+        return false; // Creation is handled by separate actions
+      }
+      
       return JSON.stringify(prev) !== JSON.stringify(card);
     });
 
