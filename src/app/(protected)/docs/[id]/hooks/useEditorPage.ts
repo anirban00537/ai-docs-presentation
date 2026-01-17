@@ -16,7 +16,7 @@ import { createEditorCommandBus } from "@/lib/editor/commands";
 import { useDoc } from "@/hooks/use-docs";
 import { useEditorDnd } from "./useEditorDnd";
 import { useCardGeneration } from "./useCardGeneration";
-import { useEditorSync } from "./useEditorSync";
+import { setDocIdForSync } from "@/store/middleware/cardSyncMiddleware";
 import { useCardActions } from "./useCardActions";
 import { detectRowBlockType } from "@/app/(protected)/docs/[id]/editor/blocks/utils";
 
@@ -46,8 +46,15 @@ export const useEditorPage = ({ docId }: UseEditorPageParams) => {
       cardsRef,
     });
 
-  // 2. Sync Logic (Auto-save)
-  useEditorSync(docId);
+  // 2. Sync Logic (Middleware-based auto-save)
+  // Set docId for the middleware to enable syncing
+  useEffect(() => {
+    setDocIdForSync(docId);
+    return () => {
+      // Cleanup: disable syncing when leaving the page
+      setDocIdForSync(null);
+    };
+  }, [docId]);
 
   // 4. Card Actions (Add/Delete)
   const { handleAddCard, handleDeleteCard } = useCardActions(docId);
