@@ -7,5 +7,4 @@ export const CONFIG = {
 
 // Ensure critical config exists
 if (!CONFIG.API_URL && typeof window !== "undefined") {
-  console.warn("NEXT_PUBLIC_API_URL is not set.");
 }

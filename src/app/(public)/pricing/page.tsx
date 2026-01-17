@@ -20,18 +20,7 @@ export default function PricingPage() {
   const currentSubscription = subscriptionStatus?.subscription;
   const [loadingCheckout, setLoadingCheckout] = useState<string | null>(null);
 
-  // Debug logs
-  useEffect(() => {
-    if (subscriptionStatus) {
-      console.log("[PricingPage] Subscription Status:", {
-        isActive: subscriptionStatus.isActive,
-        hasAccess: subscriptionStatus.hasAccess,
-        productId: currentSubscription?.productId,
-        status: currentSubscription?.status,
-        periodEnd: currentSubscription?.currentPeriodEnd,
-      });
-    }
-  }, [subscriptionStatus, currentSubscription]);
+
 
   const handleSelectPlan = async (productId: string, priceId?: string) => {
     if (!priceId) {

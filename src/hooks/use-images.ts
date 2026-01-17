@@ -118,7 +118,6 @@ export const useTrackUnsplashDownload = () => {
       } catch (error: any) {
         // Silently fail for download tracking as it's not critical
         // But log it for debugging
-        console.warn("Failed to track download:", error.message);
         // Re-throw to let TanStack Query handle it
         throw error;
       }
@@ -126,7 +125,6 @@ export const useTrackUnsplashDownload = () => {
     retry: false, // Don't retry download tracking
     onError: (error: any) => {
       // Silently handle download tracking errors
-      console.warn("Download tracking failed:", error.message);
     },
   });
 };

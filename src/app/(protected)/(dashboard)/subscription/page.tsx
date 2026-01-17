@@ -47,13 +47,11 @@ export default function SubscriptionPage() {
     if (checkoutStatus === "success" && !hasVerified.current) {
       hasVerified.current = true; // Mark as started immediately
       setIsVerifying(true);
-      console.log("Starting checkout verification...");
       
       const verify = async () => {
         try {
           // Immediately verify the checkout and sync subscription
           await verifyCheckoutMutation.mutateAsync(customerSessionToken || undefined);
-          console.log("Checkout verification successful");
         } catch (error) {
           console.error("Checkout verification failed", error);
         } finally {

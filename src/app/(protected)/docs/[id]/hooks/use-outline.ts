@@ -64,11 +64,9 @@ export const useOutlineGeneration = () => {
     (outlineId: string) => {
       // CRITICAL: Prevent double-start
       if (isGenerating || hasStartedStreaming.current) {
-        console.log("[useOutlineGeneration] Already generating, skipping duplicate call");
         return;
       }
 
-      console.log("[useOutlineGeneration] Starting generation for:", outlineId);
       setIsGenerating(true);
       setStreamingContent("");
       setCompletedOutline(null);
@@ -95,7 +93,6 @@ export const useOutlineGeneration = () => {
             lastUpdateTimestampRef.current = now;
             setStreamingContent(chunk.accumulated);
           } else if (chunk.type === "complete") {
-            console.log("[useOutlineGeneration] Generation complete");
             if (chunk.data) {
               setCompletedOutline(chunk.data);
             }
@@ -124,7 +121,6 @@ export const useOutlineGeneration = () => {
   );
 
   const resetGeneration = useCallback(() => {
-    console.log("[useOutlineGeneration] Resetting generation state");
     setIsGenerating(false);
     setStreamingContent("");
     setCompletedOutline(null);
@@ -154,7 +150,6 @@ export const useOutline = (docId: string | null) => {
       if (!docId) {
         throw new Error("Doc ID is required");
       }
-      console.log("[useOutline] Fetching doc:", docId);
       return getDoc(docId);
     },
     enabled: !!docId,
@@ -312,7 +307,6 @@ export const useOutlineEditor = (outlineId: string) => {
       !isStreaming &&
       !streamingContent
     ) {
-      console.log("[useOutlineEditor] Auto-starting generation");
       hasAutoStartedGeneration.current = true;
       startGeneration(outlineId);
     }
@@ -321,7 +315,6 @@ export const useOutlineEditor = (outlineId: string) => {
   // When stream completes, refetch to ensure we have canonical DB state
   useEffect(() => {
     if (completedOutline) {
-      console.log("[useOutlineEditor] Stream completed, refetching doc");
       refetch();
     }
   }, [completedOutline, refetch]);
@@ -415,7 +408,6 @@ export const useOutlineEditor = (outlineId: string) => {
 
   // Regenerate Handler
   const handleRegenerate = (newPrompt: string, newCardCount: number) => {
-    console.log("[useOutlineEditor] Regenerating with new prompt");
     resetGeneration();
     hasAutoStartedGeneration.current = false; // Reset for new generation
     

@@ -291,7 +291,6 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
         try {
           prosemirrorDoc = defaultMarkdownParser.parse(stringValue);
         } catch (error) {
-          console.warn("Failed to parse Markdown:", error);
           return;
         }
       }
@@ -361,7 +360,6 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
     const view = viewRef.current;
     if (!view) return;
 
-    console.log("Executing command:", command.label);
 
     const { state, dispatch } = view;
     const { $from } = state.selection;
@@ -573,10 +571,6 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       state,
       editable: () => !readOnly,
       dispatchTransaction(transaction: Transaction) {
-        console.log(
-          "dispatchTransaction called, docChanged:",
-          transaction.docChanged
-        );
 
         const newState = view.state.apply(transaction);
         view.updateState(newState);
@@ -659,21 +653,13 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
             $from.parentOffset
           );
 
-          console.log(
-            "textBefore:",
-            textBefore,
-            "parentOffset:",
-            $from.parentOffset
-          );
 
           const slashMatch = textBefore.match(/(^|\s)\/([^\s]*)$/);
-          console.log("slashMatch:", slashMatch);
 
           if (slashMatch) {
             const query = slashMatch[2] || "";
 
             if (!isMenuOpen) {
-              console.log("Opening menu, query:", query);
               // Opening menu for the first time
               try {
                 const coords = view.coordsAtPos($from.pos);
@@ -704,7 +690,6 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
               }
             }
           } else if (isMenuOpen) {
-            console.log("Closing menu - no slash found");
             // No slash pattern found, close menu
             isMenuOpen = false;
             currentQuery = "";
