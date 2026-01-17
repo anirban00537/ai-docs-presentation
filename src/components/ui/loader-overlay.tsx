@@ -134,7 +134,7 @@ export const LoaderOverlay: React.FC<LoaderOverlayProps> = ({
     : "AI is thinking";
 
   return (
-    <div className={cn("fixed inset-0 z-50 backdrop-blur-[1px] cursor-wait flex items-end justify-center pb-12 pointer-events-auto", isDark ? "bg-black/10" : "bg-white/10", className)}>
+    <div className={cn("fixed inset-0 z-50 cursor-wait flex items-end justify-center pb-12 pointer-events-auto", className)}>
         <motion.div
            initial={{ opacity: 0, scale: 0.9, y: 20 }}
            animate={{ opacity: 1, scale: 1, y: 0 }}
