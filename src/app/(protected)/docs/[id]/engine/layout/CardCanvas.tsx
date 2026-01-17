@@ -563,7 +563,7 @@ export const CardCanvas = memo(function CardCanvas({
                 "relative min-w-0 max-w-full outline-none",
                 fullWidth
                   ? "w-full max-w-[1600px] mx-auto px-16 md:px-24 py-20 md:py-32"
-                  : "p-5 md:p-10"
+                  : "px-3 py-5 md:px-5 md:py-10"
               )}
             >
               <div className="flex flex-col gap-2 relative">
