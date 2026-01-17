@@ -1,5 +1,9 @@
-import { IsOptional, IsString, IsBoolean, IsArray, IsObject, IsNumber, Min, Max } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsArray, IsObject, IsNumber, Min, Max, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
+
+// Supported document types
+export const DOC_TYPES = ['presentation', 'carousel', 'resume', 'infographic', 'report'] as const;
+export type DocType = typeof DOC_TYPES[number];
 
 export class CreateDocDto {
   @IsOptional()
@@ -13,6 +17,11 @@ export class CreateDocDto {
   @IsOptional()
   @IsString()
   thumbnail?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(DOC_TYPES, { message: `docType must be one of: ${DOC_TYPES.join(', ')}` })
+  docType?: DocType;
 
   @IsOptional()
   @IsObject()
@@ -42,4 +51,3 @@ export class CreateDocDto {
   @Type(() => Number)
   numberOfCards?: number;
 }
-

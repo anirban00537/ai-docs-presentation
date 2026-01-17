@@ -1,5 +1,6 @@
-import { IsOptional, IsString, IsBoolean, IsArray, IsObject, IsNumber, Min, Max } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsArray, IsObject, IsNumber, Min, Max, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
+import { DOC_TYPES, DocType } from './create-doc.dto';
 
 export class UpdateDocDto {
   @IsOptional()
@@ -13,6 +14,11 @@ export class UpdateDocDto {
   @IsOptional()
   @IsString()
   thumbnail?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(DOC_TYPES, { message: `docType must be one of: ${DOC_TYPES.join(', ')}` })
+  docType?: DocType;
 
   @IsOptional()
   @IsObject()
@@ -46,4 +52,3 @@ export class UpdateDocDto {
   @IsString()
   outlineStatus?: string;
 }
-

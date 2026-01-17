@@ -130,6 +130,9 @@ model Doc {
   title       String  @default("Untitled Doc")
   description String?
   thumbnail   String? @db.VarChar(500)
+  
+  // Document type: presentation, carousel, resume, etc.
+  docType     String  @default("presentation") @db.VarChar(50)
 
   globalTheme Json @default("{}")
 
@@ -167,6 +170,7 @@ model Doc {
   @@index([deletedAt])
   @@index([isPublic])
   @@index([isTemplate])
+  @@index([docType])
   @@index([createdAt])
   @@index([updatedAt])
   @@index([parentId])
