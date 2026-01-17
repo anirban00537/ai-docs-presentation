@@ -24,7 +24,7 @@ export const docKeys = {
   lists: () => [...docKeys.all, "list"] as const,
   list: (filters?: { page?: number; limit?: number }) =>
     [...docKeys.lists(), filters] as const,
-  detail: (id: string) => [...docKeys.all, id] as const,
+  detail: (id: string) => [...docKeys.all, "detail", id] as const,
 };
 
 // Get docs list query
@@ -55,6 +55,8 @@ export const useDoc = (docId: string | null) => {
     },
     enabled: !!docId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false, // Don't refetch on every mount - we have Redux
+    refetchOnWindowFocus: false, // Don't refetch on window focus - we have Redux
   });
 };
 
@@ -65,8 +67,8 @@ export const useCreateDoc = () => {
     mutationFn: (payload: CreateDocPayload) =>
       createDoc(payload),
     onSuccess: () => {
-      // Invalidate docs list
-      queryClient.invalidateQueries({ queryKey: docKeys.all });
+      // Only invalidate docs list, not individual doc queries
+      queryClient.invalidateQueries({ queryKey: docKeys.lists() });
     },
   });
 };
@@ -78,15 +80,14 @@ export const useCreateDocFromPrompt = () => {
     mutationFn: (payload: CreateFromPromptPayload) =>
       createDocFromPrompt(payload),
     onSuccess: () => {
-      // Invalidate docs list
-      queryClient.invalidateQueries({ queryKey: docKeys.all });
+      // Only invalidate docs list
+      queryClient.invalidateQueries({ queryKey: docKeys.lists() });
     },
   });
 };
 
 // Update doc mutation
 export const useUpdateDoc = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       id,
@@ -95,14 +96,8 @@ export const useUpdateDoc = () => {
       id: string;
       payload: UpdateDocPayload;
     }) => updateDoc(id, payload),
-    onSuccess: (data, variables) => {
-      // Invalidate specific doc
-      queryClient.invalidateQueries({
-        queryKey: docKeys.detail(variables.id),
-      });
-      // Invalidate docs list
-      queryClient.invalidateQueries({ queryKey: docKeys.all });
-    },
+    // Don't invalidate queries - Redux is the source of truth during editing
+    // The doc is already updated in Redux, no need to refetch
   });
 };
 
@@ -122,8 +117,8 @@ export const useDeleteDoc = () => {
   return useMutation({
     mutationFn: (id: string) => deleteDoc(id),
     onSuccess: () => {
-      // Invalidate docs list
-      queryClient.invalidateQueries({ queryKey: docKeys.all });
+      // Only invalidate docs list
+      queryClient.invalidateQueries({ queryKey: docKeys.lists() });
     },
   });
 };
@@ -145,7 +140,6 @@ export const useAddCard = () => {
 
 // Update card mutation
 export const useUpdateCard = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       docId,
@@ -156,18 +150,12 @@ export const useUpdateCard = () => {
       cardId: string;
       payload: UpdateCardPayload;
     }) => updateCard(docId, cardId, payload),
-    onSuccess: (data, variables) => {
-      // Invalidate specific doc
-      queryClient.invalidateQueries({
-        queryKey: docKeys.detail(variables.docId),
-      });
-    },
+    // Don't invalidate queries - Redux is the source of truth during editing
   });
 };
 
 // Delete card mutation
 export const useDeleteCard = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       docId,
@@ -176,18 +164,12 @@ export const useDeleteCard = () => {
       docId: string;
       cardId: string;
     }) => deleteCard(docId, cardId),
-    onSuccess: (data, variables) => {
-      // Invalidate specific doc
-      queryClient.invalidateQueries({
-        queryKey: docKeys.detail(variables.docId),
-      });
-    },
+    // Don't invalidate queries - Redux is the source of truth during editing
   });
 };
 
 // Reorder cards mutation
 export const useReorderCards = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       docId,
@@ -196,11 +178,6 @@ export const useReorderCards = () => {
       docId: string;
       cardOrders: { cardId: string; order: number }[];
     }) => reorderCards(docId, cardOrders),
-    onSuccess: (data, variables) => {
-      // Invalidate specific doc
-      queryClient.invalidateQueries({
-        queryKey: docKeys.detail(variables.docId),
-      });
-    },
+    // Don't invalidate queries - Redux is the source of truth during editing
   });
 };
