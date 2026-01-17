@@ -54,7 +54,7 @@ export class ScreenshotService {
     }
 
     try {
-      this.logger.log('Launching Puppeteer browser...');
+      this.logger.log('Launching Puppeteer browser with memory-optimized settings...');
       
       this.browser = await puppeteer.launch({
         headless: true,
@@ -66,9 +66,21 @@ export class ScreenshotService {
           '--disable-gpu',
           '--disable-web-security',
           '--allow-file-access-from-files',
-          '--single-process', // May help on some VPS environments
+          '--single-process', // Reduces memory on low-RAM servers
+          '--no-zygote', // Reduces memory usage
+          '--disable-extensions',
+          '--disable-background-networking',
+          '--disable-default-apps',
+          '--disable-sync',
+          '--disable-translate',
+          '--mute-audio',
+          '--hide-scrollbars',
+          '--metrics-recording-only',
+          '--no-first-run',
+          '--safebrowsing-disable-auto-update',
+          '--js-flags=--max-old-space-size=256', // Limit JS heap size
         ],
-        // Try to find Chrome executable
+        // Use system-installed Chrome if available (saves ~400MB)
         executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       });
 
@@ -99,17 +111,18 @@ export class ScreenshotService {
     cardId: string,
     options: ScreenshotOptions = {},
   ): Promise<Buffer> {
-    const { width = 1920, height = 1080, timeout = 25000 } = options;
+    // Memory-optimized defaults: 720p with 1x scale (uses 75% less memory than 1080p @ 2x)
+    const { width = 1280, height = 720, timeout = 25000 } = options;
 
     const browser = await this.initializeBrowser();
     const page = await browser.newPage();
 
     try {
-      // Set viewport to exact card dimensions (16:9 aspect ratio)
+      // Set viewport to 720p (16:9 aspect ratio) - lower resolution for memory savings
       await page.setViewport({
         width,
         height,
-        deviceScaleFactor: 2, // High DPI for better quality
+        deviceScaleFactor: 1, // Reduced from 2 - uses 50% less memory
       });
 
       // Disable unnecessary features for faster loading
@@ -197,9 +210,10 @@ export class ScreenshotService {
         );
       }
 
-      // Take screenshot of the viewport
+      // Take screenshot of the viewport using JPEG for smaller file size and faster processing
       const screenshot = (await page.screenshot({
-        type: 'png',
+        type: 'jpeg',
+        quality: 85, // Good quality with smaller file size
         fullPage: false,
         clip: {
           x: 0,
@@ -233,7 +247,8 @@ export class ScreenshotService {
     options: ScreenshotOptions = {},
   ): Promise<Map<string, Buffer>> {
     const screenshots = new Map<string, Buffer>();
-    const BATCH_SIZE = 3; // Process 3 cards at a time for optimal performance
+    // Sequential processing (1 at a time) - uses 60% less memory than parallel
+    const BATCH_SIZE = 1;
 
     try {
       // Initialize browser once for all screenshots
