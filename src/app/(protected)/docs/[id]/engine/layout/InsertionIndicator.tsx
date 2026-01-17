@@ -50,7 +50,7 @@ export const InsertionIndicator: React.FC<InsertionIndicatorProps> = ({
                 }),
           }}
         >
-          {/* Main line */}
+          {/* Simple line without endpoints */}
           <div
             style={{
               position: "absolute",
@@ -58,36 +58,6 @@ export const InsertionIndicator: React.FC<InsertionIndicatorProps> = ({
               backgroundColor: theme.primary,
               borderRadius: "1px",
               boxShadow: `0 0 6px ${theme.primary}50`,
-            }}
-          />
-
-          {/* Top/Left endpoint */}
-          <div
-            style={{
-              position: "absolute",
-              ...(isVertical
-                ? { top: 0, left: "50%", transform: "translate(-50%, -50%)" }
-                : { left: 0, top: "50%", transform: "translate(-50%, -50%)" }),
-              width: "8px",
-              height: "8px",
-              borderRadius: "50%",
-              backgroundColor: theme.primary,
-              boxShadow: `0 0 6px ${theme.primary}60`,
-            }}
-          />
-
-          {/* Bottom/Right endpoint */}
-          <div
-            style={{
-              position: "absolute",
-              ...(isVertical
-                ? { bottom: 0, left: "50%", transform: "translate(-50%, 50%)" }
-                : { right: 0, top: "50%", transform: "translate(50%, -50%)" }),
-              width: "8px",
-              height: "8px",
-              borderRadius: "50%",
-              backgroundColor: theme.primary,
-              boxShadow: `0 0 6px ${theme.primary}60`,
             }}
           />
         </motion.div>

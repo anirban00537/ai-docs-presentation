@@ -26,47 +26,18 @@ export const InsertDropZone = memo(function InsertDropZone({
   return (
     <div
       ref={setNodeRef}
-      className="relative h-20 -my-8 flex items-center justify-center z-20"
+      className="relative h-4 -my-1.5 flex items-center justify-center z-20"
     >
-      {/* Line with endpoints */}
-      <div
-        className={`absolute inset-x-6 flex items-center transition-all duration-150 ease-out`}
-        style={{
-          height: isOver ? "2px" : "2px",
-          opacity: isOver ? 1 : 0.4,
-        }}
-      >
-        {/* Main line */}
+      {/* Simple line - only visible when hovering */}
+      {isOver && (
         <div
-          className="flex-1 h-full rounded-full transition-all duration-150"
+          className="absolute inset-x-0 h-[2px] rounded-full transition-opacity duration-100"
           style={{
             backgroundColor: themePrimary,
-            boxShadow: isOver ? `0 0 8px ${themePrimary}50` : "none",
+            boxShadow: `0 0 8px ${themePrimary}60`,
           }}
         />
-
-        {/* Left dot */}
-        <div
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full transition-all duration-150"
-          style={{
-            width: isOver ? "8px" : "6px",
-            height: isOver ? "8px" : "6px",
-            backgroundColor: themePrimary,
-            boxShadow: isOver ? `0 0 6px ${themePrimary}60` : "none",
-          }}
-        />
-
-        {/* Right dot */}
-        <div
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 rounded-full transition-all duration-150"
-          style={{
-            width: isOver ? "8px" : "6px",
-            height: isOver ? "8px" : "6px",
-            backgroundColor: themePrimary,
-            boxShadow: isOver ? `0 0 6px ${themePrimary}60` : "none",
-          }}
-        />
-      </div>
+      )}
     </div>
   );
 });
