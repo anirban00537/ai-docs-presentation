@@ -114,20 +114,21 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  // Unsplash queries
+  // Unsplash queries - only enabled when panel is open
   const { data: searchResults, isLoading: isSearching, error: searchError } = useSearchUnsplashPhotos(
     { query: debouncedQuery, perPage: 30 },
-    activeTab === "unsplash" && debouncedQuery.length > 0
+    isOpen && activeTab === "unsplash" && debouncedQuery.length > 0 // Only fetch when panel is open
   );
   
   const { data: randomPhotos, isLoading: isLoadingRandom, error: randomError } = useRandomUnsplashPhotos(
     { count: 30 },
-    activeTab === "unsplash" && debouncedQuery.length === 0
+    isOpen && activeTab === "unsplash" && debouncedQuery.length === 0 // Only fetch when panel is open
   );
 
-  // User media query
+  // User media query - only enabled when panel is open
   const { data: userMedia, isLoading: isLoadingMedia } = useListMedia(
     { perPage: 50 },
+    isOpen // Only fetch when panel is open
   );
 
   // Mutations

@@ -47,20 +47,21 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  // Unsplash queries
+  // Unsplash queries - only enabled when modal is open
   const { data: searchResults, isLoading: isSearching } = useSearchUnsplashPhotos(
     { query: debouncedQuery, perPage: 30 },
-    activeTab === "unsplash" && debouncedQuery.length > 0
+    isOpen && activeTab === "unsplash" && debouncedQuery.length > 0
   );
   
   const { data: randomPhotos, isLoading: isLoadingRandom } = useRandomUnsplashPhotos(
     { count: 30 },
-    activeTab === "unsplash" && debouncedQuery.length === 0
+    isOpen && activeTab === "unsplash" && debouncedQuery.length === 0
   );
 
-  // User uploads query
+  // User uploads query - only enabled when modal is open
   const { data: userMedia, isLoading: isLoadingMedia } = useListMedia(
-    { perPage: 50 }
+    { perPage: 50 },
+    isOpen // Only fetch when modal is open
   );
 
   // Mutations

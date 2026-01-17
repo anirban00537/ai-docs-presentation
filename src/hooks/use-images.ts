@@ -77,7 +77,8 @@ export const useRandomUnsplashPhotos = (
       }
     },
     enabled,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 20 * 60 * 1000, // 20 minutes - cache random photos
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache longer
     retry: 1, // Retry once on failure
     retryDelay: 1000, // Wait 1 second before retry
   });
@@ -132,7 +133,7 @@ export const useTrackUnsplashDownload = () => {
 /**
  * List user's media query
  */
-export const useListMedia = (params?: ListMediaParams) => {
+export const useListMedia = (params?: ListMediaParams, enabled: boolean = true) => {
   return useQuery({
     queryKey: imageKeys.media.list(params),
     queryFn: async () => {
@@ -142,7 +143,9 @@ export const useListMedia = (params?: ListMediaParams) => {
         throw new Error(error.message || "Failed to load media. Please try again.");
       }
     },
-    staleTime: 30 * 1000, // 30 seconds
+    enabled,
+    staleTime: 20 * 60 * 1000, // 20 minutes - cache user media
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache longer
     retry: 1,
     retryDelay: 1000,
   });
