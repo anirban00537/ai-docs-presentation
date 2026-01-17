@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import puppeteer, { Browser, Page } from 'puppeteer';
-import { base_url } from 'src/shared/helpers/functions';
 import * as crypto from 'crypto';
 
 export interface ScreenshotOptions {
@@ -20,15 +19,19 @@ export class ScreenshotService {
   private readonly exportSecret: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.appUrl =
-      base_url() ||
-      this.configService.get('APP_URL') ||
+    // Use FRONTEND_URL for accessing the Next.js frontend
+    const frontendUrl = this.configService.get('FRONTEND_URL') || 
+      this.configService.get('APP_URL') || 
       'http://localhost:3000';
+    
+    // Remove trailing slash for consistent URL building
+    this.appUrl = frontendUrl.replace(/\/$/, '');
+    
     this.exportSecret =
       this.configService.get('EXPORT_SECRET') ||
       'butterfast-export-secret-key';
     
-    this.logger.log(`Screenshot service initialized with APP_URL: ${this.appUrl}`);
+    this.logger.log(`Screenshot service initialized with FRONTEND_URL: ${this.appUrl}`);
   }
 
   /**
