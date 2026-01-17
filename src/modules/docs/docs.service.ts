@@ -764,8 +764,8 @@ export class DocsService implements OnModuleInit {
       }
 
       // Check if user has enough credits before creating doc
-      // Outline generation requires 1 credit + cards require 2 credits each
-      const estimatedTotalCredits = 1 + payload.numberOfCards * 2;
+      // Outline generation requires 5 credits + cards require 2 credits each
+      const estimatedTotalCredits = 5 + payload.numberOfCards * 2;
 
       const hasCredits = await this.creditService.hasEnoughCredits(
         user.id,
@@ -839,6 +839,16 @@ export class DocsService implements OnModuleInit {
     let creditDeducted = false;
 
     try {
+      // Deduct 5 credits for outline generation
+      await this.creditService.useCredits(
+        user.id,
+        5,
+        `Outline generation for doc`,
+        docId,
+      );
+      creditDeducted = true;
+      this.logger.log(`💳 [Doc ${docId}] 5 credits deducted for outline generation`);
+
       await this.prisma.doc.update({
         where: { id: docId },
         data: { outlineStatus: 'generating' },
@@ -1031,12 +1041,12 @@ export class DocsService implements OnModuleInit {
         try {
           await this.creditService.refundCredits(
             user.id,
-            1,
+            5,
             `Refund: Outline generation failed for doc ${docId}`,
             docId,
           );
           this.logger.log(
-            `💳 [Doc ${docId}] Credit refunded due to generation failure`,
+            `💳 [Doc ${docId}] 5 credits refunded due to generation failure`,
           );
         } catch (refundError) {
           this.logger.error(
