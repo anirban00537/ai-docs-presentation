@@ -148,8 +148,10 @@ export class ScreenshotService {
       this.logger.log(`Navigating to export URL for card ${cardId}: ${exportUrl}`);
 
       try {
+        // Use networkidle0 to wait for all network requests to complete
+        // This is more reliable for pages with lazy-loaded images
         await page.goto(exportUrl, {
-          waitUntil: 'domcontentloaded', // Changed from networkidle2 for faster loading
+          waitUntil: 'networkidle0', // Wait until network is idle (no requests for 500ms)
           timeout,
         });
       } catch (navError) {
@@ -160,26 +162,48 @@ export class ScreenshotService {
       // Wait for the export container to be ready
       try {
         await page.waitForSelector('#export-card-container.export-ready', {
-          timeout: 10000,
+          timeout: 15000,
         });
 
         // Wait for lazy image fetching hooks to complete (Unsplash API calls)
-        // The useLazyImage hook has a 300ms debounce, so we wait longer
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        // useLazyImage hook has debounce + API call + state update
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        // Poll for images to appear and load (handles lazy-loaded images)
-        // This waits for img elements to appear AND fully load
+        // Wait for all images to have valid src and be fully loaded
         await page.evaluate(() => {
           return new Promise<void>((resolve) => {
-            const maxWait = 12000; // 12 seconds max
-            const pollInterval = 500; // Check every 500ms
+            const maxWait = 20000; // 20 seconds max for all images
+            const pollInterval = 300; // Check every 300ms
             const startTime = Date.now();
             
             const checkImages = () => {
-              const images = Array.from(document.images);
-              const allLoaded = images.every(img => img.complete && img.naturalWidth > 0);
+              const images = Array.from(document.querySelectorAll('img'));
               
-              if (allLoaded || Date.now() - startTime > maxWait) {
+              // Check each image:
+              // 1. Has a valid src (not empty, not placeholder)
+              // 2. Is complete (loaded)
+              // 3. Has naturalWidth > 0 (actually rendered)
+              const allReady = images.every(img => {
+                const src = img.getAttribute('src') || '';
+                const hasValidSrc = src.length > 0 && 
+                  !src.includes('placeholder') && 
+                  !src.startsWith('data:image/svg');
+                const isLoaded = img.complete && img.naturalWidth > 0;
+                
+                // Image is ready if it has valid src AND is loaded
+                // OR if it's a placeholder/empty (no src means no image to wait for)
+                return (hasValidSrc && isLoaded) || !hasValidSrc;
+              });
+
+              // Also check for background images in style attributes
+              const elementsWithBgImage = document.querySelectorAll('[style*="background-image"]');
+              const bgImagesReady = Array.from(elementsWithBgImage).every((el) => {
+                const style = (el as HTMLElement).style.backgroundImage;
+                // If background-image is set and not 'none', it should already be loaded
+                return style && style !== 'none';
+              });
+              
+              if ((allReady && bgImagesReady) || Date.now() - startTime > maxWait) {
                 resolve();
                 return;
               }
@@ -188,12 +212,12 @@ export class ScreenshotService {
               setTimeout(checkImages, pollInterval);
             };
             
-            // Start polling
-            checkImages();
+            // Start polling after a short delay to let React render
+            setTimeout(checkImages, 500);
           });
         });
 
-        // Final wait for any CSS transitions and final rendering
+        // Additional wait for any CSS transitions and final rendering
         await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (waitError) {
         // Check if there's an error state
