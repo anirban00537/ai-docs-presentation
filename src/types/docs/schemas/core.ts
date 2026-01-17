@@ -21,6 +21,23 @@ export const BLOCK_TYPES = {
   IMAGE_CARD_BLOCK: "image-card-block",
 } as const;
 
+// Supported document types
+export const DOC_TYPES = {
+  PRESENTATION: "presentation",
+  CAROUSEL: "carousel",
+  RESUME: "resume",
+  INFOGRAPHIC: "infographic",
+  REPORT: "report",
+} as const;
+
+export const DocTypeSchema = z.enum([
+  DOC_TYPES.PRESENTATION,
+  DOC_TYPES.CAROUSEL,
+  DOC_TYPES.RESUME,
+  DOC_TYPES.INFOGRAPHIC,
+  DOC_TYPES.REPORT,
+]);
+
 export const MAX_BLOCKS_PER_ROW = 3;
 
 export const BlockTypeSchema = z.nativeEnum(BLOCK_TYPES);
@@ -57,6 +74,7 @@ export const DocInfoSchema = z.object({
   title: z.string(),
   description: z.string().nullable(),
   thumbnail: z.string().nullable(),
+  docType: DocTypeSchema.default(DOC_TYPES.PRESENTATION),
   isPublic: z.boolean(),
   isTemplate: z.boolean(),
   tags: z.array(z.string()),

@@ -3,6 +3,10 @@ import { CONFIG } from "@/lib/config";
 import type { ApiResponse } from "@/types/api.types";
 import request from "@/lib/request";
 
+// Supported document types
+export const DOC_TYPES = ['presentation', 'carousel', 'resume', 'infographic', 'report'] as const;
+export type DocType = typeof DOC_TYPES[number];
+
 export interface OutlineItem {
   content: string;
 }
@@ -64,6 +68,7 @@ export interface Doc {
   title?: string;
   description?: string;
   thumbnail?: string;
+  docType?: DocType;
   globalTheme?: any;
   isPublic?: boolean;
   isTemplate?: boolean;
@@ -122,6 +127,7 @@ export interface CreateDocPayload {
   title?: string;
   description?: string;
   thumbnail?: string;
+  docType?: DocType;
   globalTheme?: any;
   isPublic?: boolean;
   isTemplate?: boolean;
@@ -134,6 +140,7 @@ export interface UpdateDocPayload {
   title?: string;
   description?: string;
   thumbnail?: string;
+  docType?: DocType;
   globalTheme?: any;
   isPublic?: boolean;
   isTemplate?: boolean;

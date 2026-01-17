@@ -22,6 +22,7 @@ import {
   DocInfoSchema,
   BlockTypeSchema,
   CardAccentSchema,
+  DocTypeSchema,
 } from "./core";
 
 import { ThemeSchema, CardDesignPatternSchema } from "./theme";
@@ -68,7 +69,8 @@ export type DocInfo = z.infer<typeof DocInfoSchema>;
 
 export type Theme = z.infer<typeof ThemeSchema>;
 export type CardDesignPattern = z.infer<typeof CardDesignPatternSchema>;
+export type DocType = z.infer<typeof DocTypeSchema>;
 
 export { getDefaultHeadingContent, withAlpha } from "./blocks";
-export { BLOCK_TYPES, MAX_BLOCKS_PER_ROW } from "./core";
+export { BLOCK_TYPES, MAX_BLOCKS_PER_ROW, DOC_TYPES } from "./core";
 export * from "../type-guards";
