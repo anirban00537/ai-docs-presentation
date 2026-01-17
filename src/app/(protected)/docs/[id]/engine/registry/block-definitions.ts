@@ -81,13 +81,19 @@ export const BLOCK_DEFINITIONS: Record<BlockType, BlockDefinition> = {
         label: 'Heading 1',
         description: 'Large section heading',
         icon: IconH1,
-        createContent: () => ({ type: 'doc', content: [{ type: 'heading', attrs: { level: 1 }, content: [{ type: 'text', text: '# Heading 1' }] }] }),
+        createContent: () => ({ type: 'doc', content: [{ type: 'heading', attrs: { level: 1 }, content: [{ type: 'text', text: 'Heading 1' }] }] }),
       },
       {
         label: 'Heading 2',
         description: 'Medium section heading',
         icon: IconH2,
-        createContent: () => ({ type: 'doc', content: [{ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: '## Heading 2' }] }] }),
+        createContent: () => ({ type: 'doc', content: [{ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Heading 2' }] }] }),
+      },
+      {
+        label: 'Heading 3',
+        description: 'Small section heading',
+        icon: IconH3,
+        createContent: () => ({ type: 'doc', content: [{ type: 'heading', attrs: { level: 3 }, content: [{ type: 'text', text: 'Heading 3' }] }] }),
       },
       {
         label: 'Quote',
