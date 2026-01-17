@@ -27,6 +27,8 @@ export class ScreenshotService {
     this.exportSecret =
       this.configService.get('EXPORT_SECRET') ||
       'butterfast-export-secret-key';
+    
+    this.logger.log(`Screenshot service initialized with APP_URL: ${this.appUrl}`);
   }
 
   /**
@@ -49,6 +51,8 @@ export class ScreenshotService {
     }
 
     try {
+      this.logger.log('Launching Puppeteer browser...');
+      
       this.browser = await puppeteer.launch({
         headless: true,
         args: [
@@ -59,13 +63,16 @@ export class ScreenshotService {
           '--disable-gpu',
           '--disable-web-security',
           '--allow-file-access-from-files',
+          '--single-process', // May help on some VPS environments
         ],
+        // Try to find Chrome executable
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       });
 
       this.logger.log('Browser initialized for screenshot capture');
       return this.browser;
     } catch (error) {
-      this.logger.error('Failed to initialize browser', error);
+      this.logger.error(`Failed to initialize browser: ${error.message}`, error.stack);
       throw error;
     }
   }
@@ -122,12 +129,17 @@ export class ScreenshotService {
       // Navigate to the export embed route
       const exportUrl = `${this.appUrl}/embed/card/${cardId}?docId=${docId}&exportKey=${exportKey}`;
 
-      this.logger.log(`Navigating to export URL for card ${cardId}`);
+      this.logger.log(`Navigating to export URL for card ${cardId}: ${exportUrl}`);
 
-      await page.goto(exportUrl, {
-        waitUntil: 'domcontentloaded', // Changed from networkidle2 for faster loading
-        timeout,
-      });
+      try {
+        await page.goto(exportUrl, {
+          waitUntil: 'domcontentloaded', // Changed from networkidle2 for faster loading
+          timeout,
+        });
+      } catch (navError) {
+        this.logger.error(`Navigation failed for ${exportUrl}: ${navError.message}`);
+        throw new Error(`Failed to navigate to export page: ${navError.message}. Check if APP_URL (${this.appUrl}) is accessible from the server.`);
+      }
 
       // Wait for the export container to be ready
       try {
@@ -200,8 +212,8 @@ export class ScreenshotService {
       return screenshot;
     } catch (error) {
       this.logger.error(
-        `Failed to capture screenshot for card ${cardId}`,
-        error,
+        `Failed to capture screenshot for card ${cardId}: ${error.message}`,
+        error.stack,
       );
       throw error;
     } finally {
