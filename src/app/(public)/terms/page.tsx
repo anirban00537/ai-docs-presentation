@@ -19,6 +19,7 @@ export default function TermsPage() {
                         fill
                         className="object-cover"
                         priority
+                        unoptimized
                     />
                 </div>
 

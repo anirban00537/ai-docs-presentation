@@ -76,6 +76,7 @@ export default function OutlinePage() {
           fill
           className="object-cover"
           priority
+          unoptimized
         />
       </div>
       

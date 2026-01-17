@@ -19,6 +19,7 @@ export default function PrivacyPage() {
                         fill
                         className="object-cover"
                         priority
+                        unoptimized
                     />
                 </div>
 

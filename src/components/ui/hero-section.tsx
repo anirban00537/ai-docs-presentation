@@ -20,6 +20,7 @@ export default function HeroSection() {
           fill
           priority
           className="object-cover object-top"
+          unoptimized
         />
       </div>
 

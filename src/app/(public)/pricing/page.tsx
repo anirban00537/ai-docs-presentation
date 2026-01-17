@@ -76,6 +76,7 @@ export default function PricingPage() {
             fill
             className="object-cover"
             priority
+            unoptimized
           />
         </div>
         
@@ -116,6 +117,7 @@ export default function PricingPage() {
           fill
           className="object-cover"
           priority
+          unoptimized
         />
       </div>
 

@@ -83,6 +83,7 @@ export default function AboutPage() {
                         fill
                         className="object-cover"
                         priority
+                        unoptimized
                     />
                 </div>
 
@@ -343,6 +344,7 @@ export default function AboutPage() {
                                     alt="Banner Background"
                                     fill
                                     className="object-cover"
+                                    unoptimized
                                 />
                                 {/* Optional overlay for better text contrast if needed */}
                                 <div className="absolute inset-0 bg-white/10" />

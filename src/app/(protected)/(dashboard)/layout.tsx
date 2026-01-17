@@ -21,6 +21,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             fill
             className="object-cover"
             priority
+            unoptimized
           />
         </div>
         <div className="container relative z-10 mx-auto h-full">

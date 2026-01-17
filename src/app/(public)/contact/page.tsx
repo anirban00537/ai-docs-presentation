@@ -56,6 +56,7 @@ export default function ContactPage() {
                         fill
                         className="object-cover"
                         priority
+                        unoptimized
                     />
                 </div>
 
