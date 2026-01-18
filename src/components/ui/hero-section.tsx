@@ -102,11 +102,11 @@ export default function HeroSection() {
           {/* Glow Effect behind the video */}
           <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-purple-600/30 rounded-2xl blur-2xl opacity-30"></div>
           
-          <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-zinc-200/50 dark:border-zinc-800/50 bg-black">
+          <div className="relative aspect-[21/9] rounded-xl overflow-hidden shadow-2xl border border-zinc-200/50 dark:border-zinc-800/50 bg-black">
             {!videoError ? (
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/XifgHi9R5Rc?autoplay=1&mute=1&loop=1&playlist=XifgHi9R5Rc&controls=1&rel=0"
+                src="https://www.youtube.com/embed/bkIDMSYVVLc"
                 title="Demo video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
