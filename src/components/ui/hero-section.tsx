@@ -106,7 +106,7 @@ export default function HeroSection() {
             {!videoError ? (
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/bkIDMSYVVLc"
+                src="https://www.youtube.com/embed/bkIDMSYVVLc?vq=hd1080&hd=1&rel=0"
                 title="Demo video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
