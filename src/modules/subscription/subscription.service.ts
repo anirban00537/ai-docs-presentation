@@ -712,7 +712,8 @@ export class SubscriptionService {
       const isAlreadySynced = existingSubscription?.polarSubscriptionId === data.id ||
         (existingSubscription?.productId === (data.product_id || data.product?.id) &&
          existingSubscription?.updatedAt && 
-         (Date.now() - new Date(existingSubscription.updatedAt).getTime()) < 2 * 60 * 1000); // Within 2 minutes
+         (Date.now() - new Date(existingSubscription.updatedAt).getTime()) < 2 * 60 * 1000 &&
+         (existingSubscription.status === 'active' || existingSubscription.status === 'trialing')); // Only skip if already active
 
       if (isAlreadySynced) {
         this.logger.log(
