@@ -61,6 +61,7 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
   
   // Mobile UI States
   const [isMobileNavigatorOpen, setIsMobileNavigatorOpen] = useState(false);
+  const lastScrolledCardId = useRef<string | null>(null);
 
   useUndoRedoKeyboardShortcuts();
 
@@ -95,14 +96,20 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
 
   useEffect(() => {
     if (activeCardId && !isPresenting && !isGeneratingCards) {
-      const index = validCards.findIndex((c: Card) => c.id === activeCardId);
-      if (index !== -1) {
-        // Use virtualizer to scroll to the card
-        rowVirtualizer.scrollToIndex(index, { align: "center", behavior: "smooth" });
+      // Only scroll if the active card has changed to prevent jumps while typing
+      if (activeCardId !== lastScrolledCardId.current) {
+        const index = validCards.findIndex((c: Card) => c.id === activeCardId);
+        if (index !== -1) {
+          // Use virtualizer to scroll to the card
+          rowVirtualizer.scrollToIndex(index, { align: "center", behavior: "smooth" });
+          lastScrolledCardId.current = activeCardId;
+          
+          // Close mobile navigator when a card is selected
+          setIsMobileNavigatorOpen(false);
+        }
       }
-      
-      // Close mobile navigator when a card is selected
-      setIsMobileNavigatorOpen(false);
+    } else if (!activeCardId) {
+      lastScrolledCardId.current = null;
     }
   }, [activeCardId, isPresenting, validCards, rowVirtualizer, isGeneratingCards]);
 
