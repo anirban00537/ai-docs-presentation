@@ -59,22 +59,28 @@ export const ScalableCardContainer = ({ children }: ScalableCardContainerProps) 
         updateHeight();
         
         // Polling measurement for a short period after mounting to catch images loading
-        const intervalId = setInterval(updateHeight, 300);
+        // Optimized: Reduced frequency and stop once valid height is found
+        let polls = 0;
+        const intervalId = setInterval(() => {
+            polls++;
+            if (contentWrapRef.current) {
+                const child = contentWrapRef.current.firstElementChild as HTMLElement;
+                if (child && child.scrollHeight > 0) {
+                     updateHeight();
+                     // If we have a valid height after a few polls, we can likely stop aggressive polling
+                     if (polls > 5 && child.scrollHeight > 100) {
+                         clearInterval(intervalId);
+                     }
+                }
+            }
+        }, 900); // 900ms interval instead of 300ms
         const timeoutId = setTimeout(() => clearInterval(intervalId), 3000);
 
         const observer = new ResizeObserver(updateHeight);
         observer.observe(contentWrapRef.current);
 
-        const mutationObserver = new MutationObserver(updateHeight);
-        mutationObserver.observe(contentWrapRef.current, {
-            childList: true,
-            subtree: true,
-            characterData: true
-        });
-
         return () => {
             observer.disconnect();
-            mutationObserver.disconnect();
             clearInterval(intervalId);
             clearTimeout(timeoutId);
         };
