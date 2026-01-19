@@ -188,6 +188,39 @@ export const CardCanvas = memo(function CardCanvas({
     [dispatch, card.id, card.accent, onUpdateAccent]
   );
 
+  // Stabilized callbacks for ContentRow to prevent re-renders
+  const handleRowUpdateBlock = useCallback(
+    (blockId: string, content: BlockContent) => {
+      onUpdateBlock(card.id, blockId, content);
+    },
+    [card.id, onUpdateBlock]
+  );
+
+  const handleRowDelete = useCallback(
+    (rowId: string) => {
+      onDeleteRow(card.id, rowId);
+    },
+    [card.id, onDeleteRow]
+  );
+
+  const handleRowAddColumn = useCallback(
+    (rowId: string, afterBlockId: string) => {
+      onAddColumn(card.id, rowId, afterBlockId);
+    },
+    [card.id, onAddColumn]
+  );
+
+  const handleRowUpdateColumnWidths = useCallback(
+    (rowId: string, columnWidths: number[]) => {
+      onUpdateColumnWidths(card.id, rowId, columnWidths);
+    },
+    [card.id, onUpdateColumnWidths]
+  );
+  
+  const handleAddRow = useCallback(() => {
+    onAddRowAtBottom(card.id);
+  }, [card.id, onAddRowAtBottom]);
+
   // Frame styling
   const getStyle = (): React.CSSProperties => {
     const opacity = theme.cardOpacity !== undefined ? theme.cardOpacity : 1;
@@ -329,7 +362,7 @@ export const CardCanvas = memo(function CardCanvas({
             isHovered={isHovered}
             fullWidth={fullWidth}
             onOpenImagePicker={() => setIsImagePickerOpen(true)}
-            onAddRow={() => onAddRowAtBottom(card.id)}
+            onAddRow={handleAddRow}
             onUpdateAccent={onUpdateAccent}
             onToggleAccent={
               onUpdateAccent
@@ -471,17 +504,10 @@ export const CardCanvas = memo(function CardCanvas({
                       totalRowsInCard={card.rows?.length || 0}
                       isDragging={dragActive}
                       enableDragHints={enableDragHints}
-                      onUpdateBlock={(blockId, content) =>
-                        onUpdateBlock(card.id, blockId, content)
-                      }
-                      onDeleteRow={(rowId) => onDeleteRow(card.id, rowId)}
-                      onAddColumn={(rowId, afterBlockId) =>
-                        onAddColumn(card.id, rowId, afterBlockId)
-                      }
-                      onUpdateColumnWidths={(
-                        rowId: string,
-                        columnWidths: number[]
-                      ) => onUpdateColumnWidths(card.id, rowId, columnWidths)}
+                      onUpdateBlock={handleRowUpdateBlock}
+                      onDeleteRow={handleRowDelete}
+                      onAddColumn={handleRowAddColumn}
+                      onUpdateColumnWidths={handleRowUpdateColumnWidths}
                       rowCount={card.rows?.length || 0}
                       readOnly={readOnly}
                       isStreaming={card.isStreaming}
