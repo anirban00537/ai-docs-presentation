@@ -58,7 +58,7 @@ export const coreConstant = {
       // NAME: 'meta-llama/llama-4-scout',
       // PRICING: { prompt: 0.08, completion: 0.30 },
       NAME: 'openai/gpt-oss-120b',
-      PRICING: { prompt: 0.08, completion: 0.33 },
+      PRICING: { prompt: 0.039, completion: 0.19 },
       //  NAME: 'mistralai/ministral-14b-2512',
       // PRICING: { prompt: 0.20, completion: 0.20},
       // NAME: 'minimax/minimax-m2.1',
