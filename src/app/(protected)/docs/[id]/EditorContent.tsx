@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CardCanvas,
@@ -60,6 +61,7 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
   
   // Mobile UI States
   const [isMobileNavigatorOpen, setIsMobileNavigatorOpen] = useState(false);
+  const lastScrolledCardId = useRef<string | null>(null);
 
   useUndoRedoKeyboardShortcuts();
 
@@ -77,36 +79,46 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
     docId,
   });
 
-  useEffect(() => {
-    if (activeCardId && !isPresenting && !isGeneratingCards) {
-      setTimeout(() => {
-        const cardElement = document.querySelector(`[data-card-id="${activeCardId}"]`);
-        if (cardElement) {
-          cardElement.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      }, 100);
-      
-      // Close mobile navigator when a card is selected
-      setIsMobileNavigatorOpen(false);
-    }
-  }, [activeCardId, isPresenting]);
+  // Determine valid cards once to ensure consistency
+  const validCards = useMemo(() => {
+    return cards.filter(
+      (card: Card) => card && card.rows && Array.isArray(card.rows)
+    );
+  }, [cards]);
+
+  // Virtualizer setup
+  const rowVirtualizer = useVirtualizer({
+    count: validCards.length,
+    getScrollElement: () => scrollContainerRef.current,
+    estimateSize: () => 600, // Estimate card height + buffer
+    overscan: 3, // Render 3 items outside viewport for smoother scrolling
+  });
 
   useEffect(() => {
-    if (isGeneratingCards && cards.length > 0) {
-      const timeoutId = setTimeout(() => {
-        if (scrollContainerRef.current) {
-          const container = scrollContainerRef.current;
-          // Scroll to the absolute bottom of the container during generation.
-          // This follows streaming changes closely and keeps the latest content in view.
-          container.scrollTo({
-            top: container.scrollHeight,
-            behavior: "auto"
-          });
+    if (activeCardId && !isPresenting && !isGeneratingCards) {
+      // Only scroll if the active card has changed to prevent jumps while typing
+      if (activeCardId !== lastScrolledCardId.current) {
+        const index = validCards.findIndex((c: Card) => c.id === activeCardId);
+        if (index !== -1) {
+          // Use virtualizer to scroll to the card
+          rowVirtualizer.scrollToIndex(index, { align: "center", behavior: "smooth" });
+          lastScrolledCardId.current = activeCardId;
+          
+          // Close mobile navigator when a card is selected
+          setIsMobileNavigatorOpen(false);
         }
-      }, 50);
-      return () => clearTimeout(timeoutId);
+      }
+    } else if (!activeCardId) {
+      lastScrolledCardId.current = null;
     }
-  }, [isGeneratingCards, cards]); // Watch 'cards' to follow streaming content updates
+  }, [activeCardId, isPresenting, validCards, rowVirtualizer, isGeneratingCards]);
+
+  useEffect(() => {
+    if (isGeneratingCards && validCards.length > 0) {
+       // When generating, follow the latest content
+       rowVirtualizer.scrollToIndex(validCards.length - 1, { align: "end", behavior: "auto" });
+    }
+  }, [isGeneratingCards, validCards.length, rowVirtualizer]);
 
   const showLoading = isLoadingDoc && !isGeneratingCards;
 
@@ -212,42 +224,60 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
             <div className="w-full max-w-[1400px] mx-auto px-4 py-8 flex flex-col items-center min-h-full">
               {isReadOnly ? (
                 // Read-only view - no editing capabilities
-                <div className="flex flex-col w-full items-center pb-32 gap-3">
-                  {cards
-                    .filter(
-                      (card: Card) => card && card.rows && Array.isArray(card.rows)
-                    )
-                    .map((card: Card, index: number) => (
-                      <motion.div
-                        key={card.id}
-                        data-card-id={card.id}
-                        data-card-index={index}
-                        className="w-full max-w-full relative"
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05, duration: 0.3 }}
-                      >
-                        <div
-                          className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
-                          style={{ color: theme.bodyColor }}
-                        >
-                          {index + 1}
-                        </div>
+                <div className="flex flex-col w-full items-center pb-32">
+                  <div
+                    className="relative w-full"
+                    style={{
+                      height: `${rowVirtualizer.getTotalSize()}px`,
+                    }}
+                  >
+                    {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+                      const card = validCards[virtualItem.index];
+                      // Just in case
+                      if (!card) return null;
 
-                        <ScalableCardContainer>
-                          <CardCanvas
-                            card={card}
-                            onUpdateBlock={() => {}}
-                            onDeleteRow={() => {}}
-                            onAddColumn={() => {}}
-                            onAddRowAtTop={() => {}}
-                            onAddRowAtBottom={() => {}}
-                            onUpdateColumnWidths={() => {}}
-                            readOnly={true}
-                          />
-                        </ScalableCardContainer>
-                      </motion.div>
-                    ))}
+                      return (
+                        <div
+                          key={card.id}
+                          ref={rowVirtualizer.measureElement}
+                          data-index={virtualItem.index}
+                          className="absolute top-0 w-full flex justify-center pb-3"
+                          style={{
+                            transform: `translateY(${virtualItem.start}px)`,
+                          }}
+                        >
+                          <motion.div
+                            data-card-id={card.id}
+                            data-card-index={virtualItem.index}
+                            className="w-full max-w-full relative"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <div
+                              className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
+                              style={{ color: theme.bodyColor }}
+                            >
+                              {virtualItem.index + 1}
+                            </div>
+
+                            <ScalableCardContainer>
+                              <CardCanvas
+                                card={card}
+                                onUpdateBlock={() => {}}
+                                onDeleteRow={() => {}}
+                                onAddColumn={() => {}}
+                                onAddRowAtTop={() => {}}
+                                onAddRowAtBottom={() => {}}
+                                onUpdateColumnWidths={() => {}}
+                                readOnly={true}
+                              />
+                            </ScalableCardContainer>
+                          </motion.div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               ) : (
                 // Full editing mode
@@ -255,41 +285,58 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
                   <BlockSelectionProvider>
                     <ToolbarPanel docId={docId} />
 
-                    <div className="flex flex-col w-full items-center pb-32 gap-3">
-                      {cards
-                        .filter(
-                          (card: Card) => card && card.rows && Array.isArray(card.rows)
-                        )
-                        .map((card: Card, index: number) => (
-                          <motion.div
-                            key={card.id}
-                            data-card-id={card.id}
-                            data-card-index={index}
-                            className="w-full max-w-full relative"
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05, duration: 0.3 }}
-                          >
-                            <div
-                              className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
-                              style={{ color: theme.bodyColor }}
-                            >
-                              {index + 1}
-                            </div>
+                    <div className="flex flex-col w-full items-center pb-32">
+                      <div
+                        className="relative w-full"
+                        style={{
+                          height: `${rowVirtualizer.getTotalSize()}px`,
+                        }}
+                      >
+                        {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+                          const card = validCards[virtualItem.index];
+                          if (!card) return null;
 
-                            <ScalableCardContainer>
-                              <CardCanvas
-                                card={card}
-                                onUpdateBlock={handleUpdateBlock}
-                                onDeleteRow={handleDeleteRow}
-                                onAddColumn={handleAddColumn}
-                                onAddRowAtTop={handleAddRowAtTop}
-                                onAddRowAtBottom={handleAddRowAtBottom}
-                                onUpdateColumnWidths={handleUpdateColumnWidths}
-                              />
-                            </ScalableCardContainer>
-                          </motion.div>
-                        ))}
+                          return (
+                            <div
+                              key={card.id}
+                              ref={rowVirtualizer.measureElement}
+                              data-index={virtualItem.index}
+                              className="absolute top-0 w-full flex justify-center pb-3"
+                              style={{
+                                transform: `translateY(${virtualItem.start}px)`,
+                              }}
+                            >
+                              <motion.div
+                                data-card-id={card.id}
+                                data-card-index={virtualItem.index}
+                                className="w-full max-w-full relative"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.3 }}
+                              >
+                                <div
+                                  className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
+                                  style={{ color: theme.bodyColor }}
+                                >
+                                  {virtualItem.index + 1}
+                                </div>
+
+                                <ScalableCardContainer>
+                                  <CardCanvas
+                                    card={card}
+                                    onUpdateBlock={handleUpdateBlock}
+                                    onDeleteRow={handleDeleteRow}
+                                    onAddColumn={handleAddColumn}
+                                    onAddRowAtTop={handleAddRowAtTop}
+                                    onAddRowAtBottom={handleAddRowAtBottom}
+                                    onUpdateColumnWidths={handleUpdateColumnWidths}
+                                  />
+                                </ScalableCardContainer>
+                              </motion.div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </BlockSelectionProvider>
 

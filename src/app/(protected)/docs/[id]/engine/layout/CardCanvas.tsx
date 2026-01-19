@@ -21,8 +21,8 @@ import { CardToolbar } from "@/app/(protected)/docs/[id]/editor/card/CardToolbar
 import type { SelectedImage } from "@/app/(protected)/docs/[id]/editor/panels/ImagePickerModal";
 import { getFontFamily } from "@/lib/fonts";
 import { CARD_MAX_WIDTH } from "@/lib/constants";
-import * as Patterns from "@/app/(protected)/docs/[id]/editor/patterns";
 import { useResize } from "@/app/(protected)/docs/[id]/engine/hooks/useResize";
+import { CardPattern } from "./CardPattern";
 import { DragStateBridge } from "./DragStateBridge";
 import { InsertDropZone } from "./InsertDropZone";
 import { cn } from "@/lib/utils";
@@ -188,6 +188,39 @@ export const CardCanvas = memo(function CardCanvas({
     [dispatch, card.id, card.accent, onUpdateAccent]
   );
 
+  // Stabilized callbacks for ContentRow to prevent re-renders
+  const handleRowUpdateBlock = useCallback(
+    (blockId: string, content: BlockContent) => {
+      onUpdateBlock(card.id, blockId, content);
+    },
+    [card.id, onUpdateBlock]
+  );
+
+  const handleRowDelete = useCallback(
+    (rowId: string) => {
+      onDeleteRow(card.id, rowId);
+    },
+    [card.id, onDeleteRow]
+  );
+
+  const handleRowAddColumn = useCallback(
+    (rowId: string, afterBlockId: string) => {
+      onAddColumn(card.id, rowId, afterBlockId);
+    },
+    [card.id, onAddColumn]
+  );
+
+  const handleRowUpdateColumnWidths = useCallback(
+    (rowId: string, columnWidths: number[]) => {
+      onUpdateColumnWidths(card.id, rowId, columnWidths);
+    },
+    [card.id, onUpdateColumnWidths]
+  );
+  
+  const handleAddRow = useCallback(() => {
+    onAddRowAtBottom(card.id);
+  }, [card.id, onAddRowAtBottom]);
+
   // Frame styling
   const getStyle = (): React.CSSProperties => {
     const opacity = theme.cardOpacity !== undefined ? theme.cardOpacity : 1;
@@ -244,120 +277,7 @@ export const CardCanvas = memo(function CardCanvas({
   const finalStyle = getStyle();
   const borderRadius = finalStyle.borderRadius;
 
-  const renderPattern = () => {
-    const pattern = theme.cardDesignPattern;
-    if (!pattern || pattern === "none") return null;
 
-    switch (pattern) {
-      case "gaussian":
-        return (
-          <Patterns.Gaussian
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "fractal":
-        return (
-          <Patterns.Fractal
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "fluid":
-        return (
-          <Patterns.Fluid
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "prism":
-        return (
-          <Patterns.Prism
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "beams":
-        return (
-          <Patterns.Beams
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "aurora":
-        return (
-          <Patterns.Aurora
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "nebula":
-        return (
-          <Patterns.Nebula
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "ether":
-        return (
-          <Patterns.Ether
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "lumina":
-        return (
-          <Patterns.Lumina
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "horizon":
-        return (
-          <Patterns.Horizon
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "pulse":
-        return (
-          <Patterns.Pulse
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "vortex":
-        return (
-          <Patterns.Vortex
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "echo":
-        return (
-          <Patterns.Echo
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "apex":
-        return (
-          <Patterns.Apex
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      case "arch":
-        return (
-          <Patterns.Arch
-            primary={theme.primary}
-            secondary={theme.secondaryColors}
-          />
-        );
-      default:
-        return null;
-    }
-  };
 
   const isVertical =
     card.accent?.position === "top" || card.accent?.position === "bottom";
@@ -381,12 +301,12 @@ export const CardCanvas = memo(function CardCanvas({
             ...(fullWidth ? { height: "100%", width: "100%" } : {}),
           }}
         >
-          <div
-            style={{ opacity: theme.cardDesignPatternOpacity ?? 1 }}
-            className="absolute inset-0"
-          >
-            {renderPattern()}
-          </div>
+          <CardPattern
+            pattern={theme.cardDesignPattern}
+            primary={theme.primary}
+            secondary={theme.secondaryColors}
+            opacity={theme.cardDesignPatternOpacity}
+          />
 
           {/* Background Image Mode */}
           {isBackground && (accentUrl || accentLoading) && (
@@ -442,7 +362,7 @@ export const CardCanvas = memo(function CardCanvas({
             isHovered={isHovered}
             fullWidth={fullWidth}
             onOpenImagePicker={() => setIsImagePickerOpen(true)}
-            onAddRow={() => onAddRowAtBottom(card.id)}
+            onAddRow={handleAddRow}
             onUpdateAccent={onUpdateAccent}
             onToggleAccent={
               onUpdateAccent
@@ -584,17 +504,10 @@ export const CardCanvas = memo(function CardCanvas({
                       totalRowsInCard={card.rows?.length || 0}
                       isDragging={dragActive}
                       enableDragHints={enableDragHints}
-                      onUpdateBlock={(blockId, content) =>
-                        onUpdateBlock(card.id, blockId, content)
-                      }
-                      onDeleteRow={(rowId) => onDeleteRow(card.id, rowId)}
-                      onAddColumn={(rowId, afterBlockId) =>
-                        onAddColumn(card.id, rowId, afterBlockId)
-                      }
-                      onUpdateColumnWidths={(
-                        rowId: string,
-                        columnWidths: number[]
-                      ) => onUpdateColumnWidths(card.id, rowId, columnWidths)}
+                      onUpdateBlock={handleRowUpdateBlock}
+                      onDeleteRow={handleRowDelete}
+                      onAddColumn={handleRowAddColumn}
+                      onUpdateColumnWidths={handleRowUpdateColumnWidths}
                       rowCount={card.rows?.length || 0}
                       readOnly={readOnly}
                       isStreaming={card.isStreaming}

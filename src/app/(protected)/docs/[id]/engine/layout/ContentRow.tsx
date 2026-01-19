@@ -113,6 +113,15 @@ export const ContentRow = memo(function ContentRow({
     [localWidths]
   );
   
+  // Stabilize callbacks to BlockCell
+  const handleUpdateBlock = useCallback((blockId: string, content: BlockContent) => {
+    onUpdateBlock(blockId, content);
+  }, [onUpdateBlock]);
+
+  const handleAddColumn = useCallback((rowId: string, afterBlockId: string) => {
+    onAddColumn(rowId, afterBlockId);
+  }, [onAddColumn]);
+
   const handleResizeStart = useCallback(() => {
     setIsResizing(true);
   }, []);
@@ -324,8 +333,8 @@ export const ContentRow = memo(function ContentRow({
             totalBlocksInRow={row.blocks?.length || 0}
             rowIndex={rowIndex}
             totalRowsInCard={totalRowsInCard}
-            onUpdate={onUpdateBlock}
-            onAddColumn={onAddColumn}
+            onUpdate={handleUpdateBlock}
+            onAddColumn={handleAddColumn}
             isLastBlock={index === (row.blocks?.length || 0) - 1}
             canAddColumn={canAddColumn}
             readOnly={readOnly}
