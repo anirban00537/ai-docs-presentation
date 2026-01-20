@@ -2,10 +2,8 @@ import React, { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
-import {
-  IconTrash,
-  IconCopy,
-} from "@tabler/icons-react";
+import { IconTrash, IconCopy } from "@tabler/icons-react";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { cn } from "@/lib/utils";
 
 interface BlockToolbarProps {
@@ -50,7 +48,10 @@ export const BlockToolbar = memo(function BlockToolbar({
           >
             {/* Duplicate */}
             <button
-              onClick={onDuplicate}
+              onClick={() => {
+                trackEvent('block_duplicate', 'engagement', 'toolbar');
+                onDuplicate();
+              }}
               className={buttonClass}
               title="Duplicate"
             >
@@ -64,7 +65,10 @@ export const BlockToolbar = memo(function BlockToolbar({
 
             {/* Delete */}
             <button
-              onClick={onDelete}
+              onClick={() => {
+                trackEvent('block_delete', 'engagement', 'toolbar');
+                onDelete();
+              }}
               className={cn(buttonClass, "text-red-500 hover:text-red-400 hover:bg-red-500/10")}
               title="Delete"
             >

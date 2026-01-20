@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { PromptBox } from "@/components/ui";
 import { HomeHeader, SuggestionGrid } from "@/components/home";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { suggestions } from "./constants";
 
 export default function HomePage() {
@@ -11,6 +12,7 @@ export default function HomePage() {
   const [promptValue, setPromptValue] = useState("");
 
   const handleSuggestionClick = (prompt: string) => {
+    trackEvent('home_suggestion_click', 'engagement', prompt);
     setPromptValue(prompt);
   };
 

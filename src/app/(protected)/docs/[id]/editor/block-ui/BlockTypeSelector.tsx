@@ -13,6 +13,7 @@ import {
   IconCheck,
 } from "@tabler/icons-react";
 import type { BlockType } from "@/types/docs";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 interface BlockTypeSelectorProps {
   isOpen: boolean;
@@ -95,7 +96,10 @@ export const BlockTypeSelector: React.FC<BlockTypeSelectorProps> = ({
               return (
                 <button
                   key={option.type}
-                  onClick={() => onSelect(option.type)}
+                  onClick={() => {
+                    trackEvent('block_type_change', 'engagement', option.type);
+                    onSelect(option.type);
+                  }}
                   disabled={isActive}
                   className="w-full px-3 py-2 flex items-center gap-2.5 transition-colors text-left"
                   style={{

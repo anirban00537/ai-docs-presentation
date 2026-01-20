@@ -19,6 +19,7 @@ import {
   IconBroadcast,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { useUndoRedo } from "@/app/(protected)/docs/[id]/hooks/useUndoRedo";
 import { selectDoc, selectCards, selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { selectIsSubscribed } from "@/store/slices/subscriptionSlice";
@@ -81,6 +82,7 @@ export const EditorHeader = ({
 
     try {
       setIsExporting(true);
+      trackEvent('doc_export_pptx', 'engagement', doc.id);
       const blob = await exportDocToPptx(doc.id);
       
       const url = window.URL.createObjectURL(blob);
@@ -105,6 +107,7 @@ export const EditorHeader = ({
 
     try {
       setIsExporting(true);
+      trackEvent('doc_export_pdf', 'engagement', doc.id);
       const blob = await exportDocToPdf(doc.id);
       
       const url = window.URL.createObjectURL(blob);
@@ -129,6 +132,7 @@ export const EditorHeader = ({
 
     try {
       setIsExporting(true);
+      trackEvent('doc_export_png', 'engagement', doc.id);
       const blob = await exportDocToPng(doc.id);
       
       const url = window.URL.createObjectURL(blob);
@@ -177,7 +181,10 @@ export const EditorHeader = ({
           {/* Back Button */}
           {!isReadOnly && (
             <button
-              onClick={() => router.push("/home")}
+              onClick={() => {
+                trackEvent('nav_home_click', 'engagement', 'editor_header');
+                router.push("/home");
+              }}
               className={cn(
                 "hidden sm:flex p-2 rounded-lg transition-all",
                 isDark 
@@ -237,7 +244,10 @@ export const EditorHeader = ({
                 isDark ? "bg-white/5" : "bg-black/5"
               )}>
                 <button
-                  onClick={undo}
+                  onClick={() => {
+                    trackEvent('doc_undo', 'engagement', doc?.id);
+                    undo();
+                  }}
                   disabled={!canUndo}
                   className={cn(
                     "p-1.5 rounded-lg disabled:opacity-20 disabled:cursor-not-allowed transition-all",
@@ -250,7 +260,10 @@ export const EditorHeader = ({
                   <IconArrowBackUp size={16} />
                 </button>
                 <button
-                  onClick={redo}
+                  onClick={() => {
+                    trackEvent('doc_redo', 'engagement', doc?.id);
+                    redo();
+                  }}
                   disabled={!canRedo}
                   className={cn(
                     "p-1.5 rounded-lg disabled:opacity-20 disabled:cursor-not-allowed transition-all",
@@ -277,7 +290,10 @@ export const EditorHeader = ({
 
               {/* Share */}
               <button
-                onClick={() => setShareModalOpen(true)}
+                onClick={() => {
+                  trackEvent('doc_share_click', 'engagement', doc?.id);
+                  setShareModalOpen(true);
+                }}
                 className={cn(
                   buttonClass,
                   isDark 
@@ -357,7 +373,10 @@ export const EditorHeader = ({
 
           {/* Present Button - Primary Action */}
           <button
-            onClick={onPresentClick}
+            onClick={() => {
+              trackEvent('doc_present_click', 'engagement', doc?.id);
+              onPresentClick();
+            }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/25"
           >
             <IconPlayerPlayFilled size={14} />

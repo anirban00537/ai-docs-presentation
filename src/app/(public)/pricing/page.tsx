@@ -9,6 +9,7 @@ import { createCheckout } from "@/services";
 import { PricingCard } from "@/components/pricing-card";
 import { PageSkeleton } from "@/components/shared";
 import { Skeleton } from "@/components/ui";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { toast } from "sonner";
 
 // Sub-components
@@ -24,9 +25,12 @@ export default function PricingPage() {
 
   const handleSelectPlan = async (productId: string, priceId?: string) => {
     if (!priceId) {
+      trackEvent('plan_select_fail', 'engagement', 'no_price_id');
       toast.error("No price available for this product");
       return;
     }
+
+    trackEvent('plan_select_start', 'engagement', productId);
 
     try {
       setLoadingCheckout(productId);
@@ -35,12 +39,17 @@ export default function PricingPage() {
       const response = await createCheckout(productId, successUrl);
 
       if (response.success && response.data?.checkoutUrl) {
+        trackEvent('checkout_session_success', 'engagement', productId);
         window.location.href = response.data.checkoutUrl;
       } else {
         const errorMessage = response.message || "Failed to create checkout session";
+        trackEvent('checkout_session_fail', 'engagement', errorMessage);
         if (errorMessage.toLowerCase().includes("already have an active subscription")) {
           toast.error(errorMessage, {
-            action: { label: "Manage Subscription", onClick: () => (window.location.href = "/subscription") },
+            action: { label: "Manage Subscription", onClick: () => {
+              trackEvent('already_subscribed_manage_click', 'engagement', 'pricing_page');
+              window.location.href = "/subscription";
+            } },
           });
         } else {
           toast.error(errorMessage);
@@ -48,6 +57,7 @@ export default function PricingPage() {
       }
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message || error?.message || "Failed to create checkout session";
+      trackEvent('checkout_session_error', 'engagement', errorMessage);
       toast.error(errorMessage);
     } finally {
       setLoadingCheckout(null);

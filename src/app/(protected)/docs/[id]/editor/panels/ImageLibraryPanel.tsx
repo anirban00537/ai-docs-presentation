@@ -7,6 +7,7 @@ import { X, Search, Upload, Loader2, Heart, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -145,12 +146,17 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
     }
     
     debounceRef.current = setTimeout(() => {
+      if (value) {
+        trackEvent('image_search', 'engagement', value);
+      }
       setDebouncedQuery(value);
     }, 500);
   }, []);
 
   // Handle image selection
   const handleImageSelect = useCallback((image: UnsplashPhoto | MediaItem) => {
+    const id = 'urls' in image ? image.id : image.id;
+    trackEvent('image_preview_click', 'engagement', id);
     setSelectedImage(image);
     setIsModalOpen(true);
   }, []);
@@ -163,6 +169,7 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
       // Unsplash image
       const unsplashImage = selectedImage as UnsplashPhoto;
       
+      trackEvent('image_use_unsplash', 'engagement', unsplashImage.id);
       // Track download for Unsplash attribution
       trackDownload.mutate({ downloadLocation: unsplashImage.links.downloadLocation });
       
@@ -173,6 +180,7 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
     } else {
       // User uploaded media
       const mediaItem = selectedImage as MediaItem;
+      trackEvent('image_use_upload', 'engagement', mediaItem.id);
       onSelectImage?.(mediaItem.imageUrl);
     }
 
@@ -187,8 +195,11 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
     if (!file) return;
 
     try {
+      trackEvent('image_upload_start', 'engagement', 'editor');
       await uploadMutation.mutateAsync({ file });
+      trackEvent('image_upload_success', 'engagement', 'editor');
     } catch (error) {
+      trackEvent('image_upload_error', 'engagement', 'editor');
       console.error("Upload failed:", error);
     }
     
@@ -264,7 +275,10 @@ export const ImageLibraryPanel: React.FC<ImageLibraryPanelProps> = ({
               <div className="relative px-4 py-3">
                 <Tabs 
                   value={activeTab} 
-                  onValueChange={(v) => setActiveTab(v as "unsplash" | "uploads")}
+                  onValueChange={(v) => {
+                    trackEvent('image_tab_switch', 'engagement', v);
+                    setActiveTab(v as "unsplash" | "uploads");
+                  }}
                   className="w-full"
                 >
                   <TabsList className={cn(

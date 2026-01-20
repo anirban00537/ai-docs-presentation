@@ -5,6 +5,7 @@ import { useEditorTheme } from "@/app/(protected)/docs/[id]/engine/theme/EditorT
 import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
 import { IconPlus, IconPhoto } from "@tabler/icons-react";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { CardOptions } from "./CardOptions";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +45,7 @@ export const CardToolbar: React.FC<CardToolbarProps> = ({
   );
 
   const handleToggleAccent = () => {
+    trackEvent('card_accent_toggle', 'engagement', card.id);
     if (onToggleAccent) {
       onToggleAccent(card.id);
     } else {
@@ -93,7 +95,10 @@ export const CardToolbar: React.FC<CardToolbarProps> = ({
         <Button
           variant="ghost" 
           size="icon"
-          onClick={onAddRow}
+          onClick={() => {
+            trackEvent('card_row_add', 'engagement', card.id);
+            onAddRow();
+          }}
           className={cn(buttonClass, "group/addrow")}
           title="Add Row"
         >

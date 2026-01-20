@@ -4,6 +4,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconChevronLeft, IconChevronRight, IconX } from "@tabler/icons-react";
 import { Theme, Card } from "@/store/slices/cardsSlice";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { CardCanvas } from "..";
 
 interface DocViewProps {
@@ -176,7 +177,10 @@ export const DocView: React.FC<DocViewProps> = ({
               }}
             >
               <button
-                onClick={onPrevCard}
+                onClick={() => {
+                  trackEvent('doc_present_prev', 'engagement', `slide_${currentCardIndex}`);
+                  onPrevCard();
+                }}
                 disabled={currentCardIndex === 0}
                 className="p-1.5 rounded-full transition-all disabled:opacity-30"
                 style={{ color: isDark ? "#fff" : "#000" }}
@@ -192,7 +196,10 @@ export const DocView: React.FC<DocViewProps> = ({
               </span>
 
               <button
-                onClick={onNextCard}
+                onClick={() => {
+                  trackEvent('doc_present_next', 'engagement', `slide_${currentCardIndex}`);
+                  onNextCard();
+                }}
                 disabled={currentCardIndex === cards.length - 1}
                 className="p-1.5 rounded-full transition-all disabled:opacity-30"
                 style={{ color: isDark ? "#fff" : "#000" }}
@@ -206,7 +213,10 @@ export const DocView: React.FC<DocViewProps> = ({
               />
 
               <button
-                onClick={onClose}
+                onClick={() => {
+                  trackEvent('doc_present_close', 'engagement', 'viewer');
+                  onClose();
+                }}
                 className="p-1.5 rounded-full transition-all hover:opacity-70"
                 style={{ color: isDark ? "#fff" : "#000" }}
               >

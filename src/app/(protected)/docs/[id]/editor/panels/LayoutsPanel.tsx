@@ -3,6 +3,7 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { addRowWithColumnsAtIndex, selectActiveCardId, selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { BLOCK_TYPES } from "../blocks/definitions";
 import {
   IconNumber,
@@ -124,6 +125,7 @@ export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
   const handleLayoutClick = (layout: LayoutDefinition) => {
     if (!activeCardId) return;
 
+    trackEvent('layout_select', 'engagement', layout.id);
     dispatch(
       addRowWithColumnsAtIndex({
         cardId: activeCardId,

@@ -17,6 +17,7 @@ import type { LayoutTemplate } from "@/types/docs";
 import { motion, AnimatePresence } from "framer-motion";
 import { SidebarList } from "./SidebarList";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 // --- Types ---
 
@@ -92,6 +93,7 @@ export const CardNavigator: React.FC<CardNavigatorProps> = ({
   // --- Handlers ---
 
   const handleAddCard = useCallback(() => {
+    trackEvent('card_add_click', 'engagement', 'navigator');
     setIsLayoutModalOpen(true);
   }, []);
 
@@ -102,6 +104,7 @@ export const CardNavigator: React.FC<CardNavigatorProps> = ({
 
   const handleDeleteCard = useCallback((cardId: string) => {
     if (cards.length <= 1) return;
+    trackEvent('card_delete_click', 'engagement', cardId);
     onDeleteCardProp(cardId);
   }, [onDeleteCardProp, cards.length]);
 
@@ -132,7 +135,10 @@ export const CardNavigator: React.FC<CardNavigatorProps> = ({
               }}
             >
               <button
-                onClick={() => setIsCollapsed(false)}
+                onClick={() => {
+                  trackEvent('navigator_expand', 'engagement', 'sidebar');
+                  setIsCollapsed(false);
+                }}
                 className="p-3 rounded-xl transition-all hover:scale-105 hover:bg-black/5 dark:hover:bg-white/5"
               >
                 <IconChevronRight size={20} style={{ color: theme.primary }} />
@@ -184,7 +190,10 @@ export const CardNavigator: React.FC<CardNavigatorProps> = ({
                   </button>
                   {!isMobile && (
                     <button
-                      onClick={() => setIsCollapsed(true)}
+                      onClick={() => {
+                        trackEvent('navigator_collapse', 'engagement', 'sidebar');
+                        setIsCollapsed(true);
+                      }}
                       className="p-2 rounded-xl transition-all opacity-40 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
                       style={{ color: isDark ? "#fff" : "#000" }}
                       title="Collapse sidebar"

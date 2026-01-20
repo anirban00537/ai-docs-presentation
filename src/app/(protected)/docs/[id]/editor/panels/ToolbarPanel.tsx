@@ -8,6 +8,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 interface ToolbarPanelProps {
   docId: string;
@@ -49,6 +50,10 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
   }, [activePanel]);
 
   const handleTogglePanel = (panelId: string) => {
+    const isOpening = activePanel !== panelId;
+    if (isOpening) {
+      trackEvent('toolbar_panel_open', 'engagement', panelId);
+    }
     setActivePanel(prev => prev === panelId ? null : panelId);
   };
 

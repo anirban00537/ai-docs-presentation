@@ -4,6 +4,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 interface BlockOptionProps {
   id: string;
@@ -40,6 +41,10 @@ export const BlockOption: React.FC<BlockOptionProps> = ({
       style={style}
       {...attributes}
       {...listeners}
+      onPointerDown={(e) => {
+        trackEvent('block_drag_start', 'engagement', blockType);
+        listeners?.onPointerDown(e);
+      }}
       className={cn(
         "flex flex-col items-center gap-1.5 p-3 rounded-xl cursor-grab active:cursor-grabbing transition-all",
         isDark ? "hover:bg-white/5" : "hover:bg-black/5"

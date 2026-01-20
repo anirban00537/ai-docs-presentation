@@ -21,6 +21,7 @@ import {
   IconEyeOff,
   IconEye
 } from "@tabler/icons-react";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { cn } from "@/lib/utils";
 
 interface CardOptionsProps {
@@ -49,6 +50,7 @@ export const CardOptions: React.FC<CardOptionsProps> = ({
   ];
 
   const handlePositionChange = (pos: "left" | "right" | "top" | "bottom" | "background") => {
+    trackEvent('card_accent_position_change', 'engagement', pos);
     if (onUpdateAccent) {
       // Use custom handler (for layout editor)
       if (!accent) {
@@ -72,6 +74,7 @@ export const CardOptions: React.FC<CardOptionsProps> = ({
   };
 
   const handleToggleAccent = () => {
+    trackEvent('card_accent_toggle', 'engagement', card.id);
     if (onToggleAccent) {
       // Use custom handler (for layout editor)
       onToggleAccent(card.id);
@@ -150,7 +153,10 @@ export const CardOptions: React.FC<CardOptionsProps> = ({
                   variant="ghost" 
                   size="sm" 
                   className="text-primary hover:text-primary hover:bg-primary/5 font-semibold"
-                  onClick={onOpenImagePicker}
+                  onClick={() => {
+                    trackEvent('card_accent_image_edit', 'engagement', card.id);
+                    onOpenImagePicker();
+                  }}
                 >
                   Edit
                 </Button>

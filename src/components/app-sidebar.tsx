@@ -18,6 +18,7 @@ import {
   IconCreditCard,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAppSelector } from "@/store/hooks";
 import { selectUser } from "@/store/slices/userSlice";
@@ -86,6 +87,7 @@ export function AppSidebar() {
   const userInitials = getInitials(primaryName, primaryEmail);
 
   const handleSignOut = () => {
+    trackEvent('user_logout', 'engagement', 'sidebar');
     signOutMutation.mutate();
   };
 
@@ -160,7 +162,10 @@ export function AppSidebar() {
                 <Link
                   key={item.url}
                   href={item.url}
-                  onClick={() => setIsMobileOpen(false)}
+                  onClick={() => {
+                    trackEvent('nav_click', 'engagement', item.title.toLowerCase());
+                    setIsMobileOpen(false);
+                  }}
                   className="relative group block outline-none"
                 >
                   <div
@@ -206,7 +211,10 @@ export function AppSidebar() {
                 <Link
                   key={item.url}
                   href={item.url}
-                  onClick={() => setIsMobileOpen(false)}
+                  onClick={() => {
+                    trackEvent('nav_click', 'engagement', item.title.toLowerCase());
+                    setIsMobileOpen(false);
+                  }}
                   className={cn(
                     "flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group",
                     isActive
@@ -237,7 +245,11 @@ export function AppSidebar() {
               <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/20 via-white to-secondary/20 opacity-100" />
               <div className="relative rounded-[15px] p-5 bg-secondary/10 backdrop-blur-md overflow-hidden border border-white/50">
                 {!isSubscribed ? (
-                  <Link href="/pricing" className="block w-full mb-4">
+                  <Link 
+                    href="/pricing" 
+                    className="block w-full mb-4"
+                    onClick={() => trackEvent('upgrade_click', 'engagement', 'sidebar_premium_card')}
+                  >
                     <Button
                       size="sm"
                       className="w-full justify-center h-10 rounded-full text-xs font-semibold bg-primary text-white shadow-coral-glow hover:bg-primary/90 hover:scale-[1.02] transition-all"

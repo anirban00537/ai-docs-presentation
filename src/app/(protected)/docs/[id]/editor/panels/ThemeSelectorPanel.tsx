@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getAdminThemes } from "@/services/themes";
 import { applyCardStylePreset } from "@/lib/editor/card-styles";
 import { GOOGLE_FONT_NAMES } from "@/lib/constants";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 // Pattern options as a const array for type safety
 const PATTERN_OPTIONS = [
@@ -254,7 +255,10 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
               {/* Tab Switcher */}
               <div className={`flex p-1 rounded-xl gap-1 mb-2 ${isDark ? "bg-white/5" : "bg-black/5"}`}>
                 <button
-                  onClick={() => setActiveTab("presets")}
+                  onClick={() => {
+                    trackEvent('theme_tab_switch', 'engagement', 'presets');
+                    setActiveTab("presets");
+                  }}
                   className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
                     activeTab === "presets" 
                       ? isDark ? "bg-white/10 shadow-sm text-white" : "bg-white shadow-sm text-black"
@@ -264,7 +268,10 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                   Presets
                 </button>
                 <button
-                  onClick={() => setActiveTab("customize")}
+                  onClick={() => {
+                    trackEvent('theme_tab_switch', 'engagement', 'customize');
+                    setActiveTab("customize");
+                  }}
                   className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
                     activeTab === "customize" 
                       ? isDark ? "bg-white/10 shadow-sm text-white" : "bg-white shadow-sm text-black"
@@ -294,7 +301,10 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.02 }}
-                        onClick={() => handleThemeSelect(palette.theme)}
+                        onClick={() => {
+                          trackEvent('theme_preset_select', 'engagement', palette.name);
+                          handleThemeSelect(palette.theme);
+                        }}
                         className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all"
                         style={{
                           backgroundColor: isActive ? `${currentTheme.primary}15` : "transparent",
@@ -331,6 +341,7 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                           <button
                             key={opt.id}
                             onClick={() => {
+                              trackEvent('theme_card_style_select', 'engagement', opt.id);
                               const updatedTheme = applyCardStylePreset(currentTheme, opt.id);
                               dispatch(setTheme(updatedTheme));
                             }}
@@ -368,7 +379,10 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                     <div className="relative group">
                       <select
                         value={currentTheme.cardDesignPattern || "none"}
-                        onChange={(e) => updateThemeProperty({ cardDesignPattern: e.target.value as PatternOption })}
+                        onChange={(e) => {
+                          trackEvent('theme_pattern_change', 'engagement', e.target.value);
+                          updateThemeProperty({ cardDesignPattern: e.target.value as PatternOption });
+                        }}
                         className={`w-full py-2.5 px-4 text-[12px] appearance-none rounded-xl border transition-all cursor-pointer outline-none ${
                           isDark 
                             ? "bg-neutral-900 border-white/10 text-white hover:border-white/20" 
@@ -410,7 +424,10 @@ export const ThemeSelectorPanel = memo(function ThemeSelectorPanel({ isOpen, onC
                     <div className="relative group">
                       <select
                         value={currentTheme.fontFamily || "Inter"}
-                        onChange={(e) => updateThemeProperty({ fontFamily: e.target.value })}
+                        onChange={(e) => {
+                          trackEvent('theme_font_change', 'engagement', e.target.value);
+                          updateThemeProperty({ fontFamily: e.target.value });
+                        }}
                         className={`w-full py-2.5 px-4 text-[12px] appearance-none rounded-xl border transition-all cursor-pointer outline-none ${
                           isDark 
                             ? "bg-neutral-900 border-white/10 text-white hover:border-white/20" 

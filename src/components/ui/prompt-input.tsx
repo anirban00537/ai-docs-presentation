@@ -14,6 +14,7 @@ import { useSavePrompt } from "@/app/(protected)/docs/[id]/hooks/use-outline";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSubscriptionStatus, usePlanTiers } from "@/hooks/use-subscription";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 // --- Utility Function & Radix Primitives ---
 const TooltipProvider = TooltipPrimitive.Provider;
@@ -157,9 +158,12 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
       }
 
       if (onSubmit) {
+        trackEvent('prompt_submit_custom', 'engagement', `${cards}_cards`);
         onSubmit(value.trim(), cards);
         return;
       }
+
+      trackEvent('prompt_submit_start', 'engagement', `${cards}_cards`);
 
       savePromptMutation.mutate(
         {
@@ -169,11 +173,13 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
         {
           onSuccess: (response) => {
             if (response.success && response.data?.id) {
+              trackEvent('prompt_submit_success', 'engagement', response.data.id);
               // Redirect to outline page
               router.push(`/create/outline/${response.data.id}`);
             } else {
               // Handle API response with success: false
               const errorMessage = response.message || "Failed to save prompt";
+              trackEvent('prompt_submit_fail', 'engagement', errorMessage);
 
               // Check if it's a credit-related error
               if (
@@ -185,6 +191,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                   action: {
                     label: "Upgrade",
                     onClick: () => {
+                      trackEvent('insufficient_credits_upgrade_click', 'engagement', 'prompt_box');
                       window.location.href = "/subscription";
                     },
                   },
@@ -202,6 +209,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
               err?.message ||
               "An unexpected error occurred";
 
+            trackEvent('prompt_submit_error', 'engagement', errorMessage);
             toast.error(errorMessage, { duration: 5000 });
 
             onError?.(errorMessage);
@@ -286,7 +294,10 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, PromptBoxProps>(
                 {/* Number of Cards Select */}
                 <Select
                   value={numberOfCards}
-                  onValueChange={setNumberOfCards}
+                  onValueChange={(v) => {
+                    trackEvent('prompt_cards_change', 'engagement', v);
+                    setNumberOfCards(v);
+                  }}
                   disabled={isLoadingStatus}
                 >
                   <SelectTrigger className="h-8 w-fit gap-2 px-2 text-xs border-0 bg-transparent hover:bg-secondary/10 transition-colors focus:ring-0">
