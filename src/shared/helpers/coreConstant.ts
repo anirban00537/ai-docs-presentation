@@ -63,7 +63,7 @@ export const coreConstant = {
       // PRICING: { prompt: 0.20, completion: 0.20},
       // NAME: 'minimax/minimax-m2.1',
       // PRICING: { prompt: 0.28, completion: 1.20},
-      NAME: 'x-ai/grok-4.1-fast',
+      NAME: 'openai/gpt-4.1-nano',
       PRICING: { prompt: 0.2, completion: 0.5 },
     },
     CARDS: {
