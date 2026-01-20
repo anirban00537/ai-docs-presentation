@@ -3,6 +3,8 @@ import { Poppins, Libre_Baskerville } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import Script from "next/script";
+import React, { Suspense } from "react";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -79,29 +81,11 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className={`${poppins.variable} ${libre.variable} font-sans antialiased h-full`}>
         <Providers>{children}</Providers>
-        {/* Umami Analytics */}
-        <Script
-          defer
-          src="https://u11.butterfast.com/script.js"
-          data-website-id="fa1ed556-8ffd-4d22-899d-3ce2b258b594"
-          strategy="afterInteractive"
-        />
         {/* Google Analytics */}
         {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}');
-              `}
-            </Script>
-          </>
+          <Suspense fallback={null}>
+            <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
+          </Suspense>
         )}
       </body>
     </html>
