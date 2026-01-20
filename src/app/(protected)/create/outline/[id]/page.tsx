@@ -9,6 +9,7 @@ import { OutlineViewer } from "@/components/outline-viewer";
 import { Button } from "@/components/ui/button";
 import { IconSparkles, IconLoader2 } from "@tabler/icons-react";
 import { LoaderOverlay } from "@/components/ui/loader-overlay";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 // Shared components
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -117,6 +118,7 @@ export default function OutlinePage() {
           themes={themes} 
           selectedTheme={selectedTheme} 
           onSelectTheme={(theme) => {
+            trackEvent('theme_change', 'engagement', theme.name);
             setSelectedTheme(theme);
             saveThemeToDoc(theme);
           }} 
@@ -127,6 +129,7 @@ export default function OutlinePage() {
             <Link href={docUrl || "#"}>
                 <Button 
                     disabled={!docUrl || isStreaming}
+                    onClick={() => trackEvent('presentation_create_click', 'engagement', outlineId)}
                     className="rounded-full h-12 px-8 shadow-coral-glow hover:scale-105 transition-transform font-bold text-base bg-primary text-primary-foreground"
                 >
                     {isStreaming ? (

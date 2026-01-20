@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 const menuItems = [
   { name: "Blog", href: "/blog" },
@@ -36,7 +37,11 @@ export function Navbar() {
           isScrolled ? "w-full max-w-4xl shadow-depth-2" : "w-full max-w-5xl"
         )}
       >
-        <Link href="/" className="group flex items-center gap-2">
+        <Link 
+          href="/" 
+          onClick={() => trackEvent('nav_logo_click', 'engagement', 'header')}
+          className="group flex items-center gap-2"
+        >
           <Image
             src="/logo.svg"
             alt="Butterfast Logo"
@@ -66,6 +71,7 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="sm"
+              onClick={() => trackEvent('button_click', 'engagement', 'nav_login')}
               className="hidden sm:inline-flex text-foreground/70 hover:text-foreground hover:bg-foreground/5 rounded-full px-5"
             >
               Log in
@@ -74,6 +80,7 @@ export function Navbar() {
           <Link href="/home">
             <Button
               size="sm"
+              onClick={() => trackEvent('button_click', 'engagement', 'nav_get_started')}
               className="rounded-full bg-primary hover:bg-primary/90 text-white px-5 shadow-coral-glow transition-all hover:scale-105"
             >
               Get Started

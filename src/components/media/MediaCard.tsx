@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { type MediaItem } from "@/services/images";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 // Format file size
 const formatFileSize = (bytes: number) => {
@@ -65,6 +66,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
     e.stopPropagation();
     await navigator.clipboard.writeText(media.imageUrl);
     toast.success("URL copied to clipboard");
+    trackEvent('media_copy_url', 'engagement', media.id);
   };
 
   const handleDownload = (e: React.MouseEvent) => {
@@ -74,6 +76,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
     a.download = media.name;
     a.click();
     toast.success("Download started");
+    trackEvent('media_download', 'engagement', media.id);
   };
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
@@ -93,7 +96,10 @@ export const MediaCard: React.FC<MediaCardProps> = ({
       {/* Thumbnail */}
       <div 
         className="relative aspect-square bg-secondary/5 overflow-hidden cursor-pointer"
-        onClick={() => onClick(media)}
+        onClick={() => {
+          trackEvent('media_preview_click', 'engagement', media.id);
+          onClick(media);
+        }}
       >
         {isImage ? (
           <img

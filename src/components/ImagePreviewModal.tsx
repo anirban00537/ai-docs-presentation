@@ -16,6 +16,7 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { type MediaItem } from "@/services/images";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 // Format file size
 const formatFileSize = (bytes: number) => {
@@ -111,6 +112,7 @@ export const ImagePreviewModal = ({
         <button
           onClick={(e) => {
             e.stopPropagation();
+            trackEvent('media_preview_nav_prev', 'engagement', media.id);
             onPrevious();
           }}
           className="absolute left-6 top-1/2 -translate-y-1/2 p-3 rounded-full z-10 transition-all duration-200 hover:scale-110 bg-white/10 hover:bg-white/20 backdrop-blur-md shadow-sm border border-white/10"
@@ -122,6 +124,7 @@ export const ImagePreviewModal = ({
         <button
           onClick={(e) => {
             e.stopPropagation();
+            trackEvent('media_preview_nav_next', 'engagement', media.id);
             onNext();
           }}
           className="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-full z-10 transition-all duration-200 hover:scale-110 bg-white/10 hover:bg-white/20 backdrop-blur-md shadow-sm border border-white/10"
@@ -178,7 +181,10 @@ export const ImagePreviewModal = ({
           className="flex items-center justify-center gap-2 mt-4"
         >
           <button
-            onClick={onToggleFavorite}
+            onClick={() => {
+              trackEvent('media_preview_favorite_toggle', 'engagement', media.id);
+              onToggleFavorite();
+            }}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10"
           >
             {media.isFavorite ? (
@@ -192,7 +198,10 @@ export const ImagePreviewModal = ({
           </button>
 
           <button
-            onClick={onCopyUrl}
+            onClick={() => {
+              trackEvent('media_preview_copy_url', 'engagement', media.id);
+              onCopyUrl();
+            }}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10"
           >
             <IconCopy size={18} className="text-white" />
@@ -200,7 +209,10 @@ export const ImagePreviewModal = ({
           </button>
 
           <button
-            onClick={onDownload}
+            onClick={() => {
+              trackEvent('media_preview_download', 'engagement', media.id);
+              onDownload();
+            }}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10"
           >
             <IconDownload size={18} className="text-white" />
@@ -208,7 +220,10 @@ export const ImagePreviewModal = ({
           </button>
 
           <button
-            onClick={() => setShowInfo(!showInfo)}
+            onClick={() => {
+              trackEvent('media_preview_info_toggle', 'engagement', media.id);
+              setShowInfo(!showInfo);
+            }}
             className={cn(
               "flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10",
               showInfo && "bg-white/20 ring-1 ring-white/30"

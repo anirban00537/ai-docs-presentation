@@ -11,6 +11,7 @@ import {
   IconCalendar,
   IconStack2,
 } from "@tabler/icons-react";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -75,7 +76,10 @@ export const DocCard: React.FC<DocCardProps> = ({
       whileHover={{ y: -4, scale: 1.01 }}
       className="group relative"
     >
-      <Link href={docHref}>
+      <Link 
+        href={docHref}
+        onClick={() => trackEvent('card_click', 'engagement', `doc_${doc.id}`)}
+      >
         <div 
           className="relative overflow-hidden rounded-2xl transition-all duration-300 cursor-pointer bg-white/40 border border-secondary/20 hover:border-primary/20 hover:shadow-depth-3 hover:bg-white"
         >
@@ -133,6 +137,7 @@ export const DocCard: React.FC<DocCardProps> = ({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
+                trackEvent('card_action_edit', 'engagement', `doc_${doc.id}`);
                 onEdit(doc.id);
               }}
               className="rounded-lg cursor-pointer"
@@ -144,6 +149,7 @@ export const DocCard: React.FC<DocCardProps> = ({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
+                trackEvent('card_action_delete', 'engagement', `doc_${doc.id}`);
                 onDelete(doc.id, doc.title || "Untitled Doc");
               }}
               className="text-destructive focus:text-destructive rounded-lg cursor-pointer"

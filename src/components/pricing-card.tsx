@@ -8,6 +8,7 @@ import { formatPrice, type Product, type Price } from "@/services/pricing";
 import { Button } from "@/components/ui/button";
 import { useAppSelector } from "@/store/hooks";
 import { selectIsAuthenticated } from "@/store/slices/userSlice";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 interface PricingCardProps {
   product: {
@@ -66,6 +67,7 @@ export function PricingCard({
           .filter(Boolean) as string[]) || [];
 
   const handleClick = () => {
+    trackEvent('plan_selection_click', 'engagement', product.name);
     if (isCurrentPlan) {
       window.location.href = "/subscription";
       return;
@@ -168,7 +170,12 @@ export function PricingCard({
                   : "border-secondary/20 hover:bg-secondary/10 text-foreground"
               )}
             >
-              <Link href={targetHref || "#"}>{cta || "Get Started"}</Link>
+              <Link 
+                href={targetHref || "#"}
+                onClick={() => trackEvent('plan_selection_click', 'engagement', product.name)}
+              >
+                {cta || "Get Started"}
+              </Link>
             </Button>
           ) : (
             <Button

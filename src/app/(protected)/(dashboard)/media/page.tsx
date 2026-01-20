@@ -3,6 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconCheck, IconLoader2, IconPhoto, IconUpload } from "@tabler/icons-react";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import {
   useListMedia,
   useUploadMedia,
@@ -71,10 +72,12 @@ export default function MediaPage() {
 
   // Handle file upload
   const handleUpload = useCallback(() => {
+    trackEvent('media_upload_click', 'engagement', 'library');
     fileInputRef.current?.click();
   }, []);
 
   const handlePageChange = (newPage: number) => {
+    trackEvent('media_pagination_change', 'engagement', `page_${newPage}`);
     setPage(newPage);
     // Scroll to top when changing pages
     const scrollContainer = document.querySelector('.overflow-y-auto');
@@ -101,9 +104,11 @@ export default function MediaPage() {
     const failed = results.filter((r) => !r.success).length;
 
     if (successful > 0) {
+      trackEvent('media_upload_success', 'engagement', `count_${successful}`);
       toast.success(`${successful} file${successful > 1 ? "s" : ""} uploaded successfully`);
     }
     if (failed > 0) {
+      trackEvent('media_upload_error', 'engagement', `count_${failed}`);
       toast.error(`${failed} file${failed > 1 ? "s" : ""} failed to upload`);
     }
 
@@ -125,6 +130,7 @@ export default function MediaPage() {
       });
       toast.success("Media renamed successfully");
       setEditingMedia(null);
+      trackEvent('media_rename_success', 'engagement', editingMedia.id);
     } catch {
       toast.error("Failed to rename media");
     }
@@ -138,6 +144,7 @@ export default function MediaPage() {
         params: { isFavorite: !media.isFavorite },
       });
       toast.success(media.isFavorite ? "Removed from favorites" : "Added to favorites");
+      trackEvent('media_favorite_toggle', 'engagement', media.id);
     } catch {
       toast.error("Failed to update favorite status");
     }
@@ -156,6 +163,7 @@ export default function MediaPage() {
     try {
       await deleteMutation.mutateAsync(mediaToDelete);
       toast.success("Media deleted successfully");
+      trackEvent('media_delete_success', 'engagement', mediaToDelete);
     } catch {
       toast.error("Failed to delete media");
     } finally {

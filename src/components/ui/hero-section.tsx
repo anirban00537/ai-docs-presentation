@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { IconSparkles, IconPlayerPlay } from "@tabler/icons-react";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 export default function HeroSection() {
   const [videoError, setVideoError] = useState(false);
@@ -75,6 +76,7 @@ export default function HeroSection() {
             <Link href="/home">
               <Button
                 size="lg"
+                onClick={() => trackEvent('button_click', 'engagement', 'hero_cta_start_creating')}
                 className="h-14 px-8 rounded-full text-lg bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 shadow-xl shadow-zinc-200/50 dark:shadow-none transition-all duration-300"
               >
                 <IconSparkles className="mr-2 h-5 w-5" />
@@ -84,6 +86,7 @@ export default function HeroSection() {
             <Button
               variant="ghost"
               size="lg"
+              onClick={() => trackEvent('button_click', 'engagement', 'hero_cta_how_it_works')}
               className="h-14 px-8 rounded-full text-lg text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-800"
             >
               <IconPlayerPlay className="mr-2 h-5 w-5 fill-current" />

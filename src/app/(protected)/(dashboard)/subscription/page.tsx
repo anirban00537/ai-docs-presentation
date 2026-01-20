@@ -16,6 +16,7 @@ import {
 } from "@/store/slices/subscriptionSlice";
 import { PageSkeleton, PageHeader } from "@/components/shared";
 import { Skeleton, Button } from "@/components/ui";
+import { trackEvent } from "@/components/analytics/trackEvent";
 
 // Sub-components
 import {
@@ -52,6 +53,7 @@ export default function SubscriptionPage() {
         try {
           // Immediately verify the checkout and sync subscription
           await verifyCheckoutMutation.mutateAsync(customerSessionToken || undefined);
+          trackEvent('checkout_success', 'engagement', 'subscription');
         } catch (error) {
           console.error("Checkout verification failed", error);
         } finally {
@@ -70,9 +72,10 @@ export default function SubscriptionPage() {
   }, [searchParams, verifyCheckoutMutation]);
 
   const handleCancel = () => {
+    trackEvent('subscription_cancel_click', 'engagement', 'subscription');
     cancelMutation.mutate(undefined, {
       onSuccess: () => {
-        // Handle success
+        trackEvent('subscription_cancel_success', 'engagement', 'subscription');
       },
     });
   };

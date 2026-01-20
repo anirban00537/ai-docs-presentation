@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { IconCreditCard, IconSparkles } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/components/analytics/trackEvent";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -65,7 +66,13 @@ export const PlanStatusCard: React.FC<PlanStatusCardProps> = ({
           <p className="text-sm text-muted-foreground/70 mt-1.5 max-w-[200px] leading-relaxed">
             Unlock pro features and more credits today.
           </p>
-          <Button onClick={() => (window.location.href = "/pricing")} className="mt-4 rounded-xl h-10 px-5 font-semibold shadow-coral-glow hover:scale-105 transition-transform">
+          <Button 
+            onClick={() => {
+              trackEvent('nav_pricing_click', 'engagement', 'subscription_empty');
+              window.location.href = "/pricing";
+            }} 
+            className="mt-4 rounded-xl h-10 px-5 font-semibold shadow-coral-glow hover:scale-105 transition-transform"
+          >
             Explore Plans
           </Button>
         </div>
@@ -141,7 +148,14 @@ export const PlanStatusCard: React.FC<PlanStatusCardProps> = ({
                 </AlertDialogHeader>
                 <AlertDialogFooter className="gap-2 mt-4">
                   <AlertDialogCancel className="rounded-xl">Keep Plan</AlertDialogCancel>
-                  <AlertDialogAction onClick={onCancel} disabled={isCanceling} className="rounded-xl bg-red-500 hover:bg-red-600">
+                  <AlertDialogAction 
+                    onClick={() => {
+                      trackEvent('subscription_cancel_confirm', 'engagement', 'subscription_card');
+                      onCancel();
+                    }} 
+                    disabled={isCanceling} 
+                    className="rounded-xl bg-red-500 hover:bg-red-600"
+                  >
                     {isCanceling ? "Ending..." : "Confirm Cancellation"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
