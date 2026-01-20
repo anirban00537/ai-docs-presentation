@@ -114,11 +114,28 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
   }, [activeCardId, isPresenting, validCards, rowVirtualizer, isGeneratingCards]);
 
   useEffect(() => {
-    if (isGeneratingCards && validCards.length > 0) {
-       // When generating, follow the latest content
-       rowVirtualizer.scrollToIndex(validCards.length - 1, { align: "end", behavior: "auto" });
-    }
-  }, [isGeneratingCards, validCards.length, rowVirtualizer]);
+    if (!isGeneratingCards || validCards.length === 0) return;
+    
+    // Continuously scroll to bottom during content generation
+    // This ensures new content is always visible as it streams in
+    const scrollToBottom = () => {
+      const scrollElement = scrollContainerRef.current;
+      if (scrollElement) {
+        scrollElement.scrollTo({
+          top: scrollElement.scrollHeight,
+          behavior: "auto",
+        });
+      }
+    };
+    
+    // Initial scroll
+    scrollToBottom();
+    
+    // Set up interval to keep scrolling as content grows
+    const intervalId = setInterval(scrollToBottom, 200);
+    
+    return () => clearInterval(intervalId);
+  }, [isGeneratingCards, validCards.length]);
 
   const showLoading = isLoadingDoc && !isGeneratingCards;
 
