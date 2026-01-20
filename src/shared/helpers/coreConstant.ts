@@ -63,7 +63,7 @@ export const coreConstant = {
       // PRICING: { prompt: 0.20, completion: 0.20},
       // NAME: 'minimax/minimax-m2.1',
       // PRICING: { prompt: 0.28, completion: 1.20},
-      NAME: 'openai/gpt-4.1-nano',
+      NAME: 'x-ai/grok-4.1-fast',
       PRICING: { prompt: 0.2, completion: 0.5 },
     },
     CARDS: {
@@ -106,7 +106,7 @@ export const coreConstant = {
 
   // Credit System Constants
   CREDITS: {
-    FREE_TIER: 10,
-    DEFAULT_NEW_USER: 10,
+    FREE_TIER: 15,
+    DEFAULT_NEW_USER: 15,
   } as const,
 };

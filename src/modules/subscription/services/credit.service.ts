@@ -12,7 +12,7 @@ export class CreditService {
   /**
    * Initialize credit balance for a user
    */
-  async initializeCreditBalance(userId: string, initialBalance: number = 30): Promise<void> {
+  async initializeCreditBalance(userId: string, initialBalance: number = coreConstant.CREDITS.DEFAULT_NEW_USER): Promise<void> {
     const existing = await this.prisma.creditBalance.findUnique({
       where: { userId },
     });
