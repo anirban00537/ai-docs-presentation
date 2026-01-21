@@ -238,7 +238,7 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
 
         <div className="flex-1 overflow-hidden relative flex flex-col">
           <div ref={scrollContainerRef} className="flex-1 overflow-y-auto w-full relative">
-            <div className="w-full max-w-[1400px] mx-auto px-4 py-8 flex flex-col items-center min-h-full">
+            <div className="w-full max-w-[1400px] mx-auto px-4 lg:pr-28 py-8 flex flex-col items-center min-h-full">
               {isReadOnly ? (
                 // Read-only view - no editing capabilities
                 <div className="flex flex-col w-full items-center pb-32">
