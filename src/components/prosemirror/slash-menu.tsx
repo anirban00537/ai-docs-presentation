@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { SlashCommand, SLASH_COMMANDS } from "./commands";
 
@@ -8,6 +8,7 @@ interface SlashMenuProps {
   position: { top: number; left: number };
   selectedIndex: number;
   onSelect: (command: SlashCommand) => void;
+  onClose?: () => void;
 }
 
 export const SlashMenu: React.FC<SlashMenuProps> = ({
@@ -16,17 +17,63 @@ export const SlashMenu: React.FC<SlashMenuProps> = ({
   position,
   selectedIndex,
   onSelect,
+  onClose,
 }) => {
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const filteredCommands = SLASH_COMMANDS.filter(
     (cmd) =>
       cmd.label.toLowerCase().includes(query.toLowerCase()) ||
       cmd.description.toLowerCase().includes(query.toLowerCase())
   );
 
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        onClose?.();
+      }
+    };
+
+    // Use mousedown to catch clicks before they might be prevented
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open, onClose]);
+
+  // Close on scroll
+  useEffect(() => {
+    if (!open) return;
+
+    const handleScroll = () => {
+      onClose?.();
+    };
+
+    // Listen for scroll on window and any scrollable parent
+    window.addEventListener("scroll", handleScroll, true);
+    return () => window.removeEventListener("scroll", handleScroll, true);
+  }, [open, onClose]);
+
+  // Close on Escape key (handled globally)
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose?.();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
+
   if (!open || filteredCommands.length === 0) return null;
 
   return (
     <div
+      ref={menuRef}
       className="fixed z-50 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 min-w-[220px] overflow-hidden animate-in fade-in zoom-in-95 duration-200"
       style={{
         top: position.top + 10,

@@ -47,14 +47,20 @@ export const SLASH_COMMANDS: SlashCommand[] = [
   {
     id: "paragraph",
     label: "Paragraph",
-    description: "Plain text",
-    icon: <span className="text-gray-500">¶</span>,
+    description: "Plain text block",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="18" x2="15" y2="18" />
+      </svg>
+    ),
     nodeType: "paragraph",
   },
   {
     id: "bullet_list",
     label: "Bullet List",
-    description: "Unordered list",
+    description: "Unordered list with bullets",
     icon: (
       <svg
         width="16"
@@ -68,6 +74,8 @@ export const SLASH_COMMANDS: SlashCommand[] = [
         <line x1="9" y1="6" x2="21" y2="6" />
         <circle cx="4" cy="12" r="2" fill="currentColor" />
         <line x1="9" y1="12" x2="21" y2="12" />
+        <circle cx="4" cy="18" r="2" fill="currentColor" />
+        <line x1="9" y1="18" x2="21" y2="18" />
       </svg>
     ),
     nodeType: "bullet_list",
@@ -75,7 +83,7 @@ export const SLASH_COMMANDS: SlashCommand[] = [
   {
     id: "ordered_list",
     label: "Numbered List",
-    description: "Ordered list",
+    description: "Ordered list with numbers",
     icon: (
       <svg
         width="16"
@@ -85,14 +93,12 @@ export const SLASH_COMMANDS: SlashCommand[] = [
         stroke="currentColor"
         strokeWidth="2"
       >
-        <text x="2" y="8" fontSize="8" fill="currentColor" stroke="none">
-          1.
-        </text>
+        <text x="2" y="8" fontSize="8" fill="currentColor" stroke="none">1.</text>
         <line x1="9" y1="6" x2="21" y2="6" />
-        <text x="2" y="14" fontSize="8" fill="currentColor" stroke="none">
-          2.
-        </text>
+        <text x="2" y="14" fontSize="8" fill="currentColor" stroke="none">2.</text>
         <line x1="9" y1="12" x2="21" y2="12" />
+        <text x="2" y="20" fontSize="8" fill="currentColor" stroke="none">3.</text>
+        <line x1="9" y1="18" x2="21" y2="18" />
       </svg>
     ),
     nodeType: "ordered_list",
@@ -100,7 +106,7 @@ export const SLASH_COMMANDS: SlashCommand[] = [
   {
     id: "blockquote",
     label: "Quote",
-    description: "Blockquote",
+    description: "Blockquote for citations",
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
@@ -111,7 +117,7 @@ export const SLASH_COMMANDS: SlashCommand[] = [
   {
     id: "code_block",
     label: "Code Block",
-    description: "Code snippet",
+    description: "Code snippet with syntax",
     icon: (
       <svg
         width="16"
@@ -126,25 +132,5 @@ export const SLASH_COMMANDS: SlashCommand[] = [
       </svg>
     ),
     nodeType: "code_block",
-  },
-{
-    id: "image",
-    label: "Image",
-    description: "Insert an image",
-    icon: (
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-        <circle cx="8.5" cy="8.5" r="1.5" />
-        <polyline points="21,15 16,10 5,21" />
-      </svg>
-    ),
-    nodeType: "image",
   },
 ];

@@ -29,7 +29,6 @@ import { SlashMenu } from "./slash-menu";
 import { SelectionToolbar } from "./selection-toolbar";
 import { injectBaseStyles } from "./styles";
 import { createPlaceholderPlugin } from "./plugins/placeholder-plugin";
-import { ImageUrlModal } from "./plugins/image-plugin";
 import { useAppSelector } from "@/store/hooks";
 import {
   selectTheme,
@@ -235,16 +234,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
   // Error state for parsing failures
   const [parseError, setParseError] = useState<string | null>(null);
 
-  // Image modal state
-  const [imageModal, setImageModal] = useState<{
-    open: boolean;
-    nodePos: number | null;
-    currentSrc: string;
-  }>({
-    open: false,
-    nodePos: null,
-    currentSrc: "",
-  });
+
 
   // Keep onChange ref updated
   useEffect(() => {
@@ -450,34 +440,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       return;
     }
 
-    // For image - insert as atom node only (user clicks below to add text)
-    if (command.nodeType === "image") {
-      dispatch(tr);
-      setMenuState((prev) => ({
-        ...prev,
-        open: false,
-        query: "",
-        selectedIndex: 0,
-      }));
 
-      setTimeout(() => {
-        if (viewRef.current) {
-          const v = viewRef.current;
-          const { $from: newFrom } = v.state.selection;
-          const start = newFrom.before(newFrom.depth);
-          const end = newFrom.after(newFrom.depth);
-
-          // Create image node with empty imageUrl (placeholder state)
-          const imageNode = nodeType.create({ imageUrl: "", alt: "", title: "" });
-
-          // Insert only the image - user can click below to add more content
-          const newTr = v.state.tr.replaceWith(start, end, imageNode);
-          v.dispatch(newTr);
-          v.focus();
-        }
-      }, 0);
-      return;
-    }
 
     // For simple block types (heading, paragraph, code_block)
     // Check if we're inside a list_item - if so, we need to replace it instead of using setNodeMarkup
@@ -762,89 +725,6 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
       attributes: {
         class: "outline-none min-h-[40px]",
       },
-      nodeViews: {
-        image(node, view, getPos) {
-          const dom = document.createElement("div");
-          dom.className = "prosemirror-image-wrapper my-2";
-          dom.contentEditable = "false";
-
-          const { imageUrl, alt } = node.attrs;
-
-          // Content container for image/placeholder
-          const contentContainer = document.createElement("div");
-
-          if (imageUrl) {
-            // Render image
-            const figure = document.createElement("figure");
-            figure.className =
-              "prosemirror-image relative cursor-pointer group rounded-lg overflow-hidden";
-            const img = document.createElement("img");
-            img.src = imageUrl;
-            img.alt = alt || "";
-            img.className =
-              "w-full h-auto max-h-[500px] object-contain rounded-lg transition-all duration-200 group-hover:opacity-90";
-            img.onerror = () => {
-              figure.innerHTML = `
-                <div class="flex flex-col items-center justify-center gap-2 p-6 border border-red-200 rounded-xl bg-red-50/50">
-                  <span class="text-red-400">Failed to load image</span>
-                  <span class="text-xs text-red-400">Click to update URL</span>
-                </div>
-              `;
-            };
-            figure.appendChild(img);
-
-            // Hover overlay
-            const overlay = document.createElement("div");
-            overlay.className =
-              "absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors";
-            overlay.innerHTML = `<span class="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 bg-white/90 rounded-full text-sm font-medium text-gray-700 shadow-sm">Click to edit</span>`;
-            figure.appendChild(overlay);
-
-            contentContainer.appendChild(figure);
-          } else {
-            // Render placeholder
-            const placeholderEl = document.createElement("div");
-            placeholderEl.className =
-              "flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50/50 hover:bg-gray-100/80 hover:border-gray-400 cursor-pointer transition-all duration-200";
-            placeholderEl.innerHTML = `
-              <div class="p-4 rounded-full bg-gray-200/80">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  <circle cx="8.5" cy="8.5" r="1.5" />
-                  <polyline points="21,15 16,10 5,21" />
-                </svg>
-              </div>
-              <div class="text-center">
-                <p class="text-sm font-medium text-gray-600">Click to add an image</p>
-                <p class="text-xs text-gray-400 mt-1">Enter a URL to display an image</p>
-              </div>
-            `;
-            contentContainer.appendChild(placeholderEl);
-          }
-
-          dom.appendChild(contentContainer);
-
-          // Click handler for image/placeholder to open modal
-          contentContainer.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const pos = typeof getPos === "function" ? getPos() : undefined;
-            if (pos !== undefined) {
-              setImageModal({
-                open: true,
-                nodePos: pos,
-                currentSrc: imageUrl || "",
-              });
-            }
-          });
-
-          return {
-            dom,
-            ignoreMutation: () => true,
-            stopEvent: () => true,
-          };
-        },
-      },
     });
 
     viewRef.current = view;
@@ -863,37 +743,17 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
     [executeCommand]
   );
 
-  // Handle image URL submission
-  const handleImageUrlSubmit = useCallback(
-    (url: string) => {
-      const view = viewRef.current;
-      if (!view || imageModal.nodePos === null) return;
-
-      const { state, dispatch } = view;
-      const tr = state.tr.setNodeMarkup(imageModal.nodePos, undefined, {
-        src: url,
-        alt: "",
-        title: "",
-      });
-      dispatch(tr);
-
-      setImageModal({
-        open: false,
-        nodePos: null,
-        currentSrc: "",
-      });
-    },
-    [imageModal.nodePos]
-  );
-
-  // Handle image modal close
-  const handleImageModalClose = useCallback(() => {
-    setImageModal({
+  // Handle menu close (for outside click, scroll, etc.)
+  const handleMenuClose = useCallback(() => {
+    setMenuState((prev) => ({
+      ...prev,
       open: false,
-      nodePos: null,
-      currentSrc: "",
-    });
+      query: "",
+      selectedIndex: 0,
+    }));
   }, []);
+
+
 
   // Generate dynamic styles based on theme, scoped to this editor instance
   // NOTE: Base styles are injected globally once via injectBaseStyles()
@@ -1023,6 +883,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
               position={menuState.position}
               selectedIndex={menuState.selectedIndex}
               onSelect={handleMenuClick}
+              onClose={handleMenuClose}
             />,
             document.body
           )}
@@ -1039,14 +900,7 @@ export const ProseMirrorEditor = memo(function ProseMirrorEditor({
             />,
             document.body
           )}
-          {imageModal.open && (
-            <ImageUrlModal
-              open={imageModal.open}
-              onClose={handleImageModalClose}
-              onSubmit={handleImageUrlSubmit}
-              initialUrl={imageModal.currentSrc}
-            />
-          )}
+
         </>
       )}
     </div>
