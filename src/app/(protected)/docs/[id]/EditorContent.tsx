@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   CardCanvas,
   CardNavigator,
@@ -15,6 +13,8 @@ import {
   EditorDndProvider,
   useEditorTheme,
   ScalableCardContainer,
+  CardActionBar,
+  CardLayoutSelector,
 } from "@/app/(protected)/docs/[id]/editor";
 import { GoogleFontsLoader } from "@/components/GoogleFontsLoader";
 import { LoadingOverlay } from "@/app/(protected)/docs/[id]/editor";
@@ -29,7 +29,7 @@ import { Card } from "@/store/slices/cardsSlice";
 import { CARD_MAX_WIDTH } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useProfile } from "@/hooks/use-auth";
-
+import type { LayoutTemplate } from "@/types";
 
 const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string | null }) => {
   const {
@@ -61,6 +61,7 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
   
   // Mobile UI States
   const [isMobileNavigatorOpen, setIsMobileNavigatorOpen] = useState(false);
+  const [layoutSelectorCardId, setLayoutSelectorCardId] = useState<string | null>(null);
   const lastScrolledCardId = useRef<string | null>(null);
 
   useUndoRedoKeyboardShortcuts();
@@ -79,6 +80,20 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
     docId,
   });
 
+  const handleOpenLayouts = (cardId: string) => {
+    setLayoutSelectorCardId(cardId);
+  };
+
+  const handleLayoutSelect = (template: LayoutTemplate) => {
+    if (layoutSelectorCardId) {
+      handleAddCard(layoutSelectorCardId, {
+        rows: template.data.rows,
+        accent: template.data.accent,
+      });
+      setLayoutSelectorCardId(null);
+    }
+  };
+
   // Determine valid cards once to ensure consistency
   const validCards = useMemo(() => {
     return cards.filter(
@@ -86,38 +101,26 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
     );
   }, [cards]);
 
-  // Virtualizer setup
-  const rowVirtualizer = useVirtualizer({
-    count: validCards.length,
-    getScrollElement: () => scrollContainerRef.current,
-    estimateSize: () => 600, // Estimate card height + buffer
-    overscan: 3, // Render 3 items outside viewport for smoother scrolling
-  });
-
+  // Scroll to active card when it changes
   useEffect(() => {
     if (activeCardId && !isPresenting && !isGeneratingCards) {
-      // Only scroll if the active card has changed to prevent jumps while typing
       if (activeCardId !== lastScrolledCardId.current) {
-        const index = validCards.findIndex((c: Card) => c.id === activeCardId);
-        if (index !== -1) {
-          // Use virtualizer to scroll to the card
-          rowVirtualizer.scrollToIndex(index, { align: "center", behavior: "smooth" });
+        const cardElement = document.querySelector(`[data-card-id="${activeCardId}"]`);
+        if (cardElement) {
+          cardElement.scrollIntoView({ behavior: "smooth", block: "center" });
           lastScrolledCardId.current = activeCardId;
-          
-          // Close mobile navigator when a card is selected
           setIsMobileNavigatorOpen(false);
         }
       }
     } else if (!activeCardId) {
       lastScrolledCardId.current = null;
     }
-  }, [activeCardId, isPresenting, validCards, rowVirtualizer, isGeneratingCards]);
+  }, [activeCardId, isPresenting, isGeneratingCards]);
 
+  // Auto-scroll to bottom during content generation
   useEffect(() => {
     if (!isGeneratingCards || validCards.length === 0) return;
     
-    // Continuously scroll to bottom during content generation
-    // This ensures new content is always visible as it streams in
     const scrollToBottom = () => {
       const scrollElement = scrollContainerRef.current;
       if (scrollElement) {
@@ -128,10 +131,7 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
       }
     };
     
-    // Initial scroll
     scrollToBottom();
-    
-    // Set up interval to keep scrolling as content grows
     const intervalId = setInterval(scrollToBottom, 200);
     
     return () => clearInterval(intervalId);
@@ -198,103 +198,69 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
         )}
 
         {/* Mobile Sidebar Overlay */}
-        <AnimatePresence>
-          {isMobileNavigatorOpen && (
-            <div className="lg:hidden fixed inset-0 z-[100]">
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsMobileNavigatorOpen(false)}
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              />
-              <motion.div
-                initial={{ x: "-100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "-100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="absolute top-0 left-0 bottom-0 w-[240px] bg-white dark:bg-[#121216] shadow-2xl"
-              >
-                <div className="h-full w-full overflow-hidden">
-                   <CardNavigator
-                      cards={cards.filter(
-                        (card: Card) => card && card.rows && Array.isArray(card.rows)
-                      )}
-                      onUpdateBlock={handleUpdateBlock}
-                      onDeleteRow={handleDeleteRow}
-                      onAddColumn={handleAddColumn}
-                      onAddRowAtTop={handleAddRowAtTop}
-                      onAddRowAtBottom={handleAddRowAtBottom}
-                      onUpdateColumnWidths={handleUpdateColumnWidths}
-                      onAddCard={handleAddCard}
-                      onDeleteCard={handleDeleteCard}
-                      isMobile={true}
-                    />
-                </div>
-              </motion.div>
+        {isMobileNavigatorOpen && (
+          <div className="lg:hidden fixed inset-0 z-[100]">
+            <div 
+              onClick={() => setIsMobileNavigatorOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            />
+            <div
+              className="absolute top-0 left-0 bottom-0 w-[240px] bg-white dark:bg-[#121216] shadow-2xl transition-transform"
+            >
+              <div className="h-full w-full overflow-hidden">
+                 <CardNavigator
+                    cards={cards.filter(
+                      (card: Card) => card && card.rows && Array.isArray(card.rows)
+                    )}
+                    onUpdateBlock={handleUpdateBlock}
+                    onDeleteRow={handleDeleteRow}
+                    onAddColumn={handleAddColumn}
+                    onAddRowAtTop={handleAddRowAtTop}
+                    onAddRowAtBottom={handleAddRowAtBottom}
+                    onUpdateColumnWidths={handleUpdateColumnWidths}
+                    onAddCard={handleAddCard}
+                    onDeleteCard={handleDeleteCard}
+                    isMobile={true}
+                  />
+              </div>
             </div>
-          )}
-        </AnimatePresence>
+          </div>
+        )}
 
         <div className="flex-1 overflow-hidden relative flex flex-col">
           <div ref={scrollContainerRef} className="flex-1 overflow-y-auto w-full relative">
             <div className="w-full max-w-[1400px] mx-auto px-4 lg:pr-28 py-8 flex flex-col items-center min-h-full">
               {isReadOnly ? (
                 // Read-only view - no editing capabilities
-                <div className="flex flex-col w-full items-center pb-32">
-                  <div
-                    className="relative w-full"
-                    style={{
-                      height: `${rowVirtualizer.getTotalSize()}px`,
-                    }}
-                  >
-                    {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-                      const card = validCards[virtualItem.index];
-                      // Just in case
-                      if (!card) return null;
+                <div className="flex flex-col w-full items-center gap-6 pb-32">
+                  {validCards.map((card, index) => (
+                    <div
+                      key={card.id}
+                      data-card-id={card.id}
+                      data-card-index={index}
+                      className="w-full max-w-full relative"
+                    >
+                      <div
+                        className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
+                        style={{ color: theme.bodyColor }}
+                      >
+                        {index + 1}
+                      </div>
 
-                      return (
-                        <div
-                          key={card.id}
-                          ref={rowVirtualizer.measureElement}
-                          data-index={virtualItem.index}
-                          className="absolute top-0 w-full flex justify-center pb-3"
-                          style={{
-                            transform: `translateY(${virtualItem.start}px)`,
-                          }}
-                        >
-                          <motion.div
-                            data-card-id={card.id}
-                            data-card-index={virtualItem.index}
-                            className="w-full max-w-full relative"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <div
-                              className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
-                              style={{ color: theme.bodyColor }}
-                            >
-                              {virtualItem.index + 1}
-                            </div>
-
-                            <ScalableCardContainer>
-                              <CardCanvas
-                                card={card}
-                                onUpdateBlock={() => {}}
-                                onDeleteRow={() => {}}
-                                onAddColumn={() => {}}
-                                onAddRowAtTop={() => {}}
-                                onAddRowAtBottom={() => {}}
-                                onUpdateColumnWidths={() => {}}
-                                readOnly={true}
-                              />
-                            </ScalableCardContainer>
-                          </motion.div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                      <ScalableCardContainer>
+                        <CardCanvas
+                          card={card}
+                          onUpdateBlock={() => {}}
+                          onDeleteRow={() => {}}
+                          onAddColumn={() => {}}
+                          onAddRowAtTop={() => {}}
+                          onAddRowAtBottom={() => {}}
+                          onUpdateColumnWidths={() => {}}
+                          readOnly={true}
+                        />
+                      </ScalableCardContainer>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 // Full editing mode
@@ -302,58 +268,46 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
                   <BlockSelectionProvider>
                     <ToolbarPanel docId={docId} />
 
-                    <div className="flex flex-col w-full items-center pb-32">
-                      <div
-                        className="relative w-full"
-                        style={{
-                          height: `${rowVirtualizer.getTotalSize()}px`,
-                        }}
-                      >
-                        {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-                          const card = validCards[virtualItem.index];
-                          if (!card) return null;
-
-                          return (
+                    <div className="flex flex-col w-full items-center gap-1 pb-32">
+                      {validCards.map((card, index) => (
+                        <div
+                          key={card.id}
+                          data-card-id={card.id}
+                          data-card-index={index}
+                          className="w-full flex flex-col items-center"
+                        >
+                          <div className="w-full max-w-full relative">
                             <div
-                              key={card.id}
-                              ref={rowVirtualizer.measureElement}
-                              data-index={virtualItem.index}
-                              className="absolute top-0 w-full flex justify-center pb-3"
-                              style={{
-                                transform: `translateY(${virtualItem.start}px)`,
-                              }}
+                              className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
+                              style={{ color: theme.bodyColor }}
                             >
-                              <motion.div
-                                data-card-id={card.id}
-                                data-card-index={virtualItem.index}
-                                className="w-full max-w-full relative"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.3 }}
-                              >
-                                <div
-                                  className="absolute -left-10 top-0 text-xs font-bold opacity-30 select-none hidden xl:block"
-                                  style={{ color: theme.bodyColor }}
-                                >
-                                  {virtualItem.index + 1}
-                                </div>
-
-                                <ScalableCardContainer>
-                                  <CardCanvas
-                                    card={card}
-                                    onUpdateBlock={handleUpdateBlock}
-                                    onDeleteRow={handleDeleteRow}
-                                    onAddColumn={handleAddColumn}
-                                    onAddRowAtTop={handleAddRowAtTop}
-                                    onAddRowAtBottom={handleAddRowAtBottom}
-                                    onUpdateColumnWidths={handleUpdateColumnWidths}
-                                  />
-                                </ScalableCardContainer>
-                              </motion.div>
+                              {index + 1}
                             </div>
-                          );
-                        })}
-                      </div>
+
+                            <ScalableCardContainer>
+                              <CardCanvas
+                                card={card}
+                                onUpdateBlock={handleUpdateBlock}
+                                onDeleteRow={handleDeleteRow}
+                                onAddColumn={handleAddColumn}
+                                onAddRowAtTop={handleAddRowAtTop}
+                                onAddRowAtBottom={handleAddRowAtBottom}
+                                onUpdateColumnWidths={handleUpdateColumnWidths}
+                              />
+                            </ScalableCardContainer>
+                          </div>
+
+                          {/* Action bar */}
+                          <div className="h-[64px] flex items-center justify-center w-full my-2">
+                            <CardActionBar
+                              onAddBlank={() => handleAddCard(card.id)}
+                              onAddTemplate={() => handleOpenLayouts(card.id)}
+                              onAddAI={() => {}}
+                              className="w-[200px]"
+                            />
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </BlockSelectionProvider>
 
@@ -371,6 +325,12 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
         theme={theme}
         mode={isDark ? "dark" : "light"}
         streamSpeed={cardGenerationSpeed}
+      />
+
+      <CardLayoutSelector
+        isOpen={!!layoutSelectorCardId}
+        onClose={() => setLayoutSelectorCardId(null)}
+        onSelectLayout={handleLayoutSelect}
       />
     </>
   );

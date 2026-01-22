@@ -20,26 +20,49 @@ export function useCardActions(docId: string | null) {
   const addCardMutation = useAddCard();
   const deleteCardMutation = useDeleteCard();
 
-  const handleAddCard = async (afterCardId?: string) => {
+  const handleAddCard = async (
+    afterCardId?: string,
+    initialData?: { rows: any[]; accent?: any }
+  ) => {
     if (!docId) return;
 
     const tempId = `temp-${nanoid()}`;
 
     // 1. Dispatch Redux action (optimistic UI)
-    dispatch(addCardAction({ afterCardId, id: tempId }));
+    dispatch(
+      addCardAction({
+        afterCardId,
+        id: tempId,
+        card: initialData
+          ? {
+              rows: initialData.rows,
+              accent: initialData.accent,
+            }
+          : undefined,
+      })
+    );
 
     try {
+      const defaultData = {
+        rows: [
+          {
+            id: nanoid(),
+            blocks: [{ id: nanoid(), type: "prosemirror", content: {} }],
+          },
+        ],
+      };
+
+      const payloadData = initialData
+        ? {
+            rows: initialData.rows,
+            accent: initialData.accent,
+          }
+        : defaultData;
+
       const response = await addCardMutation.mutateAsync({
         docId,
         payload: {
-          data: {
-            rows: [
-              {
-                id: nanoid(),
-                blocks: [{ id: nanoid(), type: "prosemirror", content: {} }],
-              },
-            ],
-          },
+          data: payloadData,
         },
       });
 

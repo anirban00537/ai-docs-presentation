@@ -76,11 +76,25 @@ const cardsSlice = createSlice({
     },
     addCard: (
       state,
-      action: PayloadAction<{ afterCardId?: string; id?: string }>
+      action: PayloadAction<{
+        afterCardId?: string;
+        id?: string;
+        card?: { rows: Row[]; accent?: CardAccent };
+      }>
     ) => {
-      const newCard = createCard();
-      if (action.payload.id) {
-        newCard.id = action.payload.id;
+      let newCard: Card;
+
+      if (action.payload.card) {
+        newCard = {
+          id: action.payload.id || nanoid(),
+          rows: action.payload.card.rows,
+          accent: action.payload.card.accent,
+        };
+      } else {
+        newCard = createCard();
+        if (action.payload.id) {
+          newCard.id = action.payload.id;
+        }
       }
 
       if (action.payload.afterCardId) {

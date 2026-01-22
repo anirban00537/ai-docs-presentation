@@ -185,8 +185,8 @@ export const useEditorPage = ({ docId }: UseEditorPageParams) => {
     columnWidths: number[]
   ) => commandBus.updateColumnWidths({ cardId, rowId, columnWidths });
 
-  const handleAddCardAtOrder = (afterCardId?: string) =>
-    handleAddCard(afterCardId);
+  const handleAddCardAtOrder = (afterCardId?: string, initialData?: any) =>
+    handleAddCard(afterCardId, initialData);
 
   return {
     // state

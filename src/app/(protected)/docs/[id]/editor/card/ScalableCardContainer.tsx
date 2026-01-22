@@ -87,8 +87,8 @@ export const ScalableCardContainer = ({ children }: ScalableCardContainerProps) 
     }, []);
 
     // We no longer enforce a large aspect-ratio minimum height to allow cards to hug their content.
-    // If we have no measurement yet, we fall back to a reasonable small height to avoid layout jump.
-    const finalContentHeight = contentHeight || 100;
+    // Use a larger fallback to prevent overlap during initial render.
+    const finalContentHeight = contentHeight || 400;
 
     return (
         <div

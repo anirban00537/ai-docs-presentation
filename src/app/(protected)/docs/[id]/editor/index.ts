@@ -41,6 +41,7 @@ export { CardNavigator } from "./card/CardNavigator";
 export { CardToolbar } from "./card/CardToolbar";
 export { CardOptions } from "./card/CardOptions";
 export { CardLayoutSelector } from "./card/CardLayoutSelector";
+export { CardActionBar } from "./card/CardActionBar";
 export { ScalableCardContainer } from "./card/ScalableCardContainer";
 
 // Block UI
