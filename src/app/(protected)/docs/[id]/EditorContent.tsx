@@ -28,7 +28,6 @@ import DragOverlayWrapper from "./DragOverlayWrapper";
 import { Card } from "@/store/slices/cardsSlice";
 import { CARD_MAX_WIDTH } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { useProfile } from "@/hooks/use-auth";
 import type { LayoutTemplate } from "@/types";
 
 const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string | null }) => {
@@ -54,10 +53,11 @@ const EditorContent = ({ docId, outlineId }: { docId: string, outlineId: string 
   const activeCardId = useAppSelector(selectActiveCardId);
   const isDark = theme.themeType === "dark";
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { data: user } = useProfile();
   
   // Determine if we're in read-only mode
-  const isReadOnly = !user && doc?.shareEnabled === true;
+  // User can edit only if they are the owner of the document
+  // If not the owner (even if logged in), they should be in read-only mode
+  const isReadOnly = doc?.isOwner !== true;
   
   // Mobile UI States
   const [isMobileNavigatorOpen, setIsMobileNavigatorOpen] = useState(false);

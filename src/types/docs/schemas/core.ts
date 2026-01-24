@@ -92,4 +92,6 @@ export const DocInfoSchema = z.object({
   prompt: z.string().nullable().optional(),
   numberOfCards: z.number().nullable().optional(),
   outlineStatus: z.enum(["none", "generating", "completed", "failed"]).nullable().optional(),
+  // Ownership flag - indicates if current user owns this doc (can edit)
+  isOwner: z.boolean().optional(),
 });
