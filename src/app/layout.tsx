@@ -51,6 +51,14 @@ export const metadata: Metadata = {
     title: "Butterfast - AI Presentation Application",
     description:
       "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Butterfast - AI Presentation Application",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -58,6 +66,7 @@ export const metadata: Metadata = {
     description:
       "Create stunning presentations effortlessly with Butterfast, an AI-powered presentation application.",
     creator: "@butterfast",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
