@@ -93,6 +93,22 @@ export default function HeroSection() {
               See how it works
             </Button>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-10 flex justify-center"
+          >
+            <a href="https://twelve.tools" target="_blank" rel="noreferrer">
+              <img
+                src="https://twelve.tools/badge0-light.svg"
+                alt="Featured on Twelve Tools"
+                width={200}
+                height={54}
+              />
+            </a>
+          </motion.div>
         </div>
 
         {/* Sleek Video Preview */}
@@ -100,7 +116,7 @@ export default function HeroSection() {
           className="relative w-full max-w-6xl"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
         >
           {/* Glow Effect behind the video */}
           <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-purple-600/30 rounded-2xl blur-2xl opacity-30"></div>
