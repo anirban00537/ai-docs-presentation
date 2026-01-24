@@ -167,6 +167,7 @@ export class DocsService implements OnModuleInit {
   async findOne(id: string, user: User | null): Promise<ResponseModel> {
     try {
       let doc = null;
+      let isOwner = false;
 
       // If user is authenticated, try to find as owner first
       if (user?.id) {
@@ -183,6 +184,10 @@ export class DocsService implements OnModuleInit {
             },
           },
         });
+        
+        if (doc) {
+          isOwner = true;
+        }
       }
 
       // If not found (either user is not authenticated, or not the owner),
@@ -207,7 +212,11 @@ export class DocsService implements OnModuleInit {
         return errorResponse('Doc not found');
       }
 
-      return successResponse('Doc retrieved successfully', doc);
+      // Return doc with isOwner flag so frontend can determine edit permissions
+      return successResponse('Doc retrieved successfully', {
+        ...doc,
+        isOwner,
+      });
     } catch (error) {
       processException(error);
     }
