@@ -7,6 +7,9 @@ import { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/navbar";
 
+// Force dynamic rendering to ensure env vars are available at runtime
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
