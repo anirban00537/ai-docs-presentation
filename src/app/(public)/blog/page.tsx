@@ -5,6 +5,9 @@ import { User, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/navbar";
 
+// Force dynamic rendering to ensure env vars are available at runtime
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Blog | Butterfast",
   description: "Insights, tutorials, and updates from the Butterfast team.",
