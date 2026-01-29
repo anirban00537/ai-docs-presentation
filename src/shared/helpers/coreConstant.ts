@@ -107,6 +107,6 @@ export const coreConstant = {
   // Credit System Constants
   CREDITS: {
     FREE_TIER: 15,
-    DEFAULT_NEW_USER: 15,
+    DEFAULT_NEW_USER: 100,
   } as const,
 };
