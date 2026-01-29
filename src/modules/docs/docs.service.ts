@@ -228,6 +228,8 @@ export class DocsService implements OnModuleInit {
     payload: UpdateDocDto,
   ): Promise<ResponseModel> {
     try {
+      const { outlines, ...docPayload } = payload;
+
       const doc = await this.prisma.doc.findFirst({
         where: {
           id,
@@ -240,10 +242,11 @@ export class DocsService implements OnModuleInit {
         return errorResponse('Doc not found');
       }
 
+      // 1. Update the document fields
       const updatedDoc = await this.prisma.doc.update({
         where: { id },
         data: {
-          ...payload,
+          ...docPayload,
           version: doc.version + 1,
         },
         include: {
@@ -253,6 +256,44 @@ export class DocsService implements OnModuleInit {
           },
         },
       });
+
+      // 2. If outlines are provided, update the corresponding cards
+      if (outlines && Array.isArray(outlines) && outlines.length > 0) {
+        // We use the cards returned from updatedDoc to ensure we have the latest state
+        const cards = updatedDoc.cards || [];
+        
+        const updatePromises = outlines
+          .map((outlineItem, index) => {
+            // Only update if we have a corresponding card
+            if (index < cards.length) {
+              const card = cards[index];
+              const currentOutline = (card.outline as any) || {};
+              
+              // Merge content updates
+              const newOutline = {
+                ...currentOutline,
+                content: outlineItem.content || currentOutline.content,
+              };
+
+              return this.prisma.card.update({
+                where: { id: card.id },
+                data: { outline: newOutline },
+              });
+            }
+            return null;
+          })
+          .filter(Boolean); // Remove nulls
+
+        if (updatePromises.length > 0) {
+          await this.prisma.$transaction(updatePromises as any[]);
+          this.logger.log(`UPDATED OUTLINES: for doc ${id}, count: ${updatePromises.length}`);
+        }
+      }
+
+      // Return the updated doc (fetching fresh if we updated cards)
+      if (outlines && Array.isArray(outlines) && outlines.length > 0) {
+         return this.findOne(id, user); 
+      }
 
       return successResponse('Doc updated successfully', updatedDoc);
     } catch (error) {

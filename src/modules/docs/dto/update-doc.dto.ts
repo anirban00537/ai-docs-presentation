@@ -51,4 +51,8 @@ export class UpdateDocDto {
   @IsOptional()
   @IsString()
   outlineStatus?: string;
+
+  @IsOptional()
+  @IsArray()
+  outlines?: any[];
 }
