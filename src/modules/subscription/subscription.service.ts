@@ -98,7 +98,7 @@ export class SubscriptionService {
       const hasActiveSubscription = accessCheck.hasAccess;
 
       // Free tier defaults (SINGLE SOURCE OF TRUTH)
-      const FREE_SLIDE_LIMIT = 5;
+      const FREE_SLIDE_LIMIT = 15;
       const FREE_STORAGE_LIMIT = 0;
 
       let slideLimit = FREE_SLIDE_LIMIT;
@@ -1264,8 +1264,8 @@ export class SubscriptionService {
       });
 
       if (!subscription?.productId) {
-        // Free tier default: 10 slides
-        return 10;
+        // Free tier default: 15 slides
+        return 15;
       }
 
       // Try to get from Polar API
@@ -1291,12 +1291,12 @@ export class SubscriptionService {
       }
 
       // Default fallback
-      return 10;
+      return 15;
     } catch (error: any) {
       this.logger.error(
         `Error getting slide limit for user ${userId}: ${error.message}`,
       );
-      return 10; // Safe default
+      return 15; // Safe default
     }
   }
 
@@ -1607,12 +1607,12 @@ export class SubscriptionService {
         // Return default tiers if Polar is not configured
         return successResponse('Plan tiers (default)', {
           tiers: [
-            { name: 'Free', planName: 'free', slideLimit: 5 },
+            { name: 'Free', planName: 'free', slideLimit: 15 },
             { name: 'Go Plan', planName: 'go_plan', slideLimit: 20 },
             { name: 'Plus Plan', planName: 'plus', slideLimit: 35 },
             { name: 'Pro Plan', planName: 'pro', slideLimit: 50 },
           ],
-          freeTier: { name: 'Free', planName: 'free', slideLimit: 5 },
+          freeTier: { name: 'Free', planName: 'free', slideLimit: 15 },
         });
       }
 
@@ -1621,12 +1621,12 @@ export class SubscriptionService {
         // Return default tiers on error
         return successResponse('Plan tiers (default)', {
           tiers: [
-            { name: 'Free', planName: 'free', slideLimit: 5 },
+            { name: 'Free', planName: 'free', slideLimit: 15 },
             { name: 'Go Plan', planName: 'go_plan', slideLimit: 20 },
             { name: 'Plus Plan', planName: 'plus', slideLimit: 35 },
             { name: 'Pro Plan', planName: 'pro', slideLimit: 50 },
           ],
-          freeTier: { name: 'Free', planName: 'free', slideLimit: 5 },
+          freeTier: { name: 'Free', planName: 'free', slideLimit: 15 },
         });
       }
 
@@ -1669,7 +1669,7 @@ export class SubscriptionService {
         .map(({ priceAmount, ...tier }: any) => tier);
 
       // Add free tier at the beginning
-      const freeTier = { name: 'Free', planName: 'free', slideLimit: 5 };
+      const freeTier = { name: 'Free', planName: 'free', slideLimit: 15 };
       const allTiers = [freeTier, ...tiers];
 
       return successResponse('Plan tiers retrieved successfully', {
@@ -1681,12 +1681,12 @@ export class SubscriptionService {
       // Return default tiers on error
       return successResponse('Plan tiers (default)', {
         tiers: [
-          { name: 'Free', planName: 'free', slideLimit: 5 },
+          { name: 'Free', planName: 'free', slideLimit: 15 },
           { name: 'Go Plan', planName: 'go_plan', slideLimit: 20 },
           { name: 'Plus Plan', planName: 'plus', slideLimit: 35 },
           { name: 'Pro Plan', planName: 'pro', slideLimit: 50 },
         ],
-        freeTier: { name: 'Free', planName: 'free', slideLimit: 5 },
+        freeTier: { name: 'Free', planName: 'free', slideLimit: 15 },
       });
     }
   }
