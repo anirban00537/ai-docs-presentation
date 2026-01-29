@@ -75,6 +75,8 @@ interface UseLayoutEditorReturn {
   handleAddColumn: (cardId: string, rowId: string, afterBlockId: string) => void;
   handleAddRowAtTop: (cardId: string) => void;
   handleAddRowAtBottom: (cardId: string) => void;
+  handleAddLayoutRow: (columnCount: number, blockType: string) => void;
+  handleDeleteBlock: (cardId: string, rowId: string, blockId: string) => void;
   handleUpdateColumnWidths: (cardId: string, rowId: string, columnWidths: number[]) => void;
   handleUpdateAccent: (cardId: string, accent: CardAccent | undefined) => void;
 
@@ -142,7 +144,10 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
     if (active.data.current?.type === "block") {
       setActiveBlock(active.data.current.block);
       setIsBlockDragging(false);
-    } else if (active.data.current?.type === "block-type") {
+    } else if (active.data.current?.type === "block-option") {
+      setIsBlockDragging(true);
+      setDraggingBlockType(active.data.current.blockType);
+    } else if (active.data.current?.type === "layout-option") {
       setIsBlockDragging(true);
       setDraggingBlockType(active.data.current.blockType);
     }
@@ -160,12 +165,13 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
       }
 
       // Handle block type drag (from toolbar)
-      if (active.data.current?.type === "block-type") {
+      if (active.data.current?.type === "block-option") {
         const blockType = active.data.current.blockType;
+        const initialContent = active.data.current.initialContent;
 
         if (over.data.current?.type === "row-insert") {
           const { insertIndex } = over.data.current;
-          const newBlock = createBlockInstance(blockType);
+          const newBlock = createBlockInstance(blockType as any, initialContent);
           const newRow = createRow([newBlock]);
 
           setLayoutData((prev: LayoutData) => {
@@ -173,17 +179,65 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
             newRows.splice(insertIndex, 0, newRow);
             return { ...prev, rows: newRows };
           });
-        } else if (over.data.current?.type === "column") {
-          const { rowId } = over.data.current;
-          const newBlock = createBlockInstance(blockType);
+        } else if (over.data.current?.type === "row") {
+          // Dropping onto an existing row - add block to that row
+          const { rowId, insertIndex } = over.data.current;
+          const newBlock = createBlockInstance(blockType as any, initialContent);
 
           setLayoutData((prev: LayoutData) => {
             const newRows = prev.rows.map((row: Row) => {
               if (row.id === rowId) {
+                const newBlocks = [...row.blocks];
+                const idx = insertIndex ?? row.blocks.length;
+                newBlocks.splice(idx, 0, newBlock);
                 return {
                   ...row,
-                  blocks: [...row.blocks, newBlock],
-                  columnWidths: [...(row.columnWidths || []), 1],
+                  blocks: newBlocks,
+                  columnWidths: newBlocks.map(() => 1),
+                };
+              }
+              return row;
+            });
+            return { ...prev, rows: newRows };
+          });
+        }
+      }
+
+      // Handle layout drag (from layouts panel - creates row with multiple columns)
+      if (active.data.current?.type === "layout-option") {
+        const blockType = active.data.current.blockType;
+        const columnCount = active.data.current.columnCount || 1;
+
+        if (over.data.current?.type === "row-insert") {
+          const { insertIndex } = over.data.current;
+          // Create multiple blocks for the layout
+          const newBlocks = Array(columnCount).fill(null).map(() => createBlockInstance(blockType as any));
+          const newRow: Row = {
+            id: crypto.randomUUID(),
+            blocks: newBlocks,
+            columnWidths: Array(columnCount).fill(1),
+          };
+
+          setLayoutData((prev: LayoutData) => {
+            const newRows = [...prev.rows];
+            newRows.splice(insertIndex, 0, newRow);
+            return { ...prev, rows: newRows };
+          });
+        } else if (over.data.current?.type === "row") {
+          // Dropping layout onto existing row - append all blocks
+          const { rowId, insertIndex } = over.data.current;
+          const newBlocks = Array(columnCount).fill(null).map(() => createBlockInstance(blockType as any));
+
+          setLayoutData((prev: LayoutData) => {
+            const newRows = prev.rows.map((row: Row) => {
+              if (row.id === rowId) {
+                const updatedBlocks = [...row.blocks];
+                const idx = insertIndex ?? row.blocks.length;
+                updatedBlocks.splice(idx, 0, ...newBlocks);
+                return {
+                  ...row,
+                  blocks: updatedBlocks,
+                  columnWidths: updatedBlocks.map(() => 1),
                 };
               }
               return row;
@@ -229,9 +283,9 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
               rows: filteredRows.length > 0 ? filteredRows : [createRow()],
             };
           });
-        } else if (over.data.current?.type === "column") {
+        } else if (over.data.current?.type === "row") {
           const targetRowId = over.data.current.rowId;
-          const targetBlockId = over.data.current.blockId;
+          const targetInsertIndex = over.data.current.insertIndex;
 
           setLayoutData((prev: LayoutData) => {
             const newRows = [...prev.rows];
@@ -248,16 +302,12 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
               }
             });
 
-            // Add to target
+            // Add to target row at specified index
             if (movedBlock) {
               newRows.forEach((row) => {
                 if (row.id === targetRowId) {
-                  const targetIndex = row.blocks.findIndex((b: Block) => b.id === targetBlockId);
-                  if (targetIndex !== -1) {
-                    row.blocks.splice(targetIndex, 0, movedBlock!);
-                  } else {
-                    row.blocks.push(movedBlock!);
-                  }
+                  const idx = targetInsertIndex ?? row.blocks.length;
+                  row.blocks.splice(idx, 0, movedBlock!);
                   row.columnWidths = row.blocks.map(() => 1);
                 }
               });
@@ -356,6 +406,31 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
     []
   );
 
+  const handleDeleteBlock = useCallback(
+    (cardId: string, rowId: string, blockId: string) => {
+      setLayoutData((prev: LayoutData) => {
+        const newRows = prev.rows.map((row: Row) => {
+          if (row.id === rowId) {
+            const newBlocks = row.blocks.filter((b: Block) => b.id !== blockId);
+            return {
+              ...row,
+              blocks: newBlocks,
+              columnWidths: newBlocks.map(() => 1),
+            };
+          }
+          return row;
+        });
+        // Remove empty rows
+        const filteredRows = newRows.filter((r: Row) => r.blocks.length > 0);
+        return {
+          ...prev,
+          rows: filteredRows.length > 0 ? filteredRows : [createRow()],
+        };
+      });
+    },
+    []
+  );
+
   // Accent Operations
   const handleUpdateAccent = useCallback((cardId: string, accent: CardAccent | undefined) => {
     setLayoutData((prev: LayoutData) => ({ ...prev, accent }));
@@ -437,6 +512,23 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
     }
   }, []);
 
+  const handleAddLayoutRow = useCallback((columnCount: number, blockType: string) => {
+    setLayoutData((prev: LayoutData) => {
+      const newBlocks = Array(columnCount).fill(null).map(() => createBlockInstance(blockType as any));
+      
+      const newRow: Row = {
+        id: crypto.randomUUID(),
+        blocks: newBlocks,
+        columnWidths: Array(columnCount).fill(1),
+      };
+
+      return {
+        ...prev,
+        rows: [...prev.rows, newRow],
+      };
+    });
+  }, []);
+
   return {
     layoutData,
     layoutMetadata,
@@ -455,6 +547,8 @@ export function useLayoutEditor(): UseLayoutEditorReturn {
     handleAddColumn,
     handleAddRowAtTop,
     handleAddRowAtBottom,
+    handleAddLayoutRow,
+    handleDeleteBlock,
     handleUpdateColumnWidths,
     handleUpdateAccent,
     handleUpdateMetadata,

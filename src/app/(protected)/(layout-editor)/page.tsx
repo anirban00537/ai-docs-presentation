@@ -57,6 +57,8 @@ const LayoutEditorContent = () => {
     handleAddRowAtBottom,
     handleUpdateColumnWidths,
     handleUpdateAccent,
+    handleDeleteBlock,
+    handleAddLayoutRow,
     handleSaveLayout,
     handleUpdateMetadata,
     handleLoadLayout,
@@ -104,7 +106,12 @@ const LayoutEditorContent = () => {
           >
             <BlockSelectionProvider>
               {/* Blocks Panel */}
-              <ToolbarPanel docId="layout-editor" />
+              <ToolbarPanel 
+                docId="layout-editor" 
+                onLayoutSelect={(layout) => {
+                  handleAddLayoutRow(layout.columnCount || 1, layout.blockType);
+                }}
+              />
 
               {/* Layout Canvas */}
               <div className="flex flex-col gap-8">
@@ -158,6 +165,7 @@ const LayoutEditorContent = () => {
                     onAddRowAtBottom={handleAddRowAtBottom}
                     onUpdateColumnWidths={handleUpdateColumnWidths}
                     onUpdateAccent={handleUpdateAccent}
+                    onDeleteBlock={handleDeleteBlock}
                     enableDragHints={true}
                     readOnly={false}
                   />

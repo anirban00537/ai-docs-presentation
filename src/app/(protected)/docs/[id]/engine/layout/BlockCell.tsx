@@ -27,6 +27,7 @@ interface BlockCellProps {
   isResizing?: boolean;
   onResizeStart?: () => void;
   onResizeEnd?: () => void;
+  onDeleteBlock?: (rowId: string, blockId: string) => void;
   readOnly?: boolean;
   isStreaming?: boolean;
 }
@@ -47,6 +48,7 @@ export const BlockCell = memo(function BlockCell({
   isResizing,
   onResizeStart,
   onResizeEnd,
+  onDeleteBlock,
   readOnly = false,
   isStreaming = false,
 }: BlockCellProps) {
@@ -140,9 +142,13 @@ export const BlockCell = memo(function BlockCell({
   }, [dispatch, cardId, rowId, block.id]);
 
   const handleDelete = useCallback(() => {
-    dispatch(deleteBlock({ cardId, rowId, blockId: block.id }));
+    if (onDeleteBlock) {
+      onDeleteBlock(rowId, block.id);
+    } else {
+      dispatch(deleteBlock({ cardId, rowId, blockId: block.id }));
+    }
     setFocusedBlock(null, null);
-  }, [dispatch, cardId, rowId, block.id, setFocusedBlock]);
+  }, [dispatch, cardId, rowId, block.id, setFocusedBlock, onDeleteBlock]);
 
   return (
     <div

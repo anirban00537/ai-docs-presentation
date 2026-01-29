@@ -53,6 +53,7 @@ interface CardCanvasProps {
     columnWidths: number[]
   ) => void;
   onUpdateAccent?: (cardId: string, accent: CardAccent | undefined) => void;
+  onDeleteBlock?: (cardId: string, rowId: string, blockId: string) => void;
   enableDragHints?: boolean;
   readOnly?: boolean;
   fullWidth?: boolean;
@@ -67,6 +68,7 @@ export const CardCanvas = memo(function CardCanvas({
   onAddRowAtBottom,
   onUpdateColumnWidths,
   onUpdateAccent,
+  onDeleteBlock,
   enableDragHints = true,
   readOnly = false,
   fullWidth = false,
@@ -220,6 +222,15 @@ export const CardCanvas = memo(function CardCanvas({
   const handleAddRow = useCallback(() => {
     onAddRowAtBottom(card.id);
   }, [card.id, onAddRowAtBottom]);
+
+  const handleRowDeleteBlock = useCallback(
+    (rowId: string, blockId: string) => {
+      if (onDeleteBlock) {
+        onDeleteBlock(card.id, rowId, blockId);
+      }
+    },
+    [card.id, onDeleteBlock]
+  );
 
   // Frame styling
   const getStyle = (): React.CSSProperties => {
@@ -508,6 +519,7 @@ export const CardCanvas = memo(function CardCanvas({
                       onDeleteRow={handleRowDelete}
                       onAddColumn={handleRowAddColumn}
                       onUpdateColumnWidths={handleRowUpdateColumnWidths}
+                      onDeleteBlock={onDeleteBlock ? handleRowDeleteBlock : undefined}
                       rowCount={card.rows?.length || 0}
                       readOnly={readOnly}
                       isStreaming={card.isStreaming}

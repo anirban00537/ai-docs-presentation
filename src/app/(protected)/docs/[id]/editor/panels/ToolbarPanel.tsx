@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { IconPalette, IconBlocks, IconPhoto, IconLayoutGrid, IconX } from "@tabler/icons-react";
 import { ThemeSelectorPanel } from "./ThemeSelectorPanel";
 import { BlockLibraryPanel } from "./BlockLibraryPanel";
-import { LayoutsPanel } from "./LayoutsPanel";
+import { LayoutsPanel, type LayoutDefinition } from "./LayoutsPanel";
 import { ImageLibraryPanel } from "./ImageLibraryPanel";
 import { useAppSelector } from "@/store/hooks";
 import { selectTheme, DEFAULT_THEME } from "@/store/slices/cardsSlice";
@@ -12,6 +12,7 @@ import { trackEvent } from "@/components/analytics/trackEvent";
 
 interface ToolbarPanelProps {
   docId: string;
+  onLayoutSelect?: (layout: LayoutDefinition) => void;
 }
 
 // Toolbar buttons with icons and labels
@@ -24,6 +25,7 @@ const TOOLBAR_ITEMS = [
 
 export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
   docId,
+  onLayoutSelect,
 }) => {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const isDark = theme.themeType === "dark";
@@ -122,6 +124,7 @@ export const ToolbarPanel: React.FC<ToolbarPanelProps> = ({
                 <LayoutsPanel
                   isOpen={true}
                   onClose={() => setActivePanel(null)}
+                  onLayoutSelect={onLayoutSelect}
                 />
               )}
 

@@ -39,6 +39,7 @@ interface ContentRowProps {
   onDeleteRow: (rowId: string) => void;
   onAddColumn: (rowId: string, afterBlockId: string) => void;
   onUpdateColumnWidths: (rowId: string, columnWidths: number[]) => void;
+  onDeleteBlock?: (rowId: string, blockId: string) => void;
   rowCount: number;
   readOnly?: boolean;
   isStreaming?: boolean;
@@ -55,6 +56,7 @@ export const ContentRow = memo(function ContentRow({
   onDeleteRow,
   onAddColumn,
   onUpdateColumnWidths,
+  onDeleteBlock,
   rowCount,
   readOnly = false,
   isStreaming = false,
@@ -339,6 +341,7 @@ export const ContentRow = memo(function ContentRow({
             canAddColumn={canAddColumn}
             readOnly={readOnly}
             isStreaming={isStreaming}
+            onDeleteBlock={onDeleteBlock}
             // Resize props
             onResize={handleResize}
             isResizing={isResizing}

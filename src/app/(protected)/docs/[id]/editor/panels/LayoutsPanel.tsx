@@ -22,9 +22,11 @@ import { cn } from "@/lib/utils";
 interface LayoutsPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  onLayoutSelect?: (layout: LayoutDefinition) => void;
 }
 
-interface LayoutDefinition {
+
+export interface LayoutDefinition {
   id: string;
   blockType: string;
   icon: React.ReactNode;
@@ -116,13 +118,20 @@ const masterLayouts: LayoutDefinition[] = [
   },
 ];
 
-export function LayoutsPanel({ isOpen, onClose }: LayoutsPanelProps) {
+
+export function LayoutsPanel({ isOpen, onClose, onLayoutSelect }: LayoutsPanelProps) {
   const theme = useAppSelector(selectTheme) || DEFAULT_THEME;
   const activeCardId = useAppSelector(selectActiveCardId);
   const dispatch = useAppDispatch();
   const isDark = theme.themeType === "dark";
 
   const handleLayoutClick = (layout: LayoutDefinition) => {
+    if (onLayoutSelect) {
+      onLayoutSelect(layout);
+      onClose();
+      return;
+    }
+
     if (!activeCardId) return;
 
     trackEvent('layout_select', 'engagement', layout.id);
