@@ -277,16 +277,6 @@ export const EditorHeader = ({
                 </button>
               </div>
 
-              {/* Live Indicator */}
-              <button className={cn(
-                "hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all",
-                isDark 
-                  ? "text-white/60 hover:text-white hover:bg-white/10" 
-                  : "text-black/60 hover:text-black hover:bg-black/5"
-              )}>
-                <IconBroadcast size={16} />
-                <span className="hidden md:inline">Live</span>
-              </button>
 
               {/* Share */}
               <button
