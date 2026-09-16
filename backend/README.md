@@ -1,378 +1,148 @@
-<p>
-  <a href="https://7code.ro/" target="blank"><img src="https://avatars.githubusercontent.com/u/41831998" height="100" alt="7Code Logo" /></a>
+# AI Docs & Presentation Backend ⚙️📊
+
+<p align="center">
+  <strong>Dynamic Schema Generation & Multi-Slide Presentation API Engine</strong>
 </p>
 
-## Description
+<p align="center">
+  Enterprise NestJS 10 API powering automated multi-slide presentation synthesis, runtime template schema introspection, dynamic structured LLM outputs, and Polar.sh monetization.
+</p>
 
-[Nest](https://github.com/nestjs/nest) + [Prisma](https://github.com/prisma/prisma) + [TypeScript](https://github.com/microsoft/TypeScript) starter repository.
+<p align="center">
+  <img src="https://img.shields.io/badge/NestJS-10.4-E0234E?style=for-the-badge&logo=nestjs&logoColor=white" alt="NestJS 10" />
+  <img src="https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Prisma_ORM-5.22-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/OpenAI-Structured_Outputs-black?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI" />
+  <img src="https://img.shields.io/badge/Polar.sh-Billing-000000?style=for-the-badge&logo=polar&logoColor=white" alt="Polar.sh" />
+</p>
 
-### Production-ready REST API:
-* Error Handling (Exception Filters)
-* Logging System
-* DB Seeds/Migrations
-* Built-in AuthModule, using JWT. Route Guards
-* Model Events Listener (onCreated, …)
-* Deployable. CI/CD pipeline using Github Actions.
-* Advanced ESLint/TSLint config. (e.g: auto-fix will remove unused imports)
-* Shared services/constants/helpers
-* Middlewares/Interceptors implementation example.
+---
 
-## Prerequisites
+## 🌟 Overview
 
-Before you begin, ensure you have the following installed:
+The **AI Docs & Presentation Backend** is a NestJS 10 microservice that automates the generation of slide decks and formatted documents from natural language prompts, outlines, or existing notes.
 
-- **Node.js** >= 20.0.0
-- **npm** or **yarn** package manager
-- **PostgreSQL** database (with pgvector extension for vector support)
-- **Git**
+### Core Capabilities:
+1. **Dynamic Runtime Schema Generation**: Eliminates hardcoded block schemas by introspecting layout templates dynamically at runtime and producing strict JSON schemas for OpenAI Structured Outputs.
+2. **Multi-Slide Deck Orchestrator**: Generates cohesive, multi-slide decks with intelligent typography pairing, content distribution, and layout variation (split-columns, number cards, lists, hero titles).
+3. **Conversational Slide Assistant**: Server-Sent Events (SSE) streaming chat companion to iteratively modify individual slides or entire decks.
+4. **Subscription Lifecycle**: Polar.sh webhook processing with cryptographic HMAC verification and atomic credit accounting.
 
-## Installation
+---
 
-1. **Clone the repository** (if you haven't already):
+## 🏛 System Modules & Architecture
+
+```text
+src/
+├── modules/
+│   ├── docs/                    # Core presentation & document engine
+│   │   ├── docs.controller.ts   # REST endpoints for decks & slides
+│   │   ├── docs.service.ts      # Deck creation, mutation & export logic
+│   │   ├── docs-chat.service.ts # Real-time streaming conversational assistant
+│   │   ├── dto/                 # Input validation DTOs (class-validator)
+│   │   └── utils/
+│   │       └── schema-generator.util.ts # Dynamic runtime JSON schema builder
+│   ├── layouts/                 # Structural templates and grid systems
+│   ├── themes/                  # Color palettes, typography & theme management
+│   ├── images/                  # Image uploads & Backblaze B2 / AWS S3 presigned URLs
+│   ├── subscription/            # Polar.sh checkout, webhooks & credit management
+│   ├── auth/                    # Better-Auth, Google OAuth & JWT cookie auth
+│   ├── blog/                    # Built-in Markdown SEO publishing engine
+│   ├── prisma/                  # Prisma ORM client singleton & extensions
+│   └── logger/                  # Structured Winston logging
+└── shared/                      # Global guards, interceptors & exception filters
+```
+
+---
+
+## 🔬 Core Engineering Innovations
+
+### 1. Dynamic Runtime Schema Generation
+Traditional LLM presentation tools rely on rigid, static schemas that frequently break when new visual block types are added.
+- **Runtime Template Introspection**: `schema-generator.util.ts` inspects the exact block types required by chosen layout templates (e.g. `prosemirror`, `simple-number-card`, `image-grid`) and generates an ephemeral, strictly-typed JSON schema at runtime.
+- **Zero Hallucination Output**: Guarantees that LLM outputs match the exact component contract expected by frontend renderers.
+
+### 2. Live SSE Conversational Deck Editing
+- Emits real-time token streams over Server-Sent Events (SSE) for continuous slide modifications without jarring full-page refreshes.
+
+### 3. Enterprise Security & Payment Ledger
+- **Cookie Authentication**: JWT authentication tokens stored exclusively in `httpOnly` secure cookies.
+- **HMAC Signatures**: Polar.sh webhooks verify raw cryptographic signatures (`x-signature`) to prevent fraudulent credit allocations.
+
+---
+
+## 🔌 API Endpoint Reference
+
+### Documents & Presentations
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/docs` | Generate a new multi-slide presentation from prompt |
+| `GET` | `/api/docs` | List paginated documents & decks for user |
+| `GET` | `/api/docs/:id` | Get full presentation state (slides, rows, blocks, theme) |
+| `PATCH`| `/api/docs/:id` | Update slide structure, order, or block content |
+| `DELETE`| `/api/docs/:id` | Delete presentation and associated assets |
+| `GET` | `/api/docs/:id/chat/stream` | **SSE Stream**: Conversational assistant slide modification stream |
+
+### Layouts & Themes
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/layouts` | Retrieve layout templates and structural presets |
+| `GET` | `/api/themes` | Retrieve active presentation color themes |
+| `POST` | `/api/themes` | Create custom theme |
+
+### Subscriptions & Billing
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/subscription/plans` | Retrieve subscription tiers |
+| `POST` | `/api/subscription/checkout` | Create Polar.sh checkout session |
+| `POST` | `/api/subscription/webhook` | Raw-body HMAC verified webhook consumer |
+| `GET` | `/api/subscription/credits` | Check user's remaining slide generation credits |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Node.js**: `v20.0.0` or higher
+- **PostgreSQL 15+**
+- **LLM API Key**: OpenAI or DeepInfra API key
+
+### Setup & Installation
+
+1. Install dependencies:
    ```bash
-   git clone <repository-url>
-   cd butterfast-backend
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   # Using npm
    npm install
-
-   # Or using yarn
-   yarn install
    ```
 
-3. **Set up environment variables**:
-   Create a `.env` file in the root directory and configure the required environment variables (see [Environment Variables](#environment-variables) section below).
-
-4. **Set up the database**:
+2. Configure environment variables:
    ```bash
-   # Generate Prisma Client
+   cp .env.example .env
+   ```
+   *Fill in your database URL, JWT secret, and OpenAI API key.*
+
+3. Run Prisma database migrations:
+   ```bash
+   npx prisma migrate dev --name init
    npx prisma generate
-
-   # Run database migrations
-   npx prisma migrate dev
-
-   # (Optional) Seed the database
-   npx prisma db seed
    ```
 
-5. **Start the development server**:
+4. Start development server:
    ```bash
-   # Using npm
    npm run start:dev
-
-   # Or using yarn
-   yarn start:dev
    ```
+   *The API will be live at `http://localhost:3001`.*
 
-The application will be available at `http://localhost:3001` (or the port specified in `APP_PORT`).
+---
 
-## Environment Variables
+## 👤 Author
 
-Create a `.env` file in the root directory with the following variables:
+**Anirban Roy**  
+- GitHub: [@anirban00537](https://github.com/anirban00537)  
+- Email: [anirban00537@gmail.com](mailto:anirban00537@gmail.com)
 
-### Required Environment Variables
+---
 
-#### Database Configuration
-```env
-# PostgreSQL database connection string
-# Format: postgresql://user:password@host:port/database?schema=public
-DATABASE_URL="postgresql://user:password@localhost:5432/butterfast_meeting?schema=public"
-```
+## 📄 License
 
-#### JWT Configuration
-```env
-# JWT secret for token signing
-JWT_SIGNATURE="your-super-secret-jwt-key-change-this-in-production"
-
-# Access token configuration
-ACCESS_TOKEN_SECRET="your-access-token-secret"
-ACCESS_TOKEN_EXPIRY="7d"  # Token expiry time (e.g., 7d, 24h, 1h)
-
-# Refresh token configuration
-REFRESH_TOKEN_SECRET="your-refresh-token-secret"
-```
-
-#### Application Configuration
-```env
-# Application port (default: 3001)
-APP_PORT=3001
-
-# Base URL of the application
-APP_URL="http://localhost:3001"
-
-# Application name
-APP_NAME="Butterfast"
-
-# Exchange app URL (if applicable)
-EXCHANGE_APP_URL="http://localhost:3000"
-
-# CORS allowed origins (comma-separated)
-CORS_ORIGIN="http://localhost:5173,http://localhost:3000"
-
-# API secret key for middleware validation
-API_SECRET="your-api-secret-key"
-```
-
-#### Mail Configuration
-```env
-# Mail service configuration
-MAIL_MAILER="smtp"  # Default: smtp
-MAIL_HOST="smtp.mailtrap.io"  # SMTP server host
-MAIL_PORT=587  # SMTP server port
-MAIL_USERNAME="your-smtp-username"
-MAIL_PASSWORD="your-smtp-password"
-MAIL_ENCRYPTION="tls"  # tls or ssl
-MAIL_FROM_ADDRESS="info@example.com"
-MAIL_FROM_NAME="Butterfast"
-```
-
-#### Backblaze B2 Storage Configuration (Optional)
-```env
-# Backblaze B2 credentials for file storage
-B2_APPLICATION_KEY_ID="your-b2-application-key-id"
-B2_APPLICATION_KEY="your-b2-application-key"
-B2_BUCKET_NAME="your-b2-bucket-name"
-```
-
-#### Development/Debugging
-```env
-# Enable Prisma query debugging (true/false)
-QUERY_DEBUG="false"
-```
-
-### Example `.env` File
-
-```env
-# Database
-DATABASE_URL="postgresql://postgres:password@localhost:5432/butterfast_meeting?schema=public"
-
-# JWT
-JWT_SIGNATURE="change-this-to-a-random-secret-key-in-production"
-ACCESS_TOKEN_SECRET="change-this-to-a-random-secret-key-in-production"
-ACCESS_TOKEN_EXPIRY="7d"
-REFRESH_TOKEN_SECRET="change-this-to-a-random-secret-key-in-production"
-
-# Application
-APP_PORT=3001
-APP_URL="http://localhost:3001"
-APP_NAME="Butterfast"
-EXCHANGE_APP_URL="http://localhost:3000"
-CORS_ORIGIN="http://localhost:5173,http://localhost:3000"
-API_SECRET="your-api-secret-key-here"
-
-# Mail
-MAIL_MAILER="smtp"
-MAIL_HOST="smtp.mailtrap.io"
-MAIL_PORT=587
-MAIL_USERNAME="your-username"
-MAIL_PASSWORD="your-password"
-MAIL_ENCRYPTION="tls"
-MAIL_FROM_ADDRESS="noreply@butterfast.com"
-MAIL_FROM_NAME="Butterfast"
-
-# Backblaze B2 (Optional)
-B2_APPLICATION_KEY_ID=""
-B2_APPLICATION_KEY=""
-B2_BUCKET_NAME=""
-
-# Debugging
-QUERY_DEBUG="false"
-```
-
-## Running the App
-
-```bash
-# Development mode (with hot-reload)
-npm run start:dev
-# or
-yarn start:dev
-
-# Watch mode
-npm run start:watch
-
-# Production mode
-npm run build
-npm run start:prod
-# or
-yarn build
-yarn start:prod
-
-# Debug mode
-npm run start:debug
-```
-
-## Database Management
-
-### Prisma Commands
-
-```bash
-# Generate Prisma Client
-npx prisma generate
-
-# Create and apply a new migration
-npx prisma migrate dev
-
-# Apply migrations in production
-npx prisma migrate deploy
-
-# Push schema changes without creating migration (development only)
-npx prisma db push
-
-# Open Prisma Studio (database GUI)
-npx prisma studio
-
-# Seed the database
-npx prisma db seed
-```
-
-### Database Setup
-
-1. **Create a PostgreSQL database**:
-   ```sql
-   CREATE DATABASE butterfast_meeting;
-   ```
-
-2. **Enable pgvector extension** (required for vector support):
-   ```sql
-   CREATE EXTENSION IF NOT EXISTS vector;
-   ```
-
-3. **Run migrations**:
-   ```bash
-   npx prisma migrate dev
-   ```
-
-## Testing
-
-```bash
-# Unit tests
-npm run test
-
-# E2E tests
-npm run test:e2e
-
-# Test coverage
-npm run test:cov
-
-# Watch mode
-npm run test:watch
-```
-
-## Project Structure
-
-```
-butterfast-backend/
-├── prisma/
-│   ├── schema.prisma          # Database schema
-│   └── seed.ts                # Database seed file
-├── src/
-│   ├── modules/               # Feature modules
-│   │   ├── app/              # Main app module
-│   │   ├── auth/             # Authentication module
-│   │   ├── users/            # User management
-│   │   ├── subscription/     # Subscription management
-│   │   └── ...
-│   ├── shared/               # Shared utilities
-│   │   ├── configs/          # Configuration files
-│   │   ├── constants/        # Constants
-│   │   ├── guards/           # Route guards
-│   │   ├── helpers/          # Helper functions
-│   │   └── middlewares/      # Middlewares
-│   └── main.ts               # Application entry point
-├── .env                      # Environment variables (create this)
-├── package.json
-└── tsconfig.json
-```
-
-## API Documentation
-
-Once the server is running, you can access the Swagger API documentation at:
-```
-http://localhost:3001/api/docs
-```
-
-## Authentication
-
-This implementation uses `httpOnly` (server-side) cookie-based authentication. [Read more](https://dev.to/guillerbr/authentication-cookies-http-http-only-jwt-reactjs-context-api-and-node-on-backend-industry-structure-3f8e)
-
-That means that the `JWT Token` is never stored on the client. 
-Usually it was stored in `localStorage` / `sessionStorage` / `cookies` (browser), but this is not secure. 
-
-Storing the token on a server side cookie is more secure, but it requires a small adjustment on frontend HTTP requests in order to work.
-
-### Frontend Adjustments
-
-* If you're using `axios` then you need to set: `withCredentials: true`. [Read more](https://flaviocopes.com/axios-credentials/)
-* If you're using `fetch` then you need to set: `credentials: 'include'`. [Read more](https://github.com/github/fetch#sending-cookies)
-
-## Code Style
-
-Sync your IDE with project `.eslintrc.js`. 
-
-Check `Run ESLint --fix on save`
-
-## Troubleshooting
-
-### Database Connection Issues
-
-- Ensure PostgreSQL is running
-- Verify `DATABASE_URL` is correct
-- Check if the database exists
-- Ensure pgvector extension is installed
-
-### Port Already in Use
-
-If port 3001 is already in use, change `APP_PORT` in your `.env` file.
-
-### Migration Issues
-
-If you encounter migration errors:
-```bash
-# Reset the database (WARNING: This will delete all data)
-npx prisma migrate reset
-
-# Or push schema without migration (development only)
-npx prisma db push
-```
-
-## Production Deployment
-
-1. **Build the application**:
-   ```bash
-   npm run build
-   ```
-
-2. **Set production environment variables** in your hosting platform
-
-3. **Run database migrations**:
-   ```bash
-   npx prisma migrate deploy
-   ```
-
-4. **Start the application**:
-   ```bash
-   npm run start:prod
-   ```
-
-## TO-DO
-
-* Add Mail Service 
-* Add [Recap.DEV](https://recap.dev/) integration - Tracing/Monitoring service
-* Add Unit tests.
-* Add Social Media Auth
-* Add documentation for setting the GitHub Secrets for the CI/CD pipeline
-* Add API Throttling - https://docs.nestjs.com/security/rate-limiting
-* ...
-
-## Stay in touch
-
-- Author - [Igor Mardari](https://www.linkedin.com/in/igor-mardari-7code/) | [GarryOne](https://github.com/GarryOne)
-- Website - [7code.ro](https://7code.ro/)
-- Github - [@7codeRO](https://github.com/7codeRO/)
-
-## License
-
-[MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the **MIT License**.
